@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Proposer un canyon</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="">
   <style>
     :root {
       color-scheme: light;
@@ -19,6 +20,8 @@
       --danger-soft: #fde8e6;
       --success: #127847;
       --success-soft: #dff3e8;
+      --warning: #996100;
+      --warning-soft: #fff1d9;
       --shadow: 0 14px 32px rgba(31, 44, 79, 0.08);
       --radius: 18px;
     }
@@ -40,12 +43,13 @@
 
     button,
     input,
+    select,
     textarea {
       font: inherit;
     }
 
     .page {
-      max-width: 980px;
+      max-width: 1120px;
       margin: 0 auto;
       padding: 18px 14px 72px;
     }
@@ -82,7 +86,7 @@
 
     h1 {
       margin: 0;
-      font-size: 28px;
+      font-size: 30px;
       line-height: 1.15;
     }
 
@@ -90,7 +94,9 @@
     .help-list,
     .notice,
     .field-help,
-    .status {
+    .status,
+    .section-note,
+    .map-status {
       color: var(--muted);
       line-height: 1.5;
     }
@@ -108,13 +114,19 @@
       font-size: 14px;
     }
 
+    .notice.warning {
+      background: var(--warning-soft);
+      border-color: #efdaa3;
+      color: var(--warning);
+    }
+
     .card {
       padding: 20px;
     }
 
     form {
       display: grid;
-      gap: 18px;
+      gap: 22px;
     }
 
     fieldset {
@@ -127,20 +139,39 @@
 
     legend {
       margin-bottom: 10px;
-      font-size: 18px;
+      font-size: 19px;
       font-weight: 700;
     }
 
-    .grid {
+    .grid,
+    .grid-3,
+    .grid-4 {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 14px;
     }
 
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
     .grid-3 {
-      display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .field-span-2 {
+      grid-column: span 2;
+    }
+
+    .field-span-3 {
+      grid-column: span 3;
+    }
+
+    .field-span-4 {
+      grid-column: span 4;
     }
 
     label {
@@ -151,6 +182,7 @@
     }
 
     input,
+    select,
     textarea {
       width: 100%;
       border: 1px solid var(--border);
@@ -161,6 +193,7 @@
     }
 
     input:focus,
+    select:focus,
     textarea:focus {
       outline: 2px solid rgba(36, 91, 255, 0.16);
       border-color: rgba(36, 91, 255, 0.5);
@@ -171,7 +204,8 @@
       resize: vertical;
     }
 
-    .field-help {
+    .field-help,
+    .section-note {
       margin: 0;
       font-size: 13px;
       font-weight: 400;
@@ -191,11 +225,18 @@
       flex: 0 0 auto;
     }
 
-    .actions {
+    .actions,
+    .points-toolbar,
+    .point-actions,
+    .points-header {
       display: flex;
       gap: 12px;
       align-items: center;
       flex-wrap: wrap;
+    }
+
+    .points-header {
+      justify-content: space-between;
     }
 
     .button {
@@ -221,16 +262,30 @@
       box-shadow: none;
     }
 
+    .button-secondary {
+      background: #fff;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .button-danger {
+      background: #fff;
+      color: var(--danger);
+      border: 1px solid #f0b8b3;
+    }
+
     .status {
       min-height: 24px;
       font-size: 14px;
     }
 
-    .status.error {
+    .status.error,
+    .map-status.error {
       color: var(--danger);
     }
 
-    .status.success {
+    .status.success,
+    .map-status.success {
       color: var(--success);
     }
 
@@ -254,6 +309,62 @@
       background: var(--danger-soft);
     }
 
+    .points-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .point-card {
+      display: grid;
+      gap: 12px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: var(--panel-soft);
+    }
+
+    .point-card.active {
+      border-color: rgba(36, 91, 255, 0.6);
+      box-shadow: inset 0 0 0 1px rgba(36, 91, 255, 0.15);
+      background: #f2f6ff;
+    }
+
+    .point-card-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .point-card-title {
+      margin: 0;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .point-map {
+      width: 100%;
+      height: 360px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      background: #dfe7f5;
+    }
+
+    .point-empty {
+      padding: 14px;
+      border-radius: 14px;
+      background: var(--panel-soft);
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .map-status {
+      min-height: 22px;
+      font-size: 14px;
+    }
+
     .visually-hidden {
       position: absolute;
       width: 1px;
@@ -266,19 +377,44 @@
       border: 0;
     }
 
+    @media (max-width: 900px) {
+      .grid-4,
+      .grid-3,
+      .grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .field-span-4,
+      .field-span-3,
+      .field-span-2 {
+        grid-column: span 2;
+      }
+    }
+
     @media (max-width: 760px) {
       h1 {
         font-size: 24px;
       }
 
-      .grid,
-      .grid-3 {
+      .grid-4,
+      .grid-3,
+      .grid {
         grid-template-columns: 1fr;
+      }
+
+      .field-span-4,
+      .field-span-3,
+      .field-span-2 {
+        grid-column: span 1;
       }
 
       .card,
       .hero {
         padding: 16px;
+      }
+
+      .point-map {
+        height: 320px;
       }
     }
   </style>
@@ -290,36 +426,37 @@
       <div>
         <h1>Proposer un nouveau canyon</h1>
         <p>
-          Cette page permet de proposer une nouvelle fiche canyon. La proposition sera publiée sous forme d'issue GitHub publique
-          après validation minimale du formulaire.
+          Cette page permet de proposer une nouvelle fiche canyon avec un niveau de détail proche de la base locale de l'application.
+          La proposition sera publiée sous forme d'issue GitHub publique.
         </p>
       </div>
-      <div class="notice">
+      <div class="notice warning">
         Tout ce que tu envoies ici est public. N'ajoute pas d'email, de numéro de téléphone ni d'information que tu ne veux pas voir publiée.
       </div>
       <ul class="help-list">
         <li>Donne au minimum un nom, un pays, une description et une source.</li>
-        <li>Les coordonnées peuvent être approximatives si le canyon est encore à confirmer.</li>
-        <li>Plus les sources sont précises, plus la proposition sera facile à traiter.</li>
+        <li>Tu peux ajouter plusieurs points GPS et les placer directement sur la carte.</li>
+        <li>Les champs techniques et bibliographiques sont optionnels, mais très utiles pour la modération.</li>
       </ul>
     </section>
 
     <section class="card">
       <form id="canyon-form" novalidate>
         <fieldset>
-          <legend>Identité</legend>
+          <legend>Identité et localisation</legend>
+
           <div class="grid">
             <label>
               Nom du canyon *
               <input name="name" type="text" maxlength="120" required>
             </label>
             <label>
-              Pseudo
-              <input name="submitterPseudo" type="text" maxlength="80" placeholder="Ton pseudo ou prénom">
+              Nom complet ou alias
+              <input name="fullName" type="text" maxlength="160">
             </label>
           </div>
 
-          <div class="grid-3">
+          <div class="grid-4">
             <label>
               Pays *
               <input name="country" type="text" maxlength="80" required>
@@ -332,57 +469,109 @@
               Département / subdivision
               <input name="department" type="text" maxlength="80">
             </label>
+            <label>
+              Commune principale
+              <input name="municipality" type="text" maxlength="120">
+            </label>
+          </div>
+
+          <div class="grid-4">
+            <label class="field-span-2">
+              Communes associées
+              <input name="communes" type="text" maxlength="200" placeholder="Séparées par des virgules">
+            </label>
+            <label>
+              Massif
+              <input name="massif" type="text" maxlength="120">
+            </label>
+            <label>
+              Cours d'eau
+              <input name="watercourse" type="text" maxlength="120">
+            </label>
+          </div>
+
+          <div class="grid">
+            <label>
+              Bassin
+              <input name="basin" type="text" maxlength="120">
+            </label>
+            <label>
+              Pseudo
+              <input name="submitterPseudo" type="text" maxlength="80" placeholder="Ton pseudo ou prénom">
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Caractéristiques techniques</legend>
+          <p class="section-note">Ces champs sont optionnels, mais ils permettent de rapprocher la proposition d'une fiche canyon complète.</p>
+
+          <div class="grid-4">
+            <label>
+              Cotation
+              <input name="rating" type="text" maxlength="40" placeholder="v3 a2 II">
+            </label>
+            <label>
+              Intérêt
+              <input name="interest" type="number" min="0" max="5" step="0.5" inputmode="decimal" placeholder="3.5">
+            </label>
+            <label>
+              Engagement
+              <input name="engagement" type="text" maxlength="160" placeholder="II, III, ...">
+            </label>
+            <label>
+              Période
+              <input name="period" type="text" maxlength="160" placeholder="mai à septembre">
+            </label>
+          </div>
+
+          <div class="grid-4">
+            <label>
+              Altitude départ (m)
+              <input name="altitudeStart" type="number" min="0" step="1" inputmode="numeric">
+            </label>
+            <label>
+              Dénivelé (m)
+              <input name="elevation" type="number" min="0" step="1" inputmode="numeric">
+            </label>
+            <label>
+              Longueur (m)
+              <input name="length" type="number" min="0" step="1" inputmode="numeric">
+            </label>
+            <label>
+              Cascade max (m)
+              <input name="maxWaterfall" type="number" min="0" step="1" inputmode="numeric">
+            </label>
+          </div>
+
+          <div class="grid-4">
+            <label>
+              Corde mini (m)
+              <input name="minRope" type="number" min="0" step="1" inputmode="numeric">
+            </label>
+            <label>
+              Temps approche
+              <input name="approachTime" type="text" maxlength="80" placeholder="20 min">
+            </label>
+            <label>
+              Temps descente
+              <input name="descentTime" type="text" maxlength="80" placeholder="2 h 30">
+            </label>
+            <label>
+              Temps retour
+              <input name="returnTime" type="text" maxlength="80" placeholder="35 min">
+            </label>
           </div>
 
           <label>
-            Commune
-            <input name="municipality" type="text" maxlength="120">
+            Navette
+            <textarea name="shuttle" maxlength="2000" placeholder="Précise si une navette est utile, évitable, ou inutile."></textarea>
           </label>
         </fieldset>
 
         <fieldset>
-          <legend>Coordonnées</legend>
-          <p class="field-help">Laisse vide si tu ne les connais pas encore. Si tu renseignes une latitude, renseigne aussi la longitude correspondante.</p>
+          <legend>Topo et accès</legend>
 
-          <div class="grid-3">
-            <label>
-              Entrée latitude
-              <input name="entryLat" type="number" step="any" inputmode="decimal" placeholder="45.1234">
-            </label>
-            <label>
-              Entrée longitude
-              <input name="entryLng" type="number" step="any" inputmode="decimal" placeholder="5.6789">
-            </label>
-            <div></div>
-          </div>
-
-          <div class="grid-3">
-            <label>
-              Sortie latitude
-              <input name="exitLat" type="number" step="any" inputmode="decimal">
-            </label>
-            <label>
-              Sortie longitude
-              <input name="exitLng" type="number" step="any" inputmode="decimal">
-            </label>
-            <div></div>
-          </div>
-
-          <div class="grid-3">
-            <label>
-              Parking latitude
-              <input name="parkingLat" type="number" step="any" inputmode="decimal">
-            </label>
-            <label>
-              Parking longitude
-              <input name="parkingLng" type="number" step="any" inputmode="decimal">
-            </label>
-            <div></div>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Description</legend>
           <label>
             Description générale *
             <textarea name="description" maxlength="4000" required placeholder="Décris brièvement le canyon, son état de connaissance, son intérêt ou le contexte de la proposition."></textarea>
@@ -390,27 +579,83 @@
 
           <div class="grid">
             <label>
-              Approche
-              <textarea name="approach" maxlength="3000" placeholder="Accès, marche d'approche, repères utiles..."></textarea>
+              Accès aval
+              <textarea name="accessDownstream" maxlength="3000" placeholder="Parking aval, approche basse, navette, repères..."></textarea>
             </label>
             <label>
-              Descente
-              <textarea name="descent" maxlength="3000" placeholder="Type d'obstacles, enchaînement général, remarques..."></textarea>
+              Accès amont
+              <textarea name="accessUpstream" maxlength="3000" placeholder="Parking amont, piste, marche d'approche, repères..."></textarea>
             </label>
           </div>
 
-          <label>
-            Retour
-            <textarea name="returnRoute" maxlength="3000" placeholder="Chemin de retour, navette éventuelle, difficultés particulières..."></textarea>
-          </label>
+          <div class="grid">
+            <label>
+              Approche
+              <textarea name="approach" maxlength="3000" placeholder="Marche d'approche, orientation, difficultés..."></textarea>
+            </label>
+            <label>
+              Descente
+              <textarea name="descent" maxlength="3000" placeholder="Profil de la descente, obstacles, équipement, eau..."></textarea>
+            </label>
+          </div>
+
+          <div class="grid">
+            <label>
+              Retour
+              <textarea name="returnRoute" maxlength="3000" placeholder="Chemin de retour, échappatoires, points clés..."></textarea>
+            </label>
+            <label>
+              Remarques
+              <textarea name="remarks" maxlength="3000" placeholder="Points d'attention, réserves, accès délicat, qualité des infos..."></textarea>
+            </label>
+          </div>
+
+          <div class="grid">
+            <label>
+              Géologie
+              <textarea name="geology" maxlength="3000" placeholder="Calcaire, granite, schiste, particularités du rocher..."></textarea>
+            </label>
+            <label>
+              Historique
+              <textarea name="history" maxlength="3000" placeholder="Ouverture, nom local, historique des parcours, sources historiques..."></textarea>
+            </label>
+          </div>
         </fieldset>
 
         <fieldset>
-          <legend>Sources</legend>
+          <legend>Points GPS</legend>
+          <div class="points-header">
+            <p class="section-note">Ajoute autant de points que nécessaire. Sélectionne un point, puis clique sur la carte pour renseigner ses coordonnées.</p>
+            <button id="add-point-button" class="button button-secondary" type="button">+ Ajouter un point GPS</button>
+          </div>
+
+          <div id="points-list" class="points-list"></div>
+          <div id="point-empty" class="point-empty">Aucun point GPS pour l'instant. Ajoute un point puis clique sur la carte pour le placer.</div>
+
+          <div class="points-toolbar">
+            <div id="map-status" class="map-status">Sélectionne un point dans la liste, puis clique sur la carte.</div>
+          </div>
+
+          <div id="point-map" class="point-map" aria-label="Carte de sélection des points GPS"></div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Sources, bibliographie et réglementation</legend>
           <label>
             Sources et liens *
-            <textarea name="sources" maxlength="3000" required placeholder="Topo, photo, trace GPX, échange de club, forum, carnet personnel, article..."></textarea>
+            <textarea name="sources" maxlength="3000" required placeholder="Topo local, photos, trace GPX, discussion club, article, forum, carnet personnel..."></textarea>
           </label>
+
+          <div class="grid">
+            <label>
+              Bibliographie
+              <textarea name="bibliography" maxlength="3000" placeholder="Topoguides, cartes, livres, articles, ressources en ligne..."></textarea>
+            </label>
+            <label>
+              Réglementation
+              <textarea name="regulations" maxlength="3000" placeholder="Arrêtés connus, interdictions, périodes, réserves, liens vers les textes..."></textarea>
+            </label>
+          </div>
         </fieldset>
 
         <fieldset>
@@ -437,12 +682,64 @@
     </section>
   </main>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
   <script>
     const workerEndpoint = "https://canyon-submission-api.antoine-duquennoy.workers.dev/submit-canyon";
     const form = document.getElementById("canyon-form");
     const submitButton = document.getElementById("submit-button");
     const statusText = document.getElementById("status-text");
     const statusPanel = document.getElementById("status-panel");
+    const addPointButton = document.getElementById("add-point-button");
+    const pointsList = document.getElementById("points-list");
+    const pointEmpty = document.getElementById("point-empty");
+    const mapStatus = document.getElementById("map-status");
+
+    const pointTypes = [
+      { value: "PARKING_AMONT", label: "Parking amont" },
+      { value: "PARKING_AVAL", label: "Parking aval" },
+      { value: "ENTREE", label: "Entrée" },
+      { value: "SORTIE", label: "Sortie" },
+      { value: "POINT_REMARQUABLE", label: "Point remarquable" },
+      { value: "ECHAPPATOIRE", label: "Échappatoire" },
+      { value: "UNKNOWN", label: "Autre point GPS" }
+    ];
+
+    const pointTypeColors = {
+      PARKING_AMONT: "#245bff",
+      PARKING_AVAL: "#7c3aed",
+      ENTREE: "#1f9d55",
+      SORTIE: "#d9485f",
+      POINT_REMARQUABLE: "#8b5e34",
+      ECHAPPATOIRE: "#0f4c81",
+      UNKNOWN: "#64748b"
+    };
+
+    const pointMap = L.map("point-map", { scrollWheelZoom: true }).setView([45.2, 6.1], 6);
+    const pointMarkersLayer = L.layerGroup().addTo(pointMap);
+    let pointIdSequence = 0;
+    let activePointId = null;
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+    }).addTo(pointMap);
+
+    function escapeHtml(value) {
+      return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/\"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function parseOptionalNumber(value) {
+      if (value === "") {
+        return null;
+      }
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : null;
+    }
 
     function setPendingState(isPending) {
       submitButton.disabled = isPending;
@@ -458,32 +755,251 @@
       statusText.textContent = type === "error" ? "Échec de l'envoi." : "Proposition envoyée.";
     }
 
-    function toOptionalNumber(value) {
-      if (value === "") {
-        return null;
+    function pointTypeLabel(type) {
+      const found = pointTypes.find((option) => option.value === type);
+      return found ? found.label : "Point GPS";
+    }
+
+    function buildPointTypeOptions(selectedValue) {
+      return pointTypes
+        .map((option) => `<option value="${option.value}"${option.value === selectedValue ? " selected" : ""}>${escapeHtml(option.label)}</option>`)
+        .join("");
+    }
+
+    function createPointRow(initial = {}) {
+      const row = document.createElement("article");
+      const pointId = `point-${++pointIdSequence}`;
+      row.className = "point-card";
+      row.dataset.pointId = pointId;
+      row.innerHTML = `
+        <div class="point-card-header">
+          <div>
+            <p class="point-card-title">Point GPS</p>
+          </div>
+          <div class="point-actions">
+            <button type="button" class="button button-secondary" data-action="select-map">Choisir sur la carte</button>
+            <button type="button" class="button button-secondary" data-action="focus-map">Centrer</button>
+            <button type="button" class="button button-danger" data-action="delete-point">Supprimer</button>
+          </div>
+        </div>
+        <div class="grid-4">
+          <label>
+            Type
+            <select data-field="type">${buildPointTypeOptions(initial.type || "PARKING_AMONT")}</select>
+          </label>
+          <label class="field-span-3">
+            Libellé du point
+            <input data-field="label" type="text" maxlength="120" value="${escapeHtml(initial.label || "")}" placeholder="Nom ou précision visible dans l'issue">
+          </label>
+        </div>
+        <div class="grid-3">
+          <label>
+            Latitude
+            <input data-field="latitude" type="number" step="any" inputmode="decimal" value="${escapeHtml(initial.latitude || "")}" placeholder="45.123456">
+          </label>
+          <label>
+            Longitude
+            <input data-field="longitude" type="number" step="any" inputmode="decimal" value="${escapeHtml(initial.longitude || "")}" placeholder="5.123456">
+          </label>
+          <label>
+            Commentaire du point
+            <input data-field="remark" type="text" maxlength="500" value="${escapeHtml(initial.remark || "")}" placeholder="Accès, ambiguïté, repère...">
+          </label>
+        </div>
+      `;
+
+      wirePointRow(row);
+      pointsList.appendChild(row);
+      refreshPointSection();
+      return row;
+    }
+
+    function wirePointRow(row) {
+      row.querySelectorAll("input, select").forEach((field) => {
+        field.addEventListener("input", refreshPointSection);
+        field.addEventListener("change", refreshPointSection);
+      });
+
+      row.querySelector('[data-action="select-map"]').addEventListener("click", () => {
+        setActivePoint(row.dataset.pointId);
+      });
+
+      row.querySelector('[data-action="focus-map"]').addEventListener("click", () => {
+        const point = readPointRow(row);
+        if (point.latitude !== null && point.longitude !== null) {
+          pointMap.setView([point.latitude, point.longitude], Math.max(pointMap.getZoom(), 13));
+        }
+      });
+
+      row.querySelector('[data-action="delete-point"]').addEventListener("click", () => {
+        const wasActive = activePointId === row.dataset.pointId;
+        row.remove();
+        if (wasActive) {
+          activePointId = null;
+        }
+        refreshPointSection();
+      });
+    }
+
+    function readPointRow(row) {
+      return {
+        id: row.dataset.pointId,
+        type: row.querySelector('[data-field="type"]').value,
+        label: row.querySelector('[data-field="label"]').value.trim(),
+        remark: row.querySelector('[data-field="remark"]').value.trim(),
+        latitude: parseOptionalNumber(row.querySelector('[data-field="latitude"]').value.trim()),
+        longitude: parseOptionalNumber(row.querySelector('[data-field="longitude"]').value.trim())
+      };
+    }
+
+    function collectGeoPoints() {
+      return Array.from(pointsList.querySelectorAll(".point-card"))
+        .map(readPointRow)
+        .filter((point) => point.latitude !== null || point.longitude !== null || point.label || point.remark)
+        .map((point) => ({
+          type: point.type,
+          label: point.label,
+          remark: point.remark,
+          latitude: point.latitude,
+          longitude: point.longitude
+        }));
+    }
+
+    function setActivePoint(pointId) {
+      activePointId = activePointId === pointId ? null : pointId;
+      refreshPointSection();
+    }
+
+    function refreshPointSection() {
+      const rows = Array.from(pointsList.querySelectorAll(".point-card"));
+      pointEmpty.style.display = rows.length === 0 ? "block" : "none";
+
+      rows.forEach((row) => {
+        const isActive = row.dataset.pointId === activePointId;
+        row.classList.toggle("active", isActive);
+        row.querySelector('[data-action="select-map"]').textContent = isActive ? "Point sélectionné" : "Choisir sur la carte";
+      });
+
+      updateMapStatus(rows);
+      refreshMapMarkers(rows);
+    }
+
+    function updateMapStatus(rows) {
+      const activeRow = rows.find((row) => row.dataset.pointId === activePointId);
+      if (!activeRow) {
+        mapStatus.textContent = rows.length === 0
+          ? "Ajoute un point GPS pour pouvoir le placer sur la carte."
+          : "Sélectionne un point dans la liste, puis clique sur la carte.";
+        mapStatus.className = "map-status";
+        return;
       }
-      const parsed = Number(value);
-      return Number.isFinite(parsed) ? parsed : value;
+
+      const activePoint = readPointRow(activeRow);
+      mapStatus.textContent = `Point sélectionné : ${pointTypeLabel(activePoint.type)}. Clique sur la carte pour mettre à jour ses coordonnées.`;
+      mapStatus.className = "map-status success";
+    }
+
+    function refreshMapMarkers(rows) {
+      pointMarkersLayer.clearLayers();
+
+      rows.forEach((row) => {
+        const point = readPointRow(row);
+        if (point.latitude === null || point.longitude === null) {
+          return;
+        }
+
+        const marker = L.circleMarker([point.latitude, point.longitude], {
+          radius: 8,
+          color: pointTypeColors[point.type] || pointTypeColors.UNKNOWN,
+          weight: 2,
+          fillColor: pointTypeColors[point.type] || pointTypeColors.UNKNOWN,
+          fillOpacity: 0.35
+        });
+
+        const popupLines = [`<strong>${escapeHtml(pointTypeLabel(point.type))}</strong>`];
+        if (point.label) {
+          popupLines.push(escapeHtml(point.label));
+        }
+        if (point.remark) {
+          popupLines.push(escapeHtml(point.remark));
+        }
+
+        marker.bindPopup(popupLines.join("<br>"));
+        marker.on("click", () => {
+          activePointId = row.dataset.pointId;
+          refreshPointSection();
+        });
+        marker.addTo(pointMarkersLayer);
+      });
+    }
+
+    pointMap.on("click", (event) => {
+      const activeRow = activePointId
+        ? pointsList.querySelector(`.point-card[data-point-id="${activePointId}"]`)
+        : null;
+
+      if (!activeRow) {
+        mapStatus.textContent = "Sélectionne d'abord un point dans la liste avant de cliquer sur la carte.";
+        mapStatus.className = "map-status error";
+        return;
+      }
+
+      activeRow.querySelector('[data-field="latitude"]').value = event.latlng.lat.toFixed(6);
+      activeRow.querySelector('[data-field="longitude"]').value = event.latlng.lng.toFixed(6);
+      refreshPointSection();
+    });
+
+    addPointButton.addEventListener("click", () => {
+      const newRow = createPointRow();
+      activePointId = newRow.dataset.pointId;
+      refreshPointSection();
+    });
+
+    function resetGeoPoints() {
+      pointsList.innerHTML = "";
+      activePointId = null;
+      createPointRow();
+      refreshPointSection();
     }
 
     function buildPayload(formData) {
       return {
         name: (formData.get("name") || "").trim(),
+        fullName: (formData.get("fullName") || "").trim(),
         country: (formData.get("country") || "").trim(),
         region: (formData.get("region") || "").trim(),
         department: (formData.get("department") || "").trim(),
         municipality: (formData.get("municipality") || "").trim(),
-        entryLat: toOptionalNumber((formData.get("entryLat") || "").trim()),
-        entryLng: toOptionalNumber((formData.get("entryLng") || "").trim()),
-        exitLat: toOptionalNumber((formData.get("exitLat") || "").trim()),
-        exitLng: toOptionalNumber((formData.get("exitLng") || "").trim()),
-        parkingLat: toOptionalNumber((formData.get("parkingLat") || "").trim()),
-        parkingLng: toOptionalNumber((formData.get("parkingLng") || "").trim()),
+        communes: (formData.get("communes") || "").trim(),
+        massif: (formData.get("massif") || "").trim(),
+        basin: (formData.get("basin") || "").trim(),
+        watercourse: (formData.get("watercourse") || "").trim(),
+        rating: (formData.get("rating") || "").trim(),
+        altitudeStart: parseOptionalNumber((formData.get("altitudeStart") || "").trim()),
+        elevation: parseOptionalNumber((formData.get("elevation") || "").trim()),
+        length: parseOptionalNumber((formData.get("length") || "").trim()),
+        maxWaterfall: parseOptionalNumber((formData.get("maxWaterfall") || "").trim()),
+        minRope: parseOptionalNumber((formData.get("minRope") || "").trim()),
+        interest: parseOptionalNumber((formData.get("interest") || "").trim()),
+        approachTime: (formData.get("approachTime") || "").trim(),
+        descentTime: (formData.get("descentTime") || "").trim(),
+        returnTime: (formData.get("returnTime") || "").trim(),
+        shuttle: (formData.get("shuttle") || "").trim(),
         description: (formData.get("description") || "").trim(),
+        accessDownstream: (formData.get("accessDownstream") || "").trim(),
+        accessUpstream: (formData.get("accessUpstream") || "").trim(),
         approach: (formData.get("approach") || "").trim(),
         descent: (formData.get("descent") || "").trim(),
         returnRoute: (formData.get("returnRoute") || "").trim(),
+        engagement: (formData.get("engagement") || "").trim(),
+        period: (formData.get("period") || "").trim(),
+        geology: (formData.get("geology") || "").trim(),
+        history: (formData.get("history") || "").trim(),
+        remarks: (formData.get("remarks") || "").trim(),
         sources: (formData.get("sources") || "").trim(),
+        bibliography: (formData.get("bibliography") || "").trim(),
+        regulations: (formData.get("regulations") || "").trim(),
+        geoPoints: collectGeoPoints(),
         submitterPseudo: (formData.get("submitterPseudo") || "").trim(),
         publicConsent: formData.get("publicConsent") === "on",
         honeypot: (formData.get("honeypot") || "").trim(),
@@ -516,11 +1032,11 @@
 
         if (!response.ok || !result.ok) {
           const details = Array.isArray(result.details) && result.details.length > 0
-            ? `<ul>${result.details.map((item) => `<li>${item}</li>`).join("")}</ul>`
+            ? `<ul>${result.details.map((item) => `<li>${escapeHtml(item)}</li>`).join("")}</ul>`
             : "";
           showResult(
             "error",
-            `<strong>Impossible de publier la proposition.</strong><br>${result.error || "Erreur inconnue."}${details}`
+            `<strong>Impossible de publier la proposition.</strong><br>${escapeHtml(result.error || "Erreur inconnue.")}${details}`
           );
           return;
         }
@@ -530,6 +1046,7 @@
           `<strong>Merci, la proposition a bien été publiée.</strong><br>Issue créée : <a href="${result.issueUrl}" target="_blank" rel="noopener noreferrer">#${result.issueNumber}</a>`
         );
         form.reset();
+        resetGeoPoints();
       } catch (error) {
         showResult(
           "error",
@@ -539,6 +1056,8 @@
         setPendingState(false);
       }
     });
+
+    resetGeoPoints();
   </script>
 </body>
 </html>
