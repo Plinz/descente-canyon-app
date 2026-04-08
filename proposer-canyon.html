@@ -1,0 +1,544 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Proposer un canyon</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef3fb;
+      --panel: rgba(255, 255, 255, 0.96);
+      --panel-soft: #f7f9fe;
+      --text: #1a2335;
+      --muted: #5d6980;
+      --border: #d8e0ee;
+      --accent: #245bff;
+      --accent-soft: #dfe7ff;
+      --danger: #b52d25;
+      --danger-soft: #fde8e6;
+      --success: #127847;
+      --success-soft: #dff3e8;
+      --shadow: 0 14px 32px rgba(31, 44, 79, 0.08);
+      --radius: 18px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #edf2fb 0%, #eef3fb 260px, #f5f7fc 100%);
+      color: var(--text);
+    }
+
+    a {
+      color: var(--accent);
+    }
+
+    button,
+    input,
+    textarea {
+      font: inherit;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 14px 72px;
+    }
+
+    .hero,
+    .card {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      display: grid;
+      gap: 14px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      width: fit-content;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.15;
+    }
+
+    .hero p,
+    .help-list,
+    .notice,
+    .field-help,
+    .status {
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .help-list {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .notice {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: var(--panel-soft);
+      border: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .card {
+      padding: 20px;
+    }
+
+    form {
+      display: grid;
+      gap: 18px;
+    }
+
+    fieldset {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      display: grid;
+      gap: 14px;
+    }
+
+    legend {
+      margin-bottom: 10px;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    label {
+      display: grid;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 11px 12px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    input:focus,
+    textarea:focus {
+      outline: 2px solid rgba(36, 91, 255, 0.16);
+      border-color: rgba(36, 91, 255, 0.5);
+    }
+
+    textarea {
+      min-height: 110px;
+      resize: vertical;
+    }
+
+    .field-help {
+      margin: 0;
+      font-size: 13px;
+      font-weight: 400;
+    }
+
+    .checkbox {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-weight: 500;
+    }
+
+    .checkbox input {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      flex: 0 0 auto;
+    }
+
+    .actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .button {
+      border: 0;
+      border-radius: 12px;
+      padding: 12px 16px;
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      transition: 0.12s ease;
+    }
+
+    .button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 22px rgba(36, 91, 255, 0.18);
+    }
+
+    .button:disabled {
+      cursor: default;
+      opacity: 0.6;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .status {
+      min-height: 24px;
+      font-size: 14px;
+    }
+
+    .status.error {
+      color: var(--danger);
+    }
+
+    .status.success {
+      color: var(--success);
+    }
+
+    .status-panel {
+      display: none;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--panel-soft);
+    }
+
+    .status-panel.success {
+      display: block;
+      border-color: #b7e2c6;
+      background: var(--success-soft);
+    }
+
+    .status-panel.error {
+      display: block;
+      border-color: #f0b8b3;
+      background: var(--danger-soft);
+    }
+
+    .visually-hidden {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (max-width: 760px) {
+      h1 {
+        font-size: 24px;
+      }
+
+      .grid,
+      .grid-3 {
+        grid-template-columns: 1fr;
+      }
+
+      .card,
+      .hero {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <div class="eyebrow">Descente-Canyon</div>
+      <div>
+        <h1>Proposer un nouveau canyon</h1>
+        <p>
+          Cette page permet de proposer une nouvelle fiche canyon. La proposition sera publiée sous forme d'issue GitHub publique
+          après validation minimale du formulaire.
+        </p>
+      </div>
+      <div class="notice">
+        Tout ce que tu envoies ici est public. N'ajoute pas d'email, de numéro de téléphone ni d'information que tu ne veux pas voir publiée.
+      </div>
+      <ul class="help-list">
+        <li>Donne au minimum un nom, un pays, une description et une source.</li>
+        <li>Les coordonnées peuvent être approximatives si le canyon est encore à confirmer.</li>
+        <li>Plus les sources sont précises, plus la proposition sera facile à traiter.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <form id="canyon-form" novalidate>
+        <fieldset>
+          <legend>Identité</legend>
+          <div class="grid">
+            <label>
+              Nom du canyon *
+              <input name="name" type="text" maxlength="120" required>
+            </label>
+            <label>
+              Pseudo
+              <input name="submitterPseudo" type="text" maxlength="80" placeholder="Ton pseudo ou prénom">
+            </label>
+          </div>
+
+          <div class="grid-3">
+            <label>
+              Pays *
+              <input name="country" type="text" maxlength="80" required>
+            </label>
+            <label>
+              Région
+              <input name="region" type="text" maxlength="80">
+            </label>
+            <label>
+              Département / subdivision
+              <input name="department" type="text" maxlength="80">
+            </label>
+          </div>
+
+          <label>
+            Commune
+            <input name="municipality" type="text" maxlength="120">
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Coordonnées</legend>
+          <p class="field-help">Laisse vide si tu ne les connais pas encore. Si tu renseignes une latitude, renseigne aussi la longitude correspondante.</p>
+
+          <div class="grid-3">
+            <label>
+              Entrée latitude
+              <input name="entryLat" type="number" step="any" inputmode="decimal" placeholder="45.1234">
+            </label>
+            <label>
+              Entrée longitude
+              <input name="entryLng" type="number" step="any" inputmode="decimal" placeholder="5.6789">
+            </label>
+            <div></div>
+          </div>
+
+          <div class="grid-3">
+            <label>
+              Sortie latitude
+              <input name="exitLat" type="number" step="any" inputmode="decimal">
+            </label>
+            <label>
+              Sortie longitude
+              <input name="exitLng" type="number" step="any" inputmode="decimal">
+            </label>
+            <div></div>
+          </div>
+
+          <div class="grid-3">
+            <label>
+              Parking latitude
+              <input name="parkingLat" type="number" step="any" inputmode="decimal">
+            </label>
+            <label>
+              Parking longitude
+              <input name="parkingLng" type="number" step="any" inputmode="decimal">
+            </label>
+            <div></div>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Description</legend>
+          <label>
+            Description générale *
+            <textarea name="description" maxlength="4000" required placeholder="Décris brièvement le canyon, son état de connaissance, son intérêt ou le contexte de la proposition."></textarea>
+          </label>
+
+          <div class="grid">
+            <label>
+              Approche
+              <textarea name="approach" maxlength="3000" placeholder="Accès, marche d'approche, repères utiles..."></textarea>
+            </label>
+            <label>
+              Descente
+              <textarea name="descent" maxlength="3000" placeholder="Type d'obstacles, enchaînement général, remarques..."></textarea>
+            </label>
+          </div>
+
+          <label>
+            Retour
+            <textarea name="returnRoute" maxlength="3000" placeholder="Chemin de retour, navette éventuelle, difficultés particulières..."></textarea>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Sources</legend>
+          <label>
+            Sources et liens *
+            <textarea name="sources" maxlength="3000" required placeholder="Topo, photo, trace GPX, échange de club, forum, carnet personnel, article..."></textarea>
+          </label>
+        </fieldset>
+
+        <fieldset>
+          <legend>Publication</legend>
+
+          <label class="checkbox">
+            <input name="publicConsent" type="checkbox" required>
+            <span>J'accepte que ces informations soient publiées publiquement dans une issue GitHub.</span>
+          </label>
+
+          <label class="visually-hidden" aria-hidden="true">
+            Ne pas remplir ce champ
+            <input name="honeypot" type="text" tabindex="-1" autocomplete="off">
+          </label>
+        </fieldset>
+
+        <div class="actions">
+          <button id="submit-button" class="button" type="submit">Publier la proposition</button>
+          <div id="status-text" class="status" aria-live="polite"></div>
+        </div>
+
+        <div id="status-panel" class="status-panel" aria-live="polite"></div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    const workerEndpoint = "https://canyon-submission-api.antoine-duquennoy.workers.dev/submit-canyon";
+    const form = document.getElementById("canyon-form");
+    const submitButton = document.getElementById("submit-button");
+    const statusText = document.getElementById("status-text");
+    const statusPanel = document.getElementById("status-panel");
+
+    function setPendingState(isPending) {
+      submitButton.disabled = isPending;
+      submitButton.textContent = isPending ? "Envoi en cours..." : "Publier la proposition";
+      statusText.textContent = isPending ? "Création de l'issue GitHub..." : "";
+      statusText.className = "status";
+    }
+
+    function showResult(type, html) {
+      statusPanel.className = `status-panel ${type}`;
+      statusPanel.innerHTML = html;
+      statusText.className = `status ${type}`;
+      statusText.textContent = type === "error" ? "Échec de l'envoi." : "Proposition envoyée.";
+    }
+
+    function toOptionalNumber(value) {
+      if (value === "") {
+        return null;
+      }
+      const parsed = Number(value);
+      return Number.isFinite(parsed) ? parsed : value;
+    }
+
+    function buildPayload(formData) {
+      return {
+        name: (formData.get("name") || "").trim(),
+        country: (formData.get("country") || "").trim(),
+        region: (formData.get("region") || "").trim(),
+        department: (formData.get("department") || "").trim(),
+        municipality: (formData.get("municipality") || "").trim(),
+        entryLat: toOptionalNumber((formData.get("entryLat") || "").trim()),
+        entryLng: toOptionalNumber((formData.get("entryLng") || "").trim()),
+        exitLat: toOptionalNumber((formData.get("exitLat") || "").trim()),
+        exitLng: toOptionalNumber((formData.get("exitLng") || "").trim()),
+        parkingLat: toOptionalNumber((formData.get("parkingLat") || "").trim()),
+        parkingLng: toOptionalNumber((formData.get("parkingLng") || "").trim()),
+        description: (formData.get("description") || "").trim(),
+        approach: (formData.get("approach") || "").trim(),
+        descent: (formData.get("descent") || "").trim(),
+        returnRoute: (formData.get("returnRoute") || "").trim(),
+        sources: (formData.get("sources") || "").trim(),
+        submitterPseudo: (formData.get("submitterPseudo") || "").trim(),
+        publicConsent: formData.get("publicConsent") === "on",
+        honeypot: (formData.get("honeypot") || "").trim(),
+        sourceContext: "web"
+      };
+    }
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      statusPanel.className = "status-panel";
+      statusPanel.innerHTML = "";
+
+      if (!form.reportValidity()) {
+        return;
+      }
+
+      setPendingState(true);
+
+      try {
+        const payload = buildPayload(new FormData(form));
+        const response = await fetch(workerEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify(payload)
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || !result.ok) {
+          const details = Array.isArray(result.details) && result.details.length > 0
+            ? `<ul>${result.details.map((item) => `<li>${item}</li>`).join("")}</ul>`
+            : "";
+          showResult(
+            "error",
+            `<strong>Impossible de publier la proposition.</strong><br>${result.error || "Erreur inconnue."}${details}`
+          );
+          return;
+        }
+
+        showResult(
+          "success",
+          `<strong>Merci, la proposition a bien été publiée.</strong><br>Issue créée : <a href="${result.issueUrl}" target="_blank" rel="noopener noreferrer">#${result.issueNumber}</a>`
+        );
+        form.reset();
+      } catch (error) {
+        showResult(
+          "error",
+          "<strong>Le formulaire n'a pas pu joindre le service.</strong><br>Réessaie dans quelques instants."
+        );
+      } finally {
+        setPendingState(false);
+      }
+    });
+  </script>
+</body>
+</html>
