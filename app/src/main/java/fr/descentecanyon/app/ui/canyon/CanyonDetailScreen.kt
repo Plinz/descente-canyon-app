@@ -1,12 +1,15 @@
 package fr.descentecanyon.app.ui.canyon
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
 import android.util.Patterns
 import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.BorderStroke
@@ -45,8 +48,11 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Navigation
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.NotificationsNone
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -94,8 +100,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
@@ -103,9 +108,16 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.R
+import fr.descentecanyon.app.domain.model.Canyon
+import fr.descentecanyon.app.domain.model.CanyonDetail
+import fr.descentecanyon.app.ui.location.hasLocationPermission
+import fr.descentecanyon.app.ui.location.loadCurrentDeviceLocation
+import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import java.util.Date
+import java.util.Locale
 import fr.descentecanyon.app.domain.model.BibliographyEntry
 import fr.descentecanyon.app.domain.model.BibliographyKind
-import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.CanyonPhoto
@@ -134,8 +146,6 @@ import fr.descentecanyon.app.ui.test.TestTags
 import fr.descentecanyon.app.ui.theme.DebitCorrect
 import fr.descentecanyon.app.ui.theme.DebitCrue
 import fr.descentecanyon.app.ui.theme.DebitTresGros
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -164,6 +174,20 @@ fun CanyonDetailScreen(
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { viewModel.toggleDebitNotifications() }
+
+    var showDepartureDialog by remember { mutableStateOf(false) }
+    var pendingSafetyShare by remember { mutableStateOf(false) }
+
+    val locationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+    ) { permissions ->
+        val granted = permissions[Manifest.permission.ACCESS_FINE_LOCATION] == true ||
+            permissions[Manifest.permission.ACCESS_COARSE_LOCATION] == true
+        if (pendingSafetyShare) {
+            pendingSafetyShare = false
+            triggerSafetyShare(context, uiState.canyonDetail?.canyon, granted)
+        }
+    }
 
     LaunchedEffect(canyonId) {
         PerformanceTrace.logEvent("canyon_detail_screen_visible", "canyonId" to canyonId)
@@ -256,20 +280,6 @@ fun CanyonDetailScreen(
                             tint = if (uiState.isDebitNotificationsEnabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onPrimaryContainer,
                         )
                     }
-                    IconButton(
-                        onClick = viewModel::toggleFavorite,
-                        modifier = Modifier.testTag(TestTags.detailFavoriteButton),
-                    ) {
-                        Icon(
-                            imageVector = if (uiState.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = if (uiState.isFavorite) {
-                                stringResource(R.string.remove_favorite)
-                            } else {
-                                stringResource(R.string.add_favorite)
-                            },
-                            tint = if (uiState.isFavorite) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onPrimaryContainer,
-                        )
-                    }
                 },
             )
         },
@@ -318,6 +328,10 @@ fun CanyonDetailScreen(
                     ) {
                         CanyonDetailContent(
                             detail = uiState.canyonDetail!!,
+                            isFavorite = uiState.isFavorite,
+                            onFavoriteToggle = viewModel::toggleFavorite,
+                            onShareClick = { triggerSimpleShare(context, uiState.canyonDetail?.canyon) },
+                            onNotifyDepartureClick = { showDepartureDialog = true },
                             isRefreshingDetail = uiState.isRefreshingDetail,
                             isOnline = uiState.isOnline,
                             isLoadingPhotos = uiState.isLoadingPhotos,
@@ -371,6 +385,50 @@ fun CanyonDetailScreen(
                 }
             }
         }
+    }
+
+    if (showDepartureDialog) {
+        AlertDialog(
+            onDismissRequest = { showDepartureDialog = false },
+            title = {
+                Text(
+                    text = stringResource(R.string.share_departure_dialog_title),
+                    style = MaterialTheme.typography.titleLarge,
+                    fontWeight = FontWeight.Bold,
+                )
+            },
+            text = {
+                Text(
+                    text = stringResource(R.string.share_departure_dialog_explanation),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showDepartureDialog = false
+                        if (context.hasLocationPermission()) {
+                            triggerSafetyShare(context, uiState.canyonDetail?.canyon, true)
+                        } else {
+                            pendingSafetyShare = true
+                            locationPermissionLauncher.launch(
+                                arrayOf(
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                                )
+                            )
+                        }
+                    }
+                ) {
+                    Text(stringResource(R.string.share_departure_dialog_confirm))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDepartureDialog = false }) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+            }
+        )
     }
 }
 
@@ -444,6 +502,10 @@ private fun AddInterestIcon(
 @Composable
 private fun CanyonDetailContent(
     detail: CanyonDetail,
+    isFavorite: Boolean,
+    onFavoriteToggle: () -> Unit,
+    onShareClick: () -> Unit,
+    onNotifyDepartureClick: () -> Unit,
     isRefreshingDetail: Boolean,
     isOnline: Boolean,
     isLoadingPhotos: Boolean,
@@ -505,6 +567,10 @@ private fun CanyonDetailContent(
         item {
             SummaryCard(
                 detail = detail,
+                isFavorite = isFavorite,
+                onFavoriteToggle = onFavoriteToggle,
+                onShareClick = onShareClick,
+                onNotifyDepartureClick = onNotifyDepartureClick,
                 onPersistedPhotoMissing = onPersistedPhotoMissing,
             )
         }
@@ -596,6 +662,10 @@ private fun DetailRefreshingBanner(modifier: Modifier = Modifier) {
 @Composable
 private fun SummaryCard(
     detail: CanyonDetail,
+    isFavorite: Boolean,
+    onFavoriteToggle: () -> Unit,
+    onShareClick: () -> Unit,
+    onNotifyDepartureClick: () -> Unit,
     onPersistedPhotoMissing: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -646,48 +716,171 @@ private fun SummaryCard(
                             )
                         )
                 )
-                Column(
+                Row(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .align(Alignment.BottomStart)
                         .padding(spacing.lg),
-                    verticalArrangement = Arrangement.spacedBy(spacing.sm),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.Bottom,
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(spacing.sm),
-                        verticalAlignment = Alignment.CenterVertically,
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(spacing.sm),
                     ) {
-                        if (canyon.isForbidden) {
-                            ForbiddenBadge()
-                        } else {
-                            CotationBadge(cotation = canyon.cotation)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(spacing.sm),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            if (canyon.isForbidden) {
+                                ForbiddenBadge()
+                            } else {
+                                CotationBadge(cotation = canyon.cotation)
+                            }
+                            canyon.interet?.let { interest ->
+                                InterestStars(interest = interest)
+                            }
                         }
-                        canyon.interet?.let { interest ->
-                            InterestStars(interest = interest)
-                        }
-                    }
-                    Text(
-                        text = canyon.nom,
-                        style = MaterialTheme.typography.headlineLarge,
-                        fontWeight = FontWeight.ExtraBold,
-                        color = colors.snow,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(
-                            imageVector = Icons.Default.LocationOn,
-                            contentDescription = null,
-                            modifier = Modifier.size(16.dp),
-                            tint = colors.waterMist,
-                        )
-                        Spacer(modifier = Modifier.width(4.dp))
                         Text(
-                            text = "${canyon.commune} - ${canyon.pays}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = colors.waterMist,
-                            maxLines = 1,
+                            text = canyon.nom,
+                            style = MaterialTheme.typography.headlineLarge,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = colors.snow,
+                            maxLines = 2,
                             overflow = TextOverflow.Ellipsis,
                         )
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = null,
+                                modifier = Modifier.size(16.dp),
+                                tint = colors.waterMist,
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(
+                                text = "${canyon.commune} - ${canyon.pays}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = colors.waterMist,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.width(spacing.sm))
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(spacing.xs),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Surface(
+                            shape = CircleShape,
+                            color = colors.surfacePhotoScrim.copy(alpha = 0.72f),
+                            contentColor = colors.snow,
+                        ) {
+                            IconButton(
+                                onClick = onNotifyDepartureClick,
+                                modifier = Modifier.size(36.dp),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Navigation,
+                                    contentDescription = stringResource(R.string.share_departure_dialog_title),
+                                    tint = colors.snow,
+                                    modifier = Modifier.size(20.dp),
+                                )
+                            }
+                        }
+                        Surface(
+                            shape = CircleShape,
+                            color = colors.surfacePhotoScrim.copy(alpha = 0.72f),
+                            contentColor = colors.snow,
+                        ) {
+                            IconButton(
+                                onClick = onShareClick,
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .testTag(TestTags.detailShareButton),
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Share,
+                                    contentDescription = stringResource(R.string.share_canyon),
+                                    tint = colors.snow,
+                                    modifier = Modifier.size(20.dp),
+                                )
+                            }
+                        }
+                        Surface(
+                            shape = CircleShape,
+                            color = colors.surfacePhotoScrim.copy(alpha = 0.72f),
+                            contentColor = colors.snow,
+                        ) {
+                            IconButton(
+                                onClick = onFavoriteToggle,
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .testTag(TestTags.detailFavoriteButton),
+                            ) {
+                                Icon(
+                                    imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                    contentDescription = if (isFavorite) {
+                                        stringResource(R.string.remove_favorite)
+                                    } else {
+                                        stringResource(R.string.add_favorite)
+                                    },
+                                    tint = if (isFavorite) MaterialTheme.colorScheme.error else colors.snow,
+                                    modifier = Modifier.size(20.dp),
+                                )
+                            }
+                        }
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(spacing.md),
+                    horizontalArrangement = Arrangement.spacedBy(spacing.xs),
+                ) {
+                    Surface(
+                        shape = CircleShape,
+                        color = colors.surfacePhotoScrim.copy(alpha = 0.72f),
+                        contentColor = colors.snow,
+                    ) {
+                        IconButton(
+                            onClick = onShareClick,
+                            modifier = Modifier
+                                .size(36.dp)
+                                .testTag(TestTags.detailShareButton),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Share,
+                                contentDescription = stringResource(R.string.share_canyon),
+                                tint = colors.snow,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
+                    }
+                    Surface(
+                        shape = CircleShape,
+                        color = colors.surfacePhotoScrim.copy(alpha = 0.72f),
+                        contentColor = colors.snow,
+                    ) {
+                        IconButton(
+                            onClick = onFavoriteToggle,
+                            modifier = Modifier
+                                .size(36.dp)
+                                .testTag(TestTags.detailFavoriteButton),
+                        ) {
+                            Icon(
+                                imageVector = if (isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                                contentDescription = if (isFavorite) {
+                                    stringResource(R.string.remove_favorite)
+                                } else {
+                                    stringResource(R.string.add_favorite)
+                                },
+                                tint = if (isFavorite) MaterialTheme.colorScheme.error else colors.snow,
+                                modifier = Modifier.size(20.dp),
+                            )
+                        }
                     }
                 }
                 heroPhoto?.auteur?.takeIf { it.isNotBlank() }?.let { author ->
@@ -2002,4 +2195,135 @@ private fun openNavigation(
     val label = Uri.encode(point.navigationLabel(context))
     val uri = Uri.parse("geo:${point.latitude},${point.longitude}?q=${point.latitude},${point.longitude}($label)")
     context.startActivity(Intent(Intent.ACTION_VIEW, uri))
+}
+
+private fun triggerSimpleShare(context: Context, canyon: Canyon?) {
+    if (canyon == null) return
+    val shareUrl = when {
+        canyon.url.startsWith("http://") || canyon.url.startsWith("https://") -> canyon.url
+        canyon.url.startsWith("/") -> "https://www.descentecanyon.com${canyon.url}"
+        else -> "https://www.descentecanyon.com/${canyon.url}"
+    }
+    val shareText = context.getString(R.string.share_canyon_text, canyon.nom, shareUrl)
+    val sendIntent = Intent(Intent.ACTION_SEND).apply {
+        putExtra(Intent.EXTRA_TEXT, shareText)
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, context.getString(R.string.share_canyon))
+    context.startActivity(shareIntent)
+}
+
+private fun triggerSafetyShare(context: Context, canyon: Canyon?, hasPermission: Boolean) {
+    if (canyon == null) return
+    val shareUrl = when {
+        canyon.url.startsWith("http://") || canyon.url.startsWith("https://") -> canyon.url
+        canyon.url.startsWith("/") -> "https://www.descentecanyon.com${canyon.url}"
+        else -> "https://www.descentecanyon.com/${canyon.url}"
+    }
+
+    if (hasPermission) {
+        Toast.makeText(context, context.getString(R.string.share_departure_locating), Toast.LENGTH_SHORT).show()
+        loadCurrentDeviceLocation(
+            context = context,
+            onLocation = { lat, lng ->
+                sendDepartureIntent(context, canyon, shareUrl, lat, lng)
+            },
+            onUnavailable = {
+                sendDepartureIntent(context, canyon, shareUrl, null, null)
+            },
+        )
+    } else {
+        sendDepartureIntent(context, canyon, shareUrl, null, null)
+    }
+}
+
+private fun sendDepartureIntent(
+    context: Context,
+    canyon: Canyon,
+    shareUrl: String,
+    lat: Double?,
+    lng: Double?,
+) {
+    val currentTimeStr = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+
+    val sb = StringBuilder()
+    sb.append(context.getString(R.string.share_departure_intro)).append("\n\n")
+    sb.append("🚨 ").append(context.getString(R.string.share_departure_header, canyon.nom)).append("\n")
+    sb.append("🔗 ").append(shareUrl).append("\n")
+    sb.append("🕒 ").append(context.getString(R.string.share_departure_time, currentTimeStr)).append("\n")
+
+    if (lat != null && lng != null) {
+        val mapsUrl = "https://maps.google.com/?q=%.5f,%.5f".format(Locale.ROOT, lat, lng)
+        sb.append("📍 ").append(context.getString(R.string.share_departure_gps, mapsUrl)).append("\n")
+    } else {
+        sb.append("📍 ").append(context.getString(R.string.share_departure_gps_unavailable)).append("\n")
+    }
+
+    sb.append("⏱️ ").append(context.getString(R.string.share_departure_durations_header)).append("\n")
+    if (!canyon.tempsApproche.isNullOrBlank()) {
+        sb.append("- ").append(context.getString(R.string.share_departure_approach, canyon.tempsApproche)).append("\n")
+    }
+    if (!canyon.tempsDescente.isNullOrBlank()) {
+        sb.append("- ").append(context.getString(R.string.share_departure_descent, canyon.tempsDescente)).append("\n")
+    }
+    if (!canyon.tempsRetour.isNullOrBlank()) {
+        sb.append("- ").append(context.getString(R.string.share_departure_return, canyon.tempsRetour)).append("\n")
+    }
+
+    val totalMinutes = calculateTotalDurationMinutes(canyon.tempsApproche, canyon.tempsDescente, canyon.tempsRetour)
+    if (totalMinutes != null && totalMinutes > 0) {
+        val totalFormatted = formatMinutesToHoursMinutes(totalMinutes)
+        sb.append("⏳ ").append(context.getString(R.string.share_departure_total_estimated, totalFormatted)).append("\n")
+    }
+
+    val sendIntent = Intent(Intent.ACTION_SEND).apply {
+        putExtra(Intent.EXTRA_TEXT, sb.toString().trimEnd())
+        type = "text/plain"
+    }
+    val shareIntent = Intent.createChooser(sendIntent, context.getString(R.string.share_departure_dialog_title))
+    context.startActivity(shareIntent)
+}
+
+private fun parseDurationMinutes(text: String?): Int? {
+    if (text.isNullOrBlank()) return null
+    val clean = text.lowercase(Locale.ROOT).trim()
+
+    val hoursRegex = Regex("""(\d+)\s*h\s*(\d*)""")
+    val hoursMatch = hoursRegex.find(clean)
+    if (hoursMatch != null) {
+        val hours = hoursMatch.groupValues[1].toIntOrNull() ?: 0
+        val mins = hoursMatch.groupValues[2].toIntOrNull() ?: 0
+        return hours * 60 + mins
+    }
+
+    val minsRegex = Regex("""(\d+)""")
+    val minsMatch = minsRegex.find(clean)
+    if (minsMatch != null) {
+        return minsMatch.groupValues[1].toIntOrNull()
+    }
+
+    return null
+}
+
+private fun calculateTotalDurationMinutes(
+    tempsApproche: String?,
+    tempsDescente: String?,
+    tempsRetour: String?,
+): Int? {
+    val appMins = parseDurationMinutes(tempsApproche)
+    val descMins = parseDurationMinutes(tempsDescente)
+    val retMins = parseDurationMinutes(tempsRetour)
+
+    val validMins = listOfNotNull(appMins, descMins, retMins)
+    return if (validMins.isNotEmpty()) validMins.sum() else null
+}
+
+private fun formatMinutesToHoursMinutes(totalMinutes: Int): String {
+    val h = totalMinutes / 60
+    val m = totalMinutes % 60
+    return when {
+        h > 0 && m > 0 -> "${h}h${m.toString().padStart(2, '0')}"
+        h > 0 -> "${h}h00"
+        else -> "${m} min"
+    }
 }

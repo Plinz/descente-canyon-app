@@ -524,4 +524,21 @@ Photos and flow reports are still fetched online when the network is available.<
     <string name="geo_point_remarkable_inside">Remarkable point inside the canyon</string>
     <string name="geo_point_escape">Escape route</string>
     <string name="geo_point_gps">GPS point</string>
+    <string name="share_canyon">Share canyon</string>
+    <string name="share_canyon_text">%1$s - Descente-Canyon page: %2$s</string>
+    <string name="share_departure_dialog_title">Notify departure</string>
+    <string name="share_departure_dialog_explanation">This feature allows you to quickly notify emergency contacts or loved ones before entering a canyon.\n\nThe message will include:\n• Canyon details and link\n• Departure timestamp and exact GPS coordinates\n• Estimated durations (approach, descent, return) to calculate expected exit time\n\nWould you like to generate and share your departure message?</string>
+    <string name="share_departure_dialog_confirm">Share departure</string>
+    <string name="share_departure_locating">Fetching GPS coordinates...</string>
+    <string name="share_departure_intro">Hello! Quick update to notify emergency contacts that we are entering a canyon.</string>
+    <string name="share_departure_header">Canyon departure: %1$s</string>
+    <string name="share_departure_time">Departure time: %1$s</string>
+    <string name="share_departure_gps">GPS position at departure: %1$s</string>
+    <string name="share_departure_gps_unavailable">GPS position at departure: Not available</string>
+    <string name="share_departure_durations_header">Estimated durations:</string>
+    <string name="share_departure_approach">Approach: %1$s</string>
+    <string name="share_departure_descent">Descent: %1$s</string>
+    <string name="share_departure_return">Return: %1$s</string>
+    <string name="share_departure_total_estimated">Total estimated duration: ~%1$s</string>
 </resources>
+

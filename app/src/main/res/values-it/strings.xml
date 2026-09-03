@@ -524,4 +524,21 @@ Le foto e le portate restano recuperate online quando la rete è disponibile.</s
     <string name="geo_point_remarkable_inside">Punto notevole all\'interno del canyon</string>
     <string name="geo_point_escape">Via di fuga</string>
     <string name="geo_point_gps">Punto GPS</string>
+    <string name="share_canyon">Condividi forra</string>
+    <string name="share_canyon_text">%1$s - Scheda Descente-Canyon: %2$s</string>
+    <string name="share_departure_dialog_title">Notifica partenza (Sicurezza)</string>
+    <string name="share_departure_dialog_explanation">Questa funzione consente di condividere rapidamente la partenza in forra con i propri contatti di emergenza.\n\nIl messaggio conterrà:\n• Scheda e link della forra\n• Ora di partenza e coordinate GPS esatte\n• Tempi stimati (avvicinamento, discesa, ritorno)\n\nVuoi generare e condividere il tuo messaggio di partenza?</string>
+    <string name="share_departure_dialog_confirm">Condividi partenza</string>
+    <string name="share_departure_locating">Rilevamento posizione GPS...</string>
+    <string name="share_departure_intro">Ciao! Breve messaggio per avvisare che stiamo entrando in forra.</string>
+    <string name="share_departure_header">Partenza per la forra: %1$s</string>
+    <string name="share_departure_time">Ora di partenza: %1$s</string>
+    <string name="share_departure_gps">Posizione GPS alla partenza: %1$s</string>
+    <string name="share_departure_gps_unavailable">Posizione GPS alla partenza: Non disponibile</string>
+    <string name="share_departure_durations_header">Durate stimate:</string>
+    <string name="share_departure_approach">Avvicinamento: %1$s</string>
+    <string name="share_departure_descent">Discesa: %1$s</string>
+    <string name="share_departure_return">Ritorno: %1$s</string>
+    <string name="share_departure_total_estimated">Durata totale stimata: ~%1$s</string>
 </resources>
+

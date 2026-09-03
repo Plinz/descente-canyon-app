@@ -4,6 +4,7 @@ object TestTags {
     const val homeQuickSearch = "home_quick_search"
     const val searchQueryField = "search_query_field"
     const val detailFavoriteButton = "detail_favorite_button"
+    const val detailShareButton = "detail_share_button"
     const val detailDebitNotificationButton = "detail_debit_notification_button"
     const val detailReportDebitButton = "detail_report_debit_button"
     const val detailRateInterestButton = "detail_rate_interest_button"

@@ -524,4 +524,20 @@ Las fotos y los caudales se siguen obteniendo en línea cuando hay red disponibl
     <string name="geo_point_remarkable_inside">Punto destacado dentro del barranco</string>
     <string name="geo_point_escape">Escape</string>
     <string name="geo_point_gps">Punto GPS</string>
+    <string name="share_canyon">Compartir barranco</string>
+    <string name="share_canyon_text">%1$s - Ficha Descente-Canyon: %2$s</string>
+    <string name="share_departure_dialog_title">Notificar salida (Seguridad)</string>
+    <string name="share_departure_dialog_explanation">Esta función le permite notificar rápidamente su salida en barranco a sus allegados o contactos de emergencia.\n\nEl mensaje incluirá:\n• Ficha y enlace del barranco\n• Hora de salida y coordenadas GPS exactas al salir\n• Tiempos estimados (aproximación, descenso, retorno)\n\n¿Desea generar y compartir su mensaje de salida?</string>
+    <string name="share_departure_dialog_confirm">Compartir salida</string>
+    <string name="share_departure_locating">Obteniendo ubicación GPS...</string>
+    <string name="share_departure_intro">¡Hola! Mensaje rápido para avisar que entramos en el barranco.</string>
+    <string name="share_departure_header">Salida al barranco: %1$s</string>
+    <string name="share_departure_time">Hora de salida: %1$s</string>
+    <string name="share_departure_gps">Posición GPS al salir: %1$s</string>
+    <string name="share_departure_gps_unavailable">Posición GPS al salir: No disponible</string>
+    <string name="share_departure_durations_header">Duraciones estimadas:</string>
+    <string name="share_departure_approach">Aproximación: %1$s</string>
+    <string name="share_departure_descent">Descenso: %1$s</string>
+    <string name="share_departure_return">Retorno: %1$s</string>
+    <string name="share_departure_total_estimated">Duración total estimada: ~%1$s</string>
 </resources>

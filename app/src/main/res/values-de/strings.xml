@@ -524,4 +524,21 @@ Fotos und Wasserstände werden weiterhin online abgerufen, wenn eine Netzwerkver
     <string name="geo_point_remarkable_inside">Besonderer Punkt im Canyon</string>
     <string name="geo_point_escape">Notausstieg</string>
     <string name="geo_point_gps">GPS-Punkt</string>
+    <string name="share_canyon">Canyon teilen</string>
+    <string name="share_canyon_text">%1$s - Descente-Canyon-Seite: %2$s</string>
+    <string name="share_departure_dialog_title">Abreise melden (Sicherheit)</string>
+    <string name="share_departure_dialog_explanation">Mit dieser Funktion können Sie Ihre Abreise vor dem Betreten der Schlucht schnell an Kontakte oder Notfallkontakte senden.\n\nDie Nachricht enthält:\n• Canyon-Details und Link\n• Abreisezeit und exakte GPS-Koordinaten\n• Geschätzte Dauer (Zustieg, Abstieg, Rückweg)\n\nMöchten Sie Ihre Abreise erstellen und teilen?</string>
+    <string name="share_departure_dialog_confirm">Abreise teilen</string>
+    <string name="share_departure_locating">GPS-Standort wird ermittelt...</string>
+    <string name="share_departure_intro">Hallo! Kurze Nachricht, um die Abreise in die Schlucht zu melden.</string>
+    <string name="share_departure_header">Abreise Canyon: %1$s</string>
+    <string name="share_departure_time">Abreisezeit: %1$s</string>
+    <string name="share_departure_gps">GPS-Position bei Abreise: %1$s</string>
+    <string name="share_departure_gps_unavailable">GPS-Position bei Abreise: Nicht verfügbar</string>
+    <string name="share_departure_durations_header">Geschätzte Zeiten:</string>
+    <string name="share_departure_approach">Zustieg: %1$s</string>
+    <string name="share_departure_descent">Abstieg: %1$s</string>
+    <string name="share_departure_return">Rückweg: %1$s</string>
+    <string name="share_departure_total_estimated">Geschätzte Gesamtdauer: ~%1$s</string>
 </resources>
+
