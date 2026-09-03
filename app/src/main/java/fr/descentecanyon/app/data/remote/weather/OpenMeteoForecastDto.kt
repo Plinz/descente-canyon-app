@@ -9,6 +9,7 @@ data class OpenMeteoForecastDto(
     val longitude: Double,
     val timezone: String,
     val hourly: HourlyForecastDto? = null,
+    val daily: DailyForecastDto? = null,
 )
 
 @Serializable

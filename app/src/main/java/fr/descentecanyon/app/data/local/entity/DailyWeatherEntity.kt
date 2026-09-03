@@ -32,5 +32,6 @@ data class DailyWeatherEntity(
     val temperature2mMin: Double? = null,
     val temperature2mMax: Double? = null,
     val precipitationHours: Double? = null,
+    val weatherCode: Int? = null,
     val fetchedAtEpochMs: Long,
 )

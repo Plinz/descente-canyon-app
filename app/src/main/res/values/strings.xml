@@ -524,4 +524,22 @@ Les photos et les débits restent récupérés en ligne quand le réseau est dis
     <string name="geo_point_remarkable_inside">Point remarquable à l\'intérieur du canyon</string>
     <string name="geo_point_escape">Échappatoire</string>
     <string name="geo_point_gps">Point GPS</string>
+
+    <!-- Weather daily forecast -->
+    <string name="weather_daily_title">Prévisions météo à 5 jours</string>
+    <string name="weather_daily_condition">Condition</string>
+    <string name="weather_daily_temperatures">Températures</string>
+    <string name="weather_daily_precipitation">Précipitations</string>
+
+    <!-- Weather WMO codes -->
+    <string name="weather_code_clear">Ciel dégagé</string>
+    <string name="weather_code_cloudy">Partiellement nuageux</string>
+    <string name="weather_code_fog">Brouillard</string>
+    <string name="weather_code_drizzle">Bruine</string>
+    <string name="weather_code_rain">Pluie</string>
+    <string name="weather_code_snow">Neige</string>
+    <string name="weather_code_showers">Averses</string>
+    <string name="weather_code_snow_showers">Averses de neige</string>
+    <string name="weather_code_thunderstorm">Orage</string>
+    <string name="weather_code_unknown">Inconnu</string>
 </resources>

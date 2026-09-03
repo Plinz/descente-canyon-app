@@ -28,4 +28,6 @@ data class DailyForecastDto(
     val temperature2mMax: List<Double?> = emptyList(),
     @SerialName("precipitation_hours")
     val precipitationHours: List<Double?> = emptyList(),
+    @SerialName("weather_code")
+    val weatherCode: List<Int?> = emptyList(),
 )

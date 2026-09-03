@@ -1,0 +1,1432 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 15,
+    "identityHash": "98d4c6b6d31fa3a19114fd2329fa7469",
+    "entities": [
+      {
+        "tableName": "canyons",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `nom` TEXT NOT NULL, `nomComplet` TEXT NOT NULL, `pays` TEXT NOT NULL, `region` TEXT, `departement` TEXT, `commune` TEXT NOT NULL, `communesJson` TEXT, `massif` TEXT, `bassin` TEXT, `coursEau` TEXT, `cotation` TEXT NOT NULL, `altitudeDepart` INTEGER, `denivele` INTEGER, `longueur` INTEGER, `cascadeMax` INTEGER, `cordeMin` INTEGER, `tempsApproche` TEXT, `tempsDescente` TEXT, `tempsRetour` TEXT, `navette` TEXT, `interet` REAL, `nbVotes` INTEGER NOT NULL, `url` TEXT NOT NULL, `accesAval` TEXT, `accesAmont` TEXT, `approche` TEXT, `descente` TEXT, `retour` TEXT, `engagement` TEXT, `periode` TEXT, `geologie` TEXT, `historique` TEXT, `remarques` TEXT, `hasSpecificRegulation` INTEGER NOT NULL, `isForbidden` INTEGER NOT NULL, `isOffline` INTEGER NOT NULL, `isFavorite` INTEGER NOT NULL, `lastUpdated` INTEGER NOT NULL, `sourceType` TEXT NOT NULL, `sourceKey` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nom",
+            "columnName": "nom",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nomComplet",
+            "columnName": "nomComplet",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pays",
+            "columnName": "pays",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "region",
+            "columnName": "region",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "departement",
+            "columnName": "departement",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "commune",
+            "columnName": "commune",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "communesJson",
+            "columnName": "communesJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "massif",
+            "columnName": "massif",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "bassin",
+            "columnName": "bassin",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "coursEau",
+            "columnName": "coursEau",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cotation",
+            "columnName": "cotation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "altitudeDepart",
+            "columnName": "altitudeDepart",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "denivele",
+            "columnName": "denivele",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "longueur",
+            "columnName": "longueur",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "cascadeMax",
+            "columnName": "cascadeMax",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "cordeMin",
+            "columnName": "cordeMin",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "tempsApproche",
+            "columnName": "tempsApproche",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tempsDescente",
+            "columnName": "tempsDescente",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "tempsRetour",
+            "columnName": "tempsRetour",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "navette",
+            "columnName": "navette",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "interet",
+            "columnName": "interet",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "nbVotes",
+            "columnName": "nbVotes",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "accesAval",
+            "columnName": "accesAval",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "accesAmont",
+            "columnName": "accesAmont",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "approche",
+            "columnName": "approche",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "descente",
+            "columnName": "descente",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "retour",
+            "columnName": "retour",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "engagement",
+            "columnName": "engagement",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "periode",
+            "columnName": "periode",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "geologie",
+            "columnName": "geologie",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "historique",
+            "columnName": "historique",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "remarques",
+            "columnName": "remarques",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "hasSpecificRegulation",
+            "columnName": "hasSpecificRegulation",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isForbidden",
+            "columnName": "isForbidden",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isOffline",
+            "columnName": "isOffline",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFavorite",
+            "columnName": "isFavorite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastUpdated",
+            "columnName": "lastUpdated",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceType",
+            "columnName": "sourceType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceKey",
+            "columnName": "sourceKey",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "geo_points",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `canyonId` INTEGER NOT NULL, `type` TEXT NOT NULL, `latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `title` TEXT, `remark` TEXT, FOREIGN KEY(`canyonId`) REFERENCES `canyons`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "type",
+            "columnName": "type",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "latitude",
+            "columnName": "latitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "longitude",
+            "columnName": "longitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "remark",
+            "columnName": "remark",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_geo_points_canyonId",
+            "unique": false,
+            "columnNames": [
+              "canyonId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_geo_points_canyonId` ON `${TABLE_NAME}` (`canyonId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "canyons",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "canyonId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "debits",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `canyonId` INTEGER NOT NULL, `date` TEXT NOT NULL, `niveau` TEXT NOT NULL, `auteur` TEXT, `isDescended` INTEGER, `waterTemperature` TEXT, `airTemperature` TEXT, `commentaire` TEXT, FOREIGN KEY(`canyonId`) REFERENCES `canyons`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "niveau",
+            "columnName": "niveau",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "auteur",
+            "columnName": "auteur",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isDescended",
+            "columnName": "isDescended",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "waterTemperature",
+            "columnName": "waterTemperature",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "airTemperature",
+            "columnName": "airTemperature",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "commentaire",
+            "columnName": "commentaire",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_debits_canyonId",
+            "unique": false,
+            "columnNames": [
+              "canyonId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_debits_canyonId` ON `${TABLE_NAME}` (`canyonId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "canyons",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "canyonId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "daily_weather",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`canyonId` INTEGER NOT NULL, `date` TEXT NOT NULL, `timezone` TEXT NOT NULL, `targetLatitude` REAL NOT NULL, `targetLongitude` REAL NOT NULL, `targetSource` TEXT NOT NULL, `sourceKind` TEXT NOT NULL, `precipitationSum` REAL, `rainSum` REAL, `snowfallSum` REAL, `temperature2mMean` REAL, `temperature2mMin` REAL, `temperature2mMax` REAL, `precipitationHours` REAL, `weatherCode` INTEGER, `fetchedAtEpochMs` INTEGER NOT NULL, PRIMARY KEY(`canyonId`, `date`), FOREIGN KEY(`canyonId`) REFERENCES `canyons`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timezone",
+            "columnName": "timezone",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetLatitude",
+            "columnName": "targetLatitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetLongitude",
+            "columnName": "targetLongitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetSource",
+            "columnName": "targetSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceKind",
+            "columnName": "sourceKind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "precipitationSum",
+            "columnName": "precipitationSum",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "rainSum",
+            "columnName": "rainSum",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "snowfallSum",
+            "columnName": "snowfallSum",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "temperature2mMean",
+            "columnName": "temperature2mMean",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "temperature2mMin",
+            "columnName": "temperature2mMin",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "temperature2mMax",
+            "columnName": "temperature2mMax",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "precipitationHours",
+            "columnName": "precipitationHours",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "weatherCode",
+            "columnName": "weatherCode",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "fetchedAtEpochMs",
+            "columnName": "fetchedAtEpochMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "canyonId",
+            "date"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_daily_weather_canyonId",
+            "unique": false,
+            "columnNames": [
+              "canyonId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_daily_weather_canyonId` ON `${TABLE_NAME}` (`canyonId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "canyons",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "canyonId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "photos",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `canyonId` INTEGER NOT NULL, `url` TEXT NOT NULL, `thumbnailUrl` TEXT, `auteur` TEXT, `description` TEXT, `localPath` TEXT, FOREIGN KEY(`canyonId`) REFERENCES `canyons`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnailUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "auteur",
+            "columnName": "auteur",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "localPath",
+            "columnName": "localPath",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_photos_canyonId",
+            "unique": false,
+            "columnNames": [
+              "canyonId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_photos_canyonId` ON `${TABLE_NAME}` (`canyonId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "canyons",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "canyonId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "bibliography_entries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` TEXT NOT NULL, `kind` TEXT NOT NULL, `resourceType` TEXT, `title` TEXT NOT NULL, `authorsJson` TEXT, `publicationYear` INTEGER, `reference` TEXT, `editor` TEXT, `status` TEXT, `scale` TEXT, `detailUrl` TEXT, `url` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "kind",
+            "columnName": "kind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "resourceType",
+            "columnName": "resourceType",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "authorsJson",
+            "columnName": "authorsJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "publicationYear",
+            "columnName": "publicationYear",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "reference",
+            "columnName": "reference",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "editor",
+            "columnName": "editor",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "scale",
+            "columnName": "scale",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "detailUrl",
+            "columnName": "detailUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "canyon_bibliography",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`canyonId` INTEGER NOT NULL, `bibliographyId` TEXT NOT NULL, PRIMARY KEY(`canyonId`, `bibliographyId`), FOREIGN KEY(`canyonId`) REFERENCES `canyons`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`bibliographyId`) REFERENCES `bibliography_entries`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bibliographyId",
+            "columnName": "bibliographyId",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "canyonId",
+            "bibliographyId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_canyon_bibliography_canyonId",
+            "unique": false,
+            "columnNames": [
+              "canyonId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_canyon_bibliography_canyonId` ON `${TABLE_NAME}` (`canyonId`)"
+          },
+          {
+            "name": "index_canyon_bibliography_bibliographyId",
+            "unique": false,
+            "columnNames": [
+              "bibliographyId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_canyon_bibliography_bibliographyId` ON `${TABLE_NAME}` (`bibliographyId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "canyons",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "canyonId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "bibliography_entries",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "bibliographyId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "regulation_texts",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `status` TEXT, `action` TEXT, `title` TEXT NOT NULL, `summary` TEXT, `remark` TEXT, `details` TEXT, `effectiveDate` TEXT, `textUrl` TEXT NOT NULL, `attachmentsJson` TEXT, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "action",
+            "columnName": "action",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "title",
+            "columnName": "title",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "summary",
+            "columnName": "summary",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "remark",
+            "columnName": "remark",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "details",
+            "columnName": "details",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "effectiveDate",
+            "columnName": "effectiveDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "textUrl",
+            "columnName": "textUrl",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "attachmentsJson",
+            "columnName": "attachmentsJson",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "canyon_regulations",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`canyonId` INTEGER NOT NULL, `regulationId` INTEGER NOT NULL, PRIMARY KEY(`canyonId`, `regulationId`), FOREIGN KEY(`canyonId`) REFERENCES `canyons`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`regulationId`) REFERENCES `regulation_texts`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "regulationId",
+            "columnName": "regulationId",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "canyonId",
+            "regulationId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_canyon_regulations_canyonId",
+            "unique": false,
+            "columnNames": [
+              "canyonId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_canyon_regulations_canyonId` ON `${TABLE_NAME}` (`canyonId`)"
+          },
+          {
+            "name": "index_canyon_regulations_regulationId",
+            "unique": false,
+            "columnNames": [
+              "regulationId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_canyon_regulations_regulationId` ON `${TABLE_NAME}` (`regulationId`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "canyons",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "canyonId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "regulation_texts",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "regulationId"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "canyon_tracks",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`canyonId` INTEGER NOT NULL, `trackId` TEXT NOT NULL, `name` TEXT NOT NULL, `role` TEXT, `isPrimary` INTEGER NOT NULL, `sourceFile` TEXT, `pointCount` INTEGER, `geometryJson` TEXT, `bboxMinLongitude` REAL, `bboxMinLatitude` REAL, `bboxMaxLongitude` REAL, `bboxMaxLatitude` REAL, PRIMARY KEY(`canyonId`, `trackId`))",
+        "fields": [
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trackId",
+            "columnName": "trackId",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "role",
+            "columnName": "role",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isPrimary",
+            "columnName": "isPrimary",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceFile",
+            "columnName": "sourceFile",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "pointCount",
+            "columnName": "pointCount",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "geometryJson",
+            "columnName": "geometryJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "bboxMinLongitude",
+            "columnName": "bboxMinLongitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "bboxMinLatitude",
+            "columnName": "bboxMinLatitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "bboxMaxLongitude",
+            "columnName": "bboxMaxLongitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "bboxMaxLatitude",
+            "columnName": "bboxMaxLatitude",
+            "affinity": "REAL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "canyonId",
+            "trackId"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_canyon_tracks_canyonId",
+            "unique": false,
+            "columnNames": [
+              "canyonId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_canyon_tracks_canyonId` ON `${TABLE_NAME}` (`canyonId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "watersheds",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`canyonId` INTEGER NOT NULL, `areaKm2` REAL, `geometryJson` TEXT, `bboxMinLongitude` REAL, `bboxMinLatitude` REAL, `bboxMaxLongitude` REAL, `bboxMaxLatitude` REAL, PRIMARY KEY(`canyonId`))",
+        "fields": [
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "areaKm2",
+            "columnName": "areaKm2",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "geometryJson",
+            "columnName": "geometryJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "bboxMinLongitude",
+            "columnName": "bboxMinLongitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "bboxMinLatitude",
+            "columnName": "bboxMinLatitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "bboxMaxLongitude",
+            "columnName": "bboxMaxLongitude",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "bboxMaxLatitude",
+            "columnName": "bboxMaxLatitude",
+            "affinity": "REAL"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "canyonId"
+          ]
+        }
+      },
+      {
+        "tableName": "app_metadata",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` TEXT NOT NULL, `value` TEXT NOT NULL, PRIMARY KEY(`key`))",
+        "fields": [
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "key"
+          ]
+        }
+      },
+      {
+        "tableName": "pending_debit_submissions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `canyonId` INTEGER NOT NULL, `observerName` TEXT NOT NULL, `observerEmail` TEXT, `observationDate` TEXT NOT NULL, `isDescended` INTEGER NOT NULL, `debitLevel` TEXT NOT NULL, `waterTemperature` TEXT NOT NULL, `airTemperature` TEXT NOT NULL, `comment` TEXT NOT NULL, `personalComment` TEXT NOT NULL, `createdAt` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "observerName",
+            "columnName": "observerName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "observerEmail",
+            "columnName": "observerEmail",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "observationDate",
+            "columnName": "observationDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDescended",
+            "columnName": "isDescended",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "debitLevel",
+            "columnName": "debitLevel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "waterTemperature",
+            "columnName": "waterTemperature",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "airTemperature",
+            "columnName": "airTemperature",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "comment",
+            "columnName": "comment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "personalComment",
+            "columnName": "personalComment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "search_index",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER NOT NULL, `nom` TEXT NOT NULL, `nomComplet` TEXT NOT NULL, `pays` TEXT NOT NULL, `countryTokensJson` TEXT, `region` TEXT, `departement` TEXT, `departmentTokensJson` TEXT, `subdivisionsByCountryJson` TEXT, `commune` TEXT, `massif` TEXT, `bassin` TEXT, `coursEau` TEXT, `cotation` TEXT NOT NULL, `cotationVertical` INTEGER, `cotationAquatic` INTEGER, `cotationEngagement` INTEGER, `interet` REAL, `nbVotes` INTEGER NOT NULL, `altitudeDepart` INTEGER, `denivele` INTEGER, `longueur` INTEGER, `cascadeMax` INTEGER, `cordeMin` INTEGER, `hasSpecificRegulation` INTEGER NOT NULL, `isForbidden` INTEGER NOT NULL, `hasNavette` INTEGER NOT NULL, `isFavorite` INTEGER NOT NULL, `representativeLat` REAL, `representativeLng` REAL, `url` TEXT NOT NULL, `searchableText` TEXT NOT NULL, `normalizedNom` TEXT NOT NULL, `normalizedNomComplet` TEXT NOT NULL, PRIMARY KEY(`id`))",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nom",
+            "columnName": "nom",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nomComplet",
+            "columnName": "nomComplet",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "pays",
+            "columnName": "pays",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "countryTokensJson",
+            "columnName": "countryTokensJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "region",
+            "columnName": "region",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "departement",
+            "columnName": "departement",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "departmentTokensJson",
+            "columnName": "departmentTokensJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "subdivisionsByCountryJson",
+            "columnName": "subdivisionsByCountryJson",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "commune",
+            "columnName": "commune",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "massif",
+            "columnName": "massif",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "bassin",
+            "columnName": "bassin",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "coursEau",
+            "columnName": "coursEau",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "cotation",
+            "columnName": "cotation",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "cotationVertical",
+            "columnName": "cotationVertical",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "cotationAquatic",
+            "columnName": "cotationAquatic",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "cotationEngagement",
+            "columnName": "cotationEngagement",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "interet",
+            "columnName": "interet",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "nbVotes",
+            "columnName": "nbVotes",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "altitudeDepart",
+            "columnName": "altitudeDepart",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "denivele",
+            "columnName": "denivele",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "longueur",
+            "columnName": "longueur",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "cascadeMax",
+            "columnName": "cascadeMax",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "cordeMin",
+            "columnName": "cordeMin",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "hasSpecificRegulation",
+            "columnName": "hasSpecificRegulation",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isForbidden",
+            "columnName": "isForbidden",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hasNavette",
+            "columnName": "hasNavette",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFavorite",
+            "columnName": "isFavorite",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "representativeLat",
+            "columnName": "representativeLat",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "representativeLng",
+            "columnName": "representativeLng",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "searchableText",
+            "columnName": "searchableText",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "normalizedNom",
+            "columnName": "normalizedNom",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "normalizedNomComplet",
+            "columnName": "normalizedNomComplet",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "forum_users",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`username` TEXT NOT NULL, `normalizedUsername` TEXT NOT NULL, `forumUserId` INTEGER, `profileUrl` TEXT, `source` TEXT NOT NULL, `hasForumActivity` INTEGER NOT NULL, `hasDebitActivity` INTEGER NOT NULL, `forumPostCount` INTEGER NOT NULL, `debitObservationCount` INTEGER NOT NULL, `lastForumPostAt` TEXT, `lastForumPostUrl` TEXT, `lastDebitObservationAt` TEXT, `lastDebitObservationUrl` TEXT, `updatedAt` TEXT NOT NULL, PRIMARY KEY(`username`))",
+        "fields": [
+          {
+            "fieldPath": "username",
+            "columnName": "username",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "normalizedUsername",
+            "columnName": "normalizedUsername",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "forumUserId",
+            "columnName": "forumUserId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "profileUrl",
+            "columnName": "profileUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "source",
+            "columnName": "source",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hasForumActivity",
+            "columnName": "hasForumActivity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "hasDebitActivity",
+            "columnName": "hasDebitActivity",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "forumPostCount",
+            "columnName": "forumPostCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "debitObservationCount",
+            "columnName": "debitObservationCount",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastForumPostAt",
+            "columnName": "lastForumPostAt",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastForumPostUrl",
+            "columnName": "lastForumPostUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastDebitObservationAt",
+            "columnName": "lastDebitObservationAt",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastDebitObservationUrl",
+            "columnName": "lastDebitObservationUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "username"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_forum_users_normalizedUsername",
+            "unique": true,
+            "columnNames": [
+              "normalizedUsername"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_forum_users_normalizedUsername` ON `${TABLE_NAME}` (`normalizedUsername`)"
+          },
+          {
+            "name": "index_forum_users_forumUserId",
+            "unique": false,
+            "columnNames": [
+              "forumUserId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_forum_users_forumUserId` ON `${TABLE_NAME}` (`forumUserId`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '98d4c6b6d31fa3a19114fd2329fa7469')"
+    ]
+  }
+}

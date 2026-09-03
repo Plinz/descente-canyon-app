@@ -15,6 +15,7 @@ data class CanyonWeather(
     val next48HoursPrecipitationMm: Double,
     val maxHourlyPrecipitationPast72HoursMm: Double,
     val maxPrecipitationProbabilityNext24Hours: Int? = null,
+    val dailyForecasts: List<DailyWeatherForecast> = emptyList(),
 )
 
 data class WeatherTarget(
@@ -41,4 +42,12 @@ data class HourlyPrecipitation(
     val showersMm: Double? = null,
     val precipitationProbabilityPercent: Int? = null,
     val weatherCode: Int? = null,
+)
+
+data class DailyWeatherForecast(
+    val date: java.time.LocalDate,
+    val precipitationMm: Double,
+    val temperatureMin: Double?,
+    val temperatureMax: Double?,
+    val weatherCode: Int?,
 )

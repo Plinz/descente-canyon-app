@@ -1,5 +1,8 @@
 package fr.descentecanyon.app.data.repository
 
+import fr.descentecanyon.app.data.local.dao.DailyWeatherDao
+import fr.descentecanyon.app.data.local.entity.DailyWeatherEntity
+import fr.descentecanyon.app.data.remote.weather.DailyForecastDto
 import fr.descentecanyon.app.data.remote.weather.HourlyForecastDto
 import fr.descentecanyon.app.data.remote.weather.OpenMeteoForecastDto
 import fr.descentecanyon.app.data.remote.weather.OpenMeteoRemoteSource
@@ -11,7 +14,11 @@ import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.WeatherLocationSource
 import io.ktor.client.HttpClient
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.mockk
+import java.net.UnknownHostException
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -23,10 +30,11 @@ import org.junit.Test
 class WeatherRepositoryImplTest {
 
     @Test
-    fun `uses watershed center when available`() = runTest {
+    fun `uses watershed center when available and inserts daily weather into cache`() = runTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
+        val dailyWeatherDao = mockk<DailyWeatherDao>(relaxed = true)
         val remoteSource = fakeRemoteSource(forecastDto())
-        val repository = WeatherRepositoryImpl(remoteSource, dispatcher)
+        val repository = WeatherRepositoryImpl(remoteSource, dailyWeatherDao, dispatcher)
         val detail = canyonDetail(
             watershed = CanyonWatershed(
                 areaKm2 = 12.5,
@@ -50,13 +58,18 @@ class WeatherRepositoryImplTest {
         assertEquals(20.0, weather.next24HoursPrecipitationMm, 0.001)
         assertEquals(20.0, weather.next48HoursPrecipitationMm, 0.001)
         assertEquals(7, weather.maxPrecipitationProbabilityNext24Hours)
+        assertEquals(2, weather.dailyForecasts.size)
+        assertEquals(0, weather.dailyForecasts.first().weatherCode)
+
+        coVerify { dailyWeatherDao.insertAll(any()) }
     }
 
     @Test
     fun `falls back to entry point when watershed is missing`() = runTest {
         val dispatcher = StandardTestDispatcher(testScheduler)
+        val dailyWeatherDao = mockk<DailyWeatherDao>(relaxed = true)
         val remoteSource = fakeRemoteSource(forecastDto())
-        val repository = WeatherRepositoryImpl(remoteSource, dispatcher)
+        val repository = WeatherRepositoryImpl(remoteSource, dailyWeatherDao, dispatcher)
         val detail = canyonDetail(
             geoPoints = listOf(
                 GeoPoint(id = 1, canyonId = 42, type = GeoPointType.SORTIE, latitude = 43.01, longitude = 6.01),
@@ -68,6 +81,46 @@ class WeatherRepositoryImplTest {
 
         assertTrue(result.isSuccess)
         assertEquals(WeatherLocationSource.ENTRY, result.getOrThrow().target.source)
+    }
+
+    @Test
+    fun `falls back to cached daily weather when network fails`() = runTest {
+        val dispatcher = StandardTestDispatcher(testScheduler)
+        val dailyWeatherDao = mockk<DailyWeatherDao>()
+        val cachedEntities = listOf(
+            DailyWeatherEntity(
+                canyonId = 42,
+                date = LocalDate.now().toString(),
+                timezone = "UTC",
+                targetLatitude = 43.0,
+                targetLongitude = 6.0,
+                targetSource = "ENTRY",
+                sourceKind = "OPEN_METEO",
+                precipitationSum = 5.0,
+                temperature2mMin = 12.0,
+                temperature2mMax = 22.0,
+                weatherCode = 0,
+                fetchedAtEpochMs = System.currentTimeMillis(),
+            )
+        )
+        coEvery { dailyWeatherDao.getByCanyonIdAndDateRange(eq(42), any(), any()) } returns cachedEntities
+
+        val failingRemoteSource = object : OpenMeteoRemoteSource(mockk<HttpClient>()) {
+            override suspend fun fetchForecast(latitude: Double, longitude: Double): OpenMeteoForecastDto {
+                throw UnknownHostException("Network down")
+            }
+        }
+
+        val repository = WeatherRepositoryImpl(failingRemoteSource, dailyWeatherDao, dispatcher)
+        val detail = canyonDetail()
+
+        val result = repository.getCanyonWeather(detail)
+
+        assertTrue(result.isSuccess)
+        val weather = result.getOrThrow()
+        assertEquals(1, weather.dailyForecasts.size)
+        assertEquals(5.0, weather.dailyForecasts.first().precipitationMm, 0.001)
+        assertEquals(0, weather.dailyForecasts.first().weatherCode)
     }
 
     private fun forecastDto(): OpenMeteoForecastDto {
@@ -98,6 +151,13 @@ class WeatherRepositoryImplTest {
                 precipitationProbability = listOf(1, 2, 3, 4, 5, 6, 7),
                 weatherCode = listOf(0, 0, 1, 2, 3, 4, 5),
             ),
+            daily = DailyForecastDto(
+                time = listOf(LocalDate.now().toString(), LocalDate.now().plusDays(1).toString()),
+                precipitationSum = listOf(2.5, 0.0),
+                temperature2mMin = listOf(10.0, 12.0),
+                temperature2mMax = listOf(20.0, 24.0),
+                weatherCode = listOf(0, 1),
+            )
         )
     }
 

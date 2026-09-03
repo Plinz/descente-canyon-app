@@ -474,4 +474,22 @@ Fotos und Wasserstände werden weiterhin online abgerufen, wenn ein Netzwerk ver
     <string name="geo_point_remarkable_inside">Besonderer Punkt im Canyon</string>
     <string name="geo_point_escape">Notausstieg</string>
     <string name="geo_point_gps">GPS-Punkt</string>
+
+    <!-- Weather daily forecast -->
+    <string name="weather_daily_title">5-Tage-Wettervorhersage</string>
+    <string name="weather_daily_condition">Zustand</string>
+    <string name="weather_daily_temperatures">Temperaturen</string>
+    <string name="weather_daily_precipitation">Niederschlag</string>
+
+    <!-- Weather WMO codes -->
+    <string name="weather_code_clear">Klarer Himmel</string>
+    <string name="weather_code_cloudy">Teilweise bewölkt</string>
+    <string name="weather_code_fog">Nebel</string>
+    <string name="weather_code_drizzle">Sprühregen</string>
+    <string name="weather_code_rain">Regen</string>
+    <string name="weather_code_snow">Schnee</string>
+    <string name="weather_code_showers">Regenschauer</string>
+    <string name="weather_code_snow_showers">Schneeschauer</string>
+    <string name="weather_code_thunderstorm">Gewitter</string>
+    <string name="weather_code_unknown">Unbekannt</string>
 </resources>

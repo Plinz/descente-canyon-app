@@ -524,4 +524,22 @@ Las fotos y los caudales se siguen obteniendo en línea cuando hay red disponibl
     <string name="geo_point_remarkable_inside">Punto destacado dentro del barranco</string>
     <string name="geo_point_escape">Escape</string>
     <string name="geo_point_gps">Punto GPS</string>
+
+    <!-- Weather daily forecast -->
+    <string name="weather_daily_title">Pronóstico del tiempo a 5 días</string>
+    <string name="weather_daily_condition">Condición</string>
+    <string name="weather_daily_temperatures">Temperaturas</string>
+    <string name="weather_daily_precipitation">Precipitación</string>
+
+    <!-- Weather WMO codes -->
+    <string name="weather_code_clear">Cielo despejado</string>
+    <string name="weather_code_cloudy">Parcialmente nublado</string>
+    <string name="weather_code_fog">Niebla</string>
+    <string name="weather_code_drizzle">Llovizna</string>
+    <string name="weather_code_rain">Lluvia</string>
+    <string name="weather_code_snow">Nieve</string>
+    <string name="weather_code_showers">Chubascos</string>
+    <string name="weather_code_snow_showers">Chubascos de nieve</string>
+    <string name="weather_code_thunderstorm">Tormenta</string>
+    <string name="weather_code_unknown">Desconocido</string>
 </resources>

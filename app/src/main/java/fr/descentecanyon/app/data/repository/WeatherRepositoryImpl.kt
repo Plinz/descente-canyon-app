@@ -1,15 +1,20 @@
 package fr.descentecanyon.app.data.repository
 
+import fr.descentecanyon.app.data.local.dao.DailyWeatherDao
+import fr.descentecanyon.app.data.local.entity.DailyWeatherEntity
 import fr.descentecanyon.app.data.remote.weather.OpenMeteoRemoteSource
 import fr.descentecanyon.app.di.IoDispatcher
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonWeather
+import fr.descentecanyon.app.domain.model.DailyWeatherForecast
 import fr.descentecanyon.app.domain.model.HourlyPrecipitation
 import fr.descentecanyon.app.domain.repository.WeatherRepository
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.nio.channels.UnresolvedAddressException
 import java.time.Instant
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -18,11 +23,11 @@ import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
-import java.nio.channels.UnresolvedAddressException
 
 @Singleton
 class WeatherRepositoryImpl @Inject constructor(
     private val remoteSource: OpenMeteoRemoteSource,
+    private val dailyWeatherDao: DailyWeatherDao,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : WeatherRepository {
 
@@ -31,39 +36,98 @@ class WeatherRepositoryImpl @Inject constructor(
             runCatching {
                 val target = WeatherTargetResolver.resolve(detail)
                     ?: throw IllegalStateException("Aucune coordonnée exploitable pour la météo")
-                val response = retryOpenMeteoRequest {
-                    remoteSource.fetchForecast(target.latitude, target.longitude)
+
+                try {
+                    val response = retryOpenMeteoRequest {
+                        remoteSource.fetchForecast(target.latitude, target.longitude)
+                    }
+                    val zoneId = response.timezone.toZoneIdOrUtc()
+                    val now = ZonedDateTime.now(zoneId)
+                        .withMinute(0)
+                        .withSecond(0)
+                        .withNano(0)
+
+                    val hourly = response.hourly.toHourlyPrecipitation()
+                    val daily = response.daily.toDailyWeatherForecast()
+
+                    // Cache the daily forecast
+                    val fetchedAtEpochMs = Instant.now().toEpochMilli()
+                    val entities = daily.map { forecast ->
+                        DailyWeatherEntity(
+                            canyonId = detail.canyon.id,
+                            date = forecast.date.toString(),
+                            timezone = response.timezone,
+                            targetLatitude = target.latitude,
+                            targetLongitude = target.longitude,
+                            targetSource = target.source.name,
+                            sourceKind = "OPEN_METEO",
+                            precipitationSum = forecast.precipitationMm,
+                            temperature2mMin = forecast.temperatureMin,
+                            temperature2mMax = forecast.temperatureMax,
+                            weatherCode = forecast.weatherCode,
+                            fetchedAtEpochMs = fetchedAtEpochMs,
+                        )
+                    }
+                    if (entities.isNotEmpty()) {
+                        dailyWeatherDao.insertAll(entities)
+                    }
+
+                    val pastHours = hourly.filter { !it.dateTime.atZone(zoneId).isAfter(now) }
+                    val futureHours = hourly.filter { it.dateTime.atZone(zoneId).isAfter(now) }
+
+                    CanyonWeather(
+                        target = target,
+                        timezone = response.timezone,
+                        fetchedAt = Instant.now(),
+                        hourly = hourly,
+                        past24HoursPrecipitationMm = pastHours.sumLast(24),
+                        past48HoursPrecipitationMm = pastHours.sumLast(48),
+                        past72HoursPrecipitationMm = pastHours.sumLast(72),
+                        next24HoursPrecipitationMm = futureHours.sumFirst(24),
+                        next48HoursPrecipitationMm = futureHours.sumFirst(48),
+                        maxHourlyPrecipitationPast72HoursMm = pastHours.maxLast(72),
+                        maxPrecipitationProbabilityNext24Hours = futureHours
+                            .take(24)
+                            .mapNotNull { it.precipitationProbabilityPercent }
+                            .maxOrNull(),
+                        dailyForecasts = daily,
+                    )
+                } catch (e: Throwable) {
+                    if (!e.isRetryableOpenMeteoFailure()) throw e
+                    // Try to fallback to offline daily weather
+                    val todayStr = LocalDate.now().toString()
+                    val next5DaysStr = LocalDate.now().plusDays(5).toString()
+                    val cachedEntities = dailyWeatherDao.getByCanyonIdAndDateRange(detail.canyon.id, todayStr, next5DaysStr)
+
+                    if (cachedEntities.isEmpty()) {
+                        throw e // No offline data
+                    }
+
+                    val offlineDaily = cachedEntities.map { entity ->
+                        DailyWeatherForecast(
+                            date = LocalDate.parse(entity.date),
+                            precipitationMm = entity.precipitationSum ?: 0.0,
+                            temperatureMin = entity.temperature2mMin,
+                            temperatureMax = entity.temperature2mMax,
+                            weatherCode = entity.weatherCode,
+                        )
+                    }
+
+                    CanyonWeather(
+                        target = target,
+                        timezone = cachedEntities.first().timezone,
+                        fetchedAt = Instant.ofEpochMilli(cachedEntities.first().fetchedAtEpochMs),
+                        hourly = emptyList(),
+                        past24HoursPrecipitationMm = 0.0,
+                        past48HoursPrecipitationMm = 0.0,
+                        past72HoursPrecipitationMm = 0.0,
+                        next24HoursPrecipitationMm = 0.0,
+                        next48HoursPrecipitationMm = 0.0,
+                        maxHourlyPrecipitationPast72HoursMm = 0.0,
+                        maxPrecipitationProbabilityNext24Hours = null,
+                        dailyForecasts = offlineDaily,
+                    )
                 }
-                val zoneId = response.timezone.toZoneIdOrUtc()
-                val now = ZonedDateTime.now(zoneId)
-                    .withMinute(0)
-                    .withSecond(0)
-                    .withNano(0)
-
-                val hourly = response.hourly.toHourlyPrecipitation()
-                if (hourly.isEmpty()) {
-                    throw IllegalStateException("Aucune donnée de précipitation disponible")
-                }
-
-                val pastHours = hourly.filter { !it.dateTime.atZone(zoneId).isAfter(now) }
-                val futureHours = hourly.filter { it.dateTime.atZone(zoneId).isAfter(now) }
-
-                CanyonWeather(
-                    target = target,
-                    timezone = response.timezone,
-                    fetchedAt = Instant.now(),
-                    hourly = hourly,
-                    past24HoursPrecipitationMm = pastHours.sumLast(24),
-                    past48HoursPrecipitationMm = pastHours.sumLast(48),
-                    past72HoursPrecipitationMm = pastHours.sumLast(72),
-                    next24HoursPrecipitationMm = futureHours.sumFirst(24),
-                    next48HoursPrecipitationMm = futureHours.sumFirst(48),
-                    maxHourlyPrecipitationPast72HoursMm = pastHours.maxLast(72),
-                    maxPrecipitationProbabilityNext24Hours = futureHours
-                        .take(24)
-                        .mapNotNull { it.precipitationProbabilityPercent }
-                        .maxOrNull(),
-                )
             }
         }
     }
@@ -83,6 +147,21 @@ class WeatherRepositoryImpl @Inject constructor(
                 rainMm = rain.getOrNull(index),
                 showersMm = showers.getOrNull(index),
                 precipitationProbabilityPercent = precipitationProbability.getOrNull(index),
+                weatherCode = weatherCode.getOrNull(index),
+            )
+        }
+    }
+
+    private fun fr.descentecanyon.app.data.remote.weather.DailyForecastDto?.toDailyWeatherForecast(): List<DailyWeatherForecast> {
+        if (this == null) return emptyList()
+
+        return time.mapIndexedNotNull { index, rawTime ->
+            val date = runCatching { LocalDate.parse(rawTime) }.getOrNull() ?: return@mapIndexedNotNull null
+            DailyWeatherForecast(
+                date = date,
+                precipitationMm = precipitationSum.getOrNull(index) ?: 0.0,
+                temperatureMin = temperature2mMin.getOrNull(index),
+                temperatureMax = temperature2mMax.getOrNull(index),
                 weatherCode = weatherCode.getOrNull(index),
             )
         }

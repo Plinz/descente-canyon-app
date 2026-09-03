@@ -524,4 +524,22 @@ Photos and flow reports are still fetched online when the network is available.<
     <string name="geo_point_remarkable_inside">Remarkable point inside the canyon</string>
     <string name="geo_point_escape">Escape route</string>
     <string name="geo_point_gps">GPS point</string>
+
+    <!-- Weather daily forecast -->
+    <string name="weather_daily_title">5-Day Weather Forecast</string>
+    <string name="weather_daily_condition">Condition</string>
+    <string name="weather_daily_temperatures">Temperatures</string>
+    <string name="weather_daily_precipitation">Precipitation</string>
+
+    <!-- Weather WMO codes -->
+    <string name="weather_code_clear">Clear sky</string>
+    <string name="weather_code_cloudy">Partly cloudy</string>
+    <string name="weather_code_fog">Fog</string>
+    <string name="weather_code_drizzle">Drizzle</string>
+    <string name="weather_code_rain">Rain</string>
+    <string name="weather_code_snow">Snow</string>
+    <string name="weather_code_showers">Showers</string>
+    <string name="weather_code_snow_showers">Snow showers</string>
+    <string name="weather_code_thunderstorm">Thunderstorm</string>
+    <string name="weather_code_unknown">Unknown</string>
 </resources>

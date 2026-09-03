@@ -49,7 +49,7 @@ import fr.descentecanyon.app.data.local.entity.WatershedEntity
         SearchIndexEntity::class,
         ForumUserEntity::class,
     ],
-    version = 14,
+    version = 15,
     exportSchema = true,
 )
 abstract class DescenteCanyonDatabase : RoomDatabase() {
