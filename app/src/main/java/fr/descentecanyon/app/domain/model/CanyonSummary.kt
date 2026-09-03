@@ -7,6 +7,7 @@ data class CanyonSummary(
     val id: Int,
     val nom: String,
     val pays: String,
+    val region: String? = null,
     val departement: String? = null,
     val cotation: String,
     val interet: Float? = null,
@@ -17,4 +18,5 @@ data class CanyonSummary(
     val longitude: Double? = null,
     val markerType: GeoPointType? = null,
     val isForbidden: Boolean = false,
+    val favoriteAddedAt: Long? = null,
 )

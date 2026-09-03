@@ -40,7 +40,7 @@ val fileVersionCode = versionProperties.getProperty("VERSION_CODE")?.toIntOrNull
 val fileVersionName = versionProperties.getProperty("VERSION_NAME")?.takeIf { it.isNotBlank() } ?: "1.0.0"
 val ciVersionCode = providers.gradleProperty("ciVersionCode").orNull?.toIntOrNull() ?: fileVersionCode
 val ciVersionName = providers.gradleProperty("ciVersionName").orNull ?: fileVersionName
-val pythonBinary = providers.gradleProperty("pythonBinary").orNull?.takeIf { it.isNotBlank() } ?: "python"
+val pythonBinary = providers.gradleProperty("pythonBinary").orNull?.takeIf { it.isNotBlank() } ?: "python3"
 val hasReleaseSigning = listOf(
     releaseKeystoreFile,
     releaseStorePassword,
@@ -58,7 +58,7 @@ val generatedPrepackagedDatabaseFile = layout.buildDirectory.file("generated/pre
 val prepackagedDatabaseGeneratorScript = rootProject.file("scripts/app/generate_prepackaged_room_db.py")
 val staticFeatureIndexGeneratorScript = rootProject.file("scripts/app/generate_static_feature_index.py")
 val runtimeLookupAssetGeneratorScript = rootProject.file("scripts/app/generate_runtime_lookup_assets.py")
-val prepackagedDatabaseSchemaFile = project.file("schemas/fr.descentecanyon.app.data.local.database.DescenteCanyonDatabase/14.json")
+val prepackagedDatabaseSchemaFile = project.file("schemas/fr.descentecanyon.app.data.local.database.DescenteCanyonDatabase/15.json")
 val prepackagedRoomImportDirectory = rootProject.file("offline-data/full/room-import")
 val staticFeaturesAssetFile = rootProject.file("modele_statistique/canyon_static_features.json")
 val runtimeLookupsAssetFile = rootProject.file("modele_statistique/runtime_feature_lookups.json")

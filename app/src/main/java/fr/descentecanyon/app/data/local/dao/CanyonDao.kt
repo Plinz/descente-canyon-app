@@ -50,8 +50,8 @@ interface CanyonDao {
     @Query("UPDATE canyons SET isOffline = :isOffline WHERE id = :canyonId")
     suspend fun setOffline(canyonId: Int, isOffline: Boolean)
 
-    @Query("UPDATE canyons SET isFavorite = :isFavorite WHERE id = :canyonId")
-    suspend fun setFavorite(canyonId: Int, isFavorite: Boolean)
+    @Query("UPDATE canyons SET isFavorite = :isFavorite, favoriteAddedAt = :addedAt WHERE id = :canyonId")
+    suspend fun setFavorite(canyonId: Int, isFavorite: Boolean, addedAt: Long?)
 
     @Query("UPDATE canyons SET isOffline = 0")
     suspend fun clearOfflineFlags()

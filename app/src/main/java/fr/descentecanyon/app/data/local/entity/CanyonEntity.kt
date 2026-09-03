@@ -45,6 +45,7 @@ data class CanyonEntity(
     // Offline management
     val isOffline: Boolean = false,
     val isFavorite: Boolean = false,
+    val favoriteAddedAt: Long? = null,
     val lastUpdated: Long = System.currentTimeMillis(),
     val sourceType: String = "DESCENTE_CANYON",
     val sourceKey: String = "",

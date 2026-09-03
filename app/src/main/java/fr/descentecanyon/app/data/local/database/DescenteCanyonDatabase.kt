@@ -31,6 +31,10 @@ import fr.descentecanyon.app.data.local.entity.RegulationTextEntity
 import fr.descentecanyon.app.data.local.entity.SearchIndexEntity
 import fr.descentecanyon.app.data.local.entity.WatershedEntity
 
+import fr.descentecanyon.app.data.local.dao.FavoriteFolderDao
+import fr.descentecanyon.app.data.local.entity.CanyonFavoriteFolderCrossRef
+import fr.descentecanyon.app.data.local.entity.FavoriteFolderEntity
+
 @Database(
     entities = [
         CanyonEntity::class,
@@ -48,8 +52,10 @@ import fr.descentecanyon.app.data.local.entity.WatershedEntity
         PendingDebitSubmissionEntity::class,
         SearchIndexEntity::class,
         ForumUserEntity::class,
+        FavoriteFolderEntity::class,
+        CanyonFavoriteFolderCrossRef::class,
     ],
-    version = 14,
+    version = 15,
     exportSchema = true,
 )
 abstract class DescenteCanyonDatabase : RoomDatabase() {
@@ -66,6 +72,7 @@ abstract class DescenteCanyonDatabase : RoomDatabase() {
     abstract fun pendingDebitSubmissionDao(): PendingDebitSubmissionDao
     abstract fun searchIndexDao(): SearchIndexDao
     abstract fun forumUserDao(): ForumUserDao
+    abstract fun favoriteFolderDao(): FavoriteFolderDao
 
     companion object {
         const val DATABASE_NAME = "descente_canyon_db"

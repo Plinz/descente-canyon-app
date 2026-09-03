@@ -17,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.StarHalf
 import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
@@ -61,6 +62,7 @@ fun CanyonSummaryCard(
     variant: CanyonSummaryCardVariant = CanyonSummaryCardVariant.Compact,
     isFavorite: Boolean = false,
     onFavoriteClick: (() -> Unit)? = null,
+    onFolderClick: (() -> Unit)? = null,
 ) {
     val colors = LocalDcColors.current
     val spacing = LocalDcSpacing.current
@@ -162,6 +164,19 @@ fun CanyonSummaryCard(
                     InterestStars(interest = interest)
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (onFolderClick != null) {
+                        IconButton(
+                            onClick = onFolderClick,
+                            modifier = Modifier.size(40.dp),
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.FolderOpen,
+                                contentDescription = stringResource(R.string.favorite_folder_manage),
+                                tint = MaterialTheme.colorScheme.primary,
+                                modifier = Modifier.size(22.dp),
+                            )
+                        }
+                    }
                     if (onFavoriteClick != null) {
                         IconButton(
                             onClick = onFavoriteClick,

@@ -129,12 +129,14 @@ fun CanyonEntity.toSummary(): CanyonSummary = CanyonSummary(
     id = id,
     nom = nom,
     pays = pays.normalizeCountryName(),
+    region = region,
     departement = departement,
     cotation = cotation,
     interet = interet.normalizedInterest().takeUnless { isForbidden },
     url = url,
     isOffline = isOffline,
     isForbidden = isForbidden,
+    favoriteAddedAt = favoriteAddedAt,
 )
 
 fun CanyonEntity.toSearchItem(
