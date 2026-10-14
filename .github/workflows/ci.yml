@@ -38,7 +38,7 @@ jobs:
           python-version: '3.12'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Check formatting
         run: ./gradlew spotlessCheck
@@ -84,7 +84,7 @@ jobs:
           python-version: '3.12'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Enable KVM
         run: |
