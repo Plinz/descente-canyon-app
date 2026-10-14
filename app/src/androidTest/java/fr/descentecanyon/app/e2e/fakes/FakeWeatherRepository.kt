@@ -11,23 +11,21 @@ import javax.inject.Singleton
 
 @Singleton
 class FakeWeatherRepository @Inject constructor() : WeatherRepository {
-    override suspend fun getCanyonWeather(detail: CanyonDetail): Result<CanyonWeather> {
-        return Result.success(
-            CanyonWeather(
-                target = WeatherTarget(
-                    latitude = 0.0,
-                    longitude = 0.0,
-                    source = WeatherLocationSource.UNKNOWN,
-                ),
-                timezone = "UTC",
-                fetchedAt = Instant.EPOCH,
-                past24HoursPrecipitationMm = 0.0,
-                past48HoursPrecipitationMm = 0.0,
-                past72HoursPrecipitationMm = 0.0,
-                next24HoursPrecipitationMm = 0.0,
-                next48HoursPrecipitationMm = 0.0,
-                maxHourlyPrecipitationPast72HoursMm = 0.0,
-            )
-        )
-    }
+    override suspend fun getCanyonWeather(detail: CanyonDetail): Result<CanyonWeather> = Result.success(
+        CanyonWeather(
+            target = WeatherTarget(
+                latitude = 0.0,
+                longitude = 0.0,
+                source = WeatherLocationSource.UNKNOWN,
+            ),
+            timezone = "UTC",
+            fetchedAt = Instant.EPOCH,
+            past24HoursPrecipitationMm = 0.0,
+            past48HoursPrecipitationMm = 0.0,
+            past72HoursPrecipitationMm = 0.0,
+            next24HoursPrecipitationMm = 0.0,
+            next48HoursPrecipitationMm = 0.0,
+            maxHourlyPrecipitationPast72HoursMm = 0.0,
+        ),
+    )
 }

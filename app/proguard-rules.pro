@@ -3,9 +3,10 @@
 # JSoup
 -keeppackagenames org.jsoup.nodes
 
-# Ktor
--keep class io.ktor.** { *; }
--dontwarn io.ktor.**
+# OkHttp ships its own consumer rules; only silence optional TLS providers.
+-dontwarn org.conscrypt.**
+-dontwarn org.bouncycastle.**
+-dontwarn org.openjsse.**
 
 # Kotlin Serialization
 -keepattributes *Annotation*, InnerClasses

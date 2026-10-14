@@ -6,23 +6,17 @@ import android.net.Uri
 sealed interface AppLaunchTarget {
     data object None : AppLaunchTarget
     data class Notifications(val clearBackStack: Boolean = false) : AppLaunchTarget
-    data class CanyonDetail(
-        val canyonId: Int,
-        val openDebitsTab: Boolean,
-        val clearBackStack: Boolean = false,
-    ) : AppLaunchTarget
+    data class CanyonDetail(val canyonId: Int, val openDebitsTab: Boolean, val clearBackStack: Boolean = false) : AppLaunchTarget
 }
 
-fun Intent.putLaunchTarget(target: AppLaunchTarget): Intent {
-    return when (target) {
-        AppLaunchTarget.None -> this
-        is AppLaunchTarget.Notifications -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_NOTIFICATIONS)
-            .putExtra(EXTRA_CLEAR_BACKSTACK, target.clearBackStack)
-        is AppLaunchTarget.CanyonDetail -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_CANYON_DETAIL)
-            .putExtra(EXTRA_CANYON_ID, target.canyonId)
-            .putExtra(EXTRA_OPEN_DEBITS_TAB, target.openDebitsTab)
-            .putExtra(EXTRA_CLEAR_BACKSTACK, target.clearBackStack)
-    }
+fun Intent.putLaunchTarget(target: AppLaunchTarget): Intent = when (target) {
+    AppLaunchTarget.None -> this
+    is AppLaunchTarget.Notifications -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_NOTIFICATIONS)
+        .putExtra(EXTRA_CLEAR_BACKSTACK, target.clearBackStack)
+    is AppLaunchTarget.CanyonDetail -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_CANYON_DETAIL)
+        .putExtra(EXTRA_CANYON_ID, target.canyonId)
+        .putExtra(EXTRA_OPEN_DEBITS_TAB, target.openDebitsTab)
+        .putExtra(EXTRA_CLEAR_BACKSTACK, target.clearBackStack)
 }
 
 fun consumeLaunchTarget(intent: Intent?): AppLaunchTarget {
@@ -53,9 +47,7 @@ fun consumeLaunchTarget(intent: Intent?): AppLaunchTarget {
     return target
 }
 
-internal fun parseLaunchTargetFromUri(uri: Uri?): AppLaunchTarget {
-    return parseLaunchTargetFromUrl(uri?.toString())
-}
+internal fun parseLaunchTargetFromUri(uri: Uri?): AppLaunchTarget = parseLaunchTargetFromUrl(uri?.toString())
 
 internal fun parseLaunchTargetFromUrl(url: String?): AppLaunchTarget {
     val normalizedUrl = url.orEmpty()

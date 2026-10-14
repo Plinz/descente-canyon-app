@@ -7,10 +7,7 @@ import dagger.hilt.android.EntryPointAccessors
 import fr.descentecanyon.app.domain.model.TrackedActivityType
 import kotlinx.coroutines.flow.first
 
-class ForumNotificationSyncWorker(
-    appContext: Context,
-    params: WorkerParameters,
-) : CoroutineWorker(appContext, params) {
+class ForumNotificationSyncWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
         val entryPoint = EntryPointAccessors.fromApplication(
@@ -19,7 +16,11 @@ class ForumNotificationSyncWorker(
         )
         val repository = entryPoint.notificationCenterRepository()
         val state = repository.observeState().first()
-        if (state.followedForumCategories.isEmpty() && state.followedForumThreads.isEmpty() && state.followedUsers.none { it.forumUserId != null }) return Result.success()
+        if (state.followedForumCategories.isEmpty() && state.followedForumThreads.isEmpty() &&
+            state.followedUsers.none { it.forumUserId != null }
+        ) {
+            return Result.success()
+        }
 
         val topics = entryPoint.forumRepository().refreshActiveTopics(MAX_TOPICS_TO_SCAN)
             .getOrElse { return Result.retry() }

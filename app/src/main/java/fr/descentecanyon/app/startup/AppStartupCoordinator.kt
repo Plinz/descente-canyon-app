@@ -1,12 +1,15 @@
 package fr.descentecanyon.app.startup
 
 import android.util.Log
-import fr.descentecanyon.app.data.local.importer.EmbeddedAppDataImporter
-import fr.descentecanyon.app.data.local.importer.EmbeddedImportMode
+import fr.descentecanyon.app.data.local.LocalDataInitializer
 import fr.descentecanyon.app.data.repository.LegacyPhotoStorageMigrator
-import fr.descentecanyon.app.data.repository.NotificationSyncScheduler
-import fr.descentecanyon.app.perf.PerformanceTrace
+import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
+import fr.descentecanyon.app.domain.error.suspendRunCatching
+import fr.descentecanyon.app.domain.error.toAppError
 import fr.descentecanyon.app.domain.repository.AuthRepository
+import fr.descentecanyon.app.perf.PerformanceTrace
+import fr.descentecanyon.app.sync.NotificationSyncScheduler
+import fr.descentecanyon.app.sync.PendingDebitSyncScheduler
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
@@ -16,36 +19,35 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import kotlinx.coroutines.withContext
 
 @Singleton
 class AppStartupCoordinator @Inject constructor(
-    private val embeddedCanyonDataImporter: EmbeddedAppDataImporter,
+    private val localDataInitializer: LocalDataInitializer,
     private val authRepository: AuthRepository,
     private val searchCatalogWarmupCoordinator: SearchCatalogWarmupCoordinator,
     private val predictionWarmupCoordinator: PredictionWarmupCoordinator,
     private val legacyPhotoStorageMigrator: LegacyPhotoStorageMigrator,
     private val notificationSyncScheduler: NotificationSyncScheduler,
+    private val pendingDebitSyncScheduler: PendingDebitSyncScheduler,
+    private val connectivityObserver: ConnectivityObserver,
 ) {
 
     private val backgroundScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val initializeMutex = Mutex()
+
     @Volatile private var initialized = false
 
+    /**
+     * The UI waits for the initialization only when the catalog has to be copied from the APK (first
+     * launch or update) or when the data of a version <= 2.2 has to be migrated.
+     */
     suspend fun resolveLaunchMode(): StartupLaunchMode {
-        val coreMode = withContext(Dispatchers.IO) { embeddedCanyonDataImporter.getCoreImportMode() }
-        val watershedsMode = withContext(Dispatchers.IO) { embeddedCanyonDataImporter.getWatershedsImportMode() }
-        val launchMode = if (coreMode == EmbeddedImportMode.SKIPPED && watershedsMode == EmbeddedImportMode.SKIPPED) {
-            StartupLaunchMode.NON_BLOCKING
-        } else {
+        val launchMode = if (localDataInitializer.needsInitialization()) {
             StartupLaunchMode.BLOCKING_IMPORT
+        } else {
+            StartupLaunchMode.NON_BLOCKING
         }
-        PerformanceTrace.logEvent(
-            event = "startup_launch_mode_resolved",
-            "launchMode" to launchMode.logLabel,
-            "coreImportMode" to coreMode.logLabel,
-            "watershedsImportMode" to watershedsMode.logLabel,
-        )
+        PerformanceTrace.logEvent(event = "startup_launch_mode_resolved", "launchMode" to launchMode.logLabel)
         return launchMode
     }
 
@@ -56,40 +58,38 @@ class AppStartupCoordinator @Inject constructor(
             if (initialized) return
 
             PerformanceTrace.logEvent("startup_initialize_enter")
-            withContext(Dispatchers.IO) {
-                val coreImportOutcome = embeddedCanyonDataImporter.ensureCoreImported()
+            localDataInitializer.initialize()?.let { report ->
                 PerformanceTrace.logEvent(
-                    event = "startup_core_ready",
-                    "launchMode" to coreImportOutcome.mode.logLabel,
-                    "datasetVersion" to coreImportOutcome.version,
-                    "expectedRows" to coreImportOutcome.expectedRowCount,
-                )
-                val watershedsImportOutcome = embeddedCanyonDataImporter.ensureWatershedsImported()
-                PerformanceTrace.logEvent(
-                    event = "startup_watersheds_ready",
-                    "launchMode" to watershedsImportOutcome.mode.logLabel,
-                    "datasetVersion" to watershedsImportOutcome.version,
-                    "expectedRows" to watershedsImportOutcome.expectedRowCount,
-                    "importedRows" to watershedsImportOutcome.importedRowCount,
+                    event = "startup_legacy_data_migrated",
+                    "favorites" to report.favorites,
+                    "pendingSubmissions" to report.pendingSubmissions,
+                    "debits" to report.debits,
+                    "photos" to report.photos,
+                    "dailyWeather" to report.dailyWeather,
+                    "keyValues" to report.keyValues,
                 )
             }
+            PerformanceTrace.logEvent("startup_local_data_ready")
 
-            if (authRepository.hasSavedCredentials()) {
-                PerformanceTrace.start(AUTH_RESTORE_TRACE_KEY, "auth_restore_session")
-                val restoreResult = authRepository.tryRestoreSession()
-                PerformanceTrace.end(
-                    key = AUTH_RESTORE_TRACE_KEY,
-                    outcome = if (restoreResult.isSuccess) "restored" else "failed",
-                )
-            } else {
-                PerformanceTrace.logEvent("auth_restore_session_skipped", "reason" to "no_saved_credentials")
-            }
+            PerformanceTrace.start(AUTH_RESTORE_TRACE_KEY, "auth_restore_session")
+            val restoreResult = authRepository.tryRestoreSession()
+            PerformanceTrace.end(
+                key = AUTH_RESTORE_TRACE_KEY,
+                outcome = if (restoreResult.isSuccess) "restored" else "no_session",
+            )
 
             notificationSyncScheduler.start()
+            pendingDebitSyncScheduler.start()
             initialized = true
             PerformanceTrace.logEvent("startup_initialize_marked_ready")
             backgroundScope.launch {
-                runCatching {
+                if (restoreResult.isSuccess && connectivityObserver.isCurrentlyOnline()) {
+                    // Tells the user now, rather than at their next submission, that the saved session expired.
+                    authRepository.validateSession().onFailure { throwable ->
+                        Log.i(TAG, "Saved session not validated: ${throwable.toAppError()}")
+                    }
+                }
+                suspendRunCatching {
                     legacyPhotoStorageMigrator.migrateOrDeleteLegacyPhotos()
                 }.onFailure { throwable ->
                     Log.w(TAG, "Unable to migrate legacy photo storage", throwable)
@@ -97,7 +97,7 @@ class AppStartupCoordinator @Inject constructor(
 
                 delay(SEARCH_CATALOG_WARMUP_DELAY_MS)
                 PerformanceTrace.logEvent("search_catalog_warmup_scheduled", "delayMs" to SEARCH_CATALOG_WARMUP_DELAY_MS)
-                runCatching {
+                suspendRunCatching {
                     searchCatalogWarmupCoordinator.warmupIfNeeded()
                 }.onFailure { throwable ->
                     Log.w(TAG, "Unable to warm up search catalog in background", throwable)
@@ -105,7 +105,7 @@ class AppStartupCoordinator @Inject constructor(
 
                 delay(PREDICTION_WARMUP_DELAY_AFTER_SEARCH_MS)
                 PerformanceTrace.logEvent("prediction_warmup_scheduled", "delayMs" to PREDICTION_WARMUP_DELAY_AFTER_SEARCH_MS)
-                runCatching {
+                suspendRunCatching {
                     predictionWarmupCoordinator.warmupIfNeeded()
                 }.onFailure { throwable ->
                     Log.w(TAG, "Unable to warm up prediction stack in background", throwable)

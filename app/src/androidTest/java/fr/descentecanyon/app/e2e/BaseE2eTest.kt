@@ -1,12 +1,13 @@
 package fr.descentecanyon.app.e2e
 
+import android.content.Context
 import android.content.Intent
+import androidx.annotation.StringRes
 import androidx.compose.ui.test.junit4.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
 import dagger.hilt.android.testing.HiltAndroidRule
-import dagger.hilt.android.testing.HiltAndroidTest
 import fr.descentecanyon.app.e2e.fakes.E2eFixtureState
 import fr.descentecanyon.app.e2e.fakes.FakeConnectivityObserver
 import fr.descentecanyon.app.ui.MainActivity
@@ -15,7 +16,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 
-@HiltAndroidTest
+/** Base of the end-to-end tests; each concrete test class must be annotated with `@HiltAndroidTest`. */
 abstract class BaseE2eTest {
     @get:Rule(order = 0)
     val hiltRule = HiltAndroidRule(this)
@@ -48,6 +49,9 @@ abstract class BaseE2eTest {
         launchMainActivity()
     }
 
+    /** Resolves UI text from resources so the tests do not depend on the device language. */
+    protected fun string(@StringRes resId: Int): String = ApplicationProvider.getApplicationContext<Context>().getString(resId)
+
     protected fun waitForTag(tag: String, timeoutMillis: Long = 15_000) {
         composeRule.waitUntil(timeoutMillis) {
             composeRule.onAllNodesWithTag(tag, useUnmergedTree = true).fetchSemanticsNodes().isNotEmpty()
@@ -61,9 +65,9 @@ abstract class BaseE2eTest {
     }
 
     private fun launchMainActivity() {
-        val context = ApplicationProvider.getApplicationContext<android.content.Context>()
+        val context = ApplicationProvider.getApplicationContext<Context>()
         scenario = ActivityScenario.launch(
-            Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
         )
         composeRule.waitForIdle()
     }

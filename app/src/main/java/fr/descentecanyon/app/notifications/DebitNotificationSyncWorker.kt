@@ -7,10 +7,7 @@ import dagger.hilt.android.EntryPointAccessors
 import fr.descentecanyon.app.domain.model.TrackedActivityType
 import kotlinx.coroutines.flow.first
 
-class DebitNotificationSyncWorker(
-    appContext: Context,
-    params: WorkerParameters,
-) : CoroutineWorker(appContext, params) {
+class DebitNotificationSyncWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
         val entryPoint = EntryPointAccessors.fromApplication(

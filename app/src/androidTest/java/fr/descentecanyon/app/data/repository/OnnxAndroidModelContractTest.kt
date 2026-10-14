@@ -85,38 +85,31 @@ class OnnxAndroidModelContractTest {
         return target
     }
 
-    private data class ExportedFeatureSpec(
-        val labels: List<String>,
-        val featureCount: Int,
-    )
+    private data class ExportedFeatureSpec(val labels: List<String>, val featureCount: Int)
 
-    private fun extractProbabilities(value: OnnxValue, labels: List<String>): Map<String, Double>? {
-        return when (value) {
-            is OnnxMap -> parseProbabilityMap(value.value)
-            is OnnxSequence -> extractProbabilitiesFromRaw(value.value, labels)
-            is OnnxTensor -> when (val raw = value.value) {
-                is Array<*> -> when (val first = raw.firstOrNull()) {
-                    is FloatArray -> labels.zip(first.map { it.toDouble() }).toMap()
-                    is DoubleArray -> labels.zip(first.toList()).toMap()
-                    else -> null
-                }
-                is FloatArray -> labels.zip(raw.map { it.toDouble() }).toMap()
-                is DoubleArray -> labels.zip(raw.toList()).toMap()
+    private fun extractProbabilities(value: OnnxValue, labels: List<String>): Map<String, Double>? = when (value) {
+        is OnnxMap -> parseProbabilityMap(value.value)
+        is OnnxSequence -> extractProbabilitiesFromRaw(value.value, labels)
+        is OnnxTensor -> when (val raw = value.value) {
+            is Array<*> -> when (val first = raw.firstOrNull()) {
+                is FloatArray -> labels.zip(first.map { it.toDouble() }).toMap()
+                is DoubleArray -> labels.zip(first.toList()).toMap()
                 else -> null
             }
+            is FloatArray -> labels.zip(raw.map { it.toDouble() }).toMap()
+            is DoubleArray -> labels.zip(raw.toList()).toMap()
             else -> null
         }
+        else -> null
     }
 
-    private fun extractProbabilitiesFromRaw(raw: Any?, labels: List<String>): Map<String, Double>? {
-        return when (raw) {
-            is OnnxMap -> parseProbabilityMap(raw.value)
-            is OnnxValue -> extractProbabilities(raw, labels)
-            is Map<*, *> -> parseProbabilityMap(raw)
-            is List<*> -> raw.firstNotNullOfOrNull { item -> extractProbabilitiesFromRaw(item, labels) }
-            is Array<*> -> raw.firstNotNullOfOrNull { item -> extractProbabilitiesFromRaw(item, labels) }
-            else -> null
-        }
+    private fun extractProbabilitiesFromRaw(raw: Any?, labels: List<String>): Map<String, Double>? = when (raw) {
+        is OnnxMap -> parseProbabilityMap(raw.value)
+        is OnnxValue -> extractProbabilities(raw, labels)
+        is Map<*, *> -> parseProbabilityMap(raw)
+        is List<*> -> raw.firstNotNullOfOrNull { item -> extractProbabilitiesFromRaw(item, labels) }
+        is Array<*> -> raw.firstNotNullOfOrNull { item -> extractProbabilitiesFromRaw(item, labels) }
+        else -> null
     }
 
     private fun parseProbabilityMap(raw: Map<*, *>): Map<String, Double>? {

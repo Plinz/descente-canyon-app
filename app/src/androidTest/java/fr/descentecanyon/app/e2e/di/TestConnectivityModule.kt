@@ -4,8 +4,8 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
-import fr.descentecanyon.app.data.network.ConnectivityObserver
 import fr.descentecanyon.app.di.NetworkObserverModule
+import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.e2e.fakes.FakeConnectivityObserver
 import javax.inject.Singleton
 

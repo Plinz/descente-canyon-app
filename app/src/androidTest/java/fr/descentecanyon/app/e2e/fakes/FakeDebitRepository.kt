@@ -11,25 +11,19 @@ import kotlinx.coroutines.flow.map
 
 @Singleton
 class FakeDebitRepository @Inject constructor() : DebitRepository {
-    override fun getDebitsForCanyon(canyonId: Int): Flow<Result<List<Debit>>> {
-        return E2eFixtureState.canyonDetails.map { details ->
-            Result.success(details[canyonId]?.debits.orEmpty())
-        }
+    override fun getDebitsForCanyon(canyonId: Int): Flow<Result<List<Debit>>> = E2eFixtureState.canyonDetails.map { details ->
+        Result.success(details[canyonId]?.debits.orEmpty())
     }
 
-    override fun getLatestDebits(limit: Int): Flow<Result<List<Debit>>> {
-        return E2eFixtureState.latestDebits.map { Result.success(it.take(limit)) }
+    override fun getLatestDebits(limit: Int): Flow<Result<List<Debit>>> = E2eFixtureState.latestDebits.map {
+        Result.success(it.take(limit))
     }
 
-    override suspend fun getCachedLatestDebits(limit: Int): CachedItems<Debit> {
-        return CachedItems(items = E2eFixtureState.latestDebits.value.take(limit))
-    }
+    override suspend fun getCachedLatestDebits(limit: Int): CachedItems<Debit> =
+        CachedItems(items = E2eFixtureState.latestDebits.value.take(limit))
 
-    override suspend fun refreshLatestDebits(limit: Int): Result<CachedItems<Debit>> {
-        return Result.success(getCachedLatestDebits(limit))
-    }
+    override suspend fun refreshLatestDebits(limit: Int): Result<CachedItems<Debit>> = Result.success(getCachedLatestDebits(limit))
 
-    override suspend fun refreshDebits(canyonId: Int): Result<List<Debit>> {
-        return Result.success(E2eFixtureState.canyonDetails.value[canyonId]?.debits.orEmpty())
-    }
+    override suspend fun refreshDebits(canyonId: Int): Result<List<Debit>> =
+        Result.success(E2eFixtureState.canyonDetails.value[canyonId]?.debits.orEmpty())
 }

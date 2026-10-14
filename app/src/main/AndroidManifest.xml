@@ -2,10 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Network access for scraping canyon data -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-
     <!-- Public photo export on Android 8/9 -->
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
@@ -25,7 +21,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:networkSecurityConfig="@xml/network_security_config"
         android:icon="@mipmap/ic_launcher"
-        android:roundIcon="@mipmap/ic_launcher"
+        android:roundIcon="@mipmap/ic_launcher_round"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.DescenteCanyon"
@@ -40,19 +36,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Deep link support for descente-canyon.com URLs -->
-            <intent-filter>
+            <!-- Canyon pages of descente-canyon.com can be opened with the app (not an App Link:
+                 the domain is not ours, so it cannot be verified). -->
+            <intent-filter android:autoVerify="false">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data
-                    android:scheme="https"
-                    android:host="www.descente-canyon.com"
-                    android:pathPrefix="/canyoning/canyon/" />
-                <data
-                    android:scheme="https"
-                    android:host="descente-canyon.com"
-                    android:pathPrefix="/canyoning/canyon/" />
+                <data android:scheme="https" />
+                <data android:host="www.descente-canyon.com" />
+                <data android:host="descente-canyon.com" />
+                <data android:pathPrefix="/canyoning/canyon/" />
             </intent-filter>
         </activity>
 

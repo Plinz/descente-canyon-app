@@ -7,14 +7,9 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
+import fr.descentecanyon.app.core.ui.R
 
-import fr.descentecanyon.app.R
-
-enum class BottomNavItem(
-    @param:StringRes val labelResId: Int,
-    val icon: ImageVector,
-    val screen: Screen,
-) {
+enum class BottomNavItem(@param:StringRes val labelResId: Int, val icon: ImageVector, val screen: Screen) {
     HOME(R.string.tab_home, Icons.Default.Home, Screen.Home),
     SEARCH(R.string.tab_search, Icons.Default.Search, Screen.Search),
     MAP(R.string.tab_map, Icons.Default.Explore, Screen.Map),

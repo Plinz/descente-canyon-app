@@ -1,5 +1,7 @@
 package fr.descentecanyon.app.e2e.fakes
 
+import fr.descentecanyon.app.domain.error.AppError
+import fr.descentecanyon.app.domain.error.failure
 import fr.descentecanyon.app.domain.model.AuthState
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import javax.inject.Inject
@@ -19,7 +21,9 @@ class FakeAuthRepository @Inject constructor() : AuthRepository {
         E2eFixtureState.authState.value = AuthState.Disconnected
     }
 
-    override suspend fun tryRestoreSession(): Result<Unit> = Result.failure(IllegalStateException("No stored session"))
+    override suspend fun tryRestoreSession(): Result<Unit> = failure(AppError.AuthenticationRequired)
 
-    override fun hasSavedCredentials(): Boolean = false
+    override suspend fun validateSession(): Result<Unit> = Result.success(Unit)
+
+    override fun rememberedUsername(): String? = null
 }

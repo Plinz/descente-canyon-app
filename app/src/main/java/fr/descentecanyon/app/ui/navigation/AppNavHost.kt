@@ -3,10 +3,10 @@ package fr.descentecanyon.app.ui.navigation
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -15,9 +15,10 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.ui.canyon.CanyonDetailScreen
-import fr.descentecanyon.app.ui.canyon.DebitPredictionInfoScreen
 import fr.descentecanyon.app.ui.canyon.CanyonPointsMapScreen
+import fr.descentecanyon.app.ui.canyon.DebitPredictionInfoScreen
 import fr.descentecanyon.app.ui.canyon.PhotoGalleryScreen
 import fr.descentecanyon.app.ui.debit.DebitFormScreen
 import fr.descentecanyon.app.ui.favorites.FavoritesScreen
@@ -28,13 +29,9 @@ import fr.descentecanyon.app.ui.notifications.NotificationCenterScreen
 import fr.descentecanyon.app.ui.search.SearchScreen
 import fr.descentecanyon.app.ui.users.UserProfileScreen
 import fr.descentecanyon.app.ui.users.UserSearchScreen
-import fr.descentecanyon.app.domain.model.normalizeForSearch
 
 @Composable
-fun AppNavHost(
-    navController: NavHostController,
-    topLevelContentPadding: PaddingValues = PaddingValues(),
-) {
+fun AppNavHost(navController: NavHostController, topLevelContentPadding: PaddingValues = PaddingValues()) {
     NavHost(
         navController = navController,
         startDestination = Screen.Home,

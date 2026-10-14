@@ -7,31 +7,32 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
-import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItemDefaults
+import androidx.compose.material3.NavigationBarDefaults
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavBackStackEntry
@@ -41,20 +42,22 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import fr.descentecanyon.app.R
+import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.startup.AppStartupCoordinator
 import fr.descentecanyon.app.startup.StartupLaunchMode
+import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.navigation.AppLaunchTarget
 import fr.descentecanyon.app.ui.navigation.AppNavHost
 import fr.descentecanyon.app.ui.navigation.BottomNavItem
 import fr.descentecanyon.app.ui.navigation.Screen
 import fr.descentecanyon.app.ui.navigation.consumeLaunchTarget
 import fr.descentecanyon.app.ui.navigation.navigateSingleTop
-import fr.descentecanyon.app.ui.design.LocalDcColors
+import fr.descentecanyon.app.ui.test.TestTags
 import fr.descentecanyon.app.ui.theme.DescenteCanyonTheme
-import kotlinx.coroutines.flow.MutableSharedFlow
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -103,7 +106,7 @@ private fun AppStartupScreen(
         key1 = appStartupCoordinator,
         key2 = retryVersion.intValue,
     ) {
-        value = runCatching {
+        value = suspendRunCatching {
             when (appStartupCoordinator.resolveLaunchMode()) {
                 StartupLaunchMode.NON_BLOCKING -> StartupUiState.AppVisible(isBackgroundInitializing = true)
                 StartupLaunchMode.BLOCKING_IMPORT -> {
@@ -134,7 +137,7 @@ private fun AppStartupScreen(
         is StartupUiState.AppVisible -> {
             if (state.isBackgroundInitializing) {
                 LaunchedEffect(appStartupCoordinator) {
-                    runCatching {
+                    suspendRunCatching {
                         runStartupInitialization(appStartupCoordinator)
                     }.onFailure { throwable ->
                         PerformanceTrace.logEvent(
@@ -179,10 +182,7 @@ private sealed interface StartupUiState {
 private const val TAG = "MainActivity"
 
 @Composable
-private fun MainScreen(
-    initialLaunchTarget: AppLaunchTarget,
-    incomingLaunchTargets: MutableSharedFlow<AppLaunchTarget>,
-) {
+private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTargets: MutableSharedFlow<AppLaunchTarget>) {
     androidx.compose.runtime.LaunchedEffect(Unit) {
         PerformanceTrace.logEvent("main_screen_visible")
     }
@@ -215,7 +215,7 @@ private fun MainScreen(
                             Screen.CanyonDetail(
                                 canyonId = target.canyonId,
                                 openDebitsTab = target.openDebitsTab,
-                            )
+                            ),
                         )
                     }
                 }
@@ -242,8 +242,8 @@ private fun MainScreen(
                                     dcColors.waterDeep.copy(alpha = 0.26f),
                                     dcColors.surfaceRaised,
                                     dcColors.rock.copy(alpha = 0.16f),
-                                )
-                            )
+                                ),
+                            ),
                         ),
                         containerColor = androidx.compose.ui.graphics.Color.Transparent,
                         tonalElevation = 0.dp,
@@ -252,6 +252,7 @@ private fun MainScreen(
                         BottomNavItem.entries.forEach { item ->
                             val itemLabel = stringResource(item.labelResId)
                             NavigationBarItem(
+                                modifier = Modifier.testTag(TestTags.bottomNavItem(item.name)),
                                 icon = { Icon(item.icon, contentDescription = itemLabel) },
                                 label = { Text(itemLabel) },
                                 colors = NavigationBarItemDefaults.colors(
@@ -273,7 +274,7 @@ private fun MainScreen(
                                             navController.navigate(screen) {
                                                 applyAppRootNavigation(startDestinationId)
                                             }
-                                        }
+                                        },
                                     )
                                 },
                             )
@@ -301,14 +302,12 @@ internal fun resolveSelectedBottomNavItem(backStackEntry: NavBackStackEntry?): B
     }
 }
 
-internal fun selectedBottomNavItemForScreen(screen: Screen): BottomNavItem? {
-    return when (screen) {
-        Screen.Home -> BottomNavItem.HOME
-        Screen.Search -> BottomNavItem.SEARCH
-        Screen.Map -> BottomNavItem.MAP
-        Screen.Favorites -> BottomNavItem.FAVORITES
-        else -> null
-    }
+internal fun selectedBottomNavItemForScreen(screen: Screen): BottomNavItem? = when (screen) {
+    Screen.Home -> BottomNavItem.HOME
+    Screen.Search -> BottomNavItem.SEARCH
+    Screen.Map -> BottomNavItem.MAP
+    Screen.Favorites -> BottomNavItem.FAVORITES
+    else -> null
 }
 
 internal fun shouldShowBottomBar(backStackEntry: NavBackStackEntry?): Boolean {
@@ -320,11 +319,7 @@ internal fun shouldShowBottomBar(backStackEntry: NavBackStackEntry?): Boolean {
         destination.hasRoute(Screen.CanyonDetail::class)
 }
 
-internal fun handleBottomNavClick(
-    item: BottomNavItem,
-    popToHome: () -> Boolean,
-    navigate: (Screen) -> Unit,
-) {
+internal fun handleBottomNavClick(item: BottomNavItem, popToHome: () -> Boolean, navigate: (Screen) -> Unit) {
     if (item == BottomNavItem.HOME && popToHome()) {
         return
     }

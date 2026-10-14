@@ -10,7 +10,6 @@ import javax.inject.Singleton
 class FakeEdfPracticabilityRepository @Inject constructor() : EdfPracticabilityRepository {
     override fun getReference(canyonId: Int): EdfPracticabilityReference? = null
 
-    override suspend fun getStatus(canyonId: Int): Result<CanyonEdfPracticability> {
-        return Result.failure(IllegalStateException("No fake EDF status for canyon $canyonId"))
-    }
+    override suspend fun getStatus(canyonId: Int): Result<CanyonEdfPracticability> =
+        Result.failure(IllegalStateException("No fake EDF status for canyon $canyonId"))
 }

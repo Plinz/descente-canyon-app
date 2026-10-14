@@ -11,6 +11,8 @@ import kotlinx.coroutines.flow.map
 class FakeFavoritesRepository @Inject constructor() : FavoritesRepository {
     override fun getFavorites(): Flow<List<CanyonSummary>> = E2eFixtureState.favoriteIds.map { E2eFixtureState.favorites() }
 
+    override fun observeFavoriteIds(): Flow<Set<Int>> = E2eFixtureState.favoriteIds
+
     override suspend fun addFavorite(canyonId: Int) {
         E2eFixtureState.favoriteIds.value = E2eFixtureState.favoriteIds.value + canyonId
     }

@@ -8,11 +8,7 @@ import javax.inject.Singleton
 
 @Singleton
 class FakeInterestRatingRepository @Inject constructor() : InterestRatingRepository {
-    override suspend fun get(canyonId: Int): Result<CanyonInterestRating> {
-        return Result.success(CanyonInterestRating(canyonId = canyonId))
-    }
+    override suspend fun get(canyonId: Int): Result<CanyonInterestRating> = Result.success(CanyonInterestRating(canyonId = canyonId))
 
-    override suspend fun submit(submission: InterestRatingSubmission): Result<Unit> {
-        return Result.success(Unit)
-    }
+    override suspend fun submit(submission: InterestRatingSubmission): Result<Unit> = Result.success(Unit)
 }

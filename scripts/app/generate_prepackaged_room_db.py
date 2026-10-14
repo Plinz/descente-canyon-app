@@ -9,9 +9,6 @@ import unicodedata
 from pathlib import Path
 
 
-DATASET_VERSION_KEY = "embedded_dataset_version"
-WATERSHEDS_VERSION_KEY = "embedded_watersheds_version"
-
 GEO_POINT_PRIORITY = {
     "PARKING_AMONT": 0,
     "PARKING_AVAL": 1,
@@ -286,7 +283,6 @@ def build_search_items(canyons: list[dict], geo_points: list[dict]) -> list[dict
                 "hasSpecificRegulation": 1 if canyon.get("hasSpecificRegulation") else 0,
                 "isForbidden": 1 if canyon.get("isForbidden") else 0,
                 "hasNavette": 1 if has_useful_navette(canyon.get("navette")) else 0,
-                "isFavorite": 1 if canyon.get("isFavorite") else 0,
                 "representativeLat": representative_point.get("latitude") if representative_point else None,
                 "representativeLng": representative_point.get("longitude") if representative_point else None,
                 "url": canyon["url"],
@@ -364,7 +360,6 @@ def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest:
             item["hasSpecificRegulation"],
             item["isForbidden"],
             item["hasNavette"],
-            item["isFavorite"],
             item["representativeLat"],
             item["representativeLng"],
             item["url"],
@@ -382,13 +377,13 @@ def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest:
             cotation, altitudeDepart, denivele, longueur, cascadeMax, cordeMin, tempsApproche, tempsDescente,
             tempsRetour, navette, interet, nbVotes, url, accesAval, accesAmont, approche, descente, retour,
             engagement, periode, geologie, historique, remarques, hasSpecificRegulation, isForbidden,
-            isOffline, isFavorite, lastUpdated, sourceType, sourceKey
+            lastUpdated, sourceType, sourceKey
         ) VALUES (
             :id, :nom, :nomComplet, :pays, :region, :departement, :commune, :communesJson, :massif, :bassin, :coursEau,
             :cotation, :altitudeDepart, :denivele, :longueur, :cascadeMax, :cordeMin, :tempsApproche, :tempsDescente,
             :tempsRetour, :navette, :interet, :nbVotes, :url, :accesAval, :accesAmont, :approche, :descente, :retour,
             :engagement, :periode, :geologie, :historique, :remarques, :hasSpecificRegulation, :isForbidden,
-            :isOffline, :isFavorite, :lastUpdated, :sourceType, :sourceKey
+            :lastUpdated, :sourceType, :sourceKey
         )
         """,
         [
@@ -398,8 +393,6 @@ def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest:
                 "interet": normalized_interest(row.get("interet")),
                 "hasSpecificRegulation": 1 if row.get("hasSpecificRegulation") else 0,
                 "isForbidden": 1 if row.get("isForbidden") else 0,
-                "isOffline": 1 if row.get("isOffline") else 0,
-                "isFavorite": 1 if row.get("isFavorite") else 0,
                 "sourceType": row.get("sourceType") or "DESCENTE_CANYON",
                 "sourceKey": row.get("sourceKey") or f"dc:{row['id']}",
             }
@@ -544,15 +537,7 @@ def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest:
         )
 
     connection.executemany(
-        "INSERT INTO app_metadata (key, value) VALUES (?, ?)",
-        [
-            (DATASET_VERSION_KEY, manifest["generatedAt"]),
-            (WATERSHEDS_VERSION_KEY, manifest.get("versions", {}).get("watersheds", manifest["generatedAt"])),
-        ],
-    )
-
-    connection.executemany(
-        "INSERT INTO search_index (id, nom, nomComplet, pays, countryTokensJson, region, departement, departmentTokensJson, subdivisionsByCountryJson, commune, massif, bassin, coursEau, cotation, cotationVertical, cotationAquatic, cotationEngagement, interet, nbVotes, altitudeDepart, denivele, longueur, cascadeMax, cordeMin, hasSpecificRegulation, isForbidden, hasNavette, isFavorite, representativeLat, representativeLng, url, searchableText, normalizedNom, normalizedNomComplet) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        "INSERT INTO search_index (id, nom, nomComplet, pays, countryTokensJson, region, departement, departmentTokensJson, subdivisionsByCountryJson, commune, massif, bassin, coursEau, cotation, cotationVertical, cotationAquatic, cotationEngagement, interet, nbVotes, altitudeDepart, denivele, longueur, cascadeMax, cordeMin, hasSpecificRegulation, isForbidden, hasNavette, representativeLat, representativeLng, url, searchableText, normalizedNom, normalizedNomComplet) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         search_index_rows,
     )
 

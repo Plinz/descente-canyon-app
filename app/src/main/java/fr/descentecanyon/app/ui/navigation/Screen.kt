@@ -29,10 +29,7 @@ sealed interface Screen {
     data class UserProfile(val normalizedUsername: String) : Screen
 
     @Serializable
-    data class CanyonDetail(
-        val canyonId: Int,
-        val openDebitsTab: Boolean = false,
-    ) : Screen
+    data class CanyonDetail(val canyonId: Int, val openDebitsTab: Boolean = false) : Screen
 
     @Serializable
     data class DebitForm(val canyonId: Int) : Screen

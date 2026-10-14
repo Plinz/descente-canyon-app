@@ -1,0 +1,369 @@
+package fr.descentecanyon.app.ui.canyon
+
+import android.Manifest
+import android.content.pm.PackageManager
+import android.os.Build
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.NotificationsNone
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.perf.PerformanceTrace
+import fr.descentecanyon.app.ui.common.asString
+import fr.descentecanyon.app.ui.common.needsNotificationPermission
+import fr.descentecanyon.app.ui.components.AppFloatingActionButton
+import fr.descentecanyon.app.ui.components.CompactAppBar
+import fr.descentecanyon.app.ui.design.rememberDcContentWidth
+import fr.descentecanyon.app.ui.test.TestTags
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CanyonDetailScreen(
+    canyonId: Int,
+    onBackClick: () -> Unit,
+    onReportDebitClick: () -> Unit,
+    onRateInterestClick: () -> Unit,
+    onShowMapClick: () -> Unit,
+    onOpenPredictionInfo: () -> Unit,
+    onOpenPhotoGallery: (Long) -> Unit,
+    onUserClick: (String) -> Unit = {},
+    openDebitsTabInitially: Boolean = false,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(),
+    refreshDebitsAfterSubmission: Boolean = false,
+    onRefreshDebitsAfterSubmissionHandled: () -> Unit = {},
+    refreshDetailAfterInterestRating: Boolean = false,
+    onRefreshDetailAfterInterestRatingHandled: () -> Unit = {},
+    viewModel: CanyonDetailViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val contentWidth = rememberDcContentWidth(maxWidth = 940.dp)
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { viewModel.toggleDebitNotifications() }
+
+    LaunchedEffect(canyonId) {
+        PerformanceTrace.logEvent("canyon_detail_screen_visible", "canyonId" to canyonId)
+    }
+
+    LaunchedEffect(refreshDebitsAfterSubmission) {
+        if (refreshDebitsAfterSubmission) {
+            viewModel.refreshDebitsAfterSubmission()
+            onRefreshDebitsAfterSubmissionHandled()
+        }
+    }
+
+    LaunchedEffect(refreshDetailAfterInterestRating) {
+        if (refreshDetailAfterInterestRating) {
+            viewModel.loadCanyon(canyonId)
+            onRefreshDetailAfterInterestRatingHandled()
+        }
+    }
+
+    LaunchedEffect(uiState.transientMessage) {
+        uiState.transientMessage?.let { message ->
+            Toast.makeText(context, message.asString(context), Toast.LENGTH_SHORT).show()
+            viewModel.clearTransientMessage()
+        }
+    }
+
+    DisposableEffect(lifecycleOwner, viewModel) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                viewModel.reconcilePersistedPhotos()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+
+    Scaffold(
+        containerColor = MaterialTheme.colorScheme.background,
+        contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        topBar = {
+            CompactAppBar(
+                title = uiState.canyonDetail?.canyon?.nom ?: stringResource(R.string.canyon_fallback_title, canyonId),
+                navigation = {
+                    IconButton(onClick = onBackClick) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = stringResource(R.string.back),
+                        )
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = onReportDebitClick,
+                        modifier = Modifier.testTag(TestTags.DETAIL_REPORT_DEBIT_BUTTON),
+                    ) {
+                        AddDebitIcon(contentDescription = stringResource(R.string.debit_add_action))
+                    }
+                    IconButton(
+                        onClick = onRateInterestClick,
+                        modifier = Modifier.testTag(TestTags.DETAIL_RATE_INTEREST_BUTTON),
+                    ) {
+                        AddInterestIcon(contentDescription = stringResource(R.string.interest_rating_add_action))
+                    }
+                    IconButton(
+                        onClick = {
+                            if (!uiState.isDebitNotificationsEnabled &&
+                                context.needsNotificationPermission()
+                            ) {
+                                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            } else {
+                                viewModel.toggleDebitNotifications()
+                            }
+                        },
+                        modifier = Modifier.testTag(TestTags.DETAIL_DEBIT_NOTIFICATION_BUTTON),
+                    ) {
+                        Icon(
+                            imageVector = if (uiState.isDebitNotificationsEnabled) {
+                                Icons.Default.NotificationsActive
+                            } else {
+                                Icons.Default.NotificationsNone
+                            },
+                            contentDescription = if (uiState.isDebitNotificationsEnabled) {
+                                stringResource(R.string.notifications_canyon_unfollow_action)
+                            } else {
+                                stringResource(R.string.notifications_canyon_follow_action)
+                            },
+                            tint = if (uiState.isDebitNotificationsEnabled) {
+                                MaterialTheme.colorScheme.primary
+                            } else {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            },
+                        )
+                    }
+                    IconButton(
+                        onClick = viewModel::toggleFavorite,
+                        modifier = Modifier.testTag(TestTags.DETAIL_FAVORITE_BUTTON),
+                    ) {
+                        Icon(
+                            imageVector = if (uiState.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
+                            contentDescription = if (uiState.isFavorite) {
+                                stringResource(R.string.remove_favorite)
+                            } else {
+                                stringResource(R.string.add_favorite)
+                            },
+                            tint = if (uiState.isFavorite) {
+                                MaterialTheme.colorScheme.error
+                            } else {
+                                MaterialTheme.colorScheme.onPrimaryContainer
+                            },
+                        )
+                    }
+                },
+            )
+        },
+        modifier = modifier,
+    ) { innerPadding ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+        ) {
+            when {
+                uiState.isLoading -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        CircularProgressIndicator()
+                    }
+                }
+
+                uiState.error != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Column(
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = uiState.error?.asString() ?: stringResource(R.string.error_generic),
+                                color = MaterialTheme.colorScheme.error,
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                            TextButton(onClick = { viewModel.loadCanyon(canyonId) }) {
+                                Text(stringResource(R.string.retry))
+                            }
+                        }
+                    }
+                }
+
+                uiState.canyonDetail != null -> {
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.TopCenter,
+                    ) {
+                        CanyonDetailContent(
+                            detail = uiState.canyonDetail!!,
+                            isRefreshingDetail = uiState.isRefreshingDetail,
+                            isOnline = uiState.isOnline,
+                            isLoadingPhotos = uiState.isLoadingPhotos,
+                            photoError = uiState.photoError?.asString(),
+                            isLoadingDebits = uiState.isLoadingDebits,
+                            debitError = uiState.debitError?.asString(),
+                            edfStatus = uiState.edfStatus,
+                            isLoadingEdfStatus = uiState.isLoadingEdfStatus,
+                            edfStatusError = uiState.edfStatusError?.asString(),
+                            edfStatusSourceUrl = uiState.edfStatusSourceUrl,
+                            weather = uiState.weather,
+                            isLoadingWeather = uiState.isLoadingWeather,
+                            weatherError = uiState.weatherError?.asString(),
+                            predictions = uiState.predictions,
+                            isLoadingPredictions = uiState.isLoadingPredictions,
+                            predictionError = uiState.predictionError?.asString(),
+                            onOpenPredictionInfo = onOpenPredictionInfo,
+                            downloadingPhotoIds = uiState.downloadingPhotoIds,
+                            onOpenPhotoGallery = onOpenPhotoGallery,
+                            onUserClick = onUserClick,
+                            onPersistedPhotoMissing = viewModel::onPersistedPhotoMissing,
+                            openDebitsTabInitially = openDebitsTabInitially,
+                            bottomContentPadding = contentPadding.calculateBottomPadding() + 96.dp,
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .width(contentWidth),
+                        )
+                    }
+                }
+            }
+
+            if (uiState.canyonDetail != null && !uiState.isLoading && uiState.error == null) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.BottomEnd,
+                ) {
+                    AppFloatingActionButton(
+                        onClick = onShowMapClick,
+                        modifier = Modifier.padding(
+                            end = 20.dp,
+                            bottom = contentPadding.calculateBottomPadding() + 20.dp,
+                        ),
+                        icon = { iconModifier ->
+                            Icon(
+                                imageVector = Icons.Default.LocationOn,
+                                contentDescription = stringResource(R.string.show_map_points),
+                                modifier = iconModifier,
+                            )
+                        },
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AddDebitIcon(contentDescription: String, modifier: Modifier = Modifier) {
+    Box(modifier = modifier.size(30.dp)) {
+        Icon(
+            imageVector = Icons.Default.WaterDrop,
+            contentDescription = contentDescription,
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier
+                .size(26.dp)
+                .align(Alignment.CenterStart),
+        )
+        Surface(
+            modifier = Modifier
+                .size(15.dp)
+                .align(Alignment.BottomEnd),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    modifier = Modifier.size(11.dp),
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun AddInterestIcon(contentDescription: String, modifier: Modifier = Modifier) {
+    Box(modifier = modifier.size(30.dp)) {
+        Icon(
+            imageVector = Icons.Default.Star,
+            contentDescription = contentDescription,
+            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            modifier = Modifier
+                .size(26.dp)
+                .align(Alignment.CenterStart),
+        )
+        Surface(
+            modifier = Modifier
+                .size(15.dp)
+                .align(Alignment.BottomEnd),
+            shape = CircleShape,
+            color = MaterialTheme.colorScheme.primary,
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = null,
+                    modifier = Modifier.size(11.dp),
+                )
+            }
+        }
+    }
+}

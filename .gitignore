@@ -1,24 +1,33 @@
-*.iml
-.gradle
-/local.properties
-/.idea
-.DS_Store
-/build
-/captures
+# Gradle / Android build outputs (every module, build-logic included)
+.gradle/
+build/
+.kotlin/
 .externalNativeBuild
 .cxx
+/captures
 local.properties
-/app/build
 /app/release
+
+# IDE
+*.iml
+/.idea
+.DS_Store
+
+# Release artifacts and signing material
 *.apk
 *.aab
 *.jks
 *.keystore
+
+# Python (data and model pipelines)
 __pycache__/
 *.pyc
 .venv/
 catboost_info/
 logs/
+
+# Node tooling (tools/overlay-merge)
 node_modules/
-.wrangler/
+
+# Local secrets
 .env-proton

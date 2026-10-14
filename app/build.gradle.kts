@@ -40,7 +40,15 @@ val fileVersionCode = versionProperties.getProperty("VERSION_CODE")?.toIntOrNull
 val fileVersionName = versionProperties.getProperty("VERSION_NAME")?.takeIf { it.isNotBlank() } ?: "1.0.0"
 val ciVersionCode = providers.gradleProperty("ciVersionCode").orNull?.toIntOrNull() ?: fileVersionCode
 val ciVersionName = providers.gradleProperty("ciVersionName").orNull ?: fileVersionName
-val pythonBinary = providers.gradleProperty("pythonBinary").orNull?.takeIf { it.isNotBlank() } ?: "python"
+// Asset generators are Python scripts: use -PpythonBinary=... or the first python3/python found on the PATH.
+val pythonBinary = providers.gradleProperty("pythonBinary").orNull?.takeIf { it.isNotBlank() } ?: detectPythonBinary()
+
+fun detectPythonBinary(): String {
+    val pathDirectories = providers.environmentVariable("PATH").orNull.orEmpty().split(File.pathSeparator)
+    return listOf("python3", "python").firstOrNull { name ->
+        pathDirectories.any { directory -> File(directory, name).canExecute() || File(directory, "$name.exe").canExecute() }
+    } ?: "python"
+}
 val hasReleaseSigning = listOf(
     releaseKeystoreFile,
     releaseStorePassword,
@@ -49,16 +57,16 @@ val hasReleaseSigning = listOf(
 ).all { !it.isNullOrBlank() }
 
 val runtimeAssetsDirectory = layout.buildDirectory.dir("generated/runtime-assets/main")
-val prepackagedDatabaseAssetName = "descente_canyon_prepackaged.db"
+val prepackagedDatabaseAssetName = "catalog.db"
 val staticFeatureIndexAssetName = "canyon_static_features.index.json"
 val runtimeLookupCoreAssetName = "runtime_feature_lookups.core.json"
 val runtimeLookupCanyonsAssetName = "runtime_feature_lookups.canyons.json"
 val runtimeLookupIndexAssetName = "runtime_feature_lookups.canyons.index.json"
-val generatedPrepackagedDatabaseFile = layout.buildDirectory.file("generated/prepackaged-room-db/$prepackagedDatabaseAssetName")
+val generatedPrepackagedDatabaseFile = layout.buildDirectory.file("generated/catalog-db/$prepackagedDatabaseAssetName")
 val prepackagedDatabaseGeneratorScript = rootProject.file("scripts/app/generate_prepackaged_room_db.py")
 val staticFeatureIndexGeneratorScript = rootProject.file("scripts/app/generate_static_feature_index.py")
 val runtimeLookupAssetGeneratorScript = rootProject.file("scripts/app/generate_runtime_lookup_assets.py")
-val prepackagedDatabaseSchemaFile = project.file("schemas/fr.descentecanyon.app.data.local.database.DescenteCanyonDatabase/14.json")
+val prepackagedDatabaseSchemaFile = rootProject.file("core/data/schemas/fr.descentecanyon.app.data.local.catalog.CatalogDatabase/1.json")
 val prepackagedRoomImportDirectory = rootProject.file("offline-data/full/room-import")
 val staticFeaturesAssetFile = rootProject.file("modele_statistique/canyon_static_features.json")
 val runtimeLookupsAssetFile = rootProject.file("modele_statistique/runtime_feature_lookups.json")
@@ -69,7 +77,7 @@ val generatedRuntimeLookupIndexFile = layout.buildDirectory.file("generated/ml-i
 
 val generatePrepackagedRoomDatabase = tasks.register<Exec>("generatePrepackagedRoomDatabase") {
     group = "build"
-    description = "Generates a prototype prepackaged Room database from room-import JSON."
+    description = "Generates the canyon catalog database (Room CatalogDatabase) from room-import JSON."
     inputs.file(prepackagedDatabaseGeneratorScript)
     inputs.file(prepackagedDatabaseSchemaFile)
     inputs.dir(prepackagedRoomImportDirectory)
@@ -156,10 +164,7 @@ val syncRuntimeAssets = tasks.register<Sync>("syncRuntimeAssets") {
     }
 }
 
-data class ReleasePackageEntry(
-    val path: String,
-    val bytes: Long,
-)
+data class ReleasePackageEntry(val path: String, val bytes: Long)
 
 data class ReleasePackageInspection(
     val label: String,
@@ -196,18 +201,16 @@ fun inspectReleasePackage(label: String, file: File, assetPathPrefix: String): R
 
 fun Long.toDisplayMegabytes(): String = "%.2f MB".format(this / (1024.0 * 1024.0))
 
-fun buildReleasePackageReport(inspections: List<ReleasePackageInspection>): String {
-    return buildString {
-        inspections.forEach { inspection ->
-            appendLine("${inspection.label}: ${inspection.file.name}")
-            appendLine("Package size: ${inspection.packageBytes.toDisplayMegabytes()}")
-            appendLine("Packaged assets: ${inspection.assetBytes.toDisplayMegabytes()}")
-            appendLine("Top 100 packaged files:")
-            inspection.topEntries.forEachIndexed { index, entry ->
-                appendLine("${index + 1}. ${entry.bytes.toDisplayMegabytes()}  ${entry.path}")
-            }
-            appendLine()
+fun buildReleasePackageReport(inspections: List<ReleasePackageInspection>): String = buildString {
+    inspections.forEach { inspection ->
+        appendLine("${inspection.label}: ${inspection.file.name}")
+        appendLine("Package size: ${inspection.packageBytes.toDisplayMegabytes()}")
+        appendLine("Packaged assets: ${inspection.assetBytes.toDisplayMegabytes()}")
+        appendLine("Top 100 packaged files:")
+        inspection.topEntries.forEachIndexed { index, entry ->
+            appendLine("${index + 1}. ${entry.bytes.toDisplayMegabytes()}  ${entry.path}")
         }
+        appendLine()
     }
 }
 
@@ -252,7 +255,7 @@ android {
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
         debug {
@@ -271,7 +274,7 @@ android {
             matchingFallbacks += listOf("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro",
             )
         }
     }
@@ -363,12 +366,12 @@ tasks.register("verifyReleaseSizeBudget") {
                 }
                 if (inspection.packageBytes > packageBudgetBytes) {
                     add(
-                        "${inspection.label} size ${inspection.packageBytes.toDisplayMegabytes()} exceeds budget ${packageBudgetBytes.toDisplayMegabytes()}"
+                        "${inspection.label} size ${inspection.packageBytes.toDisplayMegabytes()} exceeds budget ${packageBudgetBytes.toDisplayMegabytes()}",
                     )
                 }
                 if (inspection.assetBytes > assetBudgetBytes) {
                     add(
-                        "${inspection.label} assets ${inspection.assetBytes.toDisplayMegabytes()} exceed budget ${assetBudgetBytes.toDisplayMegabytes()}"
+                        "${inspection.label} assets ${inspection.assetBytes.toDisplayMegabytes()} exceed budget ${assetBudgetBytes.toDisplayMegabytes()}",
                     )
                 }
             }
@@ -395,12 +398,18 @@ kotlin {
     }
 }
 
-ksp {
-    arg("room.schemaLocation", "$projectDir/schemas")
-    arg("room.generateKotlin", "true")
-}
-
 dependencies {
+    implementation(project(":core:domain"))
+    implementation(project(":core:data"))
+    implementation(project(":core:ui"))
+    implementation(project(":feature:home"))
+    implementation(project(":feature:explore"))
+    implementation(project(":feature:canyon"))
+    implementation(project(":feature:contribute"))
+    implementation(project(":feature:favorites"))
+    implementation(project(":feature:notifications"))
+    implementation(project(":feature:users"))
+
     // AndroidX Core
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -421,33 +430,16 @@ dependencies {
     // Navigation
     implementation(libs.androidx.navigation.compose)
 
-    // Room (local database - offline storage)
-    implementation(libs.androidx.room.runtime)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-
-    // DataStore (preferences)
-    implementation(libs.androidx.datastore.preferences)
-
     // WorkManager (periodic background sync)
     implementation(libs.androidx.work.runtime.ktx)
-
-    // Security (encrypted credential storage)
-    implementation(libs.androidx.security.crypto)
 
     // Hilt (dependency injection)
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
     implementation(libs.androidx.hilt.navigation.compose)
 
-    // JSoup (HTML parsing)
-    implementation(libs.jsoup)
-
-    // Ktor (HTTP client)
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.android)
-    implementation(libs.ktor.client.content.negotiation)
-    implementation(libs.ktor.serialization.kotlinx.json)
+    // OkHttp (single HTTP stack: site, JSON APIs, images, map tiles)
+    implementation(libs.okhttp)
 
     // Kotlin Serialization
     implementation(libs.kotlinx.serialization.json)
@@ -455,12 +447,8 @@ dependencies {
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
 
-    // On-device ML inference
-    implementation(libs.onnxruntime.android)
-
-    // MapLibre (offline maps)
+    // MapLibre (tiles go through the app OkHttp client)
     implementation(libs.maplibre)
-    implementation(libs.play.services.location)
 
     // Coil (image loading with caching)
     implementation(libs.coil.compose)
@@ -469,9 +457,11 @@ dependencies {
     // Testing
     testImplementation(libs.junit)
     testImplementation(libs.mockk)
-    testImplementation(libs.turbine)
-    testImplementation(libs.onnxruntime.jvm)
     testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(project(":core:testing"))
+    testImplementation(libs.robolectric)
+    testImplementation(libs.androidx.test.core)
+    testImplementation(libs.androidx.room.runtime)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.test.runner)
@@ -480,5 +470,8 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.hilt.android.testing)
+    // The ONNX contract test runs the packaged model on the device.
+    androidTestImplementation(libs.onnxruntime.android)
+    androidTestImplementation(libs.kotlinx.serialization.json)
     kspAndroidTest(libs.hilt.android.compiler)
 }

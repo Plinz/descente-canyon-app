@@ -1,0 +1,24 @@
+package fr.descentecanyon.app.ui.test
+
+object TestTags {
+    const val HOME_QUICK_SEARCH = "home_quick_search"
+    const val SEARCH_QUERY_FIELD = "search_query_field"
+    const val DETAIL_FAVORITE_BUTTON = "detail_favorite_button"
+    const val DETAIL_DEBIT_NOTIFICATION_BUTTON = "detail_debit_notification_button"
+    const val DETAIL_REPORT_DEBIT_BUTTON = "detail_report_debit_button"
+    const val DETAIL_RATE_INTEREST_BUTTON = "detail_rate_interest_button"
+    const val FAVORITES_LIST = "favorites_list"
+    const val DEBIT_OBSERVER_NAME_FIELD = "debit_observer_name_field"
+    const val DEBIT_OBSERVER_EMAIL_FIELD = "debit_observer_email_field"
+    const val DEBIT_OBSERVATION_DATE_FIELD = "debit_observation_date_field"
+    const val DEBIT_COMMENT_FIELD = "debit_comment_field"
+    const val DEBIT_PERSONAL_COMMENT_FIELD = "debit_personal_comment_field"
+    const val DEBIT_PENDING_COUNT = "debit_pending_count"
+    const val DEBIT_SUBMIT_BUTTON = "debit_submit_button"
+    const val INTEREST_RATING_SLIDER = "interest_rating_slider"
+    const val INTEREST_RATING_SUBMIT_BUTTON = "interest_rating_submit_button"
+
+    fun canyonCard(id: Int): String = "canyon_card_$id"
+
+    fun bottomNavItem(name: String): String = "bottom_nav_$name"
+}

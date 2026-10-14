@@ -1,6 +1,6 @@
 package fr.descentecanyon.app.e2e.fakes
 
-import fr.descentecanyon.app.data.network.ConnectivityObserver
+import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow

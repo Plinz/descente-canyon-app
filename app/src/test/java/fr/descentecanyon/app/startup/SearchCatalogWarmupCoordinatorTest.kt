@@ -26,18 +26,16 @@ class SearchCatalogWarmupCoordinatorTest {
         verify(exactly = 1) { canyonRepository.observeSearchCatalog() }
     }
 
-    private fun searchItem(): CanyonSearchItem {
-        return CanyonSearchItem(
-            id = 42,
-            nom = "Riolan",
-            nomComplet = "Clue du Riolan",
-            pays = "France",
-            cotation = "v3a3III",
-            cotationRating = CotationRating.parse("v3a3III"),
-            url = "https://www.descente-canyon.com/canyoning/canyon/42/riolan.html",
-            searchableText = "riolan clue du riolan france",
-            normalizedNom = "riolan",
-            normalizedNomComplet = "clue du riolan",
-        )
-    }
+    private fun searchItem(): CanyonSearchItem = CanyonSearchItem(
+        id = 42,
+        nom = "Riolan",
+        nomComplet = "Clue du Riolan",
+        pays = "France",
+        cotation = "v3a3III",
+        cotationRating = CotationRating.parse("v3a3III"),
+        url = "https://www.descente-canyon.com/canyoning/canyon/42/riolan.html",
+        searchableText = "riolan clue du riolan france",
+        normalizedNom = "riolan",
+        normalizedNomComplet = "clue du riolan",
+    )
 }

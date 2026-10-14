@@ -9,9 +9,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 @Singleton
-class PredictionWarmupCoordinator @Inject constructor(
-    private val modelStore: EmbeddedDebitModelStore,
-) {
+class PredictionWarmupCoordinator @Inject constructor(private val modelStore: EmbeddedDebitModelStore) {
 
     private val warmupMutex = Mutex()
 

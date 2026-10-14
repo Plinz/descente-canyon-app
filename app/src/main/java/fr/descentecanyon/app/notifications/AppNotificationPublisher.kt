@@ -13,23 +13,24 @@ import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.descentecanyon.app.R
+import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.error.AppError
+import fr.descentecanyon.app.domain.model.RejectedDebitSubmission
 import fr.descentecanyon.app.domain.model.TrackedActivityEvent
 import fr.descentecanyon.app.ui.MainActivity
 import fr.descentecanyon.app.ui.navigation.AppLaunchTarget
 import fr.descentecanyon.app.ui.navigation.putLaunchTarget
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class AppNotificationPublisher @Inject constructor(
-    @param:ApplicationContext private val context: Context,
-) {
+class AppNotificationPublisher @Inject constructor(@param:ApplicationContext private val context: Context) {
 
     fun ensureChannelsCreated() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
-
         val manager = context.getSystemService(NotificationManager::class.java) ?: return
         manager.createNotificationChannels(
             listOf(
@@ -47,7 +48,7 @@ class AppNotificationPublisher @Inject constructor(
                 ).apply {
                     description = context.getString(R.string.notification_channel_forum_body)
                 },
-            )
+            ),
         )
     }
 
@@ -75,61 +76,81 @@ class AppNotificationPublisher @Inject constructor(
         return true
     }
 
-    private fun buildSingleDebitNotification(event: TrackedActivityEvent) =
-        NotificationCompat.Builder(context, DEBIT_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(event.title)
-            .setContentText(event.body)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(event.body))
+    /** Tells the user that debit reports stored offline were refused by the site and dropped. */
+    fun publishRejectedDebitSubmissions(rejected: List<RejectedDebitSubmission>): Boolean {
+        if (rejected.isEmpty()) return true
+        if (!canPostNotifications(DEBIT_CHANNEL_ID)) return false
+        val first = rejected.first()
+        val body = if (rejected.size == 1) {
+            val date = first.observationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
+            val reason = (first.error as? AppError.Rejected)?.serverMessage
+            listOfNotNull(context.getString(R.string.notification_debit_rejected_body, date), reason).joinToString("\n")
+        } else {
+            context.resources.getQuantityString(R.plurals.notification_debit_rejected_group_body, rejected.size, rejected.size)
+        }
+        val notification = NotificationCompat.Builder(context, DEBIT_CHANNEL_ID)
+            .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+            .setContentTitle(context.getString(R.string.notification_debit_rejected_title))
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setAutoCancel(true)
-            .apply {
-                event.canyonId?.let { setContentIntent(canyonDetailPendingIntent(it)) }
-            }
+            .setContentIntent(canyonDetailPendingIntent(first.canyonId))
             .build()
+        notifySafely(DEBIT_REJECTED_NOTIFICATION_ID, notification)
+        return true
+    }
 
-    private fun buildGroupedDebitNotification(events: List<TrackedActivityEvent>) =
-        NotificationCompat.Builder(context, DEBIT_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(context.getString(R.string.notification_debit_group_title, events.size))
-            .setContentText(events.joinToString(separator = " • ") { it.title })
-            .setStyle(
-                NotificationCompat.InboxStyle().also { style ->
-                    events.take(5).forEach { event ->
-                        style.addLine("${event.title} • ${event.body}")
-                    }
+    private fun buildSingleDebitNotification(event: TrackedActivityEvent) = NotificationCompat.Builder(context, DEBIT_CHANNEL_ID)
+        .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+        .setContentTitle(event.title)
+        .setContentText(event.body)
+        .setStyle(NotificationCompat.BigTextStyle().bigText(event.body))
+        .setAutoCancel(true)
+        .apply {
+            event.canyonId?.let { setContentIntent(canyonDetailPendingIntent(it)) }
+        }
+        .build()
+
+    private fun buildGroupedDebitNotification(events: List<TrackedActivityEvent>) = NotificationCompat.Builder(context, DEBIT_CHANNEL_ID)
+        .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+        .setContentTitle(context.resources.getQuantityString(R.plurals.notification_debit_group_title, events.size, events.size))
+        .setContentText(events.joinToString(separator = " • ") { it.title })
+        .setStyle(
+            NotificationCompat.InboxStyle().also { style ->
+                events.take(5).forEach { event ->
+                    style.addLine("${event.title} • ${event.body}")
                 }
-            )
-            .setAutoCancel(true)
-            .setContentIntent(notificationCenterPendingIntent())
-            .build()
+            },
+        )
+        .setAutoCancel(true)
+        .setContentIntent(notificationCenterPendingIntent())
+        .build()
 
-    private fun buildSingleForumNotification(event: TrackedActivityEvent) =
-        NotificationCompat.Builder(context, FORUM_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(event.title)
-            .setContentText(event.body)
-            .setStyle(NotificationCompat.BigTextStyle().bigText(event.body))
-            .setAutoCancel(true)
-            .apply {
-                event.externalUrl?.let { setContentIntent(browserPendingIntent(it)) }
-            }
-            .build()
+    private fun buildSingleForumNotification(event: TrackedActivityEvent) = NotificationCompat.Builder(context, FORUM_CHANNEL_ID)
+        .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+        .setContentTitle(event.title)
+        .setContentText(event.body)
+        .setStyle(NotificationCompat.BigTextStyle().bigText(event.body))
+        .setAutoCancel(true)
+        .apply {
+            event.externalUrl?.let { setContentIntent(browserPendingIntent(it)) }
+        }
+        .build()
 
-    private fun buildGroupedForumNotification(events: List<TrackedActivityEvent>) =
-        NotificationCompat.Builder(context, FORUM_CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-            .setContentTitle(context.getString(R.string.notification_forum_group_title, events.size))
-            .setContentText(events.joinToString(separator = " • ") { it.forumName ?: it.title })
-            .setStyle(
-                NotificationCompat.InboxStyle().also { style ->
-                    events.take(5).forEach { event ->
-                        style.addLine("${event.forumName ?: context.getString(R.string.home_feed_forum)} • ${event.title}")
-                    }
+    private fun buildGroupedForumNotification(events: List<TrackedActivityEvent>) = NotificationCompat.Builder(context, FORUM_CHANNEL_ID)
+        .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+        .setContentTitle(context.resources.getQuantityString(R.plurals.notification_forum_group_title, events.size, events.size))
+        .setContentText(events.joinToString(separator = " • ") { it.forumName ?: it.title })
+        .setStyle(
+            NotificationCompat.InboxStyle().also { style ->
+                events.take(5).forEach { event ->
+                    style.addLine("${event.forumName ?: context.getString(R.string.home_feed_forum)} • ${event.title}")
                 }
-            )
-            .setAutoCancel(true)
-            .setContentIntent(notificationCenterPendingIntent())
-            .build()
+            },
+        )
+        .setAutoCancel(true)
+        .setContentIntent(notificationCenterPendingIntent())
+        .build()
 
     private fun canyonDetailPendingIntent(canyonId: Int): PendingIntent {
         val intent = Intent(context, MainActivity::class.java)
@@ -156,7 +177,7 @@ class AppNotificationPublisher @Inject constructor(
     }
 
     private fun browserPendingIntent(url: String): PendingIntent {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+        val intent = Intent(Intent.ACTION_VIEW, url.toUri())
         return PendingIntent.getActivity(
             context,
             url.hashCode(),
@@ -169,10 +190,9 @@ class AppNotificationPublisher @Inject constructor(
         val hasPermission = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
         if (!hasPermission || !NotificationManagerCompat.from(context).areNotificationsEnabled()) return false
-        return Build.VERSION.SDK_INT < Build.VERSION_CODES.O ||
-            context.getSystemService(NotificationManager::class.java)
-                ?.getNotificationChannel(channelId)
-                ?.importance != NotificationManager.IMPORTANCE_NONE
+        return context.getSystemService(NotificationManager::class.java)
+            ?.getNotificationChannel(channelId)
+            ?.importance != NotificationManager.IMPORTANCE_NONE
     }
 
     @SuppressLint("MissingPermission")
@@ -191,5 +211,6 @@ class AppNotificationPublisher @Inject constructor(
         const val FORUM_CHANNEL_ID = "forum_updates"
         const val DEBIT_NOTIFICATION_ID = 2001
         const val FORUM_NOTIFICATION_ID = 2002
+        const val DEBIT_REJECTED_NOTIFICATION_ID = 2003
     }
 }

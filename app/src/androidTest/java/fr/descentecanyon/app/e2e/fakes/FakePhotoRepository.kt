@@ -9,13 +9,11 @@ import kotlinx.coroutines.flow.map
 
 @Singleton
 class FakePhotoRepository @Inject constructor() : PhotoRepository {
-    override fun observePhotos(canyonId: Int): Flow<List<CanyonPhoto>> {
-        return E2eFixtureState.canyonDetails.map { details -> details[canyonId]?.photos.orEmpty() }
-    }
+    override fun observePhotos(canyonId: Int): Flow<List<CanyonPhoto>> =
+        E2eFixtureState.canyonDetails.map { details -> details[canyonId]?.photos.orEmpty() }
 
-    override suspend fun refreshPhotos(canyonId: Int): Result<List<CanyonPhoto>> {
-        return Result.success(E2eFixtureState.canyonDetails.value[canyonId]?.photos.orEmpty())
-    }
+    override suspend fun refreshPhotos(canyonId: Int): Result<List<CanyonPhoto>> =
+        Result.success(E2eFixtureState.canyonDetails.value[canyonId]?.photos.orEmpty())
 
     override suspend fun downloadPhoto(photoId: Long): Result<String> {
         val localPath = "/data/local/tmp/photo-$photoId.jpg"

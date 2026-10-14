@@ -79,7 +79,7 @@ object E2eFixtureState {
                 detail.copy(
                     photos = detail.photos.map { photo ->
                         if (photo.id == photoId) photo.copy(localPath = localPath) else photo
-                    }
+                    },
                 )
             }
         }
@@ -154,7 +154,7 @@ object E2eFixtureState {
                         url = "https://example.com/riolan.jpg",
                         thumbnailUrl = "https://example.com/riolan-thumb.jpg",
                         description = "Vasque principale",
-                    )
+                    ),
                 ),
                 debits = listOf(
                     Debit(
@@ -168,7 +168,7 @@ object E2eFixtureState {
                         waterTemperature = "Douce",
                         airTemperature = "Bon",
                         commentaire = "Conditions parfaites",
-                    )
+                    ),
                 ),
             ),
             102 to CanyonDetail(
@@ -192,6 +192,6 @@ object E2eFixtureState {
             waterTemperature = WaterTemperature.DOUCE.name,
             airTemperature = AirTemperature.BON.name,
             commentaire = "Conditions parfaites",
-        )
+        ),
     )
 }

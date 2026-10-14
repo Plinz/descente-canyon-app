@@ -9,9 +9,7 @@ import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
 @Singleton
-class SearchCatalogWarmupCoordinator @Inject constructor(
-    private val searchCanyonsUseCase: SearchCanyonsUseCase,
-) {
+class SearchCatalogWarmupCoordinator @Inject constructor(private val searchCanyonsUseCase: SearchCanyonsUseCase) {
 
     private val warmupMutex = Mutex()
 
