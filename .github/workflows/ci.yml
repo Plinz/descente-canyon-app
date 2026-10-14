@@ -33,7 +33,7 @@ jobs:
 
       # The build generates the embedded catalog and model indexes with Python scripts.
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
@@ -79,7 +79,7 @@ jobs:
           java-version: '25'
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: '3.12'
 
