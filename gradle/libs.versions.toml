@@ -22,7 +22,7 @@ hilt = "2.59.2"
 hiltNavigationCompose = "1.2.0"
 
 # Network / Scraping
-okhttp = "4.12.0"
+okhttp = "5.5.0"
 jsoup = "1.18.3"
 kotlinxSerialization = "1.8.1"
 
