@@ -1,5 +1,7 @@
 # Debit Model Reliability
 
+> **Historique — remplacé par le modèle v3** (`docs/debit-prediction-model.md`, `scripts/debit_model/`). Les métriques « récentes » ci-dessous étaient mesurées sur des observations incluses dans l'entraînement et ne sont pas comparables.
+
 This note tracks how reliability is measured after the physical descriptor work.
 
 ## Current State

@@ -1,5 +1,7 @@
 # Debit Model Reliability Improvement Plan
 
+> **Historique — remplacé par le modèle v3** (`docs/debit-prediction-model.md`, `scripts/debit_model/`). Les métriques « récentes » ci-dessous étaient mesurées sur des observations incluses dans l'entraînement et ne sont pas comparables.
+
 ## Priority Objective
 
 Improve practical reliability by reducing dangerous under-estimation, especially `GROS`, `TRES_GROS` and `CRUE` predicted too low.

@@ -399,6 +399,7 @@ Las fotos y los caudales se siguen obteniendo en línea cuando hay red disponibl
     <string name="prediction_ordinal_gros">Caudal alto probable</string>
     <string name="prediction_ordinal_tres_gros">Caudal muy alto probable</string>
     <string name="prediction_ordinal_crue">Crecida probable</string>
+    <string name="prediction_high_flow_risk">Riesgo de caudal alto o superior: %1$d %%</string>
     <string name="prediction_confidence_high">Confianza alta</string>
     <string name="prediction_confidence_medium">Confianza media</string>
     <string name="prediction_confidence_low">Confianza baja</string>
@@ -414,8 +415,8 @@ Las fotos y los caudales se siguen obteniendo en línea cuando hay red disponibl
     <string name="prediction_info_reading_p3">La etiqueta de confianza baja si el modelo duda entre varios niveles o si la puntuación está cerca de un límite entre dos categorías.</string>
     <string name="prediction_info_reading_p4">Esta estimación debe leerse como una ayuda para la preparación, no como una garantía de seguridad ni como una medición instantánea del caudal real.</string>
     <string name="prediction_info_data_title">Qué datos se utilizan</string>
-    <string name="prediction_info_data_p1">El modelo combina la meteorología diaria reciente, las previsiones a corto plazo, algunas características del barranco, la superficie de la cuenca vertiente cuando se conoce, así como observaciones pasadas del barranco o de zonas cercanas.</string>
-    <string name="prediction_info_data_p2">En concreto, tiene en cuenta tanto la lluvia reciente, su duración, la estación, la temperatura, la nieve reciente y el comportamiento observado en el barranco, el macizo o la región.</string>
+    <string name="prediction_info_data_p1">El modelo simula el estado hidrológico de la cuenca durante los últimos 400 días a partir de datos meteorológicos (reanálisis ERA5 y luego previsiones ECMWF): manto de nieve por franja de altitud, fusión, humedad del suelo y depósitos rápidos a lentos (tormentas, acuíferos, karst).</string>
+    <string name="prediction_info_data_p2">Combina este estado con las características físicas de la cuenca, los caudales señalados en los últimos días en el barranco y en los barrancos cercanos (a menos de 30 km) y la lluvia medida por los pluviómetros cercanos de Météo-France y MeteoSwiss. Mañana y pasado mañana usan un segundo modelo, entrenado con la información disponible el día anterior.</string>
     <string name="prediction_info_training_title">Datos de entrenamiento</string>
     <string name="prediction_info_stat_total_observations">%1$s observaciones pasadas utilizadas en total</string>
     <string name="prediction_info_stat_train_rows">%1$s observaciones para el entrenamiento</string>
@@ -505,11 +506,11 @@ Las fotos y los caudales se siguen obteniendo en línea cuando hay red disponibl
     <string name="prediction_driver_area_context_title">Contexto del macizo y de la región</string>
     <string name="prediction_driver_area_context_description">Si el barranco tiene pocas observaciones propias, el modelo se apoya más en barrancos cercanos o similares.</string>
     <string name="prediction_driver_recent_rain_title">Lluvia reciente y acumulados</string>
-    <string name="prediction_driver_recent_rain_description">Las precipitaciones de los últimos días y semanas influyen mucho en el nivel estimado.</string>
+    <string name="prediction_driver_recent_rain_description">La lluvia reciente y los depósitos simulados de la cuenca (suelo, escorrentía rápida y lenta) influyen mucho en el nivel estimado.</string>
     <string name="prediction_driver_temperature_snow_title">Temperatura, lluvia y nieve</string>
-    <string name="prediction_driver_temperature_snow_description">La temperatura media, la lluvia líquida y la nieve reciente ayudan a distinguir situaciones hidrológicas distintas.</string>
+    <string name="prediction_driver_temperature_snow_description">El manto de nieve simulado por altitud, la fusión y la temperatura ayudan a anticipar los caudales de deshielo y los episodios cálidos.</string>
     <string name="prediction_driver_watershed_title">Cuenca hidrográfica</string>
-    <string name="prediction_driver_watershed_description">La superficie de la cuenca ayuda a relacionar la lluvia recibida con la respuesta probable del barranco.</string>
+    <string name="prediction_driver_watershed_description">El tamaño, la altitud, la geología (karst) y los suelos de la cuenca modulan la respuesta del barranco a la lluvia y al deshielo.</string>
     <string name="prediction_driver_season_title">Temporada</string>
     <string name="prediction_driver_season_description">La época del año influye en el comportamiento medio del barranco, especialmente por el deshielo y los regímenes de lluvia.</string>
     <string name="prediction_driver_historical_signals_title">Señales históricas atípicas</string>

@@ -14,7 +14,7 @@ import fr.descentecanyon.app.domain.model.PredictedDebitLevel
 import java.nio.FloatBuffer
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.math.roundToInt
+import kotlin.math.max
 import kotlin.math.sqrt
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
@@ -31,12 +31,14 @@ class OnnxDebitPredictor @Inject constructor(
         featureVectors: List<FloatArray>,
         dates: List<java.time.LocalDate>,
         policy: DebitPredictionPolicy = thresholds.defaultPolicy,
+        useHorizonModel: Boolean = false,
     ): List<DailyDebitPrediction> {
         require(featureVectors.isNotEmpty()) { "featureVectors must not be empty" }
         require(featureVectors.size == dates.size) { "featureVectors and dates must have the same size" }
+        val horizon = thresholds.horizonModel?.takeIf { useHorizonModel }
 
         return withContext(ioDispatcher) {
-            val sessionHolder = modelStore.getSession()
+            val sessionHolder = horizon?.let { modelStore.getHorizonSession(it.modelAsset) } ?: modelStore.getSession()
             val inputName = sessionHolder.session.inputNames.firstOrNull()
                 ?: error("No ONNX input found")
             val featureCount = featureVectors.first().size
@@ -62,47 +64,39 @@ class OnnxDebitPredictor @Inject constructor(
                         "Expected ${featureVectors.size} prediction rows, got ${probabilitiesByRow.size}"
                     }
 
-                    val highThreshold = thresholds.highThresholdByPolicy[policy]
+                    val highThreshold = (horizon?.highThresholdByPolicy ?: thresholds.highThresholdByPolicy)[policy]
                         ?: error("Missing threshold for policy $policy")
-                    val ordinalLowThreshold = thresholds.lowThresholdByPolicy[policy]
+                    val cumulativeThresholds = horizon?.cumulativeThresholds ?: thresholds.cumulativeThresholds
+                    require(cumulativeThresholds.size == ORDINAL_LABELS.size - 1) {
+                        "Expected ${ORDINAL_LABELS.size - 1} cumulative thresholds, got ${cumulativeThresholds.size}"
+                    }
 
-                    val basePredictions = probabilitiesByRow.mapIndexed { index, probabilitiesByLabel ->
-                        val normalized = threeClassProbabilities(probabilitiesByLabel)
-                        val ordinalScore = if (hasSixOrdinalLabels(probabilitiesByLabel)) {
-                            expectedOrdinalScore(probabilitiesByLabel)
-                        } else {
-                            null
+                    probabilitiesByRow.mapIndexed { index, probabilitiesByLabel ->
+                        val distribution = DoubleArray(ORDINAL_LABELS.size) { rank ->
+                            probabilitiesByLabel[ORDINAL_LABELS[rank]] ?: 0.0
                         }
-                        val ordinalStandardDeviation = ordinalScore?.let { score ->
-                            ordinalStandardDeviation(probabilitiesByLabel, score)
+                        val decision = decideOrdinal(distribution, cumulativeThresholds)
+                        val highProbability = decision.cumulative[HIGH_RANK]
+                        val level = when {
+                            decision.level >= HIGH_RANK || highProbability >= highThreshold -> PredictedDebitLevel.HIGH
+                            decision.level <= LOW_RANK -> PredictedDebitLevel.LOW
+                            else -> PredictedDebitLevel.MEDIUM
                         }
-                        val baseLevel = if (ordinalLowThreshold != null && ordinalScore != null) {
-                            when {
-                                ordinalScore >= highThreshold -> PredictedDebitLevel.HIGH
-                                ordinalScore < ordinalLowThreshold -> PredictedDebitLevel.LOW
-                                else -> PredictedDebitLevel.MEDIUM
-                            }
-                        } else {
-                            when {
-                                normalized.getValue(PredictedDebitLevel.HIGH) >= highThreshold -> PredictedDebitLevel.HIGH
-                                normalized.getValue(PredictedDebitLevel.LOW) >= normalized.getValue(PredictedDebitLevel.MEDIUM) -> PredictedDebitLevel.LOW
-                                else -> PredictedDebitLevel.MEDIUM
-                            }
-                        }
-
                         DailyDebitPrediction(
                             date = dates[index],
                             horizonDays = index,
-                            level = baseLevel,
-                            probabilities = normalized,
+                            level = level,
+                            probabilities = mapOf(
+                                PredictedDebitLevel.LOW to distribution[0] + distribution[1],
+                                PredictedDebitLevel.MEDIUM to distribution[2],
+                                PredictedDebitLevel.HIGH to highProbability,
+                            ),
                             highThreshold = highThreshold,
-                            ordinalScore = ordinalScore,
-                            ordinalLevel = ordinalScore?.let { score -> ordinalLevelFromScore(score, thresholds.ordinalCutpoints) },
-                            ordinalStandardDeviation = ordinalStandardDeviation,
+                            ordinalScore = decision.displayScore,
+                            ordinalLevel = ORDINAL_LEVELS[decision.level],
+                            ordinalStandardDeviation = ordinalStandardDeviation(distribution),
                         )
                     }
-
-                    applyHighRiskOverlay(basePredictions, featureVectors)
                 }
             }
         }
@@ -125,112 +119,17 @@ class OnnxDebitPredictor @Inject constructor(
         ).single().copy(horizonDays = horizonDays)
     }
 
-    private suspend fun applyHighRiskOverlay(
-        basePredictions: List<DailyDebitPrediction>,
-        featureVectors: List<FloatArray>,
-    ): List<DailyDebitPrediction> {
-        val candidateIndexes = basePredictions.indices.filter { index ->
-            basePredictions[index].level != PredictedDebitLevel.HIGH
-        }
-        if (candidateIndexes.isEmpty()) return basePredictions
+    internal class OrdinalDecision(
+        val level: Int,
+        /** cumulative[k] = P(rank >= k), cumulative[0] = 1. */
+        val cumulative: DoubleArray,
+        val displayScore: Double,
+    )
 
-        val overlay = modelStore.getHighRiskOverlay() ?: return basePredictions
-        val inputName = overlay.session.inputNames.firstOrNull() ?: return basePredictions
-        val featureCount = featureVectors.first().size
-        val flatBuffer = FloatArray(candidateIndexes.size * featureCount)
-        candidateIndexes.forEachIndexed { rowIndex, predictionIndex ->
-            featureVectors[predictionIndex].copyInto(
-                destination = flatBuffer,
-                destinationOffset = rowIndex * featureCount,
-            )
-        }
-
-        val tensor = OnnxTensor.createTensor(
-            overlay.environment,
-            FloatBuffer.wrap(flatBuffer),
-            longArrayOf(candidateIndexes.size.toLong(), featureCount.toLong()),
-        )
-        tensor.use { inputTensor ->
-            overlay.session.run(mapOf(inputName to inputTensor)).use { result ->
-                val probabilitiesByRow = extractProbabilityRows(result, overlay.labels)
-                require(probabilitiesByRow.size == candidateIndexes.size) {
-                    "Expected ${candidateIndexes.size} overlay rows, got ${probabilitiesByRow.size}"
-                }
-
-                return basePredictions.mapIndexed { index, prediction ->
-                    val candidateRowIndex = candidateIndexes.indexOf(index)
-                    if (candidateRowIndex < 0) {
-                        prediction
-                    } else {
-                        val highProbability = probabilitiesByRow[candidateRowIndex]["HIGH"] ?: 0.0
-                        if (highProbability >= overlay.threshold) {
-                            prediction.copy(level = PredictedDebitLevel.HIGH)
-                        } else {
-                            prediction
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun hasSixOrdinalLabels(probabilitiesByLabel: Map<String, Double>): Boolean {
-        return ORDINAL_RANK_BY_LABEL.keys.all { label -> probabilitiesByLabel.containsKey(label) }
-    }
-
-    private fun expectedOrdinalScore(probabilitiesByLabel: Map<String, Double>): Double {
-        return ORDINAL_RANK_BY_LABEL.entries.sumOf { (label, rank) ->
-            (probabilitiesByLabel[label] ?: 0.0) * rank
-        }
-    }
-
-    private fun ordinalStandardDeviation(
-        probabilitiesByLabel: Map<String, Double>,
-        score: Double,
-    ): Double {
-        val variance = ORDINAL_RANK_BY_LABEL.entries.sumOf { (label, rank) ->
-            val distance = rank - score
-            (probabilitiesByLabel[label] ?: 0.0) * distance * distance
-        }
+    private fun ordinalStandardDeviation(distribution: DoubleArray): Double {
+        val mean = distribution.indices.sumOf { rank -> rank * distribution[rank] }
+        val variance = distribution.indices.sumOf { rank -> distribution[rank] * (rank - mean) * (rank - mean) }
         return sqrt(variance.coerceAtLeast(0.0))
-    }
-
-    private fun ordinalLevelFromScore(score: Double, cutpoints: List<Double>): NiveauDebit {
-        if (cutpoints.size == 5 && cutpoints.zipWithNext().all { (left, right) -> left < right }) {
-            val index = cutpoints.indexOfFirst { score < it }.takeIf { it >= 0 } ?: 5
-            return when (index.coerceIn(0, 5)) {
-                0 -> NiveauDebit.SEC
-                1 -> NiveauDebit.FILET
-                2 -> NiveauDebit.CORRECT
-                3 -> NiveauDebit.GROS
-                4 -> NiveauDebit.TRES_GROS
-                else -> NiveauDebit.CRUE
-            }
-        }
-        return when (score.roundToInt().coerceIn(0, 5)) {
-            0 -> NiveauDebit.SEC
-            1 -> NiveauDebit.FILET
-            2 -> NiveauDebit.CORRECT
-            3 -> NiveauDebit.GROS
-            4 -> NiveauDebit.TRES_GROS
-            else -> NiveauDebit.CRUE
-        }
-    }
-
-    private fun threeClassProbabilities(probabilitiesByLabel: Map<String, Double>): Map<PredictedDebitLevel, Double> {
-        return if (hasSixOrdinalLabels(probabilitiesByLabel)) {
-            mapOf(
-                PredictedDebitLevel.LOW to ((probabilitiesByLabel["SEC"] ?: 0.0) + (probabilitiesByLabel["FILET"] ?: 0.0)),
-                PredictedDebitLevel.MEDIUM to (probabilitiesByLabel["CORRECT"] ?: 0.0),
-                PredictedDebitLevel.HIGH to ((probabilitiesByLabel["GROS"] ?: 0.0) + (probabilitiesByLabel["TRES_GROS"] ?: 0.0) + (probabilitiesByLabel["CRUE"] ?: 0.0)),
-            )
-        } else {
-            mapOf(
-                PredictedDebitLevel.HIGH to (probabilitiesByLabel["HIGH"] ?: 0.0),
-                PredictedDebitLevel.LOW to (probabilitiesByLabel["LOW"] ?: 0.0),
-                PredictedDebitLevel.MEDIUM to (probabilitiesByLabel["MEDIUM"] ?: 0.0),
-            )
-        }
     }
 
     private fun extractProbabilityRows(
@@ -289,13 +188,37 @@ class OnnxDebitPredictor @Inject constructor(
     }
 
     companion object {
-        private val ORDINAL_RANK_BY_LABEL = mapOf(
-            "SEC" to 0.0,
-            "FILET" to 1.0,
-            "CORRECT" to 2.0,
-            "GROS" to 3.0,
-            "TRES_GROS" to 4.0,
-            "CRUE" to 5.0,
+        private const val HIGH_RANK = 3
+        private const val LOW_RANK = 1
+        private val ORDINAL_LABELS = listOf("SEC", "FILET", "CORRECT", "GROS", "TRES_GROS", "CRUE")
+        private val ORDINAL_LEVELS = listOf(
+            NiveauDebit.SEC,
+            NiveauDebit.FILET,
+            NiveauDebit.CORRECT,
+            NiveauDebit.GROS,
+            NiveauDebit.TRES_GROS,
+            NiveauDebit.CRUE,
         )
+
+        /**
+         * Port of `evaluation.decide` / `evaluation.display_score`: the level is the highest k such
+         * that P(rank >= j) >= tau_j for every j <= k; the display score stays inside
+         * [level - 0.5, level + 0.5) and moves towards the neighbour level it is closest to.
+         */
+        internal fun decideOrdinal(distribution: DoubleArray, thresholds: List<Double>): OrdinalDecision {
+            val levelCount = distribution.size
+            val cumulative = DoubleArray(levelCount + 1)
+            for (rank in levelCount - 1 downTo 0) cumulative[rank] = cumulative[rank + 1] + distribution[rank]
+            cumulative[0] = 1.0
+            var level = 0
+            for (k in 1 until levelCount) {
+                if (cumulative[k] >= thresholds[k - 1]) level = k else break
+            }
+            val tau = listOf(0.0) + thresholds + listOf(1.0)
+            val up = if (level == levelCount - 1) 0.0 else (cumulative[level + 1] / max(tau[level + 1], 1e-9)).coerceIn(0.0, 1.0)
+            val down = if (level == 0) 0.0 else ((1.0 - cumulative[level]) / max(1.0 - tau[level], 1e-9)).coerceIn(0.0, 1.0)
+            val score = level + (0.45 * (up - down)).coerceIn(-0.49, 0.49)
+            return OrdinalDecision(level, cumulative.copyOf(levelCount), score)
+        }
     }
 }

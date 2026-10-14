@@ -361,6 +361,7 @@ Fotos und Wasserstände werden weiterhin online abgerufen, wenn ein Netzwerk ver
     <string name="prediction_ordinal_gros">Wahrscheinlich hoher Wasserstand</string>
     <string name="prediction_ordinal_tres_gros">Wahrscheinlich sehr hoher Wasserstand</string>
     <string name="prediction_ordinal_crue">Wahrscheinlich Hochwasser</string>
+    <string name="prediction_high_flow_risk">Risiko für hohen Abfluss oder mehr: %1$d %%</string>
     <string name="prediction_confidence_high">Hohe Sicherheit</string>
     <string name="prediction_confidence_medium">Mittlere Sicherheit</string>
     <string name="prediction_confidence_low">Geringe Sicherheit</string>
@@ -376,8 +377,8 @@ Fotos und Wasserstände werden weiterhin online abgerufen, wenn ein Netzwerk ver
     <string name="prediction_info_reading_p3">Das Vertrauens-Badge sinkt, wenn das Modell zwischen mehreren Stufen schwankt oder wenn der Wert nahe an einer Grenze zwischen zwei Kategorien liegt.</string>
     <string name="prediction_info_reading_p4">Diese Schätzung ist als Hilfe bei der Vorbereitung zu lesen, nicht als Sicherheitsgarantie und nicht als Momentanmessung des tatsächlichen Wasserstands.</string>
     <string name="prediction_info_data_title">Welche Daten verwendet werden</string>
-    <string name="prediction_info_data_p1">Das Modell kombiniert die jüngste Tageswetterlage, kurzfristige Prognosen, bestimmte Canyon-Merkmale, die Fläche des Einzugsgebiets, sofern bekannt, sowie frühere Beobachtungen des Canyons oder naher Gebiete.</string>
-    <string name="prediction_info_data_p2">Konkret berücksichtigt es zugleich den jüngsten Regen, dessen Dauer, die Jahreszeit, die Temperatur, frischen Schnee und das beobachtete Verhalten im Canyon, in der Gebirgsgruppe oder in der Region.</string>
+    <string name="prediction_info_data_p1">Das Modell simuliert aus Wetterdaten (ERA5-Reanalyse, dann ECMWF-Prognosen) den hydrologischen Zustand des Einzugsgebiets der letzten 400 Tage: Schneedecke je Höhenstufe, Schmelze, Bodenfeuchte sowie schnelle bis langsame Speicher (Gewitter, Grundwasser, Karst).</string>
+    <string name="prediction_info_data_p2">Dieser Zustand wird mit den physischen Merkmalen des Einzugsgebiets, den in den letzten Tagen gemeldeten Abflüssen des Canyons und benachbarter Canyons (unter 30 km) sowie dem von nahen Regenmessern von Météo-France und MeteoSwiss gemessenen Niederschlag kombiniert. Für morgen und übermorgen wird ein zweites Modell verwendet, das mit den am Vortag verfügbaren Informationen trainiert wurde.</string>
     <string name="prediction_info_training_title">Trainingsdaten</string>
     <string name="prediction_info_stat_total_observations">Insgesamt %1$s frühere Beobachtungen ausgewertet</string>
     <string name="prediction_info_stat_train_rows">%1$s Beobachtungen für das Training</string>
@@ -455,11 +456,11 @@ Fotos und Wasserstände werden weiterhin online abgerufen, wenn ein Netzwerk ver
     <string name="prediction_driver_area_context_title">Kontext von Massiv und Region</string>
     <string name="prediction_driver_area_context_description">Wenn es für den Canyon nur wenige eigene Beobachtungen gibt, stützt sich das Modell stärker auf nahegelegene oder ähnliche Canyons.</string>
     <string name="prediction_driver_recent_rain_title">Jüngster Regen und Summen</string>
-    <string name="prediction_driver_recent_rain_description">Die Niederschläge der letzten Tage und Wochen haben großen Einfluss auf den geschätzten Stand.</string>
+    <string name="prediction_driver_recent_rain_description">Der jüngste Regen und die simulierten Speicher des Einzugsgebiets (Boden, schneller und langsamer Abfluss) bestimmen den geschätzten Stand stark.</string>
     <string name="prediction_driver_temperature_snow_title">Temperatur, Regen und Schnee</string>
-    <string name="prediction_driver_temperature_snow_description">Durchschnittstemperatur, flüssiger Regen und frischer Schnee helfen, unterschiedliche hydrologische Situationen zu unterscheiden.</string>
+    <string name="prediction_driver_temperature_snow_description">Die simulierte Schneedecke je Höhe, die Schmelze und die Temperatur helfen, Schmelzabflüsse und Warmphasen vorherzusehen.</string>
     <string name="prediction_driver_watershed_title">Einzugsgebiet</string>
-    <string name="prediction_driver_watershed_description">Die Fläche des Einzugsgebiets hilft, die gefallenen Niederschläge mit der wahrscheinlichen Reaktion des Canyons zu verknüpfen.</string>
+    <string name="prediction_driver_watershed_description">Größe, Höhe, Geologie (Karst) und Böden des Einzugsgebiets bestimmen, wie der Canyon auf Regen und Schmelze reagiert.</string>
     <string name="prediction_driver_season_title">Saison</string>
     <string name="prediction_driver_season_description">Die Jahreszeit beeinflusst das durchschnittliche Verhalten des Canyons, insbesondere durch Schmelze und Niederschlagsregime.</string>
     <string name="prediction_driver_historical_signals_title">Atypische historische Signale</string>

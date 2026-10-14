@@ -399,6 +399,7 @@ Photos and flow reports are still fetched online when the network is available.<
     <string name="prediction_ordinal_gros">High flow likely</string>
     <string name="prediction_ordinal_tres_gros">Very high flow likely</string>
     <string name="prediction_ordinal_crue">Flood likely</string>
+    <string name="prediction_high_flow_risk">Risk of high flow or more: %1$d%%</string>
     <string name="prediction_confidence_high">High confidence</string>
     <string name="prediction_confidence_medium">Medium confidence</string>
     <string name="prediction_confidence_low">Low confidence</string>
@@ -414,8 +415,8 @@ Photos and flow reports are still fetched online when the network is available.<
     <string name="prediction_info_reading_p3">The confidence badge drops if the model hesitates between several levels or if the score is close to a boundary between two categories.</string>
     <string name="prediction_info_reading_p4">This estimate should be read as preparation help, not as a safety guarantee or an instantaneous measurement of the real flow.</string>
     <string name="prediction_info_data_title">What data is used</string>
-    <string name="prediction_info_data_p1">The model combines recent daily weather, short-term forecasts, certain canyon characteristics, the watershed area when known, and past observations from the canyon or nearby areas.</string>
-    <string name="prediction_info_data_p2">Specifically, it accounts for recent rainfall, its duration, the season, temperature, recent snow, and observed behavior in the canyon, massif, or region.</string>
+    <string name="prediction_info_data_p1">The model simulates the watershed hydrological state over the last 400 days from weather data (ERA5 reanalysis, then ECMWF forecasts): snowpack per elevation band, melt, soil moisture and fast to slow reservoirs (storms, groundwater, karst).</string>
+    <string name="prediction_info_data_p2">It combines this state with the physical characteristics of the watershed, the flows reported in recent days on the canyon and on nearby canyons (within 30 km), and the rain measured by nearby Météo-France and MeteoSwiss rain gauges. Tomorrow and the day after use a second model, trained with the information available the day before.</string>
     <string name="prediction_info_training_title">Training data</string>
     <string name="prediction_info_stat_total_observations">%1$s past observations used in total</string>
     <string name="prediction_info_stat_train_rows">%1$s observations for training</string>
@@ -505,11 +506,11 @@ Photos and flow reports are still fetched online when the network is available.<
     <string name="prediction_driver_area_context_title">Massif and region context</string>
     <string name="prediction_driver_area_context_description">If the canyon has few observations of its own, the model relies more on nearby or similar canyons.</string>
     <string name="prediction_driver_recent_rain_title">Recent rain and totals</string>
-    <string name="prediction_driver_recent_rain_description">Precipitation over the last few days and weeks has a strong influence on the estimated level.</string>
+    <string name="prediction_driver_recent_rain_description">Recent rain and the simulated watershed reservoirs (soil, fast and slow flow) strongly drive the estimated level.</string>
     <string name="prediction_driver_temperature_snow_title">Temperature, rain and snow</string>
-    <string name="prediction_driver_temperature_snow_description">Average temperature, liquid rain and recent snow help distinguish different hydrological situations.</string>
+    <string name="prediction_driver_temperature_snow_description">The simulated snowpack per elevation, melt and temperature help anticipate snowmelt flows and warm spells.</string>
     <string name="prediction_driver_watershed_title">Watershed</string>
-    <string name="prediction_driver_watershed_description">Watershed area helps relate received rainfall to the canyon’s likely response.</string>
+    <string name="prediction_driver_watershed_description">Watershed size, elevation, geology (karst) and soils shape how the canyon responds to rain and snowmelt.</string>
     <string name="prediction_driver_season_title">Season</string>
     <string name="prediction_driver_season_description">The time of year influences the canyon’s average behavior, especially through melt and rainfall regimes.</string>
     <string name="prediction_driver_historical_signals_title">Atypical historical signals</string>

@@ -5,6 +5,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.descentecanyon.app.BuildConfig
 import fr.descentecanyon.app.di.IoDispatcher
 import fr.descentecanyon.app.domain.model.Canyon
+import fr.descentecanyon.app.domain.model.NeighborCanyon
+import fr.descentecanyon.app.domain.model.RainStation
 import fr.descentecanyon.app.domain.model.ResolvedRuntimeFeatureLookup
 import fr.descentecanyon.app.domain.model.RuntimeLookupEntry
 import fr.descentecanyon.app.domain.model.RuntimeLookupSource
@@ -71,13 +73,37 @@ class EmbeddedDebitRuntimeLookupStore @Inject constructor(
             else -> RuntimeLookupSource.GLOBAL
         }
 
+        val neighbors = canyonEntry?.values.orEmpty().mapNotNull { (key, distance) ->
+            val neighborId = key.takeIf { it.length > 1 && it[0] == 'n' && it.drop(1).all(Char::isDigit) }
+                ?.drop(1)?.toIntOrNull() ?: return@mapNotNull null
+            val aggregates = core.cellSeasonal[neighborId]
+            NeighborCanyon(
+                canyonId = neighborId,
+                distanceKm = distance,
+                monthlyCounts = aggregates?.copyOfRange(0, 12) ?: DoubleArray(12),
+                monthlySums = aggregates?.copyOfRange(12, 24) ?: DoubleArray(12),
+            )
+        }.sortedBy { it.distanceKm }
+        val rainStations = canyonEntry?.values.orEmpty().mapNotNull { (key, distance) ->
+            key.takeIf(::isRainStationKey)?.let { RainStation(code = it.drop(2), distanceKm = distance) }
+        }.sortedBy { it.distanceKm }
+
         return ResolvedRuntimeFeatureLookup(
             canyonId = canyon.id,
             regionKey = canyonEntry?.regionKey ?: resolvedRegionKey,
             massifKey = canyonEntry?.massifKey ?: resolvedMassifKey,
             lookupSource = lookupSource,
             featureValues = featureValues,
+            neighbors = neighbors,
+            rainStations = rainStations,
         )
+    }
+
+    /** `mf<code>`: Météo-France codes are digits, MeteoSwiss ones start with `CHS_` / `CHP_`. */
+    private fun isRainStationKey(key: String): Boolean {
+        if (key.length <= 2 || !key.startsWith("mf")) return false
+        val code = key.drop(2)
+        return code.all(Char::isDigit) || code.startsWith("CHS_") || code.startsWith("CHP_")
     }
 
     private suspend fun getCoreLookups(): RuntimeLookupCore {
@@ -171,6 +197,9 @@ class EmbeddedDebitRuntimeLookupStore @Inject constructor(
             global = global.toNumericMap(),
             regions = regions.mapValues { (_, value) -> value.toNumericMap() },
             massifs = massifs.mapValues { (_, value) -> value.toNumericMap() },
+            cellSeasonal = cellSeasonal.mapNotNull { (key, values) ->
+                key.toIntOrNull()?.takeIf { values.size == 24 }?.let { it to values.toDoubleArray() }
+            }.toMap(),
         )
     }
 
@@ -204,6 +233,7 @@ private data class RuntimeLookupCore(
     val global: Map<String, Double>,
     val regions: Map<String, Map<String, Double>>,
     val massifs: Map<String, Map<String, Double>>,
+    val cellSeasonal: Map<Int, DoubleArray>,
 )
 
 private data class RuntimeLookupIndexEntry(
@@ -221,6 +251,7 @@ private data class RuntimeLookupCoreDto(
     val global: JsonObject = JsonObject(emptyMap()),
     val regions: Map<String, JsonObject> = emptyMap(),
     val massifs: Map<String, JsonObject> = emptyMap(),
+    val cellSeasonal: Map<String, List<Double>> = emptyMap(),
 )
 
 @Serializable

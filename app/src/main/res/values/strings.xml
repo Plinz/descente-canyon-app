@@ -401,6 +401,7 @@ Les photos et les débits restent récupérés en ligne quand le réseau est dis
     <string name="prediction_ordinal_gros">Gros débit probable</string>
     <string name="prediction_ordinal_tres_gros">Très gros débit probable</string>
     <string name="prediction_ordinal_crue">Crue probable</string>
+    <string name="prediction_high_flow_risk">Risque de gros débit ou plus : %1$d %%</string>
     <string name="prediction_confidence_high">Confiance élevée</string>
     <string name="prediction_confidence_medium">Confiance moyenne</string>
     <string name="prediction_confidence_low">Confiance faible</string>
@@ -416,8 +417,8 @@ Les photos et les débits restent récupérés en ligne quand le réseau est dis
     <string name="prediction_info_reading_p3">Le badge de confiance baisse si le modèle hésite entre plusieurs niveaux ou si le score est proche d\'une limite entre deux catégories.</string>
     <string name="prediction_info_reading_p4">Cette estimation doit être lue comme une aide à la préparation, pas comme une garantie de sécurité ni comme une mesure instantanée du débit réel.</string>
     <string name="prediction_info_data_title">Quelles données sont utilisées</string>
-    <string name="prediction_info_data_p1">Le modèle combine la météo journalière récente, les prévisions à court terme, certaines caractéristiques du canyon, la surface du bassin versant quand elle est connue, ainsi que des observations passées du canyon ou de zones proches.</string>
-    <string name="prediction_info_data_p2">Concrètement, il tient compte à la fois de la pluie récente, de sa durée, de la saison, de la température, de la neige récente et du comportement observé sur le canyon, le massif ou la région.</string>
+    <string name="prediction_info_data_p1">Le modèle simule l\'état hydrologique du bassin versant sur les 400 derniers jours à partir de la météo (réanalyse ERA5 puis prévisions ECMWF) : stock de neige par tranche d\'altitude, fonte, humidité du sol et réservoirs rapides à lents (orages, nappes, karst).</string>
+    <string name="prediction_info_data_p2">Il combine cet état avec les caractéristiques physiques du bassin, les débits signalés ces derniers jours sur le canyon et sur les canyons voisins (moins de 30 km), et la pluie mesurée par les pluviomètres Météo-France et MeteoSwiss proches. Les prévisions de demain et après-demain utilisent un second modèle, entraîné avec l\'information disponible la veille.</string>
     <string name="prediction_info_training_title">Données d\'entraînement</string>
     <string name="prediction_info_stat_total_observations">%1$s observations passées exploitées au total</string>
     <string name="prediction_info_stat_train_rows">%1$s observations pour l\'entraînement</string>
@@ -505,11 +506,11 @@ Les photos et les débits restent récupérés en ligne quand le réseau est dis
     <string name="prediction_driver_area_context_title">Contexte du massif et de la région</string>
     <string name="prediction_driver_area_context_description">Si le canyon manque d\'observations propres, le modèle s\'appuie davantage sur des canyons proches ou similaires.</string>
     <string name="prediction_driver_recent_rain_title">Pluie récente et cumuls</string>
-    <string name="prediction_driver_recent_rain_description">Les précipitations des derniers jours et des dernières semaines comptent beaucoup dans le niveau estimé.</string>
+    <string name="prediction_driver_recent_rain_description">La pluie récente et l\'état des réservoirs simulés du bassin (sol, écoulement rapide et lent) pèsent fortement dans le niveau estimé.</string>
     <string name="prediction_driver_temperature_snow_title">Température, pluie et neige</string>
-    <string name="prediction_driver_temperature_snow_description">La température moyenne, la pluie liquide et la neige récente aident à distinguer des situations hydrologiques différentes.</string>
+    <string name="prediction_driver_temperature_snow_description">Le stock de neige simulé par altitude, la fonte et la température permettent d\'anticiper les débits de fonte et les redoux.</string>
     <string name="prediction_driver_watershed_title">Bassin versant</string>
-    <string name="prediction_driver_watershed_description">La surface du bassin versant aide à relier les pluies reçues à la réponse probable du canyon.</string>
+    <string name="prediction_driver_watershed_description">La taille, l\'altitude, la géologie (karst) et les sols du bassin versant modulent la réponse du canyon à la pluie et à la fonte.</string>
     <string name="prediction_driver_season_title">Saison</string>
     <string name="prediction_driver_season_description">La période de l\'année influence le comportement moyen du canyon, notamment via la fonte et les régimes de pluie.</string>
     <string name="prediction_driver_historical_signals_title">Signaux historiques atypiques</string>

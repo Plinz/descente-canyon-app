@@ -1,35 +1,51 @@
 {
-  "schemaVersion": 1,
-  "generatedAt": "2026-06-03T11:51:14.941488+00:00",
-  "targetMode": "six_ordinal",
-  "labels": [
-    "CORRECT",
-    "CRUE",
-    "FILET",
-    "GROS",
-    "SEC",
-    "TRES_GROS"
-  ],
+  "schemaVersion": 4,
+  "targetMode": "six_ordinal_cumulative",
   "defaultPolicy": "balanced",
   "policies": {
     "balanced": {
-      "lowThreshold": 1.85,
-      "highThreshold": 2.35
+      "highThreshold": 0.31
     },
     "prudent": {
-      "lowThreshold": 1.85,
-      "highThreshold": 2.6
+      "highThreshold": 0.64
     },
     "safety_first": {
-      "lowThreshold": 1.85,
-      "highThreshold": 2.05
+      "highThreshold": 0.07
     }
   },
+  "cumulativeThresholds": [
+    0.57,
+    0.5,
+    0.27,
+    0.26,
+    0.35
+  ],
   "ordinalCutpoints": {
-    "secFilet": 0.7,
+    "secFilet": 0.5,
     "filetCorrect": 1.5,
-    "correctGros": 2.6,
-    "grosTresGros": 3.25,
-    "tresGrosCrue": 3.75
+    "correctGros": 2.5,
+    "grosTresGros": 3.5,
+    "tresGrosCrue": 4.5
+  },
+  "horizonModel": {
+    "modelAsset": "model_horizon.onnx",
+    "policies": {
+      "balanced": {
+        "highThreshold": 0.26
+      },
+      "prudent": {
+        "highThreshold": 0.66
+      },
+      "safety_first": {
+        "highThreshold": 0.07
+      }
+    },
+    "cumulativeThresholds": [
+      0.53,
+      0.51,
+      0.24,
+      0.28,
+      0.23
+    ]
   }
 }

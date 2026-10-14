@@ -13,8 +13,9 @@ open class OpenMeteoRemoteSource @Inject constructor(
 ) {
 
     companion object {
-        private const val DAILY_VARIABLES =
-            "precipitation_sum,rain_sum,snowfall_sum,temperature_2m_mean,temperature_2m_min,temperature_2m_max,precipitation_hours"
+        private const val DEBIT_DAILY_VARIABLES = "precipitation_sum,temperature_2m_mean"
+        private const val DEBIT_ARCHIVE_MODEL = "era5"
+        private const val DEBIT_FORECAST_MODEL = "ecmwf_ifs025"
     }
 
     open suspend fun fetchForecast(
@@ -34,21 +35,29 @@ open class OpenMeteoRemoteSource @Inject constructor(
         }.body()
     }
 
-    open suspend fun fetchDailyForecast(
+    /**
+     * Daily ECMWF IFS 0.25 deg values for the last [pastDays] days and the next [forecastDays] days.
+     * Same grid as ERA5, which keeps the debit model inputs consistent with its training data.
+     */
+    open suspend fun fetchDebitForecast(
         latitude: Double,
         longitude: Double,
-        forecastDays: Int = 3,
+        pastDays: Int,
+        forecastDays: Int,
     ): OpenMeteoDailyResponseDto {
         return httpClient.get("/v1/forecast") {
             parameter("latitude", latitude)
             parameter("longitude", longitude)
-            parameter("daily", DAILY_VARIABLES)
+            parameter("daily", DEBIT_DAILY_VARIABLES)
+            parameter("past_days", pastDays)
             parameter("forecast_days", forecastDays)
+            parameter("models", DEBIT_FORECAST_MODEL)
             parameter("timezone", "auto")
         }.body()
     }
 
-    open suspend fun fetchDailyArchive(
+    /** Daily ERA5 reanalysis (the debit model training source). The last ~5 days are null. */
+    open suspend fun fetchDebitArchive(
         latitude: Double,
         longitude: Double,
         startDate: String,
@@ -59,7 +68,8 @@ open class OpenMeteoRemoteSource @Inject constructor(
             parameter("longitude", longitude)
             parameter("start_date", startDate)
             parameter("end_date", endDate)
-            parameter("daily", DAILY_VARIABLES)
+            parameter("daily", DEBIT_DAILY_VARIABLES)
+            parameter("models", DEBIT_ARCHIVE_MODEL)
             parameter("timezone", "auto")
         }.body()
     }

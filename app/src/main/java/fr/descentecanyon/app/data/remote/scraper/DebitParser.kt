@@ -1,6 +1,8 @@
 package fr.descentecanyon.app.data.remote.scraper
 
+import fr.descentecanyon.app.data.mapper.DateParser
 import fr.descentecanyon.app.data.remote.dto.ScrapedDebit
+import fr.descentecanyon.app.domain.model.RecentDebitCell
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
@@ -82,6 +84,36 @@ internal object DebitParser {
         }
 
         return results
+    }
+
+    private val GRID_START_DATE = Regex("""\d{1,2}\s+\p{L}+\.?\s+\d{4}""")
+    private val GRID_LEVEL_CLASS = Regex("""\bd([1-6])\b""")
+
+    /**
+     * Parse the day grid of /canyoning/derniers-debits: one level per canyon and per day over the
+     * last ~16 days (the header gives the first day). Icon classes d1..d6 map to CRUE..SEC.
+     */
+    fun parseLatestDebitGrid(doc: Document): List<RecentDebitCell> {
+        val table = doc.selectFirst("table#listedebit") ?: return emptyList()
+        val header = table.select("thead th").lastOrNull()?.text().orEmpty()
+        val startDate = GRID_START_DATE.find(header)?.value?.let(DateParser::parseToLocalDate) ?: return emptyList()
+        val cells = mutableListOf<RecentDebitCell>()
+        for (row in table.select("tbody tr")) {
+            val tds = row.select("td")
+            if (tds.size < 5) continue
+            val canyonId = tds[1].selectFirst("a")?.attr("href")
+                ?.let { Regex("/canyon/(\\d+)/").find(it)?.groupValues?.get(1)?.toIntOrNull() } ?: continue
+            for (column in 4 until tds.size) {
+                val span = tds[column].selectFirst("span.ic-tint") ?: continue
+                val iconLevel = GRID_LEVEL_CLASS.find(span.className())?.groupValues?.get(1)?.toIntOrNull() ?: continue
+                cells += RecentDebitCell(
+                    canyonId = canyonId,
+                    date = startDate.plusDays((column - 4).toLong()),
+                    rank = 6 - iconLevel,
+                )
+            }
+        }
+        return cells
     }
 
     /**

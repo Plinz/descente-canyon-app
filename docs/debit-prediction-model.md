@@ -1,450 +1,208 @@
-# Debit Prediction Model
+# Modèle de prédiction du débit (v4)
+
+Modèle embarqué dans l'app (`modele_statistique/`), pipeline dans `scripts/debit_model/`
+(commandes : `scripts/debit_model/README.md`).
+
+## Pourquoi une refonte
+
+Le modèle précédent (v2) était surtout un modèle de persistance, alors que ses métriques le donnaient
+pour très bon :
+
+* son évaluation « récente » (0,81 d'exactitude) portait sur des observations **incluses dans
+  l'entraînement**, avec des lookups contenant l'observation elle-même : sur un vrai holdout, il
+  plafonnait à 0,67, soit le niveau de la règle naïve « répéter la dernière observation » ;
+* en production, les priors massif/région « 30 derniers jours » étaient figés à la date d'export,
+  `canyonDaysSinceLastObs` valait toujours 0 (époque Python `toordinal` contre Kotlin `toEpochDay`),
+  et la météo de l'app (`best_match`) n'était pas celle de l'entraînement (ERA5 0,25°), avec des pluies
+  extrêmes deux à quatre fois plus fréquentes ;
+* le décodage par espérance du rang écrasait les extrêmes (rappel CRUE de 0,7 %) ;
+* la météo ne portait aucun état hydrologique : pas de manteau neigeux, pas de stock karstique ou de
+  sol, pas de mémoire au-delà de 30 jours.
+
+## Principes du modèle v3
+
+1. **Un état hydrologique simulé** (`hydro.py` ↔ `DebitHydroModel.kt`), sur les 400 jours précédant
+   le jour cible :
+   * neige sur 5 bandes d'altitude de même surface, issues de l'hypsométrie du bassin (gradient
+     thermique, partition pluie/neige, fonte degré-jour) ;
+   * réservoir de production GR4J (capacité tirée de la réserve utile du sol) et ETP d'Oudin ;
+   * banque de réservoirs linéaires de 1, 3, 10, 30 et 90 jours (crue éclair → karst/nappe).
+
+   Les sorties sont normalisées par la climatologie simulée propre à chaque canyon (z-scores). Le
+   label est en effet relatif au canyon : un « débit correct » ne correspond pas au même volume d'un
+   canyon à l'autre.
+2. **Ce qui a changé depuis la dernière observation** : variation des réservoirs, apports liquides
+   et évolution du manteau neigeux depuis le dernier report du canyon. Le modèle corrige ainsi la
+   persistance au lieu de la répéter.
+3. **Parité stricte entraînement / app** :
+   * mêmes sources météo : ERA5 (`models=era5`) pour le passé, ECMWF IFS 0,25° (`ecmwf_ifs025`) pour
+     les derniers jours et la prévision (même grille) ;
+   * historique du canyon recalculé dans l'app à partir de la liste de débits scrapée ;
+   * priors massif/région strictement causaux à l'entraînement (le *leave-one-out* fait fuiter le
+     label : c'est une fonction déterministe de celui-ci) ;
+   * vecteurs dorés Python → test Kotlin (`DebitFeatureBuilderGoldenTest`) sur les features, la
+     sortie ONNX, la décision et le filtre de qualité des reports.
+4. **Décision ordinale cumulative** : niveau = plus haut k tel que P(débit ≥ j) ≥ τ_j pour tout j ≤ k.
+   Les seuils τ sont réglés hors échantillon avec un coût asymétrique : une sous-estimation d'un
+   GROS ou plus coûte 2,5 fois plus. L'app affiche aussi « Risque de gros débit ou plus : x % ».
+5. **Canyons froids** : 12 % des lignes d'entraînement sont dupliquées sans historique ni
+   climatologie, pour que le modèle serve correctement les ~730 canyons sans aucune observation.
+6. **Qualité des labels** (`label_quality.py` ↔ `DebitReportQuality.kt`) : les reports GROS / TRÈS
+   GROS / CRUE non parcourus qui ne sont que des messages (risque incendie, travaux, interdiction,
+   rééquipement, stationnement…) sont exclus des labels et de l'historique. Les revues manuelles de
+   `observation_overrides.json` restent prioritaires.
+7. **Canyons devenus interdits** : le site ne publie plus leurs reports. Leurs reports passés
+   (scraping précédent) restent des labels, et leur historique est embarqué dans les lookups (l'app
+   ne peut plus le scraper).
+
+## Sources temps réel (v4)
+
+La v3 ne voyait le canyon qu'à travers la météo et son propre historique. Or deux pratiquants qui
+signalent le même canyon le même jour ne donnent le même niveau que dans 78 % des cas (99 % à ±1
+niveau). Prédire un report à partir de ce que d'autres ont vu le même jour (« oracle même jour »)
+plafonne donc à 79 % d'exactitude. Pour s'en approcher, il faut de l'information observée du jour,
+pas seulement de la météo simulée. Toutes les sources ci-dessous ont été testées sur un banc A/B
+(deux folds walk-forward, bootstrap apparié par canyon, IC 95 %).
+
+| Source | Résultat (ΔRPS, IC 95 %) | Décision |
+| --- | --- | --- |
+| Reports des canyons à moins de 30 km (grille « derniers débits » du site, 16 jours) | −0,00053 [−0,00075 ; −0,00032] | retenue |
+| Pluviomètres Météo-France (open data quotidien, à moins de 25 km) | −0,00085 [−0,00115 ; −0,00058] | retenue |
+| + cumuls pluviomètres 14/30 jours, jours de pluie | −0,00026 [−0,00044 ; −0,00009] | retenue |
+| + pluviomètres MeteoSwiss (OGD) | −0,00187 [−0,00292 ; −0,00085] sur les canyons suisses | retenue |
+| Débits mesurés Hub'Eau (1 938 stations à moins de 30 km) | −0,00010 [−0,00032 ; +0,00010] | écartée (redondant avec les pluviomètres) |
+| Hauteur de neige observée (postes Météo-France / Nivôse) | +0,00025 [+0,00007 ; +0,00044] | écartée (dégrade) |
+| GloFAS (API Flood d'Open-Meteo) | débit simulé plat sur les petits bassins | écartée |
+| ECMWF IFS 9 km historique | non testable dans les quotas gratuits Open-Meteo | piste (clé API payante) |
+| Rayon des voisins 15 / 50 km, fenêtre de 15 jours | dégrade ou non significatif | 30 km, 3 et 7 jours |
+
+Côté modèle : profondeur 8, pondération des années récentes, `rsm`, L2 plus forte : aucun gain. Un
+ensemble de 3 graines gagne −0,00021 de RPS mais triple la taille embarquée : écarté.
+
+### Ce que l'app sait vraiment, et quand
+
+Un test de bout en bout avec les sources du jour a montré que le fichier quotidien Météo-France
+publié le matin de J (05:56 UTC) s'arrête à **J-2** : la pluie de la veille (cumul de 6 h UTC J-1 à
+6 h UTC J) n'y figure jamais. Entraîner avec la pluie J-1 aurait donc surestimé le gain. Or la pluie
+de la veille vaut à elle seule −0,00073 de RPS [−0,00100 ; −0,00047], plus que tout le reste des
+pluviomètres.
+
+Elle est récupérée autrement :
+
+* les **postes automatiques** Météo-France (fichier horaire du département, publié à 05:44 UTC avec
+  les heures jusqu'à 03 UTC du jour) donnent la pluie de la veille sur 21 des 24 heures. L'app lit
+  ce fichier (≈ 17 Mo) en flux et coupe le téléchargement dès que les stations utiles sont passées
+  (lignes triées par station) ;
+* les stations **MeteoSwiss** publient la veille dans leur fichier quotidien.
+
+À l'entraînement, cette feature (`mfAuto*`) vient de la pluie quotidienne J-1 des seuls postes
+automatiques (820 des 1 715 postes français proches des canyons). La convention est vérifiée : la
+somme des heures 07 UTC J-1 → 06 UTC J reproduit exactement la valeur quotidienne. Avant 05:44 UTC,
+la feature est absente. Pour que le modèle sache s'en passer, elle est masquée sur 20 % des lignes
+d'entraînement, pour un coût négligeable.
 
-This document describes the debit prediction model currently embedded in the app and summarizes the experiments that led to it.
+| Source (J = aujourd'hui + h) | Connue jusqu'à | Features calculées au |
+| --- | --- | --- |
+| Reports des voisins (grille du site) | aujourd'hui − 1 | J − h |
+| Pluviomètres, fichiers quotidiens | aujourd'hui − 2 | J − h − 1 |
+| Postes automatiques (horaire FR, MeteoSwiss) | aujourd'hui − 1 | J − h |
 
-## Current Embedded Model
+### Deux modèles : aujourd'hui et J+1/J+2
 
-Artifact directory: `modele_statistique/`
+Le matin du jour J, l'app connaît les reports et les pluviomètres jusqu'à J-1. Pour J+1 et J+2, il
+lui manque 1 ou 2 jours. Un modèle unique, entraîné avec l'information complète, se dégrade quand
+elle manque : à J+2, il devient moins bon que la v3. Une augmentation de données « horizon »
+réparait J+1/J+2, mais coûtait significativement à J0 (+0,00035 de RPS).
 
-Files shipped with the app:
+L'app embarque donc deux modèles qui partagent le même contrat de features :
 
-- `model.onnx`
-- `feature_spec.json`
-- `runtime_feature_lookups.json`
-- `thresholds.json`
-- `metrics.json`
-- `high_risk_overlay.onnx`
-- `high_risk_overlay.json`
-- `high_risk_overlay_feature_spec.json`
-- `high_risk_overlay_metrics.json`
+* `model.onnx` (J0) : information jusqu'à J-1 ;
+* `model_horizon.onnx` (J+1, J+2) : reports et pluviomètres décalés de l'horizon, feature
+  `infoLagDays` (entraîné sur toutes les lignes avec un décalage aléatoire de 1 ou 2 jours).
 
-Current model type:
+## Évaluation
 
-- `catboost_mobile_ordinal_classifier`
-- six ordinal labels: `SEC`, `FILET`, `CORRECT`, `GROS`, `TRES_GROS`, `CRUE`
-- primary UI output: six-level ordinal debit prediction
-- secondary risk bucket: `LOW`, `MEDIUM`, `HIGH`, with an optional Descente-only `HIGH` overlay
+Voir la section générée ci-dessous (walk-forward : un modèle par période, qui ne connaît que les
+observations antérieures à cette période, comme l'app le premier jour).
 
-The Android app includes `modele_statistique/` as assets through `app/build.gradle.kts`.
+Données : 166 802 observations Descente-Canyon (1988 → 07/10/2026), dont 8 canyons interdits
+restaurés depuis le scraping de juin. Météo ERA5 pour 3 330 cibles.
 
-## Final Training Strategy
+### Walk-forward (3 périodes jamais vues, 36 343 observations)
 
-The current embedded model uses the best production-compatible candidate found so far:
+Évaluation avec l'information réellement disponible chaque matin (tableau ci-dessus).
 
-- reviewed Descente-Canyon observations through `2026-05-28`;
-- manually reviewed high-flow reintegrations from previously excluded `invalid` / `uncertain` rows;
-- manually reintegrated high-flow rows weighted at `0.25`;
-- causal historical priors rebuilt from past observations only;
-- seasonal and recent-history lookup features available at runtime;
-- CatBoost ordinal classifier trained with `--final-train-on-all`;
-- three-class thresholds recalibrated after training;
-- six-level ordinal cutpoints added for display.
+| Période | v3 : exactitude / MAE / RPS | v5 J0 : exactitude / MAE / RPS | v5 J+1 : exactitude / MAE / RPS |
+| --- | --- | --- | --- |
+| 2023 | 0,738 / 0,289 / 0,0425 | 0,736 / 0,289 / 0,0405 | 0,729 / 0,298 / 0,0417 |
+| 2024 | 0,726 / 0,309 / 0,0429 | 0,739 / 0,290 / 0,0409 | 0,743 / 0,292 / 0,0420 |
+| 2025 → oct. 2026 | 0,758 / 0,269 / 0,0367 | 0,777 / 0,247 / 0,0352 | 0,771 / 0,253 / 0,0358 |
 
-The model does not currently use ERA5-Land grid weather in production.
+Agrégé :
 
-## Runtime Features
-
-The model still uses the standard dynamic weather and static canyon/watershed features, plus runtime lookup features.
-
-Runtime lookup additions in this version:
-
-- canyon/month priors;
-- canyon/season priors;
-- massif/month and massif/season priors;
-- region/month and region/season priors;
-- recent high-flow priors over `30`, `90`, and `365` days;
-- canyon last observed rank;
-- days since last canyon observation, computed app-side from target date.
-
-Android support:
-
-- `DebitFeatureBuilder` selects month and season lookup entries for the target date.
-- `DebitFeatureBuilder` computes `canyonDaysSinceLastObs` from `canyonLastObservationEpochDay`.
-- `OnnxDebitPredictor` supports calibrated ordinal cutpoints from `thresholds.json`.
-
-## Thresholds
-
-Current risk-bucket thresholds in `thresholds.json`:
-
-| Policy | Low threshold | High threshold |
-| --- | ---: | ---: |
-| `balanced` | `1.85` | `2.35` |
-| `prudent` | `1.85` | `2.60` |
-| `safety_first` | `1.85` | `2.05` |
-
-Current six-level ordinal cutpoints:
-
-| Boundary | Cutpoint |
-| --- | ---: |
-| `SEC / FILET` | `0.70` |
-| `FILET / CORRECT` | `1.50` |
-| `CORRECT / GROS` | `2.60` |
-| `GROS / TRES_GROS` | `3.25` |
-| `TRES_GROS / CRUE` | `3.75` |
-
-If cutpoints are absent or invalid, the app falls back to rounding the ordinal score.
-
-## Current Evaluation
-
-Recent reviewed evaluation set:
-
-- source: Descente-Canyon only;
-- date range: `2026-03-26` to `2026-06-04`;
-- observations: `2310`;
-- report: `build/debit-pipeline/post-cutoff-final-temporal-modele-statistique-evaluation-descente-2026-06-05-with-features/reliability_post_cutoff_report.md`.
-
-Base ordinal model metrics on the refreshed recent set:
-
-| Metric | Value |
-| --- | ---: |
-| Accuracy | `0.8108` |
-| Balanced accuracy | `0.7843` |
-| Macro F1 | `0.7707` |
-| Ordinal MAE | `0.2897` |
-| Ordinal RMSE | `0.4881` |
-| Severe ordinal errors >= 2 | `0.0069` |
-| HIGH precision | `0.7165` |
-| HIGH recall | `0.6192` |
-| HIGH F1 | `0.6643` |
-
-Current app risk bucket after the Descente-only HIGH overlay:
-
-| Metric | Value |
-| --- | ---: |
-| Accuracy | `0.8130` |
-| Balanced accuracy | `0.8580` |
-| Macro F1 | `0.7951` |
-| HIGH precision | `0.6383` |
-| HIGH recall | `0.8940` |
-| HIGH F1 | `0.7448` |
-
-The overlay only changes the secondary `LOW/MEDIUM/HIGH` risk bucket. The six-level ordinal display still comes from the base ordinal model.
-
-Compared with the previous embedded model:
-
-| Model | Accuracy | Balanced accuracy | Ordinal MAE | Severe errors | HIGH precision | HIGH recall | HIGH F1 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Previous embedded model | `0.6807` | `0.7262` | `0.3765` | `0.0109` | `0.5206` | `0.6580` | `0.5813` |
-| Current embedded model | `0.8148` | `0.7945` | `0.2876` | `0.0074` | `0.7467` | `0.6357` | `0.6867` |
-
-The current model predicts fewer `HIGH` buckets than the previous model, but does so with much higher precision and better overall ordinal quality.
-
-### External And Stratified Test Sets
-
-Two broader evaluation sets were added after the final model was selected.
-
-#### OpenCanyon External Source
-
-OpenCanyon rows were not used for training the embedded model. They provide an external-source validation set, although mapping noise and source-label differences remain important limitations.
-
-OpenCanyon full evaluation:
-
-- evaluated observations: `2421`;
-- skipped observations: `13`;
-- date range: `2016-04-26` to `2026-04-28`;
-- report: `build/debit-pipeline/opencanyon-full-final-model-evaluation/reliability_post_cutoff_report.md`.
-
-| Dataset | Accuracy | Balanced accuracy | Ordinal MAE | Severe errors | HIGH precision | HIGH recall | HIGH F1 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Recent reviewed Descente-Canyon | `0.8148` | `0.7945` | `0.2876` | `0.0074` | `0.7467` | `0.6357` | `0.6867` |
-| OpenCanyon full external | `0.5828` | `0.5304` | `0.5369` | `0.0169` | `0.4430` | `0.4534` | `0.4481` |
-
-Conclusion: the model generalizes poorly to OpenCanyon compared with recent Descente-Canyon data. This may reflect source-label differences, canyon matching noise, or true overfitting to Descente-Canyon semantics. OpenCanyon should be kept as an external validation set, not mixed into production training without license and label-quality review.
-
-#### Descente-Canyon Stratified Holdout
-
-A grouped year/level/canyon-day stratified holdout was generated from reviewed Descente-Canyon feature rows.
-
-Split output:
-
-- `build/debit-pipeline/stratified-holdout-descente-reviewed/train_features.jsonl`
-- `build/debit-pipeline/stratified-holdout-descente-reviewed/test_features.jsonl`
-- `build/debit-pipeline/stratified-holdout-descente-reviewed/metadata.json`
-
-Holdout summary:
-
-- test rows: `4541`;
-- test canyon count: `1463`;
-- test date range: `1986-07-26` to `2026-05-28`;
-- test level counts: `SEC=923`, `FILET=990`, `CORRECT=1130`, `GROS=943`, `TRES_GROS=306`, `CRUE=249`.
-
-A train-only candidate was exported from the stratified train rows and evaluated on the holdout. The current embedded model was also evaluated on the same holdout for reference, but that comparison is optimistic because the embedded model was trained on all rows including this holdout.
-
-| Model / Dataset | Accuracy | Balanced accuracy | Ordinal MAE | Severe errors | HIGH precision | HIGH recall | HIGH F1 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Stratified train-only candidate on holdout | `0.7150` | `0.6984` | `0.6492` | `0.0504` | `0.8896` | `0.5327` | `0.6664` |
-| Current embedded model on same holdout (optimistic) | `0.7461` | `0.7276` | `0.6081` | `0.0440` | `0.9009` | `0.6068` | `0.7252` |
-
-Methodology warning: this holdout was built from precomputed feature rows. For a strict production backtest, causal history features and runtime lookups should be rebuilt from train rows only. Even with that caveat, this split shows that performance is much lower on a deliberately high-flow-rich, all-years holdout than on the recent reviewed slice.
-
-A stricter variant was then built:
-
-- train rows only were used to rebuild causal history features;
-- runtime lookups were rebuilt from train rows only;
-- holdout rows received train-only lookup features before evaluation;
-- no holdout observation IDs were present in train.
-
-Strict holdout result:
-
-| Model / Dataset | Accuracy | Balanced accuracy | Ordinal MAE | Severe errors | HIGH precision | HIGH recall | HIGH F1 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Strict train-only candidate on holdout | `0.6690` | `0.6536` | `0.7014` | `0.0546` | `0.8415` | `0.4112` | `0.5525` |
-
-This strict backtest confirms that the model is much less robust on an all-years, high-flow-rich holdout than recent reviewed metrics suggest. The largest weakness is recall on `GROS/TRES_GROS/CRUE`, especially historical high-flow cases with weak or misleading train-only canyon history.
-
-Conclusion: future model selection should include both recent temporal validation and a stratified historical holdout. The current recent reviewed metrics are not sufficient alone.
-
-## Experiments Tested
-
-### Label Review
-
-Reviewed high-flow observations that were previously excluded by the raw quality pipeline:
-
-- reviewed high-flow excluded rows: `1030`;
-- reintegrated as `valid`: `795`;
-- confirmed `invalid`: `140`;
-- left unchanged: `95`.
-
-Overrides are centralized in `scripts/debits/observation_overrides.json`.
-
-### Full Reviewed Labels At Weight 1.0
-
-Result: rejected.
-
-Reason:
-
-- over-predicted `HIGH` massively;
-- high recall reached `1.0`, but precision collapsed;
-- ordinal metrics degraded sharply.
-
-### Reviewed High-Flow Rows With Reduced Weight
-
-Tested reintegrated high-flow sample weights: `0.50`, `0.25`, `0.10`.
-
-Best production-compatible result before temporal features: `0.25`.
-
-| Model | Accuracy | Balanced accuracy | Ordinal MAE | HIGH F1 |
-| --- | ---: | ---: | ---: | ---: |
-| Previous embedded model | `0.6807` | `0.7262` | `0.3765` | `0.5813` |
-| Reviewed causal `weight=0.25` | `0.7507` | `0.7542` | `0.3737` | `0.5869` |
-
-### Canyon-Day Target
-
-Result: rejected for production.
-
-The canyon-day consensus target reduced label noise but also lost useful observation-level signal.
-
-Best no-weight variant was close on balanced accuracy, but worse on ordinal MAE and HIGH F1 than the production candidates.
-
-### Text Abbreviation Signals
-
-Detected and audited comment-level debit nuances such as:
-
-- `DC-`, `DC`, `DC+`, `DC++`;
-- `GD-`, `GD`, `GD+`;
-- `TGD-`, `TGD`, `TGD+`;
-- ranges such as `DC/GD` and `GD/TGD`.
-
-Extraction script: `scripts/debits/enrich_text_target_signals.py`.
-
-Result: useful for audit, not adopted as hard label replacement.
-
-Reason:
-
-- hard replacement slightly improved ordinal MAE in one configuration;
-- but reduced HIGH recall and did not improve HIGH F1;
-- true soft-rank modelling remains future work.
-
-Soft-rank follow-up was tested with HGB and CatBoost regressors, using both all extracted text signals and high-confidence abbreviation-only signals.
-
-| Candidate | Target text signals | Ordinal MAE | HIGH recall | HIGH F1 |
-| --- | --- | ---: | ---: | ---: |
-| Embedded temporal-history model | none | `0.3608` | `0.6371` | `0.6138` |
-| HGB soft-rank | phrases + abbreviations | `0.3815` | `0.6153` | `0.5535` |
-| HGB soft-rank | abbreviations only | `0.3788` | `0.6333` | `0.5562` |
-| CatBoost regressor soft-rank | phrases + abbreviations | `0.3811` | `0.6106` | `0.5590` |
-| CatBoost regressor soft-rank | abbreviations only | `0.3786` | `0.6217` | `0.5587` |
-
-Conclusion: the tested soft-rank regressors do not beat the embedded temporal-history classifier. Keep text signals as audit/label-quality metadata for now.
-
-### ERA5-Land Grid Weather
-
-Implemented:
-
-- watershed-intersecting ERA5-Land grid cells;
-- monthly cell fetches with VPN/IP rotation;
-- area-weighted canyon daily weather aggregation;
-- point fallback for canyons without watershed geometry;
-- spatial precipitation features.
-
-Scripts:
-
-- `scripts/debits/build_weather_grid_cells.py`
-- `scripts/debits/plan_weather_grid_windows.py`
-- `scripts/debits/aggregate_grid_weather_by_canyon.py`
-- `scripts/debits/run_open_meteo_vpn_chunks.py`
-
-Result: rejected for production for now.
-
-ERA5-Land v2 improved raw accuracy but degraded key safety/ordinal metrics:
-
-| Model | Accuracy | Balanced accuracy | Ordinal MAE | HIGH recall | HIGH F1 |
-| --- | ---: | ---: | ---: | ---: | ---: |
-| Current embedded temporal-history model | `0.8148` | `0.7945` | `0.2876` | `0.6357` | `0.6867` |
-| ERA5-Land grid v2 recalibrated | `0.7284` | `0.7327` | `0.4037` | `0.6171` | `0.5589` |
-
-### Six-Level Cutpoints
-
-Simple unconstrained cutpoints were rejected earlier because they collapsed high-level classes.
-
-Constrained cutpoints were then tested and adopted for display because they improved recent discrete ordinal display metrics:
-
-- six-level accuracy: `0.7944 -> 0.7999`;
-- discrete MAE: `0.2314 -> 0.2234`;
-- severe discrete errors: `0.0218 -> 0.0184`.
-
-### Segment Thresholds And Risk Policies
-
-Segment-specific `HIGH` thresholds were tested on the recent reviewed evaluation rows as a decision-layer experiment:
-
-| Strategy | Accuracy | Balanced accuracy | HIGH precision | HIGH recall | HIGH F1 | Predicted HIGH |
+| | v3 | v5 J0 | v5 J0 sans postes auto (avant 05:44 UTC) | v5 J+1 | v5 J+2 | Persistance |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Final default thresholds | `0.8148` | `0.7945` | `0.7467` | `0.6357` | `0.6867` | `229` |
-| Month-specific HIGH threshold | `0.8098` | `0.8229` | `0.6700` | `0.7546` | `0.7098` | `303` |
-| Country-specific HIGH threshold | `0.8088` | `0.8213` | `0.6667` | `0.7509` | `0.7063` | `303` |
-| Season-specific HIGH threshold | `0.8093` | `0.8109` | `0.6821` | `0.7100` | `0.6958` | `280` |
+| Exactitude | 0,745 | 0,757 | 0,755 | 0,752 | 0,752 | 0,674 |
+| MAE ordinale | 0,283 | 0,267 | 0,272 | 0,275 | 0,276 | 0,416 |
+| Erreurs ≥ 2 niveaux | 2,25 % | 2,06 % | — | 2,19 % | — | 6,6 % |
+| GROS+ sous-estimés de ≥ 2 niveaux | 10,2 % | 9,0 % | — | 9,7 % | 9,8 % | 21,1 % |
+| GROS+ : précision / rappel / F1 | 0,55 / 0,60 / 0,57 | 0,57 / 0,64 / 0,60 | F1 0,59 | F1 0,59 | F1 0,58 | 0,39 / 0,42 / 0,41 |
+| RPS | 0,0398 | 0,0380 | 0,0388 | 0,0390 | 0,0392 | — |
+| AUC P(≥ GROS) | 0,901 | 0,915 | — | 0,907 | 0,905 | 0,66 |
 
-These segment thresholds improve `HIGH` recall and F1 on the recent slice, but they were not adopted because the thresholds were fitted directly on the same recent evaluation period. They are promising and should be recalibrated on a proper calibration split before production use.
+Une évaluation qui aurait supposé la pluie de J-1 connue partout (« v4 ») donnait un RPS de 0,0379 :
+les postes automatiques en récupèrent la quasi-totalité. À J+1 et même J+2, la v5 reste meilleure
+que la v3 le jour même.
 
-The standard policy comparison on the final model is:
+Par pays (exactitude v3 → v5 J0) : France 0,745 → 0,759, Espagne 0,733 → 0,744, Italie 0,774 → 0,780,
+Suisse 0,757 → 0,772 (F1 gros débits 0,57 → 0,62 grâce aux pluviomètres MeteoSwiss).
 
-| Policy | HIGH precision | HIGH recall | HIGH F1 | Predicted HIGH |
-| --- | ---: | ---: | ---: | ---: |
-| `balanced` | `0.7467` | `0.6357` | `0.6867` | `229` |
-| `prudent` | `0.8750` | `0.4944` | `0.6318` | `152` |
-| `safety_first` | `0.3964` | `0.8959` | `0.5496` | `608` |
+Comparaison au plafond : sur les 6 708 reports d'un canyon-jour signalé par au moins deux personnes,
+l'« oracle même jour » atteint 0,794 d'exactitude (MAE 0,217). La v5 atteint 0,770 (MAE 0,243), la v3
+0,761, la persistance 0,698 : la v5 comble 75 % de l'écart persistance → oracle (v3 : 66 %).
 
-`balanced` remains the default policy.
+Résultats de la v3 :
 
-### Secondary HIGH Overlay
+Le gain est le plus fort quand la dernière observation est ancienne (fold 2025-2026) :
 
-A secondary binary `HIGH` overlay is now shipped for Descente-Canyon-focused risk prediction. It trains only on the strict train split and can only promote a baseline `LOW` or `MEDIUM` prediction to `HIGH`; it never demotes a baseline `HIGH` prediction.
+| Dernier report | Modèle : exactitude / MAE | Persistance : exactitude / MAE |
+| --- | --- | --- |
+| 0–7 j | 0,814 / 0,20 | 0,788 / 0,25 |
+| 8–30 j | 0,747 / 0,28 | 0,675 / 0,40 |
+| 31–365 j | 0,667 / 0,38 | 0,524 / 0,66 |
+| > 365 j | 0,645 / 0,41 | 0,510 / 0,67 |
 
-Shipped files:
+Canyon « froid » (sans historique ni climatologie) : exactitude 0,69 à 0,70 contre 0,64 à 0,69 pour
+la climatologie du massif, et rappel GROS+ de 35 à 48 % contre 2 %.
 
-- `modele_statistique/high_risk_overlay.onnx`
-- `modele_statistique/high_risk_overlay.json`
-- `modele_statistique/high_risk_overlay_feature_spec.json`
-- `modele_statistique/high_risk_overlay_metrics.json`
+La probabilité P(≥ GROS) est bien calibrée : chaque décile de probabilité prédite est à ±3 points de
+la fréquence observée (`metrics.json`, `calibrationHigh`).
 
-Selected overlay:
+### Validation par le chemin exact de l'app
 
-- model: `ExtraTreesClassifier` binary `HIGH` vs `NOT_HIGH`;
-- trees: `32`;
-- `min_samples_leaf=3`;
-- threshold: `0.35`;
-- raw ONNX size: around `45.2 MiB`, around `9.7 MiB` gzip-compressed.
+Pour vérifier la chaîne de bout en bout, le modèle entraîné jusqu'au 04/06/2026 a été rejoué sur
+1 375 reports publiés du 05/06 au 12/10/2026 (56 canyons parmi les plus suivis), avec la météo
+récupérée comme dans l'app, les assets exportés et ONNX (`validate_recent.py`). Résultats :
+exactitude 0,835 contre 0,808 pour la persistance, MAE 0,18 contre 0,22, erreurs graves 1,0 % contre
+1,6 %. Sur les 46 « gros débits » de cet été sec, 7 étaient des messages (incendie, travaux,
+stationnement…), auxquels le modèle donnait à raison une probabilité quasi nulle. D'où le filtre
+`label_quality.py`.
 
-Descente-only validation:
+### Décision embarquée
 
-| Dataset / Policy | Accuracy | Balanced accuracy | HIGH precision | HIGH recall | HIGH F1 | Predicted HIGH |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Strict holdout baseline | `0.6690` | `0.6536` | `0.8415` | `0.4112` | `0.5525` | `732` |
-| Strict holdout + overlay | `0.7261` | `0.7052` | `0.7963` | `0.6549` | `0.7187` | `1232` |
-| Recent Descente baseline, refreshed to `2026-06-04` | `0.8108` | `0.7843` | `0.7165` | `0.6192` | `0.6643` | `261` |
-| Recent Descente + overlay | `0.8130` | `0.8580` | `0.6383` | `0.8940` | `0.7448` | `423` |
+* modèle J0 : seuils cumulatifs τ = 0,57 / 0,50 / 0,27 / 0,26 / 0,35 (SEC→FILET … TRÈS GROS→CRUE) ;
+  risque « Fort » si P(≥ GROS) ≥ 0,31 (`balanced`), 0,64 (`prudent`), 0,07 (`safety_first`) ;
+* modèle J+1/J+2 : τ = 0,53 / 0,51 / 0,24 / 0,28 / 0,23 ; risque « Fort » si
+  P(≥ GROS) ≥ 0,26 (`balanced`), 0,66 (`prudent`), 0,07 (`safety_first`).
 
-Result: adopted for the secondary risk bucket after dropping OpenCanyon as a selection gate. The base ordinal model remains unchanged for six-level display and ordinal score quality.
+## Limites connues et pistes
 
-### Uncertainty And Probability Calibration
-
-The final model's recent high-flow probability calibration is reasonably good:
-
-- HIGH Brier score: `0.0584`.
-- HIGH expected calibration error: `0.0237`.
-- Remaining `CRUE` not predicted as `HIGH`: `5/43`.
-
-Uncertainty/range display remains a product opportunity, but no alternative uncertainty policy was adopted in this pass.
-
-### Ensembles And Specialist Models
-
-The model now has strong temporal-history features. A lightweight strategy analysis was added in `scripts/debits/analyze_prediction_strategies.py` to evaluate segment thresholds and future ensembles from prediction JSONL files.
-
-Full multi-model ensembles and mixture-of-experts were not adopted in this pass because the best available alternative candidates (`ERA5-Land`, hard text-abbreviation labels, canyon-day, soft-rank regressors) did not beat the final embedded model as standalone models. Future ensemble tests should compare against this final baseline and use a proper calibration/validation split.
-
-A first true specialist model was trained on spring rows only (`March-May`), since the recent reviewed evaluation window is entirely spring. It did not beat the general final model:
-
-| Model | Accuracy | Balanced accuracy | Ordinal MAE | Severe errors | HIGH precision | HIGH recall | HIGH F1 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
-| Final embedded model | `0.8148` | `0.7945` | `0.2876` | `0.0074` | `0.7467` | `0.6357` | `0.6867` |
-| Spring specialist | `0.8054` | `0.7701` | `0.3175` | `0.0089` | `0.7273` | `0.5948` | `0.6544` |
-
-Conclusion: do not split into a spring specialist model at this stage. The general temporal-history model already captures the useful seasonal signal.
-
-## Known Limitations
-
-- Runtime lookup artifact is larger than before: around `18.7 MB`.
-- HIGH overlay ONNX adds around `45.2 MiB` raw asset size, around `9.7 MiB` gzip-compressed.
-- The model still does not use ERA5-Land grid weather at runtime.
-- The remaining severe errors are mostly `CRUE` under-estimations.
-- The app still keeps `LOW/MEDIUM/HIGH` as a secondary risk bucket for safety metrics and policy thresholds.
-
-## Useful Commands
-
-Compile app:
-
-```bash
-bash gradlew :app:compileDebugKotlin
-```
-
-Evaluate current embedded model on recent reviewed observations:
-
-```bash
-.venv/bin/python scripts/debits/evaluate_post_cutoff_app_model.py \
-  --model-dir modele_statistique \
-  --observations-path build/debit-pipeline/descente-refresh-2026-06-05-reviewed/valid_debit_observations.jsonl \
-  --output-dir build/debit-pipeline/post-cutoff-final-temporal-modele-statistique-evaluation-descente-2026-06-05-with-features \
-  --weather-cache-dir build/debit-pipeline/post-cutoff-app-model-evaluation-descente/weather-cache \
-  --request-delay-ms 2500 \
-  --timeout-s 180 \
-  --write-feature-rows
-```
-
-Export the compact HIGH overlay:
-
-```bash
-PYTHONPATH=scripts/debits .venv/bin/python scripts/debits/export_high_risk_overlay.py \
-  --output-dir build/debit-pipeline/high-risk-overlay-extra-trees-32 \
-  --n-estimators 32 \
-  --min-samples-leaf 3 \
-  --threshold 0.35
-```
-
-Export excluded high-flow review list:
-
-```bash
-.venv/bin/python scripts/debits/export_excluded_high_flow_review.py
-```
-
-Apply reviewed high-flow decisions:
-
-```bash
-.venv/bin/python scripts/debits/apply_excluded_high_flow_review.py
-```
-
-Build a stratified historical holdout:
-
-```bash
-.venv/bin/python scripts/debits/build_stratified_holdout_split.py \
-  --features-path build/debit-pipeline/training-features-reviewed-causal-weight025-temporal-history/training_features.jsonl \
-  --output-dir build/debit-pipeline/stratified-holdout-descente-reviewed
-```
-
-## Future Work
-
-Recommended next experiments:
-
-- true soft-rank model using `textTargetRank` rather than hard label replacement;
-- targeted treatment of remaining `CRUE` under-estimations;
-- runtime lookup compression, likely gzip asset loading;
-- ERA5-Land revisit only if a model can exploit it without degrading HIGH recall and ordinal MAE.
+* Les orages très locaux d'été restent la principale source de gros débits manqués. Les
+  pluviomètres réduisent ce problème en France et en Suisse, pas encore en Espagne ni en Italie :
+  AEMET demande une clé API, et les réseaux italiens sont régionaux.
+* Avant 05:44 UTC, la pluie de la veille aux postes automatiques n'est pas publiée. Le modèle s'en
+  passe, au prix de +0,0008 de RPS.
+* Une clé API Open-Meteo payante permettrait de tester ECMWF IFS 9 km (historique depuis 2017,
+  identique en prévision), aujourd'hui hors des quotas gratuits.
+* Les lâchers de barrages et les prises d'eau ne sont pas modélisés.
+* Le label reste une appréciation humaine, relative au canyon et au groupe.

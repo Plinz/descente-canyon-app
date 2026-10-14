@@ -33,23 +33,28 @@ class DebitPredictionRepositoryImpl @Inject constructor(
                 val horizonDates = (0..2).map { horizonDays ->
                     baseDate.plusDays(horizonDays.toLong())
                 }
-                val featureVectors = horizonDates.map { targetDate ->
+                val available = horizonDates.mapIndexedNotNull { horizonDays, targetDate ->
                     featureBuilder.buildFeatureVector(
                         detail = detail,
                         support = support,
                         featureSpec = featureSpec,
                         staticFeatureSet = staticFeatures,
                         targetDate = targetDate,
-                    )
+                        horizonDays = horizonDays,
+                    )?.let { vector -> Triple(horizonDays, targetDate, vector) }
                 }
-                val predictions = predictor.predictBatch(
-                    featureSpec = featureSpec,
-                    thresholds = thresholds,
-                    featureVectors = featureVectors,
-                    dates = horizonDates,
-                ).mapIndexed { horizonDays, prediction ->
-                    prediction.copy(horizonDays = horizonDays)
-                }
+                check(available.isNotEmpty()) { "Historique météo insuffisant pour estimer le débit" }
+                // Today: J0 model. Tomorrow and after: J+1/J+2 model (real-time info known up to today - 1).
+                val predictions = available.partition { it.first == 0 }.toList().flatMap { group ->
+                    if (group.isEmpty()) return@flatMap emptyList()
+                    predictor.predictBatch(
+                        featureSpec = featureSpec,
+                        thresholds = thresholds,
+                        featureVectors = group.map { it.third },
+                        dates = group.map { it.second },
+                        useHorizonModel = group.first().first > 0,
+                    ).mapIndexed { index, prediction -> prediction.copy(horizonDays = group[index].first) }
+                }.sortedBy { it.horizonDays }
                 CanyonDebitPredictions(
                     target = support.target,
                     timezone = support.timezone,

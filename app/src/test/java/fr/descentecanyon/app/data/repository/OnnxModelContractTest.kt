@@ -37,7 +37,7 @@ class OnnxModelContractTest {
             tensor.use { inputTensor ->
                 session.run(mapOf(inputName to inputTensor)).use { result ->
                     assertFalse(!result.iterator().hasNext())
-                    val probabilityMap = result.firstNotNullOfOrNull { (_, value) -> extractProbabilities(value) }
+                    val probabilityMap = result.firstNotNullOfOrNull { (_, value) -> extractProbabilities(value, spec.labels) }
                     assertNotNull(probabilityMap)
                     assertEquals(spec.labels.toSet(), probabilityMap!!.keys)
                 }
@@ -62,7 +62,7 @@ class OnnxModelContractTest {
             )
             tensor.use { inputTensor ->
                 session.run(mapOf(inputName to inputTensor)).use { result ->
-                    val probabilityRows = result.firstNotNullOfOrNull { (_, value) -> extractProbabilityRows(value) }
+                    val probabilityRows = result.firstNotNullOfOrNull { (_, value) -> extractProbabilityRows(value, spec.labels) }
                     assertNotNull(probabilityRows)
                     assertEquals(3, probabilityRows!!.size)
                     probabilityRows.forEach { row ->
@@ -88,48 +88,26 @@ class OnnxModelContractTest {
         val featureCount: Int,
     )
 
-    private fun extractProbabilities(value: ai.onnxruntime.OnnxValue): Map<String, Double>? {
-        return when (value) {
-            is OnnxMap -> parseProbabilityMap(value.value)
-            is OnnxSequence -> extractProbabilitiesFromRaw(value.value)
-            is OnnxTensor -> when (val raw = value.value) {
-                is Array<*> -> when (val first = raw.firstOrNull()) {
-                    is FloatArray -> mapOf("HIGH" to first[0].toDouble(), "LOW" to first[1].toDouble(), "MEDIUM" to first[2].toDouble())
-                    is DoubleArray -> mapOf("HIGH" to first[0], "LOW" to first[1], "MEDIUM" to first[2])
-                    else -> null
-                }
-                else -> null
-            }
-            else -> null
-        }
+    private fun extractProbabilities(value: ai.onnxruntime.OnnxValue, labels: List<String>): Map<String, Double>? {
+        return extractProbabilityRows(value, labels)?.firstOrNull()
     }
 
-    private fun extractProbabilityRows(value: ai.onnxruntime.OnnxValue): List<Map<String, Double>>? {
+    private fun extractProbabilityRows(value: ai.onnxruntime.OnnxValue, labels: List<String>): List<Map<String, Double>>? {
         return when (value) {
             is OnnxMap -> parseProbabilityMap(value.value)?.let(::listOf)
             is OnnxSequence -> extractProbabilityRowsFromRaw(value.value)
             is OnnxTensor -> when (val raw = value.value) {
-                is Array<*> -> when (val first = raw.firstOrNull()) {
+                is Array<*> -> when (raw.firstOrNull()) {
                     is FloatArray -> raw.mapNotNull { row ->
-                        (row as? FloatArray)?.let { mapOf("HIGH" to it[0].toDouble(), "LOW" to it[1].toDouble(), "MEDIUM" to it[2].toDouble()) }
+                        (row as? FloatArray)?.let { values -> labels.zip(values.map { it.toDouble() }).toMap() }
                     }.takeIf { it.isNotEmpty() }
                     is DoubleArray -> raw.mapNotNull { row ->
-                        (row as? DoubleArray)?.let { mapOf("HIGH" to it[0], "LOW" to it[1], "MEDIUM" to it[2]) }
+                        (row as? DoubleArray)?.let { values -> labels.zip(values.toList()).toMap() }
                     }.takeIf { it.isNotEmpty() }
                     else -> null
                 }
                 else -> null
             }
-            else -> null
-        }
-    }
-
-    private fun extractProbabilitiesFromRaw(raw: Any?): Map<String, Double>? {
-        return when (raw) {
-            is OnnxMap -> parseProbabilityMap(raw.value)
-            is Map<*, *> -> parseProbabilityMap(raw)
-            is List<*> -> raw.firstNotNullOfOrNull { item -> extractProbabilitiesFromRaw(item) }
-            is Array<*> -> raw.firstNotNullOfOrNull { item -> extractProbabilitiesFromRaw(item) }
             else -> null
         }
     }

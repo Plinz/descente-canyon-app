@@ -399,6 +399,7 @@ Le foto e le portate restano recuperate online quando la rete è disponibile.</s
     <string name="prediction_ordinal_gros">Probabile portata alta</string>
     <string name="prediction_ordinal_tres_gros">Probabile portata molto alta</string>
     <string name="prediction_ordinal_crue">Probabile piena</string>
+    <string name="prediction_high_flow_risk">Rischio di portata alta o superiore: %1$d%%</string>
     <string name="prediction_confidence_high">Fiducia alta</string>
     <string name="prediction_confidence_medium">Fiducia media</string>
     <string name="prediction_confidence_low">Fiducia bassa</string>
@@ -414,8 +415,8 @@ Le foto e le portate restano recuperate online quando la rete è disponibile.</s
     <string name="prediction_info_reading_p3">Il badge di fiducia diminuisce se il modello esita tra più livelli o se il punteggio è vicino a un limite tra due categorie.</string>
     <string name="prediction_info_reading_p4">Questa stima va letta come un aiuto alla preparazione, non come una garanzia di sicurezza né come una misura istantanea della portata reale.</string>
     <string name="prediction_info_data_title">Quali dati vengono utilizzati</string>
-    <string name="prediction_info_data_p1">Il modello combina la meteo giornaliera recente, le previsioni a breve termine, alcune caratteristiche del canyon, la superficie del bacino idrografico quando è nota, nonché osservazioni passate del canyon o di zone vicine.</string>
-    <string name="prediction_info_data_p2">In concreto, tiene conto sia della pioggia recente, della sua durata, della stagione, della temperatura, della neve recente e del comportamento osservato sul canyon, sul massiccio o sulla regione.</string>
+    <string name="prediction_info_data_p1">Il modello simula lo stato idrologico del bacino negli ultimi 400 giorni a partire dai dati meteo (rianalisi ERA5, poi previsioni ECMWF): manto nevoso per fascia di quota, fusione, umidità del suolo e serbatoi da rapidi a lenti (temporali, falde, carsismo).</string>
+    <string name="prediction_info_data_p2">Combina questo stato con le caratteristiche fisiche del bacino, le portate segnalate negli ultimi giorni sul torrente e sui torrenti vicini (entro 30 km) e la pioggia misurata dai pluviometri vicini di Météo-France e MeteoSwiss. Domani e dopodomani usano un secondo modello, addestrato con le informazioni disponibili il giorno prima.</string>
     <string name="prediction_info_training_title">Dati di addestramento</string>
     <string name="prediction_info_stat_total_observations">%1$s osservazioni passate utilizzate in totale</string>
     <string name="prediction_info_stat_train_rows">%1$s osservazioni per l\'addestramento</string>
@@ -505,11 +506,11 @@ Le foto e le portate restano recuperate online quando la rete è disponibile.</s
     <string name="prediction_driver_area_context_title">Contesto del massiccio e della regione</string>
     <string name="prediction_driver_area_context_description">Se il canyon ha poche osservazioni proprie, il modello si appoggia maggiormente a canyon vicini o simili.</string>
     <string name="prediction_driver_recent_rain_title">Pioggia recente e accumuli</string>
-    <string name="prediction_driver_recent_rain_description">Le precipitazioni degli ultimi giorni e delle ultime settimane incidono molto sul livello stimato.</string>
+    <string name="prediction_driver_recent_rain_description">La pioggia recente e i serbatoi simulati del bacino (suolo, deflusso rapido e lento) pesano molto sul livello stimato.</string>
     <string name="prediction_driver_temperature_snow_title">Temperatura, pioggia e neve</string>
-    <string name="prediction_driver_temperature_snow_description">La temperatura media, la pioggia liquida e la neve recente aiutano a distinguere situazioni idrologiche diverse.</string>
+    <string name="prediction_driver_temperature_snow_description">Il manto nevoso simulato per quota, la fusione e la temperatura aiutano ad anticipare le portate di fusione e i periodi caldi.</string>
     <string name="prediction_driver_watershed_title">Bacino idrografico</string>
-    <string name="prediction_driver_watershed_description">La superficie del bacino idrografico aiuta a collegare le piogge ricevute alla risposta probabile del canyon.</string>
+    <string name="prediction_driver_watershed_description">Dimensione, quota, geologia (carsismo) e suoli del bacino modulano la risposta del torrente a pioggia e fusione.</string>
     <string name="prediction_driver_season_title">Stagione</string>
     <string name="prediction_driver_season_description">Il periodo dell\'anno influenza il comportamento medio del canyon, in particolare tramite fusione e regimi di pioggia.</string>
     <string name="prediction_driver_historical_signals_title">Segnali storici atipici</string>

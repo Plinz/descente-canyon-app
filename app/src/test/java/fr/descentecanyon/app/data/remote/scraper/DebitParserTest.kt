@@ -133,4 +133,27 @@ class DebitParserTest {
             assertNotNull("Date should be parsable: ${debit.date}", DateParser.parseToLocalDate(debit.date))
         }
     }
+
+    @Test
+    fun `latest debit grid maps day columns to dates and icon classes to ranks`() {
+        val doc = Jsoup.parse(loadHtml("derniers_debits_grid.html"))
+        val cells = DebitParser.parseLatestDebitGrid(doc)
+
+        // Grid from 29 Sept to 14 Oct 2026; icon d1..d6 = CRUE..SEC (rank 5..0).
+        assertEquals(9, cells.size)
+        val forronias = cells.single { it.canyonId == 21502 }
+        assertEquals(java.time.LocalDate.of(2026, 10, 14), forronias.date)
+        assertEquals(2, forronias.rank) // d4 = CORRECT
+        val oules = cells.filter { it.canyonId == 2268 }.sortedBy { it.date }
+        assertEquals(
+            listOf(
+                java.time.LocalDate.of(2026, 9, 29) to 2,
+                java.time.LocalDate.of(2026, 10, 2) to 2,
+                java.time.LocalDate.of(2026, 10, 11) to 3,
+                java.time.LocalDate.of(2026, 10, 13) to 3,
+            ),
+            oules.map { it.date to it.rank },
+        )
+        assertEquals(0, cells.single { it.canyonId == 2824 }.rank) // d6 = SEC
+    }
 }

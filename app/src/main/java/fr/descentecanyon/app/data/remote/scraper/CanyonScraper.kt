@@ -18,6 +18,7 @@ import fr.descentecanyon.app.domain.model.InterestRatingSessionRequiredException
 import fr.descentecanyon.app.domain.model.InterestRatingSubmission
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.ObservationType
+import fr.descentecanyon.app.domain.model.RecentDebitCell
 import fr.descentecanyon.app.domain.model.WaterTemperature
 import java.util.Locale
 import kotlinx.coroutines.Dispatchers
@@ -117,6 +118,17 @@ class CanyonScraper @Inject constructor(
                 runCatching {
                     val doc = fetchDocument("$BASE_URL/canyoning/derniers-debits")
                     DebitParser.parseLatestDebits(doc)
+                }
+            }
+        }
+
+    /** Day grid of recent reports of every canyon (last ~16 days), used by the debit model. */
+    suspend fun scrapeLatestDebitGrid(): Result<List<RecentDebitCell>> =
+        withContext(Dispatchers.IO) {
+            semaphore.withPermit {
+                runCatching {
+                    val doc = fetchDocument("$BASE_URL/canyoning/derniers-debits")
+                    DebitParser.parseLatestDebitGrid(doc)
                 }
             }
         }

@@ -53,6 +53,7 @@ import fr.descentecanyon.app.ui.theme.DebitFilet
 import fr.descentecanyon.app.ui.theme.DebitGros
 import fr.descentecanyon.app.ui.theme.DebitInconnu
 import fr.descentecanyon.app.ui.theme.DebitSec
+import kotlin.math.roundToInt
 
 @Composable
 fun CanyonDebitPredictionCard(
@@ -317,6 +318,7 @@ private fun PredictionRow(
                 score = ordinalScore,
                 ordinalCutpoints = ordinalCutpoints,
             )
+            HighFlowRiskLine(prediction)
             prediction.ordinalStandardDeviation?.let { standardDeviation ->
                 ConfidenceBadge(
                     confidence = predictionConfidence(
@@ -329,6 +331,25 @@ private fun PredictionRow(
         }
     }
 }
+
+/**
+ * Probability of a high flow (GROS or above). Shown when it is not negligible, highlighted when the
+ * selected policy flags the day as a high-flow risk even if the most likely level is lower.
+ */
+@Composable
+private fun HighFlowRiskLine(prediction: DailyDebitPrediction) {
+    val probability = prediction.probabilities[PredictedDebitLevel.HIGH] ?: return
+    val flagged = prediction.level == PredictedDebitLevel.HIGH
+    if (probability < HIGH_FLOW_RISK_DISPLAY_THRESHOLD && !flagged) return
+    Text(
+        text = stringResource(R.string.prediction_high_flow_risk, (probability * 100).roundToInt()),
+        style = MaterialTheme.typography.bodySmall,
+        fontWeight = if (flagged) FontWeight.SemiBold else FontWeight.Normal,
+        color = if (flagged) DebitGros else MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+}
+
+private const val HIGH_FLOW_RISK_DISPLAY_THRESHOLD = 0.10
 
 @Composable
 private fun ConfidenceBadge(

@@ -8,6 +8,8 @@ data class OpenMeteoDailyResponseDto(
     val latitude: Double,
     val longitude: Double,
     val timezone: String,
+    /** Elevation (m) Open-Meteo used to downscale temperature for this point. */
+    val elevation: Double? = null,
     val daily: DailyForecastDto? = null,
 )
 

@@ -1,266 +1,31 @@
 {
-  "schemaVersion": 1,
+  "schemaVersion": 3,
   "labels": [
-    "CORRECT",
-    "CRUE",
-    "FILET",
-    "GROS",
     "SEC",
-    "TRES_GROS"
+    "FILET",
+    "CORRECT",
+    "GROS",
+    "TRES_GROS",
+    "CRUE"
   ],
   "features": [
     {
-      "name": "month",
+      "name": "doySin",
       "source": "computed",
       "default": -9999.0
     },
     {
-      "name": "monthSin",
+      "name": "doyCos",
       "source": "computed",
-      "default": 0.0
-    },
-    {
-      "name": "monthCos",
-      "source": "computed",
-      "default": 0.0
-    },
-    {
-      "name": "altitudeDepartM",
-      "source": "static",
       "default": -9999.0
     },
     {
-      "name": "deniveleM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "longueurM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "cascadeMaxM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "upstreamCatchmentAreaKm2",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedHasGeometry",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "watershedPerimeterKm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedCompactnessCoefficient",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedCircularityRatio",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedBboxWidthKm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedBboxHeightKm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedBboxDiagonalKm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedBboxAreaKm2",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedAreaToBboxRatio",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedLengthProxyKm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedWidthProxyKm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedElongationRatio",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedFormFactor",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedShapeFactor",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedGeometryVertexCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "watershedReliefProxyM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedReliefPerLengthProxyMPerKm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedReliefPerDiagonalProxyMPerKm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedSlopeProxyPercent",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedSlopeDiagonalProxyPercent",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedReliefAreaRatioMPerKm2",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedKirpichTimeProxyMinutes",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedFlashinessProxy",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedShapeReliefInteraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedCellCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "watershedValidCellCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "basinAreaRasterKm2",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "demResolutionM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedQualityScore",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "watershedDescriptorForcedByReview",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "soilDescriptorOk",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "glacierDescriptorOk",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "hasSoilDescriptors",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "hasGlacierDescriptors",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "dominantRegulationTypeIsNone",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "dominantRegulationTypeIsBarrier",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "dominantRegulationTypeIsReservoir",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "dominantRegulationTypeIsMixed",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "basinMinElevationM",
+      "name": "areaKm2Log",
       "source": "static",
       "default": -9999.0
     },
     {
       "name": "basinMeanElevationM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "basinMedianElevationM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "basinMaxElevationM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "basinElevationStdM",
       "source": "static",
       "default": -9999.0
     },
@@ -290,112 +55,7 @@
       "default": -9999.0
     },
     {
-      "name": "medianSlopeDeg",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "p90SlopeDeg",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "maxSlopeDeg",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "fractionSlopeOver10Deg",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "fractionSlopeOver20Deg",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "fractionSlopeOver30Deg",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "aspectNorthFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "aspectEastFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "aspectSouthFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "aspectWestFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "terrainRuggednessIndex",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "maxFlowPathLengthKm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "mainFlowLengthKm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "mainChannelSlopePercent",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
       "name": "timeOfConcentrationKirpichMin",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "timeOfConcentrationGiandottiMin",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "meltonRuggedness",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "outletElevationM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "outletSnapDistanceM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "streamExtractionThresholdKm2",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "streamCellCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "streamFrequencyPerKm2",
       "source": "static",
       "default": -9999.0
     },
@@ -405,52 +65,7 @@
       "default": -9999.0
     },
     {
-      "name": "streamLinkCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "streamSegmentCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "junctionCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "strahlerOrder",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "firstOrderLengthFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "totalStreamLengthKm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
       "name": "meanAnnualPrecipMm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "meanMonthlyPrecipSeasonality",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "meanAnnualTemperatureC",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "meanWinterTemperatureC",
       "source": "static",
       "default": -9999.0
     },
@@ -460,87 +75,7 @@
       "default": -9999.0
     },
     {
-      "name": "potentialEvapotranspiration",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
       "name": "aridityIndex",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "continentalityProxy",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "oceanicityProxy",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "hypsometricIntegral",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "topographicWetnessIndexMean",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "topographicWetnessIndexP90",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "handMeanM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "handMedianM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "handP90M",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "meanPlanCurvature",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "meanProfileCurvature",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "valleyConfinementIndex",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "channelConfinementRatio",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "flowAccumulationP50Km2",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "flowAccumulationP90Km2",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "flowAccumulationP99Km2",
       "source": "static",
       "default": -9999.0
     },
@@ -550,372 +85,7 @@
       "default": -9999.0
     },
     {
-      "name": "shrubFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "grassFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "croplandFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "urbanFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
       "name": "bareRockFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "snowIceFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "permanentWaterFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "wetlandFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "mossLichenFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "waterPatchCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "wetlandPatchCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "forestPatchCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "urbanPatchCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "largestForestPatchFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "landCoverFragmentationIndex",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "riparianForestFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "imperviousConnectivityProxy",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "soilValidFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "meanClayTopsoilPct",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "medianClayTopsoilPct",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "p90ClayTopsoilPct",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "meanSandTopsoilPct",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "medianSandTopsoilPct",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "lowPermeabilitySoilFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "highInfiltrationSoilFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "runoffPotentialIndex",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "coarseFragmentFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "subsoilClayFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "subsoilSandFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "soilDepthMeanCm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "soilDepthShallowFractionLt100Cm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "bedrockDepthCm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "availableWaterCapacityMm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "saturatedHydraulicConductivityCmPerDay",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "lakeFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "lakeCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "reservoirCountUpstream",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "regulatedLakeCountUpstream",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "damCountUpstream",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "majorReservoirDamCountUpstream",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "reservoirAreaUpstreamKm2",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "reservoirAreaFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "reservoirStorageUpstreamMcm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "largestUpstreamReservoirAreaKm2",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "largestUpstreamReservoirStorageMcm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "regulatedCatchment",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "gdwBarrierCountUpstream",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "gdwReservoirCountUpstream",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "gdwHydropowerBarrierCountUpstream",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "gdwReservoirAreaUpstreamKm2",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "gdwReservoirStorageUpstreamMcm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "gdwLargestReservoirStorageMcm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "gdwLargestReservoirAreaKm2",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "gdwMaxUpstreamDorPct",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "gdwNewestUpstreamDamYear",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "gdwMaxDamHeightM",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "gdwRegulatedCatchment",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "distanceToNearestRegulationUpstreamKm",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "regulatedAreaFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "hydropowerCascadeCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "regulationSeverityIndex",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "geologyValidFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "carbonateFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "unconsolidatedFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "crystallineFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "volcanicFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "karstIndicator",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "springDensityProxyPerKm2",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "losingStreamProxy",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "resurgenceProxy",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "karstConnectivityProxy",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "imperviousBuiltSurfaceFraction",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "meanBuiltSurfaceM2PerCell",
-      "source": "static",
-      "default": -9999.0
-    },
-    {
-      "name": "imperviousProxyFraction",
       "source": "static",
       "default": -9999.0
     },
@@ -925,1051 +95,592 @@
       "default": -9999.0
     },
     {
-      "name": "glacierCount",
-      "source": "static",
-      "default": 0.0
-    },
-    {
-      "name": "largestGlacierAreaKm2",
+      "name": "carbonateFraction",
       "source": "static",
       "default": -9999.0
     },
     {
-      "name": "precip_prev_day_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "precip_2d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "precip_3d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "precip_5d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "precip_7d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "precip_10d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "precip_14d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "precip_21d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "precip_30d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "max_daily_precip_3d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "max_daily_precip_7d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "max_daily_precip_14d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "wet_days_7d",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "wet_days_14d",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "wet_days_30d",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "days_since_precip_over_1mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "days_since_precip_over_5mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "days_since_precip_over_10mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "antecedent_precipitation_index_daily",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "antecedent_precipitation_index_daily_70",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "antecedent_precipitation_index_daily_85",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "antecedent_precipitation_index_daily_93",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "temperature2mAtObservation",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "temperature2mMeanPrevDay",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "temperature2mMinPrevDay",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "temperature2mMaxPrevDay",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "temperature2mMean_3d",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "temperature2mMean_7d",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "temperature2mMean_14d",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "temperature2mMinAtObservationDay",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "temperature2mMaxAtObservationDay",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "positive_degree_days_3d",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "positive_degree_days_7d",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "positive_degree_days_14d",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "rain_prev_day_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "rain_3d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "rain_7d_mm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "snowfall_prev_day_cm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "snowfall_3d_cm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "snowfall_7d_cm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "snowfall_14d_cm",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "rainAtObservationDay",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "snowfallAtObservationDay",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "precipitation_hours_3d",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "precipitation_hours_7d",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "precipitation_hours_14d",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "precipitationHoursAtObservationDay",
-      "source": "weather",
-      "default": -9999.0
-    },
-    {
-      "name": "hasWatershed",
+      "name": "karstIndicator",
       "source": "static",
-      "default": 0.0
+      "default": -9999.0
     },
     {
-      "name": "globalPastObsCount",
-      "source": "lookup",
-      "default": 0.0
+      "name": "availableWaterCapacityMm",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "regionPastObsCount",
-      "source": "lookup",
-      "default": 0.0
+      "name": "runoffPotentialIndex",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "massifPastObsCount",
-      "source": "lookup",
-      "default": 0.0
+      "name": "lakeFraction",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "canyonPastObsCount",
-      "source": "lookup",
-      "default": 0.0
+      "name": "regulatedCatchment",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "globalPriorLow",
-      "source": "lookup",
-      "default": 0.0
+      "name": "altitudeDepartM",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "globalPriorMedium",
-      "source": "lookup",
-      "default": 0.0
+      "name": "deniveleM",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "globalPriorHigh",
-      "source": "lookup",
-      "default": 0.0
+      "name": "longueurM",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "regionPriorLow",
-      "source": "lookup",
-      "default": 0.0
+      "name": "cascadeMaxM",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "regionPriorMedium",
-      "source": "lookup",
-      "default": 0.0
+      "name": "weatherLatitude",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "regionPriorHigh",
-      "source": "lookup",
-      "default": 0.0
+      "name": "weatherLongitude",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "massifPriorLow",
-      "source": "lookup",
-      "default": 0.0
+      "name": "weatherElevationM",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "massifPriorMedium",
-      "source": "lookup",
-      "default": 0.0
+      "name": "hydroBand1ElevationM",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "massifPriorHigh",
-      "source": "lookup",
-      "default": 0.0
+      "name": "hydroBand3ElevationM",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "canyonPriorLow",
-      "source": "lookup",
-      "default": 0.0
+      "name": "hydroBand5ElevationM",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "canyonPriorMedium",
-      "source": "lookup",
-      "default": 0.0
+      "name": "hydroSoilCapacityMm",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "canyonPriorHigh",
-      "source": "lookup",
-      "default": 0.0
+      "name": "hydroLogQ10Mean",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "canyonMonthPastObsCount",
-      "source": "lookup",
-      "default": 0.0
+      "name": "hydroLogQ90Mean",
+      "source": "static",
+      "default": -9999.0
     },
     {
-      "name": "canyonMonthPriorLow",
-      "source": "lookup",
-      "default": 0.0
+      "name": "wPrecipDay0",
+      "source": "weather",
+      "default": -9999.0
     },
     {
-      "name": "canyonMonthPriorMedium",
-      "source": "lookup",
-      "default": 0.0
+      "name": "wPrecipDay1",
+      "source": "weather",
+      "default": -9999.0
     },
     {
-      "name": "canyonMonthPriorHigh",
-      "source": "lookup",
-      "default": 0.0
+      "name": "wPrecip3d",
+      "source": "weather",
+      "default": -9999.0
     },
     {
-      "name": "canyonMonthMeanRank",
+      "name": "wPrecip7d",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "wPrecip30d",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "wPrecipMax7d",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "wTempDay0",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "wTemp7d",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hLiquidDay0",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hLiquid3d",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hLiquid7d",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hMelt7d",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hSwe",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hSnowCover",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hSweChange30d",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hSoilFill",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hQ1",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hQ3",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hQ10",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hQ30",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hQ90",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hQ1Evening",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hQ3Evening",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hZQ1",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hZQ3",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hZQ10",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hZQ30",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hZQ90",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hZQ1Evening",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hDeltaLogQ3",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hDeltaLogQ10",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hDeltaLogQ30",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hLiquidSinceLast",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "hSweChangeSinceLast",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "histCount",
       "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "canyonSeasonPastObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "canyonSeasonPriorLow",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "canyonSeasonPriorMedium",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "canyonSeasonPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "canyonSeasonMeanRank",
+      "name": "histLastRank",
       "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "massifMonthPastObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "massifMonthPriorLow",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "massifMonthPriorMedium",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "massifMonthPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "massifSeasonPastObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "massifSeasonPriorLow",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "massifSeasonPriorMedium",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "massifSeasonPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionMonthPastObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionMonthPriorLow",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionMonthPriorMedium",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionMonthPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionSeasonPastObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionSeasonPriorLow",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionSeasonPriorMedium",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionSeasonPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "canyonRecent30dObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "canyonRecent30dPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "canyonRecent90dObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "canyonRecent90dPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "canyonRecent365dObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "canyonRecent365dPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "canyonRecent365dMeanRank",
+      "name": "histDaysSinceLast",
       "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "canyonDaysSinceLastObs",
+      "name": "histCount7d",
       "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "canyonLastObservedRank",
+      "name": "histMeanRank7d",
       "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "massifRecent30dObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "massifRecent30dPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "massifRecent90dObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "massifRecent90dPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "massifRecent365dObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "massifRecent365dPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionRecent30dObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionRecent30dPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionRecent90dObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionRecent90dPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionRecent365dObsCount",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "regionRecent365dPriorHigh",
-      "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "historicalRegulatedSignalCountCanyon",
+      "name": "histCount30d",
       "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "historicalSnowmeltSignalCountCanyon",
+      "name": "histMeanRank30d",
       "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "historicalRegulatedSignalRatioCanyon",
+      "name": "histCount365d",
       "source": "lookup",
-      "default": 0.0
+      "default": -9999.0
     },
     {
-      "name": "historicalSnowmeltSignalRatioCanyon",
+      "name": "histSeasonWeight",
       "source": "lookup",
-      "default": 0.0
+      "default": -9999.0
     },
     {
-      "name": "historicalRegulatedSignalRatioMassif",
+      "name": "histSeasonMeanRank",
       "source": "lookup",
-      "default": 0.0
+      "default": -9999.0
     },
     {
-      "name": "historicalSnowmeltSignalRatioMassif",
+      "name": "histSeasonFracHigh",
       "source": "lookup",
-      "default": 0.0
+      "default": -9999.0
     },
     {
-      "name": "historicalRegulatedSignalRatioRegion",
+      "name": "histSeasonFracLow",
       "source": "lookup",
-      "default": 0.0
+      "default": -9999.0
     },
     {
-      "name": "historicalSnowmeltSignalRatioRegion",
+      "name": "histMeanRank",
       "source": "lookup",
-      "default": 0.0
+      "default": -9999.0
     },
     {
-      "name": "historicallyRegulatedCanyon",
+      "name": "histLastAnomaly",
       "source": "lookup",
-      "default": 0.0
+      "default": -9999.0
     },
     {
-      "name": "historicallySnowmeltCanyon",
+      "name": "massifSeasonMeanRank",
       "source": "lookup",
-      "default": 0.0
+      "default": -9999.0
     },
     {
-      "name": "historicallyAtypicalCanyon",
+      "name": "massifSeasonFracHigh",
       "source": "lookup",
-      "default": 0.0
-    },
-    {
-      "name": "precip7dWeeklyClimatologyRatio",
-      "source": "computed",
       "default": -9999.0
     },
     {
-      "name": "precip30dMonthlyClimatologyRatio",
-      "source": "computed",
+      "name": "massifSeasonWeightLog",
+      "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "api93MonthlyClimatologyRatio",
-      "source": "computed",
+      "name": "regionSeasonMeanRank",
+      "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "runoffPrecip7dSignal",
-      "source": "computed",
+      "name": "regionSeasonFracHigh",
+      "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "runoffPrecip30dSignal",
-      "source": "computed",
+      "name": "nb3Count",
+      "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "flashFlood7dSignal",
-      "source": "computed",
+      "name": "nb3MeanAnom",
+      "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "basinPrecipVolume30dProxy",
-      "source": "computed",
+      "name": "nb3MaxAnom",
+      "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "rainOnSnow7dSignal",
-      "source": "computed",
+      "name": "nb3MeanLevel",
+      "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "snowmeltDegreeDay14dSignal",
-      "source": "computed",
+      "name": "nb3FracHigh",
+      "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "highElevationSnowmeltSignal",
-      "source": "computed",
+      "name": "nb7Count",
+      "source": "lookup",
       "default": -9999.0
     },
     {
-      "name": "canyonHistoryConfidence",
-      "source": "computed",
-      "default": 0.0
+      "name": "nb7MeanAnom",
+      "source": "lookup",
+      "default": -9999.0
     },
     {
-      "name": "massifHistoryConfidence",
-      "source": "computed",
-      "default": 0.0
+      "name": "nb7FracHigh",
+      "source": "lookup",
+      "default": -9999.0
     },
     {
-      "name": "regionHistoryConfidence",
-      "source": "computed",
-      "default": 0.0
+      "name": "nbClose3MeanAnom",
+      "source": "lookup",
+      "default": -9999.0
     },
     {
-      "name": "canyonHighPriorLift",
-      "source": "computed",
-      "default": 0.0
+      "name": "nbNearest3Km",
+      "source": "lookup",
+      "default": -9999.0
     },
     {
-      "name": "canyonLowPriorLift",
-      "source": "computed",
-      "default": 0.0
+      "name": "mfRain1",
+      "source": "weather",
+      "default": -9999.0
     },
     {
-      "name": "massifHighPriorLift",
-      "source": "computed",
-      "default": 0.0
+      "name": "mfRain3",
+      "source": "weather",
+      "default": -9999.0
     },
     {
-      "name": "regionHighPriorLift",
-      "source": "computed",
-      "default": 0.0
+      "name": "mfRain7",
+      "source": "weather",
+      "default": -9999.0
     },
     {
-      "name": "canyonPriorEntropy",
-      "source": "computed",
-      "default": 0.0
+      "name": "mfMax1",
+      "source": "weather",
+      "default": -9999.0
     },
     {
-      "name": "highLowPriorSpread",
+      "name": "mfMax3",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "mfCount",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "mfNearestKm",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "mfClose1",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "mfClose3",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "mfRain14",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "mfRain30",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "mfWetDays7",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "mfAutoRain1",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "mfAutoMax1",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "mfAutoCount",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "mfAutoNearestKm",
+      "source": "weather",
+      "default": -9999.0
+    },
+    {
+      "name": "infoLagDays",
       "source": "computed",
-      "default": 0.0
+      "default": -9999.0
     }
   ],
   "staticFeatureNames": [
-    "altitudeDepartM",
-    "deniveleM",
-    "longueurM",
-    "cascadeMaxM",
-    "upstreamCatchmentAreaKm2",
-    "watershedHasGeometry",
-    "watershedPerimeterKm",
-    "watershedCompactnessCoefficient",
-    "watershedCircularityRatio",
-    "watershedBboxWidthKm",
-    "watershedBboxHeightKm",
-    "watershedBboxDiagonalKm",
-    "watershedBboxAreaKm2",
-    "watershedAreaToBboxRatio",
-    "watershedLengthProxyKm",
-    "watershedWidthProxyKm",
-    "watershedElongationRatio",
-    "watershedFormFactor",
-    "watershedShapeFactor",
-    "watershedGeometryVertexCount",
-    "watershedReliefProxyM",
-    "watershedReliefPerLengthProxyMPerKm",
-    "watershedReliefPerDiagonalProxyMPerKm",
-    "watershedSlopeProxyPercent",
-    "watershedSlopeDiagonalProxyPercent",
-    "watershedReliefAreaRatioMPerKm2",
-    "watershedKirpichTimeProxyMinutes",
-    "watershedFlashinessProxy",
-    "watershedShapeReliefInteraction",
-    "watershedCellCount",
-    "watershedValidCellCount",
-    "basinAreaRasterKm2",
-    "demResolutionM",
-    "watershedQualityScore",
-    "watershedDescriptorForcedByReview",
-    "soilDescriptorOk",
-    "glacierDescriptorOk",
-    "hasSoilDescriptors",
-    "hasGlacierDescriptors",
-    "dominantRegulationTypeIsNone",
-    "dominantRegulationTypeIsBarrier",
-    "dominantRegulationTypeIsReservoir",
-    "dominantRegulationTypeIsMixed",
-    "basinMinElevationM",
+    "areaKm2Log",
     "basinMeanElevationM",
-    "basinMedianElevationM",
-    "basinMaxElevationM",
-    "basinElevationStdM",
     "basinReliefM",
     "fractionAbove1500m",
     "fractionAbove2000m",
     "fractionAbove2500m",
     "meanSlopeDeg",
-    "medianSlopeDeg",
-    "p90SlopeDeg",
-    "maxSlopeDeg",
-    "fractionSlopeOver10Deg",
-    "fractionSlopeOver20Deg",
-    "fractionSlopeOver30Deg",
-    "aspectNorthFraction",
-    "aspectEastFraction",
-    "aspectSouthFraction",
-    "aspectWestFraction",
-    "terrainRuggednessIndex",
-    "maxFlowPathLengthKm",
-    "mainFlowLengthKm",
-    "mainChannelSlopePercent",
     "timeOfConcentrationKirpichMin",
-    "timeOfConcentrationGiandottiMin",
-    "meltonRuggedness",
-    "outletElevationM",
-    "outletSnapDistanceM",
-    "streamExtractionThresholdKm2",
-    "streamCellCount",
-    "streamFrequencyPerKm2",
     "drainageDensityKmPerKm2",
-    "streamLinkCount",
-    "streamSegmentCount",
-    "junctionCount",
-    "strahlerOrder",
-    "firstOrderLengthFraction",
-    "totalStreamLengthKm",
     "meanAnnualPrecipMm",
-    "meanMonthlyPrecipSeasonality",
-    "meanAnnualTemperatureC",
-    "meanWinterTemperatureC",
     "meanSnowFractionClimatology",
-    "potentialEvapotranspiration",
     "aridityIndex",
-    "continentalityProxy",
-    "oceanicityProxy",
-    "hypsometricIntegral",
-    "topographicWetnessIndexMean",
-    "topographicWetnessIndexP90",
-    "handMeanM",
-    "handMedianM",
-    "handP90M",
-    "meanPlanCurvature",
-    "meanProfileCurvature",
-    "valleyConfinementIndex",
-    "channelConfinementRatio",
-    "flowAccumulationP50Km2",
-    "flowAccumulationP90Km2",
-    "flowAccumulationP99Km2",
     "forestFraction",
-    "shrubFraction",
-    "grassFraction",
-    "croplandFraction",
-    "urbanFraction",
     "bareRockFraction",
-    "snowIceFraction",
-    "permanentWaterFraction",
-    "wetlandFraction",
-    "mossLichenFraction",
-    "waterPatchCount",
-    "wetlandPatchCount",
-    "forestPatchCount",
-    "urbanPatchCount",
-    "largestForestPatchFraction",
-    "landCoverFragmentationIndex",
-    "riparianForestFraction",
-    "imperviousConnectivityProxy",
-    "soilValidFraction",
-    "meanClayTopsoilPct",
-    "medianClayTopsoilPct",
-    "p90ClayTopsoilPct",
-    "meanSandTopsoilPct",
-    "medianSandTopsoilPct",
-    "lowPermeabilitySoilFraction",
-    "highInfiltrationSoilFraction",
-    "runoffPotentialIndex",
-    "coarseFragmentFraction",
-    "subsoilClayFraction",
-    "subsoilSandFraction",
-    "soilDepthMeanCm",
-    "soilDepthShallowFractionLt100Cm",
-    "bedrockDepthCm",
-    "availableWaterCapacityMm",
-    "saturatedHydraulicConductivityCmPerDay",
-    "lakeFraction",
-    "lakeCount",
-    "reservoirCountUpstream",
-    "regulatedLakeCountUpstream",
-    "damCountUpstream",
-    "majorReservoirDamCountUpstream",
-    "reservoirAreaUpstreamKm2",
-    "reservoirAreaFraction",
-    "reservoirStorageUpstreamMcm",
-    "largestUpstreamReservoirAreaKm2",
-    "largestUpstreamReservoirStorageMcm",
-    "regulatedCatchment",
-    "gdwBarrierCountUpstream",
-    "gdwReservoirCountUpstream",
-    "gdwHydropowerBarrierCountUpstream",
-    "gdwReservoirAreaUpstreamKm2",
-    "gdwReservoirStorageUpstreamMcm",
-    "gdwLargestReservoirStorageMcm",
-    "gdwLargestReservoirAreaKm2",
-    "gdwMaxUpstreamDorPct",
-    "gdwNewestUpstreamDamYear",
-    "gdwMaxDamHeightM",
-    "gdwRegulatedCatchment",
-    "distanceToNearestRegulationUpstreamKm",
-    "regulatedAreaFraction",
-    "hydropowerCascadeCount",
-    "regulationSeverityIndex",
-    "geologyValidFraction",
-    "carbonateFraction",
-    "unconsolidatedFraction",
-    "crystallineFraction",
-    "volcanicFraction",
-    "karstIndicator",
-    "springDensityProxyPerKm2",
-    "losingStreamProxy",
-    "resurgenceProxy",
-    "karstConnectivityProxy",
-    "imperviousBuiltSurfaceFraction",
-    "meanBuiltSurfaceM2PerCell",
-    "imperviousProxyFraction",
     "glacierFraction",
-    "glacierCount",
-    "largestGlacierAreaKm2",
-    "hasWatershed"
+    "carbonateFraction",
+    "karstIndicator",
+    "availableWaterCapacityMm",
+    "runoffPotentialIndex",
+    "lakeFraction",
+    "regulatedCatchment",
+    "altitudeDepartM",
+    "deniveleM",
+    "longueurM",
+    "cascadeMaxM",
+    "weatherLatitude",
+    "weatherLongitude",
+    "weatherElevationM",
+    "hydroBand1ElevationM",
+    "hydroBand3ElevationM",
+    "hydroBand5ElevationM",
+    "hydroSoilCapacityMm",
+    "hydroLogQ10Mean",
+    "hydroLogQ90Mean"
   ],
   "lookupFeatureNames": [
-    "globalPastObsCount",
-    "regionPastObsCount",
-    "massifPastObsCount",
-    "canyonPastObsCount",
-    "globalPriorLow",
-    "globalPriorMedium",
-    "globalPriorHigh",
-    "regionPriorLow",
-    "regionPriorMedium",
-    "regionPriorHigh",
-    "massifPriorLow",
-    "massifPriorMedium",
-    "massifPriorHigh",
-    "canyonPriorLow",
-    "canyonPriorMedium",
-    "canyonPriorHigh",
-    "canyonMonthPastObsCount",
-    "canyonMonthPriorLow",
-    "canyonMonthPriorMedium",
-    "canyonMonthPriorHigh",
-    "canyonMonthMeanRank",
-    "canyonSeasonPastObsCount",
-    "canyonSeasonPriorLow",
-    "canyonSeasonPriorMedium",
-    "canyonSeasonPriorHigh",
-    "canyonSeasonMeanRank",
-    "massifMonthPastObsCount",
-    "massifMonthPriorLow",
-    "massifMonthPriorMedium",
-    "massifMonthPriorHigh",
-    "massifSeasonPastObsCount",
-    "massifSeasonPriorLow",
-    "massifSeasonPriorMedium",
-    "massifSeasonPriorHigh",
-    "regionMonthPastObsCount",
-    "regionMonthPriorLow",
-    "regionMonthPriorMedium",
-    "regionMonthPriorHigh",
-    "regionSeasonPastObsCount",
-    "regionSeasonPriorLow",
-    "regionSeasonPriorMedium",
-    "regionSeasonPriorHigh",
-    "canyonRecent30dObsCount",
-    "canyonRecent30dPriorHigh",
-    "canyonRecent90dObsCount",
-    "canyonRecent90dPriorHigh",
-    "canyonRecent365dObsCount",
-    "canyonRecent365dPriorHigh",
-    "canyonRecent365dMeanRank",
-    "canyonDaysSinceLastObs",
-    "canyonLastObservedRank",
-    "massifRecent30dObsCount",
-    "massifRecent30dPriorHigh",
-    "massifRecent90dObsCount",
-    "massifRecent90dPriorHigh",
-    "massifRecent365dObsCount",
-    "massifRecent365dPriorHigh",
-    "regionRecent30dObsCount",
-    "regionRecent30dPriorHigh",
-    "regionRecent90dObsCount",
-    "regionRecent90dPriorHigh",
-    "regionRecent365dObsCount",
-    "regionRecent365dPriorHigh",
-    "historicalRegulatedSignalCountCanyon",
-    "historicalSnowmeltSignalCountCanyon",
-    "historicalRegulatedSignalRatioCanyon",
-    "historicalSnowmeltSignalRatioCanyon",
-    "historicalRegulatedSignalRatioMassif",
-    "historicalSnowmeltSignalRatioMassif",
-    "historicalRegulatedSignalRatioRegion",
-    "historicalSnowmeltSignalRatioRegion",
-    "historicallyRegulatedCanyon",
-    "historicallySnowmeltCanyon",
-    "historicallyAtypicalCanyon"
+    "histCount",
+    "histLastRank",
+    "histDaysSinceLast",
+    "histCount7d",
+    "histMeanRank7d",
+    "histCount30d",
+    "histMeanRank30d",
+    "histCount365d",
+    "histSeasonWeight",
+    "histSeasonMeanRank",
+    "histSeasonFracHigh",
+    "histSeasonFracLow",
+    "histMeanRank",
+    "histLastAnomaly",
+    "massifSeasonMeanRank",
+    "massifSeasonFracHigh",
+    "massifSeasonWeightLog",
+    "regionSeasonMeanRank",
+    "regionSeasonFracHigh"
   ],
   "dynamicFeatureNames": [
-    "month",
-    "monthSin",
-    "monthCos",
-    "precip_prev_day_mm",
-    "precip_2d_mm",
-    "precip_3d_mm",
-    "precip_5d_mm",
-    "precip_7d_mm",
-    "precip_10d_mm",
-    "precip_14d_mm",
-    "precip_21d_mm",
-    "precip_30d_mm",
-    "max_daily_precip_3d_mm",
-    "max_daily_precip_7d_mm",
-    "max_daily_precip_14d_mm",
-    "wet_days_7d",
-    "wet_days_14d",
-    "wet_days_30d",
-    "days_since_precip_over_1mm",
-    "days_since_precip_over_5mm",
-    "days_since_precip_over_10mm",
-    "antecedent_precipitation_index_daily",
-    "antecedent_precipitation_index_daily_70",
-    "antecedent_precipitation_index_daily_85",
-    "antecedent_precipitation_index_daily_93",
-    "temperature2mAtObservation",
-    "temperature2mMeanPrevDay",
-    "temperature2mMinPrevDay",
-    "temperature2mMaxPrevDay",
-    "temperature2mMean_3d",
-    "temperature2mMean_7d",
-    "temperature2mMean_14d",
-    "temperature2mMinAtObservationDay",
-    "temperature2mMaxAtObservationDay",
-    "positive_degree_days_3d",
-    "positive_degree_days_7d",
-    "positive_degree_days_14d",
-    "rain_prev_day_mm",
-    "rain_3d_mm",
-    "rain_7d_mm",
-    "snowfall_prev_day_cm",
-    "snowfall_3d_cm",
-    "snowfall_7d_cm",
-    "snowfall_14d_cm",
-    "rainAtObservationDay",
-    "snowfallAtObservationDay",
-    "precipitation_hours_3d",
-    "precipitation_hours_7d",
-    "precipitation_hours_14d",
-    "precipitationHoursAtObservationDay",
-    "precip7dWeeklyClimatologyRatio",
-    "precip30dMonthlyClimatologyRatio",
-    "api93MonthlyClimatologyRatio",
-    "runoffPrecip7dSignal",
-    "runoffPrecip30dSignal",
-    "flashFlood7dSignal",
-    "basinPrecipVolume30dProxy",
-    "rainOnSnow7dSignal",
-    "snowmeltDegreeDay14dSignal",
-    "highElevationSnowmeltSignal",
-    "canyonHistoryConfidence",
-    "massifHistoryConfidence",
-    "regionHistoryConfidence",
-    "canyonHighPriorLift",
-    "canyonLowPriorLift",
-    "massifHighPriorLift",
-    "regionHighPriorLift",
-    "canyonPriorEntropy",
-    "highLowPriorSpread"
+    "wPrecipDay0",
+    "wPrecipDay1",
+    "wPrecip3d",
+    "wPrecip7d",
+    "wPrecip30d",
+    "wPrecipMax7d",
+    "wTempDay0",
+    "wTemp7d",
+    "hLiquidDay0",
+    "hLiquid3d",
+    "hLiquid7d",
+    "hMelt7d",
+    "hSwe",
+    "hSnowCover",
+    "hSweChange30d",
+    "hSoilFill",
+    "hQ1",
+    "hQ3",
+    "hQ10",
+    "hQ30",
+    "hQ90",
+    "hQ1Evening",
+    "hQ3Evening",
+    "hZQ1",
+    "hZQ3",
+    "hZQ10",
+    "hZQ30",
+    "hZQ90",
+    "hZQ1Evening",
+    "hDeltaLogQ3",
+    "hDeltaLogQ10",
+    "hDeltaLogQ30",
+    "hLiquidSinceLast",
+    "hSweChangeSinceLast"
   ]
 }
