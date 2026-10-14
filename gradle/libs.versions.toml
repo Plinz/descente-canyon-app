@@ -3,7 +3,7 @@ agp = "9.1.0"
 kotlin = "2.3.20"
 ksp = "2.3.6"
 playPublisher = "4.0.0"
-spotless = "8.9.0"
+spotless = "8.10.4"
 ktlint = "1.7.1"
 
 # AndroidX
