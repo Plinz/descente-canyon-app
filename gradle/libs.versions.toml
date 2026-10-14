@@ -27,7 +27,7 @@ jsoup = "1.18.3"
 kotlinxSerialization = "1.8.1"
 
 # Maps
-maplibre = "11.8.4"
+maplibre = "13.6.1"
 playServicesLocation = "21.3.0"
 
 # Coroutines
