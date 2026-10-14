@@ -125,21 +125,21 @@ jobs:
           ./gradlew :app:bundleRelease :app:assembleRelease :app:verifyReleaseSizeBudget
 
       - name: Upload release bundle artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-release-bundle-${{ steps.version.outputs.version_name }}-${{ steps.version.outputs.version_code }}
           path: app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
 
       - name: Upload release APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-release-apk-${{ steps.version.outputs.version_name }}-${{ steps.version.outputs.version_code }}
           path: app/build/outputs/apk/release/*.apk
           if-no-files-found: error
 
       - name: Upload release size report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-release-size-report-${{ steps.version.outputs.version_name }}-${{ steps.version.outputs.version_code }}
           path: app/build/reports/release-size/release-package-report.txt
