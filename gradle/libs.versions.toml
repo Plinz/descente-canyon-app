@@ -18,7 +18,7 @@ securityCrypto = "1.1.0"
 workRuntime = "2.10.2"
 
 # Hilt
-hilt = "2.59.2"
+hilt = "2.60.1"
 hiltNavigationCompose = "1.2.0"
 
 # Network / Scraping
