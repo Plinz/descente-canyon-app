@@ -1,7 +1,7 @@
 [versions]
-agp = "9.1.0"
-kotlin = "2.3.20"
-ksp = "2.3.6"
+agp = "9.4.1"
+kotlin = "2.4.21"
+ksp = "2.3.12"
 playPublisher = "4.0.0"
 spotless = "8.9.0"
 ktlint = "1.7.1"
@@ -24,14 +24,14 @@ hiltNavigationCompose = "1.2.0"
 # Network / Scraping
 okhttp = "4.12.0"
 jsoup = "1.18.3"
-kotlinxSerialization = "1.8.1"
+kotlinxSerialization = "1.11.0"
 
 # Maps
 maplibre = "11.8.4"
 playServicesLocation = "21.3.0"
 
 # Coroutines
-coroutines = "1.10.2"
+coroutines = "1.11.0"
 
 # ML runtime
 onnxRuntime = "1.22.0"
