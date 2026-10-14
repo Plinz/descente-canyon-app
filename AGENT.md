@@ -9,6 +9,7 @@
 
 ## Gradle Validation
 
-- Prefer one Gradle command at a time.
-- Run unit tests first, then Android test compilation as a separate command if needed.
-- Avoid starting two Gradle tasks in parallel from separate tool calls.
+- Prefer one Gradle command at a time; the project has several modules (see README.md).
+- Unit tests: `./gradlew testDebugUnitTest :core:domain:test` (or `:<module>:testDebugUnitTest` for one module).
+- Formatting: `./gradlew spotlessApply` before committing; CI runs `spotlessCheck`.
+- Instrumented tests only compile without a device: `./gradlew :app:assembleDebugAndroidTest`.

@@ -1,0 +1,30 @@
+version: 2
+updates:
+  - package-ecosystem: gradle
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    groups:
+      androidx:
+        patterns:
+          - "androidx.*"
+      kotlin-and-build:
+        patterns:
+          - "org.jetbrains.kotlin*"
+          - "com.google.devtools.ksp*"
+          - "com.android.tools.build*"
+          - "com.android.application"
+          - "com.android.library"
+      testing:
+        patterns:
+          - "junit*"
+          - "io.mockk*"
+          - "org.robolectric*"
+          - "app.cash.turbine*"
+          - "androidx.test*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly

@@ -1,15 +1,17 @@
 #!/bin/sh
+# Same checks as the CI "checks" job, before anything reaches the remote.
 set -eu
 
 repo_root=$(git rev-parse --show-toplevel)
 cd "$repo_root"
 
-echo "pre-push: running ./gradlew test lint assembleDebug"
+tasks="spotlessCheck testDebugUnitTest :core:domain:test lintDebug :app:assembleDebug"
+echo "pre-push: running ./gradlew $tasks"
 
 if [ -f "./gradlew" ]; then
-  sh ./gradlew test lint assembleDebug
+  sh ./gradlew $tasks
 elif [ -n "${COMSPEC:-}" ] && [ -f "./gradlew.bat" ]; then
-  cmd //c gradlew.bat test lint assembleDebug
+  cmd //c gradlew.bat $tasks
 else
   echo "pre-push: Gradle wrapper not found" >&2
   exit 1

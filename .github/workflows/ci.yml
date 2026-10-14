@@ -16,7 +16,8 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  android:
+  checks:
+    name: Format, unit tests, lint and build
     runs-on: ubuntu-latest
     timeout-minutes: 45
 
@@ -30,11 +31,84 @@ jobs:
           distribution: temurin
           java-version: '25'
 
+      # The build generates the embedded catalog and model indexes with Python scripts.
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Make Gradle wrapper executable
-        run: chmod +x gradlew
+      - name: Check formatting
+        run: ./gradlew spotlessCheck
 
-      - name: Run unit tests, lint, and debug build
-        run: ./gradlew test lint assembleDebug
+      - name: Unit tests
+        run: ./gradlew testDebugUnitTest :core:domain:test
+
+      - name: Android Lint
+        run: ./gradlew lintDebug
+
+      - name: Build debug app and instrumented tests
+        run: ./gradlew :app:assembleDebug :app:assembleDebugAndroidTest
+
+      - name: Upload test and lint reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: |
+            **/build/reports/tests/
+            **/build/reports/lint-results-*.html
+          if-no-files-found: ignore
+
+  instrumented-tests:
+    name: Instrumented tests and launch smoke test (emulator)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    needs: checks
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 25
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run instrumented tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          target: google_apis
+          arch: x86_64
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          # Instrumented tests run with HiltTestApplication; the smoke test cold-starts the real app.
+          script: |
+            ./gradlew :app:connectedDebugAndroidTest
+            scripts/ci/smoke-launch.sh
+
+      - name: Upload instrumented test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: instrumented-test-reports
+          path: app/build/reports/androidTests/
+          if-no-files-found: ignore
