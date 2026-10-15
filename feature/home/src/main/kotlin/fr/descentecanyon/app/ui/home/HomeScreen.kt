@@ -23,6 +23,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -66,6 +67,8 @@ fun HomeScreen(
     onMapClick: () -> Unit,
     onNotificationsClick: () -> Unit,
     onUsersClick: () -> Unit,
+    onPendingDebitsClick: () -> Unit = {},
+    onSettingsClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     homeViewModel: HomeViewModel = hiltViewModel(),
@@ -163,6 +166,13 @@ fun HomeScreen(
                             modifier = Modifier.size(28.dp),
                         )
                     }
+                    IconButton(onClick = onSettingsClick) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = stringResource(R.string.settings_title),
+                            modifier = Modifier.size(24.dp),
+                        )
+                    }
                 },
             )
         },
@@ -184,6 +194,12 @@ fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 item { Spacer(modifier = Modifier.height(8.dp)) }
+
+                if (homeState.pendingDebitCount > 0) {
+                    item {
+                        PendingDebitsBanner(count = homeState.pendingDebitCount, onClick = onPendingDebitsClick)
+                    }
+                }
 
                 item {
                     QuickSearchCard(onClick = onQuickSearchClick)

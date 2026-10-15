@@ -6,13 +6,16 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
+import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.CanyonWeather
+import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
+import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.GetCanyonDetailUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonPreviewUseCase
 import fr.descentecanyon.app.domain.usecase.ToggleFavoriteUseCase
@@ -53,6 +56,8 @@ data class CanyonDetailUiState(
     val downloadingPhotoIds: Set<Long> = emptySet(),
     val isOnline: Boolean = true,
     val transientMessage: UiText? = null,
+    /** The user's private note about this canyon. */
+    val personalNote: String? = null,
 )
 
 /** State owned by the view model itself: the canyon detail and the user's choices about it. */
@@ -66,6 +71,7 @@ private data class CanyonDetailState(
     val isDebitNotificationsEnabled: Boolean = false,
     val isOnline: Boolean = true,
     val transientMessage: UiText? = null,
+    val personalNote: String? = null,
 )
 
 /**
@@ -85,6 +91,8 @@ class CanyonDetailViewModel @Inject constructor(
     private val connectivityObserver: ConnectivityObserver,
     private val conditions: CanyonConditionsController,
     private val media: CanyonMediaController,
+    private val recentCanyonsRepository: RecentCanyonsRepository,
+    private val canyonNotesRepository: CanyonNotesRepository,
 ) : ViewModel() {
 
     private val canyonId: Int = savedStateHandle["canyonId"]
@@ -92,6 +100,7 @@ class CanyonDetailViewModel @Inject constructor(
 
     private val detailState = MutableStateFlow(CanyonDetailState())
     private var hasLoggedPrimaryContentReady = false
+    private var hasRecordedView = false
 
     val uiState: StateFlow<CanyonDetailUiState> =
         combine(detailState, media.state, conditions.state, ::toUiState)
@@ -104,7 +113,13 @@ class CanyonDetailViewModel @Inject constructor(
         observeFavorite()
         observeDebitNotificationPreference()
         observeConnectivity()
+        observePersonalNote()
         loadCanyon(canyonId)
+    }
+
+    /** Saves the user's private note; an empty text deletes it. */
+    fun savePersonalNote(text: String) {
+        viewModelScope.launch { canyonNotesRepository.saveNote(canyonId, text) }
     }
 
     fun ensureWatershedGeometryLoaded() {
@@ -136,6 +151,7 @@ class CanyonDetailViewModel @Inject constructor(
                     }
                 }
                 conditions.loadFor(preview)
+                recordView(id)
                 if (wasEmpty) markPrimaryContentReady(id, "preview_ready")
             }
         }
@@ -158,6 +174,7 @@ class CanyonDetailViewModel @Inject constructor(
                         "durationMs" to (monotonicNowMs() - startedAt),
                     )
                     markPrimaryContentReady(id, "detail_ready")
+                    recordView(id)
                     conditions.loadFor(detail)
                 },
                 onFailure = { throwable ->
@@ -229,6 +246,18 @@ class CanyonDetailViewModel @Inject constructor(
         }
     }
 
+    private fun recordView(id: Int) {
+        if (hasRecordedView) return
+        hasRecordedView = true
+        viewModelScope.launch { suspendRunCatching { recentCanyonsRepository.recordView(id) } }
+    }
+
+    private fun observePersonalNote() {
+        viewModelScope.launch {
+            canyonNotesRepository.observeNote(canyonId).collect { note -> detailState.update { it.copy(personalNote = note) } }
+        }
+    }
+
     private fun observeConnectivity() {
         viewModelScope.launch {
             connectivityObserver.observe().collect { online -> detailState.update { it.copy(isOnline = online) } }
@@ -270,6 +299,7 @@ private fun toUiState(detail: CanyonDetailState, media: CanyonMediaState, condit
         downloadingPhotoIds = media.downloadingPhotoIds,
         isOnline = detail.isOnline,
         transientMessage = detail.transientMessage,
+        personalNote = detail.personalNote,
     )
 
 internal fun mergeBaseCanyonDetail(newDetail: CanyonDetail, currentDetail: CanyonDetail?): CanyonDetail = if (currentDetail == null) {

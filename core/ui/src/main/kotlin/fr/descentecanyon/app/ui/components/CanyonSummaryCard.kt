@@ -178,6 +178,7 @@ fun CanyonSummaryCard(
                             }
                         }
                         canyon.dernierDebit?.let { niveau ->
+                            LastReportDate(canyon)
                             DebitBadge(niveau = niveau)
                         }
                     }
@@ -244,6 +245,7 @@ private fun MapSheetFavoriteContent(canyon: CanyonSummary, isFavorite: Boolean, 
                 }
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     canyon.dernierDebit?.let { niveau ->
+                        LastReportDate(canyon)
                         DebitBadge(niveau = niveau)
                     }
                 }
@@ -411,5 +413,16 @@ fun DebitBadge(niveau: NiveauDebit, modifier: Modifier = Modifier) {
         niveau = niveau,
         label = debitLevelLabel(niveau),
         modifier = modifier,
+    )
+}
+
+@Composable
+private fun LastReportDate(canyon: CanyonSummary) {
+    val date = canyon.dernierDebitDate ?: return
+    Text(
+        text = relativeDayLabel(date),
+        style = MaterialTheme.typography.labelSmall,
+        color = LocalDcColors.current.textMuted,
+        modifier = Modifier.padding(end = 6.dp),
     )
 }

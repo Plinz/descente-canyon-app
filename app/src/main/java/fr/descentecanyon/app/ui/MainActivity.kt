@@ -1,12 +1,15 @@
 package fr.descentecanyon.app.ui
 
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,6 +27,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -32,9 +36,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -44,6 +50,8 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.error.suspendRunCatching
+import fr.descentecanyon.app.domain.model.ThemeMode
+import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.startup.AppStartupCoordinator
 import fr.descentecanyon.app.startup.StartupLaunchMode
@@ -51,6 +59,7 @@ import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.navigation.AppLaunchTarget
 import fr.descentecanyon.app.ui.navigation.AppNavHost
 import fr.descentecanyon.app.ui.navigation.BottomNavItem
+import fr.descentecanyon.app.ui.navigation.LaunchSection
 import fr.descentecanyon.app.ui.navigation.Screen
 import fr.descentecanyon.app.ui.navigation.consumeLaunchTarget
 import fr.descentecanyon.app.ui.navigation.navigateSingleTop
@@ -63,6 +72,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 class MainActivity : ComponentActivity() {
     @Inject lateinit var appStartupCoordinator: AppStartupCoordinator
 
+    @Inject lateinit var preferencesRepository: PreferencesRepository
+
     private val incomingLaunchTargets = MutableSharedFlow<AppLaunchTarget>(extraBufferCapacity = 1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,9 +83,25 @@ class MainActivity : ComponentActivity() {
             "isColdStart" to (savedInstanceState == null),
         )
         enableEdgeToEdge()
+        if (savedInstanceState == null) AppShortcuts.publish(this)
         val initialLaunchTarget = consumeLaunchTarget(intent)
         setContent {
-            DescenteCanyonTheme {
+            val themeMode by preferencesRepository.observeThemeMode()
+                .collectAsStateWithLifecycle(initialValue = preferencesRepository.getThemeMode())
+            val darkTheme = when (themeMode) {
+                ThemeMode.SYSTEM -> isSystemInDarkTheme()
+                ThemeMode.LIGHT -> false
+                ThemeMode.DARK -> true
+            }
+            // System bar icons follow the app theme, which can differ from the system one.
+            DisposableEffect(darkTheme) {
+                enableEdgeToEdge(
+                    statusBarStyle = SystemBarStyle.auto(Color.TRANSPARENT, Color.TRANSPARENT) { darkTheme },
+                    navigationBarStyle = SystemBarStyle.auto(LIGHT_NAVIGATION_SCRIM, DARK_NAVIGATION_SCRIM) { darkTheme },
+                )
+                onDispose {}
+            }
+            DescenteCanyonTheme(darkTheme = darkTheme) {
                 AppStartupScreen(
                     appStartupCoordinator = appStartupCoordinator,
                     initialLaunchTarget = initialLaunchTarget,
@@ -181,6 +208,10 @@ private sealed interface StartupUiState {
 
 private const val TAG = "MainActivity"
 
+// Default scrims of enableEdgeToEdge() for 3-button navigation bars (ARGB).
+private const val LIGHT_NAVIGATION_SCRIM = 0xE6FFFFFF.toInt()
+private const val DARK_NAVIGATION_SCRIM = 0x801B1B1B.toInt()
+
 @Composable
 private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTargets: MutableSharedFlow<AppLaunchTarget>) {
     androidx.compose.runtime.LaunchedEffect(Unit) {
@@ -191,6 +222,7 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
     val selectedBottomNavItem = resolveSelectedBottomNavItem(navBackStackEntry)
     val showBottomBar = shouldShowBottomBar(navBackStackEntry)
     val dcColors = LocalDcColors.current
+    val context = LocalContext.current
 
     androidx.compose.runtime.LaunchedEffect(navController, initialLaunchTarget, incomingLaunchTargets) {
         fun navigateTo(target: AppLaunchTarget) {
@@ -203,6 +235,17 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
                         }
                     } else {
                         navController.navigateSingleTop(Screen.Notifications)
+                    }
+                }
+                is AppLaunchTarget.Section -> {
+                    AppShortcuts.reportUsed(context, target.section)
+                    val screen = target.section.toScreen()
+                    if (target.clearBackStack) {
+                        navController.navigate(screen) {
+                            applyAppRootNavigation(navController.graph.findStartDestination().id)
+                        }
+                    } else {
+                        navController.navigateSingleTop(screen)
                     }
                 }
                 is AppLaunchTarget.CanyonDetail -> {
@@ -264,6 +307,7 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
                                 ),
                                 selected = item == selectedBottomNavItem,
                                 onClick = {
+                                    item.launchSection()?.let { section -> AppShortcuts.reportUsed(context, section) }
                                     val startDestinationId = navController.graph.findStartDestination().id
                                     handleBottomNavClick(
                                         item = item,
@@ -289,6 +333,20 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
             topLevelContentPadding = innerPadding,
         )
     }
+}
+
+internal fun BottomNavItem.launchSection(): LaunchSection? = when (this) {
+    BottomNavItem.HOME -> null
+    BottomNavItem.SEARCH -> LaunchSection.SEARCH
+    BottomNavItem.MAP -> LaunchSection.MAP
+    BottomNavItem.FAVORITES -> LaunchSection.FAVORITES
+}
+
+internal fun LaunchSection.toScreen(): Screen = when (this) {
+    LaunchSection.SEARCH -> Screen.Search
+    LaunchSection.MAP -> Screen.Map
+    LaunchSection.FAVORITES -> Screen.Favorites
+    LaunchSection.PENDING_DEBITS -> Screen.PendingDebits
 }
 
 internal fun resolveSelectedBottomNavItem(backStackEntry: NavBackStackEntry?): BottomNavItem? {

@@ -4,6 +4,7 @@ import org.gradle.api.artifacts.MinimalExternalModuleDependency
 import org.gradle.api.artifacts.VersionCatalog
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.provider.Provider
+import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -26,5 +27,15 @@ internal fun VersionCatalog.lib(alias: String): Provider<MinimalExternalModuleDe
 internal fun Project.configureKotlinJvmTarget() {
     tasks.withType<KotlinJvmCompile>().configureEach {
         compilerOptions.jvmTarget.set(BuildValues.JVM_TARGET)
+    }
+}
+
+/**
+ * Unit tests run on JDK 25 class files: MockK's Byte Buddy only instruments them (needed to mock
+ * final classes) in experimental mode.
+ */
+internal fun Project.configureUnitTests() {
+    tasks.withType<Test>().configureEach {
+        systemProperty("net.bytebuddy.experimental", "true")
     }
 }

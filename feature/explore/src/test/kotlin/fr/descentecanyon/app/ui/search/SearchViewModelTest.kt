@@ -3,16 +3,20 @@ package fr.descentecanyon.app.ui.search
 import androidx.lifecycle.SavedStateHandle
 import fr.descentecanyon.app.domain.coroutines.DefaultDispatcher
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
+import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.CotationRating
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
 import fr.descentecanyon.app.domain.repository.CanyonRepository
+import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
 import fr.descentecanyon.app.testutil.MainDispatcherRule
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -30,6 +34,27 @@ class SearchViewModelTest {
 
     private val canyonRepository = mockk<CanyonRepository>()
     private val searchCanyonsUseCase = SearchCanyonsUseCase(canyonRepository)
+    private val recentCanyons = MutableStateFlow<List<CanyonSummary>>(emptyList())
+    private val recentCanyonsRepository = mockk<RecentCanyonsRepository>(relaxUnitFun = true) {
+        every { observeRecentCanyons(any()) } returns recentCanyons
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `recently viewed canyons are offered and can be cleared`() = runTest {
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(listOf(canyon(id = 1)))
+        recentCanyons.value =
+            listOf(CanyonSummary(id = 7, nom = "Riolan", pays = "France", cotation = "v4a4III", url = "https://example.test/7"))
+        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository)
+
+        advanceTimeBy(250)
+        advanceUntilIdle()
+        viewModel.clearRecentCanyons()
+        advanceUntilIdle()
+
+        assertEquals(listOf(7), viewModel.uiState.value.recentCanyons.map { it.id })
+        coVerify { recentCanyonsRepository.clear() }
+    }
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -40,7 +65,7 @@ class SearchViewModelTest {
                 canyon(id = 2, pays = "Espagne", departement = "Huesca"),
             ),
         )
-        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher)
+        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository)
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -61,7 +86,7 @@ class SearchViewModelTest {
                 canyon(id = 3, pays = "Espagne", departement = "Huesca"),
             ),
         )
-        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher)
+        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository)
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -90,7 +115,7 @@ class SearchViewModelTest {
                 canyon(id = 2, nom = "Beta", interet = 4f),
             ),
         )
-        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher)
+        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository)
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -123,7 +148,7 @@ class SearchViewModelTest {
                 canyon(id = 2, nom = "Alpin"),
             ),
         )
-        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher)
+        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository)
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -152,7 +177,7 @@ class SearchViewModelTest {
                 canyon(id = 2, nom = "Versoud loin", latitude = 44.00, longitude = 7.30),
             ),
         )
-        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher)
+        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository)
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -178,7 +203,7 @@ class SearchViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun `selecting a canyon does not request a list scroll reset`() = runTest {
         every { canyonRepository.observeSearchCatalog() } returns flowOf(listOf(canyon(id = 1)))
-        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher)
+        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository)
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -199,7 +224,7 @@ class SearchViewModelTest {
                 canyon(id = 2, nom = "Beta", latitude = 43.90, longitude = 7.30),
             ),
         )
-        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher)
+        val viewModel = SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository)
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -231,6 +256,7 @@ class SearchViewModelTest {
             searchCanyonsUseCase,
             SavedStateHandle(mapOf("search_result_view_mode" to SearchResultViewMode.MAP.name)),
             mainDispatcherRule.dispatcher,
+            recentCanyonsRepository,
         )
 
         advanceTimeBy(250)

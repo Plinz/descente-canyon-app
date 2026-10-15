@@ -276,7 +276,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="no_photos">No hay fotos disponibles</string>
     <string name="no_offline_photos_without_network">No hay ninguna foto guardada para este barranco y no hay red para cargar las de Descente-Canyon.</string>
     <string name="user_account">Cuenta de usuario</string>
-    <string name="fullscreen_map">Pantalla completa</string>
     <string name="location">Ubicación</string>
     <string name="region">Región</string>
     <string name="department">Subdivisión</string>
@@ -420,7 +419,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="debit_observation_type_required">El tipo de observación es obligatorio.</string>
     <string name="debit_level_required">El caudal es obligatorio.</string>
     <string name="debit_submission_sent">Caudal enviado</string>
-    <string name="debit_submission_saved_offline">Caudal guardado sin conexión</string>
+    <string name="debit_submission_saved_offline">Caudal guardado: se enviará en cuanto vuelva la conexión.</string>
     <string name="debit_submission_failed">No se pudo enviar el caudal.</string>
     <string name="debit_session_expired">Tu sesión de Descente-Canyon ha caducado. Inicia sesión de nuevo antes de enviar el caudal.</string>
     <string name="photo_downloaded">Foto descargada</string>
@@ -518,8 +517,8 @@ Busca un barranco y añádelo a tus favoritos.</string>
     </plurals>
     <plurals name="search_results_count">
         <item quantity="one">%1$d resultado</item>
-        <item quantity="many">%1$d resultados</item>
-        <item quantity="other">%1$d resultados</item>
+        <item quantity="many">%1$,d resultados</item>
+        <item quantity="other">%1$,d resultados</item>
     </plurals>
     <plurals name="debit_pending_count">
         <item quantity="one">%1$d caudal pendiente de envío</item>
@@ -532,4 +531,91 @@ Busca un barranco y añádelo a tus favoritos.</string>
         <item quantity="other">%1$d caudales guardados sin conexión no fueron aceptados por el sitio.</item>
     </plurals>
     <string name="refresh">Actualizar</string>
+    <string name="cancel">Cancelar</string>
+    <string name="pending_debits_title">Caudales pendientes de envío</string>
+    <string name="pending_debits_empty_title">Ningún caudal pendiente</string>
+    <string name="pending_debits_empty_body">Los caudales registrados sin conexión aparecen aquí hasta que se envían.</string>
+    <string name="pending_debits_status_offline">Sin conexión: se enviarán automáticamente en cuanto vuelva la conexión.</string>
+    <string name="pending_debits_status_login">Inicia sesión en tu cuenta de Descente-Canyon para enviar los caudales registrados con esa cuenta.</string>
+    <string name="pending_debits_status_sending">Envío automático en curso. Si falla, se volverá a intentar periódicamente.</string>
+    <string name="pending_debits_delete_title">¿Eliminar este caudal?</string>
+    <string name="pending_debits_delete_body">No se enviará al sitio.</string>
+    <string name="pending_debits_delete_confirm">Eliminar</string>
+    <string name="pending_debits_with_account">Se enviará con tu cuenta</string>
+    <string name="pending_debits_view">Ver</string>
+    <string name="notification_channel_contributions_title">Mis contribuciones</string>
+    <string name="notification_channel_contributions_body">Envío de los caudales registrados sin conexión</string>
+    <string name="notification_debit_sent_title">Caudal enviado</string>
+    <string name="notification_debit_sent_unconfirmed">El sitio aún no lo muestra: comprueba los caudales del barranco.</string>
+    <string name="notification_pending_login_title">Inicio de sesión necesario</string>
+    <plurals name="notification_debit_sent_group_title">
+        <item quantity="one">%1$d caudal enviado</item>
+        <item quantity="many">%1$d caudales enviados</item>
+        <item quantity="other">%1$d caudales enviados</item>
+    </plurals>
+    <plurals name="notification_pending_login_body">
+        <item quantity="one">%1$d caudal pendiente: inicia sesión en tu cuenta de Descente-Canyon para enviarlo.</item>
+        <item quantity="many">%1$d caudales pendientes: inicia sesión en tu cuenta de Descente-Canyon para enviarlos.</item>
+        <item quantity="other">%1$d caudales pendientes: inicia sesión en tu cuenta de Descente-Canyon para enviarlos.</item>
+    </plurals>
+    <string name="settings_title">Ajustes</string>
+    <string name="settings_section_appearance">Apariencia</string>
+    <string name="settings_theme_system">Según el sistema</string>
+    <string name="settings_theme_light">Claro</string>
+    <string name="settings_theme_dark">Oscuro</string>
+    <string name="settings_section_language">Idioma</string>
+    <string name="settings_language_app">Idioma de la aplicación</string>
+    <string name="settings_section_notifications">Notificaciones</string>
+    <string name="settings_notifications_system">Ajustes de notificaciones</string>
+    <string name="settings_notifications_system_hint">Permiso, sonidos y categorías, en los ajustes de Android</string>
+    <string name="settings_section_contributions">Mis contribuciones</string>
+    <string name="settings_section_offline">Sin conexión</string>
+    <string name="settings_offline_refresh">Las fichas de más de un mes se actualizan desde el sitio al abrirlas con conexión. Los caudales y la meteorología ya consultados siguen visibles sin conexión.</string>
+    <string name="settings_section_about">Acerca de</string>
+    <string name="settings_version">Versión</string>
+    <string name="settings_unofficial">Aplicación no oficial y sin ánimo de lucro, independiente de descente-canyon.com.</string>
+    <string name="settings_website">descente-canyon.com</string>
+    <string name="settings_website_hint">Fichas, caudales y foro originales</string>
+    <string name="settings_data_sources">Fuentes de datos</string>
+    <string name="settings_data_sources_body">• Fichas, caudales, fotos y foro: descente-canyon.com y sus colaboradores.\n• Meteorología: Open-Meteo.com (CC BY 4.0).\n• Pluviómetros: Météo-France (Licence Ouverte Etalab 2.0) y MeteoSuiza (datos abiertos).\n• Desembalses de presas: EDF, «Ma rivière et moi».\n• Mapas: © colaboradores de OpenStreetMap (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Estimación del caudal: modelo entrenado con los caudales publicados en descente-canyon.com, solo orientativa.</string>
+    <string name="settings_licenses">Bibliotecas de código abierto</string>
+    <string name="settings_licenses_intro">La aplicación usa, entre otras:</string>
+    <string name="settings_privacy">Privacidad</string>
+    <string name="settings_privacy_body">Tus datos se quedan en este teléfono: favoritos, barrancos consultados, caudales pendientes de envío (con el nombre y el correo introducidos) y cachés. La aplicación no muestra publicidad ni usa herramientas de medición de audiencia.\n\nSolo contacta con: descente-canyon.com (fichas, caudales, fotos, foro y tu sesión si inicias sesión), Open-Meteo (meteorología en las coordenadas de los barrancos consultados), Météo-France y MeteoSuiza (registros públicos), EDF (desembalses) y los servidores de mapas.\n\nTu contraseña nunca se guarda: solo la sesión, cifrada y excluida de la copia de seguridad de Android, que puede incluir tus favoritos y ajustes.</string>
+    <plurals name="settings_offline_catalog">
+        <item quantity="one">%1$d barranco disponible sin conexión: ficha, puntos GPS, bibliografía y normativa están en la aplicación.</item>
+        <item quantity="many">%1$,d barrancos disponibles sin conexión: fichas, puntos GPS, bibliografía y normativa están en la aplicación.</item>
+        <item quantity="other">%1$,d barrancos disponibles sin conexión: fichas, puntos GPS, bibliografía y normativa están en la aplicación.</item>
+    </plurals>
+    <string name="copy_coordinates">Copiar coordenadas</string>
+    <string name="coordinates_copied">Coordenadas copiadas: %1$s</string>
+    <string name="more_actions">Más acciones</string>
+    <string name="share_canyon">Compartir</string>
+    <string name="open_on_site">Abrir en descente-canyon.com</string>
+    <string name="personal_note_title">Mi nota</string>
+    <string name="personal_note_add">Añadir una nota personal</string>
+    <string name="personal_note_private">Solo visible en este teléfono</string>
+    <string name="personal_note_hint">Aparcamiento, material, horarios, recuerdos de la salida…</string>
+    <string name="personal_note_edit">Editar la nota</string>
+    <string name="personal_note_delete">Eliminar</string>
+    <string name="save">Guardar</string>
+    <string name="search_recent_title">Vistos recientemente</string>
+    <string name="search_recent_clear">Borrar</string>
+    <plurals name="search_catalog_count">
+        <item quantity="one">%1$d barranco en el catálogo</item>
+        <item quantity="many">%1$,d barrancos en el catálogo</item>
+        <item quantity="other">%1$,d barrancos en el catálogo</item>
+    </plurals>
+    <string name="favorite_removed">«%1$s» quitado de favoritos</string>
+    <string name="undo">Deshacer</string>
+    <string name="relative_today">Hoy</string>
+    <string name="relative_yesterday">Ayer</string>
+    <plurals name="relative_days_ago">
+        <item quantity="one">Hace %1$d día</item>
+        <item quantity="many">Hace %1$d días</item>
+        <item quantity="other">Hace %1$d días</item>
+    </plurals>
+    <string name="shortcut_search_long">Buscar un barranco</string>
+    <string name="shortcut_map_long">Mapa de barrancos</string>
+    <string name="shortcut_favorites_long">Mis barrancos favoritos</string>
 </resources>

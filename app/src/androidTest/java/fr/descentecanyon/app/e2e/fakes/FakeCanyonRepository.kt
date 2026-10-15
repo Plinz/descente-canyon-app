@@ -2,7 +2,9 @@ package fr.descentecanyon.app.e2e.fakes
 
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
+import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.CanyonWatershed
+import fr.descentecanyon.app.domain.model.toSummary
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -19,6 +21,11 @@ class FakeCanyonRepository @Inject constructor() : CanyonRepository {
         ?: Result.failure(IllegalArgumentException("Unknown canyon $canyonId"))
 
     override suspend fun getCanyonPreview(canyonId: Int): Result<CanyonDetail> = getCanyonDetail(canyonId)
+
+    override suspend fun getCanyonSummaries(ids: Collection<Int>): List<CanyonSummary> =
+        E2eFixtureState.catalogItems().filter { it.id in ids }.map { it.toSummary() }
+
+    override suspend fun getCatalogSize(): Int = E2eFixtureState.catalogItems().size
 
     override fun observeWatershed(canyonId: Int): Flow<CanyonWatershed?> = flowOf(null)
 

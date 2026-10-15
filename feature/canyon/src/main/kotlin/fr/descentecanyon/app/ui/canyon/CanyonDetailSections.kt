@@ -69,6 +69,8 @@ internal fun CanyonDetailContent(
     onUserClick: (String) -> Unit,
     onPersistedPhotoMissing: (Long) -> Unit,
     openDebitsTabInitially: Boolean,
+    personalNote: String? = null,
+    onSavePersonalNote: (String) -> Unit = {},
     bottomContentPadding: Dp = 0.dp,
     modifier: Modifier = Modifier,
 ) {
@@ -110,6 +112,9 @@ internal fun CanyonDetailContent(
                 detail = detail,
                 onPersistedPhotoMissing = onPersistedPhotoMissing,
             )
+        }
+        item {
+            PersonalNoteCard(note = personalNote, onSave = onSavePersonalNote)
         }
         if (edfStatusSourceUrl != null) {
             item {

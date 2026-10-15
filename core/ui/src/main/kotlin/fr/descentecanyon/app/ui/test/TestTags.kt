@@ -17,8 +17,13 @@ object TestTags {
     const val DEBIT_SUBMIT_BUTTON = "debit_submit_button"
     const val INTEREST_RATING_SLIDER = "interest_rating_slider"
     const val INTEREST_RATING_SUBMIT_BUTTON = "interest_rating_submit_button"
+    const val HOME_PENDING_DEBITS_BANNER = "home_pending_debits_banner"
+    const val PENDING_DEBITS_EMPTY = "pending_debits_empty"
+    const val PENDING_DEBIT_DELETE_CONFIRM = "pending_debit_delete_confirm"
 
     fun canyonCard(id: Int): String = "canyon_card_$id"
 
     fun bottomNavItem(name: String): String = "bottom_nav_$name"
+
+    fun pendingDebitDelete(id: Long): String = "pending_debit_delete_$id"
 }

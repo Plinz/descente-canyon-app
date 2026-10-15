@@ -13,6 +13,7 @@ class JvmLibraryConventionPlugin : Plugin<Project> {
             targetCompatibility = BuildValues.JAVA_VERSION
         }
         configureKotlinJvmTarget()
+        configureUnitTests()
 
         dependencies {
             "testImplementation"(libs.lib("junit"))

@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import fr.descentecanyon.app.data.repository.AuthRepositoryImpl
+import fr.descentecanyon.app.data.repository.CanyonNotesRepositoryImpl
 import fr.descentecanyon.app.data.repository.CanyonRepositoryImpl
 import fr.descentecanyon.app.data.repository.DebitPredictionRepositoryImpl
 import fr.descentecanyon.app.data.repository.DebitPredictionSupportRepositoryImpl
@@ -18,8 +19,10 @@ import fr.descentecanyon.app.data.repository.InterestRatingRepositoryImpl
 import fr.descentecanyon.app.data.repository.NotificationCenterRepositoryImpl
 import fr.descentecanyon.app.data.repository.PhotoRepositoryImpl
 import fr.descentecanyon.app.data.repository.PreferencesRepositoryImpl
+import fr.descentecanyon.app.data.repository.RecentCanyonsRepositoryImpl
 import fr.descentecanyon.app.data.repository.WeatherRepositoryImpl
 import fr.descentecanyon.app.domain.repository.AuthRepository
+import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionSupportRepository
@@ -33,6 +36,7 @@ import fr.descentecanyon.app.domain.repository.InterestRatingRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import fr.descentecanyon.app.domain.repository.PhotoRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
+import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.repository.WeatherRepository
 import javax.inject.Singleton
 
@@ -63,6 +67,14 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindFavoritesRepository(impl: FavoritesRepositoryImpl): FavoritesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindRecentCanyonsRepository(impl: RecentCanyonsRepositoryImpl): RecentCanyonsRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCanyonNotesRepository(impl: CanyonNotesRepositoryImpl): CanyonNotesRepository
 
     @Binds
     @Singleton

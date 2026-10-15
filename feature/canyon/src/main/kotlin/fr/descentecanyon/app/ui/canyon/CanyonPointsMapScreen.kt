@@ -3,6 +3,8 @@ package fr.descentecanyon.app.ui.canyon
 import android.Manifest
 import android.app.Activity
 import android.content.ActivityNotFoundException
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.hardware.Sensor
@@ -38,6 +40,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MyLocation
@@ -88,6 +91,7 @@ import fr.descentecanyon.app.ui.location.observeDeviceLocation
 import fr.descentecanyon.app.ui.location.requestLocationSettings
 import fr.descentecanyon.app.ui.map.MapLibreView
 import fr.descentecanyon.app.ui.map.UserTrackingMode
+import java.util.Locale
 import kotlin.math.abs
 import org.maplibre.android.geometry.LatLngBounds
 
@@ -277,6 +281,16 @@ private fun CanyonPointsMapContent(
         }
     }
 
+    fun copyCoordinates(point: GeoPoint) {
+        val coordinates = point.coordinatesText()
+        context.getSystemService(ClipboardManager::class.java)
+            ?.setPrimaryClip(ClipData.newPlainText(point.navigationLabel(context), coordinates))
+        // Android 13+ confirms clipboard writes itself.
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
+            locationMessage = context.getString(R.string.coordinates_copied, coordinates)
+        }
+    }
+
     BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
@@ -291,6 +305,8 @@ private fun CanyonPointsMapContent(
             userBearingDegrees = heading.degrees,
             userTrackingMode = trackingMode,
             positionCompassWithControls = true,
+            // The points panel covers the bottom of the map.
+            attributionTopMargin = 68.dp,
             resetNorthRequestId = resetNorthRequestId,
             onMarkerClick = { markerId ->
                 pointsByMarkerId[markerId]?.let { point ->
@@ -395,6 +411,7 @@ private fun CanyonPointsMapContent(
             selectedPoint = selectedPoint,
             onExpandedChange = { pointsExpanded = it },
             onNavigate = ::navigateTo,
+            onCopyCoordinates = ::copyCoordinates,
             expandedListMaxHeight = expandedPointsMaxHeight,
             modifier = Modifier.align(Alignment.BottomCenter),
         )
@@ -454,6 +471,7 @@ private fun PointsPanel(
     selectedPoint: GeoPoint?,
     onExpandedChange: (Boolean) -> Unit,
     onNavigate: (GeoPoint) -> Unit,
+    onCopyCoordinates: (GeoPoint) -> Unit,
     expandedListMaxHeight: Dp,
     modifier: Modifier = Modifier,
 ) {
@@ -494,7 +512,7 @@ private fun PointsPanel(
             )
         }
         selectedPoint?.takeIf { !expanded }?.let { point ->
-            GeoPointRow(point = point, onNavigate = onNavigate)
+            GeoPointRow(point = point, onNavigate = onNavigate, onCopyCoordinates = onCopyCoordinates)
             Spacer(Modifier.height(8.dp))
         }
         if (expanded) {
@@ -509,7 +527,7 @@ private fun PointsPanel(
                     detail.geoPoints.sortedBy { it.type.navigationPriority() },
                     key = { point -> point.id.takeIf { it != 0L } ?: "${point.latitude}:${point.longitude}" },
                 ) { point ->
-                    GeoPointRow(point = point, onNavigate = onNavigate)
+                    GeoPointRow(point = point, onNavigate = onNavigate, onCopyCoordinates = onCopyCoordinates)
                 }
             }
         }
@@ -517,7 +535,7 @@ private fun PointsPanel(
 }
 
 @Composable
-private fun GeoPointRow(point: GeoPoint, onNavigate: (GeoPoint) -> Unit) {
+private fun GeoPointRow(point: GeoPoint, onNavigate: (GeoPoint) -> Unit, onCopyCoordinates: (GeoPoint) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -547,6 +565,9 @@ private fun GeoPointRow(point: GeoPoint, onNavigate: (GeoPoint) -> Unit) {
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
+        IconButton(onClick = { onCopyCoordinates(point) }) {
+            Icon(Icons.Default.ContentCopy, contentDescription = stringResource(R.string.copy_coordinates))
+        }
         TextButton(onClick = { onNavigate(point) }) {
             Icon(Icons.Default.Navigation, contentDescription = null)
             Spacer(Modifier.width(4.dp))
@@ -554,6 +575,9 @@ private fun GeoPointRow(point: GeoPoint, onNavigate: (GeoPoint) -> Unit) {
         }
     }
 }
+
+/** Decimal degrees with a dot, the format GPS devices and map apps accept. */
+internal fun GeoPoint.coordinatesText(): String = String.format(Locale.ROOT, "%.6f, %.6f", latitude, longitude)
 
 private data class DeviceLocation(val latitude: Double, val longitude: Double)
 

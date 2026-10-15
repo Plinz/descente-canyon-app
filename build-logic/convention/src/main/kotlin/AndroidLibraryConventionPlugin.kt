@@ -21,6 +21,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             }
         }
         configureKotlinJvmTarget()
+        configureUnitTests()
 
         dependencies {
             "testImplementation"(libs.lib("junit"))

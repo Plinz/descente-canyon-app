@@ -21,6 +21,12 @@ interface DebitRepository {
 
     suspend fun getCachedLatestDebits(limit: Int = 20): CachedItems<Debit>
 
+    /**
+     * Most recent report known on the device for each of these canyons: from their cached
+     * observations and from the last site-wide feed of latest reports. Canyons without any are absent.
+     */
+    fun observeLatestKnownDebits(canyonIds: Set<Int>): Flow<Map<Int, Debit>>
+
     suspend fun refreshLatestDebits(limit: Int = 20): Result<CachedItems<Debit>>
 
     /**

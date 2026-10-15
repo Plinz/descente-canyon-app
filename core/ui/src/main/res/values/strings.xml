@@ -276,7 +276,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="no_photos">Aucune photo disponible</string>
     <string name="no_offline_photos_without_network">Aucune photo enregistrée pour ce canyon et pas de réseau pour charger celles de Descente-Canyon.</string>
     <string name="user_account">Compte utilisateur</string>
-    <string name="fullscreen_map">Plein écran</string>
     <string name="location">Localisation</string>
     <string name="region">Région</string>
     <string name="department">Subdivision</string>
@@ -420,7 +419,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="debit_observation_type_required">Le type d\'observation est obligatoire.</string>
     <string name="debit_level_required">Le débit est obligatoire.</string>
     <string name="debit_submission_sent">Débit envoyé</string>
-    <string name="debit_submission_saved_offline">Débit enregistré hors ligne</string>
+    <string name="debit_submission_saved_offline">Débit enregistré : il sera envoyé dès que le réseau reviendra.</string>
     <string name="debit_submission_failed">Impossible d\'envoyer le débit.</string>
     <string name="debit_session_expired">Votre session Descente-Canyon a expiré. Reconnectez-vous avant d\'envoyer le débit.</string>
     <string name="photo_downloaded">Photo téléchargée</string>
@@ -518,8 +517,8 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     </plurals>
     <plurals name="search_results_count">
         <item quantity="one">%1$d résultat</item>
-        <item quantity="many">%1$d résultats</item>
-        <item quantity="other">%1$d résultats</item>
+        <item quantity="many">%1$,d résultats</item>
+        <item quantity="other">%1$,d résultats</item>
     </plurals>
     <plurals name="debit_pending_count">
         <item quantity="one">%1$d débit en attente d\'envoi</item>
@@ -532,4 +531,91 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
         <item quantity="other">%1$d débits enregistrés hors ligne n\'ont pas été acceptés par le site.</item>
     </plurals>
     <string name="refresh">Actualiser</string>
+    <string name="cancel">Annuler</string>
+    <string name="pending_debits_title">Débits en attente d\'envoi</string>
+    <string name="pending_debits_empty_title">Aucun débit en attente</string>
+    <string name="pending_debits_empty_body">Les débits saisis sans réseau apparaissent ici jusqu\'à leur envoi.</string>
+    <string name="pending_debits_status_offline">Pas de réseau : ils seront envoyés automatiquement dès que la connexion reviendra.</string>
+    <string name="pending_debits_status_login">Connectez-vous à votre compte Descente-Canyon pour envoyer les débits saisis avec ce compte.</string>
+    <string name="pending_debits_status_sending">Envoi automatique en cours. En cas d\'échec, il sera retenté régulièrement.</string>
+    <string name="pending_debits_delete_title">Supprimer ce débit ?</string>
+    <string name="pending_debits_delete_body">Il ne sera pas envoyé sur le site.</string>
+    <string name="pending_debits_delete_confirm">Supprimer</string>
+    <string name="pending_debits_with_account">Sera envoyé avec votre compte</string>
+    <string name="pending_debits_view">Voir</string>
+    <string name="notification_channel_contributions_title">Mes contributions</string>
+    <string name="notification_channel_contributions_body">Envoi des débits saisis hors ligne</string>
+    <string name="notification_debit_sent_title">Débit envoyé</string>
+    <string name="notification_debit_sent_unconfirmed">Le site ne l\'affiche pas encore : vérifiez la liste des débits du canyon.</string>
+    <string name="notification_pending_login_title">Connexion requise</string>
+    <plurals name="notification_debit_sent_group_title">
+        <item quantity="one">%1$d débit envoyé</item>
+        <item quantity="many">%1$d débits envoyés</item>
+        <item quantity="other">%1$d débits envoyés</item>
+    </plurals>
+    <plurals name="notification_pending_login_body">
+        <item quantity="one">%1$d débit attend l\'envoi : connectez-vous à votre compte Descente-Canyon pour l\'envoyer.</item>
+        <item quantity="many">%1$d débits attendent l\'envoi : connectez-vous à votre compte Descente-Canyon pour les envoyer.</item>
+        <item quantity="other">%1$d débits attendent l\'envoi : connectez-vous à votre compte Descente-Canyon pour les envoyer.</item>
+    </plurals>
+    <string name="settings_title">Réglages</string>
+    <string name="settings_section_appearance">Apparence</string>
+    <string name="settings_theme_system">Selon le système</string>
+    <string name="settings_theme_light">Clair</string>
+    <string name="settings_theme_dark">Sombre</string>
+    <string name="settings_section_language">Langue</string>
+    <string name="settings_language_app">Langue de l\'application</string>
+    <string name="settings_section_notifications">Notifications</string>
+    <string name="settings_notifications_system">Réglages des notifications</string>
+    <string name="settings_notifications_system_hint">Autorisation, sons et catégories, dans les réglages d\'Android</string>
+    <string name="settings_section_contributions">Mes contributions</string>
+    <string name="settings_section_offline">Hors ligne</string>
+    <string name="settings_offline_refresh">Les fiches de plus d\'un mois sont actualisées depuis le site à leur ouverture, quand le réseau est disponible. Les débits et la météo déjà consultés restent visibles hors ligne.</string>
+    <string name="settings_section_about">À propos</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_unofficial">Application non officielle et non commerciale, indépendante de descente-canyon.com.</string>
+    <string name="settings_website">descente-canyon.com</string>
+    <string name="settings_website_hint">Fiches, débits et forum d\'origine</string>
+    <string name="settings_data_sources">Sources des données</string>
+    <string name="settings_data_sources_body">• Fiches, débits, photos et forum : descente-canyon.com et ses contributeurs.\n• Météo : Open-Meteo.com (CC BY 4.0).\n• Pluviomètres : Météo-France (Licence Ouverte Etalab 2.0) et MétéoSuisse (données publiques).\n• Lâchers d\'eau des barrages : EDF, « Ma rivière et moi ».\n• Cartes : © contributeurs OpenStreetMap (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Estimation du débit : modèle entraîné sur les débits publiés sur descente-canyon.com, à titre indicatif.</string>
+    <string name="settings_licenses">Bibliothèques open source</string>
+    <string name="settings_licenses_intro">L\'application utilise notamment :</string>
+    <string name="settings_privacy">Confidentialité</string>
+    <string name="settings_privacy_body">Vos données restent sur ce téléphone : favoris, canyons consultés, débits en attente d\'envoi (avec le nom et l\'e-mail saisis) et caches. L\'application n\'affiche aucune publicité et n\'utilise aucun outil de mesure d\'audience.\n\nElle contacte uniquement : descente-canyon.com (fiches, débits, photos, forum et votre session si vous vous connectez), Open-Meteo (météo aux coordonnées des canyons consultés), Météo-France et MétéoSuisse (relevés publics), EDF (lâchers d\'eau) et les serveurs de fonds de carte.\n\nVotre mot de passe n\'est jamais enregistré : seule la session de connexion l\'est, chiffrée et exclue de la sauvegarde Android, qui peut inclure vos favoris et réglages.</string>
+    <plurals name="settings_offline_catalog">
+        <item quantity="one">%1$d canyon consultable sans réseau : fiche, points GPS, bibliographie et réglementation sont dans l\'application.</item>
+        <item quantity="many">%1$,d canyons consultables sans réseau : fiches, points GPS, bibliographie et réglementation sont dans l\'application.</item>
+        <item quantity="other">%1$,d canyons consultables sans réseau : fiches, points GPS, bibliographie et réglementation sont dans l\'application.</item>
+    </plurals>
+    <string name="copy_coordinates">Copier les coordonnées</string>
+    <string name="coordinates_copied">Coordonnées copiées : %1$s</string>
+    <string name="more_actions">Plus d\'actions</string>
+    <string name="share_canyon">Partager</string>
+    <string name="open_on_site">Ouvrir sur descente-canyon.com</string>
+    <string name="personal_note_title">Ma note</string>
+    <string name="personal_note_add">Ajouter une note personnelle</string>
+    <string name="personal_note_private">Visible uniquement sur ce téléphone</string>
+    <string name="personal_note_hint">Parking, matériel, horaires, souvenirs de sortie…</string>
+    <string name="personal_note_edit">Modifier la note</string>
+    <string name="personal_note_delete">Supprimer</string>
+    <string name="save">Enregistrer</string>
+    <string name="search_recent_title">Consultés récemment</string>
+    <string name="search_recent_clear">Effacer</string>
+    <plurals name="search_catalog_count">
+        <item quantity="one">%1$d canyon dans le catalogue</item>
+        <item quantity="many">%1$,d canyons dans le catalogue</item>
+        <item quantity="other">%1$,d canyons dans le catalogue</item>
+    </plurals>
+    <string name="favorite_removed">« %1$s » retiré des favoris</string>
+    <string name="undo">Annuler</string>
+    <string name="relative_today">Aujourd\'hui</string>
+    <string name="relative_yesterday">Hier</string>
+    <plurals name="relative_days_ago">
+        <item quantity="one">Il y a %1$d jour</item>
+        <item quantity="many">Il y a %1$d jours</item>
+        <item quantity="other">Il y a %1$d jours</item>
+    </plurals>
+    <string name="shortcut_search_long">Rechercher un canyon</string>
+    <string name="shortcut_map_long">Carte des canyons</string>
+    <string name="shortcut_favorites_long">Mes canyons favoris</string>
 </resources>

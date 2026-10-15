@@ -18,10 +18,13 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.model.RejectedDebitSubmission
+import fr.descentecanyon.app.domain.model.SentDebitSubmission
 import fr.descentecanyon.app.domain.model.TrackedActivityEvent
 import fr.descentecanyon.app.ui.MainActivity
 import fr.descentecanyon.app.ui.navigation.AppLaunchTarget
+import fr.descentecanyon.app.ui.navigation.LaunchSection
 import fr.descentecanyon.app.ui.navigation.putLaunchTarget
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import javax.inject.Inject
@@ -47,6 +50,13 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
                     NotificationManager.IMPORTANCE_DEFAULT,
                 ).apply {
                     description = context.getString(R.string.notification_channel_forum_body)
+                },
+                NotificationChannel(
+                    CONTRIBUTIONS_CHANNEL_ID,
+                    context.getString(R.string.notification_channel_contributions_title),
+                    NotificationManager.IMPORTANCE_DEFAULT,
+                ).apply {
+                    description = context.getString(R.string.notification_channel_contributions_body)
                 },
             ),
         )
@@ -76,19 +86,54 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         return true
     }
 
+    /** Confirms that debit reports stored offline reached the site. */
+    fun publishSentDebitSubmissions(sent: List<SentDebitSubmission>, canyonNames: Map<Int, String>): Boolean {
+        if (sent.isEmpty()) return true
+        if (!canPostNotifications(CONTRIBUTIONS_CHANNEL_ID)) return false
+        val builder = NotificationCompat.Builder(context, CONTRIBUTIONS_CHANNEL_ID)
+            .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+            .setAutoCancel(true)
+        val notification = if (sent.size == 1) {
+            val report = sent.single()
+            val line = reportLine(report.canyonId, report.observationDate, canyonNames)
+            val body = if (report.confirmed) {
+                line
+            } else {
+                "$line\n${context.getString(R.string.notification_debit_sent_unconfirmed)}"
+            }
+            builder
+                .setContentTitle(context.getString(R.string.notification_debit_sent_title))
+                .setContentText(body)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+                .setContentIntent(canyonDetailPendingIntent(report.canyonId))
+                .build()
+        } else {
+            val lines = sent.map { reportLine(it.canyonId, it.observationDate, canyonNames) }
+            builder
+                .setContentTitle(context.resources.getQuantityString(R.plurals.notification_debit_sent_group_title, sent.size, sent.size))
+                .setContentText(lines.joinToString(separator = " • "))
+                .setStyle(NotificationCompat.InboxStyle().also { style -> lines.take(5).forEach(style::addLine) })
+                .setContentIntent(appPendingIntent())
+                .build()
+        }
+        notifySafely(DEBIT_SENT_NOTIFICATION_ID, notification)
+        return true
+    }
+
     /** Tells the user that debit reports stored offline were refused by the site and dropped. */
-    fun publishRejectedDebitSubmissions(rejected: List<RejectedDebitSubmission>): Boolean {
+    fun publishRejectedDebitSubmissions(rejected: List<RejectedDebitSubmission>, canyonNames: Map<Int, String> = emptyMap()): Boolean {
         if (rejected.isEmpty()) return true
-        if (!canPostNotifications(DEBIT_CHANNEL_ID)) return false
+        if (!canPostNotifications(CONTRIBUTIONS_CHANNEL_ID)) return false
         val first = rejected.first()
         val body = if (rejected.size == 1) {
             val date = first.observationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
             val reason = (first.error as? AppError.Rejected)?.serverMessage
-            listOfNotNull(context.getString(R.string.notification_debit_rejected_body, date), reason).joinToString("\n")
+            listOfNotNull(canyonNames[first.canyonId], context.getString(R.string.notification_debit_rejected_body, date), reason)
+                .joinToString("\n")
         } else {
             context.resources.getQuantityString(R.plurals.notification_debit_rejected_group_body, rejected.size, rejected.size)
         }
-        val notification = NotificationCompat.Builder(context, DEBIT_CHANNEL_ID)
+        val notification = NotificationCompat.Builder(context, CONTRIBUTIONS_CHANNEL_ID)
             .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
             .setContentTitle(context.getString(R.string.notification_debit_rejected_title))
             .setContentText(body)
@@ -98,6 +143,31 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
             .build()
         notifySafely(DEBIT_REJECTED_NOTIFICATION_ID, notification)
         return true
+    }
+
+    /** Debit reports written with an account wait for a login: opens the queue, which offers it. */
+    fun publishPendingDebitsLoginReminder(pendingCount: Int): Boolean {
+        if (!canPostNotifications(CONTRIBUTIONS_CHANNEL_ID)) return false
+        val body = context.resources.getQuantityString(R.plurals.notification_pending_login_body, pendingCount, pendingCount)
+        val notification = NotificationCompat.Builder(context, CONTRIBUTIONS_CHANNEL_ID)
+            .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+            .setContentTitle(context.getString(R.string.notification_pending_login_title))
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setAutoCancel(true)
+            .setContentIntent(sectionPendingIntent(LaunchSection.PENDING_DEBITS))
+            .build()
+        notifySafely(PENDING_LOGIN_NOTIFICATION_ID, notification)
+        return true
+    }
+
+    fun cancelPendingDebitsLoginReminder() {
+        NotificationManagerCompat.from(context).cancel(PENDING_LOGIN_NOTIFICATION_ID)
+    }
+
+    private fun reportLine(canyonId: Int, observationDate: LocalDate, canyonNames: Map<Int, String>): String {
+        val canyon = canyonNames[canyonId] ?: context.getString(R.string.canyon_fallback_title, canyonId)
+        return "$canyon · ${observationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))}"
     }
 
     private fun buildSingleDebitNotification(event: TrackedActivityEvent) = NotificationCompat.Builder(context, DEBIT_CHANNEL_ID)
@@ -176,6 +246,29 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         )
     }
 
+    private fun sectionPendingIntent(section: LaunchSection): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            .putLaunchTarget(AppLaunchTarget.Section(section))
+        return PendingIntent.getActivity(
+            context,
+            SECTION_REQUEST_CODE_BASE + section.ordinal,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+    }
+
+    private fun appPendingIntent(): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        return PendingIntent.getActivity(
+            context,
+            APP_REQUEST_CODE,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+    }
+
     private fun browserPendingIntent(url: String): PendingIntent {
         val intent = Intent(Intent.ACTION_VIEW, url.toUri())
         return PendingIntent.getActivity(
@@ -209,8 +302,13 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
     private companion object {
         const val DEBIT_CHANNEL_ID = "debit_updates"
         const val FORUM_CHANNEL_ID = "forum_updates"
+        const val CONTRIBUTIONS_CHANNEL_ID = "my_contributions"
         const val DEBIT_NOTIFICATION_ID = 2001
         const val FORUM_NOTIFICATION_ID = 2002
         const val DEBIT_REJECTED_NOTIFICATION_ID = 2003
+        const val DEBIT_SENT_NOTIFICATION_ID = 2004
+        const val PENDING_LOGIN_NOTIFICATION_ID = 2005
+        const val APP_REQUEST_CODE = 10_001
+        const val SECTION_REQUEST_CODE_BASE = 10_100
     }
 }

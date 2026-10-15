@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.Button
@@ -25,12 +26,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.HomeFeedType
+import fr.descentecanyon.app.ui.design.DcCard
+import fr.descentecanyon.app.ui.design.DcCardVariant
+import fr.descentecanyon.app.ui.test.TestTags
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -268,4 +274,29 @@ private fun formatHomeSyncTimestamp(epochMs: Long): String {
     return Instant.ofEpochMilli(epochMs)
         .atZone(ZoneId.systemDefault())
         .format(formatter)
+}
+
+/** Reminds that debit reports written offline are still on the device. */
+@Composable
+internal fun PendingDebitsBanner(count: Int, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    DcCard(
+        variant = DcCardVariant.Warning,
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag(TestTags.HOME_PENDING_DEBITS_BANNER),
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Icon(Icons.Default.CloudUpload, contentDescription = null)
+            Text(
+                text = pluralStringResource(R.plurals.debit_pending_count, count, count),
+                style = MaterialTheme.typography.bodyMedium,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f),
+            )
+            TextButton(onClick = onClick) {
+                Text(stringResource(R.string.pending_debits_view))
+            }
+        }
+    }
 }

@@ -10,6 +10,7 @@ import fr.descentecanyon.app.data.local.catalog.entity.CanyonEntity
 import fr.descentecanyon.app.data.mapper.toEntity
 import fr.descentecanyon.app.data.mapper.toSearchIndexEntity
 import fr.descentecanyon.app.data.mapper.toSearchItem
+import fr.descentecanyon.app.data.mapper.toSummary
 import fr.descentecanyon.app.data.remote.scraper.CanyonScraper
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.domain.error.AppError
@@ -18,6 +19,7 @@ import fr.descentecanyon.app.domain.error.failure
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
+import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.CanyonWatershed
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
@@ -83,6 +85,14 @@ class CanyonRepositoryImpl @Inject constructor(
         val localCanyon = canyonDao.getById(canyonId) ?: return failure(AppError.DataUnavailable)
         return suspendRunCatching { localStore.loadLocalDetail(canyonId, localCanyon) }
     }
+
+    override suspend fun getCanyonSummaries(ids: Collection<Int>): List<CanyonSummary> = if (ids.isEmpty()) {
+        emptyList()
+    } else {
+        canyonDao.getByIds(ids.distinct()).map { it.toSummary() }
+    }
+
+    override suspend fun getCatalogSize(): Int = canyonDao.count()
 
     override fun observeWatershed(canyonId: Int): Flow<CanyonWatershed?> = watershedDao.observeMetadataByCanyonId(canyonId).map {
         it?.toDomain()

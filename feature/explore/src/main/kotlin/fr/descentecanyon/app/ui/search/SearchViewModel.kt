@@ -7,10 +7,12 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.coroutines.DefaultDispatcher
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
+import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchResultSet
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
+import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.UiText
@@ -65,6 +67,8 @@ data class SearchUiState(
     val isLocating: Boolean = false,
     val selectedCanyon: CanyonSearchItem? = null,
     val scrollResetRequestId: Int = 0,
+    /** Shown while no query or filter narrows the catalog. */
+    val recentCanyons: List<CanyonSummary> = emptyList(),
 )
 
 @HiltViewModel
@@ -73,6 +77,7 @@ class SearchViewModel @Inject constructor(
     private val searchCanyonsUseCase: SearchCanyonsUseCase,
     private val savedStateHandle: SavedStateHandle,
     @param:DefaultDispatcher private val searchDispatcher: CoroutineDispatcher,
+    private val recentCanyonsRepository: RecentCanyonsRepository,
 ) : ViewModel() {
 
     private val initialCriteria = loadCriteria()
@@ -143,6 +148,12 @@ class SearchViewModel @Inject constructor(
                     computed to resultViewMode
                 }
                 .combine(selectedCanyonIdFlow) { (computed, resultViewMode), selectedCanyonId ->
+                    Triple(computed, resultViewMode, selectedCanyonId)
+                }
+                .combine(recentCanyonsRepository.observeRecentCanyons(RECENT_CANYONS_SHOWN)) {
+                        (computed, resultViewMode, selectedCanyonId),
+                        recentCanyons,
+                    ->
                     SearchUiState(
                         queryDraft = queryDraftFlow.value,
                         criteria = computed.criteria,
@@ -163,6 +174,7 @@ class SearchViewModel @Inject constructor(
                         isLocating = computed.location.isLocating,
                         selectedCanyon = computed.resultSet.results.firstOrNull { it.id == selectedCanyonId },
                         scrollResetRequestId = computed.scrollResetRequestId,
+                        recentCanyons = recentCanyons,
                     )
                 }
                 .flowOn(searchDispatcher)
@@ -209,6 +221,10 @@ class SearchViewModel @Inject constructor(
                     _uiState.update { current -> state.copy(error = current.error ?: state.error) }
                 }
         }
+    }
+
+    fun clearRecentCanyons() {
+        viewModelScope.launch { recentCanyonsRepository.clear() }
     }
 
     fun onQueryChanged(query: String) {
@@ -405,3 +421,5 @@ private fun SearchCriteria.sanitizedForPersistence(): SearchCriteria = copy(
 )
 
 private fun monotonicNowMs(): Long = System.nanoTime() / 1_000_000
+
+private const val RECENT_CANYONS_SHOWN = 10

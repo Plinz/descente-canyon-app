@@ -7,7 +7,9 @@ estimer le débit probable d'un canyon pour les trois prochains jours.
 - Catalogue complet embarqué dans l'APK (fiches, points GPS, bibliographie, réglementation, bassins versants) :
   la consultation ne dépend pas du réseau.
 - Débits, photos, forum et notes d'intérêt lus sur le site quand le réseau est disponible ; les débits saisis hors
-  ligne sont envoyés automatiquement au retour du réseau.
+  ligne sont envoyés automatiquement au retour du réseau (file consultable, notification à l'envoi).
+- Données personnelles locales : favoris avec leur dernier débit connu, canyons consultés récemment, notes
+  personnelles par canyon, nom et e-mail du dernier signalement.
 - Estimation du débit par un modèle ONNX exécuté sur l'appareil (météo Open-Meteo, pluviomètres Météo-France et
   MeteoSwiss, état hydrologique simulé). Voir [docs/debit-prediction-model.md](docs/debit-prediction-model.md).
 
@@ -23,10 +25,11 @@ app                      Activity, navigation, démarrage, synchronisations (Wor
 feature/home             Accueil : derniers débits, forum
 feature/explore          Recherche et carte
 feature/canyon           Fiche canyon, galerie, prédiction de débit
-feature/contribute       Formulaires de débit et de note d'intérêt
+feature/contribute       Formulaires de débit et de note d'intérêt, débits en attente d'envoi
 feature/favorites        Favoris
 feature/notifications    Centre de notifications (suivis)
 feature/users            Utilisateurs du forum
+feature/settings         Réglages (thème, langue, notifications), sources des données, licences, confidentialité
 core/ui                  Design system, composants partagés, widget carte, ressources (chaînes en 6 langues)
 core/data                Bases Room, réseau (OkHttp + Jsoup), scraping, repositories, modèle ONNX
 core/domain              Modèles, interfaces des repositories, cas d'usage, erreurs typées (Kotlin pur)
@@ -42,11 +45,12 @@ d'une autre fonctionnalité ; seul `app` assemble le tout (Hilt).
 | Base | Contenu | Cycle de vie |
 | --- | --- | --- |
 | `catalog.db` (`CatalogDatabase`) | Référentiel des canyons, généré au build | Copiée depuis l'APK, **remplacée en bloc** à chaque installation ou mise à jour (`CatalogInstaller`) : aucune migration |
-| `user.db` (`UserDatabase`) | Favoris, débits en attente d'envoi, caches (débits, photos, météo) | Conservée ; toute évolution du schéma exige une migration testée |
+| `user.db` (`UserDatabase`) | Favoris, débits en attente d'envoi, canyons récents, notes personnelles, caches (débits, photos, météo) | Conservée ; toute évolution du schéma exige une migration testée (`UserDatabaseMigrationTest`) |
 
 Les installations antérieures (base unique `descente_canyon_db`, versions ≤ 2.2) sont migrées une fois au démarrage
-par `LegacyDatabaseMigrator`. Une fiche dont le contenu a plus de 30 jours est rafraîchie depuis le site quand le
-réseau est disponible.
+par `LegacyDatabaseMigrator`. La sauvegarde Android (`data_extraction_rules.xml`) exclut le catalogue et le modèle,
+reconstruits depuis l'APK : sans cela, le quota de 25 Mo serait dépassé et aucune donnée ne serait sauvegardée.
+Une fiche dont le contenu a plus de 30 jours est rafraîchie depuis le site quand le réseau est disponible.
 
 ### Réseau et erreurs
 

@@ -276,7 +276,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="no_photos">Nessuna foto disponibile</string>
     <string name="no_offline_photos_without_network">Nessuna foto salvata per questo canyon e nessuna rete per caricare quelle di Descente-Canyon.</string>
     <string name="user_account">Account utente</string>
-    <string name="fullscreen_map">Schermo intero</string>
     <string name="location">Localizzazione</string>
     <string name="region">Regione</string>
     <string name="department">Suddivisione</string>
@@ -420,7 +419,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="debit_observation_type_required">Il tipo di osservazione è obbligatorio.</string>
     <string name="debit_level_required">La portata è obbligatoria.</string>
     <string name="debit_submission_sent">Portata inviata</string>
-    <string name="debit_submission_saved_offline">Portata salvata offline</string>
+    <string name="debit_submission_saved_offline">Portata salvata: verrà inviata appena torna la rete.</string>
     <string name="debit_submission_failed">Impossibile inviare la portata.</string>
     <string name="debit_session_expired">La sessione Descente-Canyon è scaduta. Accedi di nuovo prima di inviare la portata.</string>
     <string name="photo_downloaded">Foto scaricata</string>
@@ -518,8 +517,8 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     </plurals>
     <plurals name="search_results_count">
         <item quantity="one">%1$d risultato</item>
-        <item quantity="many">%1$d risultati</item>
-        <item quantity="other">%1$d risultati</item>
+        <item quantity="many">%1$,d risultati</item>
+        <item quantity="other">%1$,d risultati</item>
     </plurals>
     <plurals name="debit_pending_count">
         <item quantity="one">%1$d portata in attesa di invio</item>
@@ -532,4 +531,91 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
         <item quantity="other">%1$d portate salvate offline non sono state accettate dal sito.</item>
     </plurals>
     <string name="refresh">Aggiorna</string>
+    <string name="cancel">Annulla</string>
+    <string name="pending_debits_title">Portate in attesa di invio</string>
+    <string name="pending_debits_empty_title">Nessuna portata in attesa</string>
+    <string name="pending_debits_empty_body">Le portate inserite senza rete compaiono qui finché non vengono inviate.</string>
+    <string name="pending_debits_status_offline">Nessuna rete: verranno inviate automaticamente appena torna la connessione.</string>
+    <string name="pending_debits_status_login">Accedi al tuo account Descente-Canyon per inviare le portate inserite con quell\'account.</string>
+    <string name="pending_debits_status_sending">Invio automatico in corso. In caso di errore verrà ritentato regolarmente.</string>
+    <string name="pending_debits_delete_title">Eliminare questa portata?</string>
+    <string name="pending_debits_delete_body">Non verrà inviata al sito.</string>
+    <string name="pending_debits_delete_confirm">Elimina</string>
+    <string name="pending_debits_with_account">Verrà inviata con il tuo account</string>
+    <string name="pending_debits_view">Vedi</string>
+    <string name="notification_channel_contributions_title">I miei contributi</string>
+    <string name="notification_channel_contributions_body">Invio delle portate inserite offline</string>
+    <string name="notification_debit_sent_title">Portata inviata</string>
+    <string name="notification_debit_sent_unconfirmed">Il sito non la mostra ancora: controlla le portate del canyon.</string>
+    <string name="notification_pending_login_title">Accesso richiesto</string>
+    <plurals name="notification_debit_sent_group_title">
+        <item quantity="one">%1$d portata inviata</item>
+        <item quantity="many">%1$d portate inviate</item>
+        <item quantity="other">%1$d portate inviate</item>
+    </plurals>
+    <plurals name="notification_pending_login_body">
+        <item quantity="one">%1$d portata in attesa: accedi al tuo account Descente-Canyon per inviarla.</item>
+        <item quantity="many">%1$d portate in attesa: accedi al tuo account Descente-Canyon per inviarle.</item>
+        <item quantity="other">%1$d portate in attesa: accedi al tuo account Descente-Canyon per inviarle.</item>
+    </plurals>
+    <string name="settings_title">Impostazioni</string>
+    <string name="settings_section_appearance">Aspetto</string>
+    <string name="settings_theme_system">Come il sistema</string>
+    <string name="settings_theme_light">Chiaro</string>
+    <string name="settings_theme_dark">Scuro</string>
+    <string name="settings_section_language">Lingua</string>
+    <string name="settings_language_app">Lingua dell\'app</string>
+    <string name="settings_section_notifications">Notifiche</string>
+    <string name="settings_notifications_system">Impostazioni delle notifiche</string>
+    <string name="settings_notifications_system_hint">Autorizzazione, suoni e categorie, nelle impostazioni di Android</string>
+    <string name="settings_section_contributions">I miei contributi</string>
+    <string name="settings_section_offline">Offline</string>
+    <string name="settings_offline_refresh">Le schede più vecchie di un mese vengono aggiornate dal sito quando le apri con la rete. Portate e meteo già consultati restano visibili offline.</string>
+    <string name="settings_section_about">Informazioni</string>
+    <string name="settings_version">Versione</string>
+    <string name="settings_unofficial">App non ufficiale e non commerciale, indipendente da descente-canyon.com.</string>
+    <string name="settings_website">descente-canyon.com</string>
+    <string name="settings_website_hint">Schede, portate e forum originali</string>
+    <string name="settings_data_sources">Fonti dei dati</string>
+    <string name="settings_data_sources_body">• Schede, portate, foto e forum: descente-canyon.com e i suoi contributori.\n• Meteo: Open-Meteo.com (CC BY 4.0).\n• Pluviometri: Météo-France (Licence Ouverte Etalab 2.0) e MeteoSvizzera (dati aperti).\n• Rilasci d\'acqua delle dighe: EDF, «Ma rivière et moi».\n• Mappe: © contributori di OpenStreetMap (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Stima della portata: modello addestrato sulle portate pubblicate su descente-canyon.com, solo indicativa.</string>
+    <string name="settings_licenses">Librerie open source</string>
+    <string name="settings_licenses_intro">L\'app utilizza in particolare:</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_privacy_body">I tuoi dati restano su questo telefono: preferiti, canyon consultati, portate in attesa di invio (con il nome e l\'e-mail inseriti) e cache. L\'app non mostra pubblicità e non usa strumenti di misurazione dell\'audience.\n\nContatta solo: descente-canyon.com (schede, portate, foto, forum e la tua sessione se accedi), Open-Meteo (meteo alle coordinate dei canyon consultati), Météo-France e MeteoSvizzera (rilevazioni pubbliche), EDF (rilasci d\'acqua) e i server delle mappe.\n\nLa tua password non viene mai salvata: solo la sessione di accesso, cifrata ed esclusa dal backup di Android, che può includere i tuoi preferiti e le impostazioni.</string>
+    <plurals name="settings_offline_catalog">
+        <item quantity="one">%1$d canyon disponibile senza rete: scheda, punti GPS, bibliografia e regolamentazione sono nell\'app.</item>
+        <item quantity="many">%1$,d canyon disponibili senza rete: schede, punti GPS, bibliografia e regolamentazione sono nell\'app.</item>
+        <item quantity="other">%1$,d canyon disponibili senza rete: schede, punti GPS, bibliografia e regolamentazione sono nell\'app.</item>
+    </plurals>
+    <string name="copy_coordinates">Copia coordinate</string>
+    <string name="coordinates_copied">Coordinate copiate: %1$s</string>
+    <string name="more_actions">Altre azioni</string>
+    <string name="share_canyon">Condividi</string>
+    <string name="open_on_site">Apri su descente-canyon.com</string>
+    <string name="personal_note_title">La mia nota</string>
+    <string name="personal_note_add">Aggiungi una nota personale</string>
+    <string name="personal_note_private">Visibile solo su questo telefono</string>
+    <string name="personal_note_hint">Parcheggio, attrezzatura, orari, ricordi dell\'uscita…</string>
+    <string name="personal_note_edit">Modifica la nota</string>
+    <string name="personal_note_delete">Elimina</string>
+    <string name="save">Salva</string>
+    <string name="search_recent_title">Visti di recente</string>
+    <string name="search_recent_clear">Cancella</string>
+    <plurals name="search_catalog_count">
+        <item quantity="one">%1$d canyon nel catalogo</item>
+        <item quantity="many">%1$,d canyon nel catalogo</item>
+        <item quantity="other">%1$,d canyon nel catalogo</item>
+    </plurals>
+    <string name="favorite_removed">«%1$s» rimosso dai preferiti</string>
+    <string name="undo">Annulla</string>
+    <string name="relative_today">Oggi</string>
+    <string name="relative_yesterday">Ieri</string>
+    <plurals name="relative_days_ago">
+        <item quantity="one">%1$d giorno fa</item>
+        <item quantity="many">%1$d giorni fa</item>
+        <item quantity="other">%1$d giorni fa</item>
+    </plurals>
+    <string name="shortcut_search_long">Cerca un canyon</string>
+    <string name="shortcut_map_long">Mappa dei canyon</string>
+    <string name="shortcut_favorites_long">I miei canyon preferiti</string>
 </resources>

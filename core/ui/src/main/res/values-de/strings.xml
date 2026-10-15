@@ -276,7 +276,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="no_photos">Keine Fotos verfügbar</string>
     <string name="no_offline_photos_without_network">Für diesen Canyon sind keine Fotos gespeichert und es gibt kein Netz, um Fotos von Descente-Canyon zu laden.</string>
     <string name="user_account">Benutzerkonto</string>
-    <string name="fullscreen_map">Vollbild</string>
     <string name="location">Standort</string>
     <string name="region">Region</string>
     <string name="department">Unterteilung</string>
@@ -420,7 +419,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="debit_observation_type_required">Der Beobachtungstyp ist erforderlich.</string>
     <string name="debit_level_required">Der Wasserstand ist erforderlich.</string>
     <string name="debit_submission_sent">Wasserstandsbericht gesendet</string>
-    <string name="debit_submission_saved_offline">Wasserstandsbericht offline gespeichert</string>
+    <string name="debit_submission_saved_offline">Wasserstandsbericht gespeichert: Er wird gesendet, sobald das Netz wieder da ist.</string>
     <string name="debit_submission_failed">Der Wasserstandsbericht konnte nicht gesendet werden.</string>
     <string name="debit_session_expired">Deine Descente-Canyon-Sitzung ist abgelaufen. Melde dich erneut an, bevor du den Wasserstandsbericht sendest.</string>
     <string name="photo_downloaded">Foto heruntergeladen</string>
@@ -515,7 +514,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     </plurals>
     <plurals name="search_results_count">
         <item quantity="one">%1$d Ergebnis</item>
-        <item quantity="other">%1$d Ergebnisse</item>
+        <item quantity="other">%1$,d Ergebnisse</item>
     </plurals>
     <plurals name="debit_pending_count">
         <item quantity="one">%1$d Wasserstandsbericht wartet auf Versand</item>
@@ -526,4 +525,86 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
         <item quantity="other">%1$d offline gespeicherte Wasserstandsberichte wurden von der Website nicht angenommen.</item>
     </plurals>
     <string name="refresh">Aktualisieren</string>
+    <string name="cancel">Abbrechen</string>
+    <string name="pending_debits_title">Wartende Wasserstandsberichte</string>
+    <string name="pending_debits_empty_title">Keine wartenden Wasserstandsberichte</string>
+    <string name="pending_debits_empty_body">Ohne Netz erfasste Wasserstandsberichte erscheinen hier, bis sie gesendet sind.</string>
+    <string name="pending_debits_status_offline">Kein Netz: Sie werden automatisch gesendet, sobald die Verbindung wieder da ist.</string>
+    <string name="pending_debits_status_login">Melde dich bei deinem Descente-Canyon-Konto an, um die mit diesem Konto erfassten Berichte zu senden.</string>
+    <string name="pending_debits_status_sending">Wird automatisch gesendet. Bei einem Fehler wird es regelmäßig erneut versucht.</string>
+    <string name="pending_debits_delete_title">Diesen Wasserstandsbericht löschen?</string>
+    <string name="pending_debits_delete_body">Er wird nicht an die Website gesendet.</string>
+    <string name="pending_debits_delete_confirm">Löschen</string>
+    <string name="pending_debits_with_account">Wird mit deinem Konto gesendet</string>
+    <string name="pending_debits_view">Ansehen</string>
+    <string name="notification_channel_contributions_title">Meine Beiträge</string>
+    <string name="notification_channel_contributions_body">Versand offline erfasster Wasserstandsberichte</string>
+    <string name="notification_debit_sent_title">Wasserstandsbericht gesendet</string>
+    <string name="notification_debit_sent_unconfirmed">Die Website zeigt ihn noch nicht an: Prüfe die Wasserstände des Canyons.</string>
+    <string name="notification_pending_login_title">Anmeldung erforderlich</string>
+    <plurals name="notification_debit_sent_group_title">
+        <item quantity="one">%1$d Wasserstandsbericht gesendet</item>
+        <item quantity="other">%1$d Wasserstandsberichte gesendet</item>
+    </plurals>
+    <plurals name="notification_pending_login_body">
+        <item quantity="one">%1$d Wasserstandsbericht wartet: Melde dich bei deinem Descente-Canyon-Konto an, um ihn zu senden.</item>
+        <item quantity="other">%1$d Wasserstandsberichte warten: Melde dich bei deinem Descente-Canyon-Konto an, um sie zu senden.</item>
+    </plurals>
+    <string name="settings_title">Einstellungen</string>
+    <string name="settings_section_appearance">Darstellung</string>
+    <string name="settings_theme_system">Wie im System</string>
+    <string name="settings_theme_light">Hell</string>
+    <string name="settings_theme_dark">Dunkel</string>
+    <string name="settings_section_language">Sprache</string>
+    <string name="settings_language_app">App-Sprache</string>
+    <string name="settings_section_notifications">Benachrichtigungen</string>
+    <string name="settings_notifications_system">Benachrichtigungseinstellungen</string>
+    <string name="settings_notifications_system_hint">Berechtigung, Töne und Kategorien in den Android-Einstellungen</string>
+    <string name="settings_section_contributions">Meine Beiträge</string>
+    <string name="settings_section_offline">Offline</string>
+    <string name="settings_offline_refresh">Beschreibungen, die älter als ein Monat sind, werden beim Öffnen mit Netz von der Website aktualisiert. Bereits angesehene Wasserstände und Wetterdaten bleiben offline sichtbar.</string>
+    <string name="settings_section_about">Über die App</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_unofficial">Inoffizielle, nicht kommerzielle App, unabhängig von descente-canyon.com.</string>
+    <string name="settings_website">descente-canyon.com</string>
+    <string name="settings_website_hint">Originale Beschreibungen, Wasserstände und Forum</string>
+    <string name="settings_data_sources">Datenquellen</string>
+    <string name="settings_data_sources_body">• Beschreibungen, Wasserstände, Fotos und Forum: descente-canyon.com und seine Mitwirkenden.\n• Wetter: Open-Meteo.com (CC BY 4.0).\n• Regenmesser: Météo-France (Licence Ouverte Etalab 2.0) und MeteoSchweiz (offene Daten).\n• Wasserabgaben der Staudämme: EDF, „Ma rivière et moi“.\n• Karten: © OpenStreetMap-Mitwirkende (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Abflussschätzung: Modell, trainiert mit den auf descente-canyon.com veröffentlichten Wasserständen, nur zur Orientierung.</string>
+    <string name="settings_licenses">Open-Source-Bibliotheken</string>
+    <string name="settings_licenses_intro">Die App verwendet unter anderem:</string>
+    <string name="settings_privacy">Datenschutz</string>
+    <string name="settings_privacy_body">Deine Daten bleiben auf diesem Telefon: Favoriten, zuletzt angesehene Canyons, wartende Wasserstandsberichte (mit dem eingegebenen Namen und der E-Mail) und Caches. Die App zeigt keine Werbung und verwendet keine Reichweitenmessung.\n\nSie kontaktiert nur: descente-canyon.com (Beschreibungen, Wasserstände, Fotos, Forum und deine Sitzung, wenn du dich anmeldest), Open-Meteo (Wetter an den Koordinaten der angesehenen Canyons), Météo-France und MeteoSchweiz (öffentliche Messwerte), EDF (Wasserabgaben) und die Kartenserver.\n\nDein Passwort wird nie gespeichert: Nur die Anmeldesitzung wird verschlüsselt gespeichert und von der Android-Sicherung ausgeschlossen, die deine Favoriten und Einstellungen enthalten kann.</string>
+    <plurals name="settings_offline_catalog">
+        <item quantity="one">%1$d Canyon ohne Netz verfügbar: Beschreibung, GPS-Punkte, Literatur und Vorschriften sind in der App.</item>
+        <item quantity="other">%1$,d Canyons ohne Netz verfügbar: Beschreibungen, GPS-Punkte, Literatur und Vorschriften sind in der App.</item>
+    </plurals>
+    <string name="copy_coordinates">Koordinaten kopieren</string>
+    <string name="coordinates_copied">Koordinaten kopiert: %1$s</string>
+    <string name="more_actions">Weitere Aktionen</string>
+    <string name="share_canyon">Teilen</string>
+    <string name="open_on_site">Auf descente-canyon.com öffnen</string>
+    <string name="personal_note_title">Meine Notiz</string>
+    <string name="personal_note_add">Persönliche Notiz hinzufügen</string>
+    <string name="personal_note_private">Nur auf diesem Telefon sichtbar</string>
+    <string name="personal_note_hint">Parkplatz, Ausrüstung, Zeiten, Tourenerinnerungen…</string>
+    <string name="personal_note_edit">Notiz bearbeiten</string>
+    <string name="personal_note_delete">Löschen</string>
+    <string name="save">Speichern</string>
+    <string name="search_recent_title">Zuletzt angesehen</string>
+    <string name="search_recent_clear">Löschen</string>
+    <plurals name="search_catalog_count">
+        <item quantity="one">%1$d Canyon im Katalog</item>
+        <item quantity="other">%1$,d Canyons im Katalog</item>
+    </plurals>
+    <string name="favorite_removed">„%1$s“ aus den Favoriten entfernt</string>
+    <string name="undo">Rückgängig</string>
+    <string name="relative_today">Heute</string>
+    <string name="relative_yesterday">Gestern</string>
+    <plurals name="relative_days_ago">
+        <item quantity="one">Vor %1$d Tag</item>
+        <item quantity="other">Vor %1$d Tagen</item>
+    </plurals>
+    <string name="shortcut_search_long">Canyon suchen</string>
+    <string name="shortcut_map_long">Canyon-Karte</string>
+    <string name="shortcut_favorites_long">Meine Lieblingscanyons</string>
 </resources>

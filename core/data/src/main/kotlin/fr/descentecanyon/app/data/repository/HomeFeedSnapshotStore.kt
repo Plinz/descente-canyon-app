@@ -11,6 +11,8 @@ import fr.descentecanyon.app.domain.model.NiveauDebit
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -20,8 +22,15 @@ class HomeFeedSnapshotStore @Inject constructor(private val keyValueDao: KeyValu
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    suspend fun readLatestDebits(limit: Int): CachedItems<Debit> {
-        val payload = keyValueDao.get(LATEST_DEBITS_KEY) ?: return CachedItems()
+    suspend fun readLatestDebits(limit: Int): CachedItems<Debit> = parseLatestDebits(keyValueDao.get(LATEST_DEBITS_KEY), limit)
+
+    /** Every report of the last latest-debits snapshot, updated when the feed is refreshed. */
+    fun observeLatestDebits(): Flow<CachedItems<Debit>> = keyValueDao.observe(LATEST_DEBITS_KEY).map { payload ->
+        parseLatestDebits(payload, limit = Int.MAX_VALUE)
+    }
+
+    private fun parseLatestDebits(payload: String?, limit: Int): CachedItems<Debit> {
+        if (payload == null) return CachedItems()
         return runCatching {
             val snapshot = json.decodeFromString<LatestDebitsSnapshotDto>(payload)
             CachedItems(

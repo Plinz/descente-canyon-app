@@ -53,14 +53,27 @@ enum class DebitSubmissionStatus {
     QUEUED_OFFLINE,
 }
 
+/** A debit report stored on the device, waiting to be sent. */
+data class PendingDebitSubmission(val id: Long, val submission: DebitSubmission, val createdAtEpochMs: Long) {
+    /**
+     * Reports written while logged in carry no e-mail: the site only accepts them with a session.
+     */
+    val needsLogin: Boolean get() = submission.observerEmail.isNullOrBlank()
+}
+
 /** Outcome of sending the reports stored while offline. */
 data class PendingDebitSyncResult(
-    val sentCount: Int = 0,
+    val sent: List<SentDebitSubmission> = emptyList(),
     /** Reports the site refused; they are removed from the queue and the user is told. */
     val rejected: List<RejectedDebitSubmission> = emptyList(),
     /** Why the remaining reports are still queued (connectivity, login needed...), or null when the queue is empty. */
     val stoppedBy: AppError? = null,
-)
+) {
+    val sentCount: Int get() = sent.size
+}
+
+/** A stored report the site accepted; [confirmed] is false when it could not be read back yet. */
+data class SentDebitSubmission(val canyonId: Int, val observationDate: LocalDate, val confirmed: Boolean)
 
 data class RejectedDebitSubmission(val canyonId: Int, val observationDate: LocalDate, val error: AppError)
 

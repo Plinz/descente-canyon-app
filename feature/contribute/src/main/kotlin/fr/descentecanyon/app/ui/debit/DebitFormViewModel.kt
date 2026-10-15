@@ -9,6 +9,7 @@ import fr.descentecanyon.app.domain.error.requiresLogin
 import fr.descentecanyon.app.domain.error.toAppError
 import fr.descentecanyon.app.domain.model.AirTemperature
 import fr.descentecanyon.app.domain.model.AuthState
+import fr.descentecanyon.app.domain.model.ContributorIdentity
 import fr.descentecanyon.app.domain.model.DebitSubmission
 import fr.descentecanyon.app.domain.model.DebitSubmissionStatus
 import fr.descentecanyon.app.domain.model.NiveauDebit
@@ -16,6 +17,7 @@ import fr.descentecanyon.app.domain.model.ObservationType
 import fr.descentecanyon.app.domain.model.WaterTemperature
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
+import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.usecase.SubmitDebitUseCase
 import fr.descentecanyon.app.ui.common.UiText
 import fr.descentecanyon.app.ui.common.toUiText
@@ -53,6 +55,7 @@ class DebitFormViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val submitDebitUseCase: SubmitDebitUseCase,
     private val debitSubmissionRepository: DebitSubmissionRepository,
+    private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
 
     private val canyonId: Int = checkNotNull(savedStateHandle["canyonId"])
@@ -63,6 +66,24 @@ class DebitFormViewModel @Inject constructor(
     init {
         observeAuth()
         observePendingCount()
+        prefillContributorIdentity()
+    }
+
+    /** Offers the name and e-mail of the last report sent without an account. */
+    private fun prefillContributorIdentity() {
+        viewModelScope.launch {
+            val identity = preferencesRepository.getContributorIdentity() ?: return@launch
+            _uiState.update { state ->
+                if (state.isConnected) {
+                    state
+                } else {
+                    state.copy(
+                        observerName = state.observerName.ifBlank { identity.name },
+                        observerEmail = state.observerEmail.ifBlank { identity.email.orEmpty() },
+                    )
+                }
+            }
+        }
     }
 
     private fun observeAuth() {
@@ -176,6 +197,9 @@ class DebitFormViewModel @Inject constructor(
                 ),
             ).fold(
                 onSuccess = { status ->
+                    if (!state.isConnected) {
+                        preferencesRepository.setContributorIdentity(ContributorIdentity(observerName, observerEmail))
+                    }
                     _uiState.update {
                         it.copy(
                             isSubmitting = false,

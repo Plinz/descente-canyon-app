@@ -20,12 +20,14 @@ import fr.descentecanyon.app.data.local.catalog.dao.RegulationDao
 import fr.descentecanyon.app.data.local.catalog.dao.SearchIndexDao
 import fr.descentecanyon.app.data.local.catalog.dao.WatershedDao
 import fr.descentecanyon.app.data.local.user.UserDatabase
+import fr.descentecanyon.app.data.local.user.dao.CanyonNoteDao
 import fr.descentecanyon.app.data.local.user.dao.DailyWeatherDao
 import fr.descentecanyon.app.data.local.user.dao.DebitDao
 import fr.descentecanyon.app.data.local.user.dao.FavoriteDao
 import fr.descentecanyon.app.data.local.user.dao.KeyValueDao
 import fr.descentecanyon.app.data.local.user.dao.PendingDebitSubmissionDao
 import fr.descentecanyon.app.data.local.user.dao.PhotoDao
+import fr.descentecanyon.app.data.local.user.dao.RecentCanyonDao
 import javax.inject.Singleton
 
 @Module
@@ -85,4 +87,8 @@ object DatabaseModule {
     @Provides fun provideDailyWeatherDao(database: UserDatabase): DailyWeatherDao = database.dailyWeatherDao()
 
     @Provides fun provideKeyValueDao(database: UserDatabase): KeyValueDao = database.keyValueDao()
+
+    @Provides fun provideRecentCanyonDao(database: UserDatabase): RecentCanyonDao = database.recentCanyonDao()
+
+    @Provides fun provideCanyonNoteDao(database: UserDatabase): CanyonNoteDao = database.canyonNoteDao()
 }

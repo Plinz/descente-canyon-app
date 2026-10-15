@@ -276,7 +276,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="no_photos">No photos available</string>
     <string name="no_offline_photos_without_network">No photo saved for this canyon and no network to load those from Descente-Canyon.</string>
     <string name="user_account">User account</string>
-    <string name="fullscreen_map">Full screen</string>
     <string name="location">Location</string>
     <string name="region">Region</string>
     <string name="department">Subdivision</string>
@@ -420,7 +419,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="debit_observation_type_required">Observation type is required.</string>
     <string name="debit_level_required">Flow level is required.</string>
     <string name="debit_submission_sent">Flow report sent</string>
-    <string name="debit_submission_saved_offline">Flow report saved offline</string>
+    <string name="debit_submission_saved_offline">Flow report saved: it will be sent as soon as the network is back.</string>
     <string name="debit_submission_failed">Could not send the flow report.</string>
     <string name="debit_session_expired">Your Descente-Canyon session has expired. Sign in again before sending the flow report.</string>
     <string name="photo_downloaded">Photo downloaded</string>
@@ -515,7 +514,7 @@ Search for a canyon and add it to your favorites.</string>
     </plurals>
     <plurals name="search_results_count">
         <item quantity="one">%1$d result</item>
-        <item quantity="other">%1$d results</item>
+        <item quantity="other">%1$,d results</item>
     </plurals>
     <plurals name="debit_pending_count">
         <item quantity="one">%1$d flow report waiting to be sent</item>
@@ -526,4 +525,86 @@ Search for a canyon and add it to your favorites.</string>
         <item quantity="other">%1$d flow reports saved while offline were not accepted by the site.</item>
     </plurals>
     <string name="refresh">Refresh</string>
+    <string name="cancel">Cancel</string>
+    <string name="pending_debits_title">Flow reports waiting to be sent</string>
+    <string name="pending_debits_empty_title">No flow report waiting</string>
+    <string name="pending_debits_empty_body">Flow reports written without network show up here until they are sent.</string>
+    <string name="pending_debits_status_offline">No network: they will be sent automatically as soon as the connection is back.</string>
+    <string name="pending_debits_status_login">Log in to your Descente-Canyon account to send the flow reports written with that account.</string>
+    <string name="pending_debits_status_sending">Sending automatically. If it fails, it will be retried regularly.</string>
+    <string name="pending_debits_delete_title">Delete this flow report?</string>
+    <string name="pending_debits_delete_body">It will not be sent to the site.</string>
+    <string name="pending_debits_delete_confirm">Delete</string>
+    <string name="pending_debits_with_account">Will be sent with your account</string>
+    <string name="pending_debits_view">View</string>
+    <string name="notification_channel_contributions_title">My contributions</string>
+    <string name="notification_channel_contributions_body">Sending of flow reports written offline</string>
+    <string name="notification_debit_sent_title">Flow report sent</string>
+    <string name="notification_debit_sent_unconfirmed">The site does not show it yet: check the canyon\'s flow reports.</string>
+    <string name="notification_pending_login_title">Login required</string>
+    <plurals name="notification_debit_sent_group_title">
+        <item quantity="one">%1$d flow report sent</item>
+        <item quantity="other">%1$d flow reports sent</item>
+    </plurals>
+    <plurals name="notification_pending_login_body">
+        <item quantity="one">%1$d flow report is waiting: log in to your Descente-Canyon account to send it.</item>
+        <item quantity="other">%1$d flow reports are waiting: log in to your Descente-Canyon account to send them.</item>
+    </plurals>
+    <string name="settings_title">Settings</string>
+    <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_theme_system">System default</string>
+    <string name="settings_theme_light">Light</string>
+    <string name="settings_theme_dark">Dark</string>
+    <string name="settings_section_language">Language</string>
+    <string name="settings_language_app">App language</string>
+    <string name="settings_section_notifications">Notifications</string>
+    <string name="settings_notifications_system">Notification settings</string>
+    <string name="settings_notifications_system_hint">Permission, sounds and categories, in Android settings</string>
+    <string name="settings_section_contributions">My contributions</string>
+    <string name="settings_section_offline">Offline</string>
+    <string name="settings_offline_refresh">Topos older than a month are refreshed from the site when opened online. Flow reports and weather already viewed stay visible offline.</string>
+    <string name="settings_section_about">About</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_unofficial">Unofficial, non-commercial app, independent from descente-canyon.com.</string>
+    <string name="settings_website">descente-canyon.com</string>
+    <string name="settings_website_hint">Original topos, flow reports and forum</string>
+    <string name="settings_data_sources">Data sources</string>
+    <string name="settings_data_sources_body">• Topos, flow reports, photos and forum: descente-canyon.com and its contributors.\n• Weather: Open-Meteo.com (CC BY 4.0).\n• Rain gauges: Météo-France (Etalab Open Licence 2.0) and MeteoSwiss (open data).\n• Dam water releases: EDF, “Ma rivière et moi”.\n• Maps: © OpenStreetMap contributors (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Flow estimate: model trained on the flow reports published on descente-canyon.com, for guidance only.</string>
+    <string name="settings_licenses">Open source libraries</string>
+    <string name="settings_licenses_intro">The app notably uses:</string>
+    <string name="settings_privacy">Privacy</string>
+    <string name="settings_privacy_body">Your data stays on this phone: favorites, recently viewed canyons, flow reports waiting to be sent (with the name and e-mail you typed) and caches. The app shows no ads and uses no audience measurement tool.\n\nIt only contacts: descente-canyon.com (topos, flow reports, photos, forum, and your session if you log in), Open-Meteo (weather at the coordinates of the canyons you view), Météo-France and MeteoSwiss (public readings), EDF (water releases) and the map tile servers.\n\nYour password is never stored: only the login session is, encrypted and excluded from Android backup, which may include your favorites and settings.</string>
+    <plurals name="settings_offline_catalog">
+        <item quantity="one">%1$d canyon available without network: its topo, GPS points, bibliography and regulations are in the app.</item>
+        <item quantity="other">%1$,d canyons available without network: topos, GPS points, bibliography and regulations are in the app.</item>
+    </plurals>
+    <string name="copy_coordinates">Copy coordinates</string>
+    <string name="coordinates_copied">Coordinates copied: %1$s</string>
+    <string name="more_actions">More actions</string>
+    <string name="share_canyon">Share</string>
+    <string name="open_on_site">Open on descente-canyon.com</string>
+    <string name="personal_note_title">My note</string>
+    <string name="personal_note_add">Add a personal note</string>
+    <string name="personal_note_private">Only visible on this phone</string>
+    <string name="personal_note_hint">Parking, gear, timings, trip memories…</string>
+    <string name="personal_note_edit">Edit the note</string>
+    <string name="personal_note_delete">Delete</string>
+    <string name="save">Save</string>
+    <string name="search_recent_title">Recently viewed</string>
+    <string name="search_recent_clear">Clear</string>
+    <plurals name="search_catalog_count">
+        <item quantity="one">%1$d canyon in the catalog</item>
+        <item quantity="other">%1$,d canyons in the catalog</item>
+    </plurals>
+    <string name="favorite_removed">“%1$s” removed from favorites</string>
+    <string name="undo">Undo</string>
+    <string name="relative_today">Today</string>
+    <string name="relative_yesterday">Yesterday</string>
+    <plurals name="relative_days_ago">
+        <item quantity="one">%1$d day ago</item>
+        <item quantity="other">%1$d days ago</item>
+    </plurals>
+    <string name="shortcut_search_long">Search for a canyon</string>
+    <string name="shortcut_map_long">Canyon map</string>
+    <string name="shortcut_favorites_long">My favorite canyons</string>
 </resources>

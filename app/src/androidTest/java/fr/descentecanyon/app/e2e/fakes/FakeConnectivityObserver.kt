@@ -4,18 +4,19 @@ import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/**
+ * Backed by [E2eFixtureState]: app-scoped components of earlier tests (sync scheduler...) keep running
+ * in the same process, so every instance must see the same connectivity as the current test.
+ */
 @Singleton
 class FakeConnectivityObserver @Inject constructor() : ConnectivityObserver {
-    private val online = MutableStateFlow(true)
+    override fun observe(): Flow<Boolean> = E2eFixtureState.online.asStateFlow()
 
-    override fun observe(): Flow<Boolean> = online.asStateFlow()
-
-    override fun isCurrentlyOnline(): Boolean = online.value
+    override fun isCurrentlyOnline(): Boolean = E2eFixtureState.online.value
 
     fun setOnline(value: Boolean) {
-        online.value = value
+        E2eFixtureState.online.value = value
     }
 }

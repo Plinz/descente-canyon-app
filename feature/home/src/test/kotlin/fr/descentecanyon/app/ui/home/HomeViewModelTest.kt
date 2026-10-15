@@ -13,9 +13,10 @@ import fr.descentecanyon.app.domain.model.NotificationCenterState
 import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
+import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import fr.descentecanyon.app.domain.repository.ForumRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
-import fr.descentecanyon.app.domain.repository.PreferencesRepository
+import fr.descentecanyon.app.testutil.FakePreferencesRepository
 import fr.descentecanyon.app.testutil.MainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -45,7 +46,26 @@ class HomeViewModelTest {
     private val connectivityObserver = mockk<ConnectivityObserver>()
     private val notificationCenterRepository = mockk<NotificationCenterRepository>()
     private val preferences = FakePreferencesRepository()
+    private val pendingDebitCount = MutableStateFlow(0)
+    private val debitSubmissionRepository = mockk<DebitSubmissionRepository> {
+        every { observePendingCount() } returns pendingDebitCount
+    }
     private val searchCatalog = MutableStateFlow<List<CanyonSearchItem>>(emptyList())
+
+    @Test
+    fun `debit reports waiting to be sent are counted for the home banner`() = runTest {
+        every { connectivityObserver.observe() } returns MutableStateFlow(false)
+        every { connectivityObserver.isCurrentlyOnline() } returns false
+        coEvery { debitRepository.getCachedLatestDebits(any()) } returns CachedItems(emptyList(), null)
+        coEvery { forumRepository.getCachedActiveTopics(any()) } returns CachedItems(emptyList(), null)
+        coEvery { forumRepository.getCachedCategories() } returns CachedItems(emptyList(), null)
+        val viewModel = createViewModel()
+
+        pendingDebitCount.value = 2
+        advanceUntilIdle()
+
+        assertEquals(2, viewModel.uiState.value.pendingDebitCount)
+    }
 
     @Test
     fun `offline startup without cached data shows offline empty states`() = runTest {
@@ -297,6 +317,7 @@ class HomeViewModelTest {
             connectivityObserver = connectivityObserver,
             preferencesRepository = preferences,
             notificationCenterRepository = notificationCenterRepository,
+            debitSubmissionRepository = debitSubmissionRepository,
         )
     }
 
@@ -344,12 +365,4 @@ class HomeViewModelTest {
         forumName = "SUISSE",
         forumUrl = "https://www.descente-canyon.com/forums/viewforum.php?f=16",
     )
-}
-
-private class FakePreferencesRepository(var selectedHomeFeed: HomeFeedType? = null) : PreferencesRepository {
-    override suspend fun getSelectedHomeFeed(): HomeFeedType? = selectedHomeFeed
-
-    override suspend fun setSelectedHomeFeed(type: HomeFeedType) {
-        selectedHomeFeed = type
-    }
 }

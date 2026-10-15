@@ -54,6 +54,9 @@ fun MapLibreView(
     compassTopMargin: Dp? = null,
     compassEndMargin: Dp = 12.dp,
     compassFadeFacingNorth: Boolean = true,
+    // Places the map data attribution ("i" button) at the top start, below the given margin, when
+    // the bottom of the map is covered by app content (sheets, panels).
+    attributionTopMargin: Dp? = null,
     onMarkerClick: (Int) -> Unit,
     onMapInteraction: () -> Unit = {},
     onVisibleBoundsChanged: (LatLngBounds) -> Unit = {},
@@ -82,6 +85,7 @@ fun MapLibreView(
             compassTopMargin = compassTopMargin,
             compassEndMargin = compassEndMargin,
             compassFadeFacingNorth = compassFadeFacingNorth,
+            attributionTopMargin = attributionTopMargin,
         )
     }
     val mapView = remember(mapOptions) {
@@ -138,6 +142,7 @@ fun MapLibreView(
                         compassTopMargin = compassTopMargin,
                         compassEndMargin = compassEndMargin,
                         compassFadeFacingNorth = compassFadeFacingNorth,
+                        attributionTopMargin = attributionTopMargin,
                     )
                 }
             }
@@ -154,6 +159,7 @@ fun MapLibreView(
                 compassTopMargin = compassTopMargin,
                 compassEndMargin = compassEndMargin,
                 compassFadeFacingNorth = compassFadeFacingNorth,
+                attributionTopMargin = attributionTopMargin,
                 onMarkerClick = onMarkerClick,
                 onMapInteraction = onMapInteraction,
                 onVisibleBoundsChanged = onVisibleBoundsChanged,
@@ -179,11 +185,19 @@ private fun createMapOptions(
     compassTopMargin: Dp?,
     compassEndMargin: Dp,
     compassFadeFacingNorth: Boolean,
+    attributionTopMargin: Dp?,
 ): MapLibreMapOptions {
     val density = context.resources.displayMetrics.density
     return MapLibreMapOptions()
         .compassEnabled(true)
         .compassFadesWhenFacingNorth(compassFadeFacingNorth)
+        .logoEnabled(false)
+        .apply {
+            if (attributionTopMargin != null) {
+                attributionGravity(Gravity.START or Gravity.TOP)
+                attributionMargins(attributionMargins(attributionTopMargin, density))
+            }
+        }
         .apply {
             when {
                 compassTopMargin != null -> {
@@ -228,6 +242,7 @@ private class MapRenderState(private val context: android.content.Context) {
     private var compassTopMargin: Dp? = null
     private var compassEndMargin: Dp = 12.dp
     private var compassFadeFacingNorth: Boolean = true
+    private var attributionTopMargin: Dp? = null
     private var onMarkerClick: (Int) -> Unit = {}
     private var onMapInteraction: () -> Unit = {}
     private var onVisibleBoundsChanged: (LatLngBounds) -> Unit = {}
@@ -260,6 +275,7 @@ private class MapRenderState(private val context: android.content.Context) {
         compassTopMargin: Dp?,
         compassEndMargin: Dp,
         compassFadeFacingNorth: Boolean,
+        attributionTopMargin: Dp?,
     ) {
         this.map = map
         this.onMarkerClick = onMarkerClick
@@ -269,6 +285,7 @@ private class MapRenderState(private val context: android.content.Context) {
         this.compassTopMargin = compassTopMargin
         this.compassEndMargin = compassEndMargin
         this.compassFadeFacingNorth = compassFadeFacingNorth
+        this.attributionTopMargin = attributionTopMargin
         configureCompass(map)
         map.setStyle(Style.Builder().fromUri(styleUri)) {
             renderMode = null
@@ -295,6 +312,7 @@ private class MapRenderState(private val context: android.content.Context) {
         compassTopMargin: Dp?,
         compassEndMargin: Dp,
         compassFadeFacingNorth: Boolean,
+        attributionTopMargin: Dp?,
         onMarkerClick: (Int) -> Unit,
         onMapInteraction: () -> Unit,
         onVisibleBoundsChanged: (LatLngBounds) -> Unit,
@@ -319,6 +337,7 @@ private class MapRenderState(private val context: android.content.Context) {
         this.compassTopMargin = compassTopMargin
         this.compassEndMargin = compassEndMargin
         this.compassFadeFacingNorth = compassFadeFacingNorth
+        this.attributionTopMargin = attributionTopMargin
         this.onMarkerClick = onMarkerClick
         this.onMapInteraction = onMapInteraction
         this.onVisibleBoundsChanged = onVisibleBoundsChanged
@@ -397,6 +416,12 @@ private class MapRenderState(private val context: android.content.Context) {
 
     private fun configureCompass(map: MapLibreMap) {
         val density = context.resources.displayMetrics.density
+        map.uiSettings.isLogoEnabled = false
+        attributionTopMargin?.let { topMargin ->
+            map.uiSettings.setAttributionGravity(Gravity.START or Gravity.TOP)
+            val margins = attributionMargins(topMargin, density)
+            map.uiSettings.setAttributionMargins(margins[0], margins[1], margins[2], margins[3])
+        }
         map.uiSettings.setCompassEnabled(true)
         map.uiSettings.setCompassFadeFacingNorth(compassFadeFacingNorth)
         when {
@@ -821,3 +846,13 @@ private class MapRenderState(private val context: android.content.Context) {
         }
     }
 }
+
+/** Left, top, right, bottom margins in pixels for an attribution placed at the top start. */
+private fun attributionMargins(topMargin: Dp, density: Float): IntArray = intArrayOf(
+    (ATTRIBUTION_START_MARGIN.value * density).roundToInt(),
+    (topMargin.value * density).roundToInt(),
+    0,
+    0,
+)
+
+private val ATTRIBUTION_START_MARGIN = 12.dp

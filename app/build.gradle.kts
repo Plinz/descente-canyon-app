@@ -218,6 +218,11 @@ android {
     namespace = "fr.descentecanyon.app"
     compileSdk = 36
 
+    // Lets Android 13+ offer the app's languages in the system per-app language setting.
+    androidResources {
+        generateLocaleConfig = true
+    }
+
     signingConfigs {
         if (hasReleaseSigning) {
             create("release") {
@@ -292,6 +297,8 @@ android {
     testOptions {
         unitTests.all {
             it.jvmArgs("--enable-native-access=ALL-UNNAMED")
+            // MockK's Byte Buddy needs it to instrument JDK 25 class files (mocks of final classes).
+            it.systemProperty("net.bytebuddy.experimental", "true")
         }
     }
 }
@@ -409,6 +416,7 @@ dependencies {
     implementation(project(":feature:favorites"))
     implementation(project(":feature:notifications"))
     implementation(project(":feature:users"))
+    implementation(project(":feature:settings"))
 
     // AndroidX Core
     implementation(libs.androidx.core.ktx)

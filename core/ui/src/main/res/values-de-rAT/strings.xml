@@ -240,7 +240,6 @@ Suche einen Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="no_photos">Keine Fotos verfügbar</string>
     <string name="no_offline_photos_without_network">Für diesen Canyon sind keine Fotos gespeichert und es gibt kein Netz, um jene von Descente-Canyon zu laden.</string>
     <string name="user_account">Benutzerkonto</string>
-    <string name="fullscreen_map">Vollbild</string>
     <string name="location">Standort</string>
     <string name="region">Region</string>
     <string name="department">Unterteilung</string>
@@ -374,7 +373,6 @@ Suche einen Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="debit_observation_type_required">Der Beobachtungstyp ist erforderlich.</string>
     <string name="debit_level_required">Der Wasserstand ist erforderlich.</string>
     <string name="debit_submission_sent">Wasserstandsbericht gesendet</string>
-    <string name="debit_submission_saved_offline">Wasserstandsbericht offline gespeichert</string>
     <string name="debit_submission_failed">Der Wasserstandsbericht konnte nicht gesendet werden.</string>
     <string name="debit_session_expired">Deine Descente-Canyon-Sitzung ist abgelaufen. Melde dich erneut an, bevor du den Wasserstandsbericht sendest.</string>
     <string name="photo_downloaded">Foto heruntergeladen</string>

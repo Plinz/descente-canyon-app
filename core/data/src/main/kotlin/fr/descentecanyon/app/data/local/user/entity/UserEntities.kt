@@ -77,3 +77,11 @@ data class DailyWeatherEntity(
 /** Small persisted values: home feed snapshots, selected feed... */
 @Entity(tableName = "key_values")
 data class KeyValueEntity(@PrimaryKey val key: String, val value: String, val updatedAt: Long = System.currentTimeMillis())
+
+/** Canyons whose detail the user opened, most recent first (trimmed to a few dozen). */
+@Entity(tableName = "recent_canyons")
+data class RecentCanyonEntity(@PrimaryKey val canyonId: Int, val viewedAt: Long)
+
+/** Private note written by the user about a canyon; never sent anywhere. */
+@Entity(tableName = "canyon_notes")
+data class CanyonNoteEntity(@PrimaryKey val canyonId: Int, val text: String, val updatedAt: Long)

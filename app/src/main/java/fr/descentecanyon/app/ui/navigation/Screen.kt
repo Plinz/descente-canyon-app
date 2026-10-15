@@ -45,4 +45,10 @@ sealed interface Screen {
 
     @Serializable
     data object DebitPredictionInfo : Screen
+
+    @Serializable
+    data object PendingDebits : Screen
+
+    @Serializable
+    data object Settings : Screen
 }

@@ -1,6 +1,8 @@
 package fr.descentecanyon.app.ui.canyon
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.widget.Toast
@@ -21,15 +23,20 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.NotificationsNone
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,6 +49,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,9 +65,12 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.Canyon
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.common.needsNotificationPermission
+import fr.descentecanyon.app.ui.common.openUrl
+import fr.descentecanyon.app.ui.common.startActivitySafely
 import fr.descentecanyon.app.ui.components.AppFloatingActionButton
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
@@ -151,12 +163,6 @@ fun CanyonDetailScreen(
                         AddDebitIcon(contentDescription = stringResource(R.string.debit_add_action))
                     }
                     IconButton(
-                        onClick = onRateInterestClick,
-                        modifier = Modifier.testTag(TestTags.DETAIL_RATE_INTEREST_BUTTON),
-                    ) {
-                        AddInterestIcon(contentDescription = stringResource(R.string.interest_rating_add_action))
-                    }
-                    IconButton(
                         onClick = {
                             if (!uiState.isDebitNotificationsEnabled &&
                                 context.needsNotificationPermission()
@@ -204,6 +210,10 @@ fun CanyonDetailScreen(
                             },
                         )
                     }
+                    CanyonMoreActions(
+                        canyon = uiState.canyonDetail?.canyon,
+                        onRateInterestClick = onRateInterestClick,
+                    )
                 },
             )
         },
@@ -274,6 +284,8 @@ fun CanyonDetailScreen(
                             onUserClick = onUserClick,
                             onPersistedPhotoMissing = viewModel::onPersistedPhotoMissing,
                             openDebitsTabInitially = openDebitsTabInitially,
+                            personalNote = uiState.personalNote,
+                            onSavePersonalNote = viewModel::savePersonalNote,
                             bottomContentPadding = contentPadding.calculateBottomPadding() + 96.dp,
                             modifier = Modifier
                                 .fillMaxHeight()
@@ -338,32 +350,68 @@ private fun AddDebitIcon(contentDescription: String, modifier: Modifier = Modifi
     }
 }
 
+/** Less frequent actions, kept in a menu so the canyon name stays readable in the top bar. */
 @Composable
-private fun AddInterestIcon(contentDescription: String, modifier: Modifier = Modifier) {
-    Box(modifier = modifier.size(30.dp)) {
-        Icon(
-            imageVector = Icons.Default.Star,
-            contentDescription = contentDescription,
-            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier
-                .size(26.dp)
-                .align(Alignment.CenterStart),
-        )
-        Surface(
-            modifier = Modifier
-                .size(15.dp)
-                .align(Alignment.BottomEnd),
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    modifier = Modifier.size(11.dp),
+private fun CanyonMoreActions(canyon: Canyon?, onRateInterestClick: () -> Unit) {
+    val context = LocalContext.current
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        IconButton(onClick = { expanded = true }) {
+            Icon(
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = stringResource(R.string.more_actions),
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+            )
+        }
+        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.interest_rating_add_action)) },
+                leadingIcon = { Icon(Icons.Default.Star, contentDescription = null) },
+                onClick = {
+                    expanded = false
+                    onRateInterestClick()
+                },
+                modifier = Modifier.testTag(TestTags.DETAIL_RATE_INTEREST_BUTTON),
+            )
+            if (canyon != null) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.share_canyon)) },
+                    leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
+                    onClick = {
+                        expanded = false
+                        context.shareCanyon(canyon)
+                    },
+                )
+            }
+            if (canyon?.url?.startsWith("https://") == true) {
+                DropdownMenuItem(
+                    text = { Text(stringResource(R.string.open_on_site)) },
+                    leadingIcon = { Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null) },
+                    onClick = {
+                        expanded = false
+                        context.openUrl(canyon.url)
+                    },
                 )
             }
         }
     }
+}
+
+private fun Context.shareCanyon(canyon: Canyon) {
+    val send = Intent(Intent.ACTION_SEND)
+        .setType("text/plain")
+        .putExtra(Intent.EXTRA_SUBJECT, canyon.nom)
+        .putExtra(Intent.EXTRA_TEXT, canyonShareText(canyon))
+    startActivitySafely(Intent.createChooser(send, null))
+}
+
+/** "Name (rating)", where it is, and the link: the site URL also opens the app for recipients who have it. */
+internal fun canyonShareText(canyon: Canyon): String {
+    val title = if (canyon.cotation.isBlank()) canyon.nom else "${canyon.nom} (${canyon.cotation})"
+    val place = listOfNotNull(
+        canyon.communes.joinToString(", ").ifBlank { canyon.commune }.takeIf { it.isNotBlank() },
+        canyon.departement?.takeIf { it.isNotBlank() },
+        canyon.pays.takeIf { it.isNotBlank() },
+    ).distinct().joinToString(" · ")
+    return listOf(title, place, canyon.url).filter { it.isNotBlank() }.joinToString("\n")
 }

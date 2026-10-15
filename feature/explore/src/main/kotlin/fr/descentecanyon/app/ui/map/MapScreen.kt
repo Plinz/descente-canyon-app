@@ -230,6 +230,8 @@ fun MapScreen(
                     compassTopMargin = compassTopMargin,
                     compassEndMargin = mapControlsEndPadding,
                     compassFadeFacingNorth = false,
+                    // The results sheet covers the bottom of the map.
+                    attributionTopMargin = compassTopMargin,
                     persistedCameraState = uiState.cameraState,
                     focusLocationRequestId = uiState.focusLocationRequestId.takeUnless {
                         it == initialFocusLocationRequestId

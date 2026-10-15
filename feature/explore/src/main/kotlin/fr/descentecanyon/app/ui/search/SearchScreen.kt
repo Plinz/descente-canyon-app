@@ -69,10 +69,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.CotationRating
 import fr.descentecanyon.app.domain.model.IntRangeFilter
 import fr.descentecanyon.app.domain.model.SearchCriteria
@@ -85,6 +87,7 @@ import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.components.AppFloatingActionButton
 import fr.descentecanyon.app.ui.components.CanyonSummaryCard
 import fr.descentecanyon.app.ui.components.SelectedCanyonSheetContent
+import fr.descentecanyon.app.ui.design.DcSectionHeader
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
 import fr.descentecanyon.app.ui.design.LocalDcSpacing
@@ -343,7 +346,12 @@ fun SearchScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = pluralStringResource(R.plurals.search_results_count, uiState.totalResultsCount, uiState.totalResultsCount),
+                    // Without query nor filter nothing is listed: the count is the catalog size, not results.
+                    text = if (uiState.isResultListDeferred) {
+                        pluralStringResource(R.plurals.search_catalog_count, uiState.totalResultsCount, uiState.totalResultsCount)
+                    } else {
+                        pluralStringResource(R.plurals.search_results_count, uiState.totalResultsCount, uiState.totalResultsCount)
+                    },
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -368,13 +376,13 @@ fun SearchScreen(
             }
 
             if (!uiState.isLoading && uiState.isResultListDeferred) {
-                Box(modifier = Modifier.fillMaxWidth().padding(28.dp), contentAlignment = Alignment.Center) {
-                    Text(
-                        text = stringResource(R.string.search_broad_results_hint),
-                        style = MaterialTheme.typography.bodyLarge,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
-                }
+                SearchIdleContent(
+                    recentCanyons = uiState.recentCanyons,
+                    onCanyonClick = onCanyonClick,
+                    onClearRecentCanyons = viewModel::clearRecentCanyons,
+                    bottomPadding = contentPadding.calculateBottomPadding() + 96.dp,
+                    modifier = Modifier.weight(1f),
+                )
             } else if (!uiState.isLoading && uiState.results.isEmpty()) {
                 Box(modifier = Modifier.fillMaxWidth().padding(28.dp), contentAlignment = Alignment.Center) {
                     Text(
@@ -578,6 +586,46 @@ private fun SearchCatalogLoadingHint(hasTypedQuery: Boolean, modifier: Modifier 
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
+    }
+}
+
+/** Before any query or filter: the canyons opened recently, available offline. */
+@Composable
+private fun SearchIdleContent(
+    recentCanyons: List<CanyonSummary>,
+    onCanyonClick: (Int) -> Unit,
+    onClearRecentCanyons: () -> Unit,
+    bottomPadding: Dp,
+    modifier: Modifier = Modifier,
+) {
+    LazyColumn(
+        modifier = modifier.fillMaxWidth(),
+        contentPadding = PaddingValues(bottom = bottomPadding),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        item {
+            Text(
+                text = stringResource(R.string.search_broad_results_hint),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(vertical = 8.dp),
+            )
+        }
+        if (recentCanyons.isNotEmpty()) {
+            item {
+                DcSectionHeader(
+                    title = stringResource(R.string.search_recent_title),
+                    action = {
+                        TextButton(onClick = onClearRecentCanyons) {
+                            Text(stringResource(R.string.search_recent_clear))
+                        }
+                    },
+                )
+            }
+            items(recentCanyons, key = { "recent-${it.id}" }) { canyon ->
+                CanyonSummaryCard(canyon = canyon, onClick = { onCanyonClick(canyon.id) })
+            }
         }
     }
 }

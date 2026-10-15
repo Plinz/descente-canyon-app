@@ -26,6 +26,7 @@ import fr.descentecanyon.app.domain.model.Regulation
 import fr.descentecanyon.app.domain.model.RuntimeLookupSource
 import fr.descentecanyon.app.domain.model.WeatherLocationSource
 import fr.descentecanyon.app.domain.model.WeatherTarget
+import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
@@ -33,6 +34,7 @@ import fr.descentecanyon.app.domain.repository.EdfPracticabilityRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import fr.descentecanyon.app.domain.repository.PhotoRepository
+import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.repository.WeatherRepository
 import fr.descentecanyon.app.domain.usecase.DownloadPhotoForOfflineUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonDebitPredictionsUseCase
@@ -44,11 +46,13 @@ import fr.descentecanyon.app.domain.usecase.ToggleFavoriteUseCase
 import fr.descentecanyon.app.testutil.MainDispatcherRule
 import fr.descentecanyon.app.ui.common.UiText
 import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import java.net.SocketTimeoutException
 import java.time.Instant
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
@@ -72,6 +76,11 @@ class CanyonDetailViewModelTest {
     private val edfPracticabilityRepository = mockk<EdfPracticabilityRepository>()
     private val connectivityObserver = mockk<ConnectivityObserver>()
     private val notificationCenterRepository = mockk<NotificationCenterRepository>()
+    private val recentCanyonsRepository = mockk<RecentCanyonsRepository>(relaxUnitFun = true)
+    private val personalNote = MutableStateFlow<String?>(null)
+    private val canyonNotesRepository = mockk<CanyonNotesRepository>(relaxUnitFun = true) {
+        every { observeNote(42) } returns personalNote
+    }
     private val getCanyonPreviewUseCase = GetCanyonPreviewUseCase(canyonRepository)
     private val getCanyonDetailUseCase = GetCanyonDetailUseCase(canyonRepository)
     private val getCanyonWeatherUseCase = GetCanyonWeatherUseCase(weatherRepository)
@@ -235,6 +244,36 @@ class CanyonDetailViewModelTest {
         assertEquals(12.5, merged.watershed?.areaKm2)
     }
 
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `opening a canyon records it once in the recently viewed list`() = runTest {
+        stubBaseState()
+        coEvery { canyonRepository.getCanyonPreview(42) } returns Result.success(detail())
+        coEvery { canyonRepository.getCanyonDetail(42) } returns Result.success(detail())
+
+        createViewModel()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { recentCanyonsRepository.recordView(42) }
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `personal note is shown and saved`() = runTest {
+        stubBaseState()
+        coEvery { canyonRepository.getCanyonPreview(42) } returns Result.success(detail())
+        coEvery { canyonRepository.getCanyonDetail(42) } returns Result.success(detail())
+        val viewModel = createViewModel()
+
+        personalNote.value = "Corde de 2 x 40 m suffisante"
+        advanceUntilIdle()
+        viewModel.savePersonalNote("Parking payant")
+        advanceUntilIdle()
+
+        assertEquals("Corde de 2 x 40 m suffisante", viewModel.uiState.value.personalNote)
+        coVerify { canyonNotesRepository.saveNote(42, "Parking payant") }
+    }
+
     private fun createViewModel(): CanyonDetailViewModel = CanyonDetailViewModel(
         savedStateHandle = SavedStateHandle(mapOf("canyonId" to 42)),
         getCanyonPreviewUseCase = getCanyonPreviewUseCase,
@@ -256,6 +295,8 @@ class CanyonDetailViewModelTest {
             downloadPhotoForOfflineUseCase = downloadPhotoForOfflineUseCase,
             connectivityObserver = connectivityObserver,
         ),
+        recentCanyonsRepository = recentCanyonsRepository,
+        canyonNotesRepository = canyonNotesRepository,
     )
 
     private fun stubBaseState() {

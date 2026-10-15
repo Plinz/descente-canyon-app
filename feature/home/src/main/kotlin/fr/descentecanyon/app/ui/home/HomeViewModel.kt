@@ -13,6 +13,7 @@ import fr.descentecanyon.app.domain.model.forumCategoryKey
 import fr.descentecanyon.app.domain.model.subdivisionsFor
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
+import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import fr.descentecanyon.app.domain.repository.ForumRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
@@ -69,6 +70,8 @@ data class HomeUiState(
     val localCanyonIds: Set<Int> = emptySet(),
     val followedForumCategoryKeys: Set<String> = emptySet(),
     val followedForumThreadIds: Set<Int> = emptySet(),
+    /** Debit reports written offline and not sent yet. */
+    val pendingDebitCount: Int = 0,
 )
 
 @HiltViewModel
@@ -79,6 +82,7 @@ class HomeViewModel @Inject constructor(
     private val connectivityObserver: ConnectivityObserver,
     private val preferencesRepository: PreferencesRepository,
     private val notificationCenterRepository: NotificationCenterRepository,
+    private val debitSubmissionRepository: DebitSubmissionRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -97,7 +101,16 @@ class HomeViewModel @Inject constructor(
         observeConnectivity()
         observeSearchCatalog()
         observeTrackedForumCategories()
+        observePendingDebits()
         restoreHomeState()
+    }
+
+    private fun observePendingDebits() {
+        viewModelScope.launch {
+            debitSubmissionRepository.observePendingCount().collect { count ->
+                _uiState.update { it.copy(pendingDebitCount = count) }
+            }
+        }
     }
 
     fun toggleForumCategoryFollow(category: ForumCategory) {

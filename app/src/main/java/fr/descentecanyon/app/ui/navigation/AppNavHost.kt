@@ -26,7 +26,9 @@ import fr.descentecanyon.app.ui.home.HomeScreen
 import fr.descentecanyon.app.ui.interest.InterestRatingFormScreen
 import fr.descentecanyon.app.ui.map.MapScreen
 import fr.descentecanyon.app.ui.notifications.NotificationCenterScreen
+import fr.descentecanyon.app.ui.pending.PendingDebitsScreen
 import fr.descentecanyon.app.ui.search.SearchScreen
+import fr.descentecanyon.app.ui.settings.SettingsScreen
 import fr.descentecanyon.app.ui.users.UserProfileScreen
 import fr.descentecanyon.app.ui.users.UserSearchScreen
 
@@ -60,6 +62,12 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 },
                 onUsersClick = {
                     navController.navigateSingleTop(Screen.UserSearch)
+                },
+                onPendingDebitsClick = {
+                    navController.navigateSingleTop(Screen.PendingDebits)
+                },
+                onSettingsClick = {
+                    navController.navigateSingleTop(Screen.Settings)
                 },
                 contentPadding = topLevelContentPadding,
             )
@@ -200,6 +208,23 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                         ?.set(DEBIT_SUBMISSION_REFRESH_KEY, true)
                     navController.popBackStack()
                 },
+                onOpenPendingDebits = { navController.navigateSingleTop(Screen.PendingDebits) },
+            )
+        }
+
+        composable<Screen.Settings> {
+            SettingsScreen(
+                onBackClick = { navController.popBackStack() },
+                onOpenPendingDebits = { navController.navigateSingleTop(Screen.PendingDebits) },
+                contentPadding = topLevelContentPadding,
+            )
+        }
+
+        composable<Screen.PendingDebits> {
+            PendingDebitsScreen(
+                onBackClick = { navController.popBackStack() },
+                onCanyonClick = { canyonId -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
+                contentPadding = topLevelContentPadding,
             )
         }
 

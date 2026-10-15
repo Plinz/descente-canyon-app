@@ -10,7 +10,9 @@ import fr.descentecanyon.app.domain.repository.DebitRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 @Singleton
@@ -29,6 +31,17 @@ class DebitRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCachedLatestDebits(limit: Int): CachedItems<Debit> = snapshotStore.readLatestDebits(limit)
+
+    override fun observeLatestKnownDebits(canyonIds: Set<Int>): Flow<Map<Int, Debit>> {
+        if (canyonIds.isEmpty()) return flowOf(emptyMap())
+        return combine(
+            debitDao.observeForCanyons(canyonIds.toList()),
+            snapshotStore.observeLatestDebits(),
+        ) { cached, feed ->
+            val known = cached.map { it.toDomain() } + feed.items.filter { it.canyonId in canyonIds }
+            known.groupBy { it.canyonId }.mapValues { (_, debits) -> debits.maxBy { it.date } }
+        }
+    }
 
     override suspend fun refreshLatestDebits(limit: Int): Result<CachedItems<Debit>> = scraper.scrapeLatestDebits().map { scrapedDebits ->
         val allDebits = scrapedDebits.map { it.toDomain() }

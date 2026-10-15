@@ -13,6 +13,9 @@ interface PendingDebitSubmissionDao {
     @Query("SELECT * FROM pending_debit_submissions ORDER BY createdAt ASC")
     suspend fun getAll(): List<PendingDebitSubmissionEntity>
 
+    @Query("SELECT * FROM pending_debit_submissions ORDER BY createdAt ASC")
+    fun observeAll(): Flow<List<PendingDebitSubmissionEntity>>
+
     @Query("SELECT COUNT(*) FROM pending_debit_submissions")
     fun observeCount(): Flow<Int>
 

@@ -24,6 +24,10 @@ class FakeDebitRepository @Inject constructor() : DebitRepository {
 
     override suspend fun refreshLatestDebits(limit: Int): Result<CachedItems<Debit>> = Result.success(getCachedLatestDebits(limit))
 
+    override fun observeLatestKnownDebits(canyonIds: Set<Int>): Flow<Map<Int, Debit>> = E2eFixtureState.latestDebits.map { debits ->
+        debits.filter { it.canyonId in canyonIds }.groupBy { it.canyonId }.mapValues { (_, items) -> items.maxBy { it.date } }
+    }
+
     override suspend fun refreshDebits(canyonId: Int): Result<List<Debit>> =
         Result.success(E2eFixtureState.canyonDetails.value[canyonId]?.debits.orEmpty())
 }

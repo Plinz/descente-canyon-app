@@ -2,6 +2,7 @@ package fr.descentecanyon.app.domain.repository
 
 import fr.descentecanyon.app.domain.model.DebitSubmission
 import fr.descentecanyon.app.domain.model.DebitSubmissionStatus
+import fr.descentecanyon.app.domain.model.PendingDebitSubmission
 import fr.descentecanyon.app.domain.model.PendingDebitSyncResult
 import kotlinx.coroutines.flow.Flow
 
@@ -16,4 +17,10 @@ interface DebitSubmissionRepository {
     suspend fun syncPending(): PendingDebitSyncResult
 
     fun observePendingCount(): Flow<Int>
+
+    /** Reports waiting to be sent, oldest first. */
+    fun observePending(): Flow<List<PendingDebitSubmission>>
+
+    /** Removes a report from the queue without sending it. */
+    suspend fun deletePending(id: Long)
 }

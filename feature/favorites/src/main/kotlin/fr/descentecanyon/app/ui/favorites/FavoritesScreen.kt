@@ -22,12 +22,18 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SwipeToDismissBox
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -56,6 +62,15 @@ fun FavoritesScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val contentWidth = rememberDcContentWidth()
     val screenHorizontalPadding = rememberDcScreenHorizontalPadding()
+    val snackbarHostState = remember { SnackbarHostState() }
+    val removedMessage = uiState.removedFavorite?.let { stringResource(R.string.favorite_removed, it.nom) }
+    val undoLabel = stringResource(R.string.undo)
+
+    LaunchedEffect(removedMessage) {
+        removedMessage ?: return@LaunchedEffect
+        val result = snackbarHostState.showSnackbar(message = removedMessage, actionLabel = undoLabel, duration = SnackbarDuration.Long)
+        if (result == SnackbarResult.ActionPerformed) viewModel.undoRemoveFavorite() else viewModel.onRemovedFavoriteShown()
+    }
 
     Box(
         modifier = modifier
@@ -125,7 +140,7 @@ fun FavoritesScreen(
                             key = { it.id },
                         ) { canyon ->
                             FavoriteDismissItem(
-                                onRemove = { viewModel.removeFavorite(canyon.id) },
+                                onRemove = { viewModel.removeFavorite(canyon) },
                             ) {
                                 CanyonSummaryCard(
                                     canyon = canyon,
@@ -137,6 +152,13 @@ fun FavoritesScreen(
                 }
             }
         }
+
+        SnackbarHost(
+            hostState = snackbarHostState,
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .padding(bottom = contentPadding.calculateBottomPadding() + 8.dp),
+        )
     }
 }
 

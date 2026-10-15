@@ -24,6 +24,7 @@ object E2eFixtureState {
     val latestDebits = MutableStateFlow(sampleLatestDebits())
     val canyonDetails = MutableStateFlow(sampleDetails())
     val queuedSubmissions = MutableStateFlow<List<DebitSubmission>>(emptyList())
+    val online = MutableStateFlow(true)
 
     fun reset() {
         favoriteIds.value = emptySet()

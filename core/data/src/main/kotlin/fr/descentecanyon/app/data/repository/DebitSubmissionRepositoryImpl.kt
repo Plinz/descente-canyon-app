@@ -13,14 +13,17 @@ import fr.descentecanyon.app.domain.model.DebitSubmission
 import fr.descentecanyon.app.domain.model.DebitSubmissionStatus
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.ObservationType
+import fr.descentecanyon.app.domain.model.PendingDebitSubmission
 import fr.descentecanyon.app.domain.model.PendingDebitSyncResult
 import fr.descentecanyon.app.domain.model.RejectedDebitSubmission
+import fr.descentecanyon.app.domain.model.SentDebitSubmission
 import fr.descentecanyon.app.domain.model.WaterTemperature
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 
@@ -54,20 +57,25 @@ class DebitSubmissionRepositoryImpl @Inject constructor(
     }
 
     override suspend fun syncPending(): PendingDebitSyncResult = syncMutex.withLock {
-        var sent = 0
+        val sent = mutableListOf<SentDebitSubmission>()
         val rejected = mutableListOf<RejectedDebitSubmission>()
         for (pending in pendingDao.getAll()) {
             val submission = pending.toDomain()
             val result = remoteSource.submit(submission)
-            if (result.isSuccess) {
+            val delivery = result.getOrNull()
+            if (delivery != null) {
                 pendingDao.deleteById(pending.id)
-                sent += 1
+                sent += SentDebitSubmission(
+                    canyonId = submission.canyonId,
+                    observationDate = submission.observationDate,
+                    confirmed = delivery == DebitDelivery.CONFIRMED,
+                )
                 continue
             }
             val error = result.exceptionOrNull()!!.toAppError()
             if (error.isTransient() || error.requiresLogin()) {
                 // Later reports would fail the same way: keep the whole queue for the next attempt.
-                return@withLock PendingDebitSyncResult(sentCount = sent, rejected = rejected, stoppedBy = error)
+                return@withLock PendingDebitSyncResult(sent = sent, rejected = rejected, stoppedBy = error)
             }
             pendingDao.deleteById(pending.id)
             rejected += RejectedDebitSubmission(
@@ -76,10 +84,20 @@ class DebitSubmissionRepositoryImpl @Inject constructor(
                 error = error,
             )
         }
-        PendingDebitSyncResult(sentCount = sent, rejected = rejected)
+        PendingDebitSyncResult(sent = sent, rejected = rejected)
     }
 
     override fun observePendingCount(): Flow<Int> = pendingDao.observeCount()
+
+    override fun observePending(): Flow<List<PendingDebitSubmission>> = pendingDao.observeAll().map { entities ->
+        entities.map { entity ->
+            PendingDebitSubmission(id = entity.id, submission = entity.toDomain(), createdAtEpochMs = entity.createdAt)
+        }
+    }
+
+    override suspend fun deletePending(id: Long) {
+        pendingDao.deleteById(id)
+    }
 
     private suspend fun queueSubmission(submission: DebitSubmission) {
         pendingDao.insert(submission.toEntity())

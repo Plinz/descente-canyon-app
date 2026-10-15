@@ -14,12 +14,16 @@ import fr.descentecanyon.app.domain.model.DebitSubmissionStatus
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.ObservationType
 import fr.descentecanyon.app.domain.model.PendingDebitSyncResult
+import fr.descentecanyon.app.domain.model.SentDebitSubmission
 import fr.descentecanyon.app.domain.model.WaterTemperature
 import io.mockk.coEvery
 import io.mockk.coVerify
+import io.mockk.every
 import io.mockk.mockk
 import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -68,7 +72,12 @@ class DebitSubmissionRepositoryImplTest {
 
         val result = repository.syncPending()
 
-        assertEquals(PendingDebitSyncResult(sentCount = 1), result)
+        assertEquals(
+            PendingDebitSyncResult(
+                sent = listOf(SentDebitSubmission(canyonId = 2186, observationDate = LocalDate.of(2026, 3, 22), confirmed = true)),
+            ),
+            result,
+        )
         coVerify { remoteSource.submit(any()) }
         coVerify { pendingDao.deleteById(9) }
     }
@@ -88,6 +97,7 @@ class DebitSubmissionRepositoryImplTest {
         val result = repository.syncPending()
 
         assertEquals(2, result.sentCount)
+        assertEquals(listOf(100 to true, 300 to false), result.sent.map { it.canyonId to it.confirmed })
         assertEquals(listOf(200), result.rejected.map { it.canyonId })
         assertEquals(AppError.Rejected("Date invalide"), result.rejected.single().error)
         assertNull(result.stoppedBy)
@@ -137,6 +147,19 @@ class DebitSubmissionRepositoryImplTest {
 
         assertEquals(AppError.Rejected(null), repository.submit(sampleSubmission()).appErrorOrNull())
         coVerify(exactly = 0) { pendingDao.insert(any()) }
+    }
+
+    @Test
+    fun `pending queue exposes stored reports and deletes them`() = runTest {
+        every { pendingDao.observeAll() } returns flowOf(listOf(pendingEntity(id = 4, canyonId = 2186)))
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver())
+
+        val pending = repository.observePending().first().single()
+        repository.deletePending(4)
+
+        assertEquals(4L, pending.id)
+        assertEquals(2186, pending.submission.canyonId)
+        coVerify { pendingDao.deleteById(4) }
     }
 
     private fun onlineObserver() = object : ConnectivityObserver {

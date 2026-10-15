@@ -1,6 +1,7 @@
 package fr.descentecanyon.app.ui.debit
 
 import android.app.DatePickerDialog
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -72,6 +73,7 @@ import java.time.LocalDate
 fun DebitFormScreen(
     onBackClick: () -> Unit,
     onSubmissionSuccess: () -> Unit = onBackClick,
+    onOpenPendingDebits: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: DebitFormViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
@@ -108,6 +110,7 @@ fun DebitFormScreen(
     }
 
     LaunchedEffect(uiState.transientMessage) {
+        if (uiState.lastSubmissionStatus != null) return@LaunchedEffect
         uiState.transientMessage?.let {
             snackbarHostState.showSnackbar(it.asString(context))
             viewModel.clearTransientMessage()
@@ -115,16 +118,16 @@ fun DebitFormScreen(
     }
 
     LaunchedEffect(uiState.lastSubmissionStatus) {
-        when (uiState.lastSubmissionStatus) {
-            DebitSubmissionStatus.SUBMITTED, DebitSubmissionStatus.SUBMITTED_UNCONFIRMED -> {
-                viewModel.clearLastSubmissionStatus()
-                onSubmissionSuccess()
-            }
-            DebitSubmissionStatus.QUEUED_OFFLINE -> {
-                viewModel.clearLastSubmissionStatus()
-                onBackClick()
-            }
-            null -> Unit
+        val status = uiState.lastSubmissionStatus ?: return@LaunchedEffect
+        // The form closes right away: a toast keeps the confirmation visible on the next screen.
+        uiState.transientMessage?.let { message ->
+            Toast.makeText(context, message.asString(context), Toast.LENGTH_LONG).show()
+            viewModel.clearTransientMessage()
+        }
+        viewModel.clearLastSubmissionStatus()
+        when (status) {
+            DebitSubmissionStatus.SUBMITTED, DebitSubmissionStatus.SUBMITTED_UNCONFIRMED -> onSubmissionSuccess()
+            DebitSubmissionStatus.QUEUED_OFFLINE -> onBackClick()
         }
     }
 
@@ -162,12 +165,23 @@ fun DebitFormScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             if (uiState.pendingCount > 0) {
-                Text(
-                    text = pluralStringResource(R.plurals.debit_pending_count, uiState.pendingCount, uiState.pendingCount),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.testTag(TestTags.DEBIT_PENDING_COUNT),
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    Text(
+                        text = pluralStringResource(R.plurals.debit_pending_count, uiState.pendingCount, uiState.pendingCount),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier
+                            .weight(1f)
+                            .testTag(TestTags.DEBIT_PENDING_COUNT),
+                    )
+                    TextButton(onClick = onOpenPendingDebits) {
+                        Text(stringResource(R.string.pending_debits_view))
+                    }
+                }
             }
 
             if (!uiState.isConnected) {
