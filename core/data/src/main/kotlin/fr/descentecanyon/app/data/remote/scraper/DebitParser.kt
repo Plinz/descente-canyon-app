@@ -3,8 +3,9 @@ package fr.descentecanyon.app.data.remote.scraper
 import fr.descentecanyon.app.data.mapper.DateParser
 import fr.descentecanyon.app.data.remote.dto.ScrapedDebit
 import fr.descentecanyon.app.domain.model.RecentDebitCell
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
+import org.jsoup.nodes.TextNode
 
 /**
  * Parses debit (water flow) observation pages.
@@ -28,6 +29,8 @@ internal object DebitParser {
     fun parseCanyonDebits(doc: Document, canyonId: Int): List<ScrapedDebit> {
         val results = mutableListOf<ScrapedDebit>()
         val rows = doc.select("table#listedebit tbody tr")
+        // Remarks are hidden rows "tr#tr<id>": indexed once, a lookup per report would be quadratic.
+        val remarkRows = doc.select("tr[id^=tr]").associateBy { it.id() }
 
         for (row in rows) {
             // Skip year separator rows (they have colspan)
@@ -43,10 +46,7 @@ internal object DebitParser {
             if (tds.size < 4) continue
 
             val dateRaw = tds[0].text().trim()
-            val authors = tds[1].html()
-                .split(Regex("(?i)<br\\s*/?>"))
-                .map { htmlPart -> Jsoup.parse(htmlPart).text().trim() }
-                .filter { it.isNotBlank() }
+            val authors = tds[1].linesSplitByBr()
             val observationTitle = tds[2].selectFirst("span")?.attr("title")?.trim()?.lowercase()
             val isDescended = when {
                 observationTitle?.contains("parcouru") == true && observationTitle.contains("non") -> false
@@ -61,7 +61,7 @@ internal object DebitParser {
                 ?.id()
                 ?.removePrefix("r")
                 ?.takeIf { it.isNotBlank() }
-                ?.let { remarkId -> parseObservationDetails(doc.selectFirst("tr#tr$remarkId")) }
+                ?.let { remarkId -> parseObservationDetails(remarkRows["tr$remarkId"]) }
                 .orEmpty()
 
             val debitObservations = buildDebitObservations(authors, observationDetails)
@@ -165,13 +165,33 @@ internal object DebitParser {
         return results
     }
 
+    /** Text of the lines of [this] separated by <br>, blank lines dropped. */
+    private fun Element.linesSplitByBr(): List<String> {
+        val lines = mutableListOf<String>()
+        val current = StringBuilder()
+        for (node in childNodes()) {
+            when {
+                node is Element && node.normalName() == "br" -> {
+                    lines += current.toString()
+                    current.clear()
+                }
+
+                node is TextNode -> current.append(node.text())
+
+                node is Element -> current.append(node.text())
+            }
+        }
+        lines += current.toString()
+        return lines.map { it.trim() }.filter { it.isNotBlank() }
+    }
+
     private fun sanitizeLatestDebitDate(raw: String): String = raw
         .replace(Regex("(?i)\\bnon\\s+parcouru\\b"), "")
         .replace(Regex("(?i)\\bparcouru\\b"), "")
         .replace(Regex("\\s+"), " ")
         .trim()
 
-    private fun parseObservationDetails(remarkRow: org.jsoup.nodes.Element?): List<DebitObservationDetail> {
+    private fun parseObservationDetails(remarkRow: Element?): List<DebitObservationDetail> {
         if (remarkRow == null) return emptyList()
 
         val users = remarkRow.select("div.userc").map { userBlock ->

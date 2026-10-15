@@ -69,7 +69,8 @@ class DebitSubmissionRemoteSourceImpl @Inject constructor(
     /** Reads the canyon observations back and looks for the report. */
     private suspend fun isPublished(submission: DebitSubmission): Boolean {
         val observations = suspendRunCatching {
-            DebitParser.parseCanyonDebits(siteClient.get(SiteUrls.canyonDebits(submission.canyonId)).document, submission.canyonId)
+            val document = siteClient.get(SiteUrls.canyonDebits(submission.canyonId)).document
+            parsing { DebitParser.parseCanyonDebits(document, submission.canyonId) }
         }.getOrNull() ?: return false
         val authors = setOfNotNull(submission.observerName.trim(), sessionManager.loggedInUsername?.trim())
             .filter { it.isNotEmpty() }

@@ -157,4 +157,27 @@ class DebitParserTest {
         )
         assertEquals(0, cells.single { it.canyonId == 2824 }.rank) // d6 = SEC
     }
+
+    @Test
+    fun `a canyon with thousands of reports is parsed in linear time with the right remarks`() {
+        val reports = 4000
+        val rows = (1..reports).joinToString("") { index ->
+            """<tr class="debit4 a2025"><td>sam. 19 avril 2025</td><td>auteur$index<br />second$index</td>""" +
+                """<td><span class="ic ic-ok" title="parcouru"></span></td><td title="Débit correct"></td>""" +
+                """<td>Froide</td><td>Bon</td><td><button id="r$index" class="lire btn">Lire</button></td></tr>""" +
+                """<tr id="tr$index" style="display:none;" class="remarque"><td></td><td colspan="6">""" +
+                """<div class="userc"><b>auteur$index</b></div><p>remarque $index</p></td></tr>"""
+        }
+        val doc = Jsoup.parse("""<table id="listedebit"><tbody>$rows</tbody></table>""")
+
+        val startedAt = System.nanoTime()
+        val result = DebitParser.parseCanyonDebits(doc, 7)
+        val elapsedMs = (System.nanoTime() - startedAt) / 1_000_000
+
+        // Looking each remark up in the whole page made this quadratic (an ANR on big canyons).
+        assertTrue("Parsing took $elapsedMs ms", elapsedMs < 5_000)
+        val last = result.filter { it.auteur == "auteur$reports" }
+        assertEquals(listOf("remarque $reports"), last.map { it.commentaire })
+        assertTrue(result.any { it.auteur == "second$reports" })
+    }
 }

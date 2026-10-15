@@ -23,42 +23,52 @@ class CanyonScraper @Inject constructor(private val siteClient: SiteHttpClient) 
 
     suspend fun scrapeCanyonPhotos(canyonId: Int, timeoutMs: Long = SiteHttpClient.DEFAULT_TIMEOUT_MS): Result<List<ScrapedPhoto>> =
         suspendRunCatching {
-            PhotoParser.parse(siteClient.get(SiteUrls.canyonPhotos(canyonId), timeoutMs).document, canyonId)
+            val document = siteClient.get(SiteUrls.canyonPhotos(canyonId), timeoutMs).document
+            parsing { PhotoParser.parse(document, canyonId) }
         }
 
     suspend fun scrapeCanyonDebits(canyonId: Int, timeoutMs: Long = SiteHttpClient.DEFAULT_TIMEOUT_MS): Result<List<ScrapedDebit>> =
         suspendRunCatching {
-            DebitParser.parseCanyonDebits(siteClient.get(SiteUrls.canyonDebits(canyonId), timeoutMs).document, canyonId)
+            val document = siteClient.get(SiteUrls.canyonDebits(canyonId), timeoutMs).document
+            parsing { DebitParser.parseCanyonDebits(document, canyonId) }
         }
 
     suspend fun scrapeLatestDebits(): Result<List<ScrapedDebit>> = suspendRunCatching {
-        DebitParser.parseLatestDebits(siteClient.get(SiteUrls.LATEST_DEBITS).document)
+        val document = siteClient.get(SiteUrls.LATEST_DEBITS).document
+        parsing { DebitParser.parseLatestDebits(document) }
     }
 
     /** Day grid of recent reports of every canyon (last ~16 days), used by the debit model. */
     suspend fun scrapeLatestDebitGrid(): Result<List<RecentDebitCell>> = suspendRunCatching {
-        DebitParser.parseLatestDebitGrid(siteClient.get(SiteUrls.LATEST_DEBITS).document)
+        val document = siteClient.get(SiteUrls.LATEST_DEBITS).document
+        parsing { DebitParser.parseLatestDebitGrid(document) }
     }
 
     suspend fun scrapeActiveForumTopics(): Result<List<ScrapedForumActiveTopic>> = suspendRunCatching {
-        ForumParser.parseActiveTopics(siteClient.get(SiteUrls.FORUM_ACTIVE_TOPICS).document)
+        val document = siteClient.get(SiteUrls.FORUM_ACTIVE_TOPICS).document
+        parsing { ForumParser.parseActiveTopics(document) }
     }
 
     suspend fun scrapeForumCategories(): Result<List<ScrapedForumCategory>> = suspendRunCatching {
-        ForumParser.parseCategories(siteClient.get(SiteUrls.FORUM_CATEGORIES).document)
+        val document = siteClient.get(SiteUrls.FORUM_CATEGORIES).document
+        parsing { ForumParser.parseCategories(document) }
     }
 
     suspend fun scrapeForumUserPosts(authorId: Int): Result<List<ScrapedForumUserPost>> = suspendRunCatching {
-        ForumParser.parseUserPosts(siteClient.get(SiteUrls.forumUserPosts(authorId)).document)
+        val document = siteClient.get(SiteUrls.forumUserPosts(authorId)).document
+        parsing { ForumParser.parseUserPosts(document) }
     }
 
     /** Full canyon detail: summary, description (topo) and GPS points merged. */
     suspend fun scrapeFullCanyonDetail(canyonId: Int): Result<ScrapedCanyonDetail> = suspendRunCatching {
-        val summary = SummaryParser.parse(siteClient.get(SiteUrls.canyon(canyonId)).document, canyonId)
-        val description = DescriptionParser.parse(siteClient.get(SiteUrls.canyonDescription(canyonId)).document, canyonId)
+        val summaryPage = siteClient.get(SiteUrls.canyon(canyonId)).document
+        val summary = parsing { SummaryParser.parse(summaryPage, canyonId) }
+        val descriptionPage = siteClient.get(SiteUrls.canyonDescription(canyonId)).document
+        val description = parsing { DescriptionParser.parse(descriptionPage, canyonId) }
         // The map page is optional: a canyon without GPS points keeps the summary and topo.
         val geoPoints = suspendRunCatching {
-            GeoPointParser.parse(siteClient.get(SiteUrls.canyonMap(canyonId)).document)
+            val mapPage = siteClient.get(SiteUrls.canyonMap(canyonId)).document
+            parsing { GeoPointParser.parse(mapPage) }
         }.getOrDefault(emptyList())
 
         summary.copy(
