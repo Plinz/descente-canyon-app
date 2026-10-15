@@ -36,7 +36,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -103,13 +103,13 @@ jobs:
           EOF
 
       - name: Set up JDK 25
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v6
         with:
           distribution: temurin
           java-version: '25'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Make Gradle wrapper executable
         run: chmod +x gradlew
@@ -125,21 +125,21 @@ jobs:
           ./gradlew :app:bundleRelease :app:assembleRelease :app:verifyReleaseSizeBudget
 
       - name: Upload release bundle artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-release-bundle-${{ steps.version.outputs.version_name }}-${{ steps.version.outputs.version_code }}
           path: app/build/outputs/bundle/release/*.aab
           if-no-files-found: error
 
       - name: Upload release APK artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-release-apk-${{ steps.version.outputs.version_name }}-${{ steps.version.outputs.version_code }}
           path: app/build/outputs/apk/release/*.apk
           if-no-files-found: error
 
       - name: Upload release size report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: app-release-size-report-${{ steps.version.outputs.version_name }}-${{ steps.version.outputs.version_code }}
           path: app/build/reports/release-size/release-package-report.txt
