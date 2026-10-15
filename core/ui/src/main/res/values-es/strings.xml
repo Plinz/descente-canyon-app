@@ -784,4 +784,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
         <item quantity="many">%1$d este año</item>
         <item quantity="other">%1$d este año</item>
     </plurals>
+    <string name="favorites_sort_added">Recientes</string>
+    <string name="favorites_sort_name">Nombre</string>
+    <string name="favorites_sort_report">Último caudal</string>
 </resources>

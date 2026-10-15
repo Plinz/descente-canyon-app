@@ -766,4 +766,7 @@ Search for a canyon and add it to your favorites.</string>
         <item quantity="one">%1$d this year</item>
         <item quantity="other">%1$d this year</item>
     </plurals>
+    <string name="favorites_sort_added">Recent</string>
+    <string name="favorites_sort_name">Name</string>
+    <string name="favorites_sort_report">Latest flow</string>
 </resources>

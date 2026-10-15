@@ -784,4 +784,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
         <item quantity="many">%1$d quest\'anno</item>
         <item quantity="other">%1$d quest\'anno</item>
     </plurals>
+    <string name="favorites_sort_added">Recenti</string>
+    <string name="favorites_sort_name">Nome</string>
+    <string name="favorites_sort_report">Ultima portata</string>
 </resources>

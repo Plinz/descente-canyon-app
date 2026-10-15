@@ -784,4 +784,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
         <item quantity="many">%1$d cette année</item>
         <item quantity="other">%1$d cette année</item>
     </plurals>
+    <string name="favorites_sort_added">Récents</string>
+    <string name="favorites_sort_name">Nom</string>
+    <string name="favorites_sort_report">Dernier débit</string>
 </resources>

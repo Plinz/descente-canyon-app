@@ -19,8 +19,31 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
+/** Order of the favorites list. */
+enum class FavoritesSort {
+    /** Most recently added first, as stored. */
+    ADDED,
+    NAME,
+
+    /** Freshest flow report first: which favorites run now. */
+    LATEST_REPORT,
+}
+
+internal fun List<CanyonSummary>.sortedFor(sort: FavoritesSort): List<CanyonSummary> = when (sort) {
+    FavoritesSort.ADDED -> this
+
+    FavoritesSort.NAME -> sortedWith(compareBy(String.CASE_INSENSITIVE_ORDER) { it.nom })
+
+    FavoritesSort.LATEST_REPORT -> sortedWith(
+        compareByDescending<CanyonSummary, java.time.LocalDate?>(nullsFirst()) {
+            it.dernierDebitDate
+        },
+    )
+}
+
 data class FavoritesUiState(
     val favorites: List<CanyonSummary> = emptyList(),
+    val sort: FavoritesSort = FavoritesSort.ADDED,
     val isLoading: Boolean = false,
     val error: UiText? = null,
     /** Favorite just removed by the user, offered for undo. */
@@ -35,6 +58,7 @@ class FavoritesViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(FavoritesUiState())
     val uiState: StateFlow<FavoritesUiState> = _uiState.asStateFlow()
+    private var unsorted: List<CanyonSummary> = emptyList()
 
     init {
         loadFavorites()
@@ -55,9 +79,14 @@ class FavoritesViewModel @Inject constructor(
                     }
                 }
                 .collect { favorites ->
-                    _uiState.update { it.copy(favorites = favorites, isLoading = false, error = null) }
+                    unsorted = favorites
+                    _uiState.update { it.copy(favorites = favorites.sortedFor(it.sort), isLoading = false, error = null) }
                 }
         }
+    }
+
+    fun selectSort(sort: FavoritesSort) {
+        _uiState.update { it.copy(sort = sort, favorites = unsorted.sortedFor(sort)) }
     }
 
     fun removeFavorite(canyon: CanyonSummary) {

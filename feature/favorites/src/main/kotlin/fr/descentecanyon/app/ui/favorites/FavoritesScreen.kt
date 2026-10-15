@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,6 +22,7 @@ import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarDuration
@@ -103,6 +105,28 @@ fun FavoritesScreen(
                     }
                 },
             )
+
+            if (uiState.favorites.size > 1) {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 8.dp)) {
+                    FavoritesSort.entries.forEach { sort ->
+                        FilterChip(
+                            selected = uiState.sort == sort,
+                            onClick = { viewModel.selectSort(sort) },
+                            label = {
+                                Text(
+                                    stringResource(
+                                        when (sort) {
+                                            FavoritesSort.ADDED -> R.string.favorites_sort_added
+                                            FavoritesSort.NAME -> R.string.favorites_sort_name
+                                            FavoritesSort.LATEST_REPORT -> R.string.favorites_sort_report
+                                        },
+                                    ),
+                                )
+                            },
+                        )
+                    }
+                }
+            }
 
             uiState.error?.let { error ->
                 Text(

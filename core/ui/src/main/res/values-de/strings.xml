@@ -766,4 +766,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
         <item quantity="one">%1$d dieses Jahr</item>
         <item quantity="other">%1$d dieses Jahr</item>
     </plurals>
+    <string name="favorites_sort_added">Neueste</string>
+    <string name="favorites_sort_name">Name</string>
+    <string name="favorites_sort_report">Letzter Abfluss</string>
 </resources>
