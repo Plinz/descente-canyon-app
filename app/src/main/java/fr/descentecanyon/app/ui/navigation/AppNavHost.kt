@@ -136,6 +136,8 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                     navController.navigateSingleTop(Screen.PhotoGallery(detail.canyonId, photoId))
                 },
                 onUserClick = { username -> navController.navigateSingleTop(Screen.UserProfile(username.normalizeForSearch())) },
+                // Not single top: another canyon is pushed so "back" returns to this one.
+                onOpenCanyon = { canyonId -> navController.navigate(Screen.CanyonDetail(canyonId)) },
                 openDebitsTabInitially = detail.openDebitsTab,
                 contentPadding = topLevelContentPadding,
                 refreshDebitsAfterSubmission = refreshDebitsAfterSubmission,

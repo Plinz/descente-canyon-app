@@ -87,6 +87,7 @@ fun CanyonDetailScreen(
     onOpenPredictionInfo: () -> Unit,
     onOpenPhotoGallery: (Long) -> Unit,
     onUserClick: (String) -> Unit = {},
+    onOpenCanyon: (Int) -> Unit = {},
     openDebitsTabInitially: Boolean = false,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -286,6 +287,8 @@ fun CanyonDetailScreen(
                             openDebitsTabInitially = openDebitsTabInitially,
                             personalNote = uiState.personalNote,
                             onSavePersonalNote = viewModel::savePersonalNote,
+                            nearbyCanyons = uiState.nearbyCanyons,
+                            onNearbyCanyonClick = onOpenCanyon,
                             bottomContentPadding = contentPadding.calculateBottomPadding() + 96.dp,
                             modifier = Modifier
                                 .fillMaxHeight()

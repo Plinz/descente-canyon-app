@@ -284,8 +284,8 @@ Search for a canyon and add it to your favorites.</string>
     <string name="basin">Basin</string>
     <string name="watershed_area">Watershed area</string>
     <string name="watercourse">Watercourse</string>
-    <string name="weather_title">Precipitation</string>
-    <string name="weather_loading">Loading precipitation…</string>
+    <string name="weather_title">Weather</string>
+    <string name="weather_loading">Loading the weather…</string>
     <string name="weather_unavailable">Weather unavailable for this canyon.</string>
     <string name="weather_collapsed_summary">72h: %1$s - next 48h: %2$s</string>
     <string name="weather_target_value">Weather point: %1$s (%2$s)</string>
@@ -607,4 +607,54 @@ Search for a canyon and add it to your favorites.</string>
     <string name="shortcut_search_long">Search for a canyon</string>
     <string name="shortcut_map_long">Canyon map</string>
     <string name="shortcut_favorites_long">My favorite canyons</string>
+    <string name="weather_compact_past_72h">Rain 72h</string>
+    <string name="weather_compact_next_48h">Next 48h</string>
+    <string name="weather_compact_rain_chance">Rain chance</string>
+    <string name="weather_day_today">Today</string>
+    <string name="weather_day_tomorrow">Tmrw</string>
+    <string name="weather_storm_today">Thunderstorms forecast today: a flash flood can come even without rain where you are.</string>
+    <string name="weather_storm_tomorrow">Thunderstorms forecast tomorrow: flash flood risk.</string>
+    <string name="weather_storm_later">Thunderstorms forecast on %1$s: flash flood risk.</string>
+    <string name="weather_sun_times">Sunrise %1$s · sunset %2$s</string>
+    <string name="weather_offline_cached">Offline: forecast downloaded on %1$s</string>
+    <string name="weather_day_description">%1$s: %2$s, rain %3$s, %4$s to %5$s</string>
+    <string name="weather_condition_clear">sunny</string>
+    <string name="weather_condition_partly_cloudy">partly cloudy</string>
+    <string name="weather_condition_cloudy">overcast</string>
+    <string name="weather_condition_fog">fog</string>
+    <string name="weather_condition_drizzle">drizzle</string>
+    <string name="weather_condition_rain">rain</string>
+    <string name="weather_condition_snow">snow</string>
+    <string name="weather_condition_thunderstorm">thunderstorms</string>
+    <string name="weather_condition_unknown">unknown weather</string>
+    <string name="prediction_range">%1$s to %2$s</string>
+    <string name="prediction_range_explanation">The model hesitates between two levels: the range is more reliable than a single level.</string>
+    <string name="prediction_range_level_sec">dry</string>
+    <string name="prediction_range_level_filet">trickle</string>
+    <string name="prediction_range_level_correct">normal</string>
+    <string name="prediction_range_level_gros">high</string>
+    <string name="prediction_range_level_tres_gros">very high</string>
+    <string name="prediction_range_level_crue">flood</string>
+    <string name="nearby_canyons_title">Nearby canyons</string>
+    <string name="nearby_no_recent_report">No recent report</string>
+    <string name="nearby_forbidden">Forbidden</string>
+    <string name="nearby_canyon_description">%1$s, %2$s away, %3$s</string>
+    <string name="seasonality_title">Reported flows by month</string>
+    <string name="seasonality_mostly">mostly %1$s (%2$d%%)</string>
+    <string name="seasonality_few_reports">Faded months: fewer than 5 reports, read with care.</string>
+    <plurals name="nearby_canyons_subtitle">
+        <item quantity="one">%1$d canyon within %2$d km</item>
+        <item quantity="other">%1$d canyons within %2$d km</item>
+    </plurals>
+    <plurals name="seasonality_subtitle">
+        <item quantity="one">%1$,d report, all years together</item>
+        <item quantity="other">%1$,d reports, all years together</item>
+    </plurals>
+    <plurals name="seasonality_month_reports">
+        <item quantity="one">%1$d report</item>
+        <item quantity="other">%1$d reports</item>
+    </plurals>
+    <string name="seasonality_month_description">%1$s: %2$s</string>
+    <string name="weather_storm_today_at">Thunderstorms forecast around %1$s: a flash flood can come even without rain where you are.</string>
+    <string name="prediction_offline_cached">Offline: estimate computed on %1$s</string>
 </resources>

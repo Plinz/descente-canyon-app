@@ -10,6 +10,7 @@ import fr.descentecanyon.app.domain.model.ForumCategory
 import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.NotificationCenterState
+import fr.descentecanyon.app.domain.model.ReportZone
 import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
@@ -302,6 +303,46 @@ class HomeViewModelTest {
 
         assertEquals(listOf(1, 2), viewModel.uiState.value.debitFeed.items.map { it.canyonId })
         assertEquals(false, viewModel.uiState.value.debitGeoFilter.canLoadMore)
+        assertEquals(ReportZone("France", "Ain"), preferences.latestReportsZone)
+    }
+
+    @Test
+    fun `the area of the latest reports is restored at launch and can be cleared`() = runTest {
+        val debits = (1..3).map { id -> sampleDebit(canyonId = id, canyonNom = "Canyon $id") }
+        searchCatalog.value = debits.map { debit ->
+            searchItem(
+                id = debit.canyonId,
+                nom = debit.canyonNom.orEmpty(),
+                pays = "France",
+                departement = if (debit.canyonId ==
+                    1
+                ) {
+                    "Ain"
+                } else {
+                    "Var"
+                },
+            )
+        }
+        every { connectivityObserver.observe() } returns MutableStateFlow(true)
+        every { connectivityObserver.isCurrentlyOnline() } returns true
+        preferences.latestReportsZone = ReportZone("France", "Var")
+        coEvery { debitRepository.getCachedLatestDebits(any()) } returns CachedItems(debits, 1234L)
+        coEvery { forumRepository.getCachedActiveTopics(any()) } returns CachedItems(emptyList(), null)
+        coEvery { forumRepository.getCachedCategories() } returns CachedItems(emptyList(), null)
+        coEvery { debitRepository.refreshLatestDebits(any()) } returns Result.success(CachedItems(debits, 1234L))
+        coEvery { forumRepository.refreshActiveTopics(any()) } returns Result.success(CachedItems(emptyList(), 1234L))
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertEquals("Var", viewModel.uiState.value.debitGeoFilter.selectedDepartment)
+        assertEquals(listOf(2, 3), viewModel.uiState.value.debitFeed.items.map { it.canyonId })
+
+        viewModel.clearDebitGeoFilter()
+        advanceUntilIdle()
+
+        assertEquals(null, preferences.latestReportsZone)
+        assertEquals(3, viewModel.uiState.value.debitFeed.items.size)
     }
 
     private fun createViewModel(): HomeViewModel {

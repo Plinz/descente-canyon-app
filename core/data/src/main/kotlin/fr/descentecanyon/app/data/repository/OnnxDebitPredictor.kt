@@ -95,6 +95,7 @@ class OnnxDebitPredictor @Inject constructor(
                             ordinalScore = decision.displayScore,
                             ordinalLevel = ORDINAL_LEVELS[decision.level],
                             ordinalStandardDeviation = ordinalStandardDeviation(distribution),
+                            levelProbabilities = ORDINAL_LEVELS.withIndex().associate { (rank, level) -> level to distribution[rank] },
                         )
                     }
                 }

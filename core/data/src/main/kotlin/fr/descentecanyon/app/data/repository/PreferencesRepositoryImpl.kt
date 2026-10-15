@@ -8,6 +8,7 @@ import fr.descentecanyon.app.data.local.user.dao.KeyValueDao
 import fr.descentecanyon.app.data.local.user.entity.KeyValueEntity
 import fr.descentecanyon.app.domain.model.ContributorIdentity
 import fr.descentecanyon.app.domain.model.HomeFeedType
+import fr.descentecanyon.app.domain.model.ReportZone
 import fr.descentecanyon.app.domain.model.ThemeMode
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import javax.inject.Inject
@@ -46,6 +47,20 @@ class PreferencesRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun getLatestReportsZone(): ReportZone? {
+        val country = keyValueDao.get(KEY_REPORTS_COUNTRY)?.takeIf { it.isNotBlank() } ?: return null
+        return ReportZone(country = country, department = keyValueDao.get(KEY_REPORTS_DEPARTMENT)?.takeIf { it.isNotBlank() })
+    }
+
+    override suspend fun setLatestReportsZone(zone: ReportZone?) {
+        keyValueDao.putAll(
+            listOf(
+                KeyValueEntity(KEY_REPORTS_COUNTRY, zone?.country.orEmpty()),
+                KeyValueEntity(KEY_REPORTS_DEPARTMENT, zone?.department.orEmpty()),
+            ),
+        )
+    }
+
     override fun getThemeMode(): ThemeMode = settings.getString(KEY_THEME_MODE, null)
         ?.let { name -> ThemeMode.entries.firstOrNull { it.name == name } }
         ?: ThemeMode.SYSTEM
@@ -68,5 +83,7 @@ class PreferencesRepositoryImpl @Inject constructor(
         const val KEY_THEME_MODE = "theme_mode"
         const val KEY_CONTRIBUTOR_NAME = "contributor.name"
         const val KEY_CONTRIBUTOR_EMAIL = "contributor.email"
+        const val KEY_REPORTS_COUNTRY = "home.reports.country"
+        const val KEY_REPORTS_DEPARTMENT = "home.reports.department"
     }
 }

@@ -42,6 +42,7 @@ import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.Debit
+import fr.descentecanyon.app.domain.model.NearbyCanyon
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -69,10 +70,12 @@ internal fun CanyonDetailContent(
     onUserClick: (String) -> Unit,
     onPersistedPhotoMissing: (Long) -> Unit,
     openDebitsTabInitially: Boolean,
+    modifier: Modifier = Modifier,
     personalNote: String? = null,
     onSavePersonalNote: (String) -> Unit = {},
+    nearbyCanyons: List<NearbyCanyon> = emptyList(),
+    onNearbyCanyonClick: (Int) -> Unit = {},
     bottomContentPadding: Dp = 0.dp,
-    modifier: Modifier = Modifier,
 ) {
     var selectedTab by rememberSaveable(openDebitsTabInitially) {
         mutableIntStateOf(if (openDebitsTabInitially) 2 else 0)
@@ -141,6 +144,11 @@ internal fun CanyonDetailContent(
                 onInfoClick = onOpenPredictionInfo,
             )
         }
+        if (nearbyCanyons.isNotEmpty()) {
+            item {
+                NearbyCanyonsSection(nearby = nearbyCanyons, onCanyonClick = onNearbyCanyonClick)
+            }
+        }
 
         stickyHeader {
             PrimaryTabRow(
@@ -170,7 +178,12 @@ internal fun CanyonDetailContent(
                 onPersistedPhotoMissing = onPersistedPhotoMissing,
             )
 
-            2 -> debitItems(detail.debits, isLoadingDebits, debitError, onUserClick)
+            2 -> {
+                if (detail.debits.isNotEmpty()) {
+                    item { DebitSeasonalityCard(debits = detail.debits) }
+                }
+                debitItems(detail.debits, isLoadingDebits, debitError, onUserClick)
+            }
         }
     }
 }

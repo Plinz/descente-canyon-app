@@ -367,7 +367,12 @@ private fun SummaryBadge(text: String, color: Color, textStyle: androidx.compose
 }
 
 @Composable
-fun InterestStars(interest: Float, modifier: Modifier = Modifier) {
+fun InterestStars(
+    interest: Float,
+    modifier: Modifier = Modifier,
+    textColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    emptyStarColor: Color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+) {
     Row(modifier = modifier, verticalAlignment = Alignment.CenterVertically) {
         val clampedInterest = interest.coerceIn(0f, 4f)
         val fullStars = clampedInterest.toInt()
@@ -394,14 +399,14 @@ fun InterestStars(interest: Float, modifier: Modifier = Modifier) {
                 imageVector = Icons.Default.StarBorder,
                 contentDescription = null,
                 modifier = Modifier.size(16.dp),
-                tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.4f),
+                tint = emptyStarColor,
             )
         }
         Spacer(modifier = Modifier.width(6.dp))
         Text(
             text = String.format(Locale.US, "%.1f/4", clampedInterest),
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = textColor,
             fontWeight = FontWeight.Medium,
         )
     }

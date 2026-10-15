@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Card
@@ -38,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -46,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.DailyDebitPrediction
+import fr.descentecanyon.app.domain.model.DebitLevelRange
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.PredictedDebitLevel
 import fr.descentecanyon.app.ui.theme.DebitCorrect
@@ -53,6 +56,9 @@ import fr.descentecanyon.app.ui.theme.DebitFilet
 import fr.descentecanyon.app.ui.theme.DebitGros
 import fr.descentecanyon.app.ui.theme.DebitInconnu
 import fr.descentecanyon.app.ui.theme.DebitSec
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import kotlin.math.roundToInt
 
 @Composable
@@ -113,6 +119,10 @@ fun CanyonDebitPredictionCard(
                 )
             }
 
+            if (predictions?.isFromCache == true) {
+                OfflineEstimateLine(predictions)
+            }
+
             AnimatedVisibility(visible = expanded) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     when {
@@ -161,6 +171,27 @@ fun CanyonDebitPredictionCard(
                 }
             }
         }
+    }
+}
+
+/** Shown when the network is unavailable and the last estimate computed is displayed. */
+@Composable
+private fun OfflineEstimateLine(predictions: CanyonDebitPredictions) {
+    val computedAt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+        .withLocale(LocalLocale.current.platformLocale)
+        .format(predictions.computedAt.atZone(ZoneId.systemDefault()))
+    Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+        Icon(
+            imageVector = Icons.Default.CloudOff,
+            contentDescription = null,
+            modifier = Modifier.size(16.dp),
+            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Text(
+            text = stringResource(R.string.prediction_offline_cached, computedAt),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
     }
 }
 
@@ -250,8 +281,28 @@ private fun PredictionCompactTile(label: String, value: String, color: Color, mo
 }
 
 @Composable
-private fun predictionSummaryValue(prediction: DailyDebitPrediction): String =
-    prediction.ordinalLevel?.let { ordinalLevelTitle(it) } ?: levelLabel(prediction.level)
+private fun predictionSummaryValue(prediction: DailyDebitPrediction): String = prediction.likelyRange()?.let { rangeLabel(it) }
+    ?: prediction.ordinalLevel?.let { ordinalLevelTitle(it) }
+    ?: levelLabel(prediction.level)
+
+/** "Correct à gros": the two levels the model hesitates between. */
+@Composable
+private fun rangeLabel(range: DebitLevelRange): String {
+    val locale = LocalLocale.current.platformLocale
+    return stringResource(R.string.prediction_range, rangeLevelWord(range.low), rangeLevelWord(range.high))
+        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
+}
+
+@Composable
+private fun rangeLevelWord(level: NiveauDebit): String = when (level) {
+    NiveauDebit.SEC -> stringResource(R.string.prediction_range_level_sec)
+    NiveauDebit.FILET -> stringResource(R.string.prediction_range_level_filet)
+    NiveauDebit.CORRECT -> stringResource(R.string.prediction_range_level_correct)
+    NiveauDebit.GROS -> stringResource(R.string.prediction_range_level_gros)
+    NiveauDebit.TRES_GROS -> stringResource(R.string.prediction_range_level_tres_gros)
+    NiveauDebit.CRUE -> stringResource(R.string.prediction_range_level_crue)
+    NiveauDebit.INCONNU -> stringResource(R.string.debit_level_inconnu)
+}
 
 @Composable
 private fun predictionSummaryColor(prediction: DailyDebitPrediction): Color =
@@ -283,7 +334,8 @@ private fun PredictionRow(prediction: DailyDebitPrediction, ordinalCutpoints: Li
             }
 
             Text(
-                text = ordinalLevel?.let { ordinalLevelTitle(it) }
+                text = prediction.likelyRange()?.let { rangeLabel(it) }
+                    ?: ordinalLevel?.let { ordinalLevelTitle(it) }
                     ?: levelLabel(prediction.level),
                 style = MaterialTheme.typography.titleSmall,
                 color = ordinalLevel?.let { ordinalColor(it) }
@@ -305,6 +357,13 @@ private fun PredictionRow(prediction: DailyDebitPrediction, ordinalCutpoints: Li
                 score = ordinalScore,
                 ordinalCutpoints = ordinalCutpoints,
             )
+            if (prediction.likelyRange() != null) {
+                Text(
+                    text = stringResource(R.string.prediction_range_explanation),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             HighFlowRiskLine(prediction)
             prediction.ordinalStandardDeviation?.let { standardDeviation ->
                 ConfidenceBadge(

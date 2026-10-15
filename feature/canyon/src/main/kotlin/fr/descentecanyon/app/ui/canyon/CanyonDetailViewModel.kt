@@ -11,6 +11,7 @@ import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.CanyonWeather
+import fr.descentecanyon.app.domain.model.NearbyCanyon
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
@@ -18,6 +19,7 @@ import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.GetCanyonDetailUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonPreviewUseCase
+import fr.descentecanyon.app.domain.usecase.GetNearbyCanyonsUseCase
 import fr.descentecanyon.app.domain.usecase.ToggleFavoriteUseCase
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.UiText
@@ -58,6 +60,8 @@ data class CanyonDetailUiState(
     val transientMessage: UiText? = null,
     /** The user's private note about this canyon. */
     val personalNote: String? = null,
+    /** Canyons around this one, nearest first. */
+    val nearbyCanyons: List<NearbyCanyon> = emptyList(),
 )
 
 /** State owned by the view model itself: the canyon detail and the user's choices about it. */
@@ -72,6 +76,7 @@ private data class CanyonDetailState(
     val isOnline: Boolean = true,
     val transientMessage: UiText? = null,
     val personalNote: String? = null,
+    val nearbyCanyons: List<NearbyCanyon> = emptyList(),
 )
 
 /**
@@ -93,6 +98,7 @@ class CanyonDetailViewModel @Inject constructor(
     private val media: CanyonMediaController,
     private val recentCanyonsRepository: RecentCanyonsRepository,
     private val canyonNotesRepository: CanyonNotesRepository,
+    private val getNearbyCanyonsUseCase: GetNearbyCanyonsUseCase,
 ) : ViewModel() {
 
     private val canyonId: Int = savedStateHandle["canyonId"]
@@ -114,6 +120,7 @@ class CanyonDetailViewModel @Inject constructor(
         observeDebitNotificationPreference()
         observeConnectivity()
         observePersonalNote()
+        observeNearbyCanyons()
         loadCanyon(canyonId)
     }
 
@@ -260,7 +267,18 @@ class CanyonDetailViewModel @Inject constructor(
 
     private fun observeConnectivity() {
         viewModelScope.launch {
-            connectivityObserver.observe().collect { online -> detailState.update { it.copy(isOnline = online) } }
+            connectivityObserver.observe().collect { online ->
+                val wasOnline = detailState.value.isOnline
+                detailState.update { it.copy(isOnline = online) }
+                // Back in coverage: the weather and estimates that failed (or came from the cache) are reloaded.
+                if (online && !wasOnline) detailState.value.canyonDetail?.let(conditions::loadFor)
+            }
+        }
+    }
+
+    private fun observeNearbyCanyons() {
+        viewModelScope.launch {
+            getNearbyCanyonsUseCase(canyonId).collect { nearby -> detailState.update { it.copy(nearbyCanyons = nearby) } }
         }
     }
 
@@ -298,6 +316,7 @@ private fun toUiState(detail: CanyonDetailState, media: CanyonMediaState, condit
         isDebitNotificationsEnabled = detail.isDebitNotificationsEnabled,
         downloadingPhotoIds = media.downloadingPhotoIds,
         isOnline = detail.isOnline,
+        nearbyCanyons = detail.nearbyCanyons,
         transientMessage = detail.transientMessage,
         personalNote = detail.personalNote,
     )

@@ -10,8 +10,10 @@ import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.CanyonPhoto
+import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonWatershed
 import fr.descentecanyon.app.domain.model.CanyonWeather
+import fr.descentecanyon.app.domain.model.CotationRating
 import fr.descentecanyon.app.domain.model.DailyDebitPrediction
 import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.DebitPredictionPolicy
@@ -42,6 +44,7 @@ import fr.descentecanyon.app.domain.usecase.GetCanyonDetailUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonEdfPracticabilityUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonPreviewUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonWeatherUseCase
+import fr.descentecanyon.app.domain.usecase.GetNearbyCanyonsUseCase
 import fr.descentecanyon.app.domain.usecase.ToggleFavoriteUseCase
 import fr.descentecanyon.app.testutil.MainDispatcherRule
 import fr.descentecanyon.app.ui.common.UiText
@@ -172,6 +175,60 @@ class CanyonDetailViewModelTest {
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
+    fun `weather failure shows the last downloaded forecast when there is one`() = runTest {
+        stubBaseState()
+
+        coEvery { canyonRepository.getCanyonPreview(42) } returns Result.success(detail())
+        coEvery { canyonRepository.getCanyonDetail(42) } returns Result.success(detail())
+        coEvery { weatherRepository.getCanyonWeather(any()) } returns Result.failure(SocketTimeoutException("timeout"))
+        coEvery { weatherRepository.getCachedCanyonWeather(42) } returns weather().copy(isFromCache = true)
+
+        val viewModel = createViewModel()
+
+        advanceUntilIdle()
+
+        assertEquals(true, viewModel.uiState.value.weather?.isFromCache)
+        assertEquals(null, viewModel.uiState.value.weatherError)
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `offline the cached forecast is shown without trying the network`() = runTest {
+        stubBaseState()
+        every { connectivityObserver.observe() } returns flowOf(false)
+        every { connectivityObserver.isCurrentlyOnline() } returns false
+
+        coEvery { canyonRepository.getCanyonPreview(42) } returns Result.success(detail())
+        coEvery { canyonRepository.getCanyonDetail(42) } returns Result.success(detail())
+        coEvery { weatherRepository.getCachedCanyonWeather(42) } returns weather().copy(isFromCache = true)
+
+        val viewModel = createViewModel()
+
+        advanceUntilIdle()
+
+        assertEquals(true, viewModel.uiState.value.weather?.isFromCache)
+        coVerify(exactly = 0) { weatherRepository.getCanyonWeather(any()) }
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `nearby canyons come with their last known report`() = runTest {
+        stubBaseState()
+
+        coEvery { canyonRepository.getCanyonPreview(42) } returns Result.success(detail())
+        coEvery { canyonRepository.getCanyonDetail(42) } returns Result.success(detail())
+
+        val viewModel = createViewModel()
+
+        advanceUntilIdle()
+
+        val nearby = viewModel.uiState.value.nearbyCanyons
+        assertEquals(listOf(7), nearby.map { it.summary.id })
+        assertEquals(NiveauDebit.CORRECT, nearby.single().summary.dernierDebit)
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun `prediction timeout shows friendly message instead of raw timeout`() = runTest {
         stubBaseState()
 
@@ -297,6 +354,7 @@ class CanyonDetailViewModelTest {
         ),
         recentCanyonsRepository = recentCanyonsRepository,
         canyonNotesRepository = canyonNotesRepository,
+        getNearbyCanyonsUseCase = GetNearbyCanyonsUseCase(canyonRepository, debitRepository),
     )
 
     private fun stubBaseState() {
@@ -315,7 +373,34 @@ class CanyonDetailViewModelTest {
         coEvery { notificationCenterRepository.toggleCanyonFollow(any(), any(), any()) } returns Unit
         every { connectivityObserver.observe() } returns flowOf(true)
         every { connectivityObserver.isCurrentlyOnline() } returns true
+        coEvery { weatherRepository.getCachedCanyonWeather(42) } returns null
+        coEvery { debitPredictionRepository.getCachedPredictions(42) } returns null
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(
+            listOf(
+                searchItem(id = 42, name = "Riolan", latitude = 43.95, longitude = 6.90),
+                searchItem(id = 7, name = "Bollinette", latitude = 43.96, longitude = 6.92),
+                searchItem(id = 8, name = "Lointain", latitude = 45.50, longitude = 6.90),
+            ),
+        )
+        every { debitRepository.observeLatestKnownDebits(setOf(7)) } returns flowOf(
+            mapOf(7 to Debit(canyonId = 7, date = java.time.LocalDate.of(2026, 3, 25), niveau = NiveauDebit.CORRECT)),
+        )
     }
+
+    private fun searchItem(id: Int, name: String, latitude: Double, longitude: Double) = CanyonSearchItem(
+        id = id,
+        nom = name,
+        nomComplet = name,
+        pays = "France",
+        cotation = "v3a3II",
+        cotationRating = CotationRating.parse("v3a3II"),
+        representativeLat = latitude,
+        representativeLng = longitude,
+        url = "/canyoning/canyon/$id/$name.html",
+        searchableText = name.lowercase(),
+        normalizedNom = name.lowercase(),
+        normalizedNomComplet = name.lowercase(),
+    )
 
     private fun detail() = CanyonDetail(
         canyon = Canyon(

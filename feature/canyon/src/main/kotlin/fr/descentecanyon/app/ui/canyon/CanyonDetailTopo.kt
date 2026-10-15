@@ -48,6 +48,9 @@ import fr.descentecanyon.app.ui.design.LocalDcColors
 
 internal fun LazyListScope.topoItems(detail: CanyonDetail) {
     val sectionModifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
+    item {
+        LocationCard(detail = detail, modifier = sectionModifier)
+    }
     detail.accesAval?.let { text ->
         item {
             CollapsibleSection(

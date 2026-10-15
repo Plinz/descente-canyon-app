@@ -23,4 +23,8 @@ interface KeyValueDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun putAllIfAbsent(entries: List<KeyValueEntity>)
+
+    /** Deletes the entries whose key starts with [prefix] written before [beforeEpochMs]. */
+    @Query("DELETE FROM key_values WHERE `key` LIKE :prefix || '%' AND updatedAt < :beforeEpochMs")
+    suspend fun deleteByPrefixOlderThan(prefix: String, beforeEpochMs: Long)
 }

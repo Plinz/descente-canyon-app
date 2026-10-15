@@ -248,8 +248,6 @@ Suche einen Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="basin">Einzugsgebiet</string>
     <string name="watershed_area">Fläche des Einzugsgebiets</string>
     <string name="watercourse">Gewässer</string>
-    <string name="weather_title">Niederschlag</string>
-    <string name="weather_loading">Niederschlag wird geladen…</string>
     <string name="weather_unavailable">Wetter für diesen Canyon nicht verfügbar.</string>
     <string name="weather_collapsed_summary">72 h: %1$s - 48 h prognostiziert: %2$s</string>
     <string name="weather_target_value">Wetterpunkt: %1$s (%2$s)</string>

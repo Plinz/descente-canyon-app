@@ -147,6 +147,47 @@ data class DailyDebitPrediction(
     val ordinalScore: Double? = null,
     val ordinalLevel: NiveauDebit? = null,
     val ordinalStandardDeviation: Double? = null,
+    /** Probability of each flow level, SEC to CRUE. */
+    val levelProbabilities: Map<NiveauDebit, Double> = emptyMap(),
+) {
+    /**
+     * When the model hesitates (the predicted level has less than [UNCERTAIN_LEVEL_PROBABILITY]),
+     * the predicted level and its most likely neighbour, lowest first. A range is right more often
+     * than a single level in that case (88 % against 84 %, see docs/debit-prediction-model.md).
+     */
+    fun likelyRange(): DebitLevelRange? {
+        val level = ordinalLevel ?: return null
+        val index = ORDINAL_DEBIT_LEVELS.indexOf(level)
+        val probability = levelProbabilities[level] ?: return null
+        if (index < 0 || probability >= UNCERTAIN_LEVEL_PROBABILITY) return null
+        val below = ORDINAL_DEBIT_LEVELS.getOrNull(index - 1)
+        val above = ORDINAL_DEBIT_LEVELS.getOrNull(index + 1)
+        val belowProbability = below?.let { levelProbabilities[it] } ?: 0.0
+        val aboveProbability = above?.let { levelProbabilities[it] } ?: 0.0
+        return when {
+            belowProbability <= 0.0 && aboveProbability <= 0.0 -> null
+            aboveProbability >= belowProbability && above != null -> DebitLevelRange(level, above)
+            below != null -> DebitLevelRange(below, level)
+            else -> null
+        }
+    }
+
+    companion object {
+        const val UNCERTAIN_LEVEL_PROBABILITY = 0.6
+    }
+}
+
+/** Two adjacent flow levels, [low] below [high]. */
+data class DebitLevelRange(val low: NiveauDebit, val high: NiveauDebit)
+
+/** Flow levels in increasing order, as predicted by the model. */
+val ORDINAL_DEBIT_LEVELS: List<NiveauDebit> = listOf(
+    NiveauDebit.SEC,
+    NiveauDebit.FILET,
+    NiveauDebit.CORRECT,
+    NiveauDebit.GROS,
+    NiveauDebit.TRES_GROS,
+    NiveauDebit.CRUE,
 )
 
 data class CanyonDebitPredictions(
@@ -158,4 +199,8 @@ data class CanyonDebitPredictions(
     val policy: DebitPredictionPolicy,
     val ordinalCutpoints: List<Double> = emptyList(),
     val predictions: List<DailyDebitPrediction>,
+    /** When the estimate was computed (now, unless it comes from the offline copy). */
+    val computedAt: Instant = fetchedAt,
+    /** True when the network was unavailable and the last estimate computed is shown. */
+    val isFromCache: Boolean = false,
 )

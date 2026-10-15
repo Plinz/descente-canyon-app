@@ -1,6 +1,7 @@
 package fr.descentecanyon.app.data.repository
 
 import fr.descentecanyon.app.data.network.ApiHttpClient
+import fr.descentecanyon.app.data.remote.weather.DailyForecastDto
 import fr.descentecanyon.app.data.remote.weather.HourlyForecastDto
 import fr.descentecanyon.app.data.remote.weather.OpenMeteoForecastDto
 import fr.descentecanyon.app.data.remote.weather.OpenMeteoRemoteSource
@@ -10,23 +11,35 @@ import fr.descentecanyon.app.domain.model.CanyonWatershed
 import fr.descentecanyon.app.domain.model.GeoBounds
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointType
+import fr.descentecanyon.app.domain.model.WeatherCondition
 import fr.descentecanyon.app.domain.model.WeatherLocationSource
+import fr.descentecanyon.app.testutil.InMemoryKeyValueDao
 import io.mockk.mockk
+import java.io.IOException
+import java.time.Clock
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
+import java.time.ZoneOffset
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class WeatherRepositoryImplTest {
 
+    private val now = LocalDateTime.of(2026, 7, 14, 10, 0)
+    private val clock = clockAt(now)
+    private val keyValueDao = InMemoryKeyValueDao()
+
     @Test
     fun `uses watershed center when available`() = runTest {
-        val dispatcher = StandardTestDispatcher(testScheduler)
-        val remoteSource = fakeRemoteSource(forecastDto())
-        val repository = WeatherRepositoryImpl(remoteSource, dispatcher)
+        val repository = repository(fakeRemoteSource(forecastDto()))
         val detail = canyonDetail(
             watershed = CanyonWatershed(
                 areaKm2 = 12.5,
@@ -50,13 +63,12 @@ class WeatherRepositoryImplTest {
         assertEquals(20.0, weather.next24HoursPrecipitationMm, 0.001)
         assertEquals(20.0, weather.next48HoursPrecipitationMm, 0.001)
         assertEquals(7, weather.maxPrecipitationProbabilityNext24Hours)
+        assertFalse(weather.isFromCache)
     }
 
     @Test
     fun `falls back to entry point when watershed is missing`() = runTest {
-        val dispatcher = StandardTestDispatcher(testScheduler)
-        val remoteSource = fakeRemoteSource(forecastDto())
-        val repository = WeatherRepositoryImpl(remoteSource, dispatcher)
+        val repository = repository(fakeRemoteSource(forecastDto()))
         val detail = canyonDetail(
             geoPoints = listOf(
                 GeoPoint(id = 1, canyonId = 42, type = GeoPointType.SORTIE, latitude = 43.01, longitude = 6.01),
@@ -70,21 +82,51 @@ class WeatherRepositoryImplTest {
         assertEquals(WeatherLocationSource.ENTRY, result.getOrThrow().target.source)
     }
 
-    private fun forecastDto(): OpenMeteoForecastDto {
-        val now = ZonedDateTime.now(ZoneId.of("UTC"))
-            .withMinute(0)
-            .withSecond(0)
-            .withNano(0)
+    @Test
+    fun `daily forecast keeps today and the next days with sun times and storms`() = runTest {
+        val repository = repository(fakeRemoteSource(forecastDto()))
 
-        val times = listOf(
-            now.minusHours(3),
-            now.minusHours(2),
-            now.minusHours(1),
-            now,
-            now.plusHours(1),
-            now.plusHours(2),
-            now.plusHours(3),
-        ).map { it.toLocalDateTime().toString() }
+        val weather = repository.getCanyonWeather(canyonDetail()).getOrThrow()
+
+        assertEquals(listOf(LocalDate.of(2026, 7, 14), LocalDate.of(2026, 7, 15)), weather.daily.map { it.date })
+        val today = weather.daily.first()
+        assertEquals(LocalTime.of(6, 4), today.sunrise)
+        assertEquals(LocalTime.of(21, 30), today.sunset)
+        assertEquals(31.5, today.temperatureMaxC!!, 0.001)
+        assertEquals(WeatherCondition.THUNDERSTORM, weather.daily[1].condition)
+        assertEquals(LocalDate.of(2026, 7, 15), weather.nextThunderstorm(now)?.date)
+    }
+
+    @Test
+    fun `the last forecast is kept for offline use and recomputed for the current hour`() = runTest {
+        repository(fakeRemoteSource(forecastDto())).getCanyonWeather(canyonDetail()).getOrThrow()
+
+        // Two hours later, without network.
+        val later = repository(failingRemoteSource(), clockAt(now.plusHours(2)))
+        val cached = later.getCachedCanyonWeather(42)!!
+
+        assertTrue(cached.isFromCache)
+        assertEquals(WeatherLocationSource.DOWNSTREAM_PARKING, cached.target.source)
+        // Hours 07:00 to 12:00 are now in the past (1 + 2 + 3 + 4 + 5 + 6 mm).
+        assertEquals(21.0, cached.past24HoursPrecipitationMm, 0.001)
+        assertEquals(9.0, cached.next24HoursPrecipitationMm, 0.001)
+    }
+
+    @Test
+    fun `a cached forecast older than three days is not shown`() = runTest {
+        repository(fakeRemoteSource(forecastDto())).getCanyonWeather(canyonDetail()).getOrThrow()
+
+        val muchLater = repository(failingRemoteSource(), clockAt(now.plusDays(4)))
+
+        assertNull(muchLater.getCachedCanyonWeather(42))
+        assertNull(muchLater.getCachedCanyonWeather(43))
+    }
+
+    private fun TestScope.repository(remoteSource: OpenMeteoRemoteSource, clock: Clock = this@WeatherRepositoryImplTest.clock) =
+        WeatherRepositoryImpl(remoteSource, keyValueDao, clock, StandardTestDispatcher(testScheduler))
+
+    private fun forecastDto(): OpenMeteoForecastDto {
+        val times = (-3..3).map { offset -> now.plusHours(offset.toLong()).toString() }
 
         return OpenMeteoForecastDto(
             latitude = 43.8,
@@ -97,6 +139,16 @@ class WeatherRepositoryImplTest {
                 showers = listOf(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0),
                 precipitationProbability = listOf(1, 2, 3, 4, 5, 6, 7),
                 weatherCode = listOf(0, 0, 1, 2, 3, 4, 5),
+            ),
+            daily = DailyForecastDto(
+                time = listOf("2026-07-13", "2026-07-14", "2026-07-15"),
+                weatherCode = listOf(61, 1, 95),
+                precipitationSum = listOf(12.0, 0.0, 25.0),
+                precipitationProbabilityMax = listOf(80, 5, 70),
+                temperature2mMax = listOf(24.0, 31.5, 22.0),
+                temperature2mMin = listOf(14.0, 16.0, 15.0),
+                sunrise = listOf("2026-07-13T06:03", "2026-07-14T06:04", "2026-07-15T06:05"),
+                sunset = listOf("2026-07-13T21:31", "2026-07-14T21:30", "2026-07-15T21:30"),
             ),
         )
     }
@@ -124,4 +176,10 @@ class WeatherRepositoryImplTest {
         object : OpenMeteoRemoteSource(mockk<ApiHttpClient>()) {
             override suspend fun fetchForecast(latitude: Double, longitude: Double): OpenMeteoForecastDto = response
         }
+
+    private fun failingRemoteSource(): OpenMeteoRemoteSource = object : OpenMeteoRemoteSource(mockk<ApiHttpClient>()) {
+        override suspend fun fetchForecast(latitude: Double, longitude: Double): OpenMeteoForecastDto = throw IOException("offline")
+    }
+
+    private fun clockAt(dateTime: LocalDateTime): Clock = Clock.fixed(dateTime.toInstant(ZoneOffset.UTC), ZoneId.of("UTC"))
 }

@@ -20,10 +20,14 @@ object TestTags {
     const val HOME_PENDING_DEBITS_BANNER = "home_pending_debits_banner"
     const val PENDING_DEBITS_EMPTY = "pending_debits_empty"
     const val PENDING_DEBIT_DELETE_CONFIRM = "pending_debit_delete_confirm"
+    const val DETAIL_NEARBY_SECTION = "detail_nearby_section"
+    const val DETAIL_SEASONALITY = "detail_seasonality"
 
     fun canyonCard(id: Int): String = "canyon_card_$id"
 
     fun bottomNavItem(name: String): String = "bottom_nav_$name"
 
     fun pendingDebitDelete(id: Long): String = "pending_debit_delete_$id"
+
+    fun detailNearbyCanyon(id: Int): String = "detail_nearby_canyon_$id"
 }

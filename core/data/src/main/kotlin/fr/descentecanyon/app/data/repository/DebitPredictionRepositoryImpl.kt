@@ -20,8 +20,13 @@ class DebitPredictionRepositoryImpl @Inject constructor(
     private val modelStore: EmbeddedDebitModelStore,
     private val featureBuilder: DebitFeatureBuilder,
     private val predictor: OnnxDebitPredictor,
+    private val predictionCache: PredictionCache,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : DebitPredictionRepository {
+
+    override suspend fun getCachedPredictions(canyonId: Int): CanyonDebitPredictions? = withContext(ioDispatcher) {
+        predictionCache.read(canyonId)
+    }
 
     override suspend fun getModelSummary(): Result<DebitPredictionInfoSummary> = suspendRunCatching {
         modelStore.getMetricsSummary()
@@ -70,7 +75,7 @@ class DebitPredictionRepositoryImpl @Inject constructor(
                     policy = thresholds.defaultPolicy,
                     ordinalCutpoints = thresholds.ordinalCutpoints,
                     predictions = predictions,
-                )
+                ).also { predictionCache.save(detail.canyon.id, it) }
             }
         }
     }

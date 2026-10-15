@@ -31,12 +31,20 @@ import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonWeather
 import fr.descentecanyon.app.domain.model.WeatherLocationSource
+import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun CanyonWeatherCard(weather: CanyonWeather?, isLoading: Boolean, error: String?, modifier: Modifier = Modifier) {
+fun CanyonWeatherCard(
+    weather: CanyonWeather?,
+    isLoading: Boolean,
+    error: String?,
+    modifier: Modifier = Modifier,
+    today: LocalDate = LocalDate.now(),
+) {
     var expanded by rememberSaveable { mutableStateOf(false) }
 
     Card(
@@ -82,10 +90,28 @@ fun CanyonWeatherCard(weather: CanyonWeather?, isLoading: Boolean, error: String
                 )
             }
 
+            weather?.let { current ->
+                if (current.isFromCache) {
+                    CachedForecastLine(current)
+                }
+                StormWarning(
+                    current,
+                    now = LocalDateTime.now(
+                        runCatching {
+                            ZoneId.of(current.timezone)
+                        }.getOrDefault(ZoneId.systemDefault()),
+                    ),
+                )
+                if (current.daily.isNotEmpty()) {
+                    DailyForecastRow(daily = current.daily, today = today)
+                }
+            }
+
             AnimatedVisibility(visible = expanded) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     weather?.let {
                         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                            it.dayOf(today)?.let { day -> SunTimesLine(day) }
                             Text(
                                 text = stringResource(
                                     R.string.weather_target_value,
@@ -183,17 +209,17 @@ private fun WeatherSummaryLine(weather: CanyonWeather?, isLoading: Boolean, erro
             horizontalArrangement = Arrangement.spacedBy(6.dp),
         ) {
             WeatherCompactTile(
-                label = stringResource(R.string.weather_last_72h),
+                label = stringResource(R.string.weather_compact_past_72h),
                 value = formatMillimeters(weather.past72HoursPrecipitationMm),
                 modifier = Modifier.weight(1f),
             )
             WeatherCompactTile(
-                label = stringResource(R.string.weather_next_48h),
+                label = stringResource(R.string.weather_compact_next_48h),
                 value = formatMillimeters(weather.next48HoursPrecipitationMm),
                 modifier = Modifier.weight(1f),
             )
             WeatherCompactTile(
-                label = stringResource(R.string.weather_probability_next_24h),
+                label = stringResource(R.string.weather_compact_rain_chance),
                 value = formatProbability(weather.maxPrecipitationProbabilityNext24Hours),
                 modifier = Modifier.weight(1f),
             )

@@ -18,6 +18,8 @@ import javax.inject.Singleton
 
 @Singleton
 class FakeDebitPredictionRepository @Inject constructor() : DebitPredictionRepository {
+    override suspend fun getCachedPredictions(canyonId: Int): CanyonDebitPredictions? = null
+
     override suspend fun getPredictions(detail: CanyonDetail): Result<CanyonDebitPredictions> = Result.success(
         CanyonDebitPredictions(
             target = WeatherTarget(

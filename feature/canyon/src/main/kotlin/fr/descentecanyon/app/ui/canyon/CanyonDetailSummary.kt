@@ -109,7 +109,8 @@ internal fun SummaryCard(detail: CanyonDetail, onPersistedPhotoMissing: (Long) -
                             CotationBadge(cotation = canyon.cotation)
                         }
                         canyon.interet?.let { interest ->
-                            InterestStars(interest = interest)
+                            // Over the photo scrim: light text, readable on any picture.
+                            InterestStars(interest = interest, textColor = colors.snow, emptyStarColor = colors.snow.copy(alpha = 0.6f))
                         }
                     }
                     Text(
@@ -182,6 +183,29 @@ private fun SummaryStatsGrid(detail: CanyonDetail, modifier: Modifier = Modifier
         SummaryStat(stringResource(R.string.return_time), canyon.tempsRetour),
     ).filter { !it.value.isNullOrBlank() }
 
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        if (parcoursStats.isNotEmpty()) {
+            SummaryMetricSection(
+                title = stringResource(R.string.canyon_summary_parcours),
+                stats = parcoursStats,
+            )
+        }
+        if (timeStats.isNotEmpty()) {
+            SummaryMetricSection(
+                title = stringResource(R.string.canyon_summary_timing),
+                stats = timeStats,
+            )
+        }
+    }
+}
+
+/** Where the canyon is: reference information, shown at the top of the topo. */
+@Composable
+internal fun LocationCard(detail: CanyonDetail, modifier: Modifier = Modifier) {
+    val canyon = detail.canyon
     val locationStats = listOf(
         SummaryStat(
             stringResource(R.string.communes),
@@ -197,29 +221,16 @@ private fun SummaryStatsGrid(detail: CanyonDetail, modifier: Modifier = Modifier
         ),
         SummaryStat(stringResource(R.string.watercourse), canyon.coursEau),
     ).filter { !it.value.isNullOrBlank() }
+    if (locationStats.isEmpty()) return
 
-    Column(
+    DcCard(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        contentPadding = 16.dp,
     ) {
-        if (locationStats.isNotEmpty()) {
-            SummarySection(
-                title = stringResource(R.string.location),
-                stats = locationStats,
-            )
-        }
-        if (parcoursStats.isNotEmpty()) {
-            SummaryMetricSection(
-                title = stringResource(R.string.canyon_summary_parcours),
-                stats = parcoursStats,
-            )
-        }
-        if (timeStats.isNotEmpty()) {
-            SummaryMetricSection(
-                title = stringResource(R.string.canyon_summary_timing),
-                stats = timeStats,
-            )
-        }
+        SummarySection(
+            title = stringResource(R.string.location),
+            stats = locationStats,
+        )
     }
 }
 

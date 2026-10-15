@@ -131,11 +131,13 @@ class CanyonConditionsController @Inject constructor(
 
     private fun maybeLoadWeather(detail: CanyonDetail) {
         val current = _state.value
-        val shouldLoad = current.weather == null || current.weatherError != null
+        val shouldLoad = current.weather == null || current.weatherError != null ||
+            (current.weather.isFromCache && connectivityObserver.isCurrentlyOnline())
         if (!shouldLoad || current.isLoadingWeather) return
         if (!connectivityObserver.isCurrentlyOnline()) {
-            _state.update { it.copy(isLoadingWeather = false, weatherError = UiText.res(R.string.weather_load_error_network)) }
             PerformanceTrace.logEvent("canyon_weather_load_skipped", "canyonId" to detail.canyon.id, "reason" to "offline")
+            _state.update { it.copy(isLoadingWeather = true, weatherError = null) }
+            scope.launch { showCachedWeatherOr(detail.canyon.id, UiText.res(R.string.weather_load_error_network)) }
             return
         }
 
@@ -159,24 +161,34 @@ class CanyonConditionsController @Inject constructor(
                         "canyonId" to detail.canyon.id,
                         "error" to throwable::class.simpleName,
                     )
-                    _state.update {
-                        it.copy(
-                            weather = null,
-                            isLoadingWeather = false,
-                            weatherError = throwable.toUiText(
-                                fallback = R.string.weather_unavailable_now,
-                                connectivity = R.string.weather_load_error_network,
-                            ),
-                        )
-                    }
+                    showCachedWeatherOr(
+                        canyonId = detail.canyon.id,
+                        error = throwable.toUiText(
+                            fallback = R.string.weather_unavailable_now,
+                            connectivity = R.string.weather_load_error_network,
+                        ),
+                    )
                 },
             )
         }
     }
 
+    /** Without network, the last forecast downloaded for the canyon is better than nothing. */
+    private suspend fun showCachedWeatherOr(canyonId: Int, error: UiText) {
+        val cached = getCanyonWeatherUseCase.cached(canyonId)
+        _state.update {
+            if (cached != null) {
+                it.copy(weather = cached, isLoadingWeather = false, weatherError = null)
+            } else {
+                it.copy(weather = null, isLoadingWeather = false, weatherError = error)
+            }
+        }
+    }
+
     private fun maybeSchedulePredictions(detail: CanyonDetail) {
         val current = _state.value
-        val shouldLoad = current.predictions == null || current.predictionError != null
+        val shouldLoad = current.predictions == null || current.predictionError != null ||
+            (current.predictions.isFromCache && connectivityObserver.isCurrentlyOnline())
         if (!shouldLoad || current.isLoadingPredictions) return
 
         _state.update { it.copy(isLoadingPredictions = true, predictionError = null) }
@@ -186,9 +198,7 @@ class CanyonConditionsController @Inject constructor(
             delay(PREDICTION_LOAD_DELAY_MS)
             if (!connectivityObserver.isCurrentlyOnline()) {
                 PerformanceTrace.logEvent("canyon_predictions_load_skipped", "canyonId" to detail.canyon.id, "reason" to "offline")
-                _state.update {
-                    it.copy(isLoadingPredictions = false, predictionError = UiText.res(R.string.prediction_load_error_network))
-                }
+                showCachedPredictionsOr(detail.canyon.id, UiText.res(R.string.prediction_load_error_network))
                 return@launch
             }
             loadPredictions(detail)
@@ -214,18 +224,27 @@ class CanyonConditionsController @Inject constructor(
                     "canyonId" to detail.canyon.id,
                     "error" to throwable::class.simpleName,
                 )
-                _state.update {
-                    it.copy(
-                        predictions = null,
-                        isLoadingPredictions = false,
-                        predictionError = throwable.toUiText(
-                            fallback = R.string.prediction_unavailable_now,
-                            connectivity = R.string.prediction_load_error_network,
-                        ),
-                    )
-                }
+                showCachedPredictionsOr(
+                    canyonId = detail.canyon.id,
+                    error = throwable.toUiText(
+                        fallback = R.string.prediction_unavailable_now,
+                        connectivity = R.string.prediction_load_error_network,
+                    ),
+                )
             },
         )
+    }
+
+    /** Without network, the last estimate computed for the canyon still covers today. */
+    private suspend fun showCachedPredictionsOr(canyonId: Int, error: UiText) {
+        val cached = getCanyonDebitPredictionsUseCase.cached(canyonId)
+        _state.update {
+            if (cached != null) {
+                it.copy(predictions = cached, isLoadingPredictions = false, predictionError = null)
+            } else {
+                it.copy(predictions = null, isLoadingPredictions = false, predictionError = error)
+            }
+        }
     }
 
     private companion object {

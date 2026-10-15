@@ -6,16 +6,12 @@ import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchResultSet
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
+import fr.descentecanyon.app.domain.model.haversineKm
 import fr.descentecanyon.app.domain.model.matches
 import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.model.subdivisionsFor
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import javax.inject.Inject
-import kotlin.math.asin
-import kotlin.math.cos
-import kotlin.math.pow
-import kotlin.math.sin
-import kotlin.math.sqrt
 
 class SearchCanyonsUseCase @Inject constructor(private val canyonRepository: CanyonRepository) {
     fun observeCatalog() = canyonRepository.observeSearchCatalog()
@@ -230,16 +226,6 @@ class SearchCanyonsUseCase @Inject constructor(private val canyonRepository: Can
             else -> return sorted.reversed()
         }
         return known.reversed() + unknown
-    }
-
-    private fun haversineKm(latitude: Double, longitude: Double, targetLatitude: Double, targetLongitude: Double): Double {
-        val earthRadiusKm = 6371.0
-        val latDistance = Math.toRadians(targetLatitude - latitude)
-        val lonDistance = Math.toRadians(targetLongitude - longitude)
-        val a = sin(latDistance / 2).pow(2.0) +
-            cos(Math.toRadians(latitude)) * cos(Math.toRadians(targetLatitude)) *
-            sin(lonDistance / 2).pow(2.0)
-        return 2 * earthRadiusKm * asin(sqrt(a))
     }
 }
 

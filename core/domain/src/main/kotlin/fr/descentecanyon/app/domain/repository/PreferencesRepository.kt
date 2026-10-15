@@ -2,6 +2,7 @@ package fr.descentecanyon.app.domain.repository
 
 import fr.descentecanyon.app.domain.model.ContributorIdentity
 import fr.descentecanyon.app.domain.model.HomeFeedType
+import fr.descentecanyon.app.domain.model.ReportZone
 import fr.descentecanyon.app.domain.model.ThemeMode
 import kotlinx.coroutines.flow.Flow
 
@@ -15,6 +16,11 @@ interface PreferencesRepository {
     suspend fun getContributorIdentity(): ContributorIdentity?
 
     suspend fun setContributorIdentity(identity: ContributorIdentity)
+
+    /** Area of the latest reports feed, kept between launches (null: every country). */
+    suspend fun getLatestReportsZone(): ReportZone?
+
+    suspend fun setLatestReportsZone(zone: ReportZone?)
 
     /** Current theme, readable synchronously so the first frame already uses it. */
     fun getThemeMode(): ThemeMode

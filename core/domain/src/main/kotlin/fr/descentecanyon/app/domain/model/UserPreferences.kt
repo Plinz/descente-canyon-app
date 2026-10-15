@@ -9,3 +9,6 @@ enum class ThemeMode {
     LIGHT,
     DARK,
 }
+
+/** Area chosen to filter the latest flow reports of the home screen. */
+data class ReportZone(val country: String, val department: String? = null)

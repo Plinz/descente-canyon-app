@@ -2,6 +2,7 @@ package fr.descentecanyon.app.testutil
 
 import fr.descentecanyon.app.domain.model.ContributorIdentity
 import fr.descentecanyon.app.domain.model.HomeFeedType
+import fr.descentecanyon.app.domain.model.ReportZone
 import fr.descentecanyon.app.domain.model.ThemeMode
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import kotlinx.coroutines.flow.Flow
@@ -12,6 +13,7 @@ class FakePreferencesRepository(
     var selectedHomeFeed: HomeFeedType? = null,
     var contributorIdentity: ContributorIdentity? = null,
     themeMode: ThemeMode = ThemeMode.SYSTEM,
+    var latestReportsZone: ReportZone? = null,
 ) : PreferencesRepository {
 
     private val themeModeState = MutableStateFlow(themeMode)
@@ -26,6 +28,12 @@ class FakePreferencesRepository(
 
     override suspend fun setContributorIdentity(identity: ContributorIdentity) {
         contributorIdentity = identity
+    }
+
+    override suspend fun getLatestReportsZone(): ReportZone? = latestReportsZone
+
+    override suspend fun setLatestReportsZone(zone: ReportZone?) {
+        latestReportsZone = zone
     }
 
     override fun getThemeMode(): ThemeMode = themeModeState.value

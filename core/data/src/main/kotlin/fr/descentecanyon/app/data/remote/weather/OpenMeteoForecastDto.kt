@@ -4,7 +4,13 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class OpenMeteoForecastDto(val latitude: Double, val longitude: Double, val timezone: String, val hourly: HourlyForecastDto? = null)
+data class OpenMeteoForecastDto(
+    val latitude: Double,
+    val longitude: Double,
+    val timezone: String,
+    val hourly: HourlyForecastDto? = null,
+    val daily: DailyForecastDto? = null,
+)
 
 @Serializable
 data class HourlyForecastDto(

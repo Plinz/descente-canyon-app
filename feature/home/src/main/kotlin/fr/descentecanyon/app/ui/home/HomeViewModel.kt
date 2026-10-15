@@ -9,6 +9,7 @@ import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.ForumActiveTopic
 import fr.descentecanyon.app.domain.model.ForumCategory
 import fr.descentecanyon.app.domain.model.HomeFeedType
+import fr.descentecanyon.app.domain.model.ReportZone
 import fr.descentecanyon.app.domain.model.forumCategoryKey
 import fr.descentecanyon.app.domain.model.subdivisionsFor
 import fr.descentecanyon.app.domain.repository.CanyonRepository
@@ -92,6 +93,7 @@ class HomeViewModel @Inject constructor(
     private var activeTopicsJob: Job? = null
     private var previousOnline: Boolean? = null
     private var hasUserSelectedFeed = false
+    private var hasUserSelectedZone = false
     private var allLatestDebits: List<Debit> = emptyList()
     private var searchCatalog: List<CanyonSearchItem> = emptyList()
     private var visibleDebitLimit = LATEST_DEBITS_PAGE_SIZE
@@ -181,6 +183,7 @@ class HomeViewModel @Inject constructor(
                 ),
             ).withDebitPresentation()
         }
+        saveReportZone()
     }
 
     fun selectDebitDepartment(department: String?) {
@@ -193,6 +196,7 @@ class HomeViewModel @Inject constructor(
                 debitGeoFilter = state.debitGeoFilter.copy(selectedDepartment = selectedDepartment),
             ).withDebitPresentation()
         }
+        saveReportZone()
     }
 
     fun clearDebitGeoFilter() {
@@ -205,6 +209,15 @@ class HomeViewModel @Inject constructor(
                 ),
             ).withDebitPresentation()
         }
+        saveReportZone()
+    }
+
+    /** The area is kept: most users look at the reports of the same department every time. */
+    private fun saveReportZone() {
+        hasUserSelectedZone = true
+        val filter = uiState.value.debitGeoFilter
+        val zone = filter.selectedCountry?.let { ReportZone(country = it, department = filter.selectedDepartment) }
+        viewModelScope.launch { preferencesRepository.setLatestReportsZone(zone) }
     }
 
     fun loadMoreDebits() {
@@ -216,6 +229,7 @@ class HomeViewModel @Inject constructor(
     private fun restoreHomeState() {
         viewModelScope.launch {
             val restoredSelectedFeed = preferencesRepository.getSelectedHomeFeed() ?: HomeFeedType.DEBITS
+            val restoredZone = preferencesRepository.getLatestReportsZone()
             val cachedDebits = debitRepository.getCachedLatestDebits(LATEST_DEBITS_CACHE_LIMIT)
             val cachedTopics = forumRepository.getCachedActiveTopics(ACTIVE_TOPICS_LIMIT)
             val cachedForumCategories = forumRepository.getCachedCategories()
@@ -247,6 +261,11 @@ class HomeViewModel @Inject constructor(
                     forumFilter = state.forumFilter.copy(
                         availableCategories = cachedForumCategories.items,
                     ),
+                    debitGeoFilter = if (hasUserSelectedZone || restoredZone == null) {
+                        state.debitGeoFilter
+                    } else {
+                        state.debitGeoFilter.copy(selectedCountry = restoredZone.country, selectedDepartment = restoredZone.department)
+                    },
                 ).withDebitPresentation().withForumPresentation()
             }
 

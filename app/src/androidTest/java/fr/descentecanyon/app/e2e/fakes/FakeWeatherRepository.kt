@@ -11,6 +11,8 @@ import javax.inject.Singleton
 
 @Singleton
 class FakeWeatherRepository @Inject constructor() : WeatherRepository {
+    override suspend fun getCachedCanyonWeather(canyonId: Int): CanyonWeather? = null
+
     override suspend fun getCanyonWeather(detail: CanyonDetail): Result<CanyonWeather> = Result.success(
         CanyonWeather(
             target = WeatherTarget(

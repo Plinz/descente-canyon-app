@@ -11,7 +11,11 @@ estimer le débit probable d'un canyon pour les trois prochains jours.
 - Données personnelles locales : favoris avec leur dernier débit connu, canyons consultés récemment, notes
   personnelles par canyon, nom et e-mail du dernier signalement.
 - Estimation du débit par un modèle ONNX exécuté sur l'appareil (météo Open-Meteo, pluviomètres Météo-France et
-  MeteoSwiss, état hydrologique simulé). Voir [docs/debit-prediction-model.md](docs/debit-prediction-model.md).
+  MeteoSwiss, état hydrologique simulé), affichée en fourchette quand le modèle hésite entre deux niveaux. Voir
+  [docs/debit-prediction-model.md](docs/debit-prediction-model.md).
+- Fiche canyon orientée décision : prévisions sur 6 jours avec alerte orage, lever et coucher du soleil, canyons à
+  moins de 30 km avec leur dernier débit connu (plan B), répartition des débits signalés selon le mois. Les dernières
+  prévisions et estimations téléchargées restent affichées hors ligne.
 
 > Le site ne propose pas d'API : l'application lit ses pages HTML. Toute évolution de leur structure peut casser une
 > fonctionnalité ; l'erreur `SiteFormatChanged` le signale explicitement à l'utilisateur.
@@ -63,7 +67,7 @@ Une fiche dont le contenu a plus de 30 jours est rafraîchie depuis le site quan
 ## Prérequis
 
 - JDK 25 (le démon Gradle le demande via `gradle/gradle-daemon-jvm.properties`)
-- Android SDK avec la plateforme 36
+- Android SDK avec la plateforme 37 (compileSdk ; l'application cible Android 16, API 36)
 - Python 3 dans le `PATH` (`python3` ou `python`, sinon `-PpythonBinary=...`) : le build génère le catalogue embarqué
   et les index du modèle à partir de `offline-data/` et `modele_statistique/`
 
