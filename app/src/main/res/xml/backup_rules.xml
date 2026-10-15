@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Legacy full backup (API 28 and below). Exclude encrypted auth prefs. -->
+<!--
+    Legacy full backup (API 30 and below). Same rules as data_extraction_rules.xml: keep user data,
+    leave out the encrypted auth prefs and the files rebuilt from the APK (catalogue, model), which
+    would exceed the 25 MB quota and cancel the backup.
+-->
 <full-backup-content>
     <exclude domain="sharedpref" path="dc_auth_prefs.xml" />
+    <exclude domain="database" path="catalog.db" />
+    <exclude domain="database" path="catalog.db-wal" />
+    <exclude domain="database" path="catalog.db-shm" />
+    <exclude domain="database" path="catalog.db-journal" />
+    <exclude domain="file" path="debit-model-cache" />
 </full-backup-content>

@@ -1,10 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Auto-backup / device-to-device (API 30+). Exclude encrypted auth prefs. -->
+<!--
+    Auto-backup / device-to-device (API 31+).
+    Backed up: user.db (favorites, reports waiting to be sent, caches) and preferences.
+    Excluded: encrypted auth prefs (their key stays in the Keystore), and files rebuilt from the APK:
+    the catalogue (39 MB) and the extracted prediction model would exceed the 25 MB backup quota,
+    which makes Android skip the whole backup.
+-->
 <data-extraction-rules>
     <cloud-backup>
         <exclude domain="sharedpref" path="dc_auth_prefs.xml" />
+        <exclude domain="database" path="catalog.db" />
+        <exclude domain="database" path="catalog.db-wal" />
+        <exclude domain="database" path="catalog.db-shm" />
+        <exclude domain="database" path="catalog.db-journal" />
+        <exclude domain="file" path="debit-model-cache" />
     </cloud-backup>
     <device-transfer>
         <exclude domain="sharedpref" path="dc_auth_prefs.xml" />
+        <exclude domain="database" path="catalog.db" />
+        <exclude domain="database" path="catalog.db-wal" />
+        <exclude domain="database" path="catalog.db-shm" />
+        <exclude domain="database" path="catalog.db-journal" />
+        <exclude domain="file" path="debit-model-cache" />
     </device-transfer>
 </data-extraction-rules>
