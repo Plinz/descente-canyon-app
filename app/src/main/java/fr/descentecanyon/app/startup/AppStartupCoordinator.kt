@@ -7,6 +7,7 @@ import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.error.toAppError
 import fr.descentecanyon.app.domain.repository.AuthRepository
+import fr.descentecanyon.app.outing.OutingReminderScheduler
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.sync.NotificationSyncScheduler
 import fr.descentecanyon.app.sync.PendingDebitSyncScheduler
@@ -29,6 +30,7 @@ class AppStartupCoordinator @Inject constructor(
     private val legacyPhotoStorageMigrator: LegacyPhotoStorageMigrator,
     private val notificationSyncScheduler: NotificationSyncScheduler,
     private val pendingDebitSyncScheduler: PendingDebitSyncScheduler,
+    private val outingReminderScheduler: OutingReminderScheduler,
     private val connectivityObserver: ConnectivityObserver,
 ) {
 
@@ -80,6 +82,7 @@ class AppStartupCoordinator @Inject constructor(
 
             notificationSyncScheduler.start()
             pendingDebitSyncScheduler.start()
+            outingReminderScheduler.start()
             initialized = true
             PerformanceTrace.logEvent("startup_initialize_marked_ready")
             backgroundScope.launch {

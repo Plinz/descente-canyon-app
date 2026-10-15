@@ -36,6 +36,7 @@ import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.ui.components.CotationBadge
 import fr.descentecanyon.app.ui.components.ForbiddenBadge
 import fr.descentecanyon.app.ui.components.InterestStars
+import fr.descentecanyon.app.ui.components.canyonDurationText
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
 import fr.descentecanyon.app.ui.design.DcMetricTile
@@ -178,9 +179,9 @@ private fun SummaryStatsGrid(detail: CanyonDetail, modifier: Modifier = Modifier
     ).filter { !it.value.isNullOrBlank() }
 
     val timeStats = listOf(
-        SummaryStat(stringResource(R.string.approach_time), canyon.tempsApproche),
-        SummaryStat(stringResource(R.string.descent_time), canyon.tempsDescente),
-        SummaryStat(stringResource(R.string.return_time), canyon.tempsRetour),
+        SummaryStat(stringResource(R.string.approach_time), canyonDurationText(canyon.tempsApproche)),
+        SummaryStat(stringResource(R.string.descent_time), canyonDurationText(canyon.tempsDescente)),
+        SummaryStat(stringResource(R.string.return_time), canyonDurationText(canyon.tempsRetour)),
     ).filter { !it.value.isNullOrBlank() }
 
     Column(

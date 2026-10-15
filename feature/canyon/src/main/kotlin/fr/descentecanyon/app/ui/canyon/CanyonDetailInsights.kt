@@ -44,6 +44,7 @@ import fr.descentecanyon.app.domain.usecase.GetNearbyCanyonsUseCase
 import fr.descentecanyon.app.ui.components.DebitBadge
 import fr.descentecanyon.app.ui.components.debitLevelColor
 import fr.descentecanyon.app.ui.components.debitLevelLabel
+import fr.descentecanyon.app.ui.components.debitRangeWord
 import fr.descentecanyon.app.ui.components.relativeDayLabel
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcRiskBadge
@@ -285,22 +286,11 @@ private fun LegendDot(level: NiveauDebit) {
                 .background(debitLevelColor(level)),
         )
         Text(
-            text = shortDebitLevelLabel(level),
+            text = debitRangeWord(level),
             style = MaterialTheme.typography.labelSmall,
             maxLines = 1,
         )
     }
-}
-
-@Composable
-private fun shortDebitLevelLabel(level: NiveauDebit): String = when (level) {
-    NiveauDebit.SEC -> stringResource(R.string.prediction_range_level_sec)
-    NiveauDebit.FILET -> stringResource(R.string.prediction_range_level_filet)
-    NiveauDebit.CORRECT -> stringResource(R.string.prediction_range_level_correct)
-    NiveauDebit.GROS -> stringResource(R.string.prediction_range_level_gros)
-    NiveauDebit.TRES_GROS -> stringResource(R.string.prediction_range_level_tres_gros)
-    NiveauDebit.CRUE -> stringResource(R.string.prediction_range_level_crue)
-    NiveauDebit.INCONNU -> stringResource(R.string.debit_level_inconnu)
 }
 
 internal fun formatDistanceKm(distanceKm: Double, locale: Locale): String = if (distanceKm < 10.0) {

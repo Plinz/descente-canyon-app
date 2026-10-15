@@ -130,8 +130,21 @@ fun loadCurrentDeviceLocation(context: Context, onLocation: (Double, Double) -> 
  * Observes the foreground device position. Call the returned function as soon as the map leaves
  * composition so GPS updates do not continue in the background.
  */
+fun observeDeviceLocation(context: Context, onLocation: (Double, Double) -> Unit, onUnavailable: () -> Unit = {}): () -> Unit =
+    observeDeviceFixes(context, onFix = { fix -> onLocation(fix.latitude, fix.longitude) }, onUnavailable = onUnavailable)
+
+/** A position given by the device, with what rescuers need besides the coordinates. */
+data class DeviceFix(
+    val latitude: Double,
+    val longitude: Double,
+    val accuracyMeters: Float?,
+    val altitudeMeters: Double?,
+    val timeEpochMs: Long,
+)
+
+/** Like [observeDeviceLocation], with the accuracy and altitude of each fix. */
 @SuppressLint("MissingPermission")
-fun observeDeviceLocation(context: Context, onLocation: (Double, Double) -> Unit, onUnavailable: () -> Unit = {}): () -> Unit {
+fun observeDeviceFixes(context: Context, onFix: (DeviceFix) -> Unit, onUnavailable: () -> Unit = {}): () -> Unit {
     if (!context.hasLocationPermission()) {
         onUnavailable()
         return {}
@@ -147,7 +160,15 @@ fun observeDeviceLocation(context: Context, onLocation: (Double, Double) -> Unit
     val callback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             result.lastLocation?.let { location ->
-                onLocation(location.latitude, location.longitude)
+                onFix(
+                    DeviceFix(
+                        latitude = location.latitude,
+                        longitude = location.longitude,
+                        accuracyMeters = location.accuracy.takeIf { location.hasAccuracy() },
+                        altitudeMeters = location.altitude.takeIf { location.hasAltitude() },
+                        timeEpochMs = location.time,
+                    ),
+                )
             }
         }
     }

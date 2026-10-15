@@ -8,10 +8,13 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import dagger.hilt.android.testing.HiltAndroidRule
+import fr.descentecanyon.app.domain.repository.OutingRepository
+import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.e2e.fakes.E2eFixtureState
 import fr.descentecanyon.app.e2e.fakes.FakeConnectivityObserver
 import fr.descentecanyon.app.ui.MainActivity
 import javax.inject.Inject
+import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -27,12 +30,23 @@ abstract class BaseE2eTest {
     @Inject
     lateinit var fakeConnectivityObserver: FakeConnectivityObserver
 
+    @Inject
+    lateinit var preferencesRepository: PreferencesRepository
+
+    @Inject
+    lateinit var outingRepository: OutingRepository
+
     private var scenario: ActivityScenario<MainActivity>? = null
 
     @Before
     open fun setUp() {
         hiltRule.inject()
         E2eFixtureState.reset()
+        // Local repositories are real and share the app's data: state left by a manual run must not leak in.
+        runBlocking {
+            preferencesRepository.setLatestReportsZone(null)
+            outingRepository.clear()
+        }
         fakeConnectivityObserver.setOnline(true)
         launchMainActivity()
     }

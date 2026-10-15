@@ -17,6 +17,7 @@ import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import fr.descentecanyon.app.domain.repository.ForumRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
+import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.testutil.FakePreferencesRepository
 import fr.descentecanyon.app.testutil.MainDispatcherRule
 import io.mockk.coEvery
@@ -28,6 +29,7 @@ import java.time.LocalDate
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -47,6 +49,9 @@ class HomeViewModelTest {
     private val connectivityObserver = mockk<ConnectivityObserver>()
     private val notificationCenterRepository = mockk<NotificationCenterRepository>()
     private val preferences = FakePreferencesRepository()
+    private val outingRepository = mockk<OutingRepository>(relaxUnitFun = true) {
+        every { observeCurrent() } returns flowOf(null)
+    }
     private val pendingDebitCount = MutableStateFlow(0)
     private val debitSubmissionRepository = mockk<DebitSubmissionRepository> {
         every { observePendingCount() } returns pendingDebitCount
@@ -359,6 +364,7 @@ class HomeViewModelTest {
             preferencesRepository = preferences,
             notificationCenterRepository = notificationCenterRepository,
             debitSubmissionRepository = debitSubmissionRepository,
+            outingRepository = outingRepository,
         )
     }
 

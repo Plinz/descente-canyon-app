@@ -14,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.FilterList
+import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material.icons.filled.WifiOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -26,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -34,12 +36,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.HomeFeedType
+import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Composable
 internal fun HomeFeedBanner(
@@ -296,6 +300,44 @@ internal fun PendingDebitsBanner(count: Int, onClick: () -> Unit, modifier: Modi
             )
             TextButton(onClick = onClick) {
                 Text(stringResource(R.string.pending_debits_view))
+            }
+        }
+    }
+}
+
+/** The announced outing, until the user says they are back; the end reminder offers to report the flow. */
+@Composable
+internal fun ActiveOutingCard(
+    outing: PlannedOuting,
+    onOpen: () -> Unit,
+    onBack: () -> Unit,
+    onEmergency: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val locale = LocalLocale.current.platformLocale
+    val zone = ZoneId.systemDefault()
+    val start = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(locale).format(outing.start.atZone(zone))
+    val back = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale).format(outing.expectedBack.atZone(zone))
+    DcCard(
+        variant = DcCardVariant.Condition,
+        onClick = onOpen,
+        modifier = modifier
+            .fillMaxWidth()
+            .testTag(TestTags.HOME_ACTIVE_OUTING),
+    ) {
+        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Icon(Icons.Default.Hiking, contentDescription = null)
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(outing.canyonName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.outing_active_summary, start, back), style = MaterialTheme.typography.bodySmall)
+                }
+            }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                TextButton(onClick = onBack) { Text(stringResource(R.string.outing_end_action)) }
+                TextButton(onClick = onEmergency) {
+                    Text(stringResource(R.string.outing_emergency_action), color = MaterialTheme.colorScheme.error)
+                }
             }
         }
     }

@@ -9,6 +9,7 @@ import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.ForumActiveTopic
 import fr.descentecanyon.app.domain.model.ForumCategory
 import fr.descentecanyon.app.domain.model.HomeFeedType
+import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.ReportZone
 import fr.descentecanyon.app.domain.model.forumCategoryKey
 import fr.descentecanyon.app.domain.model.subdivisionsFor
@@ -17,6 +18,7 @@ import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import fr.descentecanyon.app.domain.repository.ForumRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
+import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import java.net.ConnectException
 import java.net.SocketTimeoutException
@@ -73,6 +75,8 @@ data class HomeUiState(
     val followedForumThreadIds: Set<Int> = emptySet(),
     /** Debit reports written offline and not sent yet. */
     val pendingDebitCount: Int = 0,
+    /** The outing the user announced, until they are back. */
+    val activeOuting: PlannedOuting? = null,
 )
 
 @HiltViewModel
@@ -84,6 +88,7 @@ class HomeViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
     private val notificationCenterRepository: NotificationCenterRepository,
     private val debitSubmissionRepository: DebitSubmissionRepository,
+    private val outingRepository: OutingRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -104,7 +109,19 @@ class HomeViewModel @Inject constructor(
         observeSearchCatalog()
         observeTrackedForumCategories()
         observePendingDebits()
+        observeActiveOuting()
         restoreHomeState()
+    }
+
+    private fun observeActiveOuting() {
+        viewModelScope.launch {
+            outingRepository.observeCurrent().collect { outing -> _uiState.update { it.copy(activeOuting = outing) } }
+        }
+    }
+
+    /** "I'm back": the reminder is cancelled. */
+    fun endOuting() {
+        viewModelScope.launch { outingRepository.clear() }
     }
 
     private fun observePendingDebits() {

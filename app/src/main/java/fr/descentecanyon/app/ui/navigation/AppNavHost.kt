@@ -26,6 +26,8 @@ import fr.descentecanyon.app.ui.home.HomeScreen
 import fr.descentecanyon.app.ui.interest.InterestRatingFormScreen
 import fr.descentecanyon.app.ui.map.MapScreen
 import fr.descentecanyon.app.ui.notifications.NotificationCenterScreen
+import fr.descentecanyon.app.ui.outing.EmergencyScreen
+import fr.descentecanyon.app.ui.outing.OutingPlanScreen
 import fr.descentecanyon.app.ui.pending.PendingDebitsScreen
 import fr.descentecanyon.app.ui.search.SearchScreen
 import fr.descentecanyon.app.ui.settings.SettingsScreen
@@ -66,6 +68,10 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onPendingDebitsClick = {
                     navController.navigateSingleTop(Screen.PendingDebits)
                 },
+                onOutingClick = { canyonId -> navController.navigateSingleTop(Screen.OutingPlan(canyonId)) },
+                // Back from the outing: the flow seen is the most useful report.
+                onOutingEnded = { canyonId -> navController.navigateSingleTop(Screen.DebitForm(canyonId)) },
+                onEmergencyClick = { canyonId -> navController.navigateSingleTop(Screen.Emergency(canyonId)) },
                 onSettingsClick = {
                     navController.navigateSingleTop(Screen.Settings)
                 },
@@ -138,6 +144,8 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onUserClick = { username -> navController.navigateSingleTop(Screen.UserProfile(username.normalizeForSearch())) },
                 // Not single top: another canyon is pushed so "back" returns to this one.
                 onOpenCanyon = { canyonId -> navController.navigate(Screen.CanyonDetail(canyonId)) },
+                onPlanOuting = { navController.navigateSingleTop(Screen.OutingPlan(detail.canyonId)) },
+                onOpenEmergency = { navController.navigateSingleTop(Screen.Emergency(detail.canyonId)) },
                 openDebitsTabInitially = detail.openDebitsTab,
                 contentPadding = topLevelContentPadding,
                 refreshDebitsAfterSubmission = refreshDebitsAfterSubmission,
@@ -220,6 +228,18 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onOpenPendingDebits = { navController.navigateSingleTop(Screen.PendingDebits) },
                 contentPadding = topLevelContentPadding,
             )
+        }
+
+        composable<Screen.OutingPlan> {
+            OutingPlanScreen(
+                onBackClick = { navController.popBackStack() },
+                onOpenEmergency = { canyonId -> navController.navigateSingleTop(Screen.Emergency(canyonId)) },
+                onReportFlow = { canyonId -> navController.navigateSingleTop(Screen.DebitForm(canyonId)) },
+            )
+        }
+
+        composable<Screen.Emergency> {
+            EmergencyScreen(onBackClick = { navController.popBackStack() })
         }
 
         composable<Screen.PendingDebits> {

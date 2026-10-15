@@ -69,6 +69,9 @@ fun HomeScreen(
     onUsersClick: () -> Unit,
     onPendingDebitsClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
+    onOutingClick: (Int) -> Unit = {},
+    onOutingEnded: (Int) -> Unit = {},
+    onEmergencyClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     homeViewModel: HomeViewModel = hiltViewModel(),
@@ -195,6 +198,19 @@ fun HomeScreen(
             ) {
                 item { Spacer(modifier = Modifier.height(8.dp)) }
 
+                homeState.activeOuting?.let { outing ->
+                    item {
+                        ActiveOutingCard(
+                            outing = outing,
+                            onOpen = { onOutingClick(outing.canyonId) },
+                            onBack = {
+                                homeViewModel.endOuting()
+                                onOutingEnded(outing.canyonId)
+                            },
+                            onEmergency = { onEmergencyClick(outing.canyonId) },
+                        )
+                    }
+                }
                 if (homeState.pendingDebitCount > 0) {
                     item {
                         PendingDebitsBanner(count = homeState.pendingDebitCount, onClick = onPendingDebitsClick)

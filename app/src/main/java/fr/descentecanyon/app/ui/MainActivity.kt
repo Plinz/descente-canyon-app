@@ -252,6 +252,13 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
                     }
                 }
 
+                is AppLaunchTarget.DebitForm -> {
+                    navController.navigate(Screen.CanyonDetail(target.canyonId)) {
+                        applyAppRootNavigation(navController.graph.findStartDestination().id)
+                    }
+                    navController.navigate(Screen.DebitForm(target.canyonId))
+                }
+
                 is AppLaunchTarget.CanyonDetail -> {
                     if (target.clearBackStack) {
                         navController.navigate(Screen.CanyonDetail(target.canyonId, target.openDebitsTab)) {

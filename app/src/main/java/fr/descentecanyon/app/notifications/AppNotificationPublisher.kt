@@ -58,8 +58,32 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
                 ).apply {
                     description = context.getString(R.string.notification_channel_contributions_body)
                 },
+                NotificationChannel(
+                    OUTINGS_CHANNEL_ID,
+                    context.getString(R.string.notification_channel_outings_title),
+                    NotificationManager.IMPORTANCE_DEFAULT,
+                ).apply {
+                    description = context.getString(R.string.notification_channel_outings_body)
+                },
             ),
         )
+    }
+
+    /** At the expected return of an outing: back safely? A report of the flow helps everyone. */
+    fun publishOutingEndReminder(canyonId: Int, canyonName: String): Boolean {
+        if (!canPostNotifications(OUTINGS_CHANNEL_ID)) return false
+        val name = canyonName.ifBlank { context.getString(R.string.canyon_fallback_title, canyonId) }
+        val body = context.getString(R.string.notification_outing_end_body, name)
+        val notification = NotificationCompat.Builder(context, OUTINGS_CHANNEL_ID)
+            .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+            .setContentTitle(context.getString(R.string.notification_outing_end_title))
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setAutoCancel(true)
+            .setContentIntent(debitFormPendingIntent(canyonId))
+            .build()
+        notifySafely(OUTING_END_NOTIFICATION_ID, notification)
+        return true
     }
 
     fun publishDebitEvents(events: List<TrackedActivityEvent>): Boolean {
@@ -234,6 +258,18 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         )
     }
 
+    private fun debitFormPendingIntent(canyonId: Int): PendingIntent {
+        val intent = Intent(context, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            .putLaunchTarget(AppLaunchTarget.DebitForm(canyonId))
+        return PendingIntent.getActivity(
+            context,
+            DEBIT_FORM_REQUEST_CODE_BASE + canyonId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+    }
+
     private fun notificationCenterPendingIntent(): PendingIntent {
         val intent = Intent(context, MainActivity::class.java)
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -303,11 +339,14 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         const val DEBIT_CHANNEL_ID = "debit_updates"
         const val FORUM_CHANNEL_ID = "forum_updates"
         const val CONTRIBUTIONS_CHANNEL_ID = "my_contributions"
+        const val OUTINGS_CHANNEL_ID = "outings"
         const val DEBIT_NOTIFICATION_ID = 2001
         const val FORUM_NOTIFICATION_ID = 2002
         const val DEBIT_REJECTED_NOTIFICATION_ID = 2003
         const val DEBIT_SENT_NOTIFICATION_ID = 2004
         const val PENDING_LOGIN_NOTIFICATION_ID = 2005
+        const val OUTING_END_NOTIFICATION_ID = 2006
+        const val DEBIT_FORM_REQUEST_CODE_BASE = 20_000_000
         const val APP_REQUEST_CODE = 10_001
         const val SECTION_REQUEST_CODE_BASE = 10_100
     }

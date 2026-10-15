@@ -16,6 +16,11 @@ estimer le débit probable d'un canyon pour les trois prochains jours.
 - Fiche canyon orientée décision : prévisions sur 6 jours avec alerte orage, lever et coucher du soleil, canyons à
   moins de 30 km avec leur dernier débit connu (plan B), répartition des débits signalés selon le mois. Les dernières
   prévisions et estimations téléchargées restent affichées hors ligne.
+- Préparation de sortie : horaires estimés d'après les temps de la fiche, marge avant le coucher du soleil (calculé
+  sur l'appareil), conditions du jour, message à envoyer à un proche (lieu, horaires, heure d'alerte, numéro
+  d'urgence, coordonnées des parkings) et rappel au retour pour signaler le débit observé.
+- Écran d'urgence hors ligne : numéros du pays du canyon, position GPS (décimale et degrés-minutes) à lire ou
+  envoyer par SMS, échappatoires et points de la fiche.
 
 > Le site ne propose pas d'API : l'application lit ses pages HTML. Toute évolution de leur structure peut casser une
 > fonctionnalité ; l'erreur `SiteFormatChanged` le signale explicitement à l'utilisateur.

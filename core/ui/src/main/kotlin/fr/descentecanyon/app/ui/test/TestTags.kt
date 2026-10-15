@@ -22,6 +22,18 @@ object TestTags {
     const val PENDING_DEBIT_DELETE_CONFIRM = "pending_debit_delete_confirm"
     const val DETAIL_NEARBY_SECTION = "detail_nearby_section"
     const val DETAIL_SEASONALITY = "detail_seasonality"
+    const val DETAIL_PLAN_OUTING = "detail_plan_outing"
+    const val OUTING_PLAN_LIST = "outing_plan_list"
+    const val OUTING_START_TIME = "outing_start_time"
+    const val OUTING_TIMELINE = "outing_timeline"
+    const val OUTING_DAYLIGHT = "outing_daylight"
+    const val OUTING_SHARE_BUTTON = "outing_share_button"
+    const val OUTING_SAVE_BUTTON = "outing_save_button"
+    const val OUTING_END_BUTTON = "outing_end_button"
+    const val OUTING_EMERGENCY_BUTTON = "outing_emergency_button"
+    const val HOME_ACTIVE_OUTING = "home_active_outing"
+    const val EMERGENCY_LIST = "emergency_list"
+    const val EMERGENCY_POSITION = "emergency_position"
 
     fun canyonCard(id: Int): String = "canyon_card_$id"
 
@@ -30,4 +42,6 @@ object TestTags {
     fun pendingDebitDelete(id: Long): String = "pending_debit_delete_$id"
 
     fun detailNearbyCanyon(id: Int): String = "detail_nearby_canyon_$id"
+
+    fun emergencyNumber(number: String): String = "emergency_number_$number"
 }

@@ -18,6 +18,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -34,6 +36,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -43,6 +46,8 @@ import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.NearbyCanyon
+import fr.descentecanyon.app.ui.design.DcOutdoorActionCard
+import fr.descentecanyon.app.ui.test.TestTags
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -75,6 +80,7 @@ internal fun CanyonDetailContent(
     onSavePersonalNote: (String) -> Unit = {},
     nearbyCanyons: List<NearbyCanyon> = emptyList(),
     onNearbyCanyonClick: (Int) -> Unit = {},
+    onPlanOuting: () -> Unit = {},
     bottomContentPadding: Dp = 0.dp,
 ) {
     var selectedTab by rememberSaveable(openDebitsTabInitially) {
@@ -114,6 +120,18 @@ internal fun CanyonDetailContent(
             SummaryCard(
                 detail = detail,
                 onPersistedPhotoMissing = onPersistedPhotoMissing,
+            )
+        }
+        item {
+            DcOutdoorActionCard(
+                title = stringResource(R.string.outing_plan_action),
+                hint = stringResource(R.string.outing_plan_action_hint),
+                icon = Icons.Default.Hiking,
+                onClick = onPlanOuting,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 4.dp)
+                    .testTag(TestTags.DETAIL_PLAN_OUTING),
             )
         }
         item {

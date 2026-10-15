@@ -8,6 +8,7 @@ import fr.descentecanyon.app.data.repository.CanyonNotesRepositoryImpl
 import fr.descentecanyon.app.data.repository.DebitPredictionSupportRepositoryImpl
 import fr.descentecanyon.app.data.repository.ForumUserRepositoryImpl
 import fr.descentecanyon.app.data.repository.NotificationCenterRepositoryImpl
+import fr.descentecanyon.app.data.repository.OutingRepositoryImpl
 import fr.descentecanyon.app.data.repository.PreferencesRepositoryImpl
 import fr.descentecanyon.app.data.repository.RecentCanyonsRepositoryImpl
 import fr.descentecanyon.app.di.RepositoryModule
@@ -24,6 +25,7 @@ import fr.descentecanyon.app.domain.repository.ForumRepository
 import fr.descentecanyon.app.domain.repository.ForumUserRepository
 import fr.descentecanyon.app.domain.repository.InterestRatingRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
+import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PhotoRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
@@ -98,4 +100,7 @@ object TestRepositoryModule {
 
     @Provides @Singleton
     fun provideCanyonNotesRepository(impl: CanyonNotesRepositoryImpl): CanyonNotesRepository = impl
+
+    @Provides @Singleton
+    fun provideOutingRepository(impl: OutingRepositoryImpl): OutingRepository = impl
 }

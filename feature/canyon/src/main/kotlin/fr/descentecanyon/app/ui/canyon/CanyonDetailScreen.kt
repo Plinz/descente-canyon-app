@@ -25,6 +25,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Emergency
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
@@ -88,6 +89,8 @@ fun CanyonDetailScreen(
     onOpenPhotoGallery: (Long) -> Unit,
     onUserClick: (String) -> Unit = {},
     onOpenCanyon: (Int) -> Unit = {},
+    onPlanOuting: () -> Unit = {},
+    onOpenEmergency: () -> Unit = {},
     openDebitsTabInitially: Boolean = false,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -214,6 +217,7 @@ fun CanyonDetailScreen(
                     CanyonMoreActions(
                         canyon = uiState.canyonDetail?.canyon,
                         onRateInterestClick = onRateInterestClick,
+                        onOpenEmergency = onOpenEmergency,
                     )
                 },
             )
@@ -288,6 +292,7 @@ fun CanyonDetailScreen(
                             personalNote = uiState.personalNote,
                             onSavePersonalNote = viewModel::savePersonalNote,
                             nearbyCanyons = uiState.nearbyCanyons,
+                            onPlanOuting = onPlanOuting,
                             onNearbyCanyonClick = onOpenCanyon,
                             bottomContentPadding = contentPadding.calculateBottomPadding() + 96.dp,
                             modifier = Modifier
@@ -355,7 +360,7 @@ private fun AddDebitIcon(contentDescription: String, modifier: Modifier = Modifi
 
 /** Less frequent actions, kept in a menu so the canyon name stays readable in the top bar. */
 @Composable
-private fun CanyonMoreActions(canyon: Canyon?, onRateInterestClick: () -> Unit) {
+private fun CanyonMoreActions(canyon: Canyon?, onRateInterestClick: () -> Unit, onOpenEmergency: () -> Unit) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     Box {
@@ -386,6 +391,14 @@ private fun CanyonMoreActions(canyon: Canyon?, onRateInterestClick: () -> Unit) 
                     },
                 )
             }
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.emergency_title)) },
+                leadingIcon = { Icon(Icons.Default.Emergency, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
+                onClick = {
+                    expanded = false
+                    onOpenEmergency()
+                },
+            )
             if (canyon?.url?.startsWith("https://") == true) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.open_on_site)) },

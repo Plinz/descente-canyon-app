@@ -48,9 +48,9 @@ import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.DailyDebitPrediction
-import fr.descentecanyon.app.domain.model.DebitLevelRange
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.PredictedDebitLevel
+import fr.descentecanyon.app.ui.components.debitRangeLabel
 import fr.descentecanyon.app.ui.theme.DebitCorrect
 import fr.descentecanyon.app.ui.theme.DebitFilet
 import fr.descentecanyon.app.ui.theme.DebitGros
@@ -281,28 +281,9 @@ private fun PredictionCompactTile(label: String, value: String, color: Color, mo
 }
 
 @Composable
-private fun predictionSummaryValue(prediction: DailyDebitPrediction): String = prediction.likelyRange()?.let { rangeLabel(it) }
+private fun predictionSummaryValue(prediction: DailyDebitPrediction): String = prediction.likelyRange()?.let { debitRangeLabel(it) }
     ?: prediction.ordinalLevel?.let { ordinalLevelTitle(it) }
     ?: levelLabel(prediction.level)
-
-/** "Correct à gros": the two levels the model hesitates between. */
-@Composable
-private fun rangeLabel(range: DebitLevelRange): String {
-    val locale = LocalLocale.current.platformLocale
-    return stringResource(R.string.prediction_range, rangeLevelWord(range.low), rangeLevelWord(range.high))
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
-}
-
-@Composable
-private fun rangeLevelWord(level: NiveauDebit): String = when (level) {
-    NiveauDebit.SEC -> stringResource(R.string.prediction_range_level_sec)
-    NiveauDebit.FILET -> stringResource(R.string.prediction_range_level_filet)
-    NiveauDebit.CORRECT -> stringResource(R.string.prediction_range_level_correct)
-    NiveauDebit.GROS -> stringResource(R.string.prediction_range_level_gros)
-    NiveauDebit.TRES_GROS -> stringResource(R.string.prediction_range_level_tres_gros)
-    NiveauDebit.CRUE -> stringResource(R.string.prediction_range_level_crue)
-    NiveauDebit.INCONNU -> stringResource(R.string.debit_level_inconnu)
-}
 
 @Composable
 private fun predictionSummaryColor(prediction: DailyDebitPrediction): Color =
@@ -334,7 +315,7 @@ private fun PredictionRow(prediction: DailyDebitPrediction, ordinalCutpoints: Li
             }
 
             Text(
-                text = prediction.likelyRange()?.let { rangeLabel(it) }
+                text = prediction.likelyRange()?.let { debitRangeLabel(it) }
                     ?: ordinalLevel?.let { ordinalLevelTitle(it) }
                     ?: levelLabel(prediction.level),
                 style = MaterialTheme.typography.titleSmall,

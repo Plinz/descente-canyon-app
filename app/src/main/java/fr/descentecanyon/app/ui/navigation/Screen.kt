@@ -51,4 +51,11 @@ sealed interface Screen {
 
     @Serializable
     data object Settings : Screen
+
+    @Serializable
+    data class OutingPlan(val canyonId: Int) : Screen
+
+    /** Emergency numbers, position and escape routes; [canyonId] 0 when opened outside a canyon. */
+    @Serializable
+    data class Emergency(val canyonId: Int = 0) : Screen
 }

@@ -417,6 +417,7 @@ dependencies {
     implementation(project(":feature:notifications"))
     implementation(project(":feature:users"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:outing"))
 
     // AndroidX Core
     implementation(libs.androidx.core.ktx)
