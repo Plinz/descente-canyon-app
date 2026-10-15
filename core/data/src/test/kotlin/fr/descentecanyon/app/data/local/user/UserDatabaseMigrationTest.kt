@@ -69,6 +69,34 @@ class UserDatabaseMigrationTest {
     }
 
     @Test
+    fun `version 2 keeps notes and gains the logbook, one entry per canyon and day`() = runTest {
+        createDatabase(schemaVersion = 2) { db ->
+            db.insert("canyon_notes", null, values("canyonId" to 7, "text" to "Corde 2x40", "updatedAt" to 1_000L))
+        }
+
+        val database = Room.databaseBuilder(context, UserDatabase::class.java, TEST_DATABASE)
+            .addMigrations(*UserDatabase.MIGRATIONS)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            assertEquals("Corde 2x40", database.canyonNoteDao().observe(7).first())
+            val repository = fr.descentecanyon.app.data.repository.LogbookRepositoryImpl(
+                database.logbookDao(),
+                java.time.Clock.fixed(java.time.Instant.EPOCH, java.time.ZoneOffset.UTC),
+            )
+            repository.add(7, "Riolan", java.time.LocalDate.of(2026, 7, 14), null)
+            repository.add(7, "Riolan", java.time.LocalDate.of(2026, 7, 14), "Débit correct")
+            repository.add(8, "Bollinette", java.time.LocalDate.of(2026, 8, 2), null)
+
+            val entries = repository.observeAll().first()
+            assertEquals(listOf(8, 7), entries.map { it.canyonId })
+            assertEquals("Débit correct", entries.last().note)
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
     fun `recently viewed canyons are trimmed to the most recent ones`() = runTest {
         val database = TestDatabases.user()
         try {

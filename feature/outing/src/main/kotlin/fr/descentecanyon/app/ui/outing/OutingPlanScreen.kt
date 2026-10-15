@@ -130,7 +130,7 @@ fun OutingPlanScreen(
                             scope.launch { snackbarHostState.showSnackbar(resources.getString(R.string.outing_saved, back)) }
                         },
                         onEnd = {
-                            viewModel.endOuting()
+                            viewModel.markBack()
                             scope.launch {
                                 val result = snackbarHostState.showSnackbar(
                                     message = resources.getString(R.string.outing_back_report_prompt),
@@ -139,7 +139,7 @@ fun OutingPlanScreen(
                                 if (result == SnackbarResult.ActionPerformed) state.canyon?.canyon?.id?.let(onReportFlow)
                             }
                         },
-                        onCancel = viewModel::endOuting,
+                        onCancel = viewModel::cancelOuting,
                     )
                 }
                 item {

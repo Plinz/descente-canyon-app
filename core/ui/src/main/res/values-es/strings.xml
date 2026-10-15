@@ -749,4 +749,39 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="duration_unknown">desconocida</string>
     <string name="duration_minutes">%1$d min</string>
     <string name="outing_conditions_forecast">%1$s, lluvia %2$s, de %3$s a %4$s</string>
+    <string name="logbook_title">Mis salidas</string>
+    <string name="logbook_card_title">Mi cuaderno</string>
+    <string name="logbook_card_empty">Aún no descendido</string>
+    <string name="logbook_card_last">Última vez el %1$s</string>
+    <string name="logbook_add_action">He descendido este barranco</string>
+    <string name="logbook_add_title">Añadir a mi cuaderno</string>
+    <string name="logbook_date">Fecha: %1$s</string>
+    <string name="logbook_change_date">Cambiar la fecha</string>
+    <string name="logbook_note_hint">Compañeros, caudal, recuerdos… (opcional)</string>
+    <string name="logbook_save">Añadir</string>
+    <string name="logbook_added_report_prompt">Añadido a su cuaderno. ¿Señalar también el caudal observado?</string>
+    <string name="logbook_delete">Quitar del cuaderno</string>
+    <string name="logbook_empty_title">Su cuaderno está vacío</string>
+    <string name="logbook_empty_body">Anote sus salidas desde la ficha de un barranco, o con «He vuelto» tras una salida preparada. El cuaderno se queda en este teléfono.</string>
+    <string name="logbook_open_action">Mis salidas</string>
+    <plurals name="logbook_card_count">
+        <item quantity="one">Descendido %1$d vez</item>
+        <item quantity="many">Descendido %1$d veces</item>
+        <item quantity="other">Descendido %1$d veces</item>
+    </plurals>
+    <plurals name="logbook_stats">
+        <item quantity="one">%1$d salida</item>
+        <item quantity="many">%1$d salidas</item>
+        <item quantity="other">%1$d salidas</item>
+    </plurals>
+    <plurals name="logbook_stats_canyons">
+        <item quantity="one">%1$d barranco</item>
+        <item quantity="many">%1$d barrancos</item>
+        <item quantity="other">%1$d barrancos</item>
+    </plurals>
+    <plurals name="logbook_stats_year">
+        <item quantity="one">%1$d este año</item>
+        <item quantity="many">%1$d este año</item>
+        <item quantity="other">%1$d este año</item>
+    </plurals>
 </resources>

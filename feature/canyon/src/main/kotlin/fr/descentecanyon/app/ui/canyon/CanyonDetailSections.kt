@@ -45,9 +45,11 @@ import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.Debit
+import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.NearbyCanyon
 import fr.descentecanyon.app.ui.design.DcOutdoorActionCard
 import fr.descentecanyon.app.ui.test.TestTags
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -81,6 +83,9 @@ internal fun CanyonDetailContent(
     nearbyCanyons: List<NearbyCanyon> = emptyList(),
     onNearbyCanyonClick: (Int) -> Unit = {},
     onPlanOuting: () -> Unit = {},
+    logbook: List<LogbookEntry> = emptyList(),
+    onAddToLogbook: (LocalDate, String?) -> Unit = { _, _ -> },
+    onReportFlow: () -> Unit = {},
     bottomContentPadding: Dp = 0.dp,
 ) {
     var selectedTab by rememberSaveable(openDebitsTabInitially) {
@@ -136,6 +141,9 @@ internal fun CanyonDetailContent(
         }
         item {
             PersonalNoteCard(note = personalNote, onSave = onSavePersonalNote)
+        }
+        item {
+            CanyonLogbookCard(entries = logbook, onAdd = onAddToLogbook, onReportFlow = onReportFlow)
         }
         if (edfStatusSourceUrl != null) {
             item {

@@ -27,6 +27,7 @@ import fr.descentecanyon.app.ui.interest.InterestRatingFormScreen
 import fr.descentecanyon.app.ui.map.MapScreen
 import fr.descentecanyon.app.ui.notifications.NotificationCenterScreen
 import fr.descentecanyon.app.ui.outing.EmergencyScreen
+import fr.descentecanyon.app.ui.outing.LogbookScreen
 import fr.descentecanyon.app.ui.outing.OutingPlanScreen
 import fr.descentecanyon.app.ui.pending.PendingDebitsScreen
 import fr.descentecanyon.app.ui.search.SearchScreen
@@ -117,6 +118,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onCanyonClick = { canyonId ->
                     navController.navigateSingleTop(Screen.CanyonDetail(canyonId))
                 },
+                onLogbookClick = { navController.navigateSingleTop(Screen.Logbook) },
                 contentPadding = topLevelContentPadding,
             )
         }
@@ -235,6 +237,13 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onBackClick = { navController.popBackStack() },
                 onOpenEmergency = { canyonId -> navController.navigateSingleTop(Screen.Emergency(canyonId)) },
                 onReportFlow = { canyonId -> navController.navigateSingleTop(Screen.DebitForm(canyonId)) },
+            )
+        }
+
+        composable<Screen.Logbook> {
+            LogbookScreen(
+                onBackClick = { navController.popBackStack() },
+                onCanyonClick = { canyonId -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
             )
         }
 

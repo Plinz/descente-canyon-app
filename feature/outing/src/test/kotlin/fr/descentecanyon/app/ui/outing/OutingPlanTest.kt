@@ -11,6 +11,7 @@ import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
+import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.WeatherRepository
 import fr.descentecanyon.app.domain.usecase.GetCanyonDebitPredictionsUseCase
@@ -26,6 +27,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -35,6 +37,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class OutingPlanTest {
 
     @get:Rule
@@ -43,6 +46,10 @@ class OutingPlanTest {
     private val zone = ZoneId.of("Europe/Paris")
     private val clock = Clock.fixed(LocalDateTime.of(2026, 7, 14, 8, 5).atZone(zone).toInstant(), zone)
     private val saved = MutableStateFlow<PlannedOuting?>(null)
+    private val logged = mutableListOf<LocalDate>()
+    private val logbookRepository = mockk<LogbookRepository> {
+        coEvery { add(42, "Riolan", any(), null) } answers { logged += thirdArg<LocalDate>() }
+    }
     private val outingRepository = object : OutingRepository {
         override fun observeCurrent() = saved
         override suspend fun save(outing: PlannedOuting) {
@@ -84,9 +91,10 @@ class OutingPlanTest {
         assertEquals(Duration.ofHours(3), Duration.between(outing.expectedBack, outing.alertAt))
         assertEquals(outing, viewModel.uiState.value.savedOuting)
 
-        viewModel.endOuting()
+        viewModel.markBack()
         advanceUntilIdle()
         assertEquals(null, viewModel.uiState.value.savedOuting)
+        assertEquals(listOf(LocalDate.of(2026, 7, 14)), logged)
     }
 
     @Test
@@ -147,6 +155,7 @@ class OutingPlanTest {
             getCanyonDebitPredictionsUseCase = GetCanyonDebitPredictionsUseCase(predictions),
             debitRepository = debits,
             outingRepository = outingRepository,
+            logbookRepository = logbookRepository,
             connectivityObserver = connectivity,
             clock = clock,
         )

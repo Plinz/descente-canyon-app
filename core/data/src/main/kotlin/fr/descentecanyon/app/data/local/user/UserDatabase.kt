@@ -9,6 +9,7 @@ import fr.descentecanyon.app.data.local.user.dao.DailyWeatherDao
 import fr.descentecanyon.app.data.local.user.dao.DebitDao
 import fr.descentecanyon.app.data.local.user.dao.FavoriteDao
 import fr.descentecanyon.app.data.local.user.dao.KeyValueDao
+import fr.descentecanyon.app.data.local.user.dao.LogbookDao
 import fr.descentecanyon.app.data.local.user.dao.PendingDebitSubmissionDao
 import fr.descentecanyon.app.data.local.user.dao.PhotoDao
 import fr.descentecanyon.app.data.local.user.dao.RecentCanyonDao
@@ -17,6 +18,7 @@ import fr.descentecanyon.app.data.local.user.entity.DailyWeatherEntity
 import fr.descentecanyon.app.data.local.user.entity.DebitEntity
 import fr.descentecanyon.app.data.local.user.entity.FavoriteEntity
 import fr.descentecanyon.app.data.local.user.entity.KeyValueEntity
+import fr.descentecanyon.app.data.local.user.entity.LogbookEntryEntity
 import fr.descentecanyon.app.data.local.user.entity.PendingDebitSubmissionEntity
 import fr.descentecanyon.app.data.local.user.entity.PhotoEntity
 import fr.descentecanyon.app.data.local.user.entity.RecentCanyonEntity
@@ -35,8 +37,9 @@ import fr.descentecanyon.app.data.local.user.entity.RecentCanyonEntity
         KeyValueEntity::class,
         RecentCanyonEntity::class,
         CanyonNoteEntity::class,
+        LogbookEntryEntity::class,
     ],
-    version = 2,
+    version = 3,
     exportSchema = true,
 )
 abstract class UserDatabase : RoomDatabase() {
@@ -48,6 +51,7 @@ abstract class UserDatabase : RoomDatabase() {
     abstract fun keyValueDao(): KeyValueDao
     abstract fun recentCanyonDao(): RecentCanyonDao
     abstract fun canyonNoteDao(): CanyonNoteDao
+    abstract fun logbookDao(): LogbookDao
 
     companion object {
         const val DATABASE_NAME = "user.db"
@@ -66,7 +70,20 @@ abstract class UserDatabase : RoomDatabase() {
             }
         }
 
+        /** Version 3: logbook of descended canyons. */
+        val MIGRATION_2_3 = object : Migration(2, 3) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `logbook_entries` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`canyonId` INTEGER NOT NULL, `canyonName` TEXT NOT NULL, `date` TEXT NOT NULL, `note` TEXT, `createdAt` INTEGER NOT NULL)",
+                )
+                db.execSQL(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS `index_logbook_entries_canyonId_date` ON `logbook_entries` (`canyonId`, `date`)",
+                )
+            }
+        }
+
         /** Migrations of the user database, oldest first. */
-        val MIGRATIONS = arrayOf<Migration>(MIGRATION_1_2)
+        val MIGRATIONS = arrayOf<Migration>(MIGRATION_1_2, MIGRATION_2_3)
     }
 }

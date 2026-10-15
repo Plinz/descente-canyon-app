@@ -85,3 +85,15 @@ data class RecentCanyonEntity(@PrimaryKey val canyonId: Int, val viewedAt: Long)
 /** Private note written by the user about a canyon; never sent anywhere. */
 @Entity(tableName = "canyon_notes")
 data class CanyonNoteEntity(@PrimaryKey val canyonId: Int, val text: String, val updatedAt: Long)
+
+/** An outing of the user's logbook; one per canyon and day. */
+@Entity(tableName = "logbook_entries", indices = [Index(value = ["canyonId", "date"], unique = true)])
+data class LogbookEntryEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val canyonId: Int,
+    val canyonName: String,
+    /** ISO date (yyyy-MM-dd), sortable as text. */
+    val date: String,
+    val note: String? = null,
+    val createdAt: Long,
+)

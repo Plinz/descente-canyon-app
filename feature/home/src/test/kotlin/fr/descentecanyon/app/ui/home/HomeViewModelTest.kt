@@ -365,6 +365,7 @@ class HomeViewModelTest {
             notificationCenterRepository = notificationCenterRepository,
             debitSubmissionRepository = debitSubmissionRepository,
             outingRepository = outingRepository,
+            logbookRepository = mockk(relaxUnitFun = true),
         )
     }
 

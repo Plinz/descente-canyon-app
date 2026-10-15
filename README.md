@@ -8,7 +8,7 @@ estimer le débit probable d'un canyon pour les trois prochains jours.
   la consultation ne dépend pas du réseau.
 - Débits, photos, forum et notes d'intérêt lus sur le site quand le réseau est disponible ; les débits saisis hors
   ligne sont envoyés automatiquement au retour du réseau (file consultable, notification à l'envoi).
-- Données personnelles locales : favoris avec leur dernier débit connu, canyons consultés récemment, notes
+- Données personnelles locales : favoris avec leur dernier débit connu, carnet de sorties, canyons consultés récemment, notes
   personnelles par canyon, nom et e-mail du dernier signalement.
 - Estimation du débit par un modèle ONNX exécuté sur l'appareil (météo Open-Meteo, pluviomètres Météo-France et
   MeteoSwiss, état hydrologique simulé), affichée en fourchette quand le modèle hésite entre deux niveaux. Voir
@@ -19,6 +19,8 @@ estimer le débit probable d'un canyon pour les trois prochains jours.
 - Préparation de sortie : horaires estimés d'après les temps de la fiche, marge avant le coucher du soleil (calculé
   sur l'appareil), conditions du jour, message à envoyer à un proche (lieu, horaires, heure d'alerte, numéro
   d'urgence, coordonnées des parkings) et rappel au retour pour signaler le débit observé.
+- Carnet de sorties personnel (« Mes sorties », depuis les favoris) : sorties ajoutées depuis la fiche ou avec « Je
+  suis rentré », statistiques ; il reste sur le téléphone.
 - Écran d'urgence hors ligne : numéros du pays du canyon, position GPS (décimale et degrés-minutes) à lire ou
   envoyer par SMS, échappatoires et points de la fiche.
 

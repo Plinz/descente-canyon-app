@@ -749,4 +749,39 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="duration_unknown">inconnue</string>
     <string name="duration_minutes">%1$d min</string>
     <string name="outing_conditions_forecast">%1$s, pluie %2$s, %3$s à %4$s</string>
+    <string name="logbook_title">Mes sorties</string>
+    <string name="logbook_card_title">Mon carnet</string>
+    <string name="logbook_card_empty">Pas encore descendu</string>
+    <string name="logbook_card_last">Dernière fois le %1$s</string>
+    <string name="logbook_add_action">J\'ai descendu ce canyon</string>
+    <string name="logbook_add_title">Ajouter à mon carnet</string>
+    <string name="logbook_date">Date : %1$s</string>
+    <string name="logbook_change_date">Changer la date</string>
+    <string name="logbook_note_hint">Compagnons, débit, souvenirs… (facultatif)</string>
+    <string name="logbook_save">Ajouter</string>
+    <string name="logbook_added_report_prompt">Ajouté à votre carnet. Signaler aussi le débit observé ?</string>
+    <string name="logbook_delete">Retirer du carnet</string>
+    <string name="logbook_empty_title">Votre carnet est vide</string>
+    <string name="logbook_empty_body">Notez vos sorties depuis la fiche d\'un canyon, ou avec « Je suis rentré » après une sortie préparée. Le carnet reste sur ce téléphone.</string>
+    <string name="logbook_open_action">Mes sorties</string>
+    <plurals name="logbook_card_count">
+        <item quantity="one">Descendu %1$d fois</item>
+        <item quantity="many">Descendu %1$d fois</item>
+        <item quantity="other">Descendu %1$d fois</item>
+    </plurals>
+    <plurals name="logbook_stats">
+        <item quantity="one">%1$d sortie</item>
+        <item quantity="many">%1$d sorties</item>
+        <item quantity="other">%1$d sorties</item>
+    </plurals>
+    <plurals name="logbook_stats_canyons">
+        <item quantity="one">%1$d canyon</item>
+        <item quantity="many">%1$d canyons</item>
+        <item quantity="other">%1$d canyons</item>
+    </plurals>
+    <plurals name="logbook_stats_year">
+        <item quantity="one">%1$d cette année</item>
+        <item quantity="many">%1$d cette année</item>
+        <item quantity="other">%1$d cette année</item>
+    </plurals>
 </resources>

@@ -34,6 +34,11 @@ object TestTags {
     const val HOME_ACTIVE_OUTING = "home_active_outing"
     const val EMERGENCY_LIST = "emergency_list"
     const val EMERGENCY_POSITION = "emergency_position"
+    const val DETAIL_LOGBOOK = "detail_logbook"
+    const val DETAIL_LOGBOOK_ADD = "detail_logbook_add"
+    const val LOGBOOK_SAVE = "logbook_save"
+    const val LOGBOOK_LIST = "logbook_list"
+    const val FAVORITES_LOGBOOK_BUTTON = "favorites_logbook_button"
 
     fun canyonCard(id: Int): String = "canyon_card_$id"
 

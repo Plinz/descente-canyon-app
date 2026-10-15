@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,6 +32,7 @@ import androidx.compose.material3.SwipeToDismissBoxDefaults
 import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -58,6 +60,7 @@ import fr.descentecanyon.app.ui.test.TestTags
 fun FavoritesScreen(
     onCanyonClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
+    onLogbookClick: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: FavoritesViewModel = hiltViewModel(),
 ) {
@@ -93,6 +96,12 @@ fun FavoritesScreen(
                 title = stringResource(R.string.tab_favorites),
                 subtitle = stringResource(R.string.favorites_screen_subtitle),
                 modifier = Modifier.padding(bottom = 12.dp),
+                action = {
+                    TextButton(onClick = onLogbookClick, modifier = Modifier.testTag(TestTags.FAVORITES_LOGBOOK_BUTTON)) {
+                        Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null)
+                        Text(stringResource(R.string.logbook_open_action), modifier = Modifier.padding(start = 6.dp))
+                    }
+                },
             )
 
             uiState.error?.let { error ->

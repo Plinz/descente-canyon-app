@@ -25,6 +25,7 @@ import fr.descentecanyon.app.data.local.user.dao.DailyWeatherDao
 import fr.descentecanyon.app.data.local.user.dao.DebitDao
 import fr.descentecanyon.app.data.local.user.dao.FavoriteDao
 import fr.descentecanyon.app.data.local.user.dao.KeyValueDao
+import fr.descentecanyon.app.data.local.user.dao.LogbookDao
 import fr.descentecanyon.app.data.local.user.dao.PendingDebitSubmissionDao
 import fr.descentecanyon.app.data.local.user.dao.PhotoDao
 import fr.descentecanyon.app.data.local.user.dao.RecentCanyonDao
@@ -91,4 +92,6 @@ object DatabaseModule {
     @Provides fun provideRecentCanyonDao(database: UserDatabase): RecentCanyonDao = database.recentCanyonDao()
 
     @Provides fun provideCanyonNoteDao(database: UserDatabase): CanyonNoteDao = database.canyonNoteDao()
+
+    @Provides fun provideLogbookDao(database: UserDatabase): LogbookDao = database.logbookDao()
 }

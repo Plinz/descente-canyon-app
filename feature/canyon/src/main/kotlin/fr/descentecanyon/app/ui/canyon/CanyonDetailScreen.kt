@@ -293,6 +293,9 @@ fun CanyonDetailScreen(
                             onSavePersonalNote = viewModel::savePersonalNote,
                             nearbyCanyons = uiState.nearbyCanyons,
                             onPlanOuting = onPlanOuting,
+                            logbook = uiState.logbook,
+                            onAddToLogbook = viewModel::addToLogbook,
+                            onReportFlow = onReportDebitClick,
                             onNearbyCanyonClick = onOpenCanyon,
                             bottomContentPadding = contentPadding.calculateBottomPadding() + 96.dp,
                             modifier = Modifier

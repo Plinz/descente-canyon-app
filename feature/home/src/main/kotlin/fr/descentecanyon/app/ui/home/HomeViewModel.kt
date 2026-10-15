@@ -17,6 +17,7 @@ import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import fr.descentecanyon.app.domain.repository.ForumRepository
+import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
@@ -24,6 +25,7 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
+import java.time.ZoneId
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -89,6 +91,7 @@ class HomeViewModel @Inject constructor(
     private val notificationCenterRepository: NotificationCenterRepository,
     private val debitSubmissionRepository: DebitSubmissionRepository,
     private val outingRepository: OutingRepository,
+    private val logbookRepository: LogbookRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -119,9 +122,13 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    /** "I'm back": the reminder is cancelled. */
+    /** "I'm back": the outing goes to the logbook and the reminder is cancelled. */
     fun endOuting() {
-        viewModelScope.launch { outingRepository.clear() }
+        val outing = uiState.value.activeOuting ?: return
+        viewModelScope.launch {
+            logbookRepository.add(outing.canyonId, outing.canyonName, outing.start.atZone(ZoneId.systemDefault()).toLocalDate(), null)
+            outingRepository.clear()
+        }
     }
 
     private fun observePendingDebits() {

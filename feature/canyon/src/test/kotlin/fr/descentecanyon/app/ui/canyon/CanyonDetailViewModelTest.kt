@@ -84,6 +84,9 @@ class CanyonDetailViewModelTest {
     private val canyonNotesRepository = mockk<CanyonNotesRepository>(relaxUnitFun = true) {
         every { observeNote(42) } returns personalNote
     }
+    private val logbookRepository = mockk<fr.descentecanyon.app.domain.repository.LogbookRepository>(relaxUnitFun = true) {
+        every { observeForCanyon(42) } returns flowOf(emptyList())
+    }
     private val getCanyonPreviewUseCase = GetCanyonPreviewUseCase(canyonRepository)
     private val getCanyonDetailUseCase = GetCanyonDetailUseCase(canyonRepository)
     private val getCanyonWeatherUseCase = GetCanyonWeatherUseCase(weatherRepository)
@@ -355,6 +358,7 @@ class CanyonDetailViewModelTest {
         recentCanyonsRepository = recentCanyonsRepository,
         canyonNotesRepository = canyonNotesRepository,
         getNearbyCanyonsUseCase = GetNearbyCanyonsUseCase(canyonRepository, debitRepository),
+        logbookRepository = logbookRepository,
     )
 
     private fun stubBaseState() {

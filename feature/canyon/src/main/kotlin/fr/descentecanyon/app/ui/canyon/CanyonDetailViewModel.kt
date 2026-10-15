@@ -11,10 +11,12 @@ import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.CanyonWeather
+import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.NearbyCanyon
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
+import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.GetCanyonDetailUseCase
@@ -24,6 +26,7 @@ import fr.descentecanyon.app.domain.usecase.ToggleFavoriteUseCase
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.UiText
 import fr.descentecanyon.app.ui.common.toUiText
+import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -62,6 +65,8 @@ data class CanyonDetailUiState(
     val personalNote: String? = null,
     /** Canyons around this one, nearest first. */
     val nearbyCanyons: List<NearbyCanyon> = emptyList(),
+    /** The user's outings in this canyon, most recent first. */
+    val logbook: List<LogbookEntry> = emptyList(),
 )
 
 /** State owned by the view model itself: the canyon detail and the user's choices about it. */
@@ -77,6 +82,7 @@ private data class CanyonDetailState(
     val transientMessage: UiText? = null,
     val personalNote: String? = null,
     val nearbyCanyons: List<NearbyCanyon> = emptyList(),
+    val logbook: List<LogbookEntry> = emptyList(),
 )
 
 /**
@@ -99,6 +105,7 @@ class CanyonDetailViewModel @Inject constructor(
     private val recentCanyonsRepository: RecentCanyonsRepository,
     private val canyonNotesRepository: CanyonNotesRepository,
     private val getNearbyCanyonsUseCase: GetNearbyCanyonsUseCase,
+    private val logbookRepository: LogbookRepository,
 ) : ViewModel() {
 
     private val canyonId: Int = savedStateHandle["canyonId"]
@@ -121,6 +128,7 @@ class CanyonDetailViewModel @Inject constructor(
         observeConnectivity()
         observePersonalNote()
         observeNearbyCanyons()
+        observeLogbook()
         loadCanyon(canyonId)
     }
 
@@ -276,6 +284,18 @@ class CanyonDetailViewModel @Inject constructor(
         }
     }
 
+    /** Logs an outing in this canyon. */
+    fun addToLogbook(date: LocalDate, note: String?) {
+        val name = detailState.value.canyonDetail?.canyon?.nom ?: return
+        viewModelScope.launch { logbookRepository.add(canyonId, name, date, note) }
+    }
+
+    private fun observeLogbook() {
+        viewModelScope.launch {
+            logbookRepository.observeForCanyon(canyonId).collect { entries -> detailState.update { it.copy(logbook = entries) } }
+        }
+    }
+
     private fun observeNearbyCanyons() {
         viewModelScope.launch {
             getNearbyCanyonsUseCase(canyonId).collect { nearby -> detailState.update { it.copy(nearbyCanyons = nearby) } }
@@ -317,6 +337,7 @@ private fun toUiState(detail: CanyonDetailState, media: CanyonMediaState, condit
         downloadingPhotoIds = media.downloadingPhotoIds,
         isOnline = detail.isOnline,
         nearbyCanyons = detail.nearbyCanyons,
+        logbook = detail.logbook,
         transientMessage = detail.transientMessage,
         personalNote = detail.personalNote,
     )
