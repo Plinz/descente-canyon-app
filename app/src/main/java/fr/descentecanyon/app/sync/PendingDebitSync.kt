@@ -36,6 +36,7 @@ class PendingDebitSync @Inject constructor(
                 loginReminder.reset()
                 notificationPublisher.cancelPendingDebitsLoginReminder()
             }
+
             stoppedBy.requiresLogin() && loginReminder.isDue() -> {
                 val pendingCount = repository.observePendingCount().first()
                 if (pendingCount > 0 && notificationPublisher.publishPendingDebitsLoginReminder(pendingCount)) {

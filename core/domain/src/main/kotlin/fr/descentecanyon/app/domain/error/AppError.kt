@@ -69,7 +69,9 @@ fun AppError.isTransient(): Boolean = when (this) {
     AppError.Offline, AppError.Timeout, AppError.NetworkFailure, AppError.UnexpectedResponse,
     AppError.SiteFormatChanged, AppError.StorageFailure, is AppError.Unknown,
     -> true
+
     is AppError.Http -> statusCode >= 500 || statusCode == 408 || statusCode == 429
+
     else -> false
 }
 
@@ -88,12 +90,17 @@ fun Throwable.toAppError(): AppError {
     for (throwable in generateSequence(this) { it.cause }) {
         when (throwable) {
             is AppException -> return throwable.error
+
             is UnknownHostException, is UnresolvedAddressException, is NoRouteToHostException -> return AppError.Offline
+
             is SocketTimeoutException -> return AppError.Timeout
+
             is InterruptedIOException -> if (throwable.message?.contains("timeout", ignoreCase = true) == true) {
                 return AppError.Timeout
             }
+
             is ConnectException -> return AppError.NetworkFailure
+
             else -> Unit
         }
     }

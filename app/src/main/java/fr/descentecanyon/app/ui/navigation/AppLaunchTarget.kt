@@ -21,12 +21,15 @@ enum class LaunchSection {
 
 fun Intent.putLaunchTarget(target: AppLaunchTarget): Intent = when (target) {
     AppLaunchTarget.None -> this
+
     is AppLaunchTarget.Notifications -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_NOTIFICATIONS)
         .putExtra(EXTRA_CLEAR_BACKSTACK, target.clearBackStack)
+
     is AppLaunchTarget.CanyonDetail -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_CANYON_DETAIL)
         .putExtra(EXTRA_CANYON_ID, target.canyonId)
         .putExtra(EXTRA_OPEN_DEBITS_TAB, target.openDebitsTab)
         .putExtra(EXTRA_CLEAR_BACKSTACK, target.clearBackStack)
+
     is AppLaunchTarget.Section -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_SECTION)
         .putExtra(EXTRA_SECTION, target.section.name)
         .putExtra(EXTRA_CLEAR_BACKSTACK, target.clearBackStack)
@@ -38,6 +41,7 @@ fun consumeLaunchTarget(intent: Intent?): AppLaunchTarget {
         TARGET_NOTIFICATIONS -> AppLaunchTarget.Notifications(
             clearBackStack = intent.getBooleanExtra(EXTRA_CLEAR_BACKSTACK, false),
         )
+
         TARGET_CANYON_DETAIL -> {
             val canyonId = intent.getIntExtra(EXTRA_CANYON_ID, 0)
             if (canyonId > 0) {

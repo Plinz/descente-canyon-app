@@ -206,6 +206,7 @@ class DebitFeatureBuilderGoldenTest {
 
     private fun probabilityMap(value: OnnxValue): Map<String, Double>? = when (value) {
         is OnnxMap -> value.value.entries.associate { (key, probability) -> key.toString() to (probability as Number).toDouble() }
+
         is OnnxSequence -> (value.value as List<*>).firstNotNullOfOrNull { item ->
             when (item) {
                 is OnnxMap -> item.value.entries.associate { (key, probability) -> key.toString() to (probability as Number).toDouble() }
@@ -213,6 +214,7 @@ class DebitFeatureBuilderGoldenTest {
                 else -> null
             }
         }
+
         else -> null
     }
 

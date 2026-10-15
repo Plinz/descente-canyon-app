@@ -72,13 +72,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDetail
@@ -143,6 +144,7 @@ private fun CanyonPointsMapContent(
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
+    val resources = LocalResources.current
     val snackbarHostState = remember { SnackbarHostState() }
     val hasWatershedPolygon = !watershedGeometryJson.isNullOrBlank()
     var showWatershed by rememberSaveable(detail.canyon.id) { mutableStateOf(false) }
@@ -169,7 +171,7 @@ private fun CanyonPointsMapContent(
         if (result.resultCode == Activity.RESULT_OK) {
             applyLocationRequest()
         } else {
-            locationMessage = context.getString(R.string.map_location_settings_unavailable)
+            locationMessage = resources.getString(R.string.map_location_settings_unavailable)
         }
     }
 
@@ -179,7 +181,7 @@ private fun CanyonPointsMapContent(
             onEnabled = ::applyLocationRequest,
             onResolutionRequired = { request -> locationSettingsLauncher.launch(request) },
             onUnavailable = {
-                locationMessage = context.getString(R.string.map_location_settings_unavailable)
+                locationMessage = resources.getString(R.string.map_location_settings_unavailable)
             },
         )
     }
@@ -193,7 +195,7 @@ private fun CanyonPointsMapContent(
         if (granted) {
             verifyLocationSettings()
         } else {
-            locationMessage = context.getString(R.string.map_location_permission_denied)
+            locationMessage = resources.getString(R.string.map_location_permission_denied)
         }
     }
 
@@ -215,13 +217,15 @@ private fun CanyonPointsMapContent(
     fun cycleLocationTracking() {
         when (trackingMode) {
             UserTrackingMode.NONE -> activateLocationMode(UserTrackingMode.LOCATION)
+
             UserTrackingMode.LOCATION -> {
                 if (!heading.isAvailable) {
-                    locationMessage = context.getString(R.string.map_heading_unavailable)
+                    locationMessage = resources.getString(R.string.map_heading_unavailable)
                 } else {
                     activateLocationMode(UserTrackingMode.HEADING)
                 }
             }
+
             UserTrackingMode.HEADING -> {
                 trackingModeName = UserTrackingMode.LOCATION.name
                 resetNorthRequestId += 1
@@ -273,11 +277,11 @@ private fun CanyonPointsMapContent(
             context.startActivity(
                 Intent.createChooser(
                     Intent(Intent.ACTION_VIEW, uri),
-                    context.getString(R.string.navigate_chooser_title),
+                    resources.getString(R.string.navigate_chooser_title),
                 ),
             )
         } catch (_: ActivityNotFoundException) {
-            locationMessage = context.getString(R.string.map_navigation_unavailable)
+            locationMessage = resources.getString(R.string.map_navigation_unavailable)
         }
     }
 
@@ -287,7 +291,7 @@ private fun CanyonPointsMapContent(
             ?.setPrimaryClip(ClipData.newPlainText(point.navigationLabel(context), coordinates))
         // Android 13+ confirms clipboard writes itself.
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) {
-            locationMessage = context.getString(R.string.coordinates_copied, coordinates)
+            locationMessage = resources.getString(R.string.coordinates_copied, coordinates)
         }
     }
 

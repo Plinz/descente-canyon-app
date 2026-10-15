@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -115,7 +116,7 @@ fun CanyonEdfStatusCard(
                             text = stringResource(
                                 R.string.edf_status_updated_at,
                                 DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
-                                    .withLocale(Locale.getDefault())
+                                    .withLocale(LocalLocale.current.platformLocale)
                                     .format(sample.recordedAt.atZone(ZoneId.systemDefault())),
                             ),
                             style = MaterialTheme.typography.bodySmall,
@@ -203,9 +204,12 @@ fun CanyonEdfStatusCard(
 private fun ConditionBadge(condition: EdfPracticabilityCondition, modifier: Modifier = Modifier) {
     val (label, color) = when (condition) {
         EdfPracticabilityCondition.APPROPRIATE -> stringResource(R.string.edf_status_state_appropriate) to DebitCorrect
+
         EdfPracticabilityCondition.NOT_APPROPRIATE -> stringResource(R.string.edf_status_state_not_appropriate) to DebitCrue
+
         EdfPracticabilityCondition.NOT_INTERPRETED -> stringResource(R.string.edf_status_state_not_interpreted) to
             MaterialTheme.colorScheme.outline
+
         EdfPracticabilityCondition.UNKNOWN -> stringResource(R.string.edf_status_state_unknown) to MaterialTheme.colorScheme.outline
     }
 

@@ -67,7 +67,7 @@ class OkHttpSiteHttpClient @Inject constructor(
         permits.withPermit {
             val response = httpClient.newCall(Request.Builder().url(url).get().build()).await().requireSuccess()
             response.use {
-                val body = response.body ?: throw AppException(AppError.UnexpectedResponse)
+                val body = response.body
                 withContext(ioDispatcher) {
                     target.parentFile?.mkdirs()
                     val bytes = body.readBytesWithin(MAX_DOWNLOAD_BYTES)
@@ -82,7 +82,7 @@ class OkHttpSiteHttpClient @Inject constructor(
         call.timeout().timeout(timeoutMs, TimeUnit.MILLISECONDS)
         val response = call.await().requireSuccess()
         response.use {
-            val body = response.body ?: throw AppException(AppError.UnexpectedResponse)
+            val body = response.body
             withContext(ioDispatcher) {
                 val bytes = body.readBytesWithin(MAX_PAGE_BYTES)
                 val finalUrl = response.request.url.toString()

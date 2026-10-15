@@ -291,6 +291,7 @@ private fun PredictionRow(prediction: DailyDebitPrediction, ordinalCutpoints: Li
                 textAlign = TextAlign.End,
                 modifier = when {
                     ordinalLevel != null -> Modifier.width(140.dp)
+
                     else ->
                         Modifier
                             .background(levelColor(prediction.level), RoundedCornerShape(999.dp))

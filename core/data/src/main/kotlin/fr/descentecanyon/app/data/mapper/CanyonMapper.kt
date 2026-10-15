@@ -103,11 +103,17 @@ fun CanyonEntity.toDomain(): Canyon = Canyon(
     sourceKey = sourceKey.ifBlank { "dc:$id" },
 )
 
+/** Localized name of an ISO 3166 region code, or an empty string when the code is not one. */
+private fun regionDisplayName(code: String): String = runCatching { Locale.Builder().setRegion(code).build() }
+    .getOrNull()
+    ?.getDisplayCountry(Locale.getDefault())
+    .orEmpty()
+
 internal fun String.normalizeCountryName(): String {
     val normalized = normalizeForSearch()
     if (normalized == "france espagne") {
         return listOf("FR", "ES")
-            .map { Locale("", it).getDisplayCountry(Locale.getDefault()) }
+            .map { regionDisplayName(it) }
             .filter { it.isNotBlank() }
             .joinToString(", ") { country ->
                 country.replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase(Locale.getDefault()) else char.toString() }
@@ -117,7 +123,7 @@ internal fun String.normalizeCountryName(): String {
     if (length !in 2..3) return trim()
 
     val code = uppercase()
-    return Locale("", code).getDisplayCountry(Locale.getDefault())
+    return regionDisplayName(code)
         .takeIf { it.isNotBlank() }
         ?.replaceFirstChar { char -> if (char.isLowerCase()) char.titlecase(Locale.getDefault()) else char.toString() }
         ?: trim()

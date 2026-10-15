@@ -102,19 +102,25 @@ class OnnxModelContractTest {
 
     private fun extractProbabilityRows(value: ai.onnxruntime.OnnxValue, labels: List<String>): List<Map<String, Double>>? = when (value) {
         is OnnxMap -> parseProbabilityMap(value.value)?.let(::listOf)
+
         is OnnxSequence -> extractProbabilityRowsFromRaw(value.value)
+
         is OnnxTensor -> when (val raw = value.value) {
             is Array<*> -> when (raw.firstOrNull()) {
                 is FloatArray -> raw.mapNotNull { row ->
                     (row as? FloatArray)?.let { values -> labels.zip(values.map { it.toDouble() }).toMap() }
                 }.takeIf { it.isNotEmpty() }
+
                 is DoubleArray -> raw.mapNotNull { row ->
                     (row as? DoubleArray)?.let { values -> labels.zip(values.toList()).toMap() }
                 }.takeIf { it.isNotEmpty() }
+
                 else -> null
             }
+
             else -> null
         }
+
         else -> null
     }
 

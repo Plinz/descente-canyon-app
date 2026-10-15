@@ -51,10 +51,14 @@ class DebitSubmissionRemoteSourceImpl @Inject constructor(
         )
         when {
             response.isObservationsPageOf(submission.canyonId) -> DebitDelivery.CONFIRMED
+
             !response.document.isRegularSitePage() -> appError(AppError.UnexpectedResponse)
+
             isPublished(submission) -> DebitDelivery.CONFIRMED
+
             response.document.selectFirst(FORM_SELECTOR) != null || response.document.extractSiteErrorMessage() != null ->
                 appError(AppError.Rejected(response.document.extractSiteErrorMessage()))
+
             else -> DebitDelivery.UNCONFIRMED
         }
     }

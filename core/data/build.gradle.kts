@@ -8,6 +8,8 @@ android {
     namespace = "fr.descentecanyon.app.data"
 
     testOptions {
+        // OkHttp's Android build reads its public suffix list from its assets (cookie tests).
+        unitTests.isIncludeAndroidResources = true
         unitTests.all {
             // ONNX Runtime loads its native library in the model contract tests.
             it.jvmArgs("--enable-native-access=ALL-UNNAMED")

@@ -61,7 +61,8 @@ class OkHttpSiteHttpClientTest {
         assertEquals("POST", request.method)
         assertEquals("https://www.descente-canyon.com/form", request.getHeader("Referer"))
         assertEquals("https://www.descente-canyon.com", request.getHeader("Origin"))
-        assertEquals("remarque=D%C3%A9bit%20correct%20%26%20froid&debit=4", request.body.readUtf8())
+        // Spaces are sent as "+" like browsers do (OkHttp 5); PHP decodes both "+" and "%20".
+        assertEquals("remarque=D%C3%A9bit+correct+%26+froid&debit=4", request.body.readUtf8())
     }
 
     @Test

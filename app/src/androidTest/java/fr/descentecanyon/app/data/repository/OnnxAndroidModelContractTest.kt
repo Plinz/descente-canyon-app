@@ -89,17 +89,23 @@ class OnnxAndroidModelContractTest {
 
     private fun extractProbabilities(value: OnnxValue, labels: List<String>): Map<String, Double>? = when (value) {
         is OnnxMap -> parseProbabilityMap(value.value)
+
         is OnnxSequence -> extractProbabilitiesFromRaw(value.value, labels)
+
         is OnnxTensor -> when (val raw = value.value) {
             is Array<*> -> when (val first = raw.firstOrNull()) {
                 is FloatArray -> labels.zip(first.map { it.toDouble() }).toMap()
                 is DoubleArray -> labels.zip(first.toList()).toMap()
                 else -> null
             }
+
             is FloatArray -> labels.zip(raw.map { it.toDouble() }).toMap()
+
             is DoubleArray -> labels.zip(raw.toList()).toMap()
+
             else -> null
         }
+
         else -> null
     }
 

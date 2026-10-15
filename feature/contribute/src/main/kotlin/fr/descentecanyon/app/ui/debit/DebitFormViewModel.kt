@@ -166,14 +166,17 @@ class DebitFormViewModel @Inject constructor(
                 _uiState.update { it.copy(error = UiText.res(R.string.debit_observer_name_required)) }
                 return
             }
+
             !state.isConnected && observerEmail == null -> {
                 _uiState.update { it.copy(error = UiText.res(R.string.debit_observer_email_required_offline)) }
                 return
             }
+
             observationType == null -> {
                 _uiState.update { it.copy(error = UiText.res(R.string.debit_observation_type_required)) }
                 return
             }
+
             debitLevel == null -> {
                 _uiState.update { it.copy(error = UiText.res(R.string.debit_level_required)) }
                 return

@@ -136,6 +136,7 @@ private fun AppStartupScreen(
         value = suspendRunCatching {
             when (appStartupCoordinator.resolveLaunchMode()) {
                 StartupLaunchMode.NON_BLOCKING -> StartupUiState.AppVisible(isBackgroundInitializing = true)
+
                 StartupLaunchMode.BLOCKING_IMPORT -> {
                     PerformanceTrace.logEvent("startup_blocking_ui_required")
                     runStartupInitialization(appStartupCoordinator)
@@ -228,6 +229,7 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
         fun navigateTo(target: AppLaunchTarget) {
             when (target) {
                 AppLaunchTarget.None -> Unit
+
                 is AppLaunchTarget.Notifications -> {
                     if (target.clearBackStack) {
                         navController.navigate(Screen.Notifications) {
@@ -237,6 +239,7 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
                         navController.navigateSingleTop(Screen.Notifications)
                     }
                 }
+
                 is AppLaunchTarget.Section -> {
                     AppShortcuts.reportUsed(context, target.section)
                     val screen = target.section.toScreen()
@@ -248,6 +251,7 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
                         navController.navigateSingleTop(screen)
                     }
                 }
+
                 is AppLaunchTarget.CanyonDetail -> {
                     if (target.clearBackStack) {
                         navController.navigate(Screen.CanyonDetail(target.canyonId, target.openDebitsTab)) {

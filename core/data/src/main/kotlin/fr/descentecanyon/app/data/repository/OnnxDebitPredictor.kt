@@ -166,13 +166,18 @@ class OnnxDebitPredictor @Inject constructor(
             is FloatArray -> raw.mapNotNull { row ->
                 (row as? FloatArray)?.let { labels.zip(it.map { value -> value.toDouble() }).toMap() }
             }.takeIf { it.isNotEmpty() }
+
             is DoubleArray -> raw.mapNotNull { row ->
                 (row as? DoubleArray)?.let { labels.zip(it.toList()).toMap() }
             }.takeIf { it.isNotEmpty() }
+
             else -> null
         }
+
         is FloatArray -> listOf(labels.zip(raw.map { it.toDouble() }).toMap())
+
         is DoubleArray -> listOf(labels.zip(raw.toList()).toMap())
+
         else -> null
     }
 

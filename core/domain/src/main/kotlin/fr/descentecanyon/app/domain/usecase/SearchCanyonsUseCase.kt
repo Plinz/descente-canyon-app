@@ -112,25 +112,33 @@ class SearchCanyonsUseCase @Inject constructor(private val canyonRepository: Can
 
         val comparator = when (criteria.sortField) {
             SearchSortField.NAME -> compareBy(String.CASE_INSENSITIVE_ORDER) { it.nom }
+
             SearchSortField.INTEREST -> compareNullable<CanyonSearchItem, Float> { it.interet }
                 .thenBy { it.nbVotes }
                 .thenBy(String.CASE_INSENSITIVE_ORDER) { it.nom }
+
             SearchSortField.POPULARITY -> compareBy<CanyonSearchItem> { it.nbVotes }
                 .then(compareNullable<CanyonSearchItem, Float> { it.interet })
                 .thenBy(String.CASE_INSENSITIVE_ORDER) { it.nom }
+
             SearchSortField.DIFFICULTY -> Comparator { left, right ->
                 compareDifficultyAscending(left.cotationRating, right.cotationRating)
                     .takeIf { it != 0 }
                     ?: compareCotationFallback(left.cotationRating, right.cotationRating).takeIf { it != 0 }
                     ?: left.nom.compareTo(right.nom, ignoreCase = true)
             }
+
             SearchSortField.ELEVATION -> compareNullable<CanyonSearchItem, Int> { it.denivele }
                 .thenBy(String.CASE_INSENSITIVE_ORDER) { it.nom }
+
             SearchSortField.LENGTH -> compareNullable<CanyonSearchItem, Int> { it.longueur }
                 .thenBy(String.CASE_INSENSITIVE_ORDER) { it.nom }
+
             SearchSortField.MAX_WATERFALL -> compareNullable<CanyonSearchItem, Int> { it.cascadeMax }
                 .thenBy(String.CASE_INSENSITIVE_ORDER) { it.nom }
+
             SearchSortField.DISTANCE -> compareByDistance(criteria)
+
             SearchSortField.RELEVANCE -> compareBy(String.CASE_INSENSITIVE_ORDER) { it.nom }
         }
 
@@ -188,8 +196,11 @@ class SearchCanyonsUseCase @Inject constructor(private val canyonRepository: Can
         val rightProfile = right.difficultyProfileDescending()
         return when {
             leftProfile == null && rightProfile == null -> 0
+
             leftProfile == null -> 1
+
             rightProfile == null -> -1
+
             else -> leftProfile.zip(rightProfile).firstOrNull { it.first != it.second }
                 ?.let { (lv, rv) -> lv.compareTo(rv) }
                 ?: 0

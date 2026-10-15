@@ -203,12 +203,15 @@ private fun WeatherSummaryLine(weather: CanyonWeather?, isLoading: Boolean, erro
 
     val text = when {
         isLoading && weather == null -> stringResource(R.string.weather_loading)
+
         weather != null -> stringResource(
             R.string.weather_collapsed_summary,
             formatMillimeters(weather.past72HoursPrecipitationMm),
             formatMillimeters(weather.next48HoursPrecipitationMm),
         )
+
         error != null -> error.ifBlank { stringResource(R.string.weather_unavailable) }
+
         else -> stringResource(R.string.weather_loading)
     }
 

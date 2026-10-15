@@ -26,12 +26,14 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.DebitPredictionDriver
@@ -39,7 +41,6 @@ import fr.descentecanyon.app.domain.model.DebitPredictionInfoSummary
 import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import java.text.NumberFormat
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -70,11 +71,13 @@ fun DebitPredictionInfoScreen(
     ) { innerPadding ->
         when {
             uiState.isLoading -> LoadingContent(innerPadding)
+
             uiState.summary != null -> DebitPredictionInfoContent(
                 summary = uiState.summary,
                 modifier = Modifier.padding(innerPadding),
                 contentPadding = contentPadding,
             )
+
             else -> ErrorContent(
                 message = uiState.error?.asString() ?: stringResource(R.string.prediction_info_error),
                 onBackClick = onBackClick,
@@ -114,7 +117,8 @@ private fun ErrorContent(message: String, onBackClick: () -> Unit, modifier: Mod
 
 @Composable
 private fun DebitPredictionInfoContent(summary: DebitPredictionInfoSummary, contentPadding: PaddingValues, modifier: Modifier = Modifier) {
-    val numberFormat = NumberFormat.getIntegerInstance(Locale.getDefault())
+    val locale = LocalLocale.current.platformLocale
+    val numberFormat = remember(locale) { NumberFormat.getIntegerInstance(locale) }
 
     LazyColumn(
         modifier = modifier.fillMaxSize(),

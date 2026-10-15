@@ -69,10 +69,12 @@ class SessionManager @Inject constructor(
                 _state.value = SessionState.Active(username)
                 username
             }
+
             SiteSessionInspector.Status.LOGGED_OUT -> {
                 cookieJar.clear()
                 throw AppException(AppError.InvalidCredentials)
             }
+
             SiteSessionInspector.Status.UNKNOWN -> {
                 cookieJar.clear()
                 throw AppException(AppError.UnexpectedResponse)

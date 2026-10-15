@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.NoteAdd
+import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.StickyNote2
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -56,7 +56,7 @@ internal fun PersonalNoteCard(note: String?, onSave: (String) -> Unit, modifier:
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             Icon(
-                imageVector = if (note == null) Icons.AutoMirrored.Filled.NoteAdd else Icons.Default.StickyNote2,
+                imageVector = if (note == null) Icons.AutoMirrored.Filled.NoteAdd else Icons.AutoMirrored.Filled.StickyNote2,
                 contentDescription = null,
                 tint = colors.textSecondary,
             )

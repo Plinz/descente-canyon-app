@@ -1,12 +1,28 @@
 package fr.descentecanyon.app.data.remote.auth
 
+import android.app.Application
+import androidx.test.core.app.ApplicationProvider
 import okhttp3.Cookie
 import okhttp3.HttpUrl.Companion.toHttpUrl
+import okhttp3.OkHttp
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
+import org.junit.Before
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.robolectric.RobolectricTestRunner
+import org.robolectric.annotation.Config
 
+// OkHttp's Android build reads the public suffix list (needed to parse Domain cookies) from its
+// assets, so these tests need Robolectric and an initialized OkHttp.
+@RunWith(RobolectricTestRunner::class)
+@Config(application = Application::class)
 class CookieCodecTest {
+
+    @Before
+    fun setUp() {
+        OkHttp.initialize(ApplicationProvider.getApplicationContext())
+    }
 
     private val siteUrl = "https://www.descente-canyon.com/".toHttpUrl()
 

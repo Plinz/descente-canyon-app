@@ -56,7 +56,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.ThemeMode
@@ -304,8 +304,10 @@ private fun SettingsTextDialog(dialog: SettingsDialog, onDismiss: () -> Unit) {
     }
     val body = when (dialog) {
         SettingsDialog.DATA_SOURCES -> stringResource(R.string.settings_data_sources_body)
+
         SettingsDialog.LICENSES -> stringResource(R.string.settings_licenses_intro) + "\n\n" +
             OPEN_SOURCE_LIBRARIES.joinToString("\n") { "• $it" }
+
         SettingsDialog.PRIVACY -> stringResource(R.string.settings_privacy_body)
     }
     AlertDialog(

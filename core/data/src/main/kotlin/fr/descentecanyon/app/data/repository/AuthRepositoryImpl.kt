@@ -26,7 +26,6 @@ class AuthRepositoryImpl @Inject constructor(private val sessionManager: Session
 
     override suspend fun login(username: String, password: String): Result<Unit> = suspendRunCatching {
         sessionManager.login(username.trim(), password)
-        Unit
     }
 
     override suspend fun logout() {

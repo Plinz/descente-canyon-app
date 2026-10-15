@@ -201,6 +201,7 @@ class EmbeddedDebitRuntimeLookupStore @Inject constructor(
     private fun JsonObject.toNumericMap(): Map<String, Double> = entries.mapNotNull { (key, value) ->
         when (value) {
             JsonNull -> null
+
             else -> {
                 val primitive = value.jsonPrimitive
                 primitive.doubleOrNull?.let { key to it }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 /** Values shared by every module of the build. */
 internal object BuildValues {
-    const val COMPILE_SDK = 36
+    const val COMPILE_SDK = 37
     const val MIN_SDK = 26
     val JAVA_VERSION: JavaVersion = JavaVersion.VERSION_25
     val JVM_TARGET: JvmTarget = JvmTarget.JVM_25

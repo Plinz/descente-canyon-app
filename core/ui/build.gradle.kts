@@ -15,7 +15,6 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
-    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.coil.compose)
 
     // The map widget is shared by the canyon and explore features, which pass MapLibre types.

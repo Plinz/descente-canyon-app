@@ -216,7 +216,7 @@ fun buildReleasePackageReport(inspections: List<ReleasePackageInspection>): Stri
 
 android {
     namespace = "fr.descentecanyon.app"
-    compileSdk = 36
+    compileSdk = 37
 
     // Lets Android 13+ offer the app's languages in the system per-app language setting.
     androidResources {
@@ -444,7 +444,6 @@ dependencies {
     // Hilt (dependency injection)
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
-    implementation(libs.androidx.hilt.navigation.compose)
 
     // OkHttp (single HTTP stack: site, JSON APIs, images, map tiles)
     implementation(libs.okhttp)

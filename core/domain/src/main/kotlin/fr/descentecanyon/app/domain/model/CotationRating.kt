@@ -55,8 +55,11 @@ fun compareByDifficulty(left: CotationRating, right: CotationRating): Int {
 
     return when {
         leftProfile == null && rightProfile == null -> 0
+
         leftProfile == null -> 1
+
         rightProfile == null -> -1
+
         else -> {
             leftProfile.zip(rightProfile).firstOrNull { it.first != it.second }
                 ?.let { (leftValue, rightValue) -> rightValue.compareTo(leftValue) }

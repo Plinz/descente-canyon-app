@@ -44,7 +44,9 @@ class AuthViewModel @Inject constructor(private val authRepository: AuthReposito
                             username = current.username.ifBlank { state.username },
                             message = UiText.res(R.string.error_session_expired),
                         )
+
                         is AuthState.Connected -> current.copy(authState = state, message = null)
+
                         else -> current.copy(authState = state)
                     }
                 }

@@ -173,6 +173,7 @@ class EmbeddedDebitModelStore @Inject constructor(
     private fun JsonObject.toNumericMap(): Map<String, Double> = entries.mapNotNull { (key, value) ->
         when (value) {
             JsonNull -> null
+
             else -> {
                 val primitive = value.jsonPrimitive
                 primitive.doubleOrNull?.let { key to it }
@@ -245,15 +246,21 @@ class EmbeddedDebitModelStore @Inject constructor(
 
     private fun String.toDriverOrNull(): DebitPredictionDriver? = when {
         startsWith("hist") -> DebitPredictionDriver.CANYON_HISTORY
+
         startsWith("massif") || startsWith("region") -> DebitPredictionDriver.AREA_CONTEXT
+
         startsWith("wPrecip") || startsWith("hLiquid") || startsWith("hQ") || startsWith("hZQ") ||
             startsWith("hDelta") || startsWith("hSoil") -> DebitPredictionDriver.RECENT_RAIN
+
         startsWith("wTemp") || startsWith("hSwe") || startsWith("hSnow") || startsWith("hMelt") ->
             DebitPredictionDriver.TEMPERATURE_SNOW
+
         startsWith("doy") -> DebitPredictionDriver.SEASON
+
         startsWith("hydro") || startsWith("area") || startsWith("basin") || startsWith("fraction") ||
             this == "karstIndicator" || this == "carbonateFraction" || this == "glacierFraction" ->
             DebitPredictionDriver.WATERSHED
+
         else -> null
     }
 

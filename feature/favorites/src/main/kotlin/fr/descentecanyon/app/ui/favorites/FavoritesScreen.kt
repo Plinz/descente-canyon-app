@@ -27,20 +27,22 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.SwipeToDismissBox
+import androidx.compose.material3.SwipeToDismissBoxDefaults
+import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
-import androidx.compose.material3.rememberSwipeToDismissBoxState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.ui.common.asString
@@ -164,18 +166,21 @@ fun FavoritesScreen(
 
 @Composable
 private fun FavoriteDismissItem(onRemove: () -> Unit, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    val dismissState = rememberSwipeToDismissBoxState(
-        confirmValueChange = { value ->
-            if (value == SwipeToDismissBoxValue.EndToStart) {
-                onRemove()
-            }
-            value != SwipeToDismissBoxValue.StartToEnd
-        },
-    )
+    // Not saveable: a favorite brought back by "undo" must come back settled, not dismissed.
+    val positionalThreshold = SwipeToDismissBoxDefaults.positionalThreshold
+    val dismissState = remember { SwipeToDismissBoxState(SwipeToDismissBoxValue.Settled, positionalThreshold) }
+    val currentOnRemove by rememberUpdatedState(onRemove)
+    // Stable lambda: SwipeToDismissBox restarts its dismiss effect whenever the callback changes.
+    val onDismiss = remember {
+        { direction: SwipeToDismissBoxValue ->
+            if (direction == SwipeToDismissBoxValue.EndToStart) currentOnRemove()
+        }
+    }
 
     SwipeToDismissBox(
         state = dismissState,
         enableDismissFromStartToEnd = false,
+        onDismiss = onDismiss,
         modifier = modifier,
         backgroundContent = {
             val isDismissed = dismissState.targetValue == SwipeToDismissBoxValue.EndToStart ||

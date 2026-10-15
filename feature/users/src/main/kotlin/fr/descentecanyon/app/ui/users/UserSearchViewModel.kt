@@ -7,6 +7,7 @@ import fr.descentecanyon.app.domain.model.ForumUser
 import fr.descentecanyon.app.domain.repository.ForumUserRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import javax.inject.Inject
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -18,7 +19,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-@OptIn(FlowPreview::class)
+@OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class UserSearchViewModel @Inject constructor(
     private val forumUserRepository: ForumUserRepository,

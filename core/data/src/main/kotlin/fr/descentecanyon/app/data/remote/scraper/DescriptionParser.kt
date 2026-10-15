@@ -81,9 +81,11 @@ internal object DescriptionParser {
 
         return when {
             sections.isEmpty() -> accessFull.trim().takeIf { it.isNotEmpty() } to null
+
             sections.containsKey("aval") || sections.containsKey("amont") -> {
                 sections["aval"] to sections["amont"]
             }
+
             else -> accessFull.trim().takeIf { it.isNotEmpty() } to null
         }
     }

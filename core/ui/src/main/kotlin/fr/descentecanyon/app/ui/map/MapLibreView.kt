@@ -211,6 +211,7 @@ private fun createMapOptions(
                         ),
                     )
                 }
+
                 positionCompassWithControls -> {
                     compassGravity(Gravity.END or Gravity.CENTER_VERTICAL)
                     compassMargins(
@@ -434,6 +435,7 @@ private class MapRenderState(private val context: android.content.Context) {
                     0,
                 )
             }
+
             positionCompassWithControls -> {
                 map.uiSettings.setCompassGravity(Gravity.END or Gravity.CENTER_VERTICAL)
                 map.uiSettings.setCompassMargins(

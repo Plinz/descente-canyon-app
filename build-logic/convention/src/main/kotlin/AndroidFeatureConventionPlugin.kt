@@ -21,7 +21,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
             "implementation"(libs.lib("androidx-lifecycle-runtime-compose"))
             "implementation"(libs.lib("androidx-lifecycle-viewmodel-compose"))
             "implementation"(libs.lib("androidx-navigation-compose"))
-            "implementation"(libs.lib("androidx-hilt-navigation-compose"))
+            "implementation"(libs.lib("androidx-hilt-lifecycle-viewmodel-compose"))
             "implementation"(libs.lib("kotlinx-coroutines-android"))
             "testImplementation"(project(":core:testing"))
             "testImplementation"(libs.lib("turbine"))

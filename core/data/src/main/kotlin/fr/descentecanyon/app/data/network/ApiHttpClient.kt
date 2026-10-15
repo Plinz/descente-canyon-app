@@ -53,7 +53,7 @@ class OkHttpApiHttpClient @Inject constructor(
     override suspend fun getBytes(url: HttpUrl, maxBytes: Long): ByteArray {
         val response = newCall(url).await().requireSuccess()
         return response.use {
-            val body = response.body ?: throw AppException(AppError.UnexpectedResponse)
+            val body = response.body
             withContext(ioDispatcher) { body.readBytesWithin(maxBytes) }
         }
     }
@@ -61,7 +61,7 @@ class OkHttpApiHttpClient @Inject constructor(
     override suspend fun <T> getStream(url: HttpUrl, read: (InputStream) -> T): T {
         val response = newCall(url).await().requireSuccess()
         return response.use {
-            val body = response.body ?: throw AppException(AppError.UnexpectedResponse)
+            val body = response.body
             withContext(ioDispatcher) { body.byteStream().use(read) }
         }
     }

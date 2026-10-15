@@ -3,7 +3,7 @@ package fr.descentecanyon.app.e2e
 import android.content.Context
 import android.content.Intent
 import androidx.annotation.StringRes
-import androidx.compose.ui.test.junit4.createEmptyComposeRule
+import androidx.compose.ui.test.junit4.v2.createEmptyComposeRule
 import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider

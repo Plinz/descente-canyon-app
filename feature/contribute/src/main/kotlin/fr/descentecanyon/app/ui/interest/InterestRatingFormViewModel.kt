@@ -74,6 +74,7 @@ class InterestRatingFormViewModel @Inject constructor(
                             loadRating()
                         }
                     }
+
                     else -> {
                         loadedForCurrentSession = false
                         _uiState.update { it.copy(isConnected = false, username = "") }

@@ -34,5 +34,6 @@ fun UiText.asString(): String = when (this) {
         val context = LocalContext.current
         stringResource(id, *args.map { it.resolve(context) }.toTypedArray())
     }
+
     is UiText.Verbatim -> value
 }

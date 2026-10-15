@@ -159,6 +159,7 @@ internal fun CanyonDetailContent(
 
         when (selectedTab) {
             0 -> topoItems(detail)
+
             1 -> photosItems(
                 photos = detail.photos,
                 isOnline = isOnline,
@@ -168,6 +169,7 @@ internal fun CanyonDetailContent(
                 onOpenPhotoGallery = onOpenPhotoGallery,
                 onPersistedPhotoMissing = onPersistedPhotoMissing,
             )
+
             2 -> debitItems(detail.debits, isLoadingDebits, debitError, onUserClick)
         }
     }

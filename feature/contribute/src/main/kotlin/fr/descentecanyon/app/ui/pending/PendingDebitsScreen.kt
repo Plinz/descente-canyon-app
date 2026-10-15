@@ -41,7 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.AuthState
@@ -139,6 +139,7 @@ fun PendingDebitsScreen(
         ) {
             when {
                 uiState.isLoading -> CircularProgressIndicator(modifier = Modifier.padding(32.dp))
+
                 uiState.items.isEmpty() -> DcEmptyState(
                     title = stringResource(R.string.pending_debits_empty_title),
                     body = stringResource(R.string.pending_debits_empty_body),
@@ -147,6 +148,7 @@ fun PendingDebitsScreen(
                         .padding(top = 48.dp)
                         .testTag(TestTags.PENDING_DEBITS_EMPTY),
                 )
+
                 else -> LazyColumn(
                     modifier = Modifier
                         .width(contentWidth)
@@ -182,7 +184,9 @@ fun PendingDebitsScreen(
 private fun PendingStatusCard(status: PendingDebitsStatus, onLoginClick: () -> Unit) {
     val (icon: ImageVector, text: String) = when (status) {
         PendingDebitsStatus.OFFLINE -> Icons.Default.CloudOff to stringResource(R.string.pending_debits_status_offline)
+
         PendingDebitsStatus.LOGIN_REQUIRED -> Icons.Default.Lock to stringResource(R.string.pending_debits_status_login)
+
         PendingDebitsStatus.SENDING, PendingDebitsStatus.EMPTY ->
             Icons.Default.CloudUpload to
                 stringResource(R.string.pending_debits_status_sending)
