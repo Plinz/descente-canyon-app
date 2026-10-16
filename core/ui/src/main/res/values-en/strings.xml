@@ -287,18 +287,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="weather_title">Weather</string>
     <string name="weather_loading">Loading the weather…</string>
     <string name="weather_unavailable">Weather unavailable for this canyon.</string>
-    <string name="weather_collapsed_summary">72h: %1$s - next 48h: %2$s</string>
-    <string name="weather_target_value">Weather point: %1$s (%2$s)</string>
-    <string name="weather_updated_at">Updated: %1$s</string>
-    <string name="weather_past_section">Observed totals</string>
-    <string name="weather_future_section">Forecast totals</string>
-    <string name="weather_last_24h">Last 24h</string>
-    <string name="weather_last_48h">Last 48h</string>
-    <string name="weather_last_72h">Last 72h</string>
-    <string name="weather_next_24h">Next 24h</string>
-    <string name="weather_next_48h">Next 48h</string>
-    <string name="weather_max_hourly_past">Recent hourly peak</string>
-    <string name="weather_probability_next_24h">Max probability 24h</string>
     <string name="weather_source_watershed_center">watershed center</string>
     <string name="weather_source_entry">entry</string>
     <string name="weather_source_upstream_parking">upstream parking</string>
@@ -607,9 +595,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="shortcut_search_long">Search for a canyon</string>
     <string name="shortcut_map_long">Canyon map</string>
     <string name="shortcut_favorites_long">My favorite canyons</string>
-    <string name="weather_compact_past_72h">Rain 72h</string>
-    <string name="weather_compact_next_48h">Next 48h</string>
-    <string name="weather_compact_rain_chance">Rain chance</string>
     <string name="weather_day_today">Today</string>
     <string name="weather_day_tomorrow">Tmrw</string>
     <string name="weather_storm_today">Thunderstorms forecast today: a flash flood can come even without rain where you are.</string>
@@ -769,4 +754,16 @@ Search for a canyon and add it to your favorites.</string>
     <string name="favorites_sort_added">Recent</string>
     <string name="favorites_sort_name">Name</string>
     <string name="favorites_sort_report">Latest flow</string>
+    <string name="weather_rain_section">Rain</string>
+    <string name="weather_days_section">Next days</string>
+    <string name="weather_rain_past_hours">Last %1$d h</string>
+    <string name="weather_rain_next_hours">Next %1$d h</string>
+    <string name="weather_rain_chance_hours">Chance, %1$d h</string>
+    <string name="weather_now">Now</string>
+    <string name="weather_day_yesterday">Yest.</string>
+    <string name="weather_storm_hours_legend">Thunderstorm hours</string>
+    <string name="weather_rain_chart_description">Hourly rain over the last %1$d h and the next %2$d h. Heaviest: %3$s, %4$s.</string>
+    <string name="weather_rain_chart_description_dry">Hourly rain over the last %1$d h and the next %2$d h: no rain.</string>
+    <string name="weather_point">Weather point: %1$s</string>
+    <string name="weather_point_updated">Weather point: %1$s · updated at %2$s</string>
 </resources>

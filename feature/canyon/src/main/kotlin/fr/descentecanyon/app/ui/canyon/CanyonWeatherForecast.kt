@@ -3,6 +3,7 @@ package fr.descentecanyon.app.ui.canyon
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -33,6 +34,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonWeather
@@ -53,7 +55,7 @@ import kotlin.math.roundToInt
 internal fun DailyForecastRow(daily: List<DailyWeather>, today: LocalDate, modifier: Modifier = Modifier) {
     Row(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(DAY_TILE_SPACING),
     ) {
         daily.take(MAX_FORECAST_DAYS).forEach { day ->
             DailyForecastTile(day = day, today = today, modifier = Modifier.weight(1f))
@@ -71,42 +73,64 @@ private fun DailyForecastTile(day: DailyWeather, today: LocalDate, modifier: Mod
     val minimum = day.temperatureMinC?.let(::formatTemperature) ?: "--"
     val maximum = day.temperatureMaxC?.let(::formatTemperature) ?: "--"
     val description = stringResource(R.string.weather_day_description, dayLabel, conditionLabel, rain, minimum, maximum)
-    Surface(
+    WeatherTile(
         modifier = modifier.clearAndSetSemantics { contentDescription = description },
-        shape = MaterialTheme.shapes.medium,
-        color = if (isStorm) colors.warning.copy(alpha = 0.16f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.72f),
-        border = if (isStorm) BorderStroke(1.dp, colors.warning.copy(alpha = 0.6f)) else null,
+        highlighted = isStorm,
+        horizontalPadding = 2.dp,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            text = dayLabel,
+            style = MaterialTheme.typography.labelSmall,
+            fontWeight = FontWeight.SemiBold,
+            maxLines = 1,
+        )
+        Icon(
+            imageVector = weatherConditionIcon(day.condition),
+            contentDescription = null,
+            modifier = Modifier.size(20.dp),
+            tint = if (isStorm) colors.warning else colors.water,
+        )
+        Text(
+            text = rain,
+            style = MaterialTheme.typography.labelSmall,
+            maxLines = 1,
+        )
+        Text(
+            text = "$maximum/$minimum",
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            textAlign = TextAlign.Center,
+        )
+    }
+}
+
+/**
+ * The one tile of the weather card, for the rain totals and the days alike. A highlighted tile
+ * flags a thunderstorm; its label says so, never the color alone.
+ */
+@Composable
+internal fun WeatherTile(
+    modifier: Modifier = Modifier,
+    highlighted: Boolean = false,
+    horizontalPadding: Dp = 10.dp,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    val warning = LocalDcColors.current.warning
+    Surface(
+        modifier = modifier,
+        shape = MaterialTheme.shapes.small,
+        color = if (highlighted) warning.copy(alpha = 0.16f) else MaterialTheme.colorScheme.surface.copy(alpha = 0.72f),
+        border = if (highlighted) BorderStroke(1.dp, warning.copy(alpha = 0.6f)) else null,
     ) {
         Column(
-            modifier = Modifier.padding(horizontal = 2.dp, vertical = 6.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(horizontal = horizontalPadding, vertical = 8.dp),
+            horizontalAlignment = horizontalAlignment,
             verticalArrangement = Arrangement.spacedBy(2.dp),
-        ) {
-            Text(
-                text = dayLabel,
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.SemiBold,
-                maxLines = 1,
-            )
-            Icon(
-                imageVector = weatherConditionIcon(day.condition),
-                contentDescription = null,
-                modifier = Modifier.size(20.dp),
-                tint = if (isStorm) colors.warning else colors.water,
-            )
-            Text(
-                text = rain,
-                style = MaterialTheme.typography.labelSmall,
-                maxLines = 1,
-            )
-            Text(
-                text = "$maximum/$minimum",
-                style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-                maxLines = 1,
-                textAlign = TextAlign.Center,
-            )
-        }
+            content = content,
+        )
     }
 }
 
@@ -201,14 +225,15 @@ internal fun CachedForecastLine(weather: CanyonWeather, modifier: Modifier = Mod
 }
 
 @Composable
-private fun forecastDayLabel(date: LocalDate, today: LocalDate): String = when (date) {
+internal fun forecastDayLabel(date: LocalDate, today: LocalDate): String = when (date) {
+    today.minusDays(1) -> stringResource(R.string.weather_day_yesterday)
     today -> stringResource(R.string.weather_day_today)
     today.plusDays(1) -> stringResource(R.string.weather_day_tomorrow)
     else -> date.dayOfWeek.getDisplayName(TextStyle.SHORT, LocalLocale.current.platformLocale)
 }
 
 @Composable
-private fun dayName(date: LocalDate): String = date.dayOfWeek.getDisplayName(TextStyle.FULL, LocalLocale.current.platformLocale)
+internal fun dayName(date: LocalDate): String = date.dayOfWeek.getDisplayName(TextStyle.FULL, LocalLocale.current.platformLocale)
 
 @Composable
 internal fun weatherConditionLabel(condition: WeatherCondition): String = stringResource(
@@ -236,12 +261,16 @@ private fun weatherConditionIcon(condition: WeatherCondition): ImageVector = whe
     WeatherCondition.UNKNOWN -> Icons.Default.QuestionMark
 }
 
-private fun formatRainMm(value: Double): String = if (value >= 10.0) {
-    String.format(Locale.getDefault(), "%.0f mm", value)
-} else {
-    String.format(Locale.getDefault(), "%.1f mm", value)
+/** Millimeters of rain: none, tenths below 10 mm, whole millimeters above. */
+internal fun formatRainMm(value: Double): String = when {
+    value <= 0.0 -> "0 mm"
+    value < 10.0 -> String.format(Locale.getDefault(), "%.1f mm", value)
+    else -> String.format(Locale.getDefault(), "%.0f mm", value)
 }
 
 private fun formatTemperature(value: Double): String = "${value.roundToInt()}°"
 
 private const val MAX_FORECAST_DAYS = 6
+
+internal val TILE_SPACING = 8.dp
+private val DAY_TILE_SPACING = 4.dp

@@ -35,12 +35,6 @@ class WeatherConditionTest {
                 HourlyPrecipitation(now.plusHours(5), 4.0, weatherCode = 95),
                 HourlyPrecipitation(now.plusHours(30), 4.0, weatherCode = 99),
             ),
-            past24HoursPrecipitationMm = 0.0,
-            past48HoursPrecipitationMm = 0.0,
-            past72HoursPrecipitationMm = 0.0,
-            next24HoursPrecipitationMm = 4.0,
-            next48HoursPrecipitationMm = 8.0,
-            maxHourlyPrecipitationPast72HoursMm = 0.0,
             daily = listOf(
                 DailyWeather(LocalDate.of(2026, 7, 14), weatherCode = 3),
                 DailyWeather(LocalDate.of(2026, 7, 15), weatherCode = 95),

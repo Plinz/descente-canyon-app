@@ -457,13 +457,6 @@ class CanyonDetailViewModelTest {
         ),
         timezone = "UTC",
         fetchedAt = Instant.parse("2026-03-26T12:00:00Z"),
-        past24HoursPrecipitationMm = 12.0,
-        past48HoursPrecipitationMm = 18.0,
-        past72HoursPrecipitationMm = 24.0,
-        next24HoursPrecipitationMm = 3.0,
-        next48HoursPrecipitationMm = 6.0,
-        maxHourlyPrecipitationPast72HoursMm = 4.5,
-        maxPrecipitationProbabilityNext24Hours = 70,
     )
 
     private fun predictions() = CanyonDebitPredictions(

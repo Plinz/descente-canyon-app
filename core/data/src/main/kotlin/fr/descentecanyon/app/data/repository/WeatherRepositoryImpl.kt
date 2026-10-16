@@ -25,7 +25,6 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
-import java.time.ZonedDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
@@ -79,31 +78,17 @@ class WeatherRepositoryImpl @Inject constructor(
         }
     }
 
-    /** Aggregates around the current hour, so a forecast read from the cache is still meaningful. */
+    /** Days already over are dropped, so a forecast read from the cache starts today. */
     private fun OpenMeteoForecastDto.toCanyonWeather(target: WeatherTarget, fetchedAt: Instant, isFromCache: Boolean): CanyonWeather? {
-        val zoneId = timezone.toZoneIdOrUtc()
-        val now = ZonedDateTime.now(clock.withZone(zoneId)).withMinute(0).withSecond(0).withNano(0).toLocalDateTime()
+        val today = LocalDate.now(clock.withZone(timezone.toZoneIdOrUtc()))
         val hourly = hourly.toHourlyPrecipitation()
         if (hourly.isEmpty()) return null
-
-        val pastHours = hourly.filter { !it.dateTime.isAfter(now) }
-        val futureHours = hourly.filter { it.dateTime.isAfter(now) }
         return CanyonWeather(
             target = target,
             timezone = timezone,
             fetchedAt = fetchedAt,
             hourly = hourly,
-            past24HoursPrecipitationMm = pastHours.sumLast(24),
-            past48HoursPrecipitationMm = pastHours.sumLast(48),
-            past72HoursPrecipitationMm = pastHours.sumLast(72),
-            next24HoursPrecipitationMm = futureHours.sumFirst(24),
-            next48HoursPrecipitationMm = futureHours.sumFirst(48),
-            maxHourlyPrecipitationPast72HoursMm = pastHours.maxLast(72),
-            maxPrecipitationProbabilityNext24Hours = futureHours
-                .take(24)
-                .mapNotNull { it.precipitationProbabilityPercent }
-                .maxOrNull(),
-            daily = daily.toDailyWeather().filter { !it.date.isBefore(now.toLocalDate()) },
+            daily = daily.toDailyWeather().filter { !it.date.isBefore(today) },
             isFromCache = isFromCache,
         )
     }
@@ -145,12 +130,6 @@ class WeatherRepositoryImpl @Inject constructor(
     }
 
     private fun String?.toLocalTimeOrNull(): LocalTime? = this?.let { runCatching { LocalDateTime.parse(it).toLocalTime() }.getOrNull() }
-
-    private fun List<HourlyPrecipitation>.sumLast(hours: Int): Double = takeLast(hours).sumOf { it.precipitationMm }
-
-    private fun List<HourlyPrecipitation>.sumFirst(hours: Int): Double = take(hours).sumOf { it.precipitationMm }
-
-    private fun List<HourlyPrecipitation>.maxLast(hours: Int): Double = takeLast(hours).maxOfOrNull { it.precipitationMm } ?: 0.0
 
     /** Forecast kept for offline use, with the point it was computed for. */
     @Serializable

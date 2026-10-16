@@ -1,6 +1,7 @@
 package fr.descentecanyon.app.data.remote.weather
 
 import fr.descentecanyon.app.data.network.ApiHttpClient
+import fr.descentecanyon.app.domain.model.CanyonWeather
 import javax.inject.Inject
 import javax.inject.Singleton
 import okhttp3.HttpUrl
@@ -27,8 +28,9 @@ open class OpenMeteoRemoteSource @Inject constructor(private val httpClient: Api
             "latitude" to latitude,
             "longitude" to longitude,
             "hourly" to "precipitation,rain,showers,precipitation_probability,weather_code",
-            "past_hours" to 72,
-            "forecast_hours" to 48,
+            "past_hours" to CanyonWeather.PAST_HOURS,
+            // The current hour comes first and is already past: its value is the rain of the hour before.
+            "forecast_hours" to CanyonWeather.FORECAST_HOURS + 1,
             "daily" to FORECAST_DAILY_VARIABLES,
             "forecast_days" to FORECAST_DAYS,
             "timezone" to "auto",

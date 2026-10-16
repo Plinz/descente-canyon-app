@@ -22,12 +22,6 @@ class FakeWeatherRepository @Inject constructor() : WeatherRepository {
             ),
             timezone = "UTC",
             fetchedAt = Instant.EPOCH,
-            past24HoursPrecipitationMm = 0.0,
-            past48HoursPrecipitationMm = 0.0,
-            past72HoursPrecipitationMm = 0.0,
-            next24HoursPrecipitationMm = 0.0,
-            next48HoursPrecipitationMm = 0.0,
-            maxHourlyPrecipitationPast72HoursMm = 0.0,
         ),
     )
 }

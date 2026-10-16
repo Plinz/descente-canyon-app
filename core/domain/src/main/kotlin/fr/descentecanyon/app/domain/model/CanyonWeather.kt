@@ -4,24 +4,38 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.ZoneId
+import java.time.ZoneOffset
+import java.time.temporal.ChronoUnit
 
 data class CanyonWeather(
     val target: WeatherTarget,
     val timezone: String,
     val fetchedAt: Instant,
+    /** From [PAST_HOURS] hours before the download to [FORECAST_HOURS] hours after. */
     val hourly: List<HourlyPrecipitation> = emptyList(),
-    val past24HoursPrecipitationMm: Double,
-    val past48HoursPrecipitationMm: Double,
-    val past72HoursPrecipitationMm: Double,
-    val next24HoursPrecipitationMm: Double,
-    val next48HoursPrecipitationMm: Double,
-    val maxHourlyPrecipitationPast72HoursMm: Double,
-    val maxPrecipitationProbabilityNext24Hours: Int? = null,
     /** Today and the next days. */
     val daily: List<DailyWeather> = emptyList(),
     /** True when the network was unavailable and the last forecast downloaded is shown. */
     val isFromCache: Boolean = false,
 ) {
+    /** Time zone of the weather point, which the hourly and daily times are expressed in. */
+    val zoneId: ZoneId get() = runCatching { ZoneId.of(timezone) }.getOrDefault(ZoneOffset.UTC)
+
+    /**
+     * Rain of the last [PAST_HOURS] hours and of the next [FORECAST_HOURS] ones around [now]. An
+     * hourly value is the rain of the hour before its time, so the hour ending at [now] is past.
+     * A forecast read from the cache covers fewer coming hours.
+     */
+    fun rainAround(now: LocalDateTime): RainOutlook {
+        val currentHour = now.truncatedTo(ChronoUnit.HOURS)
+        val sorted = hourly.sortedBy { it.dateTime }
+        return RainOutlook(
+            past = sorted.filter { !it.dateTime.isAfter(currentHour) }.takeLast(PAST_HOURS),
+            next = sorted.filter { it.dateTime.isAfter(currentHour) }.take(FORECAST_HOURS),
+        )
+    }
+
     /** Forecast of [date], if it is still covered. */
     fun dayOf(date: LocalDate): DailyWeather? = daily.firstOrNull { it.date == date }
 
@@ -38,6 +52,22 @@ data class CanyonWeather(
         val stormDay = daily.firstOrNull { it.date.isAfter(hourlyEnd) && it.condition == WeatherCondition.THUNDERSTORM }
         return stormDay?.let { ThunderstormForecast(it.date, null) }
     }
+
+    companion object {
+        const val PAST_HOURS = 72
+        const val FORECAST_HOURS = 48
+    }
+}
+
+/** Hourly rain before and after now, oldest first. */
+data class RainOutlook(val past: List<HourlyPrecipitation>, val next: List<HourlyPrecipitation>) {
+    val pastTotalMm: Double get() = past.sumOf { it.precipitationMm }
+    val nextTotalMm: Double get() = next.sumOf { it.precipitationMm }
+
+    /** Highest chance of rain over the coming hours, when the forecast gives one. */
+    val maxProbabilityPercent: Int? get() = next.mapNotNull { it.precipitationProbabilityPercent }.maxOrNull()
+
+    val hours: List<HourlyPrecipitation> get() = past + next
 }
 
 /** A forecast thunderstorm: its day, and its time when the hourly forecast covers it. */

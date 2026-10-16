@@ -287,18 +287,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="weather_title">Meteo</string>
     <string name="weather_loading">Caricamento del meteo…</string>
     <string name="weather_unavailable">Meteo non disponibile per questo canyon.</string>
-    <string name="weather_collapsed_summary">72h: %1$s - 48h previste: %2$s</string>
-    <string name="weather_target_value">Punto meteo: %1$s (%2$s)</string>
-    <string name="weather_updated_at">Aggiornamento: %1$s</string>
-    <string name="weather_past_section">Accumuli osservati</string>
-    <string name="weather_future_section">Accumuli previsti</string>
-    <string name="weather_last_24h">Ultime 24h</string>
-    <string name="weather_last_48h">Ultime 48h</string>
-    <string name="weather_last_72h">Ultime 72h</string>
-    <string name="weather_next_24h">Prossime 24h</string>
-    <string name="weather_next_48h">Prossime 48h</string>
-    <string name="weather_max_hourly_past">Picco orario recente</string>
-    <string name="weather_probability_next_24h">Probabilità max 24h</string>
     <string name="weather_source_watershed_center">centro del bacino idrografico</string>
     <string name="weather_source_entry">ingresso</string>
     <string name="weather_source_upstream_parking">parcheggio a monte</string>
@@ -618,9 +606,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="shortcut_search_long">Cerca un canyon</string>
     <string name="shortcut_map_long">Mappa dei canyon</string>
     <string name="shortcut_favorites_long">I miei canyon preferiti</string>
-    <string name="weather_compact_past_72h">Pioggia 72 h</string>
-    <string name="weather_compact_next_48h">Prevista 48 h</string>
-    <string name="weather_compact_rain_chance">Prob. pioggia</string>
     <string name="weather_day_today">Oggi</string>
     <string name="weather_day_tomorrow">Domani</string>
     <string name="weather_storm_today">Temporali previsti oggi: una piena improvvisa può arrivare anche senza pioggia sul posto.</string>
@@ -787,4 +772,16 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="favorites_sort_added">Recenti</string>
     <string name="favorites_sort_name">Nome</string>
     <string name="favorites_sort_report">Ultima portata</string>
+    <string name="weather_rain_section">Pioggia</string>
+    <string name="weather_days_section">Prossimi giorni</string>
+    <string name="weather_rain_past_hours">Ultime %1$d h</string>
+    <string name="weather_rain_next_hours">Prossime %1$d h</string>
+    <string name="weather_rain_chance_hours">Prob. %1$d h</string>
+    <string name="weather_now">Ora</string>
+    <string name="weather_day_yesterday">Ieri</string>
+    <string name="weather_storm_hours_legend">Ore di temporale</string>
+    <string name="weather_rain_chart_description">Pioggia oraria nelle ultime %1$d ore e nelle prossime %2$d ore. Intensità massima: %3$s, %4$s.</string>
+    <string name="weather_rain_chart_description_dry">Pioggia oraria nelle ultime %1$d ore e nelle prossime %2$d ore: nessuna pioggia.</string>
+    <string name="weather_point">Punto meteo: %1$s</string>
+    <string name="weather_point_updated">Punto meteo: %1$s · aggiornato alle %2$s</string>
 </resources>

@@ -59,10 +59,10 @@ class WeatherRepositoryImplTest {
         assertEquals(WeatherLocationSource.WATERSHED_CENTER, weather.target.source)
         assertEquals(43.80, weather.target.latitude, 0.001)
         assertEquals(6.20, weather.target.longitude, 0.001)
-        assertEquals(10.0, weather.past24HoursPrecipitationMm, 0.001)
-        assertEquals(20.0, weather.next24HoursPrecipitationMm, 0.001)
-        assertEquals(20.0, weather.next48HoursPrecipitationMm, 0.001)
-        assertEquals(7, weather.maxPrecipitationProbabilityNext24Hours)
+        val rain = weather.rainAround(now)
+        assertEquals(10.0, rain.pastTotalMm, 0.001)
+        assertEquals(20.0, rain.nextTotalMm, 0.001)
+        assertEquals(7, rain.maxProbabilityPercent)
         assertFalse(weather.isFromCache)
     }
 
@@ -98,7 +98,7 @@ class WeatherRepositoryImplTest {
     }
 
     @Test
-    fun `the last forecast is kept for offline use and recomputed for the current hour`() = runTest {
+    fun `the last forecast is kept for offline use and split at the current hour`() = runTest {
         repository(fakeRemoteSource(forecastDto())).getCanyonWeather(canyonDetail()).getOrThrow()
 
         // Two hours later, without network.
@@ -108,8 +108,9 @@ class WeatherRepositoryImplTest {
         assertTrue(cached.isFromCache)
         assertEquals(WeatherLocationSource.DOWNSTREAM_PARKING, cached.target.source)
         // Hours 07:00 to 12:00 are now in the past (1 + 2 + 3 + 4 + 5 + 6 mm).
-        assertEquals(21.0, cached.past24HoursPrecipitationMm, 0.001)
-        assertEquals(9.0, cached.next24HoursPrecipitationMm, 0.001)
+        val rain = cached.rainAround(now.plusHours(2))
+        assertEquals(21.0, rain.pastTotalMm, 0.001)
+        assertEquals(9.0, rain.nextTotalMm, 0.001)
     }
 
     @Test
