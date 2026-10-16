@@ -41,9 +41,9 @@ l'écosystème existant et aux retours des utilisateurs, puis combler les manque
    fourchettes), marge avant le coucher du soleil calculé sur le téléphone, conditions du jour, message
    pour un proche (lieu, horaires, heure d'alerte, numéro d'urgence, coordonnées des parkings) et rappel
    à l'heure de retour prévue qui ouvre le formulaire de débit.
-3. **Écran d'urgence hors ligne** : numéros du pays du canyon (112 et numéros nationaux connus avec
-   certitude), position GPS en décimal et en degrés-minutes avec précision et altitude, envoi par SMS,
-   échappatoires et points de la fiche, informations à donner aux secours.
+3. **Écran d'urgence hors ligne** : numéros du pays du canyon, position GPS en décimal et en degrés-minutes
+   avec précision et altitude, envoi par SMS, échappatoires et points de la fiche, informations à donner aux
+   secours. Accessible en un geste (voir section 6).
 4. **Carnet de sorties** : ajout depuis la fiche ou automatiquement avec « Je suis rentré », liste par
    année et totaux ; chaque ajout propose de signaler le débit.
 5. **Confort** : zone des derniers débits mémorisée, tri des favoris (nom, dernier débit), durées des
@@ -70,3 +70,25 @@ Les PR #6 (prévisions à 5 jours), #7 (partage et « Avertir un proche ») et #
 favoris), ouvertes en septembre 2026 par un contributeur sur l'ancienne architecture, ne peuvent plus
 être fusionnées telles quelles. Leurs idées principales sont désormais couvertes (prévisions, partage,
 message à un proche, tri) ; les dossiers de favoris restent à discuter avec le contributeur.
+
+## 6. Retours après usage (octobre 2026)
+
+- **Carte météo** : les ajouts (prévisions, orages, soleil) s'empilaient sur l'ancienne présentation, avec des
+  doublons (cumuls affichés deux fois) et trois styles de tuiles. Elle est refaite en une seule carte sans
+  dépliage : alerte orage, « Pluie » (tombée en 72 h, prévue en 48 h, risque) avec un graphique heure par heure
+  qui montre quand il a plu et les heures d'orage, « Prochains jours », puis soleil, point météo et heure de mise à
+  jour. Le pic horaire, les cumuls 24/48 h et les coordonnées du point météo sont retirés. Les cumuls sont calculés
+  à l'affichage, donc justes aussi pour une prévision lue hors ligne le lendemain.
+- **Urgence** : il fallait ouvrir une fiche puis un menu pour l'atteindre, et l'écran ignorait où l'on était.
+  Elle est maintenant à un geste partout où l'on se trouve pendant une sortie : bouton SOS (accueil, fiche, carte
+  des points), raccourci « Urgence » de l'icône de l'application, et notification « Sortie en cours » qui
+  s'ouvre écran verrouillé et propose « Je suis rentré ». Écran verrouillé, les numéros passent par le composeur
+  d'urgence du système, sans déverrouiller. L'écran nomme le canyon (fiche, sortie en cours, sinon le canyon dont
+  le parcours passe au plus près de la position, avec « Pas le bon canyon ? »), indique le point de la fiche le
+  plus proche, trie les points par distance avec la direction, reprend l'engagement de la fiche et prépare un SMS
+  complet (canyon, position, point proche, lien de carte).
+- **Numéros d'urgence** : les 30 pays du site et une centaine d'autres pays de canyoning ont leurs numéros (source :
+  conseils aux voyageurs du Foreign Office britannique, recoupés avec France Diplomatie quand ils divergent ; un
+  numéro contradictoire est écarté). Hors d'Europe, le 112 n'est plus proposé là où il n'est pas le numéro local
+  (Madagascar : 118, 117, 119 ; Népal : 100, 1144...). Sans canyon, le pays du réseau mobile donne les numéros.
+

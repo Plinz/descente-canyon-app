@@ -41,9 +41,11 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavGraph.Companion.findStartDestination
+import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -52,6 +54,7 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.ThemeMode
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
+import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.startup.AppStartupCoordinator
 import fr.descentecanyon.app.startup.StartupLaunchMode
@@ -67,12 +70,15 @@ import fr.descentecanyon.app.ui.test.TestTags
 import fr.descentecanyon.app.ui.theme.DescenteCanyonTheme
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @Inject lateinit var appStartupCoordinator: AppStartupCoordinator
 
     @Inject lateinit var preferencesRepository: PreferencesRepository
+
+    @Inject lateinit var endOutingUseCase: EndOutingUseCase
 
     private val incomingLaunchTargets = MutableSharedFlow<AppLaunchTarget>(extraBufferCapacity = 1)
 
@@ -84,7 +90,7 @@ class MainActivity : ComponentActivity() {
         )
         enableEdgeToEdge()
         if (savedInstanceState == null) AppShortcuts.publish(this)
-        val initialLaunchTarget = consumeLaunchTarget(intent)
+        val initialLaunchTarget = resolveLaunchTarget(intent)
         setContent {
             val themeMode by preferencesRepository.observeThemeMode()
                 .collectAsStateWithLifecycle(initialValue = preferencesRepository.getThemeMode())
@@ -114,10 +120,18 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: android.content.Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        val launchTarget = consumeLaunchTarget(intent)
+        val launchTarget = resolveLaunchTarget(intent)
         if (launchTarget != AppLaunchTarget.None) {
             incomingLaunchTargets.tryEmit(launchTarget)
         }
+    }
+
+    /** "I'm back" from a notification ends the outing here; the screens then show the flow report form. */
+    private fun resolveLaunchTarget(intent: android.content.Intent?): AppLaunchTarget {
+        val target = consumeLaunchTarget(intent)
+        if (target !is AppLaunchTarget.OutingBack) return target
+        lifecycleScope.launch { endOutingUseCase(target.canyonId) }
+        return AppLaunchTarget.DebitForm(target.canyonId)
     }
 }
 
@@ -252,12 +266,10 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
                     }
                 }
 
-                is AppLaunchTarget.DebitForm -> {
-                    navController.navigate(Screen.CanyonDetail(target.canyonId)) {
-                        applyAppRootNavigation(navController.graph.findStartDestination().id)
-                    }
-                    navController.navigate(Screen.DebitForm(target.canyonId))
-                }
+                is AppLaunchTarget.DebitForm -> navController.openDebitForm(target.canyonId)
+
+                // Resolved by the activity, which ends the outing first.
+                is AppLaunchTarget.OutingBack -> navController.openDebitForm(target.canyonId)
 
                 is AppLaunchTarget.CanyonDetail -> {
                     if (target.clearBackStack) {
@@ -344,6 +356,14 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
             topLevelContentPadding = innerPadding,
         )
     }
+}
+
+/** The flow report form over the canyon page, from a notification. */
+private fun NavHostController.openDebitForm(canyonId: Int) {
+    navigate(Screen.CanyonDetail(canyonId)) {
+        applyAppRootNavigation(graph.findStartDestination().id)
+    }
+    navigate(Screen.DebitForm(canyonId))
 }
 
 internal fun BottomNavItem.launchSection(): LaunchSection? = when (this) {

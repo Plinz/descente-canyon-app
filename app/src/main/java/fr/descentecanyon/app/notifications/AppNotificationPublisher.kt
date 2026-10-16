@@ -20,11 +20,14 @@ import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.model.RejectedDebitSubmission
 import fr.descentecanyon.app.domain.model.SentDebitSubmission
 import fr.descentecanyon.app.domain.model.TrackedActivityEvent
+import fr.descentecanyon.app.ui.EmergencyActivity
 import fr.descentecanyon.app.ui.MainActivity
 import fr.descentecanyon.app.ui.navigation.AppLaunchTarget
 import fr.descentecanyon.app.ui.navigation.LaunchSection
 import fr.descentecanyon.app.ui.navigation.putLaunchTarget
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import javax.inject.Inject
@@ -69,8 +72,45 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         )
     }
 
+    /**
+     * During an outing: a silent notification that opens the emergency screen, over the lock screen
+     * too, and ends the outing. The lock screen hides the canyon name when content is hidden there.
+     */
+    fun publishOutingOngoing(canyonId: Int, canyonName: String, expectedBack: Instant): Boolean {
+        if (!canPostNotifications(OUTINGS_CHANNEL_ID)) return false
+        val name = canyonName.ifBlank { context.getString(R.string.canyon_fallback_title, canyonId) }
+        val back = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).format(expectedBack.atZone(ZoneId.systemDefault()))
+        val body = context.getString(R.string.notification_outing_ongoing_body, back)
+        val emergency = emergencyPendingIntent(canyonId)
+        val publicVersion = NotificationCompat.Builder(context, OUTINGS_CHANNEL_ID)
+            .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+            .setContentTitle(context.getString(R.string.notification_outing_ongoing_public_title))
+            .setContentText(body)
+            .setContentIntent(emergency)
+            .addAction(emergencyAction(emergency))
+            .build()
+        val notification = NotificationCompat.Builder(context, OUTINGS_CHANNEL_ID)
+            .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+            .setContentTitle(context.getString(R.string.notification_outing_ongoing_title, name))
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setOngoing(true)
+            .setSilent(true)
+            .setOnlyAlertOnce(true)
+            .setShowWhen(false)
+            .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+            .setPublicVersion(publicVersion)
+            .setContentIntent(emergency)
+            .addAction(emergencyAction(emergency))
+            .addAction(outingBackAction(canyonId))
+            .build()
+        notifySafely(OUTING_ONGOING_NOTIFICATION_ID, notification)
+        return true
+    }
+
     /** At the expected return of an outing: back safely? A report of the flow helps everyone. */
     fun publishOutingEndReminder(canyonId: Int, canyonName: String): Boolean {
+        NotificationManagerCompat.from(context).cancel(OUTING_ONGOING_NOTIFICATION_ID)
         if (!canPostNotifications(OUTINGS_CHANNEL_ID)) return false
         val name = canyonName.ifBlank { context.getString(R.string.canyon_fallback_title, canyonId) }
         val body = context.getString(R.string.notification_outing_end_body, name)
@@ -81,9 +121,19 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setAutoCancel(true)
             .setContentIntent(debitFormPendingIntent(canyonId))
+            .addAction(outingBackAction(canyonId))
+            .addAction(emergencyAction(emergencyPendingIntent(canyonId)))
             .build()
         notifySafely(OUTING_END_NOTIFICATION_ID, notification)
         return true
+    }
+
+    /** The outing was ended or cancelled: nothing about it stays in the notification shade. */
+    fun cancelOutingNotifications() {
+        NotificationManagerCompat.from(context).run {
+            cancel(OUTING_ONGOING_NOTIFICATION_ID)
+            cancel(OUTING_END_NOTIFICATION_ID)
+        }
     }
 
     fun publishDebitEvents(events: List<TrackedActivityEvent>): Boolean {
@@ -270,6 +320,37 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         )
     }
 
+    private fun emergencyPendingIntent(canyonId: Int): PendingIntent = PendingIntent.getActivity(
+        context,
+        EMERGENCY_REQUEST_CODE_BASE + canyonId,
+        EmergencyActivity.intent(context, canyonId),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+    )
+
+    private fun emergencyAction(intent: PendingIntent): NotificationCompat.Action = NotificationCompat.Action.Builder(
+        fr.descentecanyon.app.R.drawable.ic_shortcut_emergency,
+        context.getString(R.string.outing_emergency_action),
+        intent,
+    ).build()
+
+    /** "I'm back": ends the outing and opens the flow report form. */
+    private fun outingBackAction(canyonId: Int): NotificationCompat.Action {
+        val intent = Intent(context, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            .putLaunchTarget(AppLaunchTarget.OutingBack(canyonId))
+        val pendingIntent = PendingIntent.getActivity(
+            context,
+            OUTING_BACK_REQUEST_CODE_BASE + canyonId,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        return NotificationCompat.Action.Builder(
+            fr.descentecanyon.app.R.drawable.ic_launcher_foreground,
+            context.getString(R.string.outing_end_action),
+            pendingIntent,
+        ).build()
+    }
+
     private fun notificationCenterPendingIntent(): PendingIntent {
         val intent = Intent(context, MainActivity::class.java)
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
@@ -346,7 +427,10 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         const val DEBIT_SENT_NOTIFICATION_ID = 2004
         const val PENDING_LOGIN_NOTIFICATION_ID = 2005
         const val OUTING_END_NOTIFICATION_ID = 2006
+        const val OUTING_ONGOING_NOTIFICATION_ID = 2007
         const val DEBIT_FORM_REQUEST_CODE_BASE = 20_000_000
+        const val EMERGENCY_REQUEST_CODE_BASE = 30_000_000
+        const val OUTING_BACK_REQUEST_CODE_BASE = 40_000_000
         const val APP_REQUEST_CODE = 10_001
         const val SECTION_REQUEST_CODE_BASE = 10_100
     }

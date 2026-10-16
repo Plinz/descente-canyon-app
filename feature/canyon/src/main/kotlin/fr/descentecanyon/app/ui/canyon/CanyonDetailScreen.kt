@@ -25,7 +25,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Emergency
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
@@ -41,6 +40,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -74,6 +74,7 @@ import fr.descentecanyon.app.ui.common.openUrl
 import fr.descentecanyon.app.ui.common.startActivitySafely
 import fr.descentecanyon.app.ui.components.AppFloatingActionButton
 import fr.descentecanyon.app.ui.components.CompactAppBar
+import fr.descentecanyon.app.ui.components.EmergencyIconButton
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.test.TestTags
 
@@ -166,36 +167,7 @@ fun CanyonDetailScreen(
                     ) {
                         AddDebitIcon(contentDescription = stringResource(R.string.debit_add_action))
                     }
-                    IconButton(
-                        onClick = {
-                            if (!uiState.isDebitNotificationsEnabled &&
-                                context.needsNotificationPermission()
-                            ) {
-                                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                            } else {
-                                viewModel.toggleDebitNotifications()
-                            }
-                        },
-                        modifier = Modifier.testTag(TestTags.DETAIL_DEBIT_NOTIFICATION_BUTTON),
-                    ) {
-                        Icon(
-                            imageVector = if (uiState.isDebitNotificationsEnabled) {
-                                Icons.Default.NotificationsActive
-                            } else {
-                                Icons.Default.NotificationsNone
-                            },
-                            contentDescription = if (uiState.isDebitNotificationsEnabled) {
-                                stringResource(R.string.notifications_canyon_unfollow_action)
-                            } else {
-                                stringResource(R.string.notifications_canyon_follow_action)
-                            },
-                            tint = if (uiState.isDebitNotificationsEnabled) {
-                                MaterialTheme.colorScheme.primary
-                            } else {
-                                MaterialTheme.colorScheme.onPrimaryContainer
-                            },
-                        )
-                    }
+                    EmergencyIconButton(onClick = onOpenEmergency)
                     IconButton(
                         onClick = viewModel::toggleFavorite,
                         modifier = Modifier.testTag(TestTags.DETAIL_FAVORITE_BUTTON),
@@ -216,8 +188,15 @@ fun CanyonDetailScreen(
                     }
                     CanyonMoreActions(
                         canyon = uiState.canyonDetail?.canyon,
+                        isFollowingDebits = uiState.isDebitNotificationsEnabled,
+                        onToggleFollowDebits = {
+                            if (!uiState.isDebitNotificationsEnabled && context.needsNotificationPermission()) {
+                                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            } else {
+                                viewModel.toggleDebitNotifications()
+                            }
+                        },
                         onRateInterestClick = onRateInterestClick,
-                        onOpenEmergency = onOpenEmergency,
                     )
                 },
             )
@@ -363,7 +342,12 @@ private fun AddDebitIcon(contentDescription: String, modifier: Modifier = Modifi
 
 /** Less frequent actions, kept in a menu so the canyon name stays readable in the top bar. */
 @Composable
-private fun CanyonMoreActions(canyon: Canyon?, onRateInterestClick: () -> Unit, onOpenEmergency: () -> Unit) {
+private fun CanyonMoreActions(
+    canyon: Canyon?,
+    isFollowingDebits: Boolean,
+    onToggleFollowDebits: () -> Unit,
+    onRateInterestClick: () -> Unit,
+) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
     Box {
@@ -375,6 +359,28 @@ private fun CanyonMoreActions(canyon: Canyon?, onRateInterestClick: () -> Unit, 
             )
         }
         DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenuItem(
+                text = {
+                    val label = if (isFollowingDebits) {
+                        R.string.notifications_canyon_unfollow_action
+                    } else {
+                        R.string.notifications_canyon_follow_action
+                    }
+                    Text(stringResource(label))
+                },
+                leadingIcon = {
+                    Icon(
+                        imageVector = if (isFollowingDebits) Icons.Default.NotificationsActive else Icons.Default.NotificationsNone,
+                        contentDescription = null,
+                        tint = if (isFollowingDebits) MaterialTheme.colorScheme.primary else LocalContentColor.current,
+                    )
+                },
+                onClick = {
+                    expanded = false
+                    onToggleFollowDebits()
+                },
+                modifier = Modifier.testTag(TestTags.DETAIL_DEBIT_NOTIFICATION_BUTTON),
+            )
             DropdownMenuItem(
                 text = { Text(stringResource(R.string.interest_rating_add_action)) },
                 leadingIcon = { Icon(Icons.Default.Star, contentDescription = null) },
@@ -394,14 +400,6 @@ private fun CanyonMoreActions(canyon: Canyon?, onRateInterestClick: () -> Unit, 
                     },
                 )
             }
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.emergency_title)) },
-                leadingIcon = { Icon(Icons.Default.Emergency, contentDescription = null, tint = MaterialTheme.colorScheme.error) },
-                onClick = {
-                    expanded = false
-                    onOpenEmergency()
-                },
-            )
             if (canyon?.url?.startsWith("https://") == true) {
                 DropdownMenuItem(
                     text = { Text(stringResource(R.string.open_on_site)) },

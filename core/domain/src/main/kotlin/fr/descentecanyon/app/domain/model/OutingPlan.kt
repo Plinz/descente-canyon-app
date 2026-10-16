@@ -86,7 +86,11 @@ data class PlannedOuting(
     /** An outing whose alert time is long past is forgotten. */
     fun isStale(now: Instant): Boolean = now.isAfter(alertAt.plus(STALE_AFTER))
 
+    /** Under way at [now]: started, or about to (people leave earlier than planned), and not forgotten. */
+    fun isUnderway(now: Instant): Boolean = !now.isBefore(start.minus(EARLY_START)) && !isStale(now)
+
     companion object {
         val STALE_AFTER: Duration = Duration.ofHours(12)
+        val EARLY_START: Duration = Duration.ofHours(2)
     }
 }

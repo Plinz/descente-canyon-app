@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Launcher shortcut icon: Material "SOS" glyph on emergency red. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="48"
+    android:viewportHeight="48">
+    <path
+        android:fillColor="#C62828"
+        android:pathData="M24,24m-24,0a24,24 0,1 1,48 0a24,24 0,1 1,-48 0" />
+    <group
+        android:translateX="12"
+        android:translateY="12">
+        <path
+            android:fillColor="#FFFFFF"
+            android:pathData="M13.5,7h-3c-1.1,0 -2,0.9 -2,2v6c0,1.1 0.9,2 2,2h3c1.1,0 2,-0.9 2,-2V9C15.5,7.9 14.6,7 13.5,7zM13.5,15h-3V9h3V15zM1,15h4v-2H3c-1.1,0 -2,-0.9 -2,-2V9c0,-1.1 0.9,-2 2,-2h4v2H3v2h2c1.1,0 2,0.9 2,2v2c0,1.1 -0.9,2 -2,2H1V15zM17,15h4v-2h-2c-1.1,0 -2,-0.9 -2,-2V9c0,-1.1 0.9,-2 2,-2h4v2h-4v2h2c1.1,0 2,0.9 2,2v2c0,1.1 -0.9,2 -2,2h-4V15z" />
+    </group>
+</vector>

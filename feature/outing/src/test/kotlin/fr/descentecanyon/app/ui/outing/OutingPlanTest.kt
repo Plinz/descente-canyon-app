@@ -14,6 +14,7 @@ import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.WeatherRepository
+import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonDebitPredictionsUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonPreviewUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonWeatherUseCase
@@ -80,7 +81,7 @@ class OutingPlanTest {
         val state = viewModel.uiState.value
         assertEquals(LocalDateTime.of(2026, 7, 14, 11, 45), state.expectedBack) // 8:15 + 30 min + 2h + 1h
         assertTrue(state.daylight is DaylightCheck.Ok)
-        assertEquals(listOf("112", "15", "18"), state.emergencyNumbers.map { it.number })
+        assertEquals(listOf("112", "15", "18", "17"), state.emergencyNumbers.map { it.number })
 
         viewModel.selectAlertMargin(3)
         viewModel.saveOuting()
@@ -155,7 +156,7 @@ class OutingPlanTest {
             getCanyonDebitPredictionsUseCase = GetCanyonDebitPredictionsUseCase(predictions),
             debitRepository = debits,
             outingRepository = outingRepository,
-            logbookRepository = logbookRepository,
+            endOutingUseCase = EndOutingUseCase(outingRepository, logbookRepository, clock),
             connectivityObserver = connectivity,
             clock = clock,
         )

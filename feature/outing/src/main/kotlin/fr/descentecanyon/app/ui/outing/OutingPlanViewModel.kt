@@ -21,8 +21,8 @@ import fr.descentecanyon.app.domain.model.OutingTimeline
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.SunCalculator
 import fr.descentecanyon.app.domain.repository.DebitRepository
-import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
+import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonDebitPredictionsUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonPreviewUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonWeatherUseCase
@@ -87,7 +87,7 @@ class OutingPlanViewModel @Inject constructor(
     private val getCanyonDebitPredictionsUseCase: GetCanyonDebitPredictionsUseCase,
     private val debitRepository: DebitRepository,
     private val outingRepository: OutingRepository,
-    private val logbookRepository: LogbookRepository,
+    private val endOutingUseCase: EndOutingUseCase,
     private val connectivityObserver: ConnectivityObserver,
     private val clock: Clock,
 ) : ViewModel() {
@@ -139,13 +139,9 @@ class OutingPlanViewModel @Inject constructor(
         }
     }
 
-    /** Back from the outing: it goes to the logbook and the reminder is cancelled. */
+    /** Back from the outing: it goes to the logbook and its notifications are cancelled. */
     fun markBack() {
-        val outing = sources.value.outing?.takeIf { it.canyonId == canyonId }
-        viewModelScope.launch {
-            outing?.let { logbookRepository.add(it.canyonId, it.canyonName, it.start.atZone(clock.zone).toLocalDate(), null) }
-            outingRepository.clear()
-        }
+        viewModelScope.launch { endOutingUseCase(canyonId) }
     }
 
     fun cancelOuting() {

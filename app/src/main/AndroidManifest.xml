@@ -14,6 +14,9 @@
     <!-- Runtime permission required on Android 13+ for alert delivery -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
+    <!-- Puts back the notification of the outing under way after a reboot -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
      <application
         android:name=".DescenteCanyonApp"
         android:allowBackup="true"
@@ -48,6 +51,27 @@
                 <data android:pathPrefix="/canyoning/canyon/" />
             </intent-filter>
         </activity>
+
+        <!-- Opened from the launcher shortcut and the outing notification, over the lock screen too:
+             position and numbers are readable without unlocking. Its own task, so "back" returns to
+             where the user was. -->
+        <activity
+            android:name=".ui.EmergencyActivity"
+            android:exported="false"
+            android:label="@string/emergency_title"
+            android:showWhenLocked="true"
+            android:taskAffinity="${applicationId}.emergency"
+            android:theme="@style/Theme.DescenteCanyon"
+            tools:targetApi="27" />
+
+        <receiver
+            android:name=".outing.OutingRestoreReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
 
     </application>
 

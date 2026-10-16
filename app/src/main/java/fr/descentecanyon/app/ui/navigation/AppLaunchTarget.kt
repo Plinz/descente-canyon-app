@@ -11,6 +11,9 @@ sealed interface AppLaunchTarget {
     /** The flow report form of a canyon, over its page (end-of-outing reminder). */
     data class DebitForm(val canyonId: Int) : AppLaunchTarget
 
+    /** "I'm back" from an outing notification: the outing ends, then the flow seen is reported. */
+    data class OutingBack(val canyonId: Int) : AppLaunchTarget
+
     /** A screen without arguments, opened from a notification or a launcher shortcut. */
     data class Section(val section: LaunchSection, val clearBackStack: Boolean = true) : AppLaunchTarget
 }
@@ -34,6 +37,9 @@ fun Intent.putLaunchTarget(target: AppLaunchTarget): Intent = when (target) {
         .putExtra(EXTRA_CLEAR_BACKSTACK, target.clearBackStack)
 
     is AppLaunchTarget.DebitForm -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_DEBIT_FORM)
+        .putExtra(EXTRA_CANYON_ID, target.canyonId)
+
+    is AppLaunchTarget.OutingBack -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_OUTING_BACK)
         .putExtra(EXTRA_CANYON_ID, target.canyonId)
 
     is AppLaunchTarget.Section -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_SECTION)
@@ -64,6 +70,11 @@ fun consumeLaunchTarget(intent: Intent?): AppLaunchTarget {
         TARGET_DEBIT_FORM -> intent.getIntExtra(EXTRA_CANYON_ID, 0)
             .takeIf { it > 0 }
             ?.let { AppLaunchTarget.DebitForm(it) }
+            ?: AppLaunchTarget.None
+
+        TARGET_OUTING_BACK -> intent.getIntExtra(EXTRA_CANYON_ID, 0)
+            .takeIf { it > 0 }
+            ?.let { AppLaunchTarget.OutingBack(it) }
             ?: AppLaunchTarget.None
 
         TARGET_SECTION -> LaunchSection.entries.firstOrNull { it.name == intent.getStringExtra(EXTRA_SECTION) }
@@ -103,6 +114,7 @@ private const val TARGET_NOTIFICATIONS = "notifications"
 private const val TARGET_CANYON_DETAIL = "canyon_detail"
 private const val TARGET_SECTION = "section"
 private const val TARGET_DEBIT_FORM = "debit_form"
+private const val TARGET_OUTING_BACK = "outing_back"
 private val DESCENTE_CANYON_DETAIL_URL_REGEX = Regex(
     pattern = """https://(?:www\.)?descente-canyon\.com/canyoning/canyon/(\d+)(?:[/?#].*)?""",
     option = RegexOption.IGNORE_CASE,

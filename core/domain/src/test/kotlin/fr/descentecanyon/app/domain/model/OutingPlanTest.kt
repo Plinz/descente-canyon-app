@@ -1,6 +1,7 @@
 package fr.descentecanyon.app.domain.model
 
 import java.time.Duration
+import java.time.Instant
 import java.time.LocalDateTime
 import java.time.LocalTime
 import org.junit.Assert.assertEquals
@@ -69,12 +70,13 @@ class OutingPlanTest {
     }
 
     @Test
-    fun `emergency numbers follow the canyon country`() {
-        assertEquals(listOf("112", "1414", "144"), EmergencyNumbers.forCountries("Suisse").map { it.number })
-        assertEquals(listOf("112", "15", "18"), EmergencyNumbers.forCountries("France , Espagne").map { it.number })
-        assertEquals(listOf("111"), EmergencyNumbers.forCountries("Nouvelle Zélande").map { it.number })
-        assertEquals(listOf("112"), EmergencyNumbers.forCountries("Népal").map { it.number })
-        assertEquals(false, EmergencyNumbers.isKnown("Népal"))
-        assertEquals(true, EmergencyNumbers.isKnown("Grèce"))
+    fun `an outing is under way from shortly before its start until it is forgotten`() {
+        val start = Instant.parse("2026-07-14T08:00:00Z")
+        val outing = PlannedOuting(42, "Riolan", start, start.plus(Duration.ofHours(6)), start.plus(Duration.ofHours(8)))
+
+        assertEquals(false, outing.isUnderway(start.minus(Duration.ofHours(3))))
+        assertEquals(true, outing.isUnderway(start.minus(Duration.ofHours(1))))
+        assertEquals(true, outing.isUnderway(start.plus(Duration.ofHours(10))))
+        assertEquals(false, outing.isUnderway(start.plus(Duration.ofHours(21))))
     }
 }

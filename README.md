@@ -13,16 +13,21 @@ estimer le débit probable d'un canyon pour les trois prochains jours.
 - Estimation du débit par un modèle ONNX exécuté sur l'appareil (météo Open-Meteo, pluviomètres Météo-France et
   MeteoSwiss, état hydrologique simulé), affichée en fourchette quand le modèle hésite entre deux niveaux. Voir
   [docs/debit-prediction-model.md](docs/debit-prediction-model.md).
-- Fiche canyon orientée décision : prévisions sur 6 jours avec alerte orage, lever et coucher du soleil, canyons à
-  moins de 30 km avec leur dernier débit connu (plan B), répartition des débits signalés selon le mois. Les dernières
+- Fiche canyon orientée décision : météo en une carte (alerte orage, pluie tombée sur 72 h et prévue sur 48 h avec
+  graphique heure par heure et heures d'orage, 6 prochains jours, lever et coucher du soleil), canyons à moins de
+  30 km avec leur dernier débit connu (plan B), répartition des débits signalés selon le mois. Les dernières
   prévisions et estimations téléchargées restent affichées hors ligne.
 - Préparation de sortie : horaires estimés d'après les temps de la fiche, marge avant le coucher du soleil (calculé
   sur l'appareil), conditions du jour, message à envoyer à un proche (lieu, horaires, heure d'alerte, numéro
   d'urgence, coordonnées des parkings) et rappel au retour pour signaler le débit observé.
 - Carnet de sorties personnel (« Mes sorties », depuis les favoris) : sorties ajoutées depuis la fiche ou avec « Je
   suis rentré », statistiques ; il reste sur le téléphone.
-- Écran d'urgence hors ligne : numéros du pays du canyon, position GPS (décimale et degrés-minutes) à lire ou
-  envoyer par SMS, échappatoires et points de la fiche.
+- Écran d'urgence hors ligne, à un geste : bouton SOS de l'accueil, de la fiche et de la carte, raccourci « Urgence »
+  de l'icône, notification « Sortie en cours » ouvrable écran verrouillé (le 112 s'appelle alors sans déverrouiller).
+  Il nomme le canyon tout seul (fiche ouverte, sortie en cours ou position GPS, avec choix d'un canyon voisin),
+  donne les numéros du pays (une centaine de pays, sinon ceux du réseau mobile), la position à lire ou à envoyer par
+  SMS avec le point de la fiche le plus proche, les points triés par distance et direction, et l'engagement de la
+  fiche.
 
 > Le site ne propose pas d'API : l'application lit ses pages HTML. Toute évolution de leur structure peut casser une
 > fonctionnalité ; l'erreur `SiteFormatChanged` le signale explicitement à l'utilisateur.

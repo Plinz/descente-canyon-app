@@ -207,6 +207,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
             CanyonPointsMapScreen(
                 canyonId = route.canyonId,
                 onBackClick = { navController.popBackStack() },
+                onOpenEmergency = { navController.navigateSingleTop(Screen.Emergency(route.canyonId)) },
                 contentPadding = topLevelContentPadding,
             )
         }

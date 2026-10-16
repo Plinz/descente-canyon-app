@@ -21,15 +21,25 @@ import fr.descentecanyon.app.ui.navigation.putLaunchTarget
 object AppShortcuts {
 
     fun publish(context: Context) {
+        // Ranked in this order: emergency first, at hand from the home screen when something goes wrong.
         val shortcuts = listOf(
-            shortcut(context, LaunchSection.SEARCH, UiR.string.tab_search, UiR.string.shortcut_search_long, R.drawable.ic_shortcut_search),
-            shortcut(context, LaunchSection.MAP, UiR.string.tab_map, UiR.string.shortcut_map_long, R.drawable.ic_shortcut_map),
+            emergencyShortcut(context, rank = 0),
+            shortcut(
+                context,
+                LaunchSection.SEARCH,
+                UiR.string.tab_search,
+                UiR.string.shortcut_search_long,
+                R.drawable.ic_shortcut_search,
+                rank = 1,
+            ),
+            shortcut(context, LaunchSection.MAP, UiR.string.tab_map, UiR.string.shortcut_map_long, R.drawable.ic_shortcut_map, rank = 2),
             shortcut(
                 context,
                 LaunchSection.FAVORITES,
                 UiR.string.tab_favorites,
                 UiR.string.shortcut_favorites_long,
                 R.drawable.ic_shortcut_favorites,
+                rank = 3,
             ),
         )
         runCatching { ShortcutManagerCompat.setDynamicShortcuts(context, shortcuts) }
@@ -41,12 +51,23 @@ object AppShortcuts {
         runCatching { ShortcutManagerCompat.reportShortcutUsed(context, section.name.lowercase()) }
     }
 
+    /** Opens the emergency screen on its own, which finds the canyon from the outing or the position. */
+    private fun emergencyShortcut(context: Context, rank: Int): ShortcutInfoCompat =
+        ShortcutInfoCompat.Builder(context, EMERGENCY_SHORTCUT_ID)
+            .setShortLabel(context.getString(UiR.string.emergency_title))
+            .setLongLabel(context.getString(UiR.string.shortcut_emergency_long))
+            .setIcon(IconCompat.createWithResource(context, R.drawable.ic_shortcut_emergency))
+            .setIntent(EmergencyActivity.intent(context))
+            .setRank(rank)
+            .build()
+
     private fun shortcut(
         context: Context,
         section: LaunchSection,
         @StringRes shortLabel: Int,
         @StringRes longLabel: Int,
         @DrawableRes icon: Int,
+        rank: Int,
     ): ShortcutInfoCompat {
         // The launcher starts shortcuts in a new, cleared task: MainActivity opens the section from onCreate.
         val intent = Intent(context, MainActivity::class.java)
@@ -57,6 +78,9 @@ object AppShortcuts {
             .setLongLabel(context.getString(longLabel))
             .setIcon(IconCompat.createWithResource(context, icon))
             .setIntent(intent)
+            .setRank(rank)
             .build()
     }
+
+    private const val EMERGENCY_SHORTCUT_ID = "emergency"
 }

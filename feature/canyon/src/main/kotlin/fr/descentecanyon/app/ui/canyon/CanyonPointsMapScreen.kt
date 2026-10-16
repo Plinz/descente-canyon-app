@@ -45,6 +45,7 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Navigation
+import androidx.compose.material.icons.filled.Sos
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -73,7 +74,10 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -92,6 +96,7 @@ import fr.descentecanyon.app.ui.location.observeDeviceLocation
 import fr.descentecanyon.app.ui.location.requestLocationSettings
 import fr.descentecanyon.app.ui.map.MapLibreView
 import fr.descentecanyon.app.ui.map.UserTrackingMode
+import fr.descentecanyon.app.ui.test.TestTags
 import java.util.Locale
 import kotlin.math.abs
 import org.maplibre.android.geometry.LatLngBounds
@@ -102,6 +107,7 @@ fun CanyonPointsMapScreen(
     canyonId: Int,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onOpenEmergency: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: CanyonDetailViewModel = hiltViewModel(),
 ) {
@@ -125,6 +131,7 @@ fun CanyonPointsMapScreen(
                 detail = uiState.canyonDetail,
                 watershedGeometryJson = uiState.watershedGeometryJson,
                 onBackClick = onBackClick,
+                onOpenEmergency = onOpenEmergency,
                 modifier = Modifier.padding(contentPadding),
             )
 
@@ -141,6 +148,7 @@ private fun CanyonPointsMapContent(
     detail: CanyonDetail,
     watershedGeometryJson: String?,
     onBackClick: () -> Unit,
+    onOpenEmergency: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
@@ -385,6 +393,13 @@ private fun CanyonPointsMapContent(
                     onClick = { showWatershed = !showWatershed },
                 )
             }
+            MapControlButton(
+                onClick = onOpenEmergency,
+                contentDescription = stringResource(R.string.emergency_open),
+                modifier = Modifier.testTag(TestTags.EMERGENCY_BUTTON),
+            ) {
+                Icon(Icons.Default.Sos, contentDescription = null, tint = MaterialTheme.colorScheme.error)
+            }
         }
 
         MapControlButton(
@@ -437,7 +452,12 @@ private fun MapControlButton(
         shape = CircleShape,
         shadowElevation = 3.dp,
     ) {
-        IconButton(onClick = onClick, modifier = Modifier.size(48.dp)) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier
+                .size(48.dp)
+                .semantics { this.contentDescription = contentDescription },
+        ) {
             content()
         }
     }

@@ -18,6 +18,7 @@ import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import fr.descentecanyon.app.domain.repository.ForumRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
+import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
 import fr.descentecanyon.app.testutil.FakePreferencesRepository
 import fr.descentecanyon.app.testutil.MainDispatcherRule
 import io.mockk.coEvery
@@ -25,6 +26,7 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import java.net.UnknownHostException
+import java.time.Clock
 import java.time.LocalDate
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -365,7 +367,7 @@ class HomeViewModelTest {
             notificationCenterRepository = notificationCenterRepository,
             debitSubmissionRepository = debitSubmissionRepository,
             outingRepository = outingRepository,
-            logbookRepository = mockk(relaxUnitFun = true),
+            endOutingUseCase = EndOutingUseCase(outingRepository, mockk(relaxUnitFun = true), Clock.systemDefaultZone()),
         )
     }
 

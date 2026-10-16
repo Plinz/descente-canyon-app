@@ -54,6 +54,7 @@ import fr.descentecanyon.app.ui.auth.AuthViewModel
 import fr.descentecanyon.app.ui.auth.LoginDialog
 import fr.descentecanyon.app.ui.common.needsNotificationPermission
 import fr.descentecanyon.app.ui.components.CompactAppBar
+import fr.descentecanyon.app.ui.components.EmergencyIconButton
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
@@ -155,6 +156,8 @@ fun HomeScreen(
             CompactAppBar(
                 title = stringResource(R.string.app_name),
                 actions = {
+                    // The canyon is found from the outing under way or the position.
+                    EmergencyIconButton(onClick = { onEmergencyClick(0) })
                     IconButton(onClick = onNotificationsClick) {
                         Icon(
                             imageVector = Icons.Default.Notifications,

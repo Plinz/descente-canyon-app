@@ -1,9 +1,12 @@
 package fr.descentecanyon.app.ui.outing
 
+import android.Manifest
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Intent
 import android.text.format.DateFormat
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,6 +54,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
@@ -58,6 +62,7 @@ import fr.descentecanyon.app.domain.model.CanyonDuration
 import fr.descentecanyon.app.domain.model.DaylightCheck
 import fr.descentecanyon.app.domain.model.TimeWindow
 import fr.descentecanyon.app.domain.model.WeatherCondition
+import fr.descentecanyon.app.ui.common.needsNotificationPermission
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.debitLevelLabel
 import fr.descentecanyon.app.ui.components.debitRangeLabel
@@ -87,9 +92,21 @@ fun OutingPlanScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     val resources = LocalResources.current
     val timeFormatter = rememberTimeFormatter()
     val contentWidth = rememberDcContentWidth(maxWidth = 720.dp)
+
+    // The outing notifications (emergency access, end reminder) need the permission on Android 13+.
+    fun confirmSaved() {
+        val message = if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
+            resources.getString(R.string.outing_saved, state.expectedBack?.toLocalTime()?.format(timeFormatter).orEmpty())
+        } else {
+            resources.getString(R.string.outing_notifications_disabled)
+        }
+        scope.launch { snackbarHostState.showSnackbar(message) }
+    }
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { confirmSaved() }
 
     Scaffold(
         modifier = modifier,
@@ -126,8 +143,11 @@ fun OutingPlanScreen(
                         onMarginSelected = viewModel::selectAlertMargin,
                         onSave = {
                             viewModel.saveOuting()
-                            val back = state.expectedBack?.toLocalTime()?.format(timeFormatter).orEmpty()
-                            scope.launch { snackbarHostState.showSnackbar(resources.getString(R.string.outing_saved, back)) }
+                            if (context.needsNotificationPermission()) {
+                                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            } else {
+                                confirmSaved()
+                            }
                         },
                         onEnd = {
                             viewModel.markBack()
@@ -419,6 +439,7 @@ private fun RelativeCard(
                     Icon(Icons.Default.NotificationsActive, contentDescription = null)
                     Text(stringResource(R.string.outing_save_action), modifier = Modifier.padding(start = 8.dp))
                 }
+                Text(stringResource(R.string.outing_save_hint), style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
             } else {
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                     Button(onClick = onEnd, modifier = Modifier.weight(1f).testTag(TestTags.OUTING_END_BUTTON)) {
