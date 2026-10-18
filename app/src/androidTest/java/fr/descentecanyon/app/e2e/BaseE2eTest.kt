@@ -78,10 +78,16 @@ abstract class BaseE2eTest {
         }
     }
 
-    private fun launchMainActivity() {
+    /** Restarts the app as if [configure] had built the launch intent (deep link, notification...). */
+    protected fun relaunchWith(configure: Intent.() -> Unit) {
+        scenario?.close()
+        launchMainActivity(configure)
+    }
+
+    private fun launchMainActivity(configure: Intent.() -> Unit = {}) {
         val context = ApplicationProvider.getApplicationContext<Context>()
         scenario = ActivityScenario.launch(
-            Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK),
+            Intent(context, MainActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).apply(configure),
         )
         composeRule.waitForIdle()
     }

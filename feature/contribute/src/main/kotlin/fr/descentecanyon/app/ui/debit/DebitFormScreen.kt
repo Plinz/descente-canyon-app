@@ -73,6 +73,8 @@ import java.time.LocalDate
 fun DebitFormScreen(
     onBackClick: () -> Unit,
     onSubmissionSuccess: () -> Unit = onBackClick,
+    /** Closes the form once the report is stored for later sending. */
+    onClose: () -> Unit = onBackClick,
     onOpenPendingDebits: () -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: DebitFormViewModel = hiltViewModel(),
@@ -127,7 +129,7 @@ fun DebitFormScreen(
         viewModel.clearLastSubmissionStatus()
         when (status) {
             DebitSubmissionStatus.SUBMITTED, DebitSubmissionStatus.SUBMITTED_UNCONFIRMED -> onSubmissionSuccess()
-            DebitSubmissionStatus.QUEUED_OFFLINE -> onBackClick()
+            DebitSubmissionStatus.QUEUED_OFFLINE -> onClose()
         }
     }
 

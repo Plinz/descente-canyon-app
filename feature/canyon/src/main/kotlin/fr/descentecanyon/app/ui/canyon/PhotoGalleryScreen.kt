@@ -74,7 +74,13 @@ import fr.descentecanyon.app.core.ui.R
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PhotoGalleryScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier, viewModel: PhotoGalleryViewModel = hiltViewModel()) {
+fun PhotoGalleryScreen(
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    /** Closes the gallery when it has nothing to show. */
+    onClose: () -> Unit = onBackClick,
+    viewModel: PhotoGalleryViewModel = hiltViewModel(),
+) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val photos = uiState.photos
     val context = LocalContext.current
@@ -107,7 +113,7 @@ fun PhotoGalleryScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier, v
     }
 
     if (photos.isEmpty()) {
-        LaunchedEffect(Unit) { onBackClick() }
+        LaunchedEffect(Unit) { onClose() }
         return
     }
 
