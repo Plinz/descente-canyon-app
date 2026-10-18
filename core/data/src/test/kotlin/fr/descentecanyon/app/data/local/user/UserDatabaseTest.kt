@@ -51,6 +51,18 @@ class UserDatabaseTest {
     }
 
     @Test
+    fun `only the latest report of each canyon is read for the last known flow`() = runTest {
+        val debits = database.debitDao()
+        debits.insertAll(
+            listOf(debit(1, "2026-05-01"), debit(1, "2026-07-14"), debit(1, "2026-06-02"), debit(2, "2025-09-03"), debit(3, "2026-01-01")),
+        )
+
+        val latest = debits.observeLatestForCanyons(listOf(1, 2)).first()
+
+        assertEquals(mapOf(1 to "2026-07-14", 2 to "2025-09-03"), latest.associate { it.canyonId to it.date })
+    }
+
+    @Test
     fun `pending submissions copied twice are not duplicated`() = runTest {
         val pending = database.pendingDebitSubmissionDao()
         val submission = PendingDebitSubmissionEntity(

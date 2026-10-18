@@ -12,7 +12,7 @@ class FakePhotoRepository @Inject constructor() : PhotoRepository {
     override fun observePhotos(canyonId: Int): Flow<List<CanyonPhoto>> =
         E2eFixtureState.canyonDetails.map { details -> details[canyonId]?.photos.orEmpty() }
 
-    override suspend fun refreshPhotos(canyonId: Int): Result<List<CanyonPhoto>> =
+    override suspend fun refreshPhotos(canyonId: Int, maxAgeMs: Long): Result<List<CanyonPhoto>> =
         Result.success(E2eFixtureState.canyonDetails.value[canyonId]?.photos.orEmpty())
 
     override suspend fun downloadPhoto(photoId: Long): Result<String> {

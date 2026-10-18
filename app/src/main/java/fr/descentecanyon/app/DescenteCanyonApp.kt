@@ -21,6 +21,8 @@ class DescenteCanyonApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        // Kept in the debug and minified (profiling) builds only.
+        PerformanceTrace.isEnabled = BuildConfig.BUILD_TYPE != "release"
         PerformanceTrace.markProcessCreated()
         appNotificationPublisher.ensureChannelsCreated()
 

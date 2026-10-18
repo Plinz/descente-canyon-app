@@ -63,16 +63,19 @@ class CanyonMediaController @Inject constructor(
         }
     }
 
-    /** Refreshes photos and debits from the site. */
+    /**
+     * Refreshes photos and debits from the site; a canyon opened again shortly after keeps what
+     * was just read (the debits page of a popular canyon weighs megabytes).
+     */
     fun refresh() {
         _state.update { it.copy(isLoadingPhotos = true, photoError = null, isLoadingDebits = true, debitError = null) }
         scope.launch { refreshPhotos() }
-        scope.launch { refreshDebits() }
+        scope.launch { refreshDebits(maxAgeMs = DEBITS_MAX_AGE_MS) }
     }
 
     fun refreshDebitsAfterSubmission() {
         _state.update { it.copy(isLoadingDebits = true, debitError = null) }
-        scope.launch { refreshDebits() }
+        scope.launch { refreshDebits(maxAgeMs = 0) }
     }
 
     /** The canyon could not be loaded at all: no section is loading anymore. */
@@ -119,7 +122,7 @@ class CanyonMediaController @Inject constructor(
             return
         }
         PerformanceTrace.start(photoRefreshKey(canyonId), "canyon_photos_refresh", "canyonId" to canyonId)
-        photoRepository.refreshPhotos(canyonId).fold(
+        photoRepository.refreshPhotos(canyonId, maxAgeMs = PHOTOS_MAX_AGE_MS).fold(
             onSuccess = { photos ->
                 PerformanceTrace.end(photoRefreshKey(canyonId), "ready", "canyonId" to canyonId, "photoCount" to photos.size)
                 _state.update { it.copy(isLoadingPhotos = false, photoError = null) }
@@ -139,7 +142,7 @@ class CanyonMediaController @Inject constructor(
         )
     }
 
-    private suspend fun refreshDebits() {
+    private suspend fun refreshDebits(maxAgeMs: Long) {
         if (!connectivityObserver.isCurrentlyOnline()) {
             PerformanceTrace.logEvent("canyon_debits_refresh_skipped", "canyonId" to canyonId, "reason" to "offline")
             // No message: the page tells it is offline, and the reports saved stay on screen.
@@ -147,7 +150,7 @@ class CanyonMediaController @Inject constructor(
             return
         }
         PerformanceTrace.start(debitRefreshKey(canyonId), "canyon_debits_refresh", "canyonId" to canyonId)
-        debitRepository.refreshDebits(canyonId).fold(
+        debitRepository.refreshDebits(canyonId, maxAgeMs).fold(
             onSuccess = { debits ->
                 PerformanceTrace.end(debitRefreshKey(canyonId), "ready", "canyonId" to canyonId, "debitCount" to debits.size)
                 _state.update { it.copy(isLoadingDebits = false, debitError = null) }
@@ -166,6 +169,12 @@ class CanyonMediaController @Inject constructor(
     }
 
     private companion object {
+        /** New reports come in during the day: a few minutes are enough to come back to a canyon. */
+        const val DEBITS_MAX_AGE_MS = 10L * 60 * 1000
+
+        /** Photos are added rarely. */
+        const val PHOTOS_MAX_AGE_MS = 6L * 60 * 60 * 1000
+
         fun debitRefreshKey(canyonId: Int): String = "screen.canyon.$canyonId.debits"
 
         fun photoRefreshKey(canyonId: Int): String = "screen.canyon.$canyonId.photos"

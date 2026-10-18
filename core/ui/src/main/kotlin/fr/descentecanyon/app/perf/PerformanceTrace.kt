@@ -8,6 +8,13 @@ object PerformanceTrace {
 
     private const val TAG = "AppPerf"
 
+    /**
+     * Off in release builds: the traces cost string building on the main thread and would leave
+     * the canyons viewed in the system log.
+     */
+    @Volatile
+    var isEnabled: Boolean = true
+
     @Volatile
     private var processStartElapsedMs: Long = nowMs()
 
@@ -19,15 +26,18 @@ object PerformanceTrace {
     }
 
     fun logEvent(event: String, vararg attributes: Pair<String, Any?>) {
+        if (!isEnabled) return
         emitLog(buildMessage(event = event, durationMs = null, attributes = attributes.toMap()))
     }
 
     fun start(key: String, event: String, vararg attributes: Pair<String, Any?>) {
+        if (!isEnabled) return
         activeTraces[key] = ActiveTrace(event = event, startedAtElapsedMs = nowMs(), attributes = attributes.toMap())
         logEvent("${event}_start", *attributes)
     }
 
     fun end(key: String, outcome: String = "ok", vararg attributes: Pair<String, Any?>) {
+        if (!isEnabled) return
         val trace = activeTraces.remove(key)
         if (trace == null) {
             logEvent(
@@ -83,6 +93,7 @@ object PerformanceTrace {
     private fun nowMs(): Long = System.nanoTime() / 1_000_000
 
     private fun emitLog(message: String) {
+        if (!isEnabled) return
         runCatching { Log.i(TAG, message) }
             .getOrElse { println("$TAG: $message") }
     }

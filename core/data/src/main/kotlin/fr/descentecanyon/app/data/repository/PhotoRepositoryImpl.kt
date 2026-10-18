@@ -18,6 +18,7 @@ import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.CanyonPhoto
 import fr.descentecanyon.app.domain.repository.PhotoRepository
 import java.io.File
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.Dispatchers
@@ -38,8 +39,12 @@ class PhotoRepositoryImpl @Inject constructor(
         photos.map { it.withoutLegacyLocalPath().toDomain() }
     }
 
-    override suspend fun refreshPhotos(canyonId: Int): Result<List<CanyonPhoto>> = suspendRunCatching {
+    override suspend fun refreshPhotos(canyonId: Int, maxAgeMs: Long): Result<List<CanyonPhoto>> = suspendRunCatching {
         withContext(Dispatchers.IO) {
+            val now = System.currentTimeMillis()
+            if (refreshedAt[canyonId]?.let { now - it < maxAgeMs } == true) {
+                return@withContext photoDao.getByCanyonId(canyonId).map { it.withoutLegacyLocalPath().toDomain() }
+            }
             val existingByUrl = photoDao.getByCanyonId(canyonId).associateBy { it.url }
             val entities = scraper.scrapeCanyonPhotos(
                 canyonId = canyonId,
@@ -53,6 +58,7 @@ class PhotoRepositoryImpl @Inject constructor(
             }
 
             photoDao.replaceForCanyon(canyonId, entities)
+            refreshedAt[canyonId] = now
 
             entities.map { it.toDomain() }
         }
@@ -151,6 +157,9 @@ class PhotoRepositoryImpl @Inject constructor(
             context.contentResolver.openFileDescriptor(uri, "r")?.use { true } ?: false
         }.getOrDefault(false)
     }
+
+    /** When the photos of each canyon were last read from the site, during this run of the app. */
+    private val refreshedAt = ConcurrentHashMap<Int, Long>()
 
     private companion object {
         const val REFRESH_TIMEOUT_MS = 15_000L

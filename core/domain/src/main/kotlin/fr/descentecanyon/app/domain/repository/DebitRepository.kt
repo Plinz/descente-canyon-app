@@ -30,7 +30,8 @@ interface DebitRepository {
     suspend fun refreshLatestDebits(limit: Int = 20): Result<CachedItems<Debit>>
 
     /**
-     * Refresh debits from remote source.
+     * Refreshes the reports of a canyon from the site, unless they were refreshed less than
+     * [maxAgeMs] ago: the saved ones are returned then, sparing the site and the user's data.
      */
-    suspend fun refreshDebits(canyonId: Int): Result<List<Debit>>
+    suspend fun refreshDebits(canyonId: Int, maxAgeMs: Long = 0): Result<List<Debit>>
 }

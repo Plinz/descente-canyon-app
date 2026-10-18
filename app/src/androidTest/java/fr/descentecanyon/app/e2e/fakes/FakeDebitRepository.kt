@@ -28,6 +28,6 @@ class FakeDebitRepository @Inject constructor() : DebitRepository {
         debits.filter { it.canyonId in canyonIds }.groupBy { it.canyonId }.mapValues { (_, items) -> items.maxBy { it.date } }
     }
 
-    override suspend fun refreshDebits(canyonId: Int): Result<List<Debit>> =
+    override suspend fun refreshDebits(canyonId: Int, maxAgeMs: Long): Result<List<Debit>> =
         Result.success(E2eFixtureState.canyonDetails.value[canyonId]?.debits.orEmpty())
 }

@@ -14,8 +14,15 @@ interface DebitDao {
     @Query("SELECT * FROM debits WHERE canyonId = :canyonId ORDER BY date DESC")
     fun getByCanyonId(canyonId: Int): Flow<List<DebitEntity>>
 
-    @Query("SELECT * FROM debits WHERE canyonId IN (:canyonIds) ORDER BY date DESC")
-    fun observeForCanyons(canyonIds: List<Int>): Flow<List<DebitEntity>>
+    /**
+     * The most recent report of each canyon, one row per canyon: a popular canyon has thousands of
+     * reports, only the last one is needed. With MAX(), SQLite takes the bare column from its row.
+     */
+    @Query(
+        "SELECT * FROM debits WHERE id IN (" +
+            "SELECT id FROM (SELECT id, MAX(date) AS latest FROM debits WHERE canyonId IN (:canyonIds) GROUP BY canyonId))",
+    )
+    fun observeLatestForCanyons(canyonIds: List<Int>): Flow<List<DebitEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(debits: List<DebitEntity>)

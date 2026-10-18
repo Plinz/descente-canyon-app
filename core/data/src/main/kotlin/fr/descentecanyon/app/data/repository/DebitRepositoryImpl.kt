@@ -7,10 +7,12 @@ import fr.descentecanyon.app.data.remote.scraper.CanyonScraper
 import fr.descentecanyon.app.domain.model.CachedItems
 import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.repository.DebitRepository
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
@@ -35,7 +37,7 @@ class DebitRepositoryImpl @Inject constructor(
     override fun observeLatestKnownDebits(canyonIds: Set<Int>): Flow<Map<Int, Debit>> {
         if (canyonIds.isEmpty()) return flowOf(emptyMap())
         return combine(
-            debitDao.observeForCanyons(canyonIds.toList()),
+            debitDao.observeLatestForCanyons(canyonIds.toList()),
             snapshotStore.observeLatestDebits(),
         ) { cached, feed ->
             val known = cached.map { it.toDomain() } + feed.items.filter { it.canyonId in canyonIds }
@@ -51,16 +53,26 @@ class DebitRepositoryImpl @Inject constructor(
         CachedItems(items = debits, syncedAtEpochMs = syncedAtEpochMs)
     }
 
-    override suspend fun refreshDebits(canyonId: Int): Result<List<Debit>> = scraper.scrapeCanyonDebits(
-        canyonId = canyonId,
-        timeoutMs = REFRESH_TIMEOUT_MS,
-    ).map { scrapedDebits ->
-        val entities = scrapedDebits.map { it.toEntity() }
+    override suspend fun refreshDebits(canyonId: Int, maxAgeMs: Long): Result<List<Debit>> {
+        val now = System.currentTimeMillis()
+        if (refreshedAt[canyonId]?.let { now - it < maxAgeMs } == true) {
+            return Result.success(debitDao.getByCanyonId(canyonId).first().map { it.toDomain() })
+        }
+        return scraper.scrapeCanyonDebits(
+            canyonId = canyonId,
+            timeoutMs = REFRESH_TIMEOUT_MS,
+        ).map { scrapedDebits ->
+            val entities = scrapedDebits.map { it.toEntity() }
 
-        debitDao.replaceForCanyon(canyonId, entities)
+            debitDao.replaceForCanyon(canyonId, entities)
+            refreshedAt[canyonId] = now
 
-        entities.map { it.toDomain() }
+            entities.map { it.toDomain() }
+        }
     }
+
+    /** When the reports of each canyon were last read from the site, during this run of the app. */
+    private val refreshedAt = ConcurrentHashMap<Int, Long>()
 
     private companion object {
         const val REFRESH_TIMEOUT_MS = 15_000L
