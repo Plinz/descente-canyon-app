@@ -616,6 +616,10 @@ Search for a canyon and add it to your favorites.</string>
     <string name="weather_storm_today">Thunderstorms forecast today: a flash flood can come even without rain where you are.</string>
     <string name="weather_storm_tomorrow">Thunderstorms forecast tomorrow: flash flood risk.</string>
     <string name="weather_storm_later">Thunderstorms forecast on %1$s: flash flood risk.</string>
+    <string name="weather_heavy_rain_today">Heavy rain forecast today (%1$s): the flow can rise sharply.</string>
+    <string name="weather_heavy_rain_tomorrow">Heavy rain forecast tomorrow (%1$s): the flow can rise sharply.</string>
+    <string name="weather_heavy_rain_later">Heavy rain forecast %1$s (%2$s): the flow can rise sharply.</string>
+    <string name="prediction_heavy_rain_warning">Heavy rain forecast on these days: the real flow can far exceed this estimate, which mostly follows the reports.</string>
     <string name="weather_sun_times">Sunrise %1$s · sunset %2$s</string>
     <string name="weather_offline_cached">Offline: forecast downloaded on %1$s</string>
     <string name="weather_day_description">%1$s: %2$s, rain %3$s, %4$s to %5$s</string>

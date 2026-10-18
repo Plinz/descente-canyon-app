@@ -53,4 +53,23 @@ class RainOutlookTest {
         assertEquals(85, stormy.rainAround(downloadedAt).maxProbabilityPercent)
         assertNull(weather.rainAround(downloadedAt.plusHours(60)).maxProbabilityPercent)
     }
+
+    @Test
+    fun `the first heavy rain day from a date is found, past days ignored`() {
+        val days = CanyonWeather(
+            target = WeatherTarget(45.0, 6.0, WeatherLocationSource.ENTRY),
+            timezone = "Europe/Paris",
+            fetchedAt = Instant.EPOCH,
+            daily = listOf(
+                DailyWeather(java.time.LocalDate.of(2026, 10, 17), precipitationSumMm = 40.0),
+                DailyWeather(java.time.LocalDate.of(2026, 10, 18), precipitationSumMm = 0.0),
+                DailyWeather(java.time.LocalDate.of(2026, 10, 19), precipitationSumMm = 19.9),
+                DailyWeather(java.time.LocalDate.of(2026, 10, 20), precipitationSumMm = 81.0),
+                DailyWeather(java.time.LocalDate.of(2026, 10, 21), precipitationSumMm = 25.0),
+            ),
+        )
+
+        assertEquals(java.time.LocalDate.of(2026, 10, 20), days.firstHeavyRainDay(java.time.LocalDate.of(2026, 10, 18))?.date)
+        assertNull(days.firstHeavyRainDay(java.time.LocalDate.of(2026, 10, 22)))
+    }
 }

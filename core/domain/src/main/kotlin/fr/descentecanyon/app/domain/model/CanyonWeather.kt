@@ -53,9 +53,21 @@ data class CanyonWeather(
         return stormDay?.let { ThunderstormForecast(it.date, null) }
     }
 
+    /**
+     * First day from [from] whose forecast rain reaches [HEAVY_RAIN_DAY_MM]: enough to raise the flow
+     * of most canyons well beyond what the reports of the previous days suggest.
+     */
+    fun firstHeavyRainDay(from: LocalDate): DailyWeather? = daily
+        .filter { !it.date.isBefore(from) }
+        .sortedBy { it.date }
+        .firstOrNull { (it.precipitationSumMm ?: 0.0) >= HEAVY_RAIN_DAY_MM }
+
     companion object {
         const val PAST_HOURS = 72
         const val FORECAST_HOURS = 48
+
+        /** Daily rain from which the forecast is called heavy. */
+        const val HEAVY_RAIN_DAY_MM = 20.0
     }
 }
 

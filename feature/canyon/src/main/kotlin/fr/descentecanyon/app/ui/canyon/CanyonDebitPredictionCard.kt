@@ -47,11 +47,13 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
+import fr.descentecanyon.app.domain.model.CanyonWeather
 import fr.descentecanyon.app.domain.model.DailyDebitPrediction
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.PredictedDebitLevel
 import fr.descentecanyon.app.domain.model.PredictionConfidence
 import fr.descentecanyon.app.ui.components.debitRangeLabel
+import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.theme.DebitCorrect
 import fr.descentecanyon.app.ui.theme.DebitFilet
 import fr.descentecanyon.app.ui.theme.DebitGros
@@ -69,8 +71,15 @@ fun CanyonDebitPredictionCard(
     error: String?,
     onInfoClick: () -> Unit,
     modifier: Modifier = Modifier,
+    /** The forecast of the canyon, to warn when heavy rain falls on an estimated day. */
+    weather: CanyonWeather? = null,
 ) {
     var expanded by rememberSaveable { mutableStateOf(false) }
+    // Reports drive the estimate and few people report in a flood: it barely follows the rain of
+    // the day itself, so heavy rain is said next to it.
+    val heavyRainOnEstimatedDays = predictions?.predictions?.any { prediction ->
+        (weather?.dayOf(prediction.date)?.precipitationSumMm ?: 0.0) >= CanyonWeather.HEAVY_RAIN_DAY_MM
+    } == true
 
     Card(
         modifier = modifier
@@ -113,6 +122,15 @@ fun CanyonDebitPredictionCard(
                     contentDescription = stringResource(
                         if (expanded) R.string.canyon_summary_collapse else R.string.canyon_summary_expand,
                     ),
+                )
+            }
+
+            if (heavyRainOnEstimatedDays) {
+                Text(
+                    text = stringResource(R.string.prediction_heavy_rain_warning),
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = LocalDcColors.current.warning,
                 )
             }
 

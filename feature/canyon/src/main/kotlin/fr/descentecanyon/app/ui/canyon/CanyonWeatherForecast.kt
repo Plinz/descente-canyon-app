@@ -28,6 +28,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
@@ -68,6 +69,7 @@ internal fun DailyForecastRow(daily: List<DailyWeather>, today: LocalDate, modif
 private fun DailyForecastTile(day: DailyWeather, today: LocalDate, modifier: Modifier = Modifier) {
     val colors = LocalDcColors.current
     val isStorm = day.condition == WeatherCondition.THUNDERSTORM
+    val isHeavyRain = (day.precipitationSumMm ?: 0.0) >= CanyonWeather.HEAVY_RAIN_DAY_MM
     val dayLabel = forecastDayLabel(day.date, today)
     val conditionLabel = weatherConditionLabel(day.condition)
     val rain = day.precipitationSumMm?.let(::formatRainMm) ?: "--"
@@ -76,7 +78,7 @@ private fun DailyForecastTile(day: DailyWeather, today: LocalDate, modifier: Mod
     val description = stringResource(R.string.weather_day_description, dayLabel, conditionLabel, rain, minimum, maximum)
     WeatherTile(
         modifier = modifier.clearAndSetSemantics { contentDescription = description },
-        highlighted = isStorm,
+        highlighted = isStorm || isHeavyRain,
         horizontalPadding = 2.dp,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
@@ -95,6 +97,8 @@ private fun DailyForecastTile(day: DailyWeather, today: LocalDate, modifier: Mod
         Text(
             text = rain,
             style = MaterialTheme.typography.labelSmall,
+            fontWeight = if (isHeavyRain) FontWeight.Bold else null,
+            color = if (isHeavyRain) colors.warning else Color.Unspecified,
             maxLines = 1,
         )
         Text(
@@ -157,6 +161,39 @@ internal fun StormWarning(weather: CanyonWeather, now: LocalDateTime, modifier: 
 
         else -> stringResource(R.string.weather_storm_later, dayName(storm.date))
     }
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        shape = MaterialTheme.shapes.medium,
+        color = colors.warning.copy(alpha = 0.16f),
+        border = BorderStroke(1.dp, colors.warning.copy(alpha = 0.6f)),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(imageVector = Icons.Default.WarningAmber, contentDescription = null, tint = colors.warning)
+            Text(text = text, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold)
+        }
+    }
+}
+
+/**
+ * A day of heavy rain ahead (and no storm already announced for it): 60 mm tomorrow must not look
+ * like the dry days around it.
+ */
+@Composable
+internal fun HeavyRainWarning(weather: CanyonWeather, now: LocalDateTime, modifier: Modifier = Modifier) {
+    val today = now.toLocalDate()
+    val day = weather.firstHeavyRainDay(from = today) ?: return
+    if (weather.nextThunderstorm(now)?.date == day.date) return
+    val amount = formatRainMm(day.precipitationSumMm ?: 0.0)
+    val text = when (day.date) {
+        today -> stringResource(R.string.weather_heavy_rain_today, amount)
+        today.plusDays(1) -> stringResource(R.string.weather_heavy_rain_tomorrow, amount)
+        else -> stringResource(R.string.weather_heavy_rain_later, dayName(day.date), amount)
+    }
+    val colors = LocalDcColors.current
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,

@@ -627,6 +627,10 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="weather_storm_today">Tormentas previstas hoy: puede llegar una crecida súbita aunque no llueva donde estás.</string>
     <string name="weather_storm_tomorrow">Tormentas previstas mañana: riesgo de crecida súbita.</string>
     <string name="weather_storm_later">Tormentas previstas el %1$s: riesgo de crecida súbita.</string>
+    <string name="weather_heavy_rain_today">Lluvias fuertes previstas hoy (%1$s): el caudal puede subir mucho.</string>
+    <string name="weather_heavy_rain_tomorrow">Lluvias fuertes previstas mañana (%1$s): el caudal puede subir mucho.</string>
+    <string name="weather_heavy_rain_later">Lluvias fuertes previstas el %1$s (%2$s): el caudal puede subir mucho.</string>
+    <string name="prediction_heavy_rain_warning">Lluvias fuertes previstas estos días: el caudal real puede superar con creces esta estimación, basada sobre todo en los avisos.</string>
     <string name="weather_sun_times">Amanecer %1$s · atardecer %2$s</string>
     <string name="weather_offline_cached">Sin conexión: previsión descargada el %1$s</string>
     <string name="weather_day_description">%1$s: %2$s, lluvia %3$s, de %4$s a %5$s</string>

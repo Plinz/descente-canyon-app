@@ -176,6 +176,7 @@ internal fun CanyonDetailContent(
                 isLoading = isLoadingPredictions,
                 error = predictionError,
                 onInfoClick = onOpenPredictionInfo,
+                weather = weather,
             )
         }
         if (nearbyCanyons.isNotEmpty()) {

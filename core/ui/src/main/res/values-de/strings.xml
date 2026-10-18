@@ -616,6 +616,10 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="weather_storm_today">Heute Gewitter erwartet: eine Sturzflut kann auch ohne Regen vor Ort kommen.</string>
     <string name="weather_storm_tomorrow">Morgen Gewitter erwartet: Sturzflutgefahr.</string>
     <string name="weather_storm_later">Gewitter erwartet am %1$s: Sturzflutgefahr.</string>
+    <string name="weather_heavy_rain_today">Starker Regen heute erwartet (%1$s): Der Wasserstand kann stark steigen.</string>
+    <string name="weather_heavy_rain_tomorrow">Starker Regen morgen erwartet (%1$s): Der Wasserstand kann stark steigen.</string>
+    <string name="weather_heavy_rain_later">Starker Regen erwartet am %1$s (%2$s): Der Wasserstand kann stark steigen.</string>
+    <string name="prediction_heavy_rain_warning">Starker Regen an diesen Tagen erwartet: Der tatsächliche Wasserstand kann diese Schätzung, die vor allem auf den Berichten beruht, deutlich übersteigen.</string>
     <string name="weather_sun_times">Sonnenaufgang %1$s · Sonnenuntergang %2$s</string>
     <string name="weather_offline_cached">Offline: Vorhersage vom %1$s</string>
     <string name="weather_day_description">%1$s: %2$s, Regen %3$s, %4$s bis %5$s</string>

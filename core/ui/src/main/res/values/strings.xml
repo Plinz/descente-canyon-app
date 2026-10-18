@@ -627,6 +627,10 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="weather_storm_today">Orages prévus aujourd\'hui : une crue subite peut survenir sans pluie sur place.</string>
     <string name="weather_storm_tomorrow">Orages prévus demain : risque de crue subite.</string>
     <string name="weather_storm_later">Orages prévus %1$s : risque de crue subite.</string>
+    <string name="weather_heavy_rain_today">Fortes pluies prévues aujourd\'hui (%1$s) : le débit peut monter fortement.</string>
+    <string name="weather_heavy_rain_tomorrow">Fortes pluies prévues demain (%1$s) : le débit peut monter fortement.</string>
+    <string name="weather_heavy_rain_later">Fortes pluies prévues %1$s (%2$s) : le débit peut monter fortement.</string>
+    <string name="prediction_heavy_rain_warning">Fortes pluies prévues sur ces jours : le débit réel peut dépasser largement cette estimation, faite surtout d\'après les signalements.</string>
     <string name="weather_sun_times">Lever du soleil %1$s · coucher %2$s</string>
     <string name="weather_offline_cached">Hors connexion : prévisions téléchargées le %1$s</string>
     <string name="weather_day_description">%1$s : %2$s, pluie %3$s, %4$s à %5$s</string>

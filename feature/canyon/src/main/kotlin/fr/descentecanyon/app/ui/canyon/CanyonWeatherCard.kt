@@ -84,6 +84,7 @@ private fun WeatherContent(weather: CanyonWeather, isRefreshing: Boolean) {
         CachedForecastLine(weather, isRefreshing = isRefreshing)
     }
     StormWarning(weather, now = now)
+    HeavyRainWarning(weather, now = now)
     WeatherSection(title = stringResource(R.string.weather_rain_section)) {
         RainTotals(rain)
         // Without any rain nor storm over the period, the totals say it all.

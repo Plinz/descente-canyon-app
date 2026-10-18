@@ -627,6 +627,10 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="weather_storm_today">Temporali previsti oggi: una piena improvvisa può arrivare anche senza pioggia sul posto.</string>
     <string name="weather_storm_tomorrow">Temporali previsti domani: rischio di piena improvvisa.</string>
     <string name="weather_storm_later">Temporali previsti %1$s: rischio di piena improvvisa.</string>
+    <string name="weather_heavy_rain_today">Piogge forti previste oggi (%1$s): la portata può salire molto.</string>
+    <string name="weather_heavy_rain_tomorrow">Piogge forti previste domani (%1$s): la portata può salire molto.</string>
+    <string name="weather_heavy_rain_later">Piogge forti previste %1$s (%2$s): la portata può salire molto.</string>
+    <string name="prediction_heavy_rain_warning">Piogge forti previste in questi giorni: la portata reale può superare di molto questa stima, basata soprattutto sulle segnalazioni.</string>
     <string name="weather_sun_times">Alba %1$s · tramonto %2$s</string>
     <string name="weather_offline_cached">Offline: previsioni scaricate il %1$s</string>
     <string name="weather_day_description">%1$s: %2$s, pioggia %3$s, da %4$s a %5$s</string>
