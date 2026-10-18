@@ -74,6 +74,7 @@ import fr.descentecanyon.app.ui.components.CanyonSummaryCardVariant
 import fr.descentecanyon.app.ui.design.DcEmptyState
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcSpacing
+import fr.descentecanyon.app.ui.design.excludeFromBackGesture
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
 import fr.descentecanyon.app.ui.location.hasLocationPermission
@@ -378,7 +379,7 @@ private fun MapFilterControl(
 private fun MapLocationControl(isLocating: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val colors = LocalDcColors.current
     Surface(
-        modifier = modifier.size(48.dp),
+        modifier = modifier.size(48.dp).excludeFromBackGesture(),
         shape = RoundedCornerShape(24.dp),
         color = colors.surfaceRaised,
         contentColor = colors.textPrimary,

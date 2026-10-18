@@ -71,6 +71,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.ui.design.excludeFromBackGesture
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -217,7 +218,8 @@ fun PhotoGalleryScreen(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 4.dp, vertical = 2.dp),
+                            .padding(horizontal = 4.dp, vertical = 2.dp)
+                            .excludeFromBackGesture(),
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         IconButton(onClick = onBackClick) {

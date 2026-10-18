@@ -91,6 +91,7 @@ import fr.descentecanyon.app.domain.model.GeoBounds
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.ui.common.asString
+import fr.descentecanyon.app.ui.design.excludeFromBackGesture
 import fr.descentecanyon.app.ui.location.hasLocationPermission
 import fr.descentecanyon.app.ui.location.observeDeviceLocation
 import fr.descentecanyon.app.ui.location.requestLocationSettings
@@ -446,7 +447,7 @@ private fun MapControlButton(
     content: @Composable () -> Unit,
 ) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.excludeFromBackGesture(),
         color = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.surface.copy(alpha = 0.96f),
         contentColor = if (selected) MaterialTheme.colorScheme.onPrimary else MaterialTheme.colorScheme.onSurface,
         shape = CircleShape,

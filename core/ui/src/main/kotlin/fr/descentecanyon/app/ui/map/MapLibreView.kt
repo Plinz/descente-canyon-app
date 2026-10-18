@@ -2,10 +2,12 @@
 
 package fr.descentecanyon.app.ui.map
 
+import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.Gravity
 import android.view.View
+import android.widget.ImageView
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
@@ -14,6 +16,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.view.ViewCompat
+import androidx.core.view.children
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
@@ -31,6 +35,7 @@ import org.maplibre.android.maps.MapLibreMap
 import org.maplibre.android.maps.MapLibreMapOptions
 import org.maplibre.android.maps.MapView
 import org.maplibre.android.maps.Style
+import org.maplibre.android.maps.widgets.CompassView
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.maplibre.geojson.Feature
 import org.maplibre.geojson.Point
@@ -116,6 +121,7 @@ fun MapLibreView(
     DisposableEffect(mapView) {
         val refreshCompass = Runnable { renderState.refreshCompass() }
         val listener = View.OnLayoutChangeListener { _, left, top, right, bottom, oldLeft, oldTop, oldRight, oldBottom ->
+            mapView.excludeMapControlsFromBackGesture()
             if (right - left != oldRight - oldLeft || bottom - top != oldBottom - oldTop) {
                 // MapLibre posts its own UI reset after this layout pass.
                 mapView.removeCallbacks(refreshCompass)
@@ -846,6 +852,21 @@ private class MapRenderState(private val context: android.content.Context) {
                 )
             }
         }
+    }
+}
+
+/**
+ * The compass and the attribution icon, child views of MapLibre, sit near the sides of the screen:
+ * their bounds are kept from the system back gesture, as Modifier.excludeFromBackGesture() does for
+ * the Compose buttons. Updated on every layout of the map, so new margins are followed.
+ */
+private fun MapView.excludeMapControlsFromBackGesture() {
+    val controls = children
+        .filter { it.visibility != View.GONE && (it is CompassView || it is ImageView) }
+        .map { Rect(it.left, it.top, it.right, it.bottom) }
+        .toList()
+    if (controls != ViewCompat.getSystemGestureExclusionRects(this)) {
+        ViewCompat.setSystemGestureExclusionRects(this, controls)
     }
 }
 

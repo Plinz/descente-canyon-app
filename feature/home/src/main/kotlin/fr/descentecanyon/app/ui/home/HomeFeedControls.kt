@@ -40,6 +40,7 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.ForumCategory
 import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.forumCategoryKey
+import fr.descentecanyon.app.ui.design.excludeFromBackGesture
 import java.text.Normalizer
 
 @Composable
@@ -151,7 +152,7 @@ internal fun HomeFeedHeader(selectedFeed: HomeFeedType, onRefresh: () -> Unit, m
                 },
                 style = MaterialTheme.typography.titleLarge,
             )
-            IconButton(onClick = onRefresh) {
+            IconButton(onClick = onRefresh, modifier = Modifier.excludeFromBackGesture()) {
                 Icon(
                     imageVector = Icons.Default.Refresh,
                     contentDescription = stringResource(R.string.refresh),

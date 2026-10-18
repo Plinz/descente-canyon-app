@@ -137,6 +137,7 @@ fun DcTopBar(
         ) {
             if (navigation != null) {
                 Surface(
+                    modifier = Modifier.excludeFromBackGesture(),
                     color = colors.surfaceRaised.copy(alpha = 0.82f),
                     shape = RoundedCornerShape(999.dp),
                     border = BorderStroke(1.dp, colors.borderSubtle),
@@ -157,7 +158,7 @@ fun DcTopBar(
                     .weight(1f)
                     .padding(start = if (navigation == null) 12.dp else 10.dp),
             )
-            Row(verticalAlignment = Alignment.CenterVertically, content = actions)
+            Row(modifier = Modifier.excludeFromBackGesture(), verticalAlignment = Alignment.CenterVertically, content = actions)
         }
     }
 }

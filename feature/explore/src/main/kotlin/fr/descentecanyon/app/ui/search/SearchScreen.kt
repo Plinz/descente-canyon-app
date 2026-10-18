@@ -91,6 +91,7 @@ import fr.descentecanyon.app.ui.design.DcSectionHeader
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
 import fr.descentecanyon.app.ui.design.LocalDcSpacing
+import fr.descentecanyon.app.ui.design.excludeFromBackGesture
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
 import fr.descentecanyon.app.ui.location.hasLocationPermission
@@ -236,7 +237,7 @@ fun SearchScreen(
                 trailingIcon = {
                     when {
                         uiState.queryDraft.isNotEmpty() -> {
-                            IconButton(onClick = viewModel::clearQuery) {
+                            IconButton(onClick = viewModel::clearQuery, modifier = Modifier.excludeFromBackGesture()) {
                                 Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.search_clear_query))
                             }
                         }
