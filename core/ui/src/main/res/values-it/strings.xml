@@ -372,6 +372,8 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="maps_with_count">Mappe (%1$d)</string>
     <string name="resources_with_count">Risorse web (%1$d)</string>
     <string name="regulations_with_count">Regolamentazione (%1$d)</string>
+    <string name="regulations_in_force_count">Regolamentazione: %1$d in vigore su %2$d</string>
+    <string name="regulation_in_force_line">In vigore: %1$s · %2$s</string>
     <string name="bibliography_authors">Autore/i: %1$s</string>
     <string name="open_reference">Apri la scheda di riferimento</string>
     <string name="regulation_status">Stato: %1$s</string>

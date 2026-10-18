@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -33,6 +34,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDetail
+import fr.descentecanyon.app.domain.model.Regulation
 import fr.descentecanyon.app.ui.components.CotationBadge
 import fr.descentecanyon.app.ui.components.ForbiddenBadge
 import fr.descentecanyon.app.ui.components.InterestStars
@@ -158,10 +160,37 @@ internal fun SummaryCard(detail: CanyonDetail, onPersistedPhotoMissing: (Long) -
                     }
                 }
             }
+            val regulationsInForce = detail.regulations.filter { it.isInForce }
+            if (regulationsInForce.isNotEmpty()) {
+                RegulationsInForce(
+                    regulations = regulationsInForce,
+                    modifier = Modifier.padding(start = spacing.lg, end = spacing.lg, top = spacing.lg),
+                )
+            }
             SummaryStatsGrid(
                 detail = detail,
                 modifier = Modifier.padding(spacing.lg),
             )
+        }
+    }
+}
+
+/** The texts in force, before anything else: the full history stays in the topo. */
+@Composable
+private fun RegulationsInForce(regulations: List<Regulation>, modifier: Modifier = Modifier) {
+    val colors = LocalDcColors.current
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        regulations.forEach { regulation ->
+            val tint = if (regulation.forbids) MaterialTheme.colorScheme.error else colors.warning
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.Top) {
+                Icon(Icons.Default.Gavel, contentDescription = null, tint = tint, modifier = Modifier.size(18.dp))
+                Text(
+                    text = stringResource(R.string.regulation_in_force_line, regulation.action.orEmpty().ifBlank { "-" }, regulation.title),
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    color = tint,
+                )
+            }
         }
     }
 }

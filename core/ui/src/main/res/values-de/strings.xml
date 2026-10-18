@@ -372,6 +372,8 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="maps_with_count">Karten (%1$d)</string>
     <string name="resources_with_count">Webressourcen (%1$d)</string>
     <string name="regulations_with_count">Regelung (%1$d)</string>
+    <string name="regulations_in_force_count">Regelung: %1$d von %2$d in Kraft</string>
+    <string name="regulation_in_force_line">In Kraft: %1$s · %2$s</string>
     <string name="bibliography_authors">Autor(en): %1$s</string>
     <string name="open_reference">Referenzbeschreibung öffnen</string>
     <string name="regulation_status">Status: %1$s</string>

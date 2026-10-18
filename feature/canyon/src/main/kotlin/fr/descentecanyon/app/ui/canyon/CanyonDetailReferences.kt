@@ -169,8 +169,14 @@ internal fun RegulationSection(regulations: List<Regulation>, modifier: Modifier
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                val inForce = regulations.count { it.isInForce }
                 Text(
-                    text = stringResource(R.string.regulations_with_count, regulations.size),
+                    // The history counts obsolete and repealed texts: only the ones in force restrict.
+                    text = if (inForce < regulations.size) {
+                        stringResource(R.string.regulations_in_force_count, inForce, regulations.size)
+                    } else {
+                        stringResource(R.string.regulations_with_count, regulations.size)
+                    },
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                 )

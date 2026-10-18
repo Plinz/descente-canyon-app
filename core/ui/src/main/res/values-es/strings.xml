@@ -372,6 +372,8 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="maps_with_count">Mapas (%1$d)</string>
     <string name="resources_with_count">Recursos web (%1$d)</string>
     <string name="regulations_with_count">Normativa (%1$d)</string>
+    <string name="regulations_in_force_count">Normativa: %1$d vigente(s) de %2$d</string>
+    <string name="regulation_in_force_line">Vigente: %1$s · %2$s</string>
     <string name="bibliography_authors">Autor(es): %1$s</string>
     <string name="open_reference">Abrir la ficha de referencia</string>
     <string name="regulation_status">Estado: %1$s</string>
