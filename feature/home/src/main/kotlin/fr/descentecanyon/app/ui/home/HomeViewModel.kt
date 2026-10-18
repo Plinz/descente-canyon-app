@@ -72,6 +72,8 @@ data class HomeUiState(
     val forumFilter: HomeForumFilterState = HomeForumFilterState(),
     val isLocalCanyonCatalogLoaded: Boolean = false,
     val localCanyonIds: Set<Int> = emptySet(),
+    /** Department and country of each catalog canyon, shown on the reports. */
+    val canyonPlaces: Map<Int, String> = emptyMap(),
     val followedForumCategoryKeys: Set<String> = emptySet(),
     val followedForumThreadIds: Set<Int> = emptySet(),
     /** Debit reports written offline and not sent yet. */
@@ -305,6 +307,9 @@ class HomeViewModel @Inject constructor(
                     state.copy(
                         isLocalCanyonCatalogLoaded = catalog.isNotEmpty(),
                         localCanyonIds = catalog.mapTo(mutableSetOf()) { it.id },
+                        canyonPlaces = catalog.associate { item ->
+                            item.id to listOfNotNull(item.departement, item.pays.takeIf { it.isNotBlank() }).distinct().joinToString(", ")
+                        },
                     ).withDebitPresentation()
                 }
             }

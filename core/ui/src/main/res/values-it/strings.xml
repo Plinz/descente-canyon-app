@@ -159,9 +159,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="search_sort_max_waterfall">Cascata max</string>
     <string name="search_sort_distance">Distanza</string>
     <string name="quick_search_title">Ricerca rapida</string>
-    <string name="quick_search_hint">Apri la ricerca canyon</string>
     <string name="support_donation_title">Fai una donazione</string>
-    <string name="support_donation_hint">Sostieni lo sviluppo dell\'applicazione</string>
     <string name="support_donation_url">https://buymeacoffee.com/antoineduquennoy</string>
     <string name="map_location_coordinates">Lat %1$.4f, Lon %2$.4f</string>
     <string name="map_visible_title">Canyon visibili</string>
@@ -489,7 +487,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="user_last_debit">Ultima portata</string>
     <string name="user_last_forum_post">Ultimo messaggio nel forum</string>
     <string name="user_open_forum_profile">Apri il profilo del forum</string>
-    <string name="home_users_hint">Cerca un nome utente e segui la sua attività</string>
     <string name="notifications_followed_users_title">Utenti seguiti</string>
     <string name="notifications_followed_users_subtitle">Nuovi messaggi del forum</string>
     <string name="notifications_followed_users_empty_title">Nessun utente seguito</string>

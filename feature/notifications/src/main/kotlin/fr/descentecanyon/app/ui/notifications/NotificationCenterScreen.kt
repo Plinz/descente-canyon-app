@@ -196,6 +196,7 @@ fun NotificationCenterScreen(
                     items(uiState.followedCanyons, key = { it.canyonId }) { canyon ->
                         FollowedCanyonCard(
                             canyon = canyon,
+                            place = uiState.canyonPlaces[canyon.canyonId],
                             onOpen = { onCanyonClick(canyon.canyonId) },
                             onRemove = { viewModel.removeCanyonFollow(canyon.canyonId) },
                         )
@@ -431,11 +432,17 @@ private fun ActivityEventCard(event: TrackedActivityEvent, onClick: () -> Unit, 
 }
 
 @Composable
-private fun FollowedCanyonCard(canyon: FollowedCanyon, onOpen: () -> Unit, onRemove: () -> Unit, modifier: Modifier = Modifier) {
+private fun FollowedCanyonCard(
+    canyon: FollowedCanyon,
+    place: String?,
+    onOpen: () -> Unit,
+    onRemove: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
     FollowRowCard(
         modifier = modifier,
         title = canyon.canyonName,
-        subtitle = stringResource(R.string.notifications_followed_canyon_meta, canyon.canyonId),
+        subtitle = place ?: stringResource(R.string.notifications_followed_canyon_meta, canyon.canyonId),
         leadingIcon = Icons.Default.WaterDrop,
         onOpen = onOpen,
         onRemove = onRemove,

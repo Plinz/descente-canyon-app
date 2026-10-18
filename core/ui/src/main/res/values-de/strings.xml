@@ -159,9 +159,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="search_sort_max_waterfall">Max. Wasserfall</string>
     <string name="search_sort_distance">Entfernung</string>
     <string name="quick_search_title">Schnellsuche</string>
-    <string name="quick_search_hint">Canyon-Suche öffnen</string>
     <string name="support_donation_title">Spenden</string>
-    <string name="support_donation_hint">Die Entwicklung der App unterstützen</string>
     <string name="support_donation_url">https://buymeacoffee.com/antoineduquennoy</string>
     <string name="map_location_coordinates">Lat %1$.4f, Lon %2$.4f</string>
     <string name="map_visible_title">Sichtbare Canyons</string>
@@ -489,7 +487,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="user_last_debit">Letzter Wasserstandsbericht</string>
     <string name="user_last_forum_post">Letzter Forumsbeitrag</string>
     <string name="user_open_forum_profile">Forumprofil öffnen</string>
-    <string name="home_users_hint">Benutzernamen suchen und der Aktivität folgen</string>
     <string name="notifications_followed_users_title">Gefolgte Nutzer</string>
     <string name="notifications_followed_users_subtitle">Neue Forumsbeiträge</string>
     <string name="notifications_followed_users_empty_title">Keine gefolgten Nutzer</string>

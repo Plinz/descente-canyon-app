@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -23,6 +24,7 @@ import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FolderSpecial
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -42,6 +44,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -52,43 +56,85 @@ import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.ui.common.openUrl
 import fr.descentecanyon.app.ui.components.DebitBadge
 import fr.descentecanyon.app.ui.components.debitLevelColor
-import fr.descentecanyon.app.ui.design.DcOutdoorActionCard
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.format.DateTimeFormatter
 
 internal fun descenteCanyonCanyonUrl(canyonId: Int): String = "https://www.descente-canyon.com/canyoning/canyon/$canyonId/"
 
+/** Looks like the search field it opens: one line, the reports stay in view below. */
 @Composable
-internal fun QuickSearchCard(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    HomeActionCard(
-        title = stringResource(R.string.quick_search_title),
-        hint = stringResource(R.string.quick_search_hint),
-        icon = Icons.Default.Search,
+internal fun QuickSearchBar(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val label = stringResource(R.string.quick_search_title)
+    Surface(
         onClick = onClick,
-        modifier = modifier.testTag(TestTags.HOME_QUICK_SEARCH),
-    )
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(min = 52.dp)
+            .semantics { contentDescription = label }
+            .testTag(TestTags.HOME_QUICK_SEARCH),
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.surface,
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(Icons.Default.Search, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            Text(
+                text = stringResource(R.string.search_hint),
+                style = MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
+}
+
+/** Secondary entries of the home screen, side by side so they do not push the reports down. */
+@Composable
+internal fun HomeShortcutRow(onUsersClick: () -> Unit, onDonateClick: () -> Unit, modifier: Modifier = Modifier) {
+    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        HomeShortcut(
+            title = stringResource(R.string.users_title),
+            icon = Icons.Default.People,
+            onClick = onUsersClick,
+            modifier = Modifier.weight(1f),
+        )
+        HomeShortcut(
+            title = stringResource(R.string.support_donation_title),
+            icon = Icons.Default.Favorite,
+            onClick = onDonateClick,
+            modifier = Modifier.weight(1f),
+        )
+    }
 }
 
 @Composable
-internal fun DonationCard(onClick: () -> Unit, modifier: Modifier = Modifier) {
-    HomeActionCard(
-        title = stringResource(R.string.support_donation_title),
-        hint = stringResource(R.string.support_donation_hint),
-        icon = Icons.Default.Favorite,
+private fun HomeShortcut(title: String, icon: ImageVector, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Surface(
         onClick = onClick,
-        modifier = modifier,
-    )
-}
-
-@Composable
-internal fun HomeActionCard(title: String, hint: String, icon: ImageVector, onClick: () -> Unit, modifier: Modifier = Modifier) {
-    DcOutdoorActionCard(
-        title = title,
-        hint = hint,
-        icon = icon,
-        onClick = onClick,
-        modifier = modifier.fillMaxWidth(),
-    )
+        modifier = modifier.heightIn(min = 48.dp),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(icon, contentDescription = null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(20.dp))
+            Text(
+                text = title,
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
+    }
 }
 
 @Composable
@@ -110,7 +156,7 @@ internal fun CreditCard() {
 }
 
 @Composable
-internal fun DebitCard(debit: Debit, isExternalOnly: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+internal fun DebitCard(debit: Debit, isExternalOnly: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier, place: String? = null) {
     val bgColor = debitLevelColor(debit.niveau)
     val isCrue = debit.niveau == NiveauDebit.CRUE
 
@@ -155,10 +201,14 @@ internal fun DebitCard(debit: Debit, isExternalOnly: Boolean, onClick: () -> Uni
                         .padding(top = 4.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
+                    // Where the canyon is: the feed mixes every country of the site.
                     Text(
-                        text = debit.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
+                        text = listOfNotNull(debit.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), place).joinToString(" · "),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.weight(1f, fill = false),
                     )
                     debit.auteur?.let { auteur ->
                         Text(

@@ -17,7 +17,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -200,20 +199,11 @@ fun HomeScreen(
                 }
 
                 item {
-                    QuickSearchCard(onClick = onQuickSearchClick)
+                    QuickSearchBar(onClick = onQuickSearchClick)
                 }
 
                 item {
-                    HomeActionCard(
-                        title = stringResource(R.string.users_title),
-                        hint = stringResource(R.string.home_users_hint),
-                        icon = Icons.Default.People,
-                        onClick = onUsersClick,
-                    )
-                }
-
-                item {
-                    DonationCard(onClick = { openExternalUrl(context, donationUrl) })
+                    HomeShortcutRow(onUsersClick = onUsersClick, onDonateClick = { openExternalUrl(context, donationUrl) })
                 }
 
                 item {
@@ -310,6 +300,7 @@ fun HomeScreen(
                                 debit.canyonId !in homeState.localCanyonIds
                             DebitCard(
                                 debit = debit,
+                                place = homeState.canyonPlaces[debit.canyonId],
                                 isExternalOnly = isExternalOnly,
                                 onClick = {
                                     if (isExternalOnly) {

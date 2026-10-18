@@ -159,9 +159,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="search_sort_max_waterfall">Max waterfall</string>
     <string name="search_sort_distance">Distance</string>
     <string name="quick_search_title">Quick search</string>
-    <string name="quick_search_hint">Open canyon search</string>
     <string name="support_donation_title">Donate</string>
-    <string name="support_donation_hint">Support the development of the app</string>
     <string name="support_donation_url">https://buymeacoffee.com/antoineduquennoy</string>
     <string name="map_location_coordinates">Lat %1$.4f, Lon %2$.4f</string>
     <string name="map_visible_title">Visible canyons</string>
@@ -489,7 +487,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="user_last_debit">Last flow report</string>
     <string name="user_last_forum_post">Last forum post</string>
     <string name="user_open_forum_profile">Open forum profile</string>
-    <string name="home_users_hint">Search for a username and follow their activity</string>
     <string name="notifications_followed_users_title">Followed users</string>
     <string name="notifications_followed_users_subtitle">New forum posts</string>
     <string name="notifications_followed_users_empty_title">No followed users</string>

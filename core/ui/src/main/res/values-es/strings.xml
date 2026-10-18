@@ -159,9 +159,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="search_sort_max_waterfall">Cascada máx.</string>
     <string name="search_sort_distance">Distancia</string>
     <string name="quick_search_title">Búsqueda rápida</string>
-    <string name="quick_search_hint">Abrir la búsqueda de barrancos</string>
     <string name="support_donation_title">Hacer una donación</string>
-    <string name="support_donation_hint">Apoyar el desarrollo de la aplicación</string>
     <string name="support_donation_url">https://buymeacoffee.com/antoineduquennoy</string>
     <string name="map_location_coordinates">Lat %1$.4f, Lon %2$.4f</string>
     <string name="map_visible_title">Barrancos visibles</string>
@@ -489,7 +487,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="user_last_debit">Último caudal</string>
     <string name="user_last_forum_post">Último mensaje en el foro</string>
     <string name="user_open_forum_profile">Abrir el perfil del foro</string>
-    <string name="home_users_hint">Busca un nombre de usuario y sigue su actividad</string>
     <string name="notifications_followed_users_title">Usuarios seguidos</string>
     <string name="notifications_followed_users_subtitle">Nuevos mensajes del foro</string>
     <string name="notifications_followed_users_empty_title">Ningún usuario seguido</string>
