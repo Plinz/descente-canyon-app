@@ -10,13 +10,11 @@ import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
@@ -28,34 +26,46 @@ class UserSearchViewModel @Inject constructor(
 
     private val query = MutableStateFlow("")
 
-    val uiState: StateFlow<UserSearchUiState> = combine(
-        query.debounce(200).flatMapLatest { value ->
-            if (value.trim().length < 2) {
-                flowOf(emptyList())
-            } else {
-                kotlinx.coroutines.flow.flow { emit(forumUserRepository.search(value)) }
-            }
-        },
-        notificationCenterRepository.observeState(),
-    ) { users, notificationState ->
-        UserSearchUiState(
-            query = query.value,
-            users = users,
-            followedUsernames = notificationState.followedUsers.map { it.normalizedUsername }.toSet(),
-        )
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), UserSearchUiState())
+    private val _uiState = MutableStateFlow(UserSearchUiState())
+    val uiState: StateFlow<UserSearchUiState> = _uiState.asStateFlow()
 
+    init {
+        viewModelScope.launch {
+            query.debounce(SEARCH_DEBOUNCE_MS)
+                .mapLatest { value -> value to if (value.trim().length < 2) emptyList() else forumUserRepository.search(value) }
+                .collect { (searched, users) -> _uiState.update { it.copy(users = users, searchedQuery = searched) } }
+        }
+        viewModelScope.launch {
+            notificationCenterRepository.observeState().collect { state ->
+                _uiState.update { it.copy(followedUsernames = state.followedUsers.map { user -> user.normalizedUsername }.toSet()) }
+            }
+        }
+    }
+
+    /**
+     * The text typed goes to the state at once, only the search waits for a pause: a text field fed
+     * by the debounced results lost every letter typed in between.
+     */
     fun updateQuery(value: String) {
         query.value = value
+        _uiState.update { it.copy(query = value) }
     }
 
     fun toggleFollow(user: ForumUser) {
         viewModelScope.launch { notificationCenterRepository.toggleUserFollow(user) }
+    }
+
+    private companion object {
+        const val SEARCH_DEBOUNCE_MS = 200L
     }
 }
 
 data class UserSearchUiState(
     val query: String = "",
     val users: List<ForumUser> = emptyList(),
+    /** The text [users] were found for: the search of the text typed comes a moment later. */
+    val searchedQuery: String = "",
     val followedUsernames: Set<String> = emptySet(),
-)
+) {
+    val isSearching: Boolean get() = query != searchedQuery
+}

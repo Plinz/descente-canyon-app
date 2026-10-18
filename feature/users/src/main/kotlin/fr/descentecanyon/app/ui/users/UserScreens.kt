@@ -96,12 +96,15 @@ fun UserSearchScreen(
                     )
                 }
             } else if (state.users.isEmpty()) {
-                item {
-                    DcEmptyState(
-                        title = stringResource(R.string.users_search_empty_title),
-                        body = stringResource(R.string.users_search_empty_body),
-                        icon = Icons.Default.Search,
-                    )
+                // "No user" only once the text typed was searched, not while typing.
+                if (!state.isSearching) {
+                    item {
+                        DcEmptyState(
+                            title = stringResource(R.string.users_search_empty_title),
+                            body = stringResource(R.string.users_search_empty_body),
+                            icon = Icons.Default.Search,
+                        )
+                    }
                 }
             } else {
                 items(state.users, key = { it.username }) { user ->
