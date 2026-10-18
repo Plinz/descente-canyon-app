@@ -43,8 +43,11 @@ import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -108,6 +111,19 @@ fun OutingPlanScreen(
     }
     val notificationPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { confirmSaved() }
 
+    // The relative who receives the plan counts on its alert time: sending it also saves the outing,
+    // so the app reminds the user at the expected return and keeps the emergency screen at hand.
+    val shareTitle = stringResource(R.string.outing_message_share_title)
+    var pendingShare by rememberSaveable { mutableStateOf<String?>(null) }
+    fun share(message: String) {
+        val intent = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, message)
+        context.startActivity(Intent.createChooser(intent, shareTitle))
+    }
+    val sharePermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        pendingShare?.let(::share)
+        pendingShare = null
+    }
+
     Scaffold(
         modifier = modifier,
         topBar = {
@@ -141,6 +157,16 @@ fun OutingPlanScreen(
                         state = state,
                         timeFormatter = timeFormatter,
                         onMarginSelected = viewModel::selectAlertMargin,
+                        onShare = { message ->
+                            val isNewOuting = state.savedOuting == null
+                            if (isNewOuting) viewModel.saveOuting()
+                            if (isNewOuting && context.needsNotificationPermission()) {
+                                pendingShare = message
+                                sharePermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                            } else {
+                                share(message)
+                            }
+                        },
                         onSave = {
                             viewModel.saveOuting()
                             if (context.needsNotificationPermission()) {
@@ -394,13 +420,12 @@ private fun RelativeCard(
     state: OutingPlanUiState,
     timeFormatter: DateTimeFormatter,
     onMarginSelected: (Int) -> Unit,
+    onShare: (String) -> Unit,
     onSave: () -> Unit,
     onEnd: () -> Unit,
     onCancel: () -> Unit,
 ) {
-    val context = LocalContext.current
     val colors = LocalDcColors.current
-    val shareTitle = stringResource(R.string.outing_message_share_title)
     val message = outingMessage(state, timeFormatter)
     DcCard(modifier = Modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -424,10 +449,7 @@ private fun RelativeCard(
                 )
             }
             Button(
-                onClick = {
-                    val intent = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, message)
-                    context.startActivity(Intent.createChooser(intent, shareTitle))
-                },
+                onClick = { onShare(message) },
                 modifier = Modifier.fillMaxWidth().testTag(TestTags.OUTING_SHARE_BUTTON),
             ) {
                 Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null)
