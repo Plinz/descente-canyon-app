@@ -21,6 +21,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -63,6 +65,7 @@ fun FavoritesScreen(
     onCanyonClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     onLogbookClick: () -> Unit = {},
+    onSearchClick: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: FavoritesViewModel = hiltViewModel(),
 ) {
@@ -159,10 +162,16 @@ fun FavoritesScreen(
                             .padding(32.dp),
                         contentAlignment = Alignment.Center,
                     ) {
-                        DcEmptyState(
-                            title = stringResource(R.string.no_favorites),
-                            icon = Icons.Default.FavoriteBorder,
-                        )
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            DcEmptyState(
+                                title = stringResource(R.string.no_favorites),
+                                icon = Icons.Default.FavoriteBorder,
+                            )
+                            Button(onClick = onSearchClick) {
+                                Icon(Icons.Default.Search, contentDescription = null)
+                                Text(stringResource(R.string.search_canyon_action), modifier = Modifier.padding(start = 8.dp))
+                            }
+                        }
                     }
                 } else {
                     LazyColumn(

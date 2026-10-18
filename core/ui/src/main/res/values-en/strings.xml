@@ -159,6 +159,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="search_sort_max_waterfall">Max waterfall</string>
     <string name="search_sort_distance">Distance</string>
     <string name="quick_search_title">Quick search</string>
+    <string name="search_canyon_action">Search for a canyon</string>
     <string name="support_donation_title">Donate</string>
     <string name="support_donation_url">https://buymeacoffee.com/antoineduquennoy</string>
     <string name="map_location_coordinates">Lat %1$.4f, Lon %2$.4f</string>

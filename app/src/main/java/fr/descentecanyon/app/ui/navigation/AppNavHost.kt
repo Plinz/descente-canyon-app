@@ -18,12 +18,14 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.dropUnlessResumed
 import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavDestination.Companion.hasRoute
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import fr.descentecanyon.app.domain.model.normalizeForSearch
+import fr.descentecanyon.app.ui.applyAppRootNavigation
 import fr.descentecanyon.app.ui.canyon.CanyonDetailScreen
 import fr.descentecanyon.app.ui.canyon.CanyonPointsMapScreen
 import fr.descentecanyon.app.ui.canyon.DebitPredictionInfoScreen
@@ -140,6 +142,10 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                     navController.navigateSingleTop(Screen.CanyonDetail(canyonId))
                 },
                 onLogbookClick = dropUnlessResumed { navController.navigateSingleTop(Screen.Logbook) },
+                // Another tab: navigated to like from the bottom bar, so "back" returns home.
+                onSearchClick = dropUnlessResumed {
+                    navController.navigate(Screen.Search) { applyAppRootNavigation(navController.graph.findStartDestination().id) }
+                },
                 contentPadding = topLevelContentPadding,
             )
         }

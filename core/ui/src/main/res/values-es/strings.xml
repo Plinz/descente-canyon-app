@@ -159,6 +159,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="search_sort_max_waterfall">Cascada máx.</string>
     <string name="search_sort_distance">Distancia</string>
     <string name="quick_search_title">Búsqueda rápida</string>
+    <string name="search_canyon_action">Buscar un barranco</string>
     <string name="support_donation_title">Hacer una donación</string>
     <string name="support_donation_url">https://buymeacoffee.com/antoineduquennoy</string>
     <string name="map_location_coordinates">Lat %1$.4f, Lon %2$.4f</string>

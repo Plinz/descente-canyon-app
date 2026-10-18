@@ -159,6 +159,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="search_sort_max_waterfall">Cascata max</string>
     <string name="search_sort_distance">Distanza</string>
     <string name="quick_search_title">Ricerca rapida</string>
+    <string name="search_canyon_action">Cerca un canyon</string>
     <string name="support_donation_title">Fai una donazione</string>
     <string name="support_donation_url">https://buymeacoffee.com/antoineduquennoy</string>
     <string name="map_location_coordinates">Lat %1$.4f, Lon %2$.4f</string>
