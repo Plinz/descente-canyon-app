@@ -54,7 +54,7 @@ class UserDatabaseMigrationTest {
             .build()
         try {
             assertEquals(listOf(2224), database.favoriteDao().observeIds().first())
-            assertEquals(listOf(3L), database.pendingDebitSubmissionDao().getAll().map { it.id })
+            assertEquals(listOf(3L), database.pendingDebitSubmissionDao().getSendable().map { it.id })
             assertEquals("Antoine", database.keyValueDao().get("contributor.name"))
 
             database.recentCanyonDao().recordView(RecentCanyonEntity(canyonId = 2224, viewedAt = 4_000L), keep = 30)
@@ -91,6 +91,39 @@ class UserDatabaseMigrationTest {
             val entries = repository.observeAll().first()
             assertEquals(listOf(8, 7), entries.map { it.canyonId })
             assertEquals("Débit correct", entries.last().note)
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
+    fun `version 3 keeps pending reports, to be sent and not refused, and can keep refused ones`() = runTest {
+        createDatabase(schemaVersion = 3) { db ->
+            db.insert(
+                "pending_debit_submissions",
+                null,
+                values(
+                    "id" to 5, "canyonId" to 2224, "observerName" to "Antoine", "observerEmail" to "a@example.com",
+                    "observationDate" to "2026-10-14", "isDescended" to 1, "debitLevel" to "SEC", "waterTemperature" to "INCONNUE",
+                    "airTemperature" to "INCONNUE", "comment" to "RAS", "personalComment" to "", "createdAt" to 2_000L,
+                ),
+            )
+        }
+
+        val database = Room.databaseBuilder(context, UserDatabase::class.java, TEST_DATABASE)
+            .addMigrations(*UserDatabase.MIGRATIONS)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val dao = database.pendingDebitSubmissionDao()
+            val pending = dao.getSendable().single()
+            assertEquals(0, pending.failedAttempts)
+            assertEquals(null, pending.rejectedAt)
+
+            dao.markRejected(pending.id, rejectedAt = 3_000L, reason = "Date invalide")
+            assertEquals(emptyList<Any>(), dao.getSendable())
+            assertEquals(0, dao.observeCount().first())
+            assertEquals("Date invalide", dao.observeAll().first().single().rejectionReason)
         } finally {
             database.close()
         }

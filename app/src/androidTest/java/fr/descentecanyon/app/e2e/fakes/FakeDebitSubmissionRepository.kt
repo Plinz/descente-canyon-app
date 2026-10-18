@@ -10,6 +10,7 @@ import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 
 @Singleton
@@ -39,6 +40,10 @@ class FakeDebitSubmissionRepository @Inject constructor(private val connectivity
             PendingDebitSubmission(id = index.toLong() + 1, submission = submission, createdAtEpochMs = 0L)
         }
     }
+
+    override fun observeLastSyncFailure(): Flow<AppError?> = flowOf(null)
+
+    override suspend fun retryPending(id: Long) = Unit
 
     override suspend fun deletePending(id: Long) {
         E2eFixtureState.queuedSubmissions.value =

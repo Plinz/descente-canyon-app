@@ -49,6 +49,8 @@ object TestTags {
 
     fun pendingDebitDelete(id: Long): String = "pending_debit_delete_$id"
 
+    fun pendingDebitResend(id: Long) = "pending_debit_resend_$id"
+
     fun detailNearbyCanyon(id: Int): String = "detail_nearby_canyon_$id"
 
     fun emergencyNumber(number: String): String = "emergency_number_$number"

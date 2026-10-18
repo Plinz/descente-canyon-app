@@ -72,7 +72,7 @@ class LegacyDatabaseMigratorTest {
 
         assertEquals(1, report.favorites)
         assertEquals(listOf(1), userDatabase.favoriteDao().observeIds().first())
-        val pending = userDatabase.pendingDebitSubmissionDao().getAll().single()
+        val pending = userDatabase.pendingDebitSubmissionDao().getSendable().single()
         assertEquals("Perso", pending.personalComment)
         assertEquals(42L, pending.createdAt)
         assertEquals("steph", userDatabase.debitDao().getByCanyonId(1).first().single().auteur)
@@ -101,7 +101,7 @@ class LegacyDatabaseMigratorTest {
 
         assertEquals(1, report.pendingSubmissions)
         assertEquals(0, report.dailyWeather)
-        val pending = userDatabase.pendingDebitSubmissionDao().getAll().single()
+        val pending = userDatabase.pendingDebitSubmissionDao().getSendable().single()
         assertEquals("", pending.personalComment)
         assertFalse(pending.isDescended)
         assertTrue(userDatabase.favoriteDao().observeIsFavorite(7).first())

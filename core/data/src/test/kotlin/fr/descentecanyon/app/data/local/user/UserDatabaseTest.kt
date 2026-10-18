@@ -69,7 +69,7 @@ class UserDatabaseTest {
         pending.insertAllIfAbsent(listOf(submission))
         pending.insertAllIfAbsent(listOf(submission))
 
-        assertEquals(listOf(7L), pending.getAll().map { it.id })
+        assertEquals(listOf(7L), pending.getSendable().map { it.id })
     }
 
     private fun debit(canyonId: Int, date: String) = DebitEntity(canyonId = canyonId, date = date, niveau = "CORRECT")

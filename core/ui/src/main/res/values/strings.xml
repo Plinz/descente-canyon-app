@@ -539,6 +539,13 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="pending_debits_delete_body">Il ne sera pas envoyé sur le site.</string>
     <string name="pending_debits_delete_confirm">Supprimer</string>
     <string name="pending_debits_with_account">Sera envoyé avec votre compte</string>
+    <string name="notification_debit_rejected_hint">Il est conservé dans « Débits en attente d\'envoi » : renvoyez-le ou supprimez-le.</string>
+    <string name="pending_debits_status_blocked">Le site n\'a pas accepté l\'envoi pour l\'instant. Nouvel essai automatique plus tard.</string>
+    <string name="pending_debits_retry_now">Réessayer maintenant</string>
+    <string name="pending_debits_rejected">Refusé par le site</string>
+    <string name="pending_debits_rejected_reason">Refusé par le site : %1$s</string>
+    <string name="pending_debits_resend">Renvoyer</string>
+    <string name="debit_observer_email_invalid">Adresse e-mail invalide : le site refuserait le signalement.</string>
     <string name="pending_debits_view">Voir</string>
     <string name="notification_channel_contributions_title">Mes contributions</string>
     <string name="notification_channel_contributions_body">Envoi des débits saisis hors ligne</string>

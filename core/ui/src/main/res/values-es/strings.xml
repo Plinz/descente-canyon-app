@@ -539,6 +539,13 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="pending_debits_delete_body">No se enviará al sitio.</string>
     <string name="pending_debits_delete_confirm">Eliminar</string>
     <string name="pending_debits_with_account">Se enviará con tu cuenta</string>
+    <string name="notification_debit_rejected_hint">Se conserva en «Caudales pendientes de envío»: reenvíelo o elimínelo.</string>
+    <string name="pending_debits_status_blocked">El sitio no ha aceptado el envío por ahora. Se volverá a intentar automáticamente.</string>
+    <string name="pending_debits_retry_now">Reintentar ahora</string>
+    <string name="pending_debits_rejected">Rechazado por el sitio</string>
+    <string name="pending_debits_rejected_reason">Rechazado por el sitio: %1$s</string>
+    <string name="pending_debits_resend">Reenviar</string>
+    <string name="debit_observer_email_invalid">Dirección de correo no válida: el sitio rechazaría el aviso.</string>
     <string name="pending_debits_view">Ver</string>
     <string name="notification_channel_contributions_title">Mis contribuciones</string>
     <string name="notification_channel_contributions_body">Envío de los caudales registrados sin conexión</string>

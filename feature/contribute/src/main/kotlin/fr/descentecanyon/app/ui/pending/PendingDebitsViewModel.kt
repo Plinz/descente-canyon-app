@@ -4,16 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
+import fr.descentecanyon.app.domain.error.AppError
+import fr.descentecanyon.app.domain.error.isTransient
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.AuthState
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.ObservationType
+import fr.descentecanyon.app.domain.model.PendingDebitRejection
 import fr.descentecanyon.app.domain.model.PendingDebitSubmission
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -30,7 +34,11 @@ data class PendingDebitItem(
     val debitLevel: NiveauDebit,
     val comment: String,
     val needsLogin: Boolean,
-)
+    /** Set when the site refused the report: it waits for the user instead of being sent. */
+    val rejection: PendingDebitRejection? = null,
+) {
+    val isRejected: Boolean get() = rejection != null
+}
 
 /** What keeps the queue from being sent right now. */
 enum class PendingDebitsStatus {
@@ -38,15 +46,19 @@ enum class PendingDebitsStatus {
     OFFLINE,
     LOGIN_REQUIRED,
     SENDING,
+
+    /** The last sending stopped on the site's side (no answer, unexpected page): retried later. */
+    BLOCKED,
 }
 
 data class PendingDebitsUiState(
     val items: List<PendingDebitItem> = emptyList(),
     val status: PendingDebitsStatus = PendingDebitsStatus.EMPTY,
     val isLoading: Boolean = true,
+    val isRetrying: Boolean = false,
 )
 
-/** Debit reports stored on the device until they can be sent; the user can drop one. */
+/** Debit reports stored on the device until they can be sent; the user can drop one or send a refused one again. */
 @HiltViewModel
 class PendingDebitsViewModel @Inject constructor(
     private val debitSubmissionRepository: DebitSubmissionRepository,
@@ -54,6 +66,8 @@ class PendingDebitsViewModel @Inject constructor(
     connectivityObserver: ConnectivityObserver,
     authRepository: AuthRepository,
 ) : ViewModel() {
+
+    private val isRetrying = MutableStateFlow(false)
 
     private val items = debitSubmissionRepository.observePending().map { pending ->
         val names = suspendRunCatching {
@@ -66,12 +80,40 @@ class PendingDebitsViewModel @Inject constructor(
         items,
         connectivityObserver.observe(),
         authRepository.authState.map { it is AuthState.Connected },
-    ) { items, online, loggedIn ->
-        PendingDebitsUiState(items = items, status = pendingDebitsStatus(items, online, loggedIn), isLoading = false)
+        debitSubmissionRepository.observeLastSyncFailure(),
+        isRetrying,
+    ) { items, online, loggedIn, lastFailure, retrying ->
+        PendingDebitsUiState(
+            items = items,
+            status = pendingDebitsStatus(items, online, loggedIn, lastFailure),
+            isLoading = false,
+            isRetrying = retrying,
+        )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), PendingDebitsUiState())
 
     fun delete(id: Long) {
         viewModelScope.launch { debitSubmissionRepository.deletePending(id) }
+    }
+
+    /** Sends the queue now instead of waiting for the next automatic attempt. */
+    fun retryNow() {
+        if (isRetrying.value) return
+        isRetrying.value = true
+        viewModelScope.launch {
+            try {
+                suspendRunCatching { debitSubmissionRepository.syncPending() }
+            } finally {
+                isRetrying.value = false
+            }
+        }
+    }
+
+    /** Puts a report refused by the site back in the queue and sends it. */
+    fun resend(id: Long) {
+        viewModelScope.launch {
+            debitSubmissionRepository.retryPending(id)
+            retryNow()
+        }
     }
 
     private companion object {
@@ -79,11 +121,20 @@ class PendingDebitsViewModel @Inject constructor(
     }
 }
 
-internal fun pendingDebitsStatus(items: List<PendingDebitItem>, online: Boolean, loggedIn: Boolean): PendingDebitsStatus = when {
-    items.isEmpty() -> PendingDebitsStatus.EMPTY
-    !online -> PendingDebitsStatus.OFFLINE
-    !loggedIn && items.any { it.needsLogin } -> PendingDebitsStatus.LOGIN_REQUIRED
-    else -> PendingDebitsStatus.SENDING
+internal fun pendingDebitsStatus(
+    items: List<PendingDebitItem>,
+    online: Boolean,
+    loggedIn: Boolean,
+    lastFailure: AppError? = null,
+): PendingDebitsStatus {
+    val toSend = items.filterNot { it.isRejected }
+    return when {
+        toSend.isEmpty() -> PendingDebitsStatus.EMPTY
+        !online -> PendingDebitsStatus.OFFLINE
+        !loggedIn && toSend.any { it.needsLogin } -> PendingDebitsStatus.LOGIN_REQUIRED
+        lastFailure != null && lastFailure != AppError.Offline && lastFailure.isTransient() -> PendingDebitsStatus.BLOCKED
+        else -> PendingDebitsStatus.SENDING
+    }
 }
 
 private fun PendingDebitSubmission.toItem(canyonName: String?) = PendingDebitItem(
@@ -95,4 +146,5 @@ private fun PendingDebitSubmission.toItem(canyonName: String?) = PendingDebitIte
     debitLevel = submission.debitLevel,
     comment = submission.comment,
     needsLogin = needsLogin,
+    rejection = rejection,
 )

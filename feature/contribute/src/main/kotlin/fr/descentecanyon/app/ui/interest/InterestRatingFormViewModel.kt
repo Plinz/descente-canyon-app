@@ -116,6 +116,8 @@ class InterestRatingFormViewModel @Inject constructor(
 
     fun submit() {
         val state = _uiState.value
+        // A second tap while the rating is being sent would send it twice.
+        if (state.isSubmitting) return
         if (!state.isConnected) {
             _uiState.update {
                 it.copy(loginRequiredMessage = UiText.res(R.string.interest_rating_login_required))
@@ -123,8 +125,8 @@ class InterestRatingFormViewModel @Inject constructor(
             return
         }
 
+        _uiState.update { it.copy(isSubmitting = true, error = null, transientMessage = null) }
         viewModelScope.launch {
-            _uiState.update { it.copy(isSubmitting = true, error = null, transientMessage = null) }
             submitCanyonInterestRatingUseCase(
                 InterestRatingSubmission(
                     canyonId = canyonId,

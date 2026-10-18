@@ -539,6 +539,13 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="pending_debits_delete_body">Non verrà inviata al sito.</string>
     <string name="pending_debits_delete_confirm">Elimina</string>
     <string name="pending_debits_with_account">Verrà inviata con il tuo account</string>
+    <string name="notification_debit_rejected_hint">Resta in «Portate in attesa di invio»: inviala di nuovo o eliminala.</string>
+    <string name="pending_debits_status_blocked">Il sito per ora non ha accettato l\'invio. Verrà ritentato automaticamente.</string>
+    <string name="pending_debits_retry_now">Riprova ora</string>
+    <string name="pending_debits_rejected">Rifiutato dal sito</string>
+    <string name="pending_debits_rejected_reason">Rifiutato dal sito: %1$s</string>
+    <string name="pending_debits_resend">Invia di nuovo</string>
+    <string name="debit_observer_email_invalid">Indirizzo e-mail non valido: il sito rifiuterebbe la segnalazione.</string>
     <string name="pending_debits_view">Vedi</string>
     <string name="notification_channel_contributions_title">I miei contributi</string>
     <string name="notification_channel_contributions_body">Invio delle portate inserite offline</string>

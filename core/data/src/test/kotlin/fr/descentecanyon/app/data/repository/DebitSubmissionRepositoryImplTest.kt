@@ -20,7 +20,10 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneOffset
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
@@ -33,6 +36,7 @@ class DebitSubmissionRepositoryImplTest {
 
     private val pendingDao = mockk<PendingDebitSubmissionDao>(relaxed = true)
     private val remoteSource = mockk<DebitSubmissionRemoteSource>()
+    private val clock = Clock.fixed(Instant.parse("2026-10-18T12:00:00Z"), ZoneOffset.UTC)
 
     @Test
     fun `offline submit queues observation`() = runTest {
@@ -40,7 +44,7 @@ class DebitSubmissionRepositoryImplTest {
             override fun observe(): Flow<Boolean> = throw UnsupportedOperationException()
             override fun isCurrentlyOnline(): Boolean = false
         }
-        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, connectivityObserver)
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, connectivityObserver, clock)
 
         val result = repository.submit(sampleSubmission()).getOrThrow()
 
@@ -53,7 +57,7 @@ class DebitSubmissionRepositoryImplTest {
             override fun observe(): Flow<Boolean> = throw UnsupportedOperationException()
             override fun isCurrentlyOnline(): Boolean = true
         }
-        coEvery { pendingDao.getAll() } returns listOf(
+        coEvery { pendingDao.getSendable() } returns listOf(
             PendingDebitSubmissionEntity(
                 id = 9,
                 canyonId = 2186,
@@ -68,7 +72,7 @@ class DebitSubmissionRepositoryImplTest {
             ),
         )
         coEvery { remoteSource.submit(match { it.canyonId == 2186 }) } returns Result.success(DebitDelivery.CONFIRMED)
-        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, connectivityObserver)
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, connectivityObserver, clock)
 
         val result = repository.syncPending()
 
@@ -83,8 +87,8 @@ class DebitSubmissionRepositoryImplTest {
     }
 
     @Test
-    fun `sync pending drops reports refused by the site and continues`() = runTest {
-        coEvery { pendingDao.getAll() } returns listOf(
+    fun `sync pending keeps reports refused by the site for the user and continues`() = runTest {
+        coEvery { pendingDao.getSendable() } returns listOf(
             pendingEntity(id = 1, canyonId = 100),
             pendingEntity(id = 2, canyonId = 200),
             pendingEntity(id = 3, canyonId = 300),
@@ -92,7 +96,7 @@ class DebitSubmissionRepositoryImplTest {
         coEvery { remoteSource.submit(match { it.canyonId == 100 }) } returns Result.success(DebitDelivery.CONFIRMED)
         coEvery { remoteSource.submit(match { it.canyonId == 200 }) } returns failure(AppError.Rejected("Date invalide"))
         coEvery { remoteSource.submit(match { it.canyonId == 300 }) } returns Result.success(DebitDelivery.UNCONFIRMED)
-        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver())
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver(), clock)
 
         val result = repository.syncPending()
 
@@ -102,18 +106,65 @@ class DebitSubmissionRepositoryImplTest {
         assertEquals(AppError.Rejected("Date invalide"), result.rejected.single().error)
         assertNull(result.stoppedBy)
         coVerify { pendingDao.deleteById(1) }
-        coVerify { pendingDao.deleteById(2) }
+        coVerify(exactly = 0) { pendingDao.deleteById(2) }
+        coVerify { pendingDao.markRejected(2, clock.millis(), "Date invalide") }
         coVerify { pendingDao.deleteById(3) }
     }
 
     @Test
+    fun `a report whose sending failed is read back and never sent twice`() = runTest {
+        coEvery { pendingDao.getSendable() } returns listOf(pendingEntity(id = 1, canyonId = 100).copy(failedAttempts = 1))
+        coEvery { remoteSource.isPublished(any()) } returns true
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver(), clock)
+
+        val result = repository.syncPending()
+
+        assertEquals(listOf(100 to true), result.sent.map { it.canyonId to it.confirmed })
+        coVerify(exactly = 0) { remoteSource.submit(any()) }
+        coVerify { pendingDao.deleteById(1) }
+    }
+
+    @Test
+    fun `a report never sent is not read back first`() = runTest {
+        coEvery { pendingDao.getSendable() } returns listOf(pendingEntity(id = 1, canyonId = 100))
+        coEvery { remoteSource.submit(any()) } returns Result.success(DebitDelivery.CONFIRMED)
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver(), clock)
+
+        repository.syncPending()
+
+        coVerify(exactly = 0) { remoteSource.isPublished(any()) }
+    }
+
+    @Test
+    fun `a transient failure is counted and reported as the last sync failure`() = runTest {
+        coEvery { pendingDao.getSendable() } returns listOf(pendingEntity(id = 1, canyonId = 100))
+        coEvery { remoteSource.submit(any()) } returns failure(AppError.UnexpectedResponse)
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver(), clock)
+
+        repository.syncPending()
+
+        coVerify { pendingDao.recordFailedAttempt(1) }
+        assertEquals(AppError.UnexpectedResponse, repository.observeLastSyncFailure().first())
+    }
+
+    @Test
+    fun `an online submit that fails transiently is queued to be read back before a new send`() = runTest {
+        coEvery { remoteSource.submit(any()) } returns failure(AppError.Timeout)
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver(), clock)
+
+        assertEquals(DebitSubmissionStatus.QUEUED_OFFLINE, repository.submit(sampleSubmission()).getOrThrow())
+
+        coVerify { pendingDao.insert(match { it.failedAttempts == 1 }) }
+    }
+
+    @Test
     fun `sync pending keeps the queue when the site cannot be reached`() = runTest {
-        coEvery { pendingDao.getAll() } returns listOf(
+        coEvery { pendingDao.getSendable() } returns listOf(
             pendingEntity(id = 1, canyonId = 100),
             pendingEntity(id = 2, canyonId = 200),
         )
         coEvery { remoteSource.submit(match { it.canyonId == 100 }) } returns failure(AppError.Timeout)
-        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver())
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver(), clock)
 
         val result = repository.syncPending()
 
@@ -124,9 +175,9 @@ class DebitSubmissionRepositoryImplTest {
 
     @Test
     fun `sync pending waits for a login when the session expired`() = runTest {
-        coEvery { pendingDao.getAll() } returns listOf(pendingEntity(id = 1, canyonId = 100))
+        coEvery { pendingDao.getSendable() } returns listOf(pendingEntity(id = 1, canyonId = 100))
         coEvery { remoteSource.submit(any()) } returns failure(AppError.SessionExpired)
-        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver())
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver(), clock)
 
         assertEquals(AppError.SessionExpired, repository.syncPending().stoppedBy)
         coVerify(exactly = 0) { pendingDao.deleteById(any()) }
@@ -135,7 +186,7 @@ class DebitSubmissionRepositoryImplTest {
     @Test
     fun `online submit reports an unconfirmed delivery`() = runTest {
         coEvery { remoteSource.submit(any()) } returns Result.success(DebitDelivery.UNCONFIRMED)
-        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver())
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver(), clock)
 
         assertEquals(DebitSubmissionStatus.SUBMITTED_UNCONFIRMED, repository.submit(sampleSubmission()).getOrThrow())
     }
@@ -143,7 +194,7 @@ class DebitSubmissionRepositoryImplTest {
     @Test
     fun `online submit returns site refusals instead of queueing them`() = runTest {
         coEvery { remoteSource.submit(any()) } returns failure(AppError.Rejected(null))
-        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver())
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver(), clock)
 
         assertEquals(AppError.Rejected(null), repository.submit(sampleSubmission()).appErrorOrNull())
         coVerify(exactly = 0) { pendingDao.insert(any()) }
@@ -152,7 +203,7 @@ class DebitSubmissionRepositoryImplTest {
     @Test
     fun `pending queue exposes stored reports and deletes them`() = runTest {
         every { pendingDao.observeAll() } returns flowOf(listOf(pendingEntity(id = 4, canyonId = 2186)))
-        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver())
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, onlineObserver(), clock)
 
         val pending = repository.observePending().first().single()
         repository.deletePending(4)
@@ -174,7 +225,7 @@ class DebitSubmissionRepositoryImplTest {
             override fun isCurrentlyOnline(): Boolean = true
         }
         coEvery { remoteSource.submit(any()) } returns Result.failure(java.io.IOException("timeout"))
-        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, connectivityObserver)
+        val repository = DebitSubmissionRepositoryImpl(pendingDao, remoteSource, connectivityObserver, clock)
 
         val result = repository.submit(sampleSubmission()).getOrThrow()
 

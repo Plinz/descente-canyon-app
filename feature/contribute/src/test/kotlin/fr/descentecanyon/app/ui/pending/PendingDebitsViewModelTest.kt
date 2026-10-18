@@ -2,12 +2,14 @@ package fr.descentecanyon.app.ui.pending
 
 import app.cash.turbine.test
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
+import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.model.AirTemperature
 import fr.descentecanyon.app.domain.model.AuthState
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.DebitSubmission
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.ObservationType
+import fr.descentecanyon.app.domain.model.PendingDebitRejection
 import fr.descentecanyon.app.domain.model.PendingDebitSubmission
 import fr.descentecanyon.app.domain.model.WaterTemperature
 import fr.descentecanyon.app.domain.repository.AuthRepository
@@ -35,8 +37,10 @@ class PendingDebitsViewModelTest {
     private val pending = MutableStateFlow<List<PendingDebitSubmission>>(emptyList())
     private val online = MutableStateFlow(true)
     private val authState = MutableStateFlow<AuthState>(AuthState.Disconnected)
+    private val lastSyncFailure = MutableStateFlow<AppError?>(null)
     private val debitSubmissionRepository = mockk<DebitSubmissionRepository>(relaxUnitFun = true) {
         every { observePending() } returns pending
+        every { observeLastSyncFailure() } returns lastSyncFailure
     }
     private val canyonRepository = mockk<CanyonRepository> {
         coEvery { getCanyonSummaries(any()) } returns listOf(summary(2186, "Riolan"))
@@ -64,6 +68,47 @@ class PendingDebitsViewModelTest {
             assertEquals(PendingDebitsStatus.OFFLINE, state.status)
             cancelAndIgnoreRemainingEvents()
         }
+    }
+
+    @Test
+    fun `a sending stopped by the site is shown as blocked, a refused report is not sent`() = runTest {
+        pending.value = listOf(
+            pendingSubmission(id = 1, canyonId = 2186, email = "a@example.com"),
+            pendingSubmission(id = 2, canyonId = 2186, email = "a@example.com")
+                .copy(rejection = PendingDebitRejection(atEpochMs = 1L, siteMessage = "Date invalide")),
+        )
+        lastSyncFailure.value = AppError.UnexpectedResponse
+        val viewModel = createViewModel()
+
+        viewModel.uiState.test {
+            val state = awaitItemMatching { !it.isLoading }
+            assertEquals(PendingDebitsStatus.BLOCKED, state.status)
+            assertEquals(listOf(false, true), state.items.map { it.isRejected })
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `only refused reports leave nothing to send`() {
+        val refused = PendingDebitItem(
+            id = 1, canyonId = 1, canyonName = null, observationDate = LocalDate.of(2026, 10, 1),
+            observationType = ObservationType.PARCOURU, debitLevel = NiveauDebit.SEC, comment = "", needsLogin = false,
+            rejection = PendingDebitRejection(atEpochMs = 1L, siteMessage = null),
+        )
+
+        assertEquals(PendingDebitsStatus.EMPTY, pendingDebitsStatus(listOf(refused), online = true, loggedIn = true))
+    }
+
+    @Test
+    fun `resending a refused report puts it back in the queue and sends it`() = runTest {
+        coEvery { debitSubmissionRepository.syncPending() } returns fr.descentecanyon.app.domain.model.PendingDebitSyncResult()
+        val viewModel = createViewModel()
+
+        viewModel.resend(2)
+        advanceUntilIdle()
+
+        coVerify { debitSubmissionRepository.retryPending(2) }
+        coVerify { debitSubmissionRepository.syncPending() }
     }
 
     @Test

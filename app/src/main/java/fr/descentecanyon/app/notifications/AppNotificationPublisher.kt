@@ -194,12 +194,12 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         return true
     }
 
-    /** Tells the user that debit reports stored offline were refused by the site and dropped. */
+    /** Tells the user that debit reports stored offline were refused by the site; they stay in the queue screen. */
     fun publishRejectedDebitSubmissions(rejected: List<RejectedDebitSubmission>, canyonNames: Map<Int, String> = emptyMap()): Boolean {
         if (rejected.isEmpty()) return true
         if (!canPostNotifications(CONTRIBUTIONS_CHANNEL_ID)) return false
         val first = rejected.first()
-        val body = if (rejected.size == 1) {
+        val summary = if (rejected.size == 1) {
             val date = first.observationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
             val reason = (first.error as? AppError.Rejected)?.serverMessage
             listOfNotNull(canyonNames[first.canyonId], context.getString(R.string.notification_debit_rejected_body, date), reason)
@@ -207,13 +207,14 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         } else {
             context.resources.getQuantityString(R.plurals.notification_debit_rejected_group_body, rejected.size, rejected.size)
         }
+        val body = "$summary\n${context.getString(R.string.notification_debit_rejected_hint)}"
         val notification = NotificationCompat.Builder(context, CONTRIBUTIONS_CHANNEL_ID)
             .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
             .setContentTitle(context.getString(R.string.notification_debit_rejected_title))
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setAutoCancel(true)
-            .setContentIntent(canyonDetailPendingIntent(first.canyonId))
+            .setContentIntent(sectionPendingIntent(LaunchSection.PENDING_DEBITS))
             .build()
         notifySafely(DEBIT_REJECTED_NOTIFICATION_ID, notification)
         return true

@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.data.local.user.entity
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
@@ -26,6 +27,12 @@ data class PendingDebitSubmissionEntity(
     val comment: String,
     val personalComment: String = "",
     val createdAt: Long = System.currentTimeMillis(),
+    /** Attempts that failed once the report may have reached the site: it is read back before the next one. */
+    @ColumnInfo(defaultValue = "0") val failedAttempts: Int = 0,
+    /** When the site refused the report: it is kept for the user and no longer sent. */
+    val rejectedAt: Long? = null,
+    /** The error the site displayed, if any. */
+    val rejectionReason: String? = null,
 )
 
 /** Debit observations of a canyon, cached from its observations page. */

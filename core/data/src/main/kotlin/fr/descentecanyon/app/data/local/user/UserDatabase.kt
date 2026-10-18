@@ -39,7 +39,7 @@ import fr.descentecanyon.app.data.local.user.entity.RecentCanyonEntity
         CanyonNoteEntity::class,
         LogbookEntryEntity::class,
     ],
-    version = 3,
+    version = 4,
     exportSchema = true,
 )
 abstract class UserDatabase : RoomDatabase() {
@@ -83,7 +83,16 @@ abstract class UserDatabase : RoomDatabase() {
             }
         }
 
+        /** Version 4: reports read back before being sent again, and reports refused by the site kept for the user. */
+        val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `pending_debit_submissions` ADD COLUMN `failedAttempts` INTEGER NOT NULL DEFAULT 0")
+                db.execSQL("ALTER TABLE `pending_debit_submissions` ADD COLUMN `rejectedAt` INTEGER")
+                db.execSQL("ALTER TABLE `pending_debit_submissions` ADD COLUMN `rejectionReason` TEXT")
+            }
+        }
+
         /** Migrations of the user database, oldest first. */
-        val MIGRATIONS = arrayOf<Migration>(MIGRATION_1_2, MIGRATION_2_3)
+        val MIGRATIONS = arrayOf<Migration>(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
     }
 }

@@ -42,6 +42,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -67,6 +68,8 @@ import fr.descentecanyon.app.ui.design.LocalDcShapes
 import fr.descentecanyon.app.ui.design.LocalDcSpacing
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
@@ -166,6 +169,15 @@ fun DebitFormScreen(
                 .padding(horizontal = spacing.screenHorizontal, vertical = spacing.lg),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
+            uiState.canyonName?.let { name ->
+                Column {
+                    Text(text = name, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+                    uiState.canyonPlace?.takeIf { it.isNotBlank() }?.let { place ->
+                        Text(text = place, style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    }
+                }
+            }
+
             if (uiState.pendingCount > 0) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -623,9 +635,10 @@ private fun DatePickerField(
     onDateSelected: (LocalDate) -> Unit,
     showDatePicker: (LocalDate, (LocalDate) -> Unit) -> Unit,
 ) {
+    val locale = LocalLocale.current.platformLocale
     Box(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
-            value = date.toString(),
+            value = date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale)),
             onValueChange = {},
             label = { Text(stringResource(R.string.debit_observation_date)) },
             modifier = Modifier.fillMaxWidth(),

@@ -161,17 +161,22 @@ fun PendingDebitsScreen(
                     ),
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    item {
-                        PendingStatusCard(
-                            status = uiState.status,
-                            onLoginClick = { showLoginDialog = true },
-                        )
+                    if (uiState.status != PendingDebitsStatus.EMPTY) {
+                        item {
+                            PendingStatusCard(
+                                status = uiState.status,
+                                isRetrying = uiState.isRetrying,
+                                onLoginClick = { showLoginDialog = true },
+                                onRetryClick = viewModel::retryNow,
+                            )
+                        }
                     }
                     items(uiState.items, key = { it.id }) { item ->
                         PendingDebitCard(
                             item = item,
                             onCanyonClick = { onCanyonClick(item.canyonId) },
                             onDeleteClick = { itemToDelete = item.id },
+                            onResendClick = { viewModel.resend(item.id) },
                         )
                     }
                 }
@@ -181,11 +186,13 @@ fun PendingDebitsScreen(
 }
 
 @Composable
-private fun PendingStatusCard(status: PendingDebitsStatus, onLoginClick: () -> Unit) {
+private fun PendingStatusCard(status: PendingDebitsStatus, isRetrying: Boolean, onLoginClick: () -> Unit, onRetryClick: () -> Unit) {
     val (icon: ImageVector, text: String) = when (status) {
         PendingDebitsStatus.OFFLINE -> Icons.Default.CloudOff to stringResource(R.string.pending_debits_status_offline)
 
         PendingDebitsStatus.LOGIN_REQUIRED -> Icons.Default.Lock to stringResource(R.string.pending_debits_status_login)
+
+        PendingDebitsStatus.BLOCKED -> Icons.Default.CloudOff to stringResource(R.string.pending_debits_status_blocked)
 
         PendingDebitsStatus.SENDING, PendingDebitsStatus.EMPTY ->
             Icons.Default.CloudUpload to
@@ -201,11 +208,16 @@ private fun PendingStatusCard(status: PendingDebitsStatus, onLoginClick: () -> U
                 Text(stringResource(R.string.debit_login_prompt_button))
             }
         }
+        if (status == PendingDebitsStatus.BLOCKED) {
+            Button(onClick = onRetryClick, enabled = !isRetrying, modifier = Modifier.padding(top = 12.dp)) {
+                Text(stringResource(R.string.pending_debits_retry_now))
+            }
+        }
     }
 }
 
 @Composable
-private fun PendingDebitCard(item: PendingDebitItem, onCanyonClick: () -> Unit, onDeleteClick: () -> Unit) {
+private fun PendingDebitCard(item: PendingDebitItem, onCanyonClick: () -> Unit, onDeleteClick: () -> Unit, onResendClick: () -> Unit) {
     val colors = LocalDcColors.current
     val date = item.observationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM))
     val type = when (item.observationType) {
@@ -240,13 +252,26 @@ private fun PendingDebitCard(item: PendingDebitItem, onCanyonClick: () -> Unit, 
                     .padding(top = 8.dp),
             )
         }
-        if (item.needsLogin) {
+        if (item.needsLogin && !item.isRejected) {
             Text(
                 text = stringResource(R.string.pending_debits_with_account),
                 style = MaterialTheme.typography.labelMedium,
                 color = colors.textMuted,
                 modifier = Modifier.padding(top = 8.dp),
             )
+        }
+        item.rejection?.let { rejection ->
+            // Kept rather than lost: the user sees why and decides.
+            Text(
+                text = rejection.siteMessage?.let { stringResource(R.string.pending_debits_rejected_reason, it) }
+                    ?: stringResource(R.string.pending_debits_rejected),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.error,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+            TextButton(onClick = onResendClick, modifier = Modifier.testTag(TestTags.pendingDebitResend(item.id))) {
+                Text(stringResource(R.string.pending_debits_resend))
+            }
         }
     }
 }

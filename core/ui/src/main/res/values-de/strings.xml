@@ -533,6 +533,13 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="pending_debits_delete_body">Er wird nicht an die Website gesendet.</string>
     <string name="pending_debits_delete_confirm">Löschen</string>
     <string name="pending_debits_with_account">Wird mit deinem Konto gesendet</string>
+    <string name="notification_debit_rejected_hint">Er bleibt unter „Wartende Wasserstandsberichte“: erneut senden oder löschen.</string>
+    <string name="pending_debits_status_blocked">Die Website hat die Berichte vorerst nicht angenommen. Es wird automatisch erneut versucht.</string>
+    <string name="pending_debits_retry_now">Jetzt erneut versuchen</string>
+    <string name="pending_debits_rejected">Von der Website abgelehnt</string>
+    <string name="pending_debits_rejected_reason">Von der Website abgelehnt: %1$s</string>
+    <string name="pending_debits_resend">Erneut senden</string>
+    <string name="debit_observer_email_invalid">Ungültige E-Mail-Adresse: Die Website würde den Bericht ablehnen.</string>
     <string name="pending_debits_view">Ansehen</string>
     <string name="notification_channel_contributions_title">Meine Beiträge</string>
     <string name="notification_channel_contributions_body">Versand offline erfasster Wasserstandsberichte</string>

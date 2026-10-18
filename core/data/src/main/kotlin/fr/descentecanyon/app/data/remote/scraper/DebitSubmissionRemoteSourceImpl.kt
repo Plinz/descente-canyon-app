@@ -67,7 +67,7 @@ class DebitSubmissionRemoteSourceImpl @Inject constructor(
         finalUrl.contains("/canyoning/canyon-debit/$canyonId/observations.html")
 
     /** Reads the canyon observations back and looks for the report. */
-    private suspend fun isPublished(submission: DebitSubmission): Boolean {
+    override suspend fun isPublished(submission: DebitSubmission): Boolean {
         val observations = suspendRunCatching {
             val document = siteClient.get(SiteUrls.canyonDebits(submission.canyonId)).document
             parsing { DebitParser.parseCanyonDebits(document, submission.canyonId) }

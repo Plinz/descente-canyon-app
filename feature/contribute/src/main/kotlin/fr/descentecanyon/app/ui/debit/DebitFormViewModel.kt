@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.error.requiresLogin
+import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.error.toAppError
 import fr.descentecanyon.app.domain.model.AirTemperature
 import fr.descentecanyon.app.domain.model.AuthState
@@ -16,6 +17,7 @@ import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.ObservationType
 import fr.descentecanyon.app.domain.model.WaterTemperature
 import fr.descentecanyon.app.domain.repository.AuthRepository
+import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.usecase.SubmitDebitUseCase
@@ -31,6 +33,9 @@ import kotlinx.coroutines.launch
 
 data class DebitFormUiState(
     val canyonId: Int = 0,
+    /** The canyon reported on, shown so a report from a notification cannot go to the wrong one. */
+    val canyonName: String? = null,
+    val canyonPlace: String? = null,
     val observerName: String = "",
     val observerEmail: String = "",
     val observationDate: LocalDate = LocalDate.now(),
@@ -51,22 +56,36 @@ data class DebitFormUiState(
 
 @HiltViewModel
 class DebitFormViewModel @Inject constructor(
-    savedStateHandle: SavedStateHandle,
+    private val savedStateHandle: SavedStateHandle,
     private val authRepository: AuthRepository,
     private val submitDebitUseCase: SubmitDebitUseCase,
     private val debitSubmissionRepository: DebitSubmissionRepository,
     private val preferencesRepository: PreferencesRepository,
+    private val canyonRepository: CanyonRepository,
 ) : ViewModel() {
 
     private val canyonId: Int = checkNotNull(savedStateHandle["canyonId"])
 
-    private val _uiState = MutableStateFlow(DebitFormUiState(canyonId = canyonId))
+    // Restored after Android stopped the app in the background (camera, maps on the way back...).
+    private val _uiState = MutableStateFlow(savedStateHandle.restoreForm(DebitFormUiState(canyonId = canyonId)))
     val uiState: StateFlow<DebitFormUiState> = _uiState.asStateFlow()
 
     init {
         observeAuth()
         observePendingCount()
         prefillContributorIdentity()
+        loadCanyon()
+        viewModelScope.launch { _uiState.collect { state -> savedStateHandle.saveForm(state) } }
+    }
+
+    private fun loadCanyon() {
+        viewModelScope.launch {
+            val canyon =
+                suspendRunCatching { canyonRepository.getCanyonSummaries(setOf(canyonId)).firstOrNull() }.getOrNull() ?: return@launch
+            _uiState.update {
+                it.copy(canyonName = canyon.nom, canyonPlace = listOfNotNull(canyon.departement, canyon.pays).joinToString(" · "))
+            }
+        }
     }
 
     /** Offers the name and e-mail of the last report sent without an account. */
@@ -156,6 +175,8 @@ class DebitFormViewModel @Inject constructor(
 
     fun submit() {
         val state = _uiState.value
+        // A second tap while the report is being sent would send it twice.
+        if (state.isSubmitting) return
         val observerName = state.observerName.trim()
         val observerEmail = state.observerEmail.trim().takeIf { it.isNotBlank() }
         val observationType = state.observationType
@@ -172,6 +193,12 @@ class DebitFormViewModel @Inject constructor(
                 return
             }
 
+            // Caught now: a report stored offline would only be refused by the site later.
+            !state.isConnected && observerEmail?.matches(PLAUSIBLE_EMAIL) != true -> {
+                _uiState.update { it.copy(error = UiText.res(R.string.debit_observer_email_invalid)) }
+                return
+            }
+
             observationType == null -> {
                 _uiState.update { it.copy(error = UiText.res(R.string.debit_observation_type_required)) }
                 return
@@ -183,8 +210,8 @@ class DebitFormViewModel @Inject constructor(
             }
         }
 
+        _uiState.update { it.copy(isSubmitting = true, error = null, transientMessage = null) }
         viewModelScope.launch {
-            _uiState.update { it.copy(isSubmitting = true, error = null, transientMessage = null) }
             submitDebitUseCase(
                 DebitSubmission(
                     canyonId = canyonId,
@@ -244,5 +271,43 @@ class DebitFormViewModel @Inject constructor(
 
     fun clearLoginRequiredMessage() {
         _uiState.update { it.copy(loginRequiredMessage = null) }
+    }
+
+    private companion object {
+        const val FORM_NAME = "form.name"
+        const val FORM_EMAIL = "form.email"
+        const val FORM_DATE = "form.date"
+        const val FORM_TYPE = "form.type"
+        const val FORM_LEVEL = "form.level"
+        const val FORM_WATER = "form.water"
+        const val FORM_AIR = "form.air"
+        const val FORM_COMMENT = "form.comment"
+        const val FORM_PERSONAL_COMMENT = "form.personalComment"
+
+        fun SavedStateHandle.saveForm(state: DebitFormUiState) {
+            this[FORM_NAME] = state.observerName
+            this[FORM_EMAIL] = state.observerEmail
+            this[FORM_DATE] = state.observationDate.toString()
+            this[FORM_TYPE] = state.observationType?.name
+            this[FORM_LEVEL] = state.debitLevel?.name
+            this[FORM_WATER] = state.waterTemperature?.name
+            this[FORM_AIR] = state.airTemperature?.name
+            this[FORM_COMMENT] = state.comment
+            this[FORM_PERSONAL_COMMENT] = state.personalComment
+        }
+
+        fun SavedStateHandle.restoreForm(initial: DebitFormUiState): DebitFormUiState = initial.copy(
+            observerName = get<String>(FORM_NAME) ?: initial.observerName,
+            observerEmail = get<String>(FORM_EMAIL) ?: initial.observerEmail,
+            observationDate = get<String>(FORM_DATE)?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: initial.observationDate,
+            observationType = get<String>(FORM_TYPE)?.let { name -> ObservationType.entries.firstOrNull { it.name == name } },
+            debitLevel = get<String>(FORM_LEVEL)?.let { name -> NiveauDebit.entries.firstOrNull { it.name == name } },
+            waterTemperature = get<String>(FORM_WATER)?.let { name -> WaterTemperature.entries.firstOrNull { it.name == name } },
+            airTemperature = get<String>(FORM_AIR)?.let { name -> AirTemperature.entries.firstOrNull { it.name == name } },
+            comment = get<String>(FORM_COMMENT) ?: initial.comment,
+            personalComment = get<String>(FORM_PERSONAL_COMMENT) ?: initial.personalComment,
+        )
+
+        val PLAUSIBLE_EMAIL = Regex("""[^@\s]+@[^@\s]+\.[^@\s]+""")
     }
 }

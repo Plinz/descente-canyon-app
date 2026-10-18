@@ -533,6 +533,13 @@ Search for a canyon and add it to your favorites.</string>
     <string name="pending_debits_delete_body">It will not be sent to the site.</string>
     <string name="pending_debits_delete_confirm">Delete</string>
     <string name="pending_debits_with_account">Will be sent with your account</string>
+    <string name="notification_debit_rejected_hint">It is kept in “Flow reports waiting to be sent”: send it again or delete it.</string>
+    <string name="pending_debits_status_blocked">The site did not take the reports for now. They will be tried again automatically.</string>
+    <string name="pending_debits_retry_now">Try again now</string>
+    <string name="pending_debits_rejected">Refused by the site</string>
+    <string name="pending_debits_rejected_reason">Refused by the site: %1$s</string>
+    <string name="pending_debits_resend">Send again</string>
+    <string name="debit_observer_email_invalid">Invalid e-mail address: the site would refuse the report.</string>
     <string name="pending_debits_view">View</string>
     <string name="notification_channel_contributions_title">My contributions</string>
     <string name="notification_channel_contributions_body">Sending of flow reports written offline</string>

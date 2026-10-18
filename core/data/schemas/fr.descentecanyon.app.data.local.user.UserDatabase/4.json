@@ -1,0 +1,520 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 4,
+    "identityHash": "df09d0bb22e5befe460b21866dc8ff13",
+    "entities": [
+      {
+        "tableName": "favorites",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`canyonId` INTEGER NOT NULL, `addedAt` INTEGER NOT NULL, PRIMARY KEY(`canyonId`))",
+        "fields": [
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "addedAt",
+            "columnName": "addedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "canyonId"
+          ]
+        }
+      },
+      {
+        "tableName": "pending_debit_submissions",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `canyonId` INTEGER NOT NULL, `observerName` TEXT NOT NULL, `observerEmail` TEXT, `observationDate` TEXT NOT NULL, `isDescended` INTEGER NOT NULL, `debitLevel` TEXT NOT NULL, `waterTemperature` TEXT NOT NULL, `airTemperature` TEXT NOT NULL, `comment` TEXT NOT NULL, `personalComment` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, `failedAttempts` INTEGER NOT NULL DEFAULT 0, `rejectedAt` INTEGER, `rejectionReason` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "observerName",
+            "columnName": "observerName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "observerEmail",
+            "columnName": "observerEmail",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "observationDate",
+            "columnName": "observationDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDescended",
+            "columnName": "isDescended",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "debitLevel",
+            "columnName": "debitLevel",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "waterTemperature",
+            "columnName": "waterTemperature",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "airTemperature",
+            "columnName": "airTemperature",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "comment",
+            "columnName": "comment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "personalComment",
+            "columnName": "personalComment",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "failedAttempts",
+            "columnName": "failedAttempts",
+            "affinity": "INTEGER",
+            "notNull": true,
+            "defaultValue": "0"
+          },
+          {
+            "fieldPath": "rejectedAt",
+            "columnName": "rejectedAt",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "rejectionReason",
+            "columnName": "rejectionReason",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        }
+      },
+      {
+        "tableName": "debits",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `canyonId` INTEGER NOT NULL, `date` TEXT NOT NULL, `niveau` TEXT NOT NULL, `auteur` TEXT, `isDescended` INTEGER, `waterTemperature` TEXT, `airTemperature` TEXT, `commentaire` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "niveau",
+            "columnName": "niveau",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "auteur",
+            "columnName": "auteur",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "isDescended",
+            "columnName": "isDescended",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "waterTemperature",
+            "columnName": "waterTemperature",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "airTemperature",
+            "columnName": "airTemperature",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "commentaire",
+            "columnName": "commentaire",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_debits_canyonId",
+            "unique": false,
+            "columnNames": [
+              "canyonId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_debits_canyonId` ON `${TABLE_NAME}` (`canyonId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "photos",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `canyonId` INTEGER NOT NULL, `url` TEXT NOT NULL, `thumbnailUrl` TEXT, `auteur` TEXT, `description` TEXT, `localPath` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "url",
+            "columnName": "url",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "thumbnailUrl",
+            "columnName": "thumbnailUrl",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "auteur",
+            "columnName": "auteur",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "description",
+            "columnName": "description",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "localPath",
+            "columnName": "localPath",
+            "affinity": "TEXT"
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_photos_canyonId",
+            "unique": false,
+            "columnNames": [
+              "canyonId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_photos_canyonId` ON `${TABLE_NAME}` (`canyonId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "daily_weather",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`canyonId` INTEGER NOT NULL, `date` TEXT NOT NULL, `timezone` TEXT NOT NULL, `targetLatitude` REAL NOT NULL, `targetLongitude` REAL NOT NULL, `targetSource` TEXT NOT NULL, `sourceKind` TEXT NOT NULL, `precipitationSum` REAL, `rainSum` REAL, `snowfallSum` REAL, `temperature2mMean` REAL, `temperature2mMin` REAL, `temperature2mMax` REAL, `precipitationHours` REAL, `fetchedAtEpochMs` INTEGER NOT NULL, PRIMARY KEY(`canyonId`, `date`))",
+        "fields": [
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timezone",
+            "columnName": "timezone",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetLatitude",
+            "columnName": "targetLatitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetLongitude",
+            "columnName": "targetLongitude",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "targetSource",
+            "columnName": "targetSource",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceKind",
+            "columnName": "sourceKind",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "precipitationSum",
+            "columnName": "precipitationSum",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "rainSum",
+            "columnName": "rainSum",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "snowfallSum",
+            "columnName": "snowfallSum",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "temperature2mMean",
+            "columnName": "temperature2mMean",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "temperature2mMin",
+            "columnName": "temperature2mMin",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "temperature2mMax",
+            "columnName": "temperature2mMax",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "precipitationHours",
+            "columnName": "precipitationHours",
+            "affinity": "REAL"
+          },
+          {
+            "fieldPath": "fetchedAtEpochMs",
+            "columnName": "fetchedAtEpochMs",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "canyonId",
+            "date"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_daily_weather_canyonId",
+            "unique": false,
+            "columnNames": [
+              "canyonId"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_daily_weather_canyonId` ON `${TABLE_NAME}` (`canyonId`)"
+          }
+        ]
+      },
+      {
+        "tableName": "key_values",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`key` TEXT NOT NULL, `value` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`key`))",
+        "fields": [
+          {
+            "fieldPath": "key",
+            "columnName": "key",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "value",
+            "columnName": "value",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "key"
+          ]
+        }
+      },
+      {
+        "tableName": "recent_canyons",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`canyonId` INTEGER NOT NULL, `viewedAt` INTEGER NOT NULL, PRIMARY KEY(`canyonId`))",
+        "fields": [
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "viewedAt",
+            "columnName": "viewedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "canyonId"
+          ]
+        }
+      },
+      {
+        "tableName": "canyon_notes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`canyonId` INTEGER NOT NULL, `text` TEXT NOT NULL, `updatedAt` INTEGER NOT NULL, PRIMARY KEY(`canyonId`))",
+        "fields": [
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "text",
+            "columnName": "text",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "updatedAt",
+            "columnName": "updatedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "canyonId"
+          ]
+        }
+      },
+      {
+        "tableName": "logbook_entries",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `canyonId` INTEGER NOT NULL, `canyonName` TEXT NOT NULL, `date` TEXT NOT NULL, `note` TEXT, `createdAt` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canyonId",
+            "columnName": "canyonId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "canyonName",
+            "columnName": "canyonName",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "note",
+            "columnName": "note",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "createdAt",
+            "columnName": "createdAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_logbook_entries_canyonId_date",
+            "unique": true,
+            "columnNames": [
+              "canyonId",
+              "date"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_logbook_entries_canyonId_date` ON `${TABLE_NAME}` (`canyonId`, `date`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'df09d0bb22e5befe460b21866dc8ff13')"
+    ]
+  }
+}
