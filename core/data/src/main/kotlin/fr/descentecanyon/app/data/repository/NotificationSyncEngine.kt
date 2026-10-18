@@ -18,19 +18,19 @@ import java.time.format.DateTimeFormatter
 internal object NotificationSyncEngine {
 
     private const val MAX_SEEN_KEYS = 50
+    private const val DEBIT_KEY_PARTS = 3
     private const val MAX_ACTIVITY_EVENTS = 60
     private val debitDateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
 
-    fun buildDebitKey(debit: Debit): String = listOf(
-        debit.canyonId.toString(),
-        debit.date.toString(),
-        debit.niveau.name,
-        debit.auteur.orEmpty(),
-        debit.isDescended?.toString().orEmpty(),
-        debit.waterTemperature.orEmpty(),
-        debit.airTemperature.orEmpty(),
-        debit.commentaire.orEmpty(),
-    ).joinToString("|")
+    /**
+     * What a followed canyon is compared on: the latest-debits page, which the sync reads, only gives
+     * the canyon, the date and the level of its last report. Author, temperatures or comment (known
+     * when the follow starts from the canyon page) would make every report shown there look new.
+     */
+    fun buildDebitKey(debit: Debit): String = listOf(debit.canyonId.toString(), debit.date.toString(), debit.niveau.name).joinToString("|")
+
+    /** Keys stored by versions <= 2.4.1 went on with author, temperatures and comment. */
+    private fun String.asDebitKey(): String = split('|').take(DEBIT_KEY_PARTS).joinToString("|")
 
     fun buildForumTopicMarker(topic: ForumActiveTopic): String = buildString {
         append(topic.topicId)
@@ -41,7 +41,9 @@ internal object NotificationSyncEngine {
     fun buildInitialCanyonFollow(canyonId: Int, canyonName: String, baselineDebits: List<Debit>): FollowedCanyon = FollowedCanyon(
         canyonId = canyonId,
         canyonName = canyonName,
-        seenDebitKeys = baselineDebits.map(::buildDebitKey).distinct().takeLast(MAX_SEEN_KEYS),
+        // Oldest first, like every list of seen keys, so the most recent are the ones kept: the canyon
+        // page lists the newest reports first and a popular canyon has hundreds.
+        seenDebitKeys = baselineDebits.sortedBy { it.date }.map(::buildDebitKey).distinct().takeLast(MAX_SEEN_KEYS),
         hasSeededLatestDebits = baselineDebits.isNotEmpty(),
     )
 
@@ -94,9 +96,10 @@ internal object NotificationSyncEngine {
         val forumEvents = mutableListOf<TrackedActivityEvent>()
 
         val updatedCanyons = state.followedCanyons.map { followed ->
-            val matchingDebits = latestDebits.filter { it.canyonId == followed.canyonId }
+            val matchingDebits = latestDebits.filter { it.canyonId == followed.canyonId }.distinctBy(::buildDebitKey)
             val matchingKeys = matchingDebits.map(::buildDebitKey)
-            val seenKeys = followed.seenDebitKeys.toSet()
+            val previousKeys = followed.seenDebitKeys.map { it.asDebitKey() }
+            val seenKeys = previousKeys.toSet()
             val newDebits = if (followed.hasSeededLatestDebits) {
                 matchingDebits.filter { debit -> buildDebitKey(debit) !in seenKeys }
             } else {
@@ -115,7 +118,7 @@ internal object NotificationSyncEngine {
             }
             followed.copy(
                 seenDebitKeys = mergeSeenKeys(
-                    previous = followed.seenDebitKeys,
+                    previous = previousKeys,
                     current = matchingKeys,
                 ),
                 hasSeededLatestDebits = true,
@@ -236,7 +239,11 @@ internal object NotificationSyncEngine {
         return updated to NotificationSyncSummary(newForumEvents = events)
     }
 
-    private fun mergeSeenKeys(previous: List<String>, current: List<String>): List<String> = (previous + current)
-        .distinct()
-        .takeLast(MAX_SEEN_KEYS)
+    /** The keys still on the page are kept last, so the oldest dropped are never ones that would come back as new. */
+    private fun mergeSeenKeys(previous: List<String>, current: List<String>): List<String> {
+        val currentKeys = current.toSet()
+        return (previous.filterNot { it in currentKeys } + current)
+            .distinct()
+            .takeLast(MAX_SEEN_KEYS)
+    }
 }

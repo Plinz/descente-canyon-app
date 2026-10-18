@@ -1,6 +1,8 @@
 package fr.descentecanyon.app.data.repository
 
 import fr.descentecanyon.app.domain.model.Debit
+import fr.descentecanyon.app.domain.model.FollowedCanyon
+import fr.descentecanyon.app.domain.model.FollowedForumCategory
 import fr.descentecanyon.app.domain.model.ForumActiveTopic
 import fr.descentecanyon.app.domain.model.ForumUser
 import fr.descentecanyon.app.domain.model.ForumUserPost
@@ -180,15 +182,94 @@ class NotificationSyncEngineTest {
     )
 
     @Test
-    fun `same day debit observations with different comments remain distinct`() {
-        val first = debit(
-            date = LocalDate.of(2026, 6, 12),
-            niveau = NiveauDebit.CORRECT,
-            commentaire = "RAS",
+    fun `following from the canyon page does not notify the report already shown there`() {
+        // The canyon page gives the author, temperatures and comment; the latest-debits page does not.
+        val shownOnPage = debit(date = LocalDate.of(2026, 10, 18), niveau = NiveauDebit.CORRECT, commentaire = "RAS")
+            .copy(isDescended = true, waterTemperature = "Douce", airTemperature = "Bon")
+        val fromLatestDebits = Debit(canyonId = 42, canyonNom = "Riolan", date = LocalDate.of(2026, 10, 18), niveau = NiveauDebit.CORRECT)
+        val state = NotificationCenterState(
+            followedCanyons = listOf(NotificationSyncEngine.buildInitialCanyonFollow(42, "Riolan", listOf(shownOnPage))),
         )
-        val updated = first.copy(commentaire = "Attention au debit")
 
-        assertTrue(NotificationSyncEngine.buildDebitKey(first) != NotificationSyncEngine.buildDebitKey(updated))
+        val (_, summary) = NotificationSyncEngine.applyFetchedContent(state, listOf(fromLatestDebits), emptyList(), nowEpochMs = 1L)
+
+        assertTrue(summary.newDebitEvents.isEmpty())
+    }
+
+    @Test
+    fun `following a canyon with many reports keeps its latest one as seen`() {
+        // The canyon page lists the newest report first, followed by years of older ones.
+        val reports = listOf(debit(date = LocalDate.of(2026, 10, 18), niveau = NiveauDebit.CORRECT)) +
+            (1..80).map { day -> debit(date = LocalDate.of(2015, 1, 1).plusDays(day.toLong()), niveau = NiveauDebit.GROS) }.reversed()
+        val state = NotificationCenterState(
+            followedCanyons = listOf(NotificationSyncEngine.buildInitialCanyonFollow(42, "Riolan", reports)),
+        )
+        val fromLatestDebits = Debit(canyonId = 42, date = LocalDate.of(2026, 10, 18), niveau = NiveauDebit.CORRECT)
+
+        val (_, summary) = NotificationSyncEngine.applyFetchedContent(state, listOf(fromLatestDebits), emptyList(), nowEpochMs = 1L)
+
+        assertTrue(summary.newDebitEvents.isEmpty())
+    }
+
+    @Test
+    fun `reports seen with the keys of older versions stay seen`() {
+        val state = NotificationCenterState(
+            followedCanyons = listOf(
+                FollowedCanyon(
+                    canyonId = 42,
+                    canyonName = "Riolan",
+                    seenDebitKeys = listOf("42|2026-10-18|CORRECT|antoine|true|Douce|Bon|RAS"),
+                    hasSeededLatestDebits = true,
+                ),
+            ),
+        )
+        val fromLatestDebits = Debit(canyonId = 42, date = LocalDate.of(2026, 10, 18), niveau = NiveauDebit.CORRECT)
+
+        val (updated, summary) = NotificationSyncEngine.applyFetchedContent(state, listOf(fromLatestDebits), emptyList(), nowEpochMs = 1L)
+
+        assertTrue(summary.newDebitEvents.isEmpty())
+        assertEquals(listOf("42|2026-10-18|CORRECT"), updated.followedCanyons.single().seenDebitKeys)
+    }
+
+    @Test
+    fun `another level reported the same day is notified`() {
+        val state = NotificationCenterState(
+            followedCanyons = listOf(
+                NotificationSyncEngine.buildInitialCanyonFollow(
+                    canyonId = 42,
+                    canyonName = "Riolan",
+                    baselineDebits = listOf(debit(date = LocalDate.of(2026, 10, 18), niveau = NiveauDebit.CORRECT)),
+                ),
+            ),
+        )
+
+        val (_, summary) = NotificationSyncEngine.applyFetchedContent(
+            state,
+            listOf(debit(date = LocalDate.of(2026, 10, 18), niveau = NiveauDebit.GROS)),
+            emptyList(),
+            nowEpochMs = 1L,
+        )
+
+        assertEquals(1, summary.newDebitEvents.size)
+    }
+
+    @Test
+    fun `markers still listed are never the ones dropped from a full history`() {
+        val listed = topic(topicId = 7, forumId = 1, forumName = "Canyon", lastMessageUrl = "https://example.org/p7")
+        val fresh = topic(topicId = 8, forumId = 1, forumName = "Canyon", lastMessageUrl = "https://example.org/p8")
+        // 50 markers seen, the one of the topic still listed being the oldest.
+        val seen = listOf(NotificationSyncEngine.buildForumTopicMarker(listed)) + (2..50).map { "old-$it" }
+        val state = NotificationCenterState(
+            followedForumCategories = listOf(
+                FollowedForumCategory(key = "forum:1", forumId = 1, forumName = "Canyon", seenTopicMarkers = seen),
+            ),
+        )
+
+        val (updated, first) = NotificationSyncEngine.applyFetchedContent(state, emptyList(), listOf(listed, fresh), nowEpochMs = 1L)
+        val (_, second) = NotificationSyncEngine.applyFetchedContent(updated, emptyList(), listOf(listed, fresh), nowEpochMs = 2L)
+
+        assertEquals(listOf("forum:${NotificationSyncEngine.buildForumTopicMarker(fresh)}"), first.newForumEvents.map { it.id })
+        assertTrue(second.newForumEvents.isEmpty())
     }
 
     @Test
