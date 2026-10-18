@@ -342,7 +342,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="prediction_info_reading_title">How to read it</string>
     <string name="prediction_info_reading_p1">Each row corresponds to one day: today, tomorrow, and the day after tomorrow. The gauge indicates the likely flow between Dry and Flood.</string>
     <string name="prediction_info_reading_p2">The closer the cursor gets to High, Very high, or Flood, the more the model estimates that the flow may become heavy.</string>
-    <string name="prediction_info_reading_p3">The confidence badge drops if the model hesitates between several levels or if the score is close to a boundary between two categories.</string>
+    <string name="prediction_info_reading_p3">When the model hesitates between two neighbouring levels, the estimate shows a range (for example “trickle to normal”), which is more reliable than a single level. The confidence tells how sure what is shown is: over past seasons, the estimate was right about 9 times out of 10 with high confidence, 3 times out of 4 with medium confidence and 2 times out of 3 with low confidence.</string>
     <string name="prediction_info_reading_p4">This estimate should be read as preparation help, not as a safety guarantee or an instantaneous measurement of the real flow.</string>
     <string name="prediction_info_data_title">What data is used</string>
     <string name="prediction_info_data_p1">The model simulates the watershed hydrological state over the last 400 days from weather data (ERA5 reanalysis, then ECMWF forecasts): snowpack per elevation band, melt, soil moisture and fast to slow reservoirs (storms, groundwater, karst).</string>
@@ -613,7 +613,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="weather_condition_thunderstorm">thunderstorms</string>
     <string name="weather_condition_unknown">unknown weather</string>
     <string name="prediction_range">%1$s to %2$s</string>
-    <string name="prediction_range_explanation">The model hesitates between two levels: the range is more reliable than a single level.</string>
     <string name="prediction_range_level_sec">dry</string>
     <string name="prediction_range_level_filet">trickle</string>
     <string name="prediction_range_level_correct">normal</string>

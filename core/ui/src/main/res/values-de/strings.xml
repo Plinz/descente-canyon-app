@@ -342,7 +342,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="prediction_info_reading_title">So liest du sie</string>
     <string name="prediction_info_reading_p1">Jede Zeile entspricht einem Tag: heute, morgen und übermorgen. Die Anzeige zeigt den wahrscheinlichen Wasserstand zwischen Trocken und Hochwasser.</string>
     <string name="prediction_info_reading_p2">Je näher der Regler an Hoch, Sehr hoch oder Hochwasser liegt, desto stärker schätzt das Modell den Wasserstand ein.</string>
-    <string name="prediction_info_reading_p3">Die Vertrauensanzeige sinkt, wenn das Modell zwischen mehreren Stufen unsicher ist oder der Wert nahe an einer Grenze zwischen zwei Kategorien liegt.</string>
+    <string name="prediction_info_reading_p3">Wenn das Modell zwischen zwei benachbarten Stufen schwankt, zeigt die Schätzung eine Spanne (zum Beispiel „Rinnsal bis normal“), die zuverlässiger ist als eine einzelne Stufe. Die Sicherheit gibt an, wie verlässlich die Anzeige ist: In vergangenen Saisons lag die Schätzung bei hoher Sicherheit etwa 9 von 10 Mal richtig, bei mittlerer Sicherheit 3 von 4 Mal und bei geringer Sicherheit 2 von 3 Mal.</string>
     <string name="prediction_info_reading_p4">Diese Abschätzung ist als Hilfe zur Vorbereitung zu verstehen, nicht als Sicherheitsgarantie oder als momentane Messung des tatsächlichen Wasserstands.</string>
     <string name="prediction_info_data_title">Welche Daten verwendet werden</string>
     <string name="prediction_info_data_p1">Das Modell simuliert aus Wetterdaten (ERA5-Reanalyse, dann ECMWF-Prognosen) den hydrologischen Zustand des Einzugsgebiets der letzten 400 Tage: Schneedecke je Höhenstufe, Schmelze, Bodenfeuchte sowie schnelle bis langsame Speicher (Gewitter, Grundwasser, Karst).</string>
@@ -613,7 +613,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="weather_condition_thunderstorm">Gewitter</string>
     <string name="weather_condition_unknown">Wetter unbekannt</string>
     <string name="prediction_range">%1$s bis %2$s</string>
-    <string name="prediction_range_explanation">Das Modell schwankt zwischen zwei Stufen: die Spanne ist zuverlässiger als eine einzelne Stufe.</string>
     <string name="prediction_range_level_sec">trocken</string>
     <string name="prediction_range_level_filet">Rinnsal</string>
     <string name="prediction_range_level_correct">normal</string>

@@ -41,6 +41,39 @@ class DebitPredictionRangeTest {
         assertNull(prediction(NiveauDebit.CORRECT).copy(levelProbabilities = emptyMap()).likelyRange())
     }
 
+    @Test
+    fun `confidence is the probability of the shown level`() {
+        val prediction = prediction(NiveauDebit.SEC, sec = 0.93, filet = 0.06, correct = 0.01)
+
+        assertEquals(0.93, prediction.shownProbability()!!, 1e-9)
+        assertEquals(PredictionConfidence.HIGH, prediction.confidence())
+    }
+
+    @Test
+    fun `a range between two levels can be shown with high confidence`() {
+        val prediction = prediction(NiveauDebit.FILET, sec = 0.04, filet = 0.48, correct = 0.45, gros = 0.03)
+
+        assertEquals(0.93, prediction.shownProbability()!!, 1e-9)
+        assertEquals(PredictionConfidence.HIGH, prediction.confidence())
+    }
+
+    @Test
+    fun `confidence drops when the shown answer is less likely`() {
+        assertEquals(
+            PredictionConfidence.MEDIUM,
+            prediction(NiveauDebit.CORRECT, filet = 0.1, correct = 0.75, gros = 0.15).confidence(),
+        )
+        assertEquals(
+            PredictionConfidence.LOW,
+            prediction(NiveauDebit.GROS, filet = 0.2, correct = 0.38, gros = 0.22, tresGros = 0.12, crue = 0.08).confidence(),
+        )
+    }
+
+    @Test
+    fun `no confidence without the level distribution`() {
+        assertNull(prediction(NiveauDebit.CORRECT).copy(levelProbabilities = emptyMap()).confidence())
+    }
+
     private fun prediction(
         level: NiveauDebit,
         sec: Double = 0.0,

@@ -107,7 +107,6 @@ class PredictionCache @Inject constructor(private val keyValueDao: KeyValueDao, 
         val highThreshold: Double,
         val ordinalScore: Double? = null,
         val ordinalLevel: String? = null,
-        val ordinalStandardDeviation: Double? = null,
         val levelProbabilities: Map<String, Double> = emptyMap(),
     ) {
         /** The prediction with its horizon counted from [today]; null when the date is unreadable. */
@@ -123,7 +122,6 @@ class PredictionCache @Inject constructor(private val keyValueDao: KeyValueDao, 
                 highThreshold = highThreshold,
                 ordinalScore = ordinalScore,
                 ordinalLevel = ordinalLevel?.let { enumOr(it, NiveauDebit.INCONNU) },
-                ordinalStandardDeviation = ordinalStandardDeviation,
                 levelProbabilities = levelProbabilities.mapNotNull { (name, value) ->
                     NiveauDebit.entries.firstOrNull { it.name == name }?.let { it to value }
                 }.toMap(),
@@ -138,7 +136,6 @@ class PredictionCache @Inject constructor(private val keyValueDao: KeyValueDao, 
                 highThreshold = prediction.highThreshold,
                 ordinalScore = prediction.ordinalScore,
                 ordinalLevel = prediction.ordinalLevel?.name,
-                ordinalStandardDeviation = prediction.ordinalStandardDeviation,
                 levelProbabilities = prediction.levelProbabilities.mapKeys { it.key.name },
             )
         }

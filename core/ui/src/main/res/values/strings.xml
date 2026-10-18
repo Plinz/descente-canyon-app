@@ -344,7 +344,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="prediction_info_reading_title">Comment la lire</string>
     <string name="prediction_info_reading_p1">Chaque ligne correspond à un jour : aujourd\'hui, demain et après-demain. La jauge indique le débit probable entre Sec et Crue.</string>
     <string name="prediction_info_reading_p2">Plus le curseur se rapproche de Gros, Très gros ou Crue, plus le modèle estime que le débit peut devenir chargé.</string>
-    <string name="prediction_info_reading_p3">Le badge de confiance baisse si le modèle hésite entre plusieurs niveaux ou si le score est proche d\'une limite entre deux catégories.</string>
+    <string name="prediction_info_reading_p3">Quand le modèle hésite entre deux niveaux voisins, l\'estimation affiche une fourchette (par exemple « filet à correct »), plus fiable qu\'un niveau unique. La confiance dit à quel point ce qui est affiché est sûr : sur les saisons passées, l\'estimation s\'est révélée juste environ 9 fois sur 10 en confiance élevée, 3 fois sur 4 en confiance moyenne et 2 fois sur 3 en confiance faible.</string>
     <string name="prediction_info_reading_p4">Cette estimation doit être lue comme une aide à la préparation, pas comme une garantie de sécurité ni comme une mesure instantanée du débit réel.</string>
     <string name="prediction_info_data_title">Quelles données sont utilisées</string>
     <string name="prediction_info_data_p1">Le modèle simule l\'état hydrologique du bassin versant sur les 400 derniers jours à partir de la météo (réanalyse ERA5 puis prévisions ECMWF) : stock de neige par tranche d\'altitude, fonte, humidité du sol et réservoirs rapides à lents (orages, nappes, karst).</string>
@@ -624,7 +624,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="weather_condition_thunderstorm">orages</string>
     <string name="weather_condition_unknown">temps inconnu</string>
     <string name="prediction_range">%1$s à %2$s</string>
-    <string name="prediction_range_explanation">Le modèle hésite entre deux niveaux : la fourchette est plus fiable qu\'un niveau unique.</string>
     <string name="prediction_range_level_sec">sec</string>
     <string name="prediction_range_level_filet">filet</string>
     <string name="prediction_range_level_correct">correct</string>

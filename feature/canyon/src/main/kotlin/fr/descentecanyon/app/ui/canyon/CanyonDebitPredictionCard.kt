@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
@@ -50,6 +49,7 @@ import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.DailyDebitPrediction
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.PredictedDebitLevel
+import fr.descentecanyon.app.domain.model.PredictionConfidence
 import fr.descentecanyon.app.ui.components.debitRangeLabel
 import fr.descentecanyon.app.ui.theme.DebitCorrect
 import fr.descentecanyon.app.ui.theme.DebitFilet
@@ -87,7 +87,7 @@ fun CanyonDebitPredictionCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable { expanded = !expanded },
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Column(
@@ -99,16 +99,12 @@ fun CanyonDebitPredictionCard(
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.SemiBold,
                     )
-                    PredictionSummaryLine(
-                        predictions = predictions,
-                        isLoading = isLoading,
-                        error = error,
-                        expanded = expanded,
-                    )
-                }
-                if (expanded) {
-                    TextButton(onClick = onInfoClick) {
-                        Text(text = stringResource(R.string.prediction_info_cta))
+                    if (!expanded) {
+                        PredictionSummaryLine(
+                            predictions = predictions,
+                            isLoading = isLoading,
+                            error = error,
+                        )
                     }
                 }
                 Icon(
@@ -156,6 +152,7 @@ fun CanyonDebitPredictionCard(
                                 PredictionRow(
                                     prediction = prediction,
                                     ordinalCutpoints = predictions.ordinalCutpoints,
+                                    showScaleLabels = index == 0,
                                 )
                             }
                         }
@@ -167,6 +164,12 @@ fun CanyonDebitPredictionCard(
                                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                             )
                         }
+                    }
+                    TextButton(
+                        onClick = onInfoClick,
+                        modifier = Modifier.align(Alignment.End),
+                    ) {
+                        Text(text = stringResource(R.string.prediction_info_cta))
                     }
                 }
             }
@@ -195,59 +198,48 @@ private fun OfflineEstimateLine(predictions: CanyonDebitPredictions) {
     }
 }
 
+/** Collapsed card: today and tomorrow at a glance, or the loading or error state. */
 @Composable
-private fun PredictionSummaryLine(predictions: CanyonDebitPredictions?, isLoading: Boolean, error: String?, expanded: Boolean) {
-    val todayPrediction = predictions?.predictions?.firstOrNull { it.horizonDays == 0 }
-        ?: predictions?.predictions?.firstOrNull()
-    val tomorrowPrediction = predictions?.predictions?.firstOrNull { it.horizonDays == 1 }
-    if (predictions != null && !expanded) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            todayPrediction?.let { prediction ->
-                PredictionCompactTile(
-                    label = stringResource(R.string.prediction_today),
-                    value = predictionSummaryValue(prediction),
-                    color = predictionSummaryColor(prediction),
-                    modifier = Modifier.weight(1f),
-                )
-            }
-            tomorrowPrediction?.let { prediction ->
-                PredictionCompactTile(
-                    label = stringResource(R.string.prediction_tomorrow),
-                    value = predictionSummaryValue(prediction),
-                    color = predictionSummaryColor(prediction),
-                    modifier = Modifier.weight(1f),
-                )
-            }
-            if (todayPrediction != null && tomorrowPrediction == null) {
-                Box(modifier = Modifier.weight(1f))
-            }
-        }
+private fun PredictionSummaryLine(predictions: CanyonDebitPredictions?, isLoading: Boolean, error: String?) {
+    if (predictions == null) {
+        val shownError = error?.takeIf { !isLoading }
+        Text(
+            text = shownError?.ifBlank { stringResource(R.string.prediction_unavailable) }
+                ?: stringResource(R.string.prediction_loading),
+            style = MaterialTheme.typography.bodySmall,
+            color = if (shownError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+        )
         return
     }
-
-    val todayOrdinalLevel = todayPrediction?.ordinalLevel
-    val text = when {
-        isLoading && predictions == null -> stringResource(R.string.prediction_loading)
-        todayOrdinalLevel != null -> "${stringResource(R.string.prediction_today)} : ${ordinalLevelTitle(todayOrdinalLevel)}"
-        todayPrediction != null -> "${stringResource(R.string.prediction_today)} : ${levelLabel(todayPrediction.level)}"
-        error != null -> error.ifBlank { stringResource(R.string.prediction_unavailable) }
-        else -> stringResource(R.string.prediction_unavailable)
+    val todayPrediction = predictions.predictions.firstOrNull { it.horizonDays == 0 }
+        ?: predictions.predictions.firstOrNull()
+    val tomorrowPrediction = predictions.predictions.firstOrNull { it.horizonDays == 1 }
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        todayPrediction?.let { prediction ->
+            PredictionCompactTile(
+                label = stringResource(R.string.prediction_today),
+                value = predictionSummaryValue(prediction),
+                color = predictionSummaryColor(prediction),
+                modifier = Modifier.weight(1f),
+            )
+        }
+        tomorrowPrediction?.let { prediction ->
+            PredictionCompactTile(
+                label = stringResource(R.string.prediction_tomorrow),
+                value = predictionSummaryValue(prediction),
+                color = predictionSummaryColor(prediction),
+                modifier = Modifier.weight(1f),
+            )
+        }
+        if (todayPrediction != null && tomorrowPrediction == null) {
+            Box(modifier = Modifier.weight(1f))
+        }
     }
-    val color = when {
-        error != null && !isLoading && predictions == null -> MaterialTheme.colorScheme.error
-        else -> MaterialTheme.colorScheme.onSurfaceVariant
-    }
-
-    Text(
-        text = text,
-        style = MaterialTheme.typography.bodySmall,
-        color = color,
-        maxLines = if (expanded) 2 else 1,
-        overflow = TextOverflow.Ellipsis,
-    )
 }
 
 @Composable
@@ -289,10 +281,16 @@ private fun predictionSummaryValue(prediction: DailyDebitPrediction): String = p
 private fun predictionSummaryColor(prediction: DailyDebitPrediction): Color =
     prediction.ordinalLevel?.let { ordinalColor(it) } ?: levelColor(prediction.level)
 
+/** One day: the shown level or range, the gauge, then its confidence and the high-flow risk. */
 @Composable
-private fun PredictionRow(prediction: DailyDebitPrediction, ordinalCutpoints: List<Double>, modifier: Modifier = Modifier) {
-    val ordinalLevel = prediction.ordinalLevel
+private fun PredictionRow(
+    prediction: DailyDebitPrediction,
+    ordinalCutpoints: List<Double>,
+    showScaleLabels: Boolean,
+    modifier: Modifier = Modifier,
+) {
     val ordinalScore = prediction.ordinalScore
+    val confidence = prediction.confidence()
 
     Column(
         modifier = modifier.fillMaxWidth(),
@@ -300,61 +298,37 @@ private fun PredictionRow(prediction: DailyDebitPrediction, ordinalCutpoints: Li
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                Text(
-                    text = when (prediction.horizonDays) {
-                        0 -> stringResource(R.string.prediction_today)
-                        1 -> stringResource(R.string.prediction_tomorrow)
-                        else -> stringResource(R.string.prediction_day_after_tomorrow)
-                    },
-                    style = MaterialTheme.typography.titleSmall,
-                )
-            }
-
             Text(
-                text = prediction.likelyRange()?.let { debitRangeLabel(it) }
-                    ?: ordinalLevel?.let { ordinalLevelTitle(it) }
-                    ?: levelLabel(prediction.level),
-                style = MaterialTheme.typography.titleSmall,
-                color = ordinalLevel?.let { ordinalColor(it) }
-                    ?: Color.White,
-                textAlign = TextAlign.End,
-                modifier = when {
-                    ordinalLevel != null -> Modifier.width(140.dp)
-
-                    else ->
-                        Modifier
-                            .background(levelColor(prediction.level), RoundedCornerShape(999.dp))
-                            .padding(horizontal = 10.dp, vertical = 4.dp)
+                text = when (prediction.horizonDays) {
+                    0 -> stringResource(R.string.prediction_today)
+                    1 -> stringResource(R.string.prediction_tomorrow)
+                    else -> stringResource(R.string.prediction_day_after_tomorrow)
                 },
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Text(
+                text = predictionSummaryValue(prediction),
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                color = predictionSummaryColor(prediction),
+                textAlign = TextAlign.End,
             )
         }
 
-        if (ordinalLevel != null && ordinalScore != null) {
+        if (prediction.ordinalLevel != null && ordinalScore != null) {
             DebitOrdinalGauge(
                 score = ordinalScore,
                 ordinalCutpoints = ordinalCutpoints,
+                showLabels = showScaleLabels,
             )
-            if (prediction.likelyRange() != null) {
-                Text(
-                    text = stringResource(R.string.prediction_range_explanation),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
+        }
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            confidence?.let { ConfidenceLine(it) }
             HighFlowRiskLine(prediction)
-            prediction.ordinalStandardDeviation?.let { standardDeviation ->
-                ConfidenceBadge(
-                    confidence = predictionConfidence(
-                        standardDeviation = standardDeviation,
-                        score = ordinalScore,
-                        ordinalCutpoints = ordinalCutpoints,
-                    ),
-                )
-            }
         }
     }
 }
@@ -379,50 +353,44 @@ private fun HighFlowRiskLine(prediction: DailyDebitPrediction) {
 private const val HIGH_FLOW_RISK_DISPLAY_THRESHOLD = 0.10
 
 @Composable
-private fun ConfidenceBadge(confidence: PredictionConfidence, modifier: Modifier = Modifier) {
-    val color = confidenceColor(confidence)
+private fun ConfidenceLine(confidence: PredictionConfidence) {
     Row(
-        modifier = modifier
-            .widthIn(max = 220.dp)
-            .background(color.copy(alpha = 0.14f), RoundedCornerShape(999.dp))
-            .border(1.dp, color.copy(alpha = 0.56f), RoundedCornerShape(999.dp))
-            .padding(horizontal = 10.dp, vertical = 5.dp),
-        horizontalArrangement = Arrangement.spacedBy(7.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Box(
             modifier = Modifier
                 .size(8.dp)
                 .clip(RoundedCornerShape(999.dp))
-                .background(color),
+                .background(confidenceColor(confidence)),
         )
         Text(
             text = confidenceLabel(confidence),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurface,
-            maxLines = 1,
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     }
 }
 
+/** The six levels as equal segments with the marker at the display score; the level names below when [showLabels]. */
 @Composable
-private fun DebitOrdinalGauge(score: Double, ordinalCutpoints: List<Double>, modifier: Modifier = Modifier) {
+private fun DebitOrdinalGauge(score: Double, ordinalCutpoints: List<Double>, showLabels: Boolean, modifier: Modifier = Modifier) {
     val trackShape = RoundedCornerShape(999.dp)
     val markerWidth = 6.dp
     Column(
         modifier = modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(5.dp),
+        verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         BoxWithConstraints(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(28.dp),
+                .height(20.dp),
         ) {
             Row(
                 modifier = Modifier
                     .align(Alignment.Center)
                     .fillMaxWidth()
-                    .height(14.dp)
+                    .height(10.dp)
                     .clip(trackShape)
                     .border(1.dp, gaugeTrackBorderColor(), trackShape),
             ) {
@@ -440,22 +408,24 @@ private fun DebitOrdinalGauge(score: Double, ordinalCutpoints: List<Double>, mod
                     .align(Alignment.CenterStart)
                     .offset(x = (maxWidth - markerWidth) * ordinalGaugePositionFraction(score, ordinalCutpoints))
                     .width(markerWidth)
-                    .height(26.dp)
+                    .height(20.dp)
                     .clip(RoundedCornerShape(999.dp))
                     .background(MaterialTheme.colorScheme.inverseSurface)
                     .border(1.dp, MaterialTheme.colorScheme.surface, RoundedCornerShape(999.dp)),
             )
         }
-        Row(modifier = Modifier.fillMaxWidth()) {
-            ORDINAL_GAUGE_LEVELS.forEach { gaugeLevel ->
-                Text(
-                    text = ordinalLevelShortLabel(gaugeLevel),
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center,
-                    maxLines = 1,
-                )
+        if (showLabels) {
+            Row(modifier = Modifier.fillMaxWidth()) {
+                ORDINAL_GAUGE_LEVELS.forEach { gaugeLevel ->
+                    Text(
+                        text = ordinalLevelShortLabel(gaugeLevel),
+                        modifier = Modifier.weight(1f),
+                        style = MaterialTheme.typography.labelSmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                        maxLines = 1,
+                    )
+                }
             }
         }
     }
@@ -529,33 +499,6 @@ internal fun ordinalGaugePositionFraction(score: Double, ordinalCutpoints: List<
     return ((score.coerceIn(0.0, 5.0).toFloat() + 0.5f) / categoryCount).coerceIn(0f, 1f)
 }
 
-internal fun predictionConfidence(
-    standardDeviation: Double,
-    score: Double,
-    ordinalCutpoints: List<Double> = emptyList(),
-): PredictionConfidence {
-    val boundaryProximity = scoreBoundaryProximity(score, ordinalCutpoints)
-    return when {
-        standardDeviation >= 1.20 || boundaryProximity?.let { it < 0.10 } == true -> PredictionConfidence.LOW
-        standardDeviation >= 0.75 || boundaryProximity?.let { it < 0.20 } == true -> PredictionConfidence.MEDIUM
-        else -> PredictionConfidence.HIGH
-    }
-}
-
-private fun scoreBoundaryProximity(score: Double, ordinalCutpoints: List<Double>): Double? {
-    if (ordinalCutpoints.size != ORDINAL_GAUGE_LEVELS.size - 1 || !ordinalCutpoints.zipWithNext().all { (left, right) -> left < right }) {
-        return null
-    }
-    val bounds = listOf(0.0) + ordinalCutpoints + listOf(5.0)
-    val clampedScore = score.coerceIn(bounds.first(), bounds.last())
-    val index = ordinalCutpoints.indexOfFirst { clampedScore < it }.takeIf { it >= 0 } ?: (ORDINAL_GAUGE_LEVELS.size - 1)
-    val lower = bounds[index]
-    val upper = bounds[index + 1]
-    if (upper <= lower) return null
-    val localFraction = ((clampedScore - lower) / (upper - lower)).coerceIn(0.0, 1.0)
-    return minOf(localFraction, 1.0 - localFraction)
-}
-
 private fun ordinalGaugePositionFractionFromCutpoints(score: Double, ordinalCutpoints: List<Double>): Float {
     val categoryCount = ORDINAL_GAUGE_LEVELS.size
     val bounds = listOf(0.0) + ordinalCutpoints + listOf(5.0)
@@ -584,9 +527,3 @@ private val ORDINAL_GAUGE_LEVELS = listOf(
 )
 
 private val DebitVeryHighRed = Color(0xFFE53935)
-
-internal enum class PredictionConfidence {
-    HIGH,
-    MEDIUM,
-    LOW,
-}

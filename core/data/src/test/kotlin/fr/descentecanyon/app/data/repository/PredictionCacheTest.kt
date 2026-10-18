@@ -80,7 +80,6 @@ class PredictionCacheTest {
                 highThreshold = 0.26,
                 ordinalScore = 3.1,
                 ordinalLevel = NiveauDebit.GROS,
-                ordinalStandardDeviation = 0.8,
                 levelProbabilities = mapOf(NiveauDebit.CORRECT to 0.35, NiveauDebit.GROS to 0.4, NiveauDebit.TRES_GROS to 0.25),
             )
         },

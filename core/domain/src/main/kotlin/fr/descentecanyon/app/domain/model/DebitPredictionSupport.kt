@@ -146,7 +146,6 @@ data class DailyDebitPrediction(
     val highThreshold: Double,
     val ordinalScore: Double? = null,
     val ordinalLevel: NiveauDebit? = null,
-    val ordinalStandardDeviation: Double? = null,
     /** Probability of each flow level, SEC to CRUE. */
     val levelProbabilities: Map<NiveauDebit, Double> = emptyMap(),
 ) {
@@ -172,9 +171,37 @@ data class DailyDebitPrediction(
         }
     }
 
+    /** Probability that the flow is what is shown: the predicted level, or [likelyRange] when there is one. */
+    fun shownProbability(): Double? {
+        val level = ordinalLevel ?: return null
+        val shown = likelyRange()?.let { listOf(it.low, it.high) } ?: listOf(level)
+        return shown.map { levelProbabilities[it] ?: return null }.sum()
+    }
+
+    /**
+     * How often what is shown turns out right, from [shownProbability]. The model probabilities are
+     * calibrated: in walk-forward evaluation (2023 → Oct. 2026) the shown level or range was right
+     * 92 % of the time for HIGH, 77 % for MEDIUM and 64 % for LOW (docs/debit-prediction-model.md).
+     */
+    fun confidence(): PredictionConfidence? = shownProbability()?.let { probability ->
+        when {
+            probability >= HIGH_CONFIDENCE_PROBABILITY -> PredictionConfidence.HIGH
+            probability >= MEDIUM_CONFIDENCE_PROBABILITY -> PredictionConfidence.MEDIUM
+            else -> PredictionConfidence.LOW
+        }
+    }
+
     companion object {
         const val UNCERTAIN_LEVEL_PROBABILITY = 0.6
+        const val HIGH_CONFIDENCE_PROBABILITY = 0.85
+        const val MEDIUM_CONFIDENCE_PROBABILITY = 0.70
     }
+}
+
+enum class PredictionConfidence {
+    HIGH,
+    MEDIUM,
+    LOW,
 }
 
 /** Two adjacent flow levels, [low] below [high]. */

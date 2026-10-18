@@ -15,7 +15,6 @@ import java.nio.FloatBuffer
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlin.math.max
-import kotlin.math.sqrt
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 
@@ -94,7 +93,6 @@ class OnnxDebitPredictor @Inject constructor(
                             highThreshold = highThreshold,
                             ordinalScore = decision.displayScore,
                             ordinalLevel = ORDINAL_LEVELS[decision.level],
-                            ordinalStandardDeviation = ordinalStandardDeviation(distribution),
                             levelProbabilities = ORDINAL_LEVELS.withIndex().associate { (rank, level) -> level to distribution[rank] },
                         )
                     }
@@ -124,12 +122,6 @@ class OnnxDebitPredictor @Inject constructor(
         val cumulative: DoubleArray,
         val displayScore: Double,
     )
-
-    private fun ordinalStandardDeviation(distribution: DoubleArray): Double {
-        val mean = distribution.indices.sumOf { rank -> rank * distribution[rank] }
-        val variance = distribution.indices.sumOf { rank -> distribution[rank] * (rank - mean) * (rank - mean) }
-        return sqrt(variance.coerceAtLeast(0.0))
-    }
 
     private fun extractProbabilityRows(result: ai.onnxruntime.OrtSession.Result, labels: List<String>): List<Map<String, Double>> {
         result.forEach { (_, value) ->

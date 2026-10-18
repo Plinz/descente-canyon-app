@@ -193,7 +193,15 @@ stationnement…), auxquels le modèle donnait à raison une probabilité quasi 
 * modèle J0 : seuils cumulatifs τ = 0,57 / 0,50 / 0,27 / 0,26 / 0,35 (SEC→FILET … TRÈS GROS→CRUE) ;
   risque « Fort » si P(≥ GROS) ≥ 0,31 (`balanced`), 0,64 (`prudent`), 0,07 (`safety_first`) ;
 * modèle J+1/J+2 : τ = 0,53 / 0,51 / 0,24 / 0,28 / 0,23 ; risque « Fort » si
-  P(≥ GROS) ≥ 0,26 (`balanced`), 0,66 (`prudent`), 0,07 (`safety_first`).
+  P(≥ GROS) ≥ 0,26 (`balanced`), 0,66 (`prudent`), 0,07 (`safety_first`) ;
+* confiance affichée : probabilité que le débit soit dans ce qui est affiché (le niveau, ou la
+  fourchette quand le niveau a moins de 0,6), « élevée » à partir de 0,85, « moyenne » à partir de
+  0,70. Cette probabilité est calibrée (±2 points par tranche ; canyons sans report depuis plus
+  d'un an : 81 % prévus pour 78 % observés). En walk-forward, ce qui est affiché est juste 92 % du
+  temps en confiance élevée (61 % des cas), 77 % en moyenne (28 %) et 64 % en faible (11 %), à
+  J0 comme à J+1/J+2. L'ancien badge (écart-type de la distribution et proximité d'une limite de
+  catégorie) ne séparait pas les bonnes réponses des mauvaises (AUC 0,53 contre 0,73) : près d'une
+  limite, la fourchette couvre déjà les deux niveaux.
 
 ## Limites connues et pistes
 

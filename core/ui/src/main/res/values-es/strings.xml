@@ -342,7 +342,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="prediction_info_reading_title">Cómo leerla</string>
     <string name="prediction_info_reading_p1">Cada línea corresponde a un día: hoy, mañana y pasado mañana. El indicador muestra el caudal probable entre Seco y Crecida.</string>
     <string name="prediction_info_reading_p2">Cuanto más se acerque el cursor a Caudal alto, Caudal muy alto o Crecida, más estima el modelo que el caudal puede volverse cargado.</string>
-    <string name="prediction_info_reading_p3">La etiqueta de confianza baja si el modelo duda entre varios niveles o si la puntuación está cerca de un límite entre dos categorías.</string>
+    <string name="prediction_info_reading_p3">Cuando el modelo duda entre dos niveles vecinos, la estimación muestra un intervalo (por ejemplo «hilo de agua a normal»), más fiable que un único nivel. La confianza indica lo seguro que es lo que se muestra: en temporadas pasadas, la estimación acertó unas 9 veces de cada 10 con confianza alta, 3 de cada 4 con confianza media y 2 de cada 3 con confianza baja.</string>
     <string name="prediction_info_reading_p4">Esta estimación debe leerse como una ayuda para la preparación, no como una garantía de seguridad ni como una medición instantánea del caudal real.</string>
     <string name="prediction_info_data_title">Qué datos se utilizan</string>
     <string name="prediction_info_data_p1">El modelo simula el estado hidrológico de la cuenca durante los últimos 400 días a partir de datos meteorológicos (reanálisis ERA5 y luego previsiones ECMWF): manto de nieve por franja de altitud, fusión, humedad del suelo y depósitos rápidos a lentos (tormentas, acuíferos, karst).</string>
@@ -624,7 +624,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="weather_condition_thunderstorm">tormentas</string>
     <string name="weather_condition_unknown">tiempo desconocido</string>
     <string name="prediction_range">%1$s a %2$s</string>
-    <string name="prediction_range_explanation">El modelo duda entre dos niveles: el intervalo es más fiable que un único nivel.</string>
     <string name="prediction_range_level_sec">seco</string>
     <string name="prediction_range_level_filet">hilo de agua</string>
     <string name="prediction_range_level_correct">normal</string>

@@ -20,41 +20,4 @@ class CanyonDebitPredictionCardTest {
     fun `ordinal gauge falls back to legacy equal rank mapping without cutpoints`() {
         assertEquals(2.5f / 6f, ordinalGaugePositionFraction(score = 2.0), 0.0001f)
     }
-
-    @Test
-    fun `prediction confidence is lowered near category cutpoint`() {
-        val cutpoints = listOf(0.7, 1.5, 2.6, 3.25, 3.75)
-
-        val confidence = predictionConfidence(
-            standardDeviation = 0.2,
-            score = 2.59,
-            ordinalCutpoints = cutpoints,
-        )
-
-        assertEquals(PredictionConfidence.LOW, confidence)
-    }
-
-    @Test
-    fun `prediction confidence stays high when stable and far from cutpoints`() {
-        val cutpoints = listOf(0.7, 1.5, 2.6, 3.25, 3.75)
-
-        val confidence = predictionConfidence(
-            standardDeviation = 0.2,
-            score = 2.0,
-            ordinalCutpoints = cutpoints,
-        )
-
-        assertEquals(PredictionConfidence.HIGH, confidence)
-    }
-
-    @Test
-    fun `prediction confidence is lowered by high dispersion`() {
-        val confidence = predictionConfidence(
-            standardDeviation = 1.3,
-            score = 2.0,
-            ordinalCutpoints = emptyList(),
-        )
-
-        assertEquals(PredictionConfidence.LOW, confidence)
-    }
 }

@@ -342,7 +342,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="prediction_info_reading_title">Come leggerla</string>
     <string name="prediction_info_reading_p1">Ogni riga corrisponde a un giorno: oggi, domani e dopodomani. L\'indicatore mostra la portata probabile tra Asciutto e Piena.</string>
     <string name="prediction_info_reading_p2">Più il cursore si avvicina ad Alta, Molto alta o Piena, più il modello stima che la portata possa diventare carica.</string>
-    <string name="prediction_info_reading_p3">Il badge di fiducia diminuisce se il modello esita tra più livelli o se il punteggio è vicino a un limite tra due categorie.</string>
+    <string name="prediction_info_reading_p3">Quando il modello esita tra due livelli vicini, la stima mostra un intervallo (per esempio «da filo d\'acqua a normale»), più affidabile di un livello unico. La fiducia indica quanto è sicuro ciò che viene mostrato: nelle stagioni passate, la stima è risultata giusta circa 9 volte su 10 con fiducia alta, 3 su 4 con fiducia media e 2 su 3 con fiducia bassa.</string>
     <string name="prediction_info_reading_p4">Questa stima va letta come un aiuto alla preparazione, non come una garanzia di sicurezza né come una misura istantanea della portata reale.</string>
     <string name="prediction_info_data_title">Quali dati vengono utilizzati</string>
     <string name="prediction_info_data_p1">Il modello simula lo stato idrologico del bacino negli ultimi 400 giorni a partire dai dati meteo (rianalisi ERA5, poi previsioni ECMWF): manto nevoso per fascia di quota, fusione, umidità del suolo e serbatoi da rapidi a lenti (temporali, falde, carsismo).</string>
@@ -624,7 +624,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="weather_condition_thunderstorm">temporali</string>
     <string name="weather_condition_unknown">meteo sconosciuto</string>
     <string name="prediction_range">da %1$s a %2$s</string>
-    <string name="prediction_range_explanation">Il modello esita tra due livelli: l\'intervallo è più affidabile di un livello unico.</string>
     <string name="prediction_range_level_sec">secco</string>
     <string name="prediction_range_level_filet">filo d\'acqua</string>
     <string name="prediction_range_level_correct">normale</string>
