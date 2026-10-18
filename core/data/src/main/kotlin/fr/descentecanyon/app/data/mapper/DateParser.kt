@@ -11,7 +11,7 @@ import java.util.Locale
  *
  * Common formats encountered:
  * - French long:   "dim. 22 mars 2026"
- * - French short:  "22/03" (day/month, current year assumed)
+ * - French short:  "22/03" (day/month, the latest such date up to today)
  * - ISO-like:      "22-03-2026" or "2026-03-22"
  */
 object DateParser {
@@ -46,17 +46,17 @@ object DateParser {
 
     /**
      * Attempts to parse a raw date string from the website into an ISO date string (yyyy-MM-dd).
-     * Returns null if no known format matches.
+     * Returns null if no known format matches. [today] dates the "dd/MM" forms, which have no year.
      */
-    fun parseToIsoString(raw: String): String? {
+    fun parseToIsoString(raw: String, today: LocalDate = LocalDate.now()): String? {
         val trimmed = raw.trim()
         if (trimmed.isBlank()) return null
 
         return tryParseIso(trimmed)
             ?: tryParseFrenchLong(trimmed)
             ?: tryParseDmySlash(trimmed)
-            ?: tryParseFrenchDayMonth(trimmed)
-            ?: tryParseDayMonthSlash(trimmed)
+            ?: tryParseFrenchDayMonth(trimmed, today)
+            ?: tryParseDayMonthSlash(trimmed, today)
             ?: tryParseDmyDash(trimmed)
     }
 
@@ -64,8 +64,8 @@ object DateParser {
      * Attempts to parse a raw date string into a [LocalDate].
      * Returns null if no known format matches.
      */
-    fun parseToLocalDate(raw: String): LocalDate? {
-        val iso = parseToIsoString(raw) ?: return null
+    fun parseToLocalDate(raw: String, today: LocalDate = LocalDate.now()): LocalDate? {
+        val iso = parseToIsoString(raw, today) ?: return null
         return try {
             LocalDate.parse(iso)
         } catch (_: DateTimeParseException) {
@@ -122,32 +122,35 @@ object DateParser {
     }
 
     /**
-     * "dim. 22/03" -> ignores weekday, assumes current year.
+     * "dim. 22/03" -> ignores weekday, see [recentDate] for the year.
      */
-    private fun tryParseFrenchDayMonth(value: String): String? {
+    private fun tryParseFrenchDayMonth(value: String, today: LocalDate): String? {
         val match = FRENCH_DAY_MONTH_REGEX.matchEntire(value.trim()) ?: return null
         val day = match.groupValues[1].toIntOrNull() ?: return null
         val month = match.groupValues[2].toIntOrNull() ?: return null
-        return try {
-            LocalDate.of(LocalDate.now().year, month, day).format(DateTimeFormatter.ISO_LOCAL_DATE)
-        } catch (_: Exception) {
-            null
-        }
+        return recentDate(day, month, today)?.format(DateTimeFormatter.ISO_LOCAL_DATE)
     }
 
     /**
-     * "22/03" -> assumes current year
+     * "22/03" -> see [recentDate] for the year.
      */
-    private fun tryParseDayMonthSlash(value: String): String? {
+    private fun tryParseDayMonthSlash(value: String, today: LocalDate): String? {
         val match = DAY_MONTH_REGEX.matchEntire(value.trim()) ?: return null
         val day = match.groupValues[1].toIntOrNull() ?: return null
         val month = match.groupValues[2].toIntOrNull() ?: return null
-        return try {
-            LocalDate.of(LocalDate.now().year, month, day).format(DateTimeFormatter.ISO_LOCAL_DATE)
-        } catch (_: Exception) {
-            null
-        }
+        return recentDate(day, month, today)?.format(DateTimeFormatter.ISO_LOCAL_DATE)
     }
+
+    /**
+     * The site shows recent dates without their year ("dim. 30/12" in the latest reports): the year
+     * is the one that does not put the date in the future, so on January 5 it is last December.
+     */
+    private fun recentDate(day: Int, month: Int, today: LocalDate): LocalDate? = (today.year downTo today.year - 1)
+        .firstNotNullOfOrNull { year ->
+            runCatching { LocalDate.of(year, month, day) }.getOrNull()
+                // A day of margin: the site's day may already be tomorrow in the user's time zone.
+                ?.takeUnless { it.isAfter(today.plusDays(1)) }
+        }
 
     /**
      * "22-03-2026" (dd-MM-yyyy)

@@ -49,13 +49,26 @@ class DateParserTest {
     // --- Short day/month format: "22/03" ---
 
     @Test
-    fun `parse day slash month assumes current year`() {
-        val result = DateParser.parseToIsoString("22/03")
-        assertNotNull(result)
-        val parsed = LocalDate.parse(result!!)
-        assertEquals(22, parsed.dayOfMonth)
-        assertEquals(3, parsed.monthValue)
-        assertEquals(LocalDate.now().year, parsed.year)
+    fun `parse day slash month in the current year when already past`() {
+        assertEquals("2026-03-22", DateParser.parseToIsoString("22/03", today = LocalDate.of(2026, 10, 18)))
+    }
+
+    @Test
+    fun `a day slash month still to come this year is last year's`() {
+        // The latest reports of January 5 still list the end of December.
+        assertEquals("2026-12-30", DateParser.parseToIsoString("mer. 30/12", today = LocalDate.of(2027, 1, 5)))
+        assertEquals("2027-01-04", DateParser.parseToIsoString("lun. 04/01", today = LocalDate.of(2027, 1, 5)))
+    }
+
+    @Test
+    fun `a day slash month of tomorrow is kept in the current year`() {
+        // The site may already be on the next day in the user's time zone.
+        assertEquals("2026-10-19", DateParser.parseToIsoString("19/10", today = LocalDate.of(2026, 10, 18)))
+    }
+
+    @Test
+    fun `the twenty-ninth of February goes back to the last leap year within a year`() {
+        assertEquals("2028-02-29", DateParser.parseToIsoString("29/02", today = LocalDate.of(2029, 1, 10)))
     }
 
     @Test
@@ -69,12 +82,8 @@ class DateParserTest {
 
     @Test
     fun `parse weekday plus day slash month`() {
-        val result = DateParser.parseToIsoString("dim. 22/03")
-        assertNotNull(result)
-        val parsed = LocalDate.parse(result!!)
-        assertEquals(22, parsed.dayOfMonth)
-        assertEquals(3, parsed.monthValue)
-        assertEquals(LocalDate.now().year, parsed.year)
+        val result = DateParser.parseToIsoString("dim. 22/03", today = LocalDate.of(2026, 10, 18))
+        assertEquals("2026-03-22", result)
     }
 
     // --- dd-MM-yyyy format ---
