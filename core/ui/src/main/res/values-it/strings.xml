@@ -483,11 +483,12 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="user_open_forum_profile">Apri il profilo del forum</string>
     <string name="home_users_hint">Cerca un nome utente e segui la sua attività</string>
     <string name="notifications_followed_users_title">Utenti seguiti</string>
-    <string name="notifications_followed_users_subtitle">Nuove portate e messaggi del forum</string>
+    <string name="notifications_followed_users_subtitle">Nuovi messaggi del forum</string>
     <string name="notifications_followed_users_empty_title">Nessun utente seguito</string>
-    <string name="notifications_followed_users_empty_body">Segui un utente dal suo profilo per ricevere le sue attività.</string>
-    <string name="notifications_followed_user_debits_only">Portate seguite · Forum non disponibile</string>
-    <string name="notifications_followed_user_all">Portate e forum seguiti</string>
+    <string name="notifications_followed_users_empty_body">Segui un utente dal suo profilo per essere avvisato dei suoi nuovi messaggi del forum.</string>
+    <string name="notifications_followed_user_forum">Messaggi del forum seguiti</string>
+    <string name="notifications_followed_user_no_forum">Nessun account sul forum: niente da seguire</string>
+    <string name="user_follow_unavailable">Senza account sul forum questo utente non può essere seguito: il sito non elenca le portate per autore.</string>
     <plurals name="notification_debit_group_title">
         <item quantity="one">%1$d nuova portata seguita</item>
         <item quantity="many">%1$d nuove portate seguite</item>

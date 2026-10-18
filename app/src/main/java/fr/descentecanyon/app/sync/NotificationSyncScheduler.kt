@@ -144,15 +144,16 @@ class NotificationSyncScheduler @Inject constructor(
     private fun kotlinx.coroutines.flow.Flow<NotificationCenterState>.mapToTrackedTargets() = map { state ->
         TrackedTargets(
             debitFollowCount = state.followedCanyons.size,
-            forumFollowCount = state.followedForumCategories.size + state.followedForumThreads.size,
+            // Followed users count too: their posts are read by the forum sync.
+            forumFollowCount = state.forumTargetCount,
         )
     }
 
-    private fun NotificationCenterState.hasForumTargets(): Boolean =
-        followedForumCategories.isNotEmpty() || followedForumThreads.isNotEmpty()
+    private fun NotificationCenterState.hasForumTargets(): Boolean = forumTargetCount > 0
 
     private companion object {
-        const val PERIODIC_MINUTES = 15L
+        /** Twice an hour is soon enough for a flow report, and spares the battery and the site. */
+        const val PERIODIC_MINUTES = 30L
         const val BACKOFF_MINUTES = 10L
         const val DEBIT_PERIODIC_WORK_NAME = "notification-debit-sync"
         const val FORUM_PERIODIC_WORK_NAME = "notification-forum-sync"

@@ -483,11 +483,12 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="user_open_forum_profile">Ouvrir le profil du forum</string>
     <string name="home_users_hint">Rechercher un pseudo et suivre son activité</string>
     <string name="notifications_followed_users_title">Utilisateurs suivis</string>
-    <string name="notifications_followed_users_subtitle">Nouveaux débits et nouveaux messages du forum</string>
+    <string name="notifications_followed_users_subtitle">Nouveaux messages du forum</string>
     <string name="notifications_followed_users_empty_title">Aucun utilisateur suivi</string>
-    <string name="notifications_followed_users_empty_body">Suivez un utilisateur depuis sa fiche pour recevoir ses activités.</string>
-    <string name="notifications_followed_user_debits_only">Débits suivis · Forum indisponible</string>
-    <string name="notifications_followed_user_all">Débits et forum suivis</string>
+    <string name="notifications_followed_users_empty_body">Suivez un utilisateur depuis sa fiche pour être averti de ses nouveaux messages du forum.</string>
+    <string name="notifications_followed_user_forum">Messages du forum suivis</string>
+    <string name="notifications_followed_user_no_forum">Pas de compte sur le forum : rien à suivre</string>
+    <string name="user_follow_unavailable">Sans compte sur le forum, cet utilisateur ne peut pas être suivi : le site ne publie pas les débits par auteur.</string>
     <plurals name="notification_debit_group_title">
         <item quantity="one">%1$d nouveau débit suivi</item>
         <item quantity="many">%1$d nouveaux débits suivis</item>

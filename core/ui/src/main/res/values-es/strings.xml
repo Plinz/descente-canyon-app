@@ -483,11 +483,12 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="user_open_forum_profile">Abrir el perfil del foro</string>
     <string name="home_users_hint">Busca un nombre de usuario y sigue su actividad</string>
     <string name="notifications_followed_users_title">Usuarios seguidos</string>
-    <string name="notifications_followed_users_subtitle">Nuevos caudales y mensajes del foro</string>
+    <string name="notifications_followed_users_subtitle">Nuevos mensajes del foro</string>
     <string name="notifications_followed_users_empty_title">Ningún usuario seguido</string>
-    <string name="notifications_followed_users_empty_body">Sigue a un usuario desde su perfil para recibir su actividad.</string>
-    <string name="notifications_followed_user_debits_only">Caudales seguidos · Foro no disponible</string>
-    <string name="notifications_followed_user_all">Caudales y foro seguidos</string>
+    <string name="notifications_followed_users_empty_body">Sigue a un usuario desde su perfil para recibir sus nuevos mensajes del foro.</string>
+    <string name="notifications_followed_user_forum">Mensajes del foro seguidos</string>
+    <string name="notifications_followed_user_no_forum">Sin cuenta en el foro: nada que seguir</string>
+    <string name="user_follow_unavailable">Sin cuenta en el foro, este usuario no se puede seguir: el sitio no publica los caudales por autor.</string>
     <plurals name="notification_debit_group_title">
         <item quantity="one">%1$d nuevo caudal seguido</item>
         <item quantity="many">%1$d nuevos caudales seguidos</item>

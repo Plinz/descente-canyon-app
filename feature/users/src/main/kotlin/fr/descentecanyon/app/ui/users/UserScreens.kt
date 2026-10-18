@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -39,6 +40,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.ForumUser
 import fr.descentecanyon.app.ui.common.openUrl
+import fr.descentecanyon.app.ui.common.rememberFollowWithNotificationPermission
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcEmptyState
@@ -56,6 +58,7 @@ fun UserSearchScreen(
     viewModel: UserSearchViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val toggleFollowAskingPermission = rememberFollowWithNotificationPermission()
     Scaffold(
         containerColor = LocalDcColors.current.backgroundBase,
         topBar = {
@@ -102,11 +105,12 @@ fun UserSearchScreen(
                 }
             } else {
                 items(state.users, key = { it.username }) { user ->
+                    val isFollowed = user.normalizedUsername in state.followedUsernames
                     UserResultCard(
                         user = user,
-                        isFollowed = user.normalizedUsername in state.followedUsernames,
+                        isFollowed = isFollowed,
                         onClick = { onUserClick(user.normalizedUsername) },
-                        onToggleFollow = { viewModel.toggleFollow(user) },
+                        onToggleFollow = { toggleFollowAskingPermission(isFollowed) { viewModel.toggleFollow(user) } },
                     )
                 }
             }
@@ -124,6 +128,7 @@ fun UserProfileScreen(
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val user = state.user
     val context = LocalContext.current
+    val toggleFollowAskingPermission = rememberFollowWithNotificationPermission()
     Scaffold(
         containerColor = LocalDcColors.current.backgroundBase,
         topBar = {
@@ -164,11 +169,22 @@ fun UserProfileScreen(
                                         ).joinToString(" • "),
                                     )
                                 }
-                                Button(onClick = viewModel::toggleFollow) {
-                                    Icon(Icons.Default.Notifications, contentDescription = null)
-                                    Spacer(Modifier.width(6.dp))
-                                    Text(stringResource(if (state.isFollowed) R.string.user_following else R.string.user_follow))
+                                // Only forum posts can be followed: the site does not list flow reports by author.
+                                if (user.forumUserId != null || state.isFollowed) {
+                                    Button(onClick = { toggleFollowAskingPermission(state.isFollowed, viewModel::toggleFollow) }) {
+                                        Icon(Icons.Default.Notifications, contentDescription = null)
+                                        Spacer(Modifier.width(6.dp))
+                                        Text(stringResource(if (state.isFollowed) R.string.user_following else R.string.user_follow))
+                                    }
                                 }
+                            }
+                            if (user.forumUserId == null) {
+                                Text(
+                                    stringResource(R.string.user_follow_unavailable),
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = LocalDcColors.current.textSecondary,
+                                    modifier = Modifier.padding(top = 8.dp),
+                                )
                             }
                         }
                     }
@@ -220,7 +236,11 @@ internal fun UserResultCard(user: ForumUser, isFollowed: Boolean, onClick: () ->
                     ).joinToString(" • "),
                 )
             }
-            TextButton(onClick = onToggleFollow) { Text(stringResource(if (isFollowed) R.string.user_following else R.string.user_follow)) }
+            if (user.forumUserId != null || isFollowed) {
+                TextButton(onClick = onToggleFollow) {
+                    Text(stringResource(if (isFollowed) R.string.user_following else R.string.user_follow))
+                }
+            }
         }
     }
 }

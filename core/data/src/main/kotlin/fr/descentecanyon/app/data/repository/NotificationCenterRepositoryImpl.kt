@@ -234,20 +234,26 @@ class NotificationCenterRepositoryImpl @Inject constructor(@param:ApplicationCon
 
     private suspend fun updateState(transform: (NotificationCenterState) -> NotificationCenterState) {
         context.notificationCenterDataStore.edit { preferences ->
-            val current = decodeState(preferences)
-            val updated = transform(current)
+            val raw = preferences[STATE_KEY]
+            val current = raw?.let(::decodeOrNull)
+            if (raw != null && current == null) {
+                // Follows that cannot be read any more (format changed) are set aside, never silently lost.
+                preferences[UNREADABLE_STATE_KEY] = raw
+            }
+            val updated = transform(current ?: NotificationCenterState())
             preferences[STATE_KEY] = json.encodeToString(updated)
         }
     }
 
-    private fun decodeState(preferences: Preferences): NotificationCenterState {
-        val raw = preferences[STATE_KEY] ?: return NotificationCenterState()
-        return runCatching {
-            json.decodeFromString<NotificationCenterState>(raw)
-        }.getOrDefault(NotificationCenterState())
-    }
+    private fun decodeState(preferences: Preferences): NotificationCenterState =
+        preferences[STATE_KEY]?.let(::decodeOrNull) ?: NotificationCenterState()
+
+    private fun decodeOrNull(raw: String): NotificationCenterState? = runCatching {
+        json.decodeFromString<NotificationCenterState>(raw)
+    }.getOrNull()
 
     private companion object {
         val STATE_KEY = stringPreferencesKey("notification_center.state")
+        val UNREADABLE_STATE_KEY = stringPreferencesKey("notification_center.unreadable_state")
     }
 }

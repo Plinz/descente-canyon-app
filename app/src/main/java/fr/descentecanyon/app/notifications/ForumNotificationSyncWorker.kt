@@ -16,11 +16,7 @@ class ForumNotificationSyncWorker(appContext: Context, params: WorkerParameters)
         )
         val repository = entryPoint.notificationCenterRepository()
         val state = repository.observeState().first()
-        if (state.followedForumCategories.isEmpty() && state.followedForumThreads.isEmpty() &&
-            state.followedUsers.none { it.forumUserId != null }
-        ) {
-            return Result.success()
-        }
+        if (state.forumTargetCount == 0) return Result.success()
 
         val topics = entryPoint.forumRepository().refreshActiveTopics(MAX_TOPICS_TO_SCAN)
             .getOrElse { return Result.retry() }

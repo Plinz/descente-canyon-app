@@ -13,6 +13,10 @@ data class NotificationCenterState(
 ) {
     fun hasTrackedTargets(): Boolean = followedCanyons.isNotEmpty() || followedForumCategories.isNotEmpty() ||
         followedForumThreads.isNotEmpty() || followedUsers.isNotEmpty()
+
+    /** What the forum sync has to look at: categories, threads and users with a forum account. */
+    val forumTargetCount: Int get() = followedForumCategories.size + followedForumThreads.size +
+        followedUsers.count { it.forumUserId != null }
 }
 
 @Serializable
@@ -58,15 +62,17 @@ data class TrackedActivityEvent(
     val notificationDelivered: Boolean = false,
 )
 
+/**
+ * A user whose forum posts are followed. Their flow reports cannot be: the site lists them per
+ * canyon only, never per author.
+ */
 @Serializable
 data class FollowedUser(
     val username: String,
     val normalizedUsername: String,
     val forumUserId: Int? = null,
     val seenForumPostMarkers: List<String> = emptyList(),
-    val seenDebitMarkers: List<String> = emptyList(),
     val hasSeededForumPosts: Boolean = false,
-    val hasSeededDebits: Boolean = false,
 )
 
 @Serializable

@@ -483,11 +483,12 @@ Search for a canyon and add it to your favorites.</string>
     <string name="user_open_forum_profile">Open forum profile</string>
     <string name="home_users_hint">Search for a username and follow their activity</string>
     <string name="notifications_followed_users_title">Followed users</string>
-    <string name="notifications_followed_users_subtitle">New flow reports and forum posts</string>
+    <string name="notifications_followed_users_subtitle">New forum posts</string>
     <string name="notifications_followed_users_empty_title">No followed users</string>
-    <string name="notifications_followed_users_empty_body">Follow a user from their profile to receive their activity.</string>
-    <string name="notifications_followed_user_debits_only">Flow reports followed · Forum unavailable</string>
-    <string name="notifications_followed_user_all">Flow reports and forum followed</string>
+    <string name="notifications_followed_users_empty_body">Follow a user from their profile to be told about their new forum posts.</string>
+    <string name="notifications_followed_user_forum">Forum posts followed</string>
+    <string name="notifications_followed_user_no_forum">No forum account: nothing to follow</string>
+    <string name="user_follow_unavailable">Without a forum account this user cannot be followed: the site does not list flow reports by author.</string>
     <plurals name="notification_debit_group_title">
         <item quantity="one">%1$d new tracked flow report</item>
         <item quantity="other">%1$d new tracked flow reports</item>

@@ -145,30 +145,6 @@ fun NotificationCenterScreen(
                     )
                 }
 
-                item {
-                    SectionHeader(
-                        title = stringResource(R.string.notifications_followed_users_title),
-                        subtitle = stringResource(R.string.notifications_followed_users_subtitle),
-                    )
-                }
-
-                if (uiState.followedUsers.isEmpty()) {
-                    item {
-                        EmptyCard(
-                            icon = Icons.Default.NotificationsActive,
-                            title = stringResource(R.string.notifications_followed_users_empty_title),
-                            body = stringResource(R.string.notifications_followed_users_empty_body),
-                        )
-                    }
-                } else {
-                    items(uiState.followedUsers, key = { it.normalizedUsername }) { user ->
-                        FollowedUserCard(
-                            user = user,
-                            onRemove = { viewModel.removeUserFollow(user.normalizedUsername) },
-                        )
-                    }
-                }
-
                 if (uiState.recentEvents.isEmpty()) {
                     item {
                         EmptyCard(
@@ -255,6 +231,30 @@ fun NotificationCenterScreen(
                         )
                     }
                 }
+
+                item {
+                    SectionHeader(
+                        title = stringResource(R.string.notifications_followed_users_title),
+                        subtitle = stringResource(R.string.notifications_followed_users_subtitle),
+                    )
+                }
+
+                if (uiState.followedUsers.isEmpty()) {
+                    item {
+                        EmptyCard(
+                            icon = Icons.Default.NotificationsActive,
+                            title = stringResource(R.string.notifications_followed_users_empty_title),
+                            body = stringResource(R.string.notifications_followed_users_empty_body),
+                        )
+                    }
+                } else {
+                    items(uiState.followedUsers, key = { it.normalizedUsername }) { user ->
+                        FollowedUserCard(
+                            user = user,
+                            onRemove = { viewModel.removeUserFollow(user.normalizedUsername) },
+                        )
+                    }
+                }
             }
         }
     }
@@ -280,9 +280,9 @@ private fun FollowedUserCard(user: FollowedUser, onRemove: () -> Unit) {
                         if (user.forumUserId ==
                             null
                         ) {
-                            R.string.notifications_followed_user_debits_only
+                            R.string.notifications_followed_user_no_forum
                         } else {
-                            R.string.notifications_followed_user_all
+                            R.string.notifications_followed_user_forum
                         },
                     ),
                     style = MaterialTheme.typography.bodySmall,

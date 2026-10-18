@@ -1,10 +1,5 @@
 package fr.descentecanyon.app.ui.home
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -41,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
@@ -52,7 +46,7 @@ import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.forumCategoryKey
 import fr.descentecanyon.app.ui.auth.AuthViewModel
 import fr.descentecanyon.app.ui.auth.LoginDialog
-import fr.descentecanyon.app.ui.common.needsNotificationPermission
+import fr.descentecanyon.app.ui.common.rememberFollowWithNotificationPermission
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.EmergencyIconButton
 import fr.descentecanyon.app.ui.design.LocalDcColors
@@ -86,23 +80,8 @@ fun HomeScreen(
     val screenHorizontalPadding = rememberDcScreenHorizontalPadding()
     var showLoginDialog by remember { mutableStateOf(false) }
     var selectedFeedOverride by remember { mutableStateOf<HomeFeedType?>(null) }
-    var pendingFollowAction by remember { mutableStateOf<(() -> Unit)?>(null) }
-    val notificationPermissionLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission(),
-    ) {
-        pendingFollowAction?.invoke()
-        pendingFollowAction = null
-    }
-
-    // Following needs notifications: ask for the permission first, then run the pending toggle.
-    fun toggleFollowAskingPermission(isFollowed: Boolean, toggle: () -> Unit) {
-        if (!isFollowed && context.needsNotificationPermission()) {
-            pendingFollowAction = toggle
-            notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            toggle()
-        }
-    }
+    // Following needs notifications: the permission is asked first, then the toggle runs.
+    val toggleFollowAskingPermission = rememberFollowWithNotificationPermission()
     val selectedFeed = selectedFeedOverride ?: homeState.selectedFeed
     val listState = rememberLazyListState()
     val selectFeed: (HomeFeedType) -> Unit = { type ->
@@ -269,7 +248,11 @@ fun HomeScreen(
                             onCategorySelected = homeViewModel::selectForumCategory,
                             onClear = homeViewModel::clearForumCategoryFilter,
                             followedCategoryKeys = homeState.followedForumCategoryKeys,
-                            onToggleCategoryFollow = { category -> homeViewModel.toggleForumCategoryFollow(category) },
+                            onToggleCategoryFollow = { category ->
+                                val isFollowed =
+                                    forumCategoryKey(category.forumId, category.forumName) in homeState.followedForumCategoryKeys
+                                toggleFollowAskingPermission(isFollowed) { homeViewModel.toggleForumCategoryFollow(category) }
+                            },
                         )
                     }
                 }

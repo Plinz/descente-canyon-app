@@ -483,11 +483,12 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="user_open_forum_profile">Forumprofil öffnen</string>
     <string name="home_users_hint">Benutzernamen suchen und der Aktivität folgen</string>
     <string name="notifications_followed_users_title">Gefolgte Nutzer</string>
-    <string name="notifications_followed_users_subtitle">Neue Wasserstandsberichte und Forumsbeiträge</string>
+    <string name="notifications_followed_users_subtitle">Neue Forumsbeiträge</string>
     <string name="notifications_followed_users_empty_title">Keine gefolgten Nutzer</string>
-    <string name="notifications_followed_users_empty_body">Folge einem Nutzer über sein Profil, um seine Aktivitäten zu erhalten.</string>
-    <string name="notifications_followed_user_debits_only">Wasserstandsberichte gefolgt · Forum nicht verfügbar</string>
-    <string name="notifications_followed_user_all">Wasserstandsberichte und Forum gefolgt</string>
+    <string name="notifications_followed_users_empty_body">Folge einem Nutzer über sein Profil, um über seine neuen Forumsbeiträge informiert zu werden.</string>
+    <string name="notifications_followed_user_forum">Forumsbeiträge gefolgt</string>
+    <string name="notifications_followed_user_no_forum">Kein Forumskonto: nichts zu folgen</string>
+    <string name="user_follow_unavailable">Ohne Forumskonto kann diesem Nutzer nicht gefolgt werden: Die Website listet Wasserstandsberichte nicht nach Autor.</string>
     <plurals name="notification_debit_group_title">
         <item quantity="one">%1$d neuer verfolgter Wasserstand</item>
         <item quantity="other">%1$d neue verfolgte Wasserstände</item>
