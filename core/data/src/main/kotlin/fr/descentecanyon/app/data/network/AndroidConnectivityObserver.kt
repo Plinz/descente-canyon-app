@@ -4,7 +4,6 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkCapabilities
-import android.net.NetworkRequest
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import javax.inject.Inject
@@ -12,7 +11,14 @@ import javax.inject.Singleton
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 
+/**
+ * Online means that the default network, the one requests go through, reaches the internet:
+ * Android checked it ("validated"). A Wi-Fi without internet (gîte, captive portal) or a dead mobile
+ * connection counts as offline, so the app shows what it saved at once instead of waiting for
+ * timeouts.
+ */
 @Singleton
 class AndroidConnectivityObserver @Inject constructor(@param:ApplicationContext private val context: Context) : ConnectivityObserver {
 
@@ -20,28 +26,27 @@ class AndroidConnectivityObserver @Inject constructor(@param:ApplicationContext 
         val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         trySend(isCurrentlyOnline())
 
+        // Only the default network: another network appearing or vanishing says nothing about it.
         val callback = object : ConnectivityManager.NetworkCallback() {
-            override fun onAvailable(network: Network) {
-                trySend(true)
+            override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
+                trySend(networkCapabilities.reachesInternet())
             }
 
             override fun onLost(network: Network) {
                 trySend(isCurrentlyOnline())
             }
-
-            override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
-                trySend(networkCapabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET))
-            }
         }
 
-        manager.registerNetworkCallback(NetworkRequest.Builder().build(), callback)
+        manager.registerDefaultNetworkCallback(callback)
         awaitClose { manager.unregisterNetworkCallback(callback) }
-    }
+    }.distinctUntilChanged()
 
     override fun isCurrentlyOnline(): Boolean {
         val manager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = manager.activeNetwork ?: return false
-        val capabilities = manager.getNetworkCapabilities(network) ?: return false
-        return capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET)
+        return manager.getNetworkCapabilities(network)?.reachesInternet() == true
     }
+
+    private fun NetworkCapabilities.reachesInternet(): Boolean =
+        hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) && hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED)
 }
