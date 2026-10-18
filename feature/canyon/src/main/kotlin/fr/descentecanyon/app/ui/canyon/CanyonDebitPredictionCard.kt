@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -116,34 +117,13 @@ fun CanyonDebitPredictionCard(
             }
 
             if (predictions?.isFromCache == true) {
-                OfflineEstimateLine(predictions)
+                OfflineEstimateLine(predictions, isRefreshing = isLoading)
             }
 
             AnimatedVisibility(visible = expanded) {
                 Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                     when {
-                        isLoading || (predictions == null && error == null) -> {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                CircularProgressIndicator(strokeWidth = 2.dp)
-                                Text(
-                                    text = stringResource(R.string.prediction_loading),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                )
-                            }
-                        }
-
-                        error != null -> {
-                            Text(
-                                text = error,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.error,
-                            )
-                        }
-
+                        // The estimate saved stays on screen while the fresh one is computed.
                         predictions != null -> {
                             predictions.predictions.forEachIndexed { index, prediction ->
                                 if (index > 0) {
@@ -157,11 +137,25 @@ fun CanyonDebitPredictionCard(
                             }
                         }
 
+                        isLoading || error == null -> {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                CircularProgressIndicator(strokeWidth = 2.dp)
+                                Text(
+                                    text = stringResource(R.string.prediction_loading),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                            }
+                        }
+
                         else -> {
                             Text(
-                                text = stringResource(R.string.prediction_unavailable),
+                                text = error,
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                color = MaterialTheme.colorScheme.error,
                             )
                         }
                     }
@@ -179,19 +173,26 @@ fun CanyonDebitPredictionCard(
 
 /** Shown when the network is unavailable and the last estimate computed is displayed. */
 @Composable
-private fun OfflineEstimateLine(predictions: CanyonDebitPredictions) {
+private fun OfflineEstimateLine(predictions: CanyonDebitPredictions, isRefreshing: Boolean) {
     val computedAt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
         .withLocale(LocalLocale.current.platformLocale)
         .format(predictions.computedAt.atZone(ZoneId.systemDefault()))
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-        Icon(
-            imageVector = Icons.Default.CloudOff,
-            contentDescription = null,
-            modifier = Modifier.size(16.dp),
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
+        if (isRefreshing) {
+            CircularProgressIndicator(modifier = Modifier.size(14.dp), strokeWidth = 2.dp)
+        } else {
+            Icon(
+                imageVector = Icons.Default.CloudOff,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
         Text(
-            text = stringResource(R.string.prediction_offline_cached, computedAt),
+            text = stringResource(
+                if (isRefreshing) R.string.prediction_refreshing_cached else R.string.prediction_offline_cached,
+                computedAt,
+            ),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -208,16 +209,17 @@ private fun PredictionSummaryLine(predictions: CanyonDebitPredictions?, isLoadin
                 ?: stringResource(R.string.prediction_loading),
             style = MaterialTheme.typography.bodySmall,
             color = if (shownError != null) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
         )
         return
     }
     val todayPrediction = predictions.predictions.firstOrNull { it.horizonDays == 0 }
         ?: predictions.predictions.firstOrNull()
     val tomorrowPrediction = predictions.predictions.firstOrNull { it.horizonDays == 1 }
+    // Same height for both tiles when one value wraps ("Débit correct probable" on a narrow phone).
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(IntrinsicSize.Min),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         todayPrediction?.let { prediction ->
@@ -225,7 +227,9 @@ private fun PredictionSummaryLine(predictions: CanyonDebitPredictions?, isLoadin
                 label = stringResource(R.string.prediction_today),
                 value = predictionSummaryValue(prediction),
                 color = predictionSummaryColor(prediction),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
             )
         }
         tomorrowPrediction?.let { prediction ->
@@ -233,7 +237,9 @@ private fun PredictionSummaryLine(predictions: CanyonDebitPredictions?, isLoadin
                 label = stringResource(R.string.prediction_tomorrow),
                 value = predictionSummaryValue(prediction),
                 color = predictionSummaryColor(prediction),
-                modifier = Modifier.weight(1f),
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxHeight(),
             )
         }
         if (todayPrediction != null && tomorrowPrediction == null) {
@@ -265,7 +271,7 @@ private fun PredictionCompactTile(label: String, value: String, color: Color, mo
                 style = MaterialTheme.typography.labelLarge,
                 color = color,
                 fontWeight = FontWeight.Bold,
-                maxLines = 1,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
             )
         }

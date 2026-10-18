@@ -421,6 +421,14 @@ Search for a canyon and add it to your favorites.</string>
     <string name="debits_load_error_network">Could not load flow reports right now.</string>
     <string name="debits_unavailable_now">Flow reports are unavailable right now.</string>
     <string name="photos_load_error_network">Could not load photos right now.</string>
+    <string name="canyon_offline_banner">Offline: route page, flow reports, weather and estimate saved on the phone.</string>
+    <string name="weather_offline">Offline: no forecast saved for this canyon.</string>
+    <string name="prediction_offline">Offline: the estimate needs the weather of the day.</string>
+    <string name="edf_status_offline">Offline: EDF conditions unavailable.</string>
+    <string name="debits_offline">Offline: no flow report saved for this canyon.</string>
+    <string name="photos_offline">Offline: photos unavailable.</string>
+    <string name="weather_refreshing_cached">Updating… Meanwhile: forecast of %1$s.</string>
+    <string name="prediction_refreshing_cached">Updating… Meanwhile: estimate of %1$s.</string>
     <string name="photos_unavailable_now">Photos are unavailable right now.</string>
     <string name="photo_load_error_now">Could not load the photo right now.</string>
     <string name="prediction_info_unavailable">Information unavailable</string>

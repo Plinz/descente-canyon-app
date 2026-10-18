@@ -421,6 +421,14 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="debits_load_error_network">Wasserstandsberichte können derzeit nicht geladen werden.</string>
     <string name="debits_unavailable_now">Wasserstandsberichte derzeit nicht verfügbar.</string>
     <string name="photos_load_error_network">Fotos können derzeit nicht geladen werden.</string>
+    <string name="canyon_offline_banner">Offline: Canyon-Beschreibung, Wasserstandsberichte, Wetter und Schätzung auf dem Telefon gespeichert.</string>
+    <string name="weather_offline">Offline: keine Vorhersage für diesen Canyon gespeichert.</string>
+    <string name="prediction_offline">Offline: Die Schätzung braucht das Wetter des Tages.</string>
+    <string name="edf_status_offline">Offline: EDF-Bedingungen nicht verfügbar.</string>
+    <string name="debits_offline">Offline: kein Wasserstandsbericht für diesen Canyon gespeichert.</string>
+    <string name="photos_offline">Offline: Fotos nicht verfügbar.</string>
+    <string name="weather_refreshing_cached">Aktualisierung… Bis dahin: Vorhersage vom %1$s.</string>
+    <string name="prediction_refreshing_cached">Aktualisierung… Bis dahin: Schätzung vom %1$s.</string>
     <string name="photos_unavailable_now">Fotos derzeit nicht verfügbar.</string>
     <string name="photo_load_error_now">Das Foto kann derzeit nicht geladen werden.</string>
     <string name="prediction_info_unavailable">Informationen nicht verfügbar</string>

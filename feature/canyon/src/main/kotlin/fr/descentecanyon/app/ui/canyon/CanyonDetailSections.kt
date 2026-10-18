@@ -16,14 +16,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Surface
@@ -32,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -50,6 +54,7 @@ import fr.descentecanyon.app.domain.model.NearbyCanyon
 import fr.descentecanyon.app.ui.design.DcOutdoorActionCard
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.LocalDate
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -87,11 +92,12 @@ internal fun CanyonDetailContent(
     onAddToLogbook: (LocalDate, String?) -> Unit = { _, _ -> },
     onReportFlow: () -> Unit = {},
     bottomContentPadding: Dp = 0.dp,
+    listState: LazyListState = rememberLazyListState(),
 ) {
     var selectedTab by rememberSaveable(openDebitsTabInitially) {
         mutableIntStateOf(if (openDebitsTabInitially) 2 else 0)
     }
-    val listState = rememberLazyListState()
+    val scope = rememberCoroutineScope()
     val tabs = listOf(
         stringResource(R.string.tab_topo),
         if (photoError != null && detail.photos.isEmpty()) {
@@ -116,10 +122,12 @@ internal fun CanyonDetailContent(
         contentPadding = PaddingValues(bottom = bottomContentPadding),
         verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {
-        item {
-            AnimatedVisibility(visible = isRefreshingDetail) {
-                DetailRefreshingBanner()
-            }
+        // Items only when shown: an empty first item would shift the first visible index at the top.
+        if (!isOnline) {
+            item(key = "offline_banner") { OfflineBanner(modifier = Modifier.animateItem()) }
+        }
+        if (isRefreshingDetail && isOnline) {
+            item(key = "refreshing_banner") { DetailRefreshingBanner(modifier = Modifier.animateItem()) }
         }
         item {
             SummaryCard(
@@ -176,7 +184,7 @@ internal fun CanyonDetailContent(
             }
         }
 
-        stickyHeader {
+        stickyHeader(key = TABS_HEADER_KEY) {
             PrimaryTabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = MaterialTheme.colorScheme.background,
@@ -184,7 +192,14 @@ internal fun CanyonDetailContent(
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTab == index,
-                        onClick = { selectedTab = index },
+                        onClick = {
+                            selectedTab = index
+                            // With the tab row pinned, the tab opens at its top, not where the previous one was scrolled to.
+                            val header = listState.layoutInfo.visibleItemsInfo.firstOrNull { it.key == TABS_HEADER_KEY }
+                            if (header != null && listState.firstVisibleItemIndex >= header.index) {
+                                scope.launch { listState.scrollToItem(header.index) }
+                            }
+                        },
                         text = { Text(title) },
                     )
                 }
@@ -210,6 +225,36 @@ internal fun CanyonDetailContent(
                 }
                 debitItems(detail.debits, isLoadingDebits, debitError, onUserClick)
             }
+        }
+    }
+}
+
+/** Offline, everything shown comes from the phone: said once here rather than as errors in each section. */
+@Composable
+private fun OfflineBanner(modifier: Modifier = Modifier) {
+    Surface(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.CloudOff,
+                contentDescription = null,
+                modifier = Modifier.size(18.dp),
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = stringResource(R.string.canyon_offline_banner),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
@@ -331,3 +376,5 @@ internal fun InlineLoadingBanner(text: String, modifier: Modifier = Modifier) {
         }
     }
 }
+
+private const val TABS_HEADER_KEY = "canyon_tabs"

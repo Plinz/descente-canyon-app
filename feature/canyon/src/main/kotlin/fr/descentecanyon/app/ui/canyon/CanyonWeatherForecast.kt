@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.filled.WbCloudy
 import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.material.icons.filled.WbTwilight
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -200,7 +201,7 @@ internal fun SunTimesLine(day: DailyWeather, modifier: Modifier = Modifier) {
 
 /** Shown when the network is unavailable and the last downloaded forecast is displayed. */
 @Composable
-internal fun CachedForecastLine(weather: CanyonWeather, modifier: Modifier = Modifier) {
+internal fun CachedForecastLine(weather: CanyonWeather, isRefreshing: Boolean, modifier: Modifier = Modifier) {
     val locale = LocalLocale.current.platformLocale
     val downloadedAt = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
         .withLocale(locale)
@@ -210,14 +211,18 @@ internal fun CachedForecastLine(weather: CanyonWeather, modifier: Modifier = Mod
         horizontalArrangement = Arrangement.spacedBy(6.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(
-            imageVector = Icons.Default.CloudOff,
-            contentDescription = null,
-            modifier = Modifier.size(16.dp),
-            tint = LocalDcColors.current.offline,
-        )
+        if (isRefreshing) {
+            CircularProgressIndicator(modifier = Modifier.size(14.dp), strokeWidth = 2.dp)
+        } else {
+            Icon(
+                imageVector = Icons.Default.CloudOff,
+                contentDescription = null,
+                modifier = Modifier.size(16.dp),
+                tint = LocalDcColors.current.offline,
+            )
+        }
         Text(
-            text = stringResource(R.string.weather_offline_cached, downloadedAt),
+            text = stringResource(if (isRefreshing) R.string.weather_refreshing_cached else R.string.weather_offline_cached, downloadedAt),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

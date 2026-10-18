@@ -115,7 +115,7 @@ class CanyonMediaController @Inject constructor(
     private suspend fun refreshPhotos() {
         if (!connectivityObserver.isCurrentlyOnline()) {
             PerformanceTrace.logEvent("canyon_photos_refresh_skipped", "canyonId" to canyonId, "reason" to "offline")
-            _state.update { it.copy(isLoadingPhotos = false, photoError = UiText.res(R.string.photos_load_error_network)) }
+            _state.update { it.copy(isLoadingPhotos = false, photoError = UiText.res(R.string.photos_offline)) }
             return
         }
         PerformanceTrace.start(photoRefreshKey(canyonId), "canyon_photos_refresh", "canyonId" to canyonId)
@@ -142,9 +142,8 @@ class CanyonMediaController @Inject constructor(
     private suspend fun refreshDebits() {
         if (!connectivityObserver.isCurrentlyOnline()) {
             PerformanceTrace.logEvent("canyon_debits_refresh_skipped", "canyonId" to canyonId, "reason" to "offline")
-            val message = UiText.res(R.string.debits_load_error_network)
-            _state.update { it.copy(isLoadingDebits = false, debitError = message) }
-            showMessage(message)
+            // No message: the page tells it is offline, and the reports saved stay on screen.
+            _state.update { it.copy(isLoadingDebits = false, debitError = UiText.res(R.string.debits_offline)) }
             return
         }
         PerformanceTrace.start(debitRefreshKey(canyonId), "canyon_debits_refresh", "canyonId" to canyonId)
@@ -160,7 +159,8 @@ class CanyonMediaController @Inject constructor(
                     connectivity = R.string.debits_load_error_network,
                 )
                 _state.update { it.copy(isLoadingDebits = false, debitError = message) }
-                showMessage(message)
+                // Without saved reports the tab says it; with some, only a message tells they are not fresh.
+                if (!_state.value.debits.isNullOrEmpty()) showMessage(message)
             },
         )
     }

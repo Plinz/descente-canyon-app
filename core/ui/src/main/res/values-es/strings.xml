@@ -421,6 +421,14 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="debits_load_error_network">No se pudieron cargar los caudales por el momento.</string>
     <string name="debits_unavailable_now">Caudales no disponibles por el momento.</string>
     <string name="photos_load_error_network">No se pudieron cargar las fotos por el momento.</string>
+    <string name="canyon_offline_banner">Sin conexión: ficha, caudales, tiempo y estimación guardados en el teléfono.</string>
+    <string name="weather_offline">Sin conexión: ninguna previsión guardada para este barranco.</string>
+    <string name="prediction_offline">Sin conexión: la estimación necesita el tiempo del día.</string>
+    <string name="edf_status_offline">Sin conexión: condiciones de EDF no disponibles.</string>
+    <string name="debits_offline">Sin conexión: ningún caudal guardado para este barranco.</string>
+    <string name="photos_offline">Sin conexión: fotos no disponibles.</string>
+    <string name="weather_refreshing_cached">Actualizando… Mientras tanto: previsión del %1$s.</string>
+    <string name="prediction_refreshing_cached">Actualizando… Mientras tanto: estimación del %1$s.</string>
     <string name="photos_unavailable_now">Fotos no disponibles por el momento.</string>
     <string name="photo_load_error_now">No se pudo cargar la foto por el momento.</string>
     <string name="prediction_info_unavailable">Información no disponible</string>

@@ -421,6 +421,14 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="debits_load_error_network">Impossible de charger les débits pour le moment.</string>
     <string name="debits_unavailable_now">Débits indisponibles pour le moment.</string>
     <string name="photos_load_error_network">Impossible de charger les photos pour le moment.</string>
+    <string name="canyon_offline_banner">Hors connexion : fiche, débits, météo et estimation enregistrés sur le téléphone.</string>
+    <string name="weather_offline">Hors connexion : aucune prévision enregistrée pour ce canyon.</string>
+    <string name="prediction_offline">Hors connexion : l\'estimation a besoin de la météo du jour.</string>
+    <string name="edf_status_offline">Hors connexion : conditions EDF indisponibles.</string>
+    <string name="debits_offline">Hors connexion : aucun débit enregistré pour ce canyon.</string>
+    <string name="photos_offline">Hors connexion : photos indisponibles.</string>
+    <string name="weather_refreshing_cached">Mise à jour… En attendant : prévisions du %1$s.</string>
+    <string name="prediction_refreshing_cached">Mise à jour… En attendant : estimation du %1$s.</string>
     <string name="photos_unavailable_now">Photos indisponibles pour le moment.</string>
     <string name="photo_load_error_now">Impossible de charger la photo pour le moment.</string>
     <string name="prediction_info_unavailable">Informations indisponibles</string>

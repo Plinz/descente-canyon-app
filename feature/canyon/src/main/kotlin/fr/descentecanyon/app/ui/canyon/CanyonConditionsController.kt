@@ -86,7 +86,7 @@ class CanyonConditionsController @Inject constructor(
             _state.update {
                 it.copy(
                     isLoadingEdfStatus = false,
-                    edfStatusError = UiText.res(R.string.edf_status_load_error_network),
+                    edfStatusError = UiText.res(R.string.edf_status_offline),
                     edfStatusSourceUrl = sourceUrl,
                 )
             }
@@ -137,12 +137,18 @@ class CanyonConditionsController @Inject constructor(
         if (!connectivityObserver.isCurrentlyOnline()) {
             PerformanceTrace.logEvent("canyon_weather_load_skipped", "canyonId" to detail.canyon.id, "reason" to "offline")
             _state.update { it.copy(isLoadingWeather = true, weatherError = null) }
-            scope.launch { showCachedWeatherOr(detail.canyon.id, UiText.res(R.string.weather_load_error_network)) }
+            scope.launch { showCachedWeatherOr(detail.canyon.id, UiText.res(R.string.weather_offline)) }
             return
         }
 
         _state.update { it.copy(isLoadingWeather = true, weatherError = null) }
         scope.launch {
+            // On a weak connection the download can take long: the forecast saved is shown meanwhile.
+            if (_state.value.weather == null) {
+                getCanyonWeatherUseCase.cached(detail.canyon.id)?.let { cached ->
+                    _state.update { if (it.weather == null) it.copy(weather = cached) else it }
+                }
+            }
             PerformanceTrace.start(weatherLoadKey(detail.canyon.id), "canyon_weather_load", "canyonId" to detail.canyon.id)
             getCanyonWeatherUseCase(detail).fold(
                 onSuccess = { weather ->
@@ -194,11 +200,17 @@ class CanyonConditionsController @Inject constructor(
         _state.update { it.copy(isLoadingPredictions = true, predictionError = null) }
         predictionLoadJob?.cancel()
         predictionLoadJob = scope.launch {
+            // The estimate saved is shown meanwhile: computing a new one needs the network.
+            if (_state.value.predictions == null) {
+                getCanyonDebitPredictionsUseCase.cached(detail.canyon.id)?.let { cached ->
+                    _state.update { if (it.predictions == null) it.copy(predictions = cached) else it }
+                }
+            }
             // Let the canyon screen settle before loading the heaviest remote/native prediction stack.
             delay(PREDICTION_LOAD_DELAY_MS)
             if (!connectivityObserver.isCurrentlyOnline()) {
                 PerformanceTrace.logEvent("canyon_predictions_load_skipped", "canyonId" to detail.canyon.id, "reason" to "offline")
-                showCachedPredictionsOr(detail.canyon.id, UiText.res(R.string.prediction_load_error_network))
+                showCachedPredictionsOr(detail.canyon.id, UiText.res(R.string.prediction_offline))
                 return@launch
             }
             loadPredictions(detail)

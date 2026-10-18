@@ -54,7 +54,8 @@ fun CanyonWeatherCard(weather: CanyonWeather?, isLoading: Boolean, error: String
                 modifier = Modifier.semantics { heading() },
             )
             when {
-                weather != null -> WeatherContent(weather)
+                // The forecast saved is shown while the fresh one downloads.
+                weather != null -> WeatherContent(weather, isRefreshing = isLoading)
 
                 isLoading -> Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -75,12 +76,12 @@ fun CanyonWeatherCard(weather: CanyonWeather?, isLoading: Boolean, error: String
 }
 
 @Composable
-private fun WeatherContent(weather: CanyonWeather) {
+private fun WeatherContent(weather: CanyonWeather, isRefreshing: Boolean) {
     // Times of the forecast are those of the weather point.
     val now = remember(weather) { LocalDateTime.now(weather.zoneId) }
     val rain = remember(weather, now) { weather.rainAround(now) }
     if (weather.isFromCache) {
-        CachedForecastLine(weather)
+        CachedForecastLine(weather, isRefreshing = isRefreshing)
     }
     StormWarning(weather, now = now)
     WeatherSection(title = stringResource(R.string.weather_rain_section)) {

@@ -8,6 +8,11 @@ import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,6 +25,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -49,7 +56,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -105,6 +114,9 @@ fun CanyonDetailScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val contentWidth = rememberDcContentWidth(maxWidth = 940.dp)
+    val listState = rememberLazyListState()
+    // The map button would cover the content being read: it hides while scrolling down.
+    val showMapButton = listState.isAtTopOrScrollingUp()
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { viewModel.toggleDebitNotifications() }
@@ -277,6 +289,7 @@ fun CanyonDetailScreen(
                             onReportFlow = onReportDebitClick,
                             onNearbyCanyonClick = onOpenCanyon,
                             bottomContentPadding = contentPadding.calculateBottomPadding() + 96.dp,
+                            listState = listState,
                             modifier = Modifier
                                 .fillMaxHeight()
                                 .width(contentWidth),
@@ -290,20 +303,22 @@ fun CanyonDetailScreen(
                     modifier = Modifier.fillMaxSize(),
                     contentAlignment = Alignment.BottomEnd,
                 ) {
-                    AppFloatingActionButton(
-                        onClick = onShowMapClick,
-                        modifier = Modifier.padding(
-                            end = 20.dp,
-                            bottom = contentPadding.calculateBottomPadding() + 20.dp,
-                        ),
-                        icon = { iconModifier ->
-                            Icon(
-                                imageVector = Icons.Default.LocationOn,
-                                contentDescription = stringResource(R.string.show_map_points),
-                                modifier = iconModifier,
-                            )
-                        },
-                    )
+                    AnimatedVisibility(visible = showMapButton, enter = scaleIn() + fadeIn(), exit = scaleOut() + fadeOut()) {
+                        AppFloatingActionButton(
+                            onClick = onShowMapClick,
+                            modifier = Modifier.padding(
+                                end = 20.dp,
+                                bottom = contentPadding.calculateBottomPadding() + 20.dp,
+                            ),
+                            icon = { iconModifier ->
+                                Icon(
+                                    imageVector = Icons.Default.LocationOn,
+                                    contentDescription = stringResource(R.string.show_map_points),
+                                    modifier = iconModifier,
+                                )
+                            },
+                        )
+                    }
                 }
             }
         }
@@ -431,4 +446,23 @@ internal fun canyonShareText(canyon: Canyon): String {
         canyon.pays.takeIf { it.isNotBlank() },
     ).distinct().joinToString(" · ")
     return listOf(title, place, canyon.url).filter { it.isNotBlank() }.joinToString("\n")
+}
+
+/** True at the top of the list and while it scrolls back up, false while it scrolls down. */
+@Composable
+private fun LazyListState.isAtTopOrScrollingUp(): Boolean {
+    var previousIndex by remember(this) { mutableIntStateOf(firstVisibleItemIndex) }
+    var previousOffset by remember(this) { mutableIntStateOf(firstVisibleItemScrollOffset) }
+    return remember(this) {
+        derivedStateOf {
+            val isUp = when {
+                !canScrollBackward -> true
+                previousIndex != firstVisibleItemIndex -> previousIndex > firstVisibleItemIndex
+                else -> previousOffset >= firstVisibleItemScrollOffset
+            }
+            previousIndex = firstVisibleItemIndex
+            previousOffset = firstVisibleItemScrollOffset
+            isUp
+        }
+    }.value
 }

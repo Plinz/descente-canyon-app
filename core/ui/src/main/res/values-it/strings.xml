@@ -421,6 +421,14 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="debits_load_error_network">Impossibile caricare le portate al momento.</string>
     <string name="debits_unavailable_now">Portate non disponibili al momento.</string>
     <string name="photos_load_error_network">Impossibile caricare le foto al momento.</string>
+    <string name="canyon_offline_banner">Offline: scheda, portate, meteo e stima salvati sul telefono.</string>
+    <string name="weather_offline">Offline: nessuna previsione salvata per questo canyon.</string>
+    <string name="prediction_offline">Offline: la stima ha bisogno del meteo del giorno.</string>
+    <string name="edf_status_offline">Offline: condizioni EDF non disponibili.</string>
+    <string name="debits_offline">Offline: nessuna portata salvata per questo canyon.</string>
+    <string name="photos_offline">Offline: foto non disponibili.</string>
+    <string name="weather_refreshing_cached">Aggiornamento… Nel frattempo: previsioni del %1$s.</string>
+    <string name="prediction_refreshing_cached">Aggiornamento… Nel frattempo: stima del %1$s.</string>
     <string name="photos_unavailable_now">Foto non disponibili al momento.</string>
     <string name="photo_load_error_now">Impossibile caricare la foto al momento.</string>
     <string name="prediction_info_unavailable">Informazioni non disponibili</string>
