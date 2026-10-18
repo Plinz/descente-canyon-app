@@ -53,7 +53,13 @@ object SitePages {
     fun loggedIn(username: String, body: String = "") = """
         <html><body>
           <ul class="nav navbar-nav navbar-right">
-            <li class="dropdown"><a href="#" class="dropdown-toggle">$username <b class="caret"></b></a></li>
+            <li class="dropdown"><a href="#" class="dropdown-toggle">Mon compte <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li class="dropdown-header">Bienvenue <b>$username</b> !</li>
+                <li><a href="/perso">Mon compte</a></li>
+                <li><a href="/logout?redirect=/">Déconnexion</a></li>
+              </ul>
+            </li>
           </ul>
           $body
         </body></html>

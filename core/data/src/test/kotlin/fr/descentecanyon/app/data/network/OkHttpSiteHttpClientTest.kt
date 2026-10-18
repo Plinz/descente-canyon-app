@@ -66,6 +66,32 @@ class OkHttpSiteHttpClientTest {
     }
 
     @Test
+    fun `an immediate refresh header is followed like a redirect`() = runTest {
+        // What the site answers to a successful login: an empty page that refreshes to the home page.
+        server.enqueue(MockResponse().setHeader("Refresh", "0;url=${server.url("/")}"))
+        server.enqueue(MockResponse().setBody("<html><body><h1>Bienvenue</h1></body></html>"))
+
+        val page = client.postForm(server.url("/login").toString(), mapOf("username" to "user"))
+
+        assertEquals("Bienvenue", page.document.selectFirst("h1")?.text())
+        assertEquals(server.url("/").toString(), page.finalUrl)
+        assertEquals("POST", server.takeRequest().method)
+        assertEquals("GET", server.takeRequest().method)
+    }
+
+    @Test
+    fun `a delayed refresh or a refresh to another host is not followed`() = runTest {
+        server.enqueue(MockResponse().setHeader("Refresh", "5;url=/elsewhere").setBody("<html><body><h1>Merci</h1></body></html>"))
+        server.enqueue(
+            MockResponse().setHeader("Refresh", "0;url=https://example.org/").setBody("<html><body><h1>Merci</h1></body></html>"),
+        )
+
+        assertEquals("Merci", client.get(server.url("/delayed").toString()).document.selectFirst("h1")?.text())
+        assertEquals("Merci", client.get(server.url("/other-host").toString()).document.selectFirst("h1")?.text())
+        assertEquals(2, server.requestCount)
+    }
+
+    @Test
     fun `http errors are typed`() = runTest {
         server.enqueue(MockResponse().setResponseCode(404))
         server.enqueue(MockResponse().setResponseCode(503))

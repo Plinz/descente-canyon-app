@@ -13,8 +13,10 @@ import kotlinx.coroutines.sync.Semaphore
 import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import okhttp3.FormBody
+import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.Response
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 
@@ -78,9 +80,16 @@ class OkHttpSiteHttpClient @Inject constructor(
     }
 
     private suspend fun fetchPage(request: Request, timeoutMs: Long): SitePage = permits.withPermit {
-        val call = httpClient.newCall(request)
-        call.timeout().timeout(timeoutMs, TimeUnit.MILLISECONDS)
-        val response = call.await().requireSuccess()
+        var response = execute(request, timeoutMs)
+        // The site answers a successful login with an empty page and "Refresh: 0;url=..." instead
+        // of an HTTP redirect, which OkHttp does not follow: follow it like a browser does.
+        var refreshes = 0
+        while (refreshes < MAX_REFRESHES) {
+            val target = response.immediateRefreshTarget() ?: break
+            response.close()
+            response = execute(Request.Builder().url(target).get().build(), timeoutMs)
+            refreshes++
+        }
         response.use {
             val body = response.body
             withContext(ioDispatcher) {
@@ -95,7 +104,21 @@ class OkHttpSiteHttpClient @Inject constructor(
         }
     }
 
+    private suspend fun execute(request: Request, timeoutMs: Long): Response {
+        val call = httpClient.newCall(request)
+        call.timeout().timeout(timeoutMs, TimeUnit.MILLISECONDS)
+        return call.await().requireSuccess()
+    }
+
+    /** Target of a "Refresh: 0;url=..." header pointing to the same host, null otherwise. */
+    private fun Response.immediateRefreshTarget(): HttpUrl? {
+        val target = header("Refresh")?.let { IMMEDIATE_REFRESH.find(it) }?.groupValues?.get(1) ?: return null
+        return request.url.resolve(target)?.takeIf { it.host == request.url.host }
+    }
+
     private companion object {
+        val IMMEDIATE_REFRESH = Regex("""^\s*0+\s*[;,]\s*url\s*=\s*['"]?([^'"\s]+)""", RegexOption.IGNORE_CASE)
+        const val MAX_REFRESHES = 5
         const val MAX_PARALLEL_REQUESTS = 3
         const val MAX_PAGE_BYTES = 16L * 1024 * 1024
         const val MAX_DOWNLOAD_BYTES = 40L * 1024 * 1024
