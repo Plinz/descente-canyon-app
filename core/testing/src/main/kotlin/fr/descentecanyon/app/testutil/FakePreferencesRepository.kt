@@ -2,6 +2,7 @@ package fr.descentecanyon.app.testutil
 
 import fr.descentecanyon.app.domain.model.ContributorIdentity
 import fr.descentecanyon.app.domain.model.HomeFeedType
+import fr.descentecanyon.app.domain.model.MapPosition
 import fr.descentecanyon.app.domain.model.ReportZone
 import fr.descentecanyon.app.domain.model.ThemeMode
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
@@ -14,6 +15,7 @@ class FakePreferencesRepository(
     var contributorIdentity: ContributorIdentity? = null,
     themeMode: ThemeMode = ThemeMode.SYSTEM,
     var latestReportsZone: ReportZone? = null,
+    var mapPosition: MapPosition? = null,
 ) : PreferencesRepository {
 
     private val themeModeState = MutableStateFlow(themeMode)
@@ -42,5 +44,11 @@ class FakePreferencesRepository(
 
     override suspend fun setThemeMode(mode: ThemeMode) {
         themeModeState.value = mode
+    }
+
+    override fun getLastMapPosition(): MapPosition? = mapPosition
+
+    override fun setLastMapPosition(position: MapPosition) {
+        mapPosition = position
     }
 }

@@ -4,11 +4,13 @@ import androidx.lifecycle.SavedStateHandle
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.CotationRating
+import fr.descentecanyon.app.domain.model.MapPosition
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
 import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
 import fr.descentecanyon.app.domain.usecase.ToggleFavoriteUseCase
+import fr.descentecanyon.app.testutil.FakePreferencesRepository
 import fr.descentecanyon.app.testutil.MainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -33,6 +35,20 @@ class MapViewModelTest {
     private val favoritesRepository = mockk<FavoritesRepository>()
     private val searchCanyonsUseCase = SearchCanyonsUseCase(canyonRepository)
     private val toggleFavoriteUseCase = ToggleFavoriteUseCase(favoritesRepository)
+    private val preferences = FakePreferencesRepository()
+
+    @Test
+    fun `the map opens where it was left at the previous launch`() {
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(emptyList())
+        preferences.mapPosition = MapPosition(latitude = 43.96, longitude = 7.5, zoom = 11.0)
+
+        val viewModel = mapViewModel()
+
+        assertEquals(MapCameraState(latitude = 43.96, longitude = 7.5, zoom = 11.0), viewModel.uiState.value.cameraState)
+
+        viewModel.onCameraChanged(MapCameraState(latitude = 45.0, longitude = 6.0, zoom = 9.0))
+        assertEquals(MapPosition(latitude = 45.0, longitude = 6.0, zoom = 9.0), preferences.mapPosition)
+    }
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -179,6 +195,7 @@ class MapViewModelTest {
             searchCanyonsUseCase = searchCanyonsUseCase,
             favoritesRepository = favoritesRepository,
             toggleFavoriteUseCase = toggleFavoriteUseCase,
+            preferencesRepository = preferences,
         )
     }
 }

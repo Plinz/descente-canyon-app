@@ -12,3 +12,6 @@ enum class ThemeMode {
 
 /** Area chosen to filter the latest flow reports of the home screen. */
 data class ReportZone(val country: String, val department: String? = null)
+
+/** Where the map was left, to open it there at the next launch rather than on the whole world. */
+data class MapPosition(val latitude: Double, val longitude: Double, val zoom: Double)

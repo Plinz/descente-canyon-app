@@ -2,6 +2,7 @@ package fr.descentecanyon.app.domain.repository
 
 import fr.descentecanyon.app.domain.model.ContributorIdentity
 import fr.descentecanyon.app.domain.model.HomeFeedType
+import fr.descentecanyon.app.domain.model.MapPosition
 import fr.descentecanyon.app.domain.model.ReportZone
 import fr.descentecanyon.app.domain.model.ThemeMode
 import kotlinx.coroutines.flow.Flow
@@ -28,4 +29,9 @@ interface PreferencesRepository {
     fun observeThemeMode(): Flow<ThemeMode>
 
     suspend fun setThemeMode(mode: ThemeMode)
+
+    /** Last position of the map, readable synchronously so the map opens there at once. */
+    fun getLastMapPosition(): MapPosition?
+
+    fun setLastMapPosition(position: MapPosition)
 }

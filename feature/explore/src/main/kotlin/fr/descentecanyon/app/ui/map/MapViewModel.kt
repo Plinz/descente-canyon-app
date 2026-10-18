@@ -6,9 +6,11 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonSummary
+import fr.descentecanyon.app.domain.model.MapPosition
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.toSummary
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
+import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
 import fr.descentecanyon.app.domain.usecase.ToggleFavoriteUseCase
 import fr.descentecanyon.app.perf.PerformanceTrace
@@ -51,6 +53,7 @@ class MapViewModel @Inject constructor(
     searchCanyonsUseCase: SearchCanyonsUseCase,
     private val favoritesRepository: FavoritesRepository,
     private val toggleFavoriteUseCase: ToggleFavoriteUseCase,
+    private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
 
     private val initialCriteria = loadCriteria()
@@ -61,7 +64,10 @@ class MapViewModel @Inject constructor(
             hasRequestedLocationPermission = savedStateHandle[MAP_HAS_REQUESTED_LOCATION_PERMISSION_KEY] ?: false,
             userLatitude = savedStateHandle.get<Double>(MAP_USER_LATITUDE_KEY),
             userLongitude = savedStateHandle.get<Double>(MAP_USER_LONGITUDE_KEY),
-            cameraState = loadCameraState(savedStateHandle),
+            // Back where the map was left, even after the app was closed, rather than on the whole world.
+            cameraState = loadCameraState(savedStateHandle) ?: preferencesRepository.getLastMapPosition()?.let {
+                MapCameraState(latitude = it.latitude, longitude = it.longitude, zoom = it.zoom)
+            },
             focusLocationRequestId = savedStateHandle[MAP_FOCUS_LOCATION_REQUEST_ID_KEY] ?: 0,
             criteria = initialCriteria,
         ),
@@ -254,6 +260,7 @@ class MapViewModel @Inject constructor(
         savedStateHandle[MAP_CAMERA_LATITUDE_KEY] = cameraState.latitude
         savedStateHandle[MAP_CAMERA_LONGITUDE_KEY] = cameraState.longitude
         savedStateHandle[MAP_CAMERA_ZOOM_KEY] = cameraState.zoom
+        preferencesRepository.setLastMapPosition(MapPosition(cameraState.latitude, cameraState.longitude, cameraState.zoom))
     }
 
     private fun loadCriteria(): SearchCriteria {

@@ -8,6 +8,7 @@ import fr.descentecanyon.app.data.local.user.dao.KeyValueDao
 import fr.descentecanyon.app.data.local.user.entity.KeyValueEntity
 import fr.descentecanyon.app.domain.model.ContributorIdentity
 import fr.descentecanyon.app.domain.model.HomeFeedType
+import fr.descentecanyon.app.domain.model.MapPosition
 import fr.descentecanyon.app.domain.model.ReportZone
 import fr.descentecanyon.app.domain.model.ThemeMode
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
@@ -78,9 +79,27 @@ class PreferencesRepositoryImpl @Inject constructor(
         settings.edit { putString(KEY_THEME_MODE, mode.name) }
     }
 
+    override fun getLastMapPosition(): MapPosition? {
+        val latitude = settings.getString(KEY_MAP_LATITUDE, null)?.toDoubleOrNull() ?: return null
+        val longitude = settings.getString(KEY_MAP_LONGITUDE, null)?.toDoubleOrNull() ?: return null
+        val zoom = settings.getString(KEY_MAP_ZOOM, null)?.toDoubleOrNull() ?: return null
+        return MapPosition(latitude, longitude, zoom)
+    }
+
+    override fun setLastMapPosition(position: MapPosition) {
+        settings.edit {
+            putString(KEY_MAP_LATITUDE, position.latitude.toString())
+            putString(KEY_MAP_LONGITUDE, position.longitude.toString())
+            putString(KEY_MAP_ZOOM, position.zoom.toString())
+        }
+    }
+
     private companion object {
         const val SETTINGS_PREFS = "app_settings"
         const val KEY_THEME_MODE = "theme_mode"
+        const val KEY_MAP_LATITUDE = "map.latitude"
+        const val KEY_MAP_LONGITUDE = "map.longitude"
+        const val KEY_MAP_ZOOM = "map.zoom"
         const val KEY_CONTRIBUTOR_NAME = "contributor.name"
         const val KEY_CONTRIBUTOR_EMAIL = "contributor.email"
         const val KEY_REPORTS_COUNTRY = "home.reports.country"
