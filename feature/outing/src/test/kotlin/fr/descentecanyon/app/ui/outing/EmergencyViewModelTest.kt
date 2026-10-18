@@ -26,7 +26,9 @@ import java.time.ZoneId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runCurrent
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -125,20 +127,24 @@ class EmergencyViewModelTest {
         // An outing planned for tomorrow is not the one under way.
         outing.value = PlannedOuting(42, "Riolan", now.plus(Duration.ofDays(1)), now.plus(Duration.ofDays(1)), now.plus(Duration.ofDays(1)))
         val viewModel = viewModel()
-        advanceUntilIdle()
+        runCurrent()
         assertTrue(viewModel.uiState.value.isLocatingCanyon)
 
-        // Too vague to tell the canyons apart.
+        // Too vague to tell the canyons apart: none is named, both are offered.
         viewModel.onPosition(fix(43.954, 6.90, accuracy = 2_000f))
         advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.isLocatingCanyon)
-        assertNull(viewModel.uiState.value.canyon)
+        var state = viewModel.uiState.value
+        assertFalse(state.isLocatingCanyon)
+        assertTrue(state.isPositionImprecise)
+        assertNull(state.canyon)
+        assertEquals(listOf(42, 7), state.otherCanyons.map { it.summary.id })
 
         // Between the parking (445 m south) and the exit (665 m north): on the route of Riolan.
         viewModel.onPosition(fix(43.954, 6.90))
         advanceUntilIdle()
-        var state = viewModel.uiState.value
+        state = viewModel.uiState.value
         assertFalse(state.isLocatingCanyon)
+        assertFalse(state.isPositionImprecise)
         assertEquals(EmergencyCanyonOrigin.POSITION, state.origin)
         assertEquals("Riolan", state.canyon?.name)
         assertEquals(0, state.canyonDistanceMeters)
@@ -155,6 +161,34 @@ class EmergencyViewModelTest {
         assertEquals("Ecouges", state.canyon?.name)
         assertEquals(listOf(42), state.otherCanyons.map { it.summary.id })
         assertEquals("1414", state.numbers[1].number)
+    }
+
+    @Test
+    fun `a canyon offered around a vague position can be chosen`() = runTest {
+        val viewModel = viewModel()
+        viewModel.onPosition(fix(43.954, 6.90, accuracy = 3_000f))
+        advanceUntilIdle()
+
+        viewModel.selectCanyon(7)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertEquals("Ecouges", state.canyon?.name)
+        assertEquals(EmergencyCanyonOrigin.POSITION, state.origin)
+        assertEquals(listOf(42), state.otherCanyons.map { it.summary.id })
+    }
+
+    @Test
+    fun `without any position, the canyon is no longer shown as searched after a while`() = runTest {
+        val viewModel = viewModel()
+        runCurrent()
+        assertTrue(viewModel.uiState.value.isLocatingCanyon)
+
+        advanceTimeBy(EmergencyViewModel.POSITION_TIMEOUT_MS + 1)
+
+        assertFalse(viewModel.uiState.value.isLocatingCanyon)
+        assertNull(viewModel.uiState.value.position)
+        assertNull(viewModel.uiState.value.canyon)
     }
 
     @Test

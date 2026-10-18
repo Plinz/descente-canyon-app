@@ -90,6 +90,7 @@ import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.location.DeviceFix
 import fr.descentecanyon.app.ui.location.hasLocationPermission
+import fr.descentecanyon.app.ui.location.hasPreciseLocationPermission
 import fr.descentecanyon.app.ui.location.observeDeviceFixes
 import fr.descentecanyon.app.ui.location.requestLocationSettings
 import fr.descentecanyon.app.ui.test.TestTags
@@ -111,10 +112,12 @@ fun EmergencyScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier, view
     val context = LocalContext.current
     val contentWidth = rememberDcContentWidth(maxWidth = 720.dp)
     var hasPermission by remember { mutableStateOf(context.hasLocationPermission()) }
+    var hasPrecisePermission by remember { mutableStateOf(context.hasPreciseLocationPermission()) }
     var isPositionUnavailable by remember { mutableStateOf(false) }
     var isDeviceLocked by remember { mutableStateOf(false) }
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
-        hasPermission = results.values.any { it }
+        hasPermission = context.hasLocationPermission()
+        hasPrecisePermission = context.hasPreciseLocationPermission()
         if (!hasPermission) viewModel.onPositionUnavailable()
     }
 
@@ -140,7 +143,8 @@ fun EmergencyScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier, view
         view.keepScreenOn = true
         onDispose { view.keepScreenOn = false }
     }
-    DisposableEffect(hasPermission) {
+    // Restarted when the precise location is granted: the fixes of the running request stay approximate.
+    DisposableEffect(hasPermission, hasPrecisePermission) {
         if (!hasPermission) {
             onDispose {}
         } else {
@@ -185,7 +189,9 @@ fun EmergencyScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier, view
                     PositionCard(
                         state = state,
                         hasPermission = hasPermission,
+                        hasPrecisePermission = hasPrecisePermission,
                         isUnavailable = isPositionUnavailable,
+                        // With the approximate location granted, Android offers to switch to the precise one.
                         onRequestPermission = {
                             permissionLauncher.launch(
                                 arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
@@ -248,12 +254,43 @@ private fun CanyonCard(state: EmergencyUiState, onSelectCanyon: (Int) -> Unit) {
                         Text(stringResource(R.string.emergency_locating_canyon), style = MaterialTheme.typography.bodyMedium)
                     }
 
+                    state.position == null -> Text(
+                        stringResource(R.string.emergency_canyon_no_position),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+
+                    state.isPositionImprecise -> {
+                        val uncertainty =
+                            formatDistance(state.position.accuracyMeters?.roundToInt() ?: 0, LocalLocale.current.platformLocale)
+                        val text = if (state.otherCanyons.isEmpty()) {
+                            stringResource(R.string.emergency_canyon_imprecise_none, uncertainty)
+                        } else {
+                            stringResource(R.string.emergency_canyon_imprecise, uncertainty)
+                        }
+                        Text(text, style = MaterialTheme.typography.bodyMedium)
+                    }
+
                     else -> Text(stringResource(R.string.emergency_no_canyon_around), style = MaterialTheme.typography.bodyMedium)
                 }
             }
         }
-        if (canyon != null && state.otherCanyons.isNotEmpty()) {
-            OtherCanyonsChooser(state, onSelectCanyon)
+        when {
+            canyon != null && state.otherCanyons.isNotEmpty() -> OtherCanyonsChooser(state, onSelectCanyon)
+
+            // The position does not tell which one: each canyon around is one tap away.
+            canyon == null && state.isPositionImprecise -> state.otherCanyons.forEach { candidate ->
+                OutlinedButton(
+                    onClick = { onSelectCanyon(candidate.summary.id) },
+                    modifier = Modifier.fillMaxWidth().testTag(TestTags.EMERGENCY_OTHER_CANYON),
+                ) {
+                    Text(
+                        "${candidate.summary.nom} · ${formatDistance(
+                            (candidate.distanceKm * 1000).roundToInt(),
+                            LocalLocale.current.platformLocale,
+                        )}",
+                    )
+                }
+            }
         }
     }
 }
@@ -389,7 +426,13 @@ private fun serviceLabel(number: EmergencyNumber): String = stringResource(
 
 /** The position to read to the rescuers or to send, with the closest point of the canyon. */
 @Composable
-private fun PositionCard(state: EmergencyUiState, hasPermission: Boolean, isUnavailable: Boolean, onRequestPermission: () -> Unit) {
+private fun PositionCard(
+    state: EmergencyUiState,
+    hasPermission: Boolean,
+    hasPrecisePermission: Boolean,
+    isUnavailable: Boolean,
+    onRequestPermission: () -> Unit,
+) {
     val context = LocalContext.current
     val resources = LocalResources.current
     val locale = LocalLocale.current.platformLocale
@@ -405,6 +448,17 @@ private fun PositionCard(state: EmergencyUiState, hasPermission: Boolean, isUnav
                 )
             }
             val fix = state.position
+            if (hasPermission && !hasPrecisePermission) {
+                // Rescuers need the exact place, not a circle of a few kilometres.
+                Text(
+                    stringResource(R.string.emergency_position_approximate),
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.error,
+                )
+                OutlinedButton(onClick = onRequestPermission, modifier = Modifier.fillMaxWidth()) {
+                    Text(stringResource(R.string.emergency_position_precise_permission))
+                }
+            }
             when {
                 fix != null -> {
                     val decimal = decimalCoordinates(fix.latitude, fix.longitude)

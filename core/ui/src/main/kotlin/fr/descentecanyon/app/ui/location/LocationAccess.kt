@@ -24,6 +24,10 @@ fun Context.hasLocationPermission(): Boolean = ContextCompat.checkSelfPermission
     ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) ==
     android.content.pm.PackageManager.PERMISSION_GRANTED
 
+/** False when only the approximate location was granted (a choice offered since Android 12). */
+fun Context.hasPreciseLocationPermission(): Boolean = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
+    android.content.pm.PackageManager.PERMISSION_GRANTED
+
 fun requestLocationSettings(
     context: Context,
     onEnabled: () -> Unit,

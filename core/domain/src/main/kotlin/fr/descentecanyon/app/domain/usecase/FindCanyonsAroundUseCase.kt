@@ -14,13 +14,14 @@ import kotlinx.coroutines.flow.first
  */
 class FindCanyonsAroundUseCase @Inject constructor(private val canyonRepository: CanyonRepository) {
 
-    suspend operator fun invoke(latitude: Double, longitude: Double): List<CanyonAround> {
+    /** [maxDistanceKm] grows with the uncertainty of a vague position, which may be that far from the user. */
+    suspend operator fun invoke(latitude: Double, longitude: Double, maxDistanceKm: Double = MAX_DISTANCE_KM): List<CanyonAround> {
         val candidates = canyonRepository.observeSearchCatalog().first()
             .mapNotNull { item ->
                 val itemLatitude = item.representativeLat ?: return@mapNotNull null
                 val itemLongitude = item.representativeLng ?: return@mapNotNull null
                 val distance = haversineKm(latitude, longitude, itemLatitude, itemLongitude)
-                if (distance <= CANDIDATE_RADIUS_KM) item to distance else null
+                if (distance <= CANDIDATE_RADIUS_KM + maxDistanceKm - MAX_DISTANCE_KM) item to distance else null
             }
             .sortedBy { (_, distance) -> distance }
             .take(MAX_CANDIDATES)
@@ -28,7 +29,7 @@ class FindCanyonsAroundUseCase @Inject constructor(private val canyonRepository:
             .mapNotNull { (item, catalogDistance) ->
                 val points = canyonRepository.getCanyonPreview(item.id).getOrNull()?.geoPoints.orEmpty()
                 val distance = minOf(catalogDistance, distanceToCanyonKm(latitude, longitude, points) ?: catalogDistance)
-                if (distance <= MAX_DISTANCE_KM) CanyonAround(item.toSummary(), distance) else null
+                if (distance <= maxDistanceKm) CanyonAround(item.toSummary(), distance) else null
             }
             .sortedWith(compareBy<CanyonAround> { it.distanceKm }.thenBy { it.summary.nom })
     }

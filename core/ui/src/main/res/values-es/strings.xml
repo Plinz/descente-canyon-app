@@ -790,6 +790,11 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="emergency_canyon_here">Está en su recorrido</string>
     <string name="emergency_canyon_around">A %1$s de su posición</string>
     <string name="emergency_other_canyon">¿No es el barranco correcto?</string>
+    <string name="emergency_canyon_no_position">Todavía no hay posición GPS: el barranco no se reconoce. Dé su nombre a los servicios de rescate.</string>
+    <string name="emergency_canyon_imprecise">Posición demasiado imprecisa (± %1$s) para reconocer el barranco: elíjalo.</string>
+    <string name="emergency_canyon_imprecise_none">Posición demasiado imprecisa (± %1$s) y ningún barranco de la base cerca: dé a los servicios de rescate el nombre del barranco.</string>
+    <string name="emergency_position_approximate">Solo ubicación aproximada: los servicios de rescate necesitan la posición precisa.</string>
+    <string name="emergency_position_precise_permission">Permitir la ubicación precisa</string>
     <string name="emergency_locked_hint">Teléfono bloqueado: los números de emergencia se llaman sin desbloquear; el SMS y compartir lo requieren.</string>
     <string name="emergency_position_time">a las %1$s</string>
     <string name="emergency_nearest_point">Punto más cercano: %1$s, a %2$s</string>

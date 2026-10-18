@@ -790,6 +790,11 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="emergency_canyon_here">Vous êtes sur son parcours</string>
     <string name="emergency_canyon_around">À %1$s de votre position</string>
     <string name="emergency_other_canyon">Pas le bon canyon ?</string>
+    <string name="emergency_canyon_no_position">Pas de position GPS pour l\'instant : le canyon n\'est pas reconnu. Donnez son nom aux secours.</string>
+    <string name="emergency_canyon_imprecise">Position trop imprécise (± %1$s) pour reconnaître le canyon : choisissez-le.</string>
+    <string name="emergency_canyon_imprecise_none">Position trop imprécise (± %1$s) et aucun canyon de la base autour : donnez aux secours le nom du canyon.</string>
+    <string name="emergency_position_approximate">Position approximative seulement : les secours ont besoin de la position précise.</string>
+    <string name="emergency_position_precise_permission">Autoriser la position précise</string>
     <string name="emergency_locked_hint">Téléphone verrouillé : les numéros d\'urgence s\'appellent sans déverrouiller ; le SMS et le partage le demandent.</string>
     <string name="emergency_position_time">à %1$s</string>
     <string name="emergency_nearest_point">Point le plus proche : %1$s, à %2$s</string>

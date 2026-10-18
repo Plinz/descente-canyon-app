@@ -772,6 +772,11 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="emergency_canyon_here">Sie befinden sich auf seiner Route</string>
     <string name="emergency_canyon_around">%1$s von Ihrer Position</string>
     <string name="emergency_other_canyon">Nicht der richtige Canyon?</string>
+    <string name="emergency_canyon_no_position">Noch keine GPS-Position: Der Canyon wird nicht erkannt. Nennen Sie der Rettung seinen Namen.</string>
+    <string name="emergency_canyon_imprecise">Position zu ungenau (± %1$s), um den Canyon zu erkennen: Wählen Sie ihn aus.</string>
+    <string name="emergency_canyon_imprecise_none">Position zu ungenau (± %1$s) und kein Canyon der Datenbank in der Nähe: Nennen Sie der Rettung den Namen des Canyons.</string>
+    <string name="emergency_position_approximate">Nur ungefährer Standort: Die Rettung braucht die genaue Position.</string>
+    <string name="emergency_position_precise_permission">Genauen Standort erlauben</string>
     <string name="emergency_locked_hint">Telefon gesperrt: Notrufnummern lassen sich ohne Entsperren anrufen; SMS und Teilen erfordern es.</string>
     <string name="emergency_position_time">um %1$s</string>
     <string name="emergency_nearest_point">Nächster Punkt: %1$s, %2$s entfernt</string>

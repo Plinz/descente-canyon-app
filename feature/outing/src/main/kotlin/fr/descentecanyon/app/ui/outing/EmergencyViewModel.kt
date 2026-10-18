@@ -22,6 +22,7 @@ import fr.descentecanyon.app.ui.location.DeviceFix
 import java.time.Clock
 import javax.inject.Inject
 import kotlin.math.roundToInt
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -64,9 +65,14 @@ data class EmergencyUiState(
     val outing: PlannedOuting? = null,
     /** True while the canyon is looked for around the position. */
     val isLocatingCanyon: Boolean = false,
+    /**
+     * The position is too vague to tell the canyons apart (approximate location, cell towers in a
+     * valley): no canyon is named, the user picks among [otherCanyons].
+     */
+    val isPositionImprecise: Boolean = false,
     /** Distance from the position to the route of the canyon. */
     val canyonDistanceMeters: Int? = null,
-    /** Other canyons around the position, to correct the one found. */
+    /** Other canyons around the position, to correct the one found or to choose one when it is vague. */
     val otherCanyons: List<CanyonAround> = emptyList(),
     val numbers: List<EmergencyNumber> = listOf(EmergencyNumbers.EUROPEAN),
     /** False when the numbers of the country are not known for sure: the local number must be checked. */
@@ -111,6 +117,8 @@ class EmergencyViewModel @Inject constructor(
     /** True once neither a page nor an outing gives the canyon: the position does. */
     private var locatesByPosition = false
     private var isPositionUnavailable = false
+
+    /** Last fix the canyons around were looked for at, precise or not. */
     private var locatedAt: DeviceFix? = null
     private var userChoseCanyon = false
     private var canyonsAround: List<CanyonAround> = emptyList()
@@ -130,6 +138,10 @@ class EmergencyViewModel @Inject constructor(
                         position != null -> locateCanyon(position)
                         isPositionUnavailable -> _uiState.update { it.copy(isLocatingCanyon = false) }
                     }
+                    // No fix at all (deep gorge, location off): the screen stops searching, the canyon
+                    // still comes with the first position.
+                    delay(POSITION_TIMEOUT_MS)
+                    if (locatedAt == null) _uiState.update { it.copy(isLocatingCanyon = false) }
                 }
             }
         }
@@ -152,7 +164,10 @@ class EmergencyViewModel @Inject constructor(
         }
         if (!locatesByPosition) return
         val previous = locatedAt
-        if (previous == null || haversineKm(previous.latitude, previous.longitude, fix.latitude, fix.longitude) > RELOCATE_KM) {
+        val becamePrecise = previous != null && previous.isImprecise() && !fix.isImprecise()
+        if (previous == null || becamePrecise ||
+            haversineKm(previous.latitude, previous.longitude, fix.latitude, fix.longitude) > RELOCATE_KM
+        ) {
             locateCanyon(fix)
         }
     }
@@ -171,9 +186,22 @@ class EmergencyViewModel @Inject constructor(
     }
 
     private fun locateCanyon(fix: DeviceFix) {
-        // A vague fix (cell towers in a valley) would name the wrong canyon: wait for a better one.
-        if ((fix.accuracyMeters ?: 0f) > MAX_LOCATING_ACCURACY_M) return
         locatedAt = fix
+        if (fix.isImprecise()) {
+            // A vague fix would name the wrong canyon: the canyons it may be in are offered instead,
+            // until a precise fix names it.
+            if (userChoseCanyon || _uiState.value.canyon != null) return
+            val uncertaintyKm = (fix.accuracyMeters ?: 0f) / 1000.0
+            viewModelScope.launch {
+                canyonsAround = findCanyonsAroundUseCase(
+                    fix.latitude,
+                    fix.longitude,
+                    maxDistanceKm = (FindCanyonsAroundUseCase.MAX_DISTANCE_KM + uncertaintyKm).coerceAtMost(MAX_IMPRECISE_DISTANCE_KM),
+                )
+                _uiState.update { it.copy(isLocatingCanyon = false, isPositionImprecise = true).withOtherCanyons() }
+            }
+            return
+        }
         viewModelScope.launch {
             canyonsAround = findCanyonsAroundUseCase(fix.latitude, fix.longitude)
             val current = _uiState.value.canyon?.id
@@ -183,9 +211,11 @@ class EmergencyViewModel @Inject constructor(
                 target.summary.id != current -> show(target.summary.id, EmergencyCanyonOrigin.POSITION, outing = null, target.distanceKm)
                 else -> Unit
             }
-            _uiState.update { it.copy(isLocatingCanyon = false).withOtherCanyons() }
+            _uiState.update { it.copy(isLocatingCanyon = false, isPositionImprecise = false).withOtherCanyons() }
         }
     }
+
+    private fun DeviceFix.isImprecise(): Boolean = (accuracyMeters ?: 0f) > MAX_LOCATING_ACCURACY_M
 
     private suspend fun show(id: Int, origin: EmergencyCanyonOrigin, outing: PlannedOuting?, distanceKm: Double? = null) {
         val detail = getCanyonPreviewUseCase(id).getOrNull()
@@ -207,7 +237,7 @@ class EmergencyViewModel @Inject constructor(
     }
 
     private fun EmergencyUiState.withOtherCanyons(): EmergencyUiState = copy(
-        otherCanyons = if (origin == EmergencyCanyonOrigin.POSITION) {
+        otherCanyons = if (origin == EmergencyCanyonOrigin.POSITION || (canyon == null && isPositionImprecise)) {
             canyonsAround.filterNot { it.summary.id == canyon?.id }.take(MAX_OTHER_CANYONS)
         } else {
             emptyList()
@@ -265,6 +295,12 @@ class EmergencyViewModel @Inject constructor(
         /** The canyon found is looked for again once the user moved this far. */
         const val RELOCATE_KM = 1.0
         const val MAX_OTHER_CANYONS = 4
+
+        /** A vague position is searched around up to this far. */
+        const val MAX_IMPRECISE_DISTANCE_KM = 10.0
+
+        /** Without any fix after this delay, the canyon is no longer shown as being searched. */
+        const val POSITION_TIMEOUT_MS = 20_000L
 
         private val POINT_ORDER = listOf(
             GeoPointType.ECHAPPATOIRE,
