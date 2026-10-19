@@ -89,7 +89,7 @@ data class KeyValueEntity(@PrimaryKey val key: String, val value: String, val up
 @Entity(tableName = "recent_canyons")
 data class RecentCanyonEntity(@PrimaryKey val canyonId: Int, val viewedAt: Long)
 
-/** Private note written by the user about a canyon; never sent anywhere. */
+/** Memo written by the user about a canyon; never sent to the site. */
 @Entity(tableName = "canyon_notes")
 data class CanyonNoteEntity(@PrimaryKey val canyonId: Int, val text: String, val updatedAt: Long)
 
@@ -103,4 +103,14 @@ data class LogbookEntryEntity(
     val date: String,
     val note: String? = null,
     val createdAt: Long,
+    /** NiveauDebit name of the flow seen. */
+    val debitLevel: String? = null,
+    /** Companions as typed, separated by commas. */
+    val companions: String? = null,
+    val durationMinutes: Int? = null,
+    /** LogbookSource name: how the outing got into the logbook. */
+    @ColumnInfo(defaultValue = "MANUAL") val source: String = "MANUAL",
+    /** Report of the site account the outing was imported from. */
+    val siteObservationId: Long? = null,
+    val updatedAt: Long? = null,
 )

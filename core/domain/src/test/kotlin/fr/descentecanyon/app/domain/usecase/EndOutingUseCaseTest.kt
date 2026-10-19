@@ -1,8 +1,11 @@
 package fr.descentecanyon.app.domain.usecase
 
+import fr.descentecanyon.app.domain.model.LogbookEntry
+import fr.descentecanyon.app.domain.model.LogbookSource
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
+import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.mockk
 import java.time.Clock
@@ -28,8 +31,14 @@ class EndOutingUseCaseTest {
             current.value = null
         }
     }
-    private val logbookRepository = mockk<LogbookRepository>(relaxUnitFun = true)
-    private val useCase = EndOutingUseCase(outingRepository, logbookRepository, Clock.fixed(Instant.parse("2026-07-15T08:00:00Z"), zone))
+    private val logbookRepository = mockk<LogbookRepository> { coEvery { record(any()) } returns true }
+    private var now = Instant.parse("2026-07-15T02:10:00Z")
+    private val clock = object : Clock() {
+        override fun getZone(): ZoneId = this@EndOutingUseCaseTest.zone
+        override fun withZone(zone: ZoneId?): Clock = this
+        override fun instant(): Instant = now
+    }
+    private val useCase = EndOutingUseCase(outingRepository, logbookRepository, clock)
 
     /** Started at 23:30 in Paris on 14 July (21:30 UTC): the logbook keeps the local day. */
     private val outing = PlannedOuting(
@@ -41,13 +50,33 @@ class EndOutingUseCaseTest {
     )
 
     @Test
-    fun `the outing goes to the logbook on the day it started and is cleared`() = runTest {
+    fun `the outing goes to the logbook on the day it started, with its duration, and is cleared`() = runTest {
         current.value = outing
 
         assertEquals(outing, useCase(42))
 
-        coVerify { logbookRepository.add(42, "Riolan", LocalDate.of(2026, 7, 14), null) }
+        coVerify {
+            logbookRepository.record(
+                LogbookEntry(
+                    canyonId = 42,
+                    canyonName = "Riolan",
+                    date = LocalDate.of(2026, 7, 14),
+                    durationMinutes = 4 * 60 + 40,
+                    source = LogbookSource.OUTING,
+                ),
+            )
+        }
         assertNull(current.value)
+    }
+
+    @Test
+    fun `"I'm back" tapped long after the return records no duration`() = runTest {
+        current.value = outing
+        now = Instant.parse("2026-07-16T09:00:00Z")
+
+        useCase(42)
+
+        coVerify { logbookRepository.record(match { it.durationMinutes == null && it.date == LocalDate.of(2026, 7, 14) }) }
     }
 
     @Test
@@ -59,6 +88,6 @@ class EndOutingUseCaseTest {
 
         current.value = null
         assertNull(useCase())
-        coVerify(exactly = 0) { logbookRepository.add(any(), any(), any(), any()) }
+        coVerify(exactly = 0) { logbookRepository.record(any()) }
     }
 }

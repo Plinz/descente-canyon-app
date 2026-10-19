@@ -11,6 +11,9 @@ object SiteUrls {
     const val FORUM_ACTIVE_TOPICS = "$BASE_URL/forums/search.php?search_id=active_topics"
     const val FORUM_CATEGORIES = "$BASE_URL/forums/"
 
+    /** Every flow report of the logged-in member, every year at once ("Ma liste de courses"). */
+    const val MY_OBSERVATIONS = "$BASE_URL/perso/observations/all"
+
     fun canyon(canyonId: Int): String = "$BASE_URL/canyoning/canyon/$canyonId/"
 
     fun canyonDescription(canyonId: Int): String = "$BASE_URL/canyoning/canyon-description/$canyonId/topo.html"

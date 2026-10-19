@@ -18,6 +18,9 @@ interface PreferencesRepository {
 
     suspend fun setContributorIdentity(identity: ContributorIdentity)
 
+    /** Forgets the name and e-mail of reports sent without an account. */
+    suspend fun clearContributorIdentity()
+
     /** Area of the latest reports feed, kept between launches (null: every country). */
     suspend fun getLatestReportsZone(): ReportZone?
 

@@ -61,6 +61,8 @@ fun CanyonSummaryCard(
     variant: CanyonSummaryCardVariant = CanyonSummaryCardVariant.Compact,
     isFavorite: Boolean = false,
     onFavoriteClick: (() -> Unit)? = null,
+    /** Already in the user's logbook. */
+    isDescended: Boolean = false,
 ) {
     val colors = LocalDcColors.current
     val spacing = LocalDcSpacing.current
@@ -86,6 +88,7 @@ fun CanyonSummaryCard(
                     canyon = canyon,
                     isFavorite = isFavorite,
                     onFavoriteClick = onFavoriteClick,
+                    isDescended = isDescended,
                 )
             } else {
                 Row(
@@ -143,6 +146,7 @@ fun CanyonSummaryCard(
                         } else {
                             CotationBadge(cotation = canyon.cotation)
                         }
+                        if (isDescended) DescendedBadge(modifier = Modifier.padding(top = 4.dp))
                     }
                 }
 
@@ -189,7 +193,7 @@ fun CanyonSummaryCard(
 }
 
 @Composable
-private fun MapSheetFavoriteContent(canyon: CanyonSummary, isFavorite: Boolean, onFavoriteClick: () -> Unit) {
+private fun MapSheetFavoriteContent(canyon: CanyonSummary, isFavorite: Boolean, onFavoriteClick: () -> Unit, isDescended: Boolean) {
     val colors = LocalDcColors.current
     val spacing = LocalDcSpacing.current
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -262,6 +266,7 @@ private fun MapSheetFavoriteContent(canyon: CanyonSummary, isFavorite: Boolean, 
             } else {
                 CotationBadge(cotation = canyon.cotation)
             }
+            if (isDescended) DescendedBadge(modifier = Modifier.padding(top = 4.dp))
             Box(
                 modifier = Modifier
                     .weight(1f)

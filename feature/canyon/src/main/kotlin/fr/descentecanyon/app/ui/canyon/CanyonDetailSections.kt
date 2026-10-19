@@ -47,13 +47,13 @@ import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
+import fr.descentecanyon.app.domain.model.CanyonDuration
 import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.NearbyCanyon
 import fr.descentecanyon.app.ui.design.DcOutdoorActionCard
 import fr.descentecanyon.app.ui.test.TestTags
-import java.time.LocalDate
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -90,8 +90,11 @@ internal fun CanyonDetailContent(
     onNearbyCanyonClick: (Int) -> Unit = {},
     onPlanOuting: () -> Unit = {},
     logbook: List<LogbookEntry> = emptyList(),
-    onAddToLogbook: (LocalDate, String?) -> Unit = { _, _ -> },
-    onReportFlow: () -> Unit = {},
+    knownCompanions: List<String> = emptyList(),
+    onSaveLogbookEntry: (LogbookEntry) -> Unit = {},
+    onDeleteLogbookEntry: (Long) -> Unit = {},
+    onReportFlow: (LogbookEntry) -> Unit = {},
+    onOpenLogbook: () -> Unit = {},
     bottomContentPadding: Dp = 0.dp,
     listState: LazyListState = rememberLazyListState(),
 ) {
@@ -149,10 +152,24 @@ internal fun CanyonDetailContent(
             )
         }
         item {
-            PersonalNoteCard(note = personalNote, onSave = onSavePersonalNote)
-        }
-        item {
-            CanyonLogbookCard(entries = logbook, onAdd = onAddToLogbook, onReportFlow = onReportFlow)
+            val canyon = detail.canyon
+            MyCanyonCard(
+                canyonId = canyon.id,
+                canyonName = canyon.nom,
+                memo = personalNote,
+                entries = logbook,
+                topoDuration = CanyonDuration.total(
+                    CanyonDuration.parse(canyon.tempsApproche),
+                    CanyonDuration.parse(canyon.tempsDescente),
+                    CanyonDuration.parse(canyon.tempsRetour),
+                ),
+                knownCompanions = knownCompanions,
+                onSaveMemo = onSavePersonalNote,
+                onSaveEntry = onSaveLogbookEntry,
+                onDeleteEntry = onDeleteLogbookEntry,
+                onReportFlow = onReportFlow,
+                onOpenLogbook = onOpenLogbook,
+            )
         }
         if (edfStatusSourceUrl != null) {
             item {

@@ -7,7 +7,10 @@ import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.DaylightCheck
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointType
+import fr.descentecanyon.app.domain.model.LogbookEntry
+import fr.descentecanyon.app.domain.model.LogbookSource
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
@@ -47,10 +50,15 @@ class OutingPlanTest {
     private val zone = ZoneId.of("Europe/Paris")
     private val clock = Clock.fixed(LocalDateTime.of(2026, 7, 14, 8, 5).atZone(zone).toInstant(), zone)
     private val saved = MutableStateFlow<PlannedOuting?>(null)
-    private val logged = mutableListOf<LocalDate>()
+    private val logged = mutableListOf<LogbookEntry>()
     private val logbookRepository = mockk<LogbookRepository> {
-        coEvery { add(42, "Riolan", any(), null) } answers { logged += thirdArg<LocalDate>() }
+        coEvery { record(any()) } answers {
+            logged += firstArg<LogbookEntry>()
+            true
+        }
     }
+    private val memo = MutableStateFlow<String?>(null)
+    private val canyonNotesRepository = mockk<CanyonNotesRepository> { every { observeNote(42) } returns memo }
     private val outingRepository = object : OutingRepository {
         override fun observeCurrent() = saved
         override suspend fun save(outing: PlannedOuting) {
@@ -95,7 +103,19 @@ class OutingPlanTest {
         viewModel.markBack()
         advanceUntilIdle()
         assertEquals(null, viewModel.uiState.value.savedOuting)
-        assertEquals(listOf(LocalDate.of(2026, 7, 14)), logged)
+        assertEquals(listOf(LocalDate.of(2026, 7, 14)), logged.map { it.date })
+        assertEquals(LogbookSource.OUTING, logged.single().source)
+    }
+
+    @Test
+    fun `the memo of the canyon is read again while preparing`() = runTest {
+        val viewModel = viewModel()
+        advanceUntilIdle()
+        assertEquals(null, viewModel.uiState.value.memo)
+
+        memo.value = "Parking après le pont, 2x40 m"
+        advanceUntilIdle()
+        assertEquals("Parking après le pont, 2x40 m", viewModel.uiState.value.memo)
     }
 
     @Test
@@ -156,6 +176,7 @@ class OutingPlanTest {
             getCanyonDebitPredictionsUseCase = GetCanyonDebitPredictionsUseCase(predictions),
             debitRepository = debits,
             outingRepository = outingRepository,
+            canyonNotesRepository = canyonNotesRepository,
             endOutingUseCase = EndOutingUseCase(outingRepository, logbookRepository, clock),
             connectivityObserver = connectivity,
             clock = clock,

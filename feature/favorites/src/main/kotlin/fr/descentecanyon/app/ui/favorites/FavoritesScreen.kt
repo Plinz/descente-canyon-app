@@ -1,6 +1,7 @@
 package fr.descentecanyon.app.ui.favorites
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,10 +18,12 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
@@ -37,6 +40,7 @@ import androidx.compose.material3.SwipeToDismissBoxState
 import androidx.compose.material3.SwipeToDismissBoxValue
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -109,8 +113,19 @@ fun FavoritesScreen(
                 },
             )
 
-            if (uiState.favorites.size > 1) {
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(bottom = 8.dp)) {
+            if (uiState.totalCount > 1) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(bottom = 8.dp).horizontalScroll(rememberScrollState()),
+                ) {
+                    FilterChip(
+                        selected = uiState.toDoOnly,
+                        onClick = viewModel::toggleToDoOnly,
+                        label = { Text(stringResource(R.string.favorites_filter_todo)) },
+                        leadingIcon = { Icon(Icons.Default.FilterList, contentDescription = null, modifier = Modifier.size(18.dp)) },
+                        modifier = Modifier.testTag(TestTags.FAVORITES_TODO_FILTER),
+                    )
+                    VerticalDivider(modifier = Modifier.height(32.dp).align(Alignment.CenterVertically))
                     FavoritesSort.entries.forEach { sort ->
                         FilterChip(
                             selected = uiState.sort == sort,
@@ -155,6 +170,12 @@ fun FavoritesScreen(
                     ) {
                         CircularProgressIndicator()
                     }
+                } else if (uiState.favorites.isEmpty() && uiState.toDoOnly && uiState.totalCount > 0) {
+                    DcEmptyState(
+                        title = stringResource(R.string.favorites_todo_empty),
+                        icon = Icons.AutoMirrored.Filled.MenuBook,
+                        modifier = Modifier.padding(32.dp),
+                    )
                 } else if (uiState.favorites.isEmpty()) {
                     Box(
                         modifier = Modifier
@@ -189,6 +210,7 @@ fun FavoritesScreen(
                                 CanyonSummaryCard(
                                     canyon = canyon,
                                     onClick = { onCanyonClick(canyon.id) },
+                                    isDescended = canyon.id in uiState.descendedIds,
                                 )
                             }
                         }

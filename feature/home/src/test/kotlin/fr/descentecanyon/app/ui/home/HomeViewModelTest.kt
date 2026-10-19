@@ -508,7 +508,7 @@ class HomeViewModelTest {
             notificationCenterRepository = notificationCenterRepository,
             debitSubmissionRepository = debitSubmissionRepository,
             outingRepository = outingRepository,
-            endOutingUseCase = EndOutingUseCase(outingRepository, mockk(relaxUnitFun = true), Clock.systemDefaultZone()),
+            endOutingUseCase = EndOutingUseCase(outingRepository, mockk(relaxed = true), Clock.systemDefaultZone()),
         )
     }
 

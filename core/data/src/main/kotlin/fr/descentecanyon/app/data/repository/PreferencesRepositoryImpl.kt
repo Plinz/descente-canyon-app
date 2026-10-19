@@ -48,6 +48,10 @@ class PreferencesRepositoryImpl @Inject constructor(
         )
     }
 
+    override suspend fun clearContributorIdentity() {
+        keyValueDao.putAll(listOf(KeyValueEntity(KEY_CONTRIBUTOR_NAME, ""), KeyValueEntity(KEY_CONTRIBUTOR_EMAIL, "")))
+    }
+
     override suspend fun getLatestReportsZone(): ReportZone? {
         val country = keyValueDao.get(KEY_REPORTS_COUNTRY)?.takeIf { it.isNotBlank() } ?: return null
         return ReportZone(country = country, department = keyValueDao.get(KEY_REPORTS_DEPARTMENT)?.takeIf { it.isNotBlank() })

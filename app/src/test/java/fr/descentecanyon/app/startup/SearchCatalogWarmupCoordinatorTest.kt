@@ -3,6 +3,7 @@ package fr.descentecanyon.app.startup
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CotationRating
 import fr.descentecanyon.app.domain.repository.CanyonRepository
+import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
 import io.mockk.every
 import io.mockk.mockk
@@ -14,7 +15,7 @@ import org.junit.Test
 class SearchCatalogWarmupCoordinatorTest {
 
     private val canyonRepository = mockk<CanyonRepository>()
-    private val coordinator = SearchCatalogWarmupCoordinator(SearchCanyonsUseCase(canyonRepository))
+    private val coordinator = SearchCatalogWarmupCoordinator(SearchCanyonsUseCase(canyonRepository, noOutings()))
 
     @Test
     fun `warmup observes catalog only once`() = runTest {
@@ -39,3 +40,6 @@ class SearchCatalogWarmupCoordinatorTest {
         normalizedNomComplet = "clue du riolan",
     )
 }
+
+/** A logbook without outings, for the catalog search. */
+private fun noOutings(): LogbookRepository = mockk { every { observeDescendedCanyonIds() } returns flowOf(emptySet()) }

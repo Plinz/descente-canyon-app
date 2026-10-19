@@ -274,6 +274,7 @@ fun MapScreen(
                     variant = CanyonSummaryCardVariant.MapSheet,
                     isFavorite = uiState.isSelectedCanyonFavorite,
                     onFavoriteClick = viewModel::toggleSelectedCanyonFavorite,
+                    isDescended = canyon.id in uiState.descendedIds,
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
                         .width(contentWidth)

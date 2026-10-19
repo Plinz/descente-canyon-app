@@ -33,6 +33,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -44,14 +45,13 @@ import fr.descentecanyon.app.domain.model.ForumActiveTopic
 import fr.descentecanyon.app.domain.model.ForumCategory
 import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.forumCategoryKey
-import fr.descentecanyon.app.ui.auth.AuthViewModel
-import fr.descentecanyon.app.ui.auth.LoginDialog
 import fr.descentecanyon.app.ui.common.rememberFollowWithNotificationPermission
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.EmergencyIconButton
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
+import fr.descentecanyon.app.ui.test.TestTags
 import kotlinx.coroutines.flow.distinctUntilChanged
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,21 +64,19 @@ fun HomeScreen(
     onUsersClick: () -> Unit,
     onPendingDebitsClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
+    onAccountClick: () -> Unit = {},
     onOutingClick: (Int) -> Unit = {},
     onOutingEnded: (Int) -> Unit = {},
     onEmergencyClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     homeViewModel: HomeViewModel = hiltViewModel(),
-    authViewModel: AuthViewModel = hiltViewModel(),
 ) {
     val homeState by homeViewModel.uiState.collectAsStateWithLifecycle()
-    val authState by authViewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val donationUrl = stringResource(R.string.support_donation_url)
     val contentWidth = rememberDcContentWidth()
     val screenHorizontalPadding = rememberDcScreenHorizontalPadding()
-    var showLoginDialog by remember { mutableStateOf(false) }
     var selectedFeedOverride by remember { mutableStateOf<HomeFeedType?>(null) }
     // Following needs notifications: the permission is asked first, then the toggle runs.
     val toggleFollowAskingPermission = rememberFollowWithNotificationPermission()
@@ -118,17 +116,6 @@ fun HomeScreen(
             }
     }
 
-    if (showLoginDialog) {
-        LoginDialog(
-            uiState = authState,
-            onUsernameChanged = authViewModel::onUsernameChanged,
-            onPasswordChanged = authViewModel::onPasswordChanged,
-            onLogin = authViewModel::login,
-            onLogout = authViewModel::logout,
-            onDismiss = { showLoginDialog = false },
-        )
-    }
-
     val activeFeedState = when (selectedFeed) {
         HomeFeedType.DEBITS -> homeState.debitFeed
         HomeFeedType.FORUM -> homeState.forumFeed
@@ -149,10 +136,10 @@ fun HomeScreen(
                             modifier = Modifier.size(24.dp),
                         )
                     }
-                    IconButton(onClick = { showLoginDialog = true }) {
+                    IconButton(onClick = onAccountClick, modifier = Modifier.testTag(TestTags.HOME_ACCOUNT_BUTTON)) {
                         Icon(
                             imageVector = Icons.Default.AccountCircle,
-                            contentDescription = stringResource(R.string.user_account),
+                            contentDescription = stringResource(R.string.account_title),
                             modifier = Modifier.size(28.dp),
                         )
                     }

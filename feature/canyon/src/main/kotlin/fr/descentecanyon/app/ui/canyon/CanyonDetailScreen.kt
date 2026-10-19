@@ -70,6 +70,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.Canyon
+import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.common.needsNotificationPermission
@@ -98,6 +99,9 @@ fun CanyonDetailScreen(
     onOpenCanyon: (Int) -> Unit = {},
     onPlanOuting: () -> Unit = {},
     onOpenEmergency: () -> Unit = {},
+    /** A flow report prefilled from an outing just logged (date, descended, flow seen). */
+    onReportOuting: (LogbookEntry) -> Unit = {},
+    onOpenLogbook: () -> Unit = {},
     openDebitsTabInitially: Boolean = false,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -283,8 +287,11 @@ fun CanyonDetailScreen(
                             nearbyCanyons = uiState.nearbyCanyons,
                             onPlanOuting = onPlanOuting,
                             logbook = uiState.logbook,
-                            onAddToLogbook = viewModel::addToLogbook,
-                            onReportFlow = onReportDebitClick,
+                            knownCompanions = uiState.knownCompanions,
+                            onSaveLogbookEntry = viewModel::saveLogbookEntry,
+                            onDeleteLogbookEntry = viewModel::deleteLogbookEntry,
+                            onReportFlow = onReportOuting,
+                            onOpenLogbook = onOpenLogbook,
                             onNearbyCanyonClick = onOpenCanyon,
                             bottomContentPadding = contentPadding.calculateBottomPadding() + 96.dp,
                             listState = listState,

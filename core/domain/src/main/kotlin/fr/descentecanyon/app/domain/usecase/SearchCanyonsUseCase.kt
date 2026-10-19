@@ -2,6 +2,7 @@ package fr.descentecanyon.app.domain.usecase
 
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CotationRating
+import fr.descentecanyon.app.domain.model.LogbookFilter
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchResultSet
 import fr.descentecanyon.app.domain.model.SearchSortField
@@ -12,10 +13,20 @@ import fr.descentecanyon.app.domain.model.matches
 import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.model.subdivisionsFor
 import fr.descentecanyon.app.domain.repository.CanyonRepository
+import fr.descentecanyon.app.domain.repository.LogbookRepository
 import javax.inject.Inject
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 
-class SearchCanyonsUseCase @Inject constructor(private val canyonRepository: CanyonRepository) {
-    fun observeCatalog() = canyonRepository.observeSearchCatalog()
+class SearchCanyonsUseCase @Inject constructor(
+    private val canyonRepository: CanyonRepository,
+    private val logbookRepository: LogbookRepository,
+) {
+    /** The catalog, each canyon marked when it is in the logbook. */
+    fun observeCatalog(): Flow<List<CanyonSearchItem>> =
+        combine(canyonRepository.observeSearchCatalog(), logbookRepository.observeDescendedCanyonIds()) { items, descended ->
+            if (descended.isEmpty()) items else items.map { if (it.id in descended) it.copy(isDescended = true) else it }
+        }
 
     operator fun invoke(catalog: List<CanyonSearchItem>, criteria: SearchCriteria): SearchResultSet {
         val normalizedQuery = criteria.query.normalizeForSearch()
@@ -63,6 +74,7 @@ class SearchCanyonsUseCase @Inject constructor(private val canyonRepository: Can
         queryTokens: List<String>,
     ): Boolean = matchesQuery(item, normalizedQuery, queryTokens) &&
         (!criteria.favoritesOnly || item.isFavorite) &&
+        matchesLogbook(item, criteria.logbookFilter) &&
         item.cotationRating.matches(criteria) &&
         (criteria.interestMin == null || (item.interet ?: Float.NEGATIVE_INFINITY) >= criteria.interestMin) &&
         (!criteria.regulationOnly || item.hasSpecificRegulation) &&
@@ -72,6 +84,12 @@ class SearchCanyonsUseCase @Inject constructor(private val canyonRepository: Can
         criteria.lengthRange.matches(item.longueur) &&
         criteria.maxWaterfallRange.matches(item.cascadeMax) &&
         criteria.ropeRange.matches(item.cordeMin)
+
+    private fun matchesLogbook(item: CanyonSearchItem, filter: LogbookFilter): Boolean = when (filter) {
+        LogbookFilter.ALL -> true
+        LogbookFilter.DESCENDED -> item.isDescended
+        LogbookFilter.NOT_DESCENDED -> !item.isDescended
+    }
 
     private fun matchesCountry(item: CanyonSearchItem, country: String?): Boolean = country == null || item.countryTokens.any {
         it.equals(country, ignoreCase = true)

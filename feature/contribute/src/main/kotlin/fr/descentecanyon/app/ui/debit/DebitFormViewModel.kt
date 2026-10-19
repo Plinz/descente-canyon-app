@@ -67,7 +67,7 @@ class DebitFormViewModel @Inject constructor(
     private val canyonId: Int = checkNotNull(savedStateHandle["canyonId"])
 
     // Restored after Android stopped the app in the background (camera, maps on the way back...).
-    private val _uiState = MutableStateFlow(savedStateHandle.restoreForm(DebitFormUiState(canyonId = canyonId)))
+    private val _uiState = MutableStateFlow(savedStateHandle.restoreForm(savedStateHandle.prefilledForm(canyonId)))
     val uiState: StateFlow<DebitFormUiState> = _uiState.asStateFlow()
 
     init {
@@ -296,12 +296,23 @@ class DebitFormViewModel @Inject constructor(
             this[FORM_PERSONAL_COMMENT] = state.personalComment
         }
 
+        /** The form opened from an outing just logged: its day, "descended" and the flow seen. */
+        fun SavedStateHandle.prefilledForm(canyonId: Int): DebitFormUiState {
+            val initial = DebitFormUiState(canyonId = canyonId)
+            return initial.copy(
+                observationDate = get<String>("date")?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: initial.observationDate,
+                observationType = ObservationType.PARCOURU.takeIf { get<Boolean>("descended") == true },
+                debitLevel = get<String>("level")?.let { name -> NiveauDebit.entries.firstOrNull { it.name == name } },
+            )
+        }
+
         fun SavedStateHandle.restoreForm(initial: DebitFormUiState): DebitFormUiState = initial.copy(
             observerName = get<String>(FORM_NAME) ?: initial.observerName,
             observerEmail = get<String>(FORM_EMAIL) ?: initial.observerEmail,
             observationDate = get<String>(FORM_DATE)?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: initial.observationDate,
-            observationType = get<String>(FORM_TYPE)?.let { name -> ObservationType.entries.firstOrNull { it.name == name } },
-            debitLevel = get<String>(FORM_LEVEL)?.let { name -> NiveauDebit.entries.firstOrNull { it.name == name } },
+            observationType = get<String>(FORM_TYPE)?.let { name -> ObservationType.entries.firstOrNull { it.name == name } }
+                ?: initial.observationType,
+            debitLevel = get<String>(FORM_LEVEL)?.let { name -> NiveauDebit.entries.firstOrNull { it.name == name } } ?: initial.debitLevel,
             waterTemperature = get<String>(FORM_WATER)?.let { name -> WaterTemperature.entries.firstOrNull { it.name == name } },
             airTemperature = get<String>(FORM_AIR)?.let { name -> AirTemperature.entries.firstOrNull { it.name == name } },
             comment = get<String>(FORM_COMMENT) ?: initial.comment,

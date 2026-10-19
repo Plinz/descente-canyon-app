@@ -5,6 +5,7 @@ import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
+import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.testutil.MainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -31,13 +32,38 @@ class FavoritesViewModelTest {
     private val debitRepository = mockk<DebitRepository> {
         every { observeLatestKnownDebits(any()) } returns latestDebits
     }
+    private val descendedIds = MutableStateFlow<Set<Int>>(emptySet())
+    private val logbookRepository = mockk<LogbookRepository> { every { observeDescendedCanyonIds() } returns descendedIds }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `the to-do filter keeps the favorites never descended and marks the others done`() = runTest {
+        every { favoritesRepository.getFavorites() } returns MutableStateFlow(listOf(summary(7), summary(8), summary(9)))
+        descendedIds.value = setOf(8)
+        val viewModel = FavoritesViewModel(favoritesRepository, debitRepository, logbookRepository)
+        advanceUntilIdle()
+        assertEquals(setOf(8), viewModel.uiState.value.descendedIds)
+
+        viewModel.toggleToDoOnly()
+        advanceUntilIdle()
+        assertEquals(listOf(7, 9), viewModel.uiState.value.favorites.map { it.id })
+        assertEquals(3, viewModel.uiState.value.totalCount)
+
+        descendedIds.value = setOf(8, 9)
+        advanceUntilIdle()
+        assertEquals(listOf(7), viewModel.uiState.value.favorites.map { it.id })
+
+        viewModel.toggleToDoOnly()
+        advanceUntilIdle()
+        assertEquals(listOf(7, 8, 9), viewModel.uiState.value.favorites.map { it.id })
+    }
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
     fun `favorites flow populates ui state`() = runTest {
         every { favoritesRepository.getFavorites() } returns MutableStateFlow(listOf(summary(7)))
 
-        val viewModel = FavoritesViewModel(favoritesRepository, debitRepository)
+        val viewModel = FavoritesViewModel(favoritesRepository, debitRepository, logbookRepository)
         advanceUntilIdle()
 
         assertEquals(listOf(7), viewModel.uiState.value.favorites.map { it.id })
@@ -48,7 +74,7 @@ class FavoritesViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     fun `favorites show their last known report`() = runTest {
         every { favoritesRepository.getFavorites() } returns MutableStateFlow(listOf(summary(7), summary(8)))
-        val viewModel = FavoritesViewModel(favoritesRepository, debitRepository)
+        val viewModel = FavoritesViewModel(favoritesRepository, debitRepository, logbookRepository)
 
         latestDebits.value = mapOf(7 to Debit(canyonId = 7, date = LocalDate.of(2026, 10, 14), niveau = NiveauDebit.SEC))
         advanceUntilIdle()
@@ -64,7 +90,7 @@ class FavoritesViewModelTest {
     fun `removed favorite can be restored`() = runTest {
         every { favoritesRepository.getFavorites() } returns MutableStateFlow(listOf(summary(7)))
         coEvery { favoritesRepository.removeFavorite(7) } returns Unit
-        val viewModel = FavoritesViewModel(favoritesRepository, debitRepository)
+        val viewModel = FavoritesViewModel(favoritesRepository, debitRepository, logbookRepository)
         advanceUntilIdle()
 
         viewModel.removeFavorite(summary(7))

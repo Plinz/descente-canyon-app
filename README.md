@@ -46,6 +46,8 @@ feature/favorites        Favoris
 feature/notifications    Centre de notifications (suivis)
 feature/users            Membres du site : recherche, profil, suivi de leurs messages du forum
 feature/settings         Réglages (thème, langue, notifications), sources des données, licences, confidentialité
+feature/outing           Préparation de sortie, sortie en cours, écran d'urgence
+feature/account          Mon espace (compte, identité de contribution, données) et carnet : sorties, mémos, bilan, import de la liste de courses du site
 core/ui                  Design system, composants partagés, widget carte, ressources (chaînes en 6 langues)
 core/data                Bases Room, réseau (OkHttp + Jsoup), scraping, repositories, modèle ONNX
 core/domain              Modèles, interfaces des repositories, cas d'usage, erreurs typées (Kotlin pur)

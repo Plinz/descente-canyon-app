@@ -6,12 +6,15 @@ import fr.descentecanyon.app.domain.model.AuthState
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.ContributorIdentity
 import fr.descentecanyon.app.domain.model.DebitSubmissionStatus
+import fr.descentecanyon.app.domain.model.LogbookEntry
+import fr.descentecanyon.app.domain.model.LogbookSource
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.ObservationType
 import fr.descentecanyon.app.domain.model.WaterTemperature
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
+import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.usecase.SubmitDebitUseCase
 import fr.descentecanyon.app.testutil.FakePreferencesRepository
 import fr.descentecanyon.app.testutil.MainDispatcherRule
@@ -39,13 +42,14 @@ class DebitFormViewModelTest {
     private val authStateFlow = MutableStateFlow<AuthState>(AuthState.Disconnected)
     private val authRepository = mockk<AuthRepository>()
     private val debitSubmissionRepository = mockk<DebitSubmissionRepository>()
-    private val submitDebitUseCase = SubmitDebitUseCase(debitSubmissionRepository)
     private val preferences = FakePreferencesRepository()
     private val canyonRepository = mockk<CanyonRepository> {
         coEvery { getCanyonSummaries(any()) } returns listOf(
             CanyonSummary(id = 2186, nom = "Riolan", pays = "France", departement = "Alpes-Maritimes", cotation = "v4a4III", url = ""),
         )
     }
+    private val logbookRepository = mockk<LogbookRepository> { coEvery { record(any()) } returns true }
+    private val submitDebitUseCase = SubmitDebitUseCase(debitSubmissionRepository, logbookRepository, canyonRepository)
 
     private fun createViewModel(savedStateHandle: SavedStateHandle = SavedStateHandle(mapOf("canyonId" to 2186))) = DebitFormViewModel(
         savedStateHandle = savedStateHandle,
@@ -90,6 +94,70 @@ class DebitFormViewModelTest {
         assertEquals(NiveauDebit.GROS, restored.debitLevel)
         assertEquals(WaterTemperature.FROIDE, restored.waterTemperature)
         assertEquals("Rappel de 25 m arrosé", restored.comment)
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `a report opened from an outing just logged takes its day, descent and flow`() = runTest {
+        every { authRepository.authState } returns authStateFlow
+        every { debitSubmissionRepository.observePendingCount() } returns flowOf(0)
+
+        val state = createViewModel(
+            SavedStateHandle(mapOf("canyonId" to 2186, "date" to "2026-08-12", "descended" to true, "level" to "GROS")),
+        ).uiState.value
+
+        assertEquals(LocalDate.of(2026, 8, 12), state.observationDate)
+        assertEquals(ObservationType.PARCOURU, state.observationType)
+        assertEquals(NiveauDebit.GROS, state.debitLevel)
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `a report of a descent also logs the outing with the flow and the personal comment`() = runTest {
+        every { authRepository.authState } returns authStateFlow
+        every { debitSubmissionRepository.observePendingCount() } returns flowOf(0)
+        coEvery { debitSubmissionRepository.submit(any()) } returns Result.success(DebitSubmissionStatus.SUBMITTED)
+        val viewModel = createViewModel()
+        viewModel.onObserverNameChanged("Antoine")
+        viewModel.onObserverEmailChanged("antoine@example.com")
+        viewModel.onObservationDateSelected(LocalDate.of(2026, 8, 12))
+        viewModel.onObservationTypeChanged(ObservationType.PARCOURU)
+        viewModel.onDebitLevelChanged(NiveauDebit.CORRECT)
+        viewModel.onPersonalCommentChanged("Avec Paul, corde 2x40")
+
+        viewModel.submit()
+        advanceUntilIdle()
+
+        coVerify {
+            logbookRepository.record(
+                LogbookEntry(
+                    canyonId = 2186,
+                    canyonName = "Riolan",
+                    date = LocalDate.of(2026, 8, 12),
+                    note = "Avec Paul, corde 2x40",
+                    debitLevel = NiveauDebit.CORRECT,
+                    source = LogbookSource.REPORT,
+                ),
+            )
+        }
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `a flow only looked at is not logged as an outing`() = runTest {
+        every { authRepository.authState } returns authStateFlow
+        every { debitSubmissionRepository.observePendingCount() } returns flowOf(0)
+        coEvery { debitSubmissionRepository.submit(any()) } returns Result.success(DebitSubmissionStatus.SUBMITTED)
+        val viewModel = createViewModel()
+        viewModel.onObserverNameChanged("Antoine")
+        viewModel.onObserverEmailChanged("antoine@example.com")
+        viewModel.onObservationTypeChanged(ObservationType.NON_PARCOURU)
+        viewModel.onDebitLevelChanged(NiveauDebit.SEC)
+
+        viewModel.submit()
+        advanceUntilIdle()
+
+        coVerify(exactly = 0) { logbookRepository.record(any()) }
     }
 
     @Test

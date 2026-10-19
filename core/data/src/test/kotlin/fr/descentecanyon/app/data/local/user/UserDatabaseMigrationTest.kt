@@ -5,6 +5,9 @@ import android.content.ContentValues
 import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
 import fr.descentecanyon.app.data.local.user.entity.RecentCanyonEntity
+import fr.descentecanyon.app.domain.model.LogbookEntry
+import fr.descentecanyon.app.domain.model.LogbookSource
+import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.testutil.TestDatabases
 import java.io.File
 import kotlinx.coroutines.flow.first
@@ -84,9 +87,11 @@ class UserDatabaseMigrationTest {
                 database.logbookDao(),
                 java.time.Clock.fixed(java.time.Instant.EPOCH, java.time.ZoneOffset.UTC),
             )
-            repository.add(7, "Riolan", java.time.LocalDate.of(2026, 7, 14), null)
-            repository.add(7, "Riolan", java.time.LocalDate.of(2026, 7, 14), "Débit correct")
-            repository.add(8, "Bollinette", java.time.LocalDate.of(2026, 8, 2), null)
+            repository.save(LogbookEntry(canyonId = 7, canyonName = "Riolan", date = java.time.LocalDate.of(2026, 7, 14)))
+            repository.save(
+                LogbookEntry(canyonId = 7, canyonName = "Riolan", date = java.time.LocalDate.of(2026, 7, 14), note = "Débit correct"),
+            )
+            repository.save(LogbookEntry(canyonId = 8, canyonName = "Bollinette", date = java.time.LocalDate.of(2026, 8, 2)))
 
             val entries = repository.observeAll().first()
             assertEquals(listOf(8, 7), entries.map { it.canyonId })
@@ -124,6 +129,47 @@ class UserDatabaseMigrationTest {
             assertEquals(emptyList<Any>(), dao.getSendable())
             assertEquals(0, dao.observeCount().first())
             assertEquals("Date invalide", dao.observeAll().first().single().rejectionReason)
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
+    fun `version 4 keeps the outings, which gain flow, companions, duration and origin`() = runTest {
+        createDatabase(schemaVersion = 4) { db ->
+            db.insert(
+                "logbook_entries",
+                null,
+                values(
+                    "id" to 1,
+                    "canyonId" to 26,
+                    "canyonName" to "Furon",
+                    "date" to "2026-07-30",
+                    "note" to "Super",
+                    "createdAt" to 1_000L,
+                ),
+            )
+        }
+
+        val database = Room.databaseBuilder(context, UserDatabase::class.java, TEST_DATABASE)
+            .addMigrations(*UserDatabase.MIGRATIONS)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val repository = fr.descentecanyon.app.data.repository.LogbookRepositoryImpl(
+                database.logbookDao(),
+                java.time.Clock.fixed(java.time.Instant.EPOCH, java.time.ZoneOffset.UTC),
+            )
+            val kept = repository.observeAll().first().single()
+            assertEquals("Super", kept.note)
+            assertEquals(LogbookSource.MANUAL, kept.source)
+            assertEquals(null, kept.debitLevel)
+
+            repository.save(kept.copy(debitLevel = NiveauDebit.CORRECT, companions = "Paul", durationMinutes = 240))
+            val edited = repository.observeAll().first().single()
+            assertEquals(NiveauDebit.CORRECT, edited.debitLevel)
+            assertEquals("Paul", edited.companions)
+            assertEquals(240, edited.durationMinutes)
         } finally {
             database.close()
         }

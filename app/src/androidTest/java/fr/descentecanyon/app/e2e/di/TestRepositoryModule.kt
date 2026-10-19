@@ -10,6 +10,7 @@ import fr.descentecanyon.app.data.repository.ForumUserRepositoryImpl
 import fr.descentecanyon.app.data.repository.LogbookRepositoryImpl
 import fr.descentecanyon.app.data.repository.NotificationCenterRepositoryImpl
 import fr.descentecanyon.app.data.repository.OutingRepositoryImpl
+import fr.descentecanyon.app.data.repository.PersonalDataRepositoryImpl
 import fr.descentecanyon.app.data.repository.PreferencesRepositoryImpl
 import fr.descentecanyon.app.data.repository.RecentCanyonsRepositoryImpl
 import fr.descentecanyon.app.di.RepositoryModule
@@ -28,9 +29,11 @@ import fr.descentecanyon.app.domain.repository.InterestRatingRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
+import fr.descentecanyon.app.domain.repository.PersonalDataRepository
 import fr.descentecanyon.app.domain.repository.PhotoRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
+import fr.descentecanyon.app.domain.repository.SiteAccountRepository
 import fr.descentecanyon.app.domain.repository.WeatherRepository
 import fr.descentecanyon.app.e2e.fakes.FakeAuthRepository
 import fr.descentecanyon.app.e2e.fakes.FakeCanyonRepository
@@ -42,6 +45,7 @@ import fr.descentecanyon.app.e2e.fakes.FakeFavoritesRepository
 import fr.descentecanyon.app.e2e.fakes.FakeForumRepository
 import fr.descentecanyon.app.e2e.fakes.FakeInterestRatingRepository
 import fr.descentecanyon.app.e2e.fakes.FakePhotoRepository
+import fr.descentecanyon.app.e2e.fakes.FakeSiteAccountRepository
 import fr.descentecanyon.app.e2e.fakes.FakeWeatherRepository
 import javax.inject.Singleton
 
@@ -108,4 +112,10 @@ object TestRepositoryModule {
 
     @Provides @Singleton
     fun provideLogbookRepository(impl: LogbookRepositoryImpl): LogbookRepository = impl
+
+    @Provides @Singleton
+    fun provideSiteAccountRepository(fake: FakeSiteAccountRepository): SiteAccountRepository = fake
+
+    @Provides @Singleton
+    fun providePersonalDataRepository(impl: PersonalDataRepositoryImpl): PersonalDataRepository = impl
 }

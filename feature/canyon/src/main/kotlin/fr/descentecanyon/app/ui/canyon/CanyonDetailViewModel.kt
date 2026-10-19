@@ -26,7 +26,6 @@ import fr.descentecanyon.app.domain.usecase.ToggleFavoriteUseCase
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.UiText
 import fr.descentecanyon.app.ui.common.toUiText
-import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -69,6 +68,8 @@ data class CanyonDetailUiState(
     val nearbyCanyons: List<NearbyCanyon> = emptyList(),
     /** The user's outings in this canyon, most recent first. */
     val logbook: List<LogbookEntry> = emptyList(),
+    /** Companions of earlier outings, offered when logging one. */
+    val knownCompanions: List<String> = emptyList(),
 )
 
 /** State owned by the view model itself: the canyon detail and the user's choices about it. */
@@ -85,6 +86,7 @@ private data class CanyonDetailState(
     val personalNote: String? = null,
     val nearbyCanyons: List<NearbyCanyon> = emptyList(),
     val logbook: List<LogbookEntry> = emptyList(),
+    val knownCompanions: List<String> = emptyList(),
 )
 
 /**
@@ -286,15 +288,23 @@ class CanyonDetailViewModel @Inject constructor(
         }
     }
 
-    /** Logs an outing in this canyon. */
-    fun addToLogbook(date: LocalDate, note: String?) {
-        val name = detailState.value.canyonDetail?.canyon?.nom ?: return
-        viewModelScope.launch { logbookRepository.add(canyonId, name, date, note) }
+    /** Logs or edits an outing in this canyon. */
+    fun saveLogbookEntry(entry: LogbookEntry) {
+        viewModelScope.launch { logbookRepository.save(entry.copy(canyonId = canyonId)) }
+    }
+
+    fun deleteLogbookEntry(id: Long) {
+        viewModelScope.launch { logbookRepository.delete(id) }
     }
 
     private fun observeLogbook() {
         viewModelScope.launch {
-            logbookRepository.observeForCanyon(canyonId).collect { entries -> detailState.update { it.copy(logbook = entries) } }
+            logbookRepository.observeForCanyon(canyonId).collect { entries ->
+                detailState.update { it.copy(logbook = entries) }
+                // Refreshed with the logbook: a name typed in the last outing is offered in the next one.
+                val companions = suspendRunCatching { logbookRepository.knownCompanions() }.getOrDefault(emptyList())
+                detailState.update { it.copy(knownCompanions = companions) }
+            }
         }
     }
 
@@ -341,6 +351,7 @@ private fun toUiState(detail: CanyonDetailState, media: CanyonMediaState, condit
         isOnline = detail.isOnline,
         nearbyCanyons = detail.nearbyCanyons,
         logbook = detail.logbook,
+        knownCompanions = detail.knownCompanions,
         transientMessage = detail.transientMessage,
         personalNote = detail.personalNote,
     )

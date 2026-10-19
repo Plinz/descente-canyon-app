@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Emergency
@@ -149,6 +150,7 @@ fun OutingPlanScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
+                state.memo?.let { memo -> item { MemoCard(memo = memo) } }
                 item { WhenCard(state = state, onDateSelected = viewModel::selectDate, onTimeSelected = viewModel::selectStartTime) }
                 item { TimelineCard(state = state, timeFormatter = timeFormatter) }
                 item { ConditionsCard(state = state) }
@@ -198,6 +200,24 @@ fun OutingPlanScreen(
                         Text(stringResource(R.string.outing_emergency_action), modifier = Modifier.padding(start = 8.dp))
                     }
                 }
+            }
+        }
+    }
+}
+
+/** The memo written on the canyon page: parking, gear and traps are what one checks before leaving. */
+@Composable
+private fun MemoCard(memo: String) {
+    DcCard(modifier = Modifier.fillMaxWidth(), contentPadding = 14.dp) {
+        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Icon(Icons.AutoMirrored.Filled.StickyNote2, contentDescription = null, tint = LocalDcColors.current.textSecondary)
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    stringResource(R.string.personal_note_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Text(memo, style = MaterialTheme.typography.bodyMedium)
             }
         }
     }

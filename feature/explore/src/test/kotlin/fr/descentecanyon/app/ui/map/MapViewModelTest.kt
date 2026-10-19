@@ -8,6 +8,7 @@ import fr.descentecanyon.app.domain.model.MapPosition
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
+import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
 import fr.descentecanyon.app.domain.usecase.ToggleFavoriteUseCase
 import fr.descentecanyon.app.testutil.FakePreferencesRepository
@@ -33,7 +34,7 @@ class MapViewModelTest {
 
     private val canyonRepository = mockk<CanyonRepository>()
     private val favoritesRepository = mockk<FavoritesRepository>()
-    private val searchCanyonsUseCase = SearchCanyonsUseCase(canyonRepository)
+    private val searchCanyonsUseCase = SearchCanyonsUseCase(canyonRepository, noOutings())
     private val toggleFavoriteUseCase = ToggleFavoriteUseCase(favoritesRepository)
     private val preferences = FakePreferencesRepository()
 
@@ -199,3 +200,6 @@ class MapViewModelTest {
         )
     }
 }
+
+/** A logbook without outings, for the catalog search. */
+private fun noOutings(): LogbookRepository = mockk { every { observeDescendedCanyonIds() } returns flowOf(emptySet()) }

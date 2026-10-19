@@ -19,6 +19,8 @@ data class IntRangeFilter(val min: Int? = null, val max: Int? = null) {
 data class SearchCriteria(
     val query: String = "",
     val favoritesOnly: Boolean = false,
+    /** Canyons of the logbook only, or those never descended. */
+    val logbookFilter: LogbookFilter = LogbookFilter.ALL,
     val selectedCountry: String? = null,
     val selectedDepartment: String? = null,
     val verticalRange: IntRangeFilter = IntRangeFilter(),
@@ -55,6 +57,7 @@ data class SearchCriteria(
             userLongitude != null
         return query.normalizeForSearch().length < 2 &&
             !favoritesOnly &&
+            logbookFilter != LogbookFilter.DESCENDED &&
             selectedCountry == null &&
             selectedDepartment == null &&
             !hasAdvancedFilters() &&
@@ -64,6 +67,7 @@ data class SearchCriteria(
     fun activeFilterCount(): Int {
         var count = 0
         if (favoritesOnly) count++
+        if (logbookFilter != LogbookFilter.ALL) count++
         if (selectedCountry != null) count++
         if (selectedDepartment != null) count++
         if (verticalRange.isActive()) count++
@@ -82,6 +86,7 @@ data class SearchCriteria(
 
     fun clearAllFilters(): SearchCriteria = copy(
         favoritesOnly = false,
+        logbookFilter = LogbookFilter.ALL,
         selectedCountry = null,
         selectedDepartment = null,
         verticalRange = IntRangeFilter(),
@@ -96,6 +101,18 @@ data class SearchCriteria(
         maxWaterfallRange = IntRangeFilter(),
         ropeRange = IntRangeFilter(),
     )
+}
+
+/** Filter on the user's logbook. */
+@Serializable
+enum class LogbookFilter {
+    ALL,
+
+    /** Canyons with at least one outing in the logbook. */
+    DESCENDED,
+
+    /** Canyons never descended: ideas for the next outings. */
+    NOT_DESCENDED,
 }
 
 @Serializable

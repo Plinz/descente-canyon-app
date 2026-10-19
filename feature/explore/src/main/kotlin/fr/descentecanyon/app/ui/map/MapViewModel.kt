@@ -45,6 +45,8 @@ data class MapUiState(
     val criteria: SearchCriteria = SearchCriteria(),
     val zones: List<ZoneCountry> = emptyList(),
     val totalResultsCount: Int = 0,
+    /** Canyons of the user's logbook. */
+    val descendedIds: Set<Int> = emptySet(),
 )
 
 @HiltViewModel
@@ -100,6 +102,7 @@ class MapViewModel @Inject constructor(
                         zones = resultSet.zones,
                         totalResultsCount = resultSet.totalResultsCount,
                         catalogSize = catalog.size,
+                        descendedIds = catalog.mapNotNullTo(mutableSetOf()) { item -> item.id.takeIf { item.isDescended } },
                     )
                 }
                 .catch { throwable ->
@@ -139,6 +142,7 @@ class MapViewModel @Inject constructor(
                             criteria = catalogState.criteria,
                             zones = catalogState.zones,
                             totalResultsCount = catalogState.totalResultsCount,
+                            descendedIds = catalogState.descendedIds,
                         )
                     }
                     if (!hasLoggedInitialCatalog) {
@@ -279,6 +283,7 @@ private data class MapCatalogState(
     val zones: List<ZoneCountry>,
     val totalResultsCount: Int,
     val catalogSize: Int,
+    val descendedIds: Set<Int>,
 )
 
 private const val MAP_INITIAL_TRACE_KEY = "screen.map.initial"

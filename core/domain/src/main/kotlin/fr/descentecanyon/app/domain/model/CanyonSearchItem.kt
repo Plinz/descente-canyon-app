@@ -27,6 +27,8 @@ data class CanyonSearchItem(
     val isForbidden: Boolean = false,
     val hasNavette: Boolean = false,
     val isFavorite: Boolean = false,
+    /** In the user's logbook. */
+    val isDescended: Boolean = false,
     val representativeLat: Double? = null,
     val representativeLng: Double? = null,
     val url: String,

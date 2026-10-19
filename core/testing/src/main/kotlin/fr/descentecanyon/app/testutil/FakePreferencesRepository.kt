@@ -32,6 +32,10 @@ class FakePreferencesRepository(
         contributorIdentity = identity
     }
 
+    override suspend fun clearContributorIdentity() {
+        contributorIdentity = null
+    }
+
     override suspend fun getLatestReportsZone(): ReportZone? = latestReportsZone
 
     override suspend fun setLatestReportsZone(zone: ReportZone?) {

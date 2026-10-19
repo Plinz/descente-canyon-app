@@ -69,6 +69,8 @@ data class SearchUiState(
     val scrollResetRequestId: Int = 0,
     /** Shown while no query or filter narrows the catalog. */
     val recentCanyons: List<CanyonSummary> = emptyList(),
+    /** Canyons of the user's logbook. */
+    val descendedIds: Set<Int> = emptySet(),
 )
 
 @HiltViewModel
@@ -142,6 +144,7 @@ class SearchViewModel @Inject constructor(
                         location = input.location,
                         resultSet = resultSet,
                         scrollResetRequestId = input.scrollResetRequestId,
+                        descendedIds = input.catalog.mapNotNullTo(mutableSetOf()) { item -> item.id.takeIf { item.isDescended } },
                     )
                 }
                 .combine(resultViewModeFlow) { computed, resultViewMode ->
@@ -174,6 +177,7 @@ class SearchViewModel @Inject constructor(
                         selectedCanyon = computed.resultSet.results.firstOrNull { it.id == selectedCanyonId },
                         scrollResetRequestId = computed.scrollResetRequestId,
                         recentCanyons = recentCanyons,
+                        descendedIds = computed.descendedIds,
                     )
                 }
                 .flowOn(searchDispatcher)
@@ -413,6 +417,7 @@ private data class SearchComputedState(
     val location: SearchLocationUiState,
     val resultSet: SearchResultSet,
     val scrollResetRequestId: Int,
+    val descendedIds: Set<Int>,
 )
 
 private fun SearchCriteria.sanitizedForPersistence(): SearchCriteria = copy(

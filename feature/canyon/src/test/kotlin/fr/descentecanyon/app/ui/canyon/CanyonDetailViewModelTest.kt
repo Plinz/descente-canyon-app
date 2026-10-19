@@ -21,6 +21,7 @@ import fr.descentecanyon.app.domain.model.EdfPracticabilityCondition
 import fr.descentecanyon.app.domain.model.EdfPracticabilityReference
 import fr.descentecanyon.app.domain.model.EdfPracticabilitySample
 import fr.descentecanyon.app.domain.model.GeoBounds
+import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.NotificationCenterState
 import fr.descentecanyon.app.domain.model.PredictedDebitLevel
@@ -55,6 +56,7 @@ import io.mockk.every
 import io.mockk.mockk
 import java.net.SocketTimeoutException
 import java.time.Instant
+import java.time.LocalDate
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -88,8 +90,10 @@ class CanyonDetailViewModelTest {
     private val canyonNotesRepository = mockk<CanyonNotesRepository>(relaxUnitFun = true) {
         every { observeNote(42) } returns personalNote
     }
+    private val logbook = MutableStateFlow<List<LogbookEntry>>(emptyList())
     private val logbookRepository = mockk<fr.descentecanyon.app.domain.repository.LogbookRepository>(relaxUnitFun = true) {
-        every { observeForCanyon(42) } returns flowOf(emptyList())
+        every { observeForCanyon(42) } returns logbook
+        coEvery { knownCompanions() } returns listOf("Paul", "Léa")
     }
     private val getCanyonPreviewUseCase = GetCanyonPreviewUseCase(canyonRepository)
     private val getCanyonDetailUseCase = GetCanyonDetailUseCase(canyonRepository)
@@ -355,6 +359,27 @@ class CanyonDetailViewModelTest {
 
         assertEquals("Corde de 2 x 40 m suffisante", viewModel.uiState.value.personalNote)
         coVerify { canyonNotesRepository.saveNote(42, "Parking payant") }
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `outings of the canyon are shown, saved for it and deleted`() = runTest {
+        stubBaseState()
+        coEvery { canyonRepository.getCanyonPreview(42) } returns Result.success(detail())
+        coEvery { canyonRepository.getCanyonDetail(42) } returns Result.success(detail())
+        val viewModel = createViewModel()
+        val outing = LogbookEntry(id = 3, canyonId = 42, canyonName = "Riolan", date = LocalDate.of(2026, 7, 14), companions = "Paul")
+
+        logbook.value = listOf(outing)
+        advanceUntilIdle()
+        viewModel.saveLogbookEntry(outing.copy(canyonId = 0, debitLevel = NiveauDebit.GROS))
+        viewModel.deleteLogbookEntry(3)
+        advanceUntilIdle()
+
+        assertEquals(listOf(outing), viewModel.uiState.value.logbook)
+        assertEquals(listOf("Paul", "Léa"), viewModel.uiState.value.knownCompanions)
+        coVerify { logbookRepository.save(outing.copy(debitLevel = NiveauDebit.GROS)) }
+        coVerify { logbookRepository.delete(3) }
     }
 
     private fun createViewModel(): CanyonDetailViewModel = CanyonDetailViewModel(

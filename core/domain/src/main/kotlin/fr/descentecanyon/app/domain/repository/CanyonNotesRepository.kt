@@ -1,11 +1,17 @@
 package fr.descentecanyon.app.domain.repository
 
+import fr.descentecanyon.app.domain.model.CanyonNote
 import kotlinx.coroutines.flow.Flow
 
-/** Private notes the user writes about canyons; they stay on the device. */
+/** Memos the user writes about canyons; they are never sent to the site. */
 interface CanyonNotesRepository {
     fun observeNote(canyonId: Int): Flow<String?>
 
-    /** Saves the note of a canyon; a blank text deletes it. */
+    /** Every memo, the most recently edited first. */
+    fun observeAll(): Flow<List<CanyonNote>>
+
+    /** Saves the memo of a canyon; a blank text deletes it. */
     suspend fun saveNote(canyonId: Int, text: String)
+
+    suspend fun clear()
 }

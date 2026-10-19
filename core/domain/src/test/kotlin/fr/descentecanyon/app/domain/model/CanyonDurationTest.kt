@@ -41,4 +41,19 @@ class CanyonDurationTest {
     }
 
     private fun known(min: Int, max: Int) = CanyonDuration.Known(DurationRange(min, max))
+
+    @Test
+    fun `the parts of an outing add up unless one is unknown`() {
+        assertEquals(
+            DurationRange(150, 175),
+            CanyonDuration.total(
+                CanyonDuration.parse("20 à 45min"),
+                CanyonDuration.parse("2h"),
+                CanyonDuration.parse("néant"),
+                CanyonDuration.parse("10min"),
+            ),
+        )
+        assertEquals(null, CanyonDuration.total(CanyonDuration.parse("30min"), CanyonDuration.parse("??"), CanyonDuration.parse("1h")))
+        assertEquals(null, CanyonDuration.total(CanyonDuration.parse("néant"), CanyonDuration.parse("néant")))
+    }
 }

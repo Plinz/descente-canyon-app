@@ -24,8 +24,8 @@ import fr.descentecanyon.app.data.local.user.entity.PhotoEntity
 import fr.descentecanyon.app.data.local.user.entity.RecentCanyonEntity
 
 /**
- * Data that must survive app updates: favorites, debit reports waiting to be sent and the caches
- * filled at runtime. Every schema change needs a migration covered by `UserDatabaseMigrationTest`.
+ * Data that must survive app updates: favorites, logbook, memos, debit reports waiting to be sent
+ * and the caches filled at runtime. Every schema change needs a migration covered by `UserDatabaseMigrationTest`.
  */
 @Database(
     entities = [
@@ -39,7 +39,7 @@ import fr.descentecanyon.app.data.local.user.entity.RecentCanyonEntity
         CanyonNoteEntity::class,
         LogbookEntryEntity::class,
     ],
-    version = 4,
+    version = 5,
     exportSchema = true,
 )
 abstract class UserDatabase : RoomDatabase() {
@@ -92,7 +92,19 @@ abstract class UserDatabase : RoomDatabase() {
             }
         }
 
+        /** Version 5: logbook outings gain the flow seen, companions, duration, origin and site report. */
+        val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE `logbook_entries` ADD COLUMN `debitLevel` TEXT")
+                db.execSQL("ALTER TABLE `logbook_entries` ADD COLUMN `companions` TEXT")
+                db.execSQL("ALTER TABLE `logbook_entries` ADD COLUMN `durationMinutes` INTEGER")
+                db.execSQL("ALTER TABLE `logbook_entries` ADD COLUMN `source` TEXT NOT NULL DEFAULT 'MANUAL'")
+                db.execSQL("ALTER TABLE `logbook_entries` ADD COLUMN `siteObservationId` INTEGER")
+                db.execSQL("ALTER TABLE `logbook_entries` ADD COLUMN `updatedAt` INTEGER")
+            }
+        }
+
         /** Migrations of the user database, oldest first. */
-        val MIGRATIONS = arrayOf<Migration>(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+        val MIGRATIONS = arrayOf<Migration>(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
     }
 }

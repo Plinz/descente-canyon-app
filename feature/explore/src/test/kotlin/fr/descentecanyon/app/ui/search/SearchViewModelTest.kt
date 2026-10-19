@@ -8,6 +8,7 @@ import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
 import fr.descentecanyon.app.domain.repository.CanyonRepository
+import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
 import fr.descentecanyon.app.testutil.MainDispatcherRule
@@ -32,7 +33,7 @@ class SearchViewModelTest {
     val mainDispatcherRule = MainDispatcherRule()
 
     private val canyonRepository = mockk<CanyonRepository>()
-    private val searchCanyonsUseCase = SearchCanyonsUseCase(canyonRepository)
+    private val searchCanyonsUseCase = SearchCanyonsUseCase(canyonRepository, noOutings())
     private val recentCanyons = MutableStateFlow<List<CanyonSummary>>(emptyList())
     private val recentCanyonsRepository = mockk<RecentCanyonsRepository>(relaxUnitFun = true) {
         every { observeRecentCanyons(any()) } returns recentCanyons
@@ -301,3 +302,6 @@ class SearchViewModelTest {
         normalizedNomComplet = nom.lowercase(),
     )
 }
+
+/** A logbook without outings, for the catalog search. */
+private fun noOutings(): LogbookRepository = mockk { every { observeDescendedCanyonIds() } returns flowOf(emptySet()) }

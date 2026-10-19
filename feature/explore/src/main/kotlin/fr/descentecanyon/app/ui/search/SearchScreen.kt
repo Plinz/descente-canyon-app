@@ -347,6 +347,7 @@ fun SearchScreen(
             if (!uiState.isLoading && uiState.isResultListDeferred) {
                 SearchIdleContent(
                     recentCanyons = uiState.recentCanyons,
+                    descendedIds = uiState.descendedIds,
                     onCanyonClick = onCanyonClick,
                     onClearRecentCanyons = viewModel::clearRecentCanyons,
                     bottomPadding = contentPadding.calculateBottomPadding() + 96.dp,
@@ -371,6 +372,7 @@ fun SearchScreen(
                         CanyonSummaryCard(
                             canyon = canyon.toSummary(),
                             onClick = { onCanyonClick(canyon.id) },
+                            isDescended = canyon.isDescended,
                         )
                     }
                     item { Spacer(modifier = Modifier.height(96.dp)) }
@@ -585,6 +587,7 @@ private fun SearchCatalogLoadingHint(hasTypedQuery: Boolean, modifier: Modifier 
 @Composable
 private fun SearchIdleContent(
     recentCanyons: List<CanyonSummary>,
+    descendedIds: Set<Int>,
     onCanyonClick: (Int) -> Unit,
     onClearRecentCanyons: () -> Unit,
     bottomPadding: Dp,
@@ -615,7 +618,7 @@ private fun SearchIdleContent(
                 )
             }
             items(recentCanyons, key = { "recent-${it.id}" }) { canyon ->
-                CanyonSummaryCard(canyon = canyon, onClick = { onCanyonClick(canyon.id) })
+                CanyonSummaryCard(canyon = canyon, onClick = { onCanyonClick(canyon.id) }, isDescended = canyon.id in descendedIds)
             }
         }
     }

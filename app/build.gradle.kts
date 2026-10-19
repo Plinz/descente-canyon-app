@@ -418,6 +418,7 @@ dependencies {
     implementation(project(":feature:users"))
     implementation(project(":feature:settings"))
     implementation(project(":feature:outing"))
+    implementation(project(":feature:account"))
 
     // AndroidX Core
     implementation(libs.androidx.core.ktx)

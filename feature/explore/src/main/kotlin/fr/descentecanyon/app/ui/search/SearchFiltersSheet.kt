@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CotationRating
 import fr.descentecanyon.app.domain.model.IntRangeFilter
+import fr.descentecanyon.app.domain.model.LogbookFilter
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.ZoneCountry
@@ -153,6 +154,18 @@ fun SearchFiltersSheet(
                         onClick = { onCriteriaChanged(criteria.copy(favoritesOnly = !criteria.favoritesOnly)) },
                         label = { Text(stringResource(R.string.search_filter_favorites)) },
                     )
+                    LogbookFilterChip(
+                        criteria,
+                        LogbookFilter.DESCENDED,
+                        stringResource(R.string.search_filter_descended),
+                        onCriteriaChanged,
+                    )
+                    LogbookFilterChip(
+                        criteria,
+                        LogbookFilter.NOT_DESCENDED,
+                        stringResource(R.string.search_filter_not_descended),
+                        onCriteriaChanged,
+                    )
                     FilterChip(
                         selected = criteria.regulationOnly,
                         onClick = { onCriteriaChanged(criteria.copy(regulationOnly = !criteria.regulationOnly)) },
@@ -196,6 +209,18 @@ fun SearchFiltersSheet(
 }
 
 data class SearchFiltersSheetState(val criteria: SearchCriteria, val zones: List<ZoneCountry>, val totalResultsCount: Int)
+
+/** One of the two logbook choices; a second tap goes back to every canyon. */
+@Composable
+private fun LogbookFilterChip(criteria: SearchCriteria, filter: LogbookFilter, label: String, onCriteriaChanged: (SearchCriteria) -> Unit) {
+    FilterChip(
+        selected = criteria.logbookFilter == filter,
+        onClick = {
+            onCriteriaChanged(criteria.copy(logbookFilter = if (criteria.logbookFilter == filter) LogbookFilter.ALL else filter))
+        },
+        label = { Text(label) },
+    )
+}
 
 @Composable
 private fun FilterSection(title: String, content: @Composable () -> Unit) {
@@ -325,6 +350,8 @@ data class ActiveFilterAction(val label: String, val onRemove: () -> Unit)
 fun buildActiveFilterActions(uiState: SearchUiState, viewModel: SearchViewModel): List<ActiveFilterAction> {
     val criteria = uiState.criteria
     val favoritesLabel = stringResource(R.string.search_filter_favorites)
+    val descendedLabel = stringResource(R.string.search_filter_descended)
+    val notDescendedLabel = stringResource(R.string.search_filter_not_descended)
     val interestMinLabel = stringResource(R.string.search_filter_interest_min)
     val regulationsLabel = stringResource(R.string.regulations)
     val shuttleLabel = stringResource(R.string.shuttle)
@@ -340,6 +367,10 @@ fun buildActiveFilterActions(uiState: SearchUiState, viewModel: SearchViewModel)
                     viewModel.onCriteriaChanged(criteria.copy(favoritesOnly = false))
                 },
             )
+        }
+        if (criteria.logbookFilter != LogbookFilter.ALL) {
+            val label = if (criteria.logbookFilter == LogbookFilter.DESCENDED) descendedLabel else notDescendedLabel
+            add(ActiveFilterAction(label) { viewModel.onCriteriaChanged(criteria.copy(logbookFilter = LogbookFilter.ALL)) })
         }
         criteria.selectedCountry?.let { add(ActiveFilterAction(it, viewModel::clearCountry)) }
         criteria.selectedDepartment?.let { add(ActiveFilterAction(it, viewModel::clearDepartment)) }

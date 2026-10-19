@@ -3,6 +3,7 @@ package fr.descentecanyon.app.domain.usecase
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CotationRating
 import fr.descentecanyon.app.domain.model.IntRangeFilter
+import fr.descentecanyon.app.domain.model.LogbookFilter
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
@@ -10,6 +11,7 @@ import fr.descentecanyon.app.domain.model.ZoneCountry
 import fr.descentecanyon.app.domain.model.ZoneSubdivision
 import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.repository.CanyonRepository
+import fr.descentecanyon.app.domain.repository.LogbookRepository
 import io.mockk.mockk
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
@@ -17,7 +19,7 @@ import org.junit.Test
 
 class SearchCanyonsUseCaseTest {
 
-    private val useCase = SearchCanyonsUseCase(mockk<CanyonRepository>())
+    private val useCase = SearchCanyonsUseCase(mockk<CanyonRepository>(), mockk<LogbookRepository>())
 
     @Test
     fun `difficulty sort compares strongest cotation component first`() {
@@ -36,6 +38,20 @@ class SearchCanyonsUseCaseTest {
         )
 
         assertEquals(listOf(3, 4, 1, 2), result.results.map { it.id })
+    }
+
+    @Test
+    fun `the logbook filter keeps the canyons descended, or those never descended`() {
+        val catalog = listOf(canyon(id = 1).copy(isDescended = true), canyon(id = 2), canyon(id = 3).copy(isDescended = true))
+
+        val descended = useCase(catalog, SearchCriteria(logbookFilter = LogbookFilter.DESCENDED))
+        val notDescended = useCase(catalog, SearchCriteria(query = "canyon", logbookFilter = LogbookFilter.NOT_DESCENDED))
+
+        // Canyons done are few: listed without typing anything, unlike the rest of the catalog.
+        assertEquals(setOf(1, 3), descended.results.map { it.id }.toSet())
+        assertEquals(listOf(2), notDescended.results.map { it.id })
+        assertEquals(1, SearchCriteria(logbookFilter = LogbookFilter.DESCENDED).activeFilterCount())
+        assertEquals(LogbookFilter.ALL, SearchCriteria(logbookFilter = LogbookFilter.DESCENDED).clearAllFilters().logbookFilter)
     }
 
     @Test

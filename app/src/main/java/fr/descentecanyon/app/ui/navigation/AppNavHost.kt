@@ -24,6 +24,10 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import fr.descentecanyon.app.domain.model.LogbookEntry
+import fr.descentecanyon.app.ui.account.LogbookScreen
+import fr.descentecanyon.app.ui.account.LogbookTab
+import fr.descentecanyon.app.ui.account.MyAccountScreen
 import fr.descentecanyon.app.ui.applyAppRootNavigation
 import fr.descentecanyon.app.ui.canyon.CanyonDetailScreen
 import fr.descentecanyon.app.ui.canyon.CanyonPointsMapScreen
@@ -37,7 +41,6 @@ import fr.descentecanyon.app.ui.interest.InterestRatingFormScreen
 import fr.descentecanyon.app.ui.map.MapScreen
 import fr.descentecanyon.app.ui.notifications.NotificationCenterScreen
 import fr.descentecanyon.app.ui.outing.EmergencyScreen
-import fr.descentecanyon.app.ui.outing.LogbookScreen
 import fr.descentecanyon.app.ui.outing.OutingPlanScreen
 import fr.descentecanyon.app.ui.pending.PendingDebitsScreen
 import fr.descentecanyon.app.ui.search.SearchScreen
@@ -98,6 +101,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onSettingsClick = dropUnlessResumed {
                     navController.navigateSingleTop(Screen.Settings)
                 },
+                onAccountClick = dropUnlessResumed { navController.navigateSingleTop(Screen.MyAccount) },
                 contentPadding = topLevelContentPadding,
             )
         }
@@ -140,7 +144,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onCanyonClick = dropUnlessResumedWith { canyonId: Int ->
                     navController.navigateSingleTop(Screen.CanyonDetail(canyonId))
                 },
-                onLogbookClick = dropUnlessResumed { navController.navigateSingleTop(Screen.Logbook) },
+                onLogbookClick = dropUnlessResumed { navController.navigateSingleTop(Screen.Logbook()) },
                 // Another tab: navigated to like from the bottom bar, so "back" returns home.
                 onSearchClick = dropUnlessResumed {
                     navController.navigate(Screen.Search) { applyAppRootNavigation(navController.graph.findStartDestination().id) }
@@ -174,6 +178,12 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigate(Screen.CanyonDetail(canyonId)) },
                 onPlanOuting = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingPlan(detail.canyonId)) },
                 onOpenEmergency = dropUnlessResumed { navController.navigateSingleTop(Screen.Emergency(detail.canyonId)) },
+                onReportOuting = dropUnlessResumedWith { entry: LogbookEntry ->
+                    navController.navigateSingleTop(
+                        Screen.DebitForm(entry.canyonId, date = entry.date.toString(), descended = true, level = entry.debitLevel?.name),
+                    )
+                },
+                onOpenLogbook = dropUnlessResumed { navController.navigateSingleTop(Screen.Logbook()) },
                 openDebitsTabInitially = detail.openDebitsTab,
                 contentPadding = topLevelContentPadding,
                 refreshDebitsAfterSubmission = refreshDebitsAfterSubmission,
@@ -275,6 +285,20 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
             LogbookScreen(
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
                 onCanyonClick = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
+            )
+        }
+
+        composable<Screen.MyAccount> {
+            MyAccountScreen(
+                onBackClick = dropUnlessResumed { navController.popBackStack() },
+                onOpenLogbook = dropUnlessResumedWith { tab: LogbookTab -> navController.navigateSingleTop(Screen.Logbook(tab.ordinal)) },
+                onOpenMemberProfile = dropUnlessResumedWith { username: String ->
+                    navController.navigateSingleTop(Screen.UserProfile(username))
+                },
+                onOpenOuting = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.OutingPlan(canyonId)) },
+                onOpenPendingDebits = dropUnlessResumed { navController.navigateSingleTop(Screen.PendingDebits) },
+                onOpenNotifications = dropUnlessResumed { navController.navigateSingleTop(Screen.Notifications) },
+                onOpenSettings = dropUnlessResumed { navController.navigateSingleTop(Screen.Settings) },
             )
         }
 

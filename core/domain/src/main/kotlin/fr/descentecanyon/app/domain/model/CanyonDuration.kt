@@ -26,6 +26,25 @@ sealed interface CanyonDuration {
         private val PART_SEPARATORS = Regex("""\s+(?:à|ou|a)\s+|\s*[-/,–—]\s*""")
         private val PART = Regex("""^(\d{1,3})\s*(?:(h|heures?|j|jours?)\s*(\d{1,2})?\s*(?:mins?|mn|mi|m)?|(mins?|mn|mi|m|'))?$""")
 
+        /** The parts of an outing (approach, descent, return) added up; null when one of them is unknown. */
+        fun total(vararg parts: CanyonDuration): DurationRange? {
+            var low = 0
+            var high = 0
+            for (part in parts) {
+                when (part) {
+                    None -> Unit
+
+                    Unknown -> return null
+
+                    is Known -> {
+                        low += part.range.minMinutes
+                        high += part.range.maxMinutes
+                    }
+                }
+            }
+            return DurationRange(low, high).takeIf { high > 0 }
+        }
+
         /** Reads a duration of a canyon sheet; a bare number is a number of minutes ("5" for an approach). */
         fun parse(raw: String?): CanyonDuration {
             val text = raw?.trim()?.lowercase()?.trimEnd('.')?.replace(Regex("""\s+"""), " ").orEmpty()

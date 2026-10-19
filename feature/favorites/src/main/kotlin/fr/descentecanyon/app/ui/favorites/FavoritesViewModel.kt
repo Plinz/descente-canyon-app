@@ -8,6 +8,7 @@ import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
+import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.ui.common.UiText
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -42,8 +43,15 @@ internal fun List<CanyonSummary>.sortedFor(sort: FavoritesSort): List<CanyonSumm
 }
 
 data class FavoritesUiState(
+    /** Favorites shown: every one, or those never descended when [toDoOnly]. */
     val favorites: List<CanyonSummary> = emptyList(),
     val sort: FavoritesSort = FavoritesSort.ADDED,
+    /** Favorites already in the logbook. */
+    val descendedIds: Set<Int> = emptySet(),
+    /** Only the favorites never descended: the canyons still to do. */
+    val toDoOnly: Boolean = false,
+    /** How many favorites there are in all, whatever the filter. */
+    val totalCount: Int = 0,
     val isLoading: Boolean = false,
     val error: UiText? = null,
     /** Favorite just removed by the user, offered for undo. */
@@ -54,6 +62,7 @@ data class FavoritesUiState(
 class FavoritesViewModel @Inject constructor(
     private val favoritesRepository: FavoritesRepository,
     private val debitRepository: DebitRepository,
+    private val logbookRepository: LogbookRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FavoritesUiState())
@@ -62,6 +71,11 @@ class FavoritesViewModel @Inject constructor(
 
     init {
         loadFavorites()
+        viewModelScope.launch {
+            logbookRepository.observeDescendedCanyonIds().collect { ids ->
+                _uiState.update { it.copy(descendedIds = ids).withShownFavorites() }
+            }
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -80,14 +94,23 @@ class FavoritesViewModel @Inject constructor(
                 }
                 .collect { favorites ->
                     unsorted = favorites
-                    _uiState.update { it.copy(favorites = favorites.sortedFor(it.sort), isLoading = false, error = null) }
+                    _uiState.update { it.copy(isLoading = false, error = null).withShownFavorites() }
                 }
         }
     }
 
     fun selectSort(sort: FavoritesSort) {
-        _uiState.update { it.copy(sort = sort, favorites = unsorted.sortedFor(sort)) }
+        _uiState.update { it.copy(sort = sort).withShownFavorites() }
     }
+
+    fun toggleToDoOnly() {
+        _uiState.update { it.copy(toDoOnly = !it.toDoOnly).withShownFavorites() }
+    }
+
+    private fun FavoritesUiState.withShownFavorites(): FavoritesUiState = copy(
+        favorites = unsorted.filter { !toDoOnly || it.id !in descendedIds }.sortedFor(sort),
+        totalCount = unsorted.size,
+    )
 
     fun removeFavorite(canyon: CanyonSummary) {
         viewModelScope.launch {

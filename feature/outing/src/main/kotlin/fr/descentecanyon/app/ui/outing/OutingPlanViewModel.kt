@@ -20,6 +20,7 @@ import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.OutingTimeline
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.SunCalculator
+import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
@@ -72,6 +73,8 @@ data class OutingPlanUiState(
     val savedOuting: PlannedOuting? = null,
     val alertAt: LocalDateTime? = null,
     val expectedBack: LocalDateTime? = null,
+    /** The user's memo of the canyon (access, gear, traps): read again while preparing. */
+    val memo: String? = null,
 )
 
 /**
@@ -87,6 +90,7 @@ class OutingPlanViewModel @Inject constructor(
     private val getCanyonDebitPredictionsUseCase: GetCanyonDebitPredictionsUseCase,
     private val debitRepository: DebitRepository,
     private val outingRepository: OutingRepository,
+    private val canyonNotesRepository: CanyonNotesRepository,
     private val endOutingUseCase: EndOutingUseCase,
     private val connectivityObserver: ConnectivityObserver,
     private val clock: Clock,
@@ -104,6 +108,9 @@ class OutingPlanViewModel @Inject constructor(
         load()
         viewModelScope.launch {
             outingRepository.observeCurrent().collect { outing -> sources.update { it.copy(outing = outing) } }
+        }
+        viewModelScope.launch {
+            canyonNotesRepository.observeNote(canyonId).collect { memo -> sources.update { it.copy(memo = memo) } }
         }
         viewModelScope.launch {
             debitRepository.observeLatestKnownDebits(setOf(canyonId)).collect { debits ->
@@ -193,6 +200,7 @@ class OutingPlanViewModel @Inject constructor(
             savedOuting = sources.outing?.takeIf { it.canyonId == canyonId },
             alertAt = expectedBack.plusHours(choices.alertMarginHours.toLong()),
             expectedBack = expectedBack,
+            memo = sources.memo,
         )
     }
 
@@ -215,6 +223,7 @@ class OutingPlanViewModel @Inject constructor(
         val predictions: CanyonDebitPredictions? = null,
         val lastReport: Debit? = null,
         val outing: PlannedOuting? = null,
+        val memo: String? = null,
     )
 
     companion object {

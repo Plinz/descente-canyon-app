@@ -19,9 +19,11 @@ import fr.descentecanyon.app.data.repository.InterestRatingRepositoryImpl
 import fr.descentecanyon.app.data.repository.LogbookRepositoryImpl
 import fr.descentecanyon.app.data.repository.NotificationCenterRepositoryImpl
 import fr.descentecanyon.app.data.repository.OutingRepositoryImpl
+import fr.descentecanyon.app.data.repository.PersonalDataRepositoryImpl
 import fr.descentecanyon.app.data.repository.PhotoRepositoryImpl
 import fr.descentecanyon.app.data.repository.PreferencesRepositoryImpl
 import fr.descentecanyon.app.data.repository.RecentCanyonsRepositoryImpl
+import fr.descentecanyon.app.data.repository.SiteAccountRepositoryImpl
 import fr.descentecanyon.app.data.repository.WeatherRepositoryImpl
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
@@ -38,9 +40,11 @@ import fr.descentecanyon.app.domain.repository.InterestRatingRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
+import fr.descentecanyon.app.domain.repository.PersonalDataRepository
 import fr.descentecanyon.app.domain.repository.PhotoRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
+import fr.descentecanyon.app.domain.repository.SiteAccountRepository
 import fr.descentecanyon.app.domain.repository.WeatherRepository
 import javax.inject.Singleton
 
@@ -123,4 +127,12 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindLogbookRepository(impl: LogbookRepositoryImpl): LogbookRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSiteAccountRepository(impl: SiteAccountRepositoryImpl): SiteAccountRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPersonalDataRepository(impl: PersonalDataRepositoryImpl): PersonalDataRepository
 }
