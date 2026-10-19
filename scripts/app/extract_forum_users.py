@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+"""
+Builds forum_users.json: the members of descente-canyon.com (a site account is also the forum
+account) found in the debit reports and on the forum.
+
+A debit report signed by a name typed without an account is not a member: the anonymous form asks
+for a "groupe", so these names are free text ("Pierre, Paul et Jacques") that no one can be
+followed by, and splitting them would invent people. The remark under a report tells the two
+apart: a member shows the site counters, an anonymous name shows "Utilisateur non enregistré"
+(see parse_report_author_block in scripts/debits/pipeline_lib.py). A name is a member once it has
+been seen with an account in one remark, or on the forum.
+"""
 
 from __future__ import annotations
 
@@ -21,44 +32,49 @@ from bs4 import BeautifulSoup, FeatureNotFound, XMLParsedAsHTMLWarning
 
 
 BASE_URL = "https://www.descente-canyon.com"
+FORUM_URL = f"{BASE_URL}/forums/"
 DEFAULT_FEED_URLS = [
     f"{BASE_URL}/forums/feed",
     f"{BASE_URL}/forums/feed/topics_active",
 ]
-DEFAULT_USER_AGENT = "DescenteCanyonForumUserExtractor/0.1"
+DEFAULT_USER_AGENT = "DescenteCanyonForumUserExtractor/0.2"
 SKIPPED_USERNAMES = {
     "",
     "utilisateur non enregistre",
     "utilisateur non inscrit",
     "anonyme",
 }
+ISO_DATE = re.compile(r"^\d{4}-\d{2}-\d{2}")
+SEARCH_RESULT_COUNT = re.compile(r"(\d[\d\s .,]*)\s*(?:r[ée]sultats?|results?)", re.IGNORECASE)
 
 
 @dataclass
-class UserRecord:
+class MemberRecord:
     username: str
-    normalized_username: str
     forum_user_id: int | None = None
-    profile_url: str | None = None
-    has_forum_activity: bool = False
-    has_debit_activity: bool = False
-    forum_post_count: int = 0
-    debit_observation_count: int = 0
-    last_forum_post_at: str | None = None
+    # Counters the site shows under the member's name (debitReports, forumPosts, photos, ...).
+    site_stats: dict[str, int] | None = None
+    # Report lines signed with the name, for members whose counters were never seen.
+    report_count: int = 0
+    last_report_date: str | None = None
+    last_report_canyon_id: int | None = None
+    last_report_canyon_name: str | None = None
+    forum_post_urls: set[str] = field(default_factory=set)
+    scanned_forum_post_count: int | None = None
+    last_forum_post_date: str | None = None
     last_forum_post_url: str | None = None
-    last_debit_observation_at: str | None = None
-    last_debit_observation_url: str | None = None
     sources: set[str] = field(default_factory=set)
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Extract forum_users.json from debit observations and public forum pages.")
+    parser = argparse.ArgumentParser(description="Extract forum_users.json (site members) from debit observations and public forum pages.")
     parser.add_argument("--room-import-dir", type=Path, default=Path("offline-data/full/room-import"))
     parser.add_argument("--output", type=Path)
     parser.add_argument(
         "--debit-observations-path",
         type=Path,
         default=Path("build/debit-pipeline/observations/all_debit_observations.jsonl"),
+        help="Output of scripts/debits/build_observation_dataset.py (needs the authorProfiles field)",
     )
     parser.add_argument("--skip-debits", action="store_true")
     parser.add_argument("--skip-forum", action="store_true")
@@ -96,7 +112,8 @@ def is_valid_username(username: str | None) -> bool:
 def sanitize_url(value: str | None) -> str | None:
     if not value:
         return None
-    absolute = urljoin(BASE_URL, value)
+    # Forum links are relative to /forums/ (./viewtopic.php, memberlist.php).
+    absolute = urljoin(FORUM_URL, value)
     parsed = urlparse(absolute)
     query = parse_qs(parsed.query, keep_blank_values=True)
     query.pop("sid", None)
@@ -115,6 +132,13 @@ def extract_forum_user_id(url: str | None) -> int | None:
         return None
 
 
+def iso_date(value: str | None) -> str | None:
+    """The day of an ISO date or timestamp; anything else (French text dates) is dropped."""
+    if not value or not ISO_DATE.match(value):
+        return None
+    return value[:10]
+
+
 def is_newer(candidate: str | None, current: str | None) -> bool:
     if candidate is None:
         return False
@@ -123,64 +147,16 @@ def is_newer(candidate: str | None, current: str | None) -> bool:
     return candidate > current
 
 
-def user_key(username: str) -> str:
-    return normalize_username(username)
-
-
-def get_or_create(users: dict[str, UserRecord], username: str) -> UserRecord | None:
+def get_or_create(members: dict[str, MemberRecord], username: str | None) -> MemberRecord | None:
     username = clean_text(username) or ""
     if not is_valid_username(username):
         return None
-    key = user_key(username)
-    existing = users.get(key)
-    if existing is not None:
-        return existing
-    record = UserRecord(username=username, normalized_username=key)
-    users[key] = record
+    # The exact name is the identity: "lolo" and "Lolo_" are two accounts.
+    record = members.get(username)
+    if record is None:
+        record = MemberRecord(username=username)
+        members[username] = record
     return record
-
-
-def record_debit_author(
-    users: dict[str, UserRecord],
-    *,
-    username: str,
-    observed_at: str | None,
-    source_url: str | None,
-) -> None:
-    record = get_or_create(users, username)
-    if record is None:
-        return
-    record.has_debit_activity = True
-    record.sources.add("DEBIT")
-    record.debit_observation_count += 1
-    if is_newer(observed_at, record.last_debit_observation_at):
-        record.last_debit_observation_at = observed_at
-        record.last_debit_observation_url = sanitize_url(source_url)
-
-
-def record_forum_author(
-    users: dict[str, UserRecord],
-    *,
-    username: str,
-    forum_user_id: int | None = None,
-    profile_url: str | None = None,
-    post_count: int = 1,
-    posted_at: str | None = None,
-    post_url: str | None = None,
-) -> None:
-    record = get_or_create(users, username)
-    if record is None:
-        return
-    record.has_forum_activity = True
-    record.sources.add("FORUM")
-    record.forum_post_count = max(record.forum_post_count, 0) + max(post_count, 0)
-    if forum_user_id is not None:
-        record.forum_user_id = forum_user_id
-    if profile_url:
-        record.profile_url = sanitize_url(profile_url)
-    if is_newer(posted_at, record.last_forum_post_at):
-        record.last_forum_post_at = posted_at
-        record.last_forum_post_url = sanitize_url(post_url)
 
 
 def cache_path_for_url(cache_dir: Path, url: str) -> Path:
@@ -220,21 +196,104 @@ def read_jsonl(path: Path) -> list[dict[str, Any]]:
     return rows
 
 
-def collect_debit_users(users: dict[str, UserRecord], observations_path: Path) -> int:
-    if not observations_path.exists():
-        print(f"Debit observations missing: {observations_path}", file=sys.stderr)
-        return 0
-    observations = read_jsonl(observations_path)
+def collect_debit_members(members: dict[str, MemberRecord], observations: list[dict[str, Any]]) -> dict[str, int]:
+    """Registers the authors seen with an account in a report remark, with the site counters."""
+    anonymous_names: set[str] = set()
+    profile_count = 0
     for observation in observations:
-        observed_at = observation.get("assumedObservationTimeLocal") or observation.get("date")
-        source_url = observation.get("sourceUrl")
+        for profile in observation.get("authorProfiles") or []:
+            profile_count += 1
+            if profile.get("registered") is False:
+                anonymous_names.add(profile.get("author") or "")
+            if profile.get("registered") is not True:
+                continue
+            record = get_or_create(members, profile.get("author"))
+            if record is None:
+                continue
+            record.sources.add("DEBIT")
+            if profile.get("forumUserId") is not None:
+                record.forum_user_id = int(profile["forumUserId"])
+            stats = profile.get("siteStats")
+            # Pages are read over hours: the highest debit count is the most recent snapshot.
+            if stats and (record.site_stats is None or stats.get("debitReports", 0) >= record.site_stats.get("debitReports", 0)):
+                record.site_stats = dict(stats)
+    return {
+        "authorProfileCount": profile_count,
+        "anonymousNameCount": len(anonymous_names - set(members)),
+    }
+
+
+def collect_previous_members(members: dict[str, MemberRecord], previous_rows: list[dict[str, Any]]) -> int:
+    """
+    Keeps the members an earlier run proved by their forum account id: an account does not go away,
+    while the forum pages read only show who posted lately.
+    """
+    count = 0
+    for row in previous_rows:
+        if row.get("forumUserId") is None:
+            continue
+        record = get_or_create(members, row.get("username"))
+        if record is None:
+            continue
+        if record.forum_user_id is None:
+            record.forum_user_id = int(row["forumUserId"])
+        record.sources.add("PREVIOUS")
+        count += 1
+    return count
+
+
+def attribute_debit_reports(members: dict[str, MemberRecord], observations: list[dict[str, Any]], today: str) -> int:
+    """Counts the report lines signed by a member and keeps the latest one (future typos aside)."""
+    attributed = 0
+    for observation in observations:
+        report_date = iso_date(observation.get("date"))
         for author in observation.get("authors") or []:
-            record_debit_author(users, username=str(author), observed_at=observed_at, source_url=source_url)
-    return len(observations)
+            record = members.get(clean_text(str(author)) or "")
+            if record is None:
+                continue
+            attributed += 1
+            record.report_count += 1
+            if report_date is not None and report_date <= today and is_newer(report_date, record.last_report_date):
+                record.last_report_date = report_date
+                record.last_report_canyon_id = observation.get("canyonId")
+                record.last_report_canyon_name = observation.get("canyonName")
+    return attributed
+
+
+def record_forum_post(
+    members: dict[str, MemberRecord],
+    *,
+    username: str,
+    forum_user_id: int | None,
+    posted_at: str | None = None,
+    post_url: str | None = None,
+    post_count: int | None = None,
+) -> bool:
+    # An author with an account id is a member; without one (the feeds give none) the post only
+    # completes a member already known.
+    if forum_user_id is None:
+        record = members.get(clean_text(username) or "")
+    else:
+        record = get_or_create(members, username)
+    if record is None:
+        return False
+    record.sources.add("FORUM")
+    if forum_user_id is not None:
+        record.forum_user_id = forum_user_id
+    post_url = sanitize_url(post_url)
+    if post_url:
+        record.forum_post_urls.add(post_url)
+    if post_count is not None:
+        record.scanned_forum_post_count = post_count
+    posted_on = iso_date(posted_at)
+    if is_newer(posted_on, record.last_forum_post_date):
+        record.last_forum_post_date = posted_on
+        record.last_forum_post_url = post_url
+    return True
 
 
 def collect_feed_users(
-    users: dict[str, UserRecord],
+    members: dict[str, MemberRecord],
     *,
     url: str,
     cache_dir: Path,
@@ -262,23 +321,21 @@ def collect_feed_users(
         uri = clean_text(author.find("uri").get_text(" ", strip=True) if author and author.find("uri") else None)
         link = entry.find("link")
         post_url = link.get("href") if link is not None else None
-        date_node = entry.find("updated") or entry.find("published") or entry.find("id")
+        date_node = entry.find("published") or entry.find("updated")
         posted_at = clean_text(date_node.get_text(" ", strip=True) if date_node is not None else None)
-        if name:
-            record_forum_author(
-                users,
-                username=name,
-                forum_user_id=extract_forum_user_id(uri),
-                profile_url=uri,
-                posted_at=posted_at,
-                post_url=post_url,
-            )
+        if name and record_forum_post(
+            members,
+            username=name,
+            forum_user_id=extract_forum_user_id(uri),
+            posted_at=posted_at,
+            post_url=post_url,
+        ):
             count += 1
     return count
 
 
 def collect_active_topic_users(
-    users: dict[str, UserRecord],
+    members: dict[str, MemberRecord],
     *,
     page_count: int,
     cache_dir: Path,
@@ -298,27 +355,38 @@ def collect_active_topic_users(
             delay_seconds=delay_seconds,
         )
         soup = BeautifulSoup(html, "html.parser")
+        # Only who posted: the dates of a topic row do not say which of its authors they belong to.
         for link in soup.select("a[href*='memberlist.php?mode=viewprofile'][href*='u=']"):
-            username = clean_text(link.get_text(" ", strip=True))
-            profile_url = sanitize_url(link.get("href"))
-            container = link.find_parent(["li", "tr", "div"]) or soup
-            time_node = container.select_one("time[datetime]") if container else None
-            posted_at = clean_text(time_node.get("datetime") if time_node is not None else None)
-            post_link = container.select_one("a[href*='viewtopic.php']") if container else None
-            record_forum_author(
-                users,
-                username=username or "",
-                forum_user_id=extract_forum_user_id(profile_url),
-                profile_url=profile_url,
-                posted_at=posted_at,
-                post_url=post_link.get("href") if post_link is not None else None,
-            )
-            count += 1
+            if record_forum_post(
+                members,
+                username=clean_text(link.get_text(" ", strip=True)) or "",
+                forum_user_id=extract_forum_user_id(link.get("href")),
+            ):
+                count += 1
     return count
 
 
+def read_author_search(
+    url: str,
+    *,
+    cache_dir: Path,
+    refresh_cache: bool,
+    user_agent: str,
+    delay_seconds: float,
+) -> tuple[Any, int] | None:
+    """The forum search of an author's posts: its page and the number of posts it found."""
+    html = fetch_text(url, cache_dir=cache_dir, refresh_cache=refresh_cache, user_agent=user_agent, delay_seconds=delay_seconds)
+    soup = BeautifulSoup(html, "html.parser")
+    title = soup.select_one("h2.searchresults-title") or soup.select_one("h2")
+    match = SEARCH_RESULT_COUNT.search(title.get_text(" ", strip=True) if title is not None else "")
+    if match is not None:
+        return soup, int(re.sub(r"\D", "", match.group(1)))
+    posts = soup.select("div.search.post")
+    return (soup, len(posts)) if posts else None
+
+
 def collect_author_id_scan_users(
-    users: dict[str, UserRecord],
+    members: dict[str, MemberRecord],
     *,
     author_id_min: int,
     author_id_max: int,
@@ -331,74 +399,86 @@ def collect_author_id_scan_users(
     for author_id in range(author_id_min, author_id_max + 1):
         url = f"{BASE_URL}/forums/search.php?author_id={author_id}&sr=posts&sk=t&sd=d"
         try:
-            html = fetch_text(
-                url,
-                cache_dir=cache_dir,
-                refresh_cache=refresh_cache,
-                user_agent=user_agent,
-                delay_seconds=delay_seconds,
-            )
+            result = read_author_search(url, cache_dir=cache_dir, refresh_cache=refresh_cache, user_agent=user_agent, delay_seconds=delay_seconds)
         except Exception as exc:  # noqa: BLE001
             print(f"author_id={author_id} failed: {exc!r}", file=sys.stderr)
             continue
-        soup = BeautifulSoup(html, "html.parser")
+        if result is None:
+            continue
+        soup, result_count = result
         profile_link = soup.select_one(f"a[href*='memberlist.php?mode=viewprofile'][href*='u={author_id}']")
         if profile_link is None:
             continue
-        username = clean_text(profile_link.get_text(" ", strip=True))
-        result_text = clean_text(soup.select_one("h2").get_text(" ", strip=True) if soup.select_one("h2") else None) or ""
-        match = re.search(r"(\d+)\s+result", result_text)
-        result_count = int(match.group(1)) if match else len(soup.select("div.search.post"))
         first_post = soup.select_one("div.search.post")
         post_link = first_post.select_one("h3 a[href]") if first_post is not None else None
-        date_node = first_post.select_one("dd.search-result-date") if first_post is not None else None
-        record_forum_author(
-            users,
-            username=username or "",
+        time_node = first_post.select_one("time[datetime]") if first_post is not None else None
+        if record_forum_post(
+            members,
+            username=clean_text(profile_link.get_text(" ", strip=True)) or "",
             forum_user_id=author_id,
-            profile_url=profile_link.get("href"),
-            post_count=max(result_count, 1),
-            posted_at=clean_text(date_node.get_text(" ", strip=True) if date_node is not None else None),
+            posted_at=clean_text(time_node.get("datetime") if time_node is not None else None),
             post_url=post_link.get("href") if post_link is not None else None,
-        )
-        count += 1
-        if count % 50 == 0:
-            print(f"Forum author scan: found={count} latestAuthorId={author_id}", file=sys.stderr)
+            post_count=result_count,
+        ):
+            count += 1
+            if count % 50 == 0:
+                print(f"Forum author scan: found={count} latestAuthorId={author_id}", file=sys.stderr)
     return count
 
 
-def source_label(record: UserRecord) -> str:
-    has_forum = record.has_forum_activity
-    has_debit = record.has_debit_activity
-    if has_forum and has_debit:
-        return "FORUM_AND_DEBIT"
-    if has_forum:
-        return "FORUM"
-    return "DEBIT"
+def count_forum_posts_without_counters(
+    members: dict[str, MemberRecord],
+    *,
+    cache_dir: Path,
+    refresh_cache: bool,
+    user_agent: str,
+    delay_seconds: float,
+) -> int:
+    """Members known by the forum only have no site counters: their post count comes from the search."""
+    count = 0
+    for record in members.values():
+        if record.site_stats is not None or record.scanned_forum_post_count is not None or record.forum_user_id is None:
+            continue
+        url = f"{BASE_URL}/forums/search.php?author_id={record.forum_user_id}&sr=posts&sk=t&sd=d"
+        try:
+            result = read_author_search(url, cache_dir=cache_dir, refresh_cache=refresh_cache, user_agent=user_agent, delay_seconds=delay_seconds)
+        except Exception as exc:  # noqa: BLE001
+            print(f"author_id={record.forum_user_id} failed: {exc!r}", file=sys.stderr)
+            continue
+        if result is not None:
+            record.scanned_forum_post_count = result[1]
+            count += 1
+    return count
 
 
-def to_output_rows(users: dict[str, UserRecord], generated_at: str) -> list[dict[str, Any]]:
+def to_output_rows(members: dict[str, MemberRecord], generated_at: str) -> list[dict[str, Any]]:
     rows = []
-    for record in users.values():
+    for record in members.values():
+        stats = record.site_stats or {}
+        forum_post_count = max(
+            stats.get("forumPosts", 0),
+            record.scanned_forum_post_count or 0,
+            len(record.forum_post_urls),
+        )
         rows.append(
             {
                 "username": record.username,
-                "normalizedUsername": record.normalized_username,
+                "normalizedUsername": normalize_username(record.username),
                 "forumUserId": record.forum_user_id,
-                "profileUrl": record.profile_url,
-                "source": source_label(record),
-                "hasForumActivity": record.has_forum_activity,
-                "hasDebitActivity": record.has_debit_activity,
-                "forumPostCount": record.forum_post_count,
-                "debitObservationCount": record.debit_observation_count,
-                "lastForumPostAt": record.last_forum_post_at,
+                "debitReportCount": stats["debitReports"] if "debitReports" in stats else record.report_count,
+                "forumPostCount": forum_post_count,
+                # Unknown, not zero, for a member never seen with the site counters.
+                "photoCount": stats.get("photos") if stats else None,
+                "canyonSheetContributionCount": stats.get("canyonSheetContributions") if stats else None,
+                "lastDebitReportDate": record.last_report_date,
+                "lastDebitReportCanyonId": record.last_report_canyon_id,
+                "lastDebitReportCanyonName": record.last_report_canyon_name,
+                "lastForumPostDate": record.last_forum_post_date,
                 "lastForumPostUrl": record.last_forum_post_url,
-                "lastDebitObservationAt": record.last_debit_observation_at,
-                "lastDebitObservationUrl": record.last_debit_observation_url,
                 "updatedAt": generated_at,
             }
         )
-    return sorted(rows, key=lambda item: item["normalizedUsername"])
+    return sorted(rows, key=lambda item: (item["normalizedUsername"], item["username"]))
 
 
 def write_json(path: Path, payload: Any) -> None:
@@ -430,59 +510,70 @@ def update_manifest(room_import_dir: Path, generated_at: str, user_count: int) -
 def main() -> int:
     args = parse_args()
     delay_seconds = max(args.request_delay_ms, 0) / 1000.0
-    generated_at = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(timezone.utc)
+    generated_at = now.isoformat()
     output_path = args.output or (args.room_import_dir / "forum_users.json")
-    users: dict[str, UserRecord] = {}
+    members: dict[str, MemberRecord] = {}
+    fetch_options = {
+        "cache_dir": args.cache_dir,
+        "refresh_cache": args.refresh_cache,
+        "user_agent": args.user_agent,
+        "delay_seconds": delay_seconds,
+    }
 
-    debit_observation_count = 0
+    previous_rows = json.loads(output_path.read_text(encoding="utf-8")) if output_path.exists() else []
+    previous_member_count = collect_previous_members(members, previous_rows)
+
+    observations: list[dict[str, Any]] = []
+    debit_summary: dict[str, int] = {}
     if not args.skip_debits:
-        debit_observation_count = collect_debit_users(users, args.debit_observations_path)
-        print(f"Debit observations processed: {debit_observation_count}", file=sys.stderr)
+        if not args.debit_observations_path.exists():
+            print(f"Debit observations missing: {args.debit_observations_path}", file=sys.stderr)
+            return 1
+        observations = read_jsonl(args.debit_observations_path)
+        if not any("authorProfiles" in observation for observation in observations[:1000]):
+            print("Debit observations have no authorProfiles: rebuild them with scripts/debits/build_observation_dataset.py", file=sys.stderr)
+            return 1
+        debit_summary = collect_debit_members(members, observations)
+        print(f"Debit observations processed: {len(observations)}", file=sys.stderr)
 
     forum_event_count = 0
+    forum_count_scans = 0
     if not args.skip_forum:
-        for feed_url in args.forum_feed_urls or DEFAULT_FEED_URLS:
-            forum_event_count += collect_feed_users(
-                users,
-                url=feed_url,
-                cache_dir=args.cache_dir,
-                refresh_cache=args.refresh_cache,
-                user_agent=args.user_agent,
-                delay_seconds=delay_seconds,
-            )
-        forum_event_count += collect_active_topic_users(
-            users,
-            page_count=args.forum_active_topic_pages,
-            cache_dir=args.cache_dir,
-            refresh_cache=args.refresh_cache,
-            user_agent=args.user_agent,
-            delay_seconds=delay_seconds,
-        )
+        # The pages giving account ids first: the feeds only complete the members they found.
+        forum_event_count += collect_active_topic_users(members, page_count=args.forum_active_topic_pages, **fetch_options)
         if args.forum_author_id_min is not None and args.forum_author_id_max is not None:
             forum_event_count += collect_author_id_scan_users(
-                users,
+                members,
                 author_id_min=args.forum_author_id_min,
                 author_id_max=args.forum_author_id_max,
-                cache_dir=args.cache_dir,
-                refresh_cache=args.refresh_cache,
-                user_agent=args.user_agent,
-                delay_seconds=delay_seconds,
+                **fetch_options,
             )
+        for feed_url in args.forum_feed_urls or DEFAULT_FEED_URLS:
+            forum_event_count += collect_feed_users(members, url=feed_url, **fetch_options)
+        forum_count_scans = count_forum_posts_without_counters(members, **fetch_options)
         print(f"Forum author events processed: {forum_event_count}", file=sys.stderr)
 
-    rows = to_output_rows(users, generated_at)
+    attributed_reports = attribute_debit_reports(members, observations, now.date().isoformat())
+
+    rows = to_output_rows(members, generated_at)
     write_json(output_path, rows)
     update_manifest(args.room_import_dir, generated_at, len(rows))
 
     summary = {
         "generatedAt": generated_at,
         "output": str(output_path),
-        "userCount": len(rows),
-        "forumUserCount": sum(1 for row in rows if row["hasForumActivity"]),
-        "debitUserCount": sum(1 for row in rows if row["hasDebitActivity"]),
-        "forumAndDebitUserCount": sum(1 for row in rows if row["source"] == "FORUM_AND_DEBIT"),
-        "debitObservationCount": debit_observation_count,
+        "memberCount": len(rows),
+        "membersFromDebits": sum(1 for record in members.values() if "DEBIT" in record.sources),
+        "membersFromForum": sum(1 for record in members.values() if "FORUM" in record.sources),
+        "membersKeptFromPreviousRun": previous_member_count,
+        "membersWithForumId": sum(1 for row in rows if row["forumUserId"] is not None),
+        "membersWithForumPosts": sum(1 for row in rows if row["forumPostCount"] > 0),
+        "debitObservationCount": len(observations),
+        "reportLinesAttributedToMembers": attributed_reports,
         "forumEventCount": forum_event_count,
+        "forumPostCountScans": forum_count_scans,
+        **debit_summary,
     }
     print(json.dumps(summary, ensure_ascii=False, indent=2), file=sys.stderr)
     return 0

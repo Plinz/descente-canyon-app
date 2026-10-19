@@ -25,8 +25,9 @@ sealed interface Screen {
     @Serializable
     data object UserSearch : Screen
 
+    /** A member of the site, by account name exactly as the site shows it. */
     @Serializable
-    data class UserProfile(val normalizedUsername: String) : Screen
+    data class UserProfile(val username: String) : Screen
 
     @Serializable
     data class CanyonDetail(val canyonId: Int, val openDebitsTab: Boolean = false) : Screen

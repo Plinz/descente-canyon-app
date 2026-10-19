@@ -1,21 +1,32 @@
 package fr.descentecanyon.app.domain.model
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class NotificationCenterStateTest {
 
     @Test
-    fun `followed users with a forum account are forum targets, the others are not`() {
+    fun `every followed member is a forum target, with or without a known forum id`() {
         val state = NotificationCenterState(
             followedUsers = listOf(
-                FollowedUser(username = "Max38", normalizedUsername = "max38", forumUserId = 12),
-                FollowedUser(username = "Riri", normalizedUsername = "riri"),
+                FollowedUser(username = "Max38", forumUserId = 12),
+                // Searched by name.
+                FollowedUser(username = "Riri"),
             ),
         )
 
         // Following only users must still run the forum sync.
-        assertEquals(1, state.forumTargetCount)
+        assertEquals(2, state.forumTargetCount)
+    }
+
+    @Test
+    fun `a followed member is recognised whatever the case of the name`() {
+        val user = FollowedUser(username = "Lolo")
+
+        assertTrue(user.hasUsername("lolo"))
+        assertFalse(user.hasUsername("Lolo_"))
     }
 
     @Test

@@ -84,9 +84,9 @@ class NotificationCenterViewModel @Inject constructor(
         }
     }
 
-    fun removeUserFollow(normalizedUsername: String) {
+    fun removeUserFollow(username: String) {
         viewModelScope.launch {
-            notificationCenterRepository.removeUserFollow(normalizedUsername)
+            notificationCenterRepository.removeUserFollow(username)
         }
     }
 

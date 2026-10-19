@@ -34,6 +34,7 @@ import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.EdfPracticabilityRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
+import fr.descentecanyon.app.domain.repository.ForumUserRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import fr.descentecanyon.app.domain.repository.PhotoRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
@@ -79,6 +80,9 @@ class CanyonDetailViewModelTest {
     private val edfPracticabilityRepository = mockk<EdfPracticabilityRepository>()
     private val connectivityObserver = mockk<ConnectivityObserver>()
     private val notificationCenterRepository = mockk<NotificationCenterRepository>()
+    private val forumUserRepository = mockk<ForumUserRepository> {
+        coEvery { findMembers(any()) } returns emptySet()
+    }
     private val recentCanyonsRepository = mockk<RecentCanyonsRepository>(relaxUnitFun = true)
     private val personalNote = MutableStateFlow<String?>(null)
     private val canyonNotesRepository = mockk<CanyonNotesRepository>(relaxUnitFun = true) {
@@ -111,6 +115,25 @@ class CanyonDetailViewModelTest {
 
         assertEquals("Riolan", viewModel.uiState.value.canyonDetail?.canyon?.nom)
         assertFalse(viewModel.uiState.value.isLoading)
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `only the report authors who are site members are offered a profile`() = runTest {
+        stubBaseState()
+        coEvery { canyonRepository.getCanyonPreview(42) } returns Result.success(detail())
+        coEvery { canyonRepository.getCanyonDetail(42) } returns Result.success(detail())
+        val reports = listOf(
+            Debit(canyonId = 42, date = java.time.LocalDate.of(2026, 3, 28), niveau = NiveauDebit.GROS, auteur = "Pierre, Paul et Jacques"),
+            Debit(canyonId = 42, date = java.time.LocalDate.of(2026, 3, 27), niveau = NiveauDebit.CORRECT, auteur = "alice"),
+        )
+        every { debitRepository.getDebitsForCanyon(42) } returns flowOf(Result.success(reports))
+        coEvery { forumUserRepository.findMembers(listOf("Pierre, Paul et Jacques", "alice")) } returns setOf("alice")
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertEquals(setOf("alice"), viewModel.uiState.value.memberAuthors)
     }
 
     @Test
@@ -354,6 +377,7 @@ class CanyonDetailViewModelTest {
             debitRepository = debitRepository,
             downloadPhotoForOfflineUseCase = downloadPhotoForOfflineUseCase,
             connectivityObserver = connectivityObserver,
+            forumUserRepository = forumUserRepository,
         ),
         recentCanyonsRepository = recentCanyonsRepository,
         canyonNotesRepository = canyonNotesRepository,

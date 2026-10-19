@@ -3,6 +3,7 @@ package fr.descentecanyon.app.data.repository
 import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.FollowedCanyon
 import fr.descentecanyon.app.domain.model.FollowedForumCategory
+import fr.descentecanyon.app.domain.model.FollowedUser
 import fr.descentecanyon.app.domain.model.ForumActiveTopic
 import fr.descentecanyon.app.domain.model.ForumUser
 import fr.descentecanyon.app.domain.model.ForumUserPost
@@ -11,6 +12,7 @@ import fr.descentecanyon.app.domain.model.NotificationCenterState
 import fr.descentecanyon.app.domain.model.TrackedActivityType
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -18,7 +20,7 @@ class NotificationSyncEngineTest {
 
     @Test
     fun `followed user seeds first forum result then emits only new post`() {
-        val user = ForumUser(username = "Eric", normalizedUsername = "eric", forumUserId = 5)
+        val user = ForumUser(username = "Eric", forumUserId = 5)
         val state = NotificationCenterState(
             followedUsers = listOf(NotificationSyncEngine.buildInitialUserFollow(user)),
         )
@@ -34,6 +36,18 @@ class NotificationSyncEngineTest {
             2L,
         )
         assertEquals(listOf("forum-post:101"), summary.newForumEvents.map { it.id })
+    }
+
+    @Test
+    fun `a followed member whose posts were not read is seeded by the next read, without announcing them`() {
+        val state = NotificationCenterState(followedUsers = listOf(FollowedUser(username = "Eric")))
+
+        val (unread, _) = NotificationSyncEngine.applyFetchedUserPosts(state, emptyList(), 1L)
+        assertFalse(unread.followedUsers.first().hasSeededForumPosts)
+
+        val (seeded, summary) = NotificationSyncEngine.applyFetchedUserPosts(unread, listOf(forumPost(100), forumPost(99)), 2L)
+        assertTrue(summary.newForumEvents.isEmpty())
+        assertTrue(seeded.followedUsers.first().hasSeededForumPosts)
     }
 
     @Test

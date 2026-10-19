@@ -24,7 +24,6 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
-import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.ui.applyAppRootNavigation
 import fr.descentecanyon.app.ui.canyon.CanyonDetailScreen
 import fr.descentecanyon.app.ui.canyon.CanyonPointsMapScreen
@@ -170,9 +169,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onOpenPhotoGallery = dropUnlessResumedWith { photoId: Long ->
                     navController.navigateSingleTop(Screen.PhotoGallery(detail.canyonId, photoId))
                 },
-                onUserClick = dropUnlessResumedWith { username: String ->
-                    navController.navigateSingleTop(Screen.UserProfile(username.normalizeForSearch()))
-                },
+                onUserClick = dropUnlessResumedWith { username: String -> navController.navigateSingleTop(Screen.UserProfile(username)) },
                 // Not single top: another canyon is pushed so "back" returns to this one.
                 onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigate(Screen.CanyonDetail(canyonId)) },
                 onPlanOuting = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingPlan(detail.canyonId)) },
@@ -216,6 +213,9 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
         composable<Screen.UserProfile> {
             UserProfileScreen(
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
+                onOpenCanyon = dropUnlessResumedWith { canyonId: Int ->
+                    navController.navigateSingleTop(Screen.CanyonDetail(canyonId, openDebitsTab = true))
+                },
                 contentPadding = topLevelContentPadding,
             )
         }

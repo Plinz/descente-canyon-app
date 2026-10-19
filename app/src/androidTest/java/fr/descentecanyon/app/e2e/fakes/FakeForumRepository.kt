@@ -22,5 +22,5 @@ class FakeForumRepository @Inject constructor() : ForumRepository {
 
     override suspend fun refreshCategories(): Result<CachedItems<ForumCategory>> = Result.success(CachedItems())
 
-    override suspend fun refreshUserPosts(authorId: Int): Result<List<ForumUserPost>> = Result.success(emptyList())
+    override suspend fun refreshUserPosts(username: String, authorId: Int?): Result<List<ForumUserPost>> = Result.success(emptyList())
 }

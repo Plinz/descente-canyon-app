@@ -55,7 +55,7 @@ abstract class CatalogDatabase : RoomDatabase() {
     abstract fun forumUserDao(): ForumUserDao
 
     companion object {
-        const val SCHEMA_VERSION = 1
+        const val SCHEMA_VERSION = 2
         const val DATABASE_NAME = "catalog.db"
         const val ASSET_PATH = "databases/catalog.db"
     }

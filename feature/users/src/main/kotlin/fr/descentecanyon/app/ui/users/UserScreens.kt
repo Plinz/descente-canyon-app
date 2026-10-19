@@ -1,7 +1,5 @@
 package fr.descentecanyon.app.ui.users
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +30,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -48,6 +47,8 @@ import fr.descentecanyon.app.ui.design.DcMetricTile
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Composable
 fun UserSearchScreen(
@@ -108,11 +109,11 @@ fun UserSearchScreen(
                 }
             } else {
                 items(state.users, key = { it.username }) { user ->
-                    val isFollowed = user.normalizedUsername in state.followedUsernames
+                    val isFollowed = state.isFollowed(user)
                     UserResultCard(
                         user = user,
                         isFollowed = isFollowed,
-                        onClick = { onUserClick(user.normalizedUsername) },
+                        onClick = { onUserClick(user.username) },
                         onToggleFollow = { toggleFollowAskingPermission(isFollowed) { viewModel.toggleFollow(user) } },
                     )
                 }
@@ -124,18 +125,18 @@ fun UserSearchScreen(
 @Composable
 fun UserProfileScreen(
     onBackClick: () -> Unit,
+    onOpenCanyon: (Int) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: UserProfileViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val user = state.user
-    val context = LocalContext.current
     val toggleFollowAskingPermission = rememberFollowWithNotificationPermission()
     Scaffold(
         containerColor = LocalDcColors.current.backgroundBase,
         topBar = {
-            CompactAppBar(title = user?.username ?: stringResource(R.string.user_profile_fallback_title), navigation = {
+            CompactAppBar(title = state.username, navigation = {
                 IconButton(onClick = onBackClick) {
                     Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
                 }
@@ -144,74 +145,110 @@ fun UserProfileScreen(
         modifier = modifier,
     ) { padding ->
         Box(modifier = Modifier.fillMaxSize().padding(padding), contentAlignment = Alignment.TopCenter) {
-            if (user == null) {
+            if (user != null) {
+                UserProfileContent(
+                    user = user,
+                    isFollowed = state.isFollowed,
+                    onToggleFollow = { toggleFollowAskingPermission(state.isFollowed, viewModel::toggleFollow) },
+                    onOpenCanyon = onOpenCanyon,
+                    contentPadding = contentPadding,
+                )
+            } else if (state.isLoaded) {
                 DcEmptyState(
                     title = stringResource(R.string.user_profile_not_found_title),
                     body = stringResource(R.string.user_profile_not_found_body),
                     icon = Icons.Default.Person,
                 )
-            } else {
-                val contentWidth = rememberDcContentWidth()
-                val horizontalPadding = rememberDcScreenHorizontalPadding()
-                LazyColumn(
-                    modifier = Modifier.width(contentWidth).padding(horizontal = horizontalPadding),
-                    contentPadding = PaddingValues(top = 12.dp, bottom = contentPadding.calculateBottomPadding() + 20.dp),
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                ) {
-                    item {
-                        DcCard {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(Icons.Default.Person, contentDescription = null)
-                                Spacer(Modifier.width(12.dp))
-                                Column(Modifier.weight(1f)) {
-                                    Text(user.username, fontWeight = FontWeight.Bold)
-                                    Text(
-                                        listOfNotNull(
-                                            if (user.hasDebitActivity) stringResource(R.string.debits) else null,
-                                            if (user.hasForumActivity) stringResource(R.string.user_activity_forum) else null,
-                                        ).joinToString(" • "),
-                                    )
-                                }
-                                // Only forum posts can be followed: the site does not list flow reports by author.
-                                if (user.forumUserId != null || state.isFollowed) {
-                                    Button(onClick = { toggleFollowAskingPermission(state.isFollowed, viewModel::toggleFollow) }) {
-                                        Icon(Icons.Default.Notifications, contentDescription = null)
-                                        Spacer(Modifier.width(6.dp))
-                                        Text(stringResource(if (state.isFollowed) R.string.user_following else R.string.user_follow))
-                                    }
-                                }
-                            }
-                            if (user.forumUserId == null) {
-                                Text(
-                                    stringResource(R.string.user_follow_unavailable),
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = LocalDcColors.current.textSecondary,
-                                    modifier = Modifier.padding(top = 8.dp),
-                                )
-                            }
-                        }
+            }
+        }
+    }
+}
+
+@Composable
+private fun UserProfileContent(
+    user: ForumUser,
+    isFollowed: Boolean,
+    onToggleFollow: () -> Unit,
+    onOpenCanyon: (Int) -> Unit,
+    contentPadding: PaddingValues,
+) {
+    val context = LocalContext.current
+    val dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(LocalLocale.current.platformLocale)
+    LazyColumn(
+        modifier = Modifier.width(rememberDcContentWidth()).padding(horizontal = rememberDcScreenHorizontalPadding()),
+        contentPadding = PaddingValues(top = 12.dp, bottom = contentPadding.calculateBottomPadding() + 20.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+    ) {
+        item {
+            DcCard {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(Icons.Default.Person, contentDescription = null)
+                    Spacer(Modifier.width(12.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text(user.username, fontWeight = FontWeight.Bold)
+                        Text(
+                            stringResource(R.string.user_profile_member_subtitle),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = LocalDcColors.current.textSecondary,
+                        )
                     }
-                    item {
-                        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            DcMetricTile(stringResource(R.string.debits), user.debitObservationCount.toString(), Modifier.weight(1f))
-                            DcMetricTile(stringResource(R.string.user_metric_posts), user.forumPostCount.toString(), Modifier.weight(1f))
-                        }
-                    }
-                    item { Text(stringResource(R.string.user_recent_activity), fontWeight = FontWeight.Bold) }
-                    user.lastDebitObservationAt?.let { date ->
-                        item { ActivitySummaryCard(stringResource(R.string.user_last_debit), date, user.lastDebitObservationUrl) }
-                    }
-                    user.lastForumPostAt?.let { date ->
-                        item { ActivitySummaryCard(stringResource(R.string.user_last_forum_post), date, user.lastForumPostUrl) }
-                    }
-                    user.profileUrl?.let { profileUrl ->
-                        item {
-                            TextButton(onClick = {
-                                context.openUrl(profileUrl)
-                            }) { Text(stringResource(R.string.user_open_forum_profile)) }
-                        }
+                    Button(onClick = onToggleFollow) {
+                        Icon(Icons.Default.Notifications, contentDescription = null)
+                        Spacer(Modifier.width(6.dp))
+                        Text(stringResource(if (isFollowed) R.string.user_following else R.string.user_follow))
                     }
                 }
+                Text(
+                    stringResource(R.string.user_follow_hint),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = LocalDcColors.current.textSecondary,
+                    modifier = Modifier.padding(top = 8.dp),
+                )
+            }
+        }
+        // The site's own counters, as shown under the member's reports.
+        item {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                DcMetricTile(stringResource(R.string.user_metric_debits), user.debitReportCount.toString(), Modifier.weight(1f))
+                DcMetricTile(stringResource(R.string.user_metric_posts), user.forumPostCount.toString(), Modifier.weight(1f))
+            }
+        }
+        if (user.photoCount != null && user.canyonSheetContributionCount != null) {
+            item {
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    DcMetricTile(stringResource(R.string.user_metric_photos), user.photoCount.toString(), Modifier.weight(1f))
+                    DcMetricTile(
+                        stringResource(R.string.user_metric_sheets),
+                        user.canyonSheetContributionCount.toString(),
+                        Modifier.weight(1f),
+                    )
+                }
+            }
+        }
+        if (user.lastDebitReport != null || user.lastForumPostDate != null) {
+            item { Text(stringResource(R.string.user_recent_activity), fontWeight = FontWeight.Bold) }
+        }
+        user.lastDebitReport?.let { report ->
+            item {
+                ActivitySummaryCard(
+                    label = stringResource(R.string.user_last_debit),
+                    detail = listOfNotNull(report.canyonName, dateFormatter.format(report.date)).joinToString(" • "),
+                    onClick = report.canyonId?.let { canyonId -> { onOpenCanyon(canyonId) } },
+                )
+            }
+        }
+        user.lastForumPostDate?.let { date ->
+            item {
+                ActivitySummaryCard(
+                    label = stringResource(R.string.user_last_forum_post),
+                    detail = dateFormatter.format(date),
+                    onClick = user.lastForumPostUrl?.let { url -> { context.openUrl(url) } },
+                )
+            }
+        }
+        user.forumPostsUrl?.let { url ->
+            item {
+                TextButton(onClick = { context.openUrl(url) }) { Text(stringResource(R.string.user_open_forum_posts)) }
             }
         }
     }
@@ -225,34 +262,23 @@ internal fun UserResultCard(user: ForumUser, isFollowed: Boolean, onClick: () ->
             Spacer(Modifier.width(12.dp))
             Column(Modifier.weight(1f)) {
                 Text(user.username, fontWeight = FontWeight.SemiBold)
-                Text(
-                    listOfNotNull(
-                        if (user.hasDebitActivity) {
-                            stringResource(
-                                R.string.user_activity_debits_count,
-                                user.debitObservationCount,
-                            )
-                        } else {
-                            null
-                        },
-                        if (user.hasForumActivity) stringResource(R.string.user_activity_forum_count, user.forumPostCount) else null,
-                    ).joinToString(" • "),
+                val activity = listOfNotNull(
+                    if (user.debitReportCount > 0) stringResource(R.string.user_activity_debits_count, user.debitReportCount) else null,
+                    if (user.forumPostCount > 0) stringResource(R.string.user_activity_forum_count, user.forumPostCount) else null,
                 )
+                if (activity.isNotEmpty()) Text(activity.joinToString(" • "))
             }
-            if (user.forumUserId != null || isFollowed) {
-                TextButton(onClick = onToggleFollow) {
-                    Text(stringResource(if (isFollowed) R.string.user_following else R.string.user_follow))
-                }
+            TextButton(onClick = onToggleFollow) {
+                Text(stringResource(if (isFollowed) R.string.user_following else R.string.user_follow))
             }
         }
     }
 }
 
 @Composable
-private fun ActivitySummaryCard(label: String, date: String, url: String?) {
-    val context = LocalContext.current
-    DcCard(onClick = if (url == null) null else ({ context.openUrl(url) })) {
+private fun ActivitySummaryCard(label: String, detail: String, onClick: (() -> Unit)?) {
+    DcCard(modifier = Modifier.fillMaxWidth(), onClick = onClick) {
         Text(label, fontWeight = FontWeight.SemiBold)
-        Text(date)
+        Text(detail)
     }
 }

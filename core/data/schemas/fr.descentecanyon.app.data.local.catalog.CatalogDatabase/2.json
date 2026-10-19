@@ -1,8 +1,8 @@
 {
   "formatVersion": 1,
   "database": {
-    "version": 1,
-    "identityHash": "d8963d30fa9849184501674b65672dd0",
+    "version": 2,
+    "identityHash": "910da6f562e3b879244a4f8d28f6dc82",
     "entities": [
       {
         "tableName": "canyons",
@@ -906,7 +906,7 @@
       },
       {
         "tableName": "forum_users",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`username` TEXT NOT NULL, `normalizedUsername` TEXT NOT NULL, `forumUserId` INTEGER, `profileUrl` TEXT, `source` TEXT NOT NULL, `hasForumActivity` INTEGER NOT NULL, `hasDebitActivity` INTEGER NOT NULL, `forumPostCount` INTEGER NOT NULL, `debitObservationCount` INTEGER NOT NULL, `lastForumPostAt` TEXT, `lastForumPostUrl` TEXT, `lastDebitObservationAt` TEXT, `lastDebitObservationUrl` TEXT, `updatedAt` TEXT NOT NULL, PRIMARY KEY(`username`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`username` TEXT NOT NULL, `normalizedUsername` TEXT NOT NULL, `forumUserId` INTEGER, `debitReportCount` INTEGER NOT NULL, `forumPostCount` INTEGER NOT NULL, `photoCount` INTEGER, `canyonSheetContributionCount` INTEGER, `lastDebitReportDate` TEXT, `lastDebitReportCanyonId` INTEGER, `lastDebitReportCanyonName` TEXT, `lastForumPostDate` TEXT, `lastForumPostUrl` TEXT, `updatedAt` TEXT NOT NULL, PRIMARY KEY(`username`))",
         "fields": [
           {
             "fieldPath": "username",
@@ -926,25 +926,8 @@
             "affinity": "INTEGER"
           },
           {
-            "fieldPath": "profileUrl",
-            "columnName": "profileUrl",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "source",
-            "columnName": "source",
-            "affinity": "TEXT",
-            "notNull": true
-          },
-          {
-            "fieldPath": "hasForumActivity",
-            "columnName": "hasForumActivity",
-            "affinity": "INTEGER",
-            "notNull": true
-          },
-          {
-            "fieldPath": "hasDebitActivity",
-            "columnName": "hasDebitActivity",
+            "fieldPath": "debitReportCount",
+            "columnName": "debitReportCount",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -955,29 +938,38 @@
             "notNull": true
           },
           {
-            "fieldPath": "debitObservationCount",
-            "columnName": "debitObservationCount",
-            "affinity": "INTEGER",
-            "notNull": true
+            "fieldPath": "photoCount",
+            "columnName": "photoCount",
+            "affinity": "INTEGER"
           },
           {
-            "fieldPath": "lastForumPostAt",
-            "columnName": "lastForumPostAt",
+            "fieldPath": "canyonSheetContributionCount",
+            "columnName": "canyonSheetContributionCount",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastDebitReportDate",
+            "columnName": "lastDebitReportDate",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastDebitReportCanyonId",
+            "columnName": "lastDebitReportCanyonId",
+            "affinity": "INTEGER"
+          },
+          {
+            "fieldPath": "lastDebitReportCanyonName",
+            "columnName": "lastDebitReportCanyonName",
+            "affinity": "TEXT"
+          },
+          {
+            "fieldPath": "lastForumPostDate",
+            "columnName": "lastForumPostDate",
             "affinity": "TEXT"
           },
           {
             "fieldPath": "lastForumPostUrl",
             "columnName": "lastForumPostUrl",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "lastDebitObservationAt",
-            "columnName": "lastDebitObservationAt",
-            "affinity": "TEXT"
-          },
-          {
-            "fieldPath": "lastDebitObservationUrl",
-            "columnName": "lastDebitObservationUrl",
             "affinity": "TEXT"
           },
           {
@@ -996,28 +988,19 @@
         "indices": [
           {
             "name": "index_forum_users_normalizedUsername",
-            "unique": true,
+            "unique": false,
             "columnNames": [
               "normalizedUsername"
             ],
             "orders": [],
-            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_forum_users_normalizedUsername` ON `${TABLE_NAME}` (`normalizedUsername`)"
-          },
-          {
-            "name": "index_forum_users_forumUserId",
-            "unique": false,
-            "columnNames": [
-              "forumUserId"
-            ],
-            "orders": [],
-            "createSql": "CREATE INDEX IF NOT EXISTS `index_forum_users_forumUserId` ON `${TABLE_NAME}` (`forumUserId`)"
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_forum_users_normalizedUsername` ON `${TABLE_NAME}` (`normalizedUsername`)"
           }
         ]
       }
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd8963d30fa9849184501674b65672dd0')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '910da6f562e3b879244a4f8d28f6dc82')"
     ]
   }
 }

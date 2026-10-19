@@ -510,26 +510,25 @@ def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest:
         connection.executemany(
             """
             INSERT OR REPLACE INTO forum_users (
-                username, normalizedUsername, forumUserId, profileUrl, source, hasForumActivity,
-                hasDebitActivity, forumPostCount, debitObservationCount, lastForumPostAt,
-                lastForumPostUrl, lastDebitObservationAt, lastDebitObservationUrl, updatedAt
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                username, normalizedUsername, forumUserId, debitReportCount, forumPostCount, photoCount,
+                canyonSheetContributionCount, lastDebitReportDate, lastDebitReportCanyonId,
+                lastDebitReportCanyonName, lastForumPostDate, lastForumPostUrl, updatedAt
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             [
                 (
                     row["username"],
                     row["normalizedUsername"],
                     row.get("forumUserId"),
-                    row.get("profileUrl"),
-                    row["source"],
-                    1 if row.get("hasForumActivity") else 0,
-                    1 if row.get("hasDebitActivity") else 0,
+                    int(row.get("debitReportCount") or 0),
                     int(row.get("forumPostCount") or 0),
-                    int(row.get("debitObservationCount") or 0),
-                    row.get("lastForumPostAt"),
+                    row.get("photoCount"),
+                    row.get("canyonSheetContributionCount"),
+                    row.get("lastDebitReportDate"),
+                    row.get("lastDebitReportCanyonId"),
+                    row.get("lastDebitReportCanyonName"),
+                    row.get("lastForumPostDate"),
                     row.get("lastForumPostUrl"),
-                    row.get("lastDebitObservationAt"),
-                    row.get("lastDebitObservationUrl"),
                     row["updatedAt"],
                 )
                 for row in forum_users

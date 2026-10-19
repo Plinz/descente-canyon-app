@@ -44,7 +44,7 @@ feature/canyon           Fiche canyon, galerie, prédiction de débit
 feature/contribute       Formulaires de débit et de note d'intérêt, débits en attente d'envoi
 feature/favorites        Favoris
 feature/notifications    Centre de notifications (suivis)
-feature/users            Utilisateurs du forum
+feature/users            Membres du site : recherche, profil, suivi de leurs messages du forum
 feature/settings         Réglages (thème, langue, notifications), sources des données, licences, confidentialité
 core/ui                  Design system, composants partagés, widget carte, ressources (chaînes en 6 langues)
 core/data                Bases Room, réseau (OkHttp + Jsoup), scraping, repositories, modèle ONNX
@@ -124,3 +124,9 @@ git config core.hooksPath .githooks
 Le schéma du catalogue est exporté par Room dans `core/data/schemas/` ; le générateur
 `scripts/app/generate_prepackaged_room_db.py` s'en sert, et le test `CatalogAssetTest` vérifie que Room accepte la
 base produite.
+
+Les membres (`forum_users.json`) viennent de `scripts/app/extract_forum_users.py`, qui lit les débits produits par
+`scripts/debits/build_observation_dataset.py` et quelques pages publiques du forum. Seuls les comptes du site y
+figurent : un nom saisi sans compte sous un débit (« Pierre, Paul et Jacques », champ « groupe » du formulaire
+anonyme) n'est pas un membre. Le site les distingue dans la remarque d'un débit : compteurs pour un membre,
+« Utilisateur non enregistré » sinon.

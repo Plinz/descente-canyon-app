@@ -66,8 +66,8 @@ class NotificationCenterRepositoryImpl @Inject constructor(@param:ApplicationCon
         .map { state -> state.followedForumThreads.any { it.topicId == topicId } }
         .distinctUntilChanged()
 
-    override fun observeIsUserFollowed(normalizedUsername: String): Flow<Boolean> = observeState()
-        .map { state -> state.followedUsers.any { it.normalizedUsername == normalizedUsername } }
+    override fun observeIsUserFollowed(username: String): Flow<Boolean> = observeState()
+        .map { state -> state.followedUsers.any { it.hasUsername(username) } }
         .distinctUntilChanged()
 
     override suspend fun toggleCanyonFollow(canyonId: Int, canyonName: String, baselineDebits: List<Debit>) {
@@ -144,8 +144,8 @@ class NotificationCenterRepositoryImpl @Inject constructor(@param:ApplicationCon
 
     override suspend fun toggleUserFollow(user: ForumUser) {
         updateState { state ->
-            if (state.followedUsers.any { it.normalizedUsername == user.normalizedUsername }) {
-                state.copy(followedUsers = state.followedUsers.filterNot { it.normalizedUsername == user.normalizedUsername })
+            if (state.followedUsers.any { it.hasUsername(user.username) }) {
+                state.copy(followedUsers = state.followedUsers.filterNot { it.hasUsername(user.username) })
             } else {
                 state.copy(
                     followedUsers = (state.followedUsers + NotificationSyncEngine.buildInitialUserFollow(user))
@@ -155,9 +155,9 @@ class NotificationCenterRepositoryImpl @Inject constructor(@param:ApplicationCon
         }
     }
 
-    override suspend fun removeUserFollow(normalizedUsername: String) {
+    override suspend fun removeUserFollow(username: String) {
         updateState { state ->
-            state.copy(followedUsers = state.followedUsers.filterNot { it.normalizedUsername == normalizedUsername })
+            state.copy(followedUsers = state.followedUsers.filterNot { it.hasUsername(username) })
         }
     }
 

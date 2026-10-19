@@ -6,6 +6,7 @@ import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.CanyonPhoto
 import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.repository.DebitRepository
+import fr.descentecanyon.app.domain.repository.ForumUserRepository
 import fr.descentecanyon.app.domain.repository.PhotoRepository
 import fr.descentecanyon.app.domain.usecase.DownloadPhotoForOfflineUseCase
 import fr.descentecanyon.app.perf.PerformanceTrace
@@ -29,6 +30,8 @@ data class CanyonMediaState(
     val isLoadingDebits: Boolean = false,
     val debitError: UiText? = null,
     val downloadingPhotoIds: Set<Long> = emptySet(),
+    /** Report authors who are members of the site; the others typed a name without an account. */
+    val memberAuthors: Set<String> = emptySet(),
 )
 
 /**
@@ -40,6 +43,7 @@ class CanyonMediaController @Inject constructor(
     private val debitRepository: DebitRepository,
     private val downloadPhotoForOfflineUseCase: DownloadPhotoForOfflineUseCase,
     private val connectivityObserver: ConnectivityObserver,
+    private val forumUserRepository: ForumUserRepository,
 ) {
 
     private val _state = MutableStateFlow(CanyonMediaState())
@@ -58,7 +62,11 @@ class CanyonMediaController @Inject constructor(
         }
         scope.launch {
             debitRepository.getDebitsForCanyon(canyonId).collect { result ->
-                result.onSuccess { debits -> _state.update { it.copy(debits = debits) } }
+                result.onSuccess { debits ->
+                    _state.update { it.copy(debits = debits) }
+                    val members = forumUserRepository.findMembers(debits.mapNotNull { it.auteur })
+                    _state.update { it.copy(memberAuthors = members) }
+                }
             }
         }
     }

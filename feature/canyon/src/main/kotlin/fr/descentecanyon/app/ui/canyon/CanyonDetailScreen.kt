@@ -277,6 +277,7 @@ fun CanyonDetailScreen(
                             onOpenPredictionInfo = onOpenPredictionInfo,
                             downloadingPhotoIds = uiState.downloadingPhotoIds,
                             onOpenPhotoGallery = onOpenPhotoGallery,
+                            memberAuthors = uiState.memberAuthors,
                             onUserClick = onUserClick,
                             onPersistedPhotoMissing = viewModel::onPersistedPhotoMissing,
                             openDebitsTabInitially = openDebitsTabInitially,

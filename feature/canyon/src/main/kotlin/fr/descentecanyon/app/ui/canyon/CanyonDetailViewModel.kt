@@ -45,6 +45,8 @@ data class CanyonDetailUiState(
     val photoError: UiText? = null,
     val isLoadingDebits: Boolean = false,
     val debitError: UiText? = null,
+    /** Report authors who are site members: only they have a profile to open. */
+    val memberAuthors: Set<String> = emptySet(),
     val error: UiText? = null,
     val weather: CanyonWeather? = null,
     val isLoadingWeather: Boolean = false,
@@ -321,6 +323,7 @@ private fun toUiState(detail: CanyonDetailState, media: CanyonMediaState, condit
         photoError = media.photoError,
         isLoadingDebits = media.isLoadingDebits,
         debitError = media.debitError,
+        memberAuthors = media.memberAuthors,
         error = detail.error,
         weather = conditions.weather,
         isLoadingWeather = conditions.isLoadingWeather,

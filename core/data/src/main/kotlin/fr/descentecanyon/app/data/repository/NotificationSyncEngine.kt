@@ -75,7 +75,6 @@ internal object NotificationSyncEngine {
 
     fun buildInitialUserFollow(user: ForumUser): FollowedUser = FollowedUser(
         username = user.username,
-        normalizedUsername = user.normalizedUsername,
         forumUserId = user.forumUserId,
     )
 
@@ -212,7 +211,10 @@ internal object NotificationSyncEngine {
     ): Pair<NotificationCenterState, NotificationSyncSummary> {
         val events = mutableListOf<TrackedActivityEvent>()
         val users = state.followedUsers.map { followed ->
-            val matching = posts.filter { it.author.equals(followed.username, ignoreCase = true) }
+            val matching = posts.filter { followed.hasUsername(it.author) }
+            // Nothing read for this member (failed or refused search): seeding them with nothing
+            // would announce all their posts as new on the next read.
+            if (matching.isEmpty()) return@map followed
             val markers = matching.map { "forum-post:${it.postId}" }
             if (followed.hasSeededForumPosts) {
                 matching.filter { "forum-post:${it.postId}" !in followed.seenForumPostMarkers }.forEach { post ->

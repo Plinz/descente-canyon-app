@@ -249,10 +249,10 @@ fun NotificationCenterScreen(
                         )
                     }
                 } else {
-                    items(uiState.followedUsers, key = { it.normalizedUsername }) { user ->
+                    items(uiState.followedUsers, key = { it.username }) { user ->
                         FollowedUserCard(
                             user = user,
-                            onRemove = { viewModel.removeUserFollow(user.normalizedUsername) },
+                            onRemove = { viewModel.removeUserFollow(user.username) },
                         )
                     }
                 }
@@ -277,15 +277,7 @@ private fun FollowedUserCard(user: FollowedUser, onRemove: () -> Unit) {
             Column(Modifier.weight(1f)) {
                 Text(user.username, fontWeight = FontWeight.SemiBold)
                 Text(
-                    stringResource(
-                        if (user.forumUserId ==
-                            null
-                        ) {
-                            R.string.notifications_followed_user_no_forum
-                        } else {
-                            R.string.notifications_followed_user_forum
-                        },
-                    ),
+                    stringResource(R.string.notifications_followed_user_forum),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )

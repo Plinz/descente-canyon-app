@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.ui.users
 
+import fr.descentecanyon.app.domain.model.FollowedUser
 import fr.descentecanyon.app.domain.model.ForumUser
 import fr.descentecanyon.app.domain.model.NotificationCenterState
 import fr.descentecanyon.app.domain.repository.ForumUserRepository
@@ -48,7 +49,7 @@ class UserSearchViewModelTest {
 
     @Test
     fun `users are searched once typing pauses`() = runTest {
-        val riou = ForumUser(username = "Riou", normalizedUsername = "riou")
+        val riou = ForumUser(username = "Riou")
         coEvery { forumUserRepository.search("rio", any()) } returns listOf(riou)
         val viewModel = UserSearchViewModel(forumUserRepository, notificationCenterRepository)
 
@@ -61,6 +62,18 @@ class UserSearchViewModelTest {
         assertEquals(listOf(riou), viewModel.uiState.value.users)
         assertFalse(viewModel.uiState.value.isSearching)
         coVerify(exactly = 1) { forumUserRepository.search(any(), any()) }
+    }
+
+    @Test
+    fun `a followed member shows as followed whatever the case of the stored name`() = runTest {
+        every { notificationCenterRepository.observeState() } returns flowOf(
+            NotificationCenterState(followedUsers = listOf(FollowedUser(username = "LOLO"))),
+        )
+        val viewModel = UserSearchViewModel(forumUserRepository, notificationCenterRepository)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.isFollowed(ForumUser(username = "lolo")))
+        assertFalse(viewModel.uiState.value.isFollowed(ForumUser(username = "Lolo_")))
     }
 
     @Test

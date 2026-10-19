@@ -79,6 +79,7 @@ internal fun CanyonDetailContent(
     onOpenPredictionInfo: () -> Unit,
     downloadingPhotoIds: Set<Long>,
     onOpenPhotoGallery: (Long) -> Unit,
+    memberAuthors: Set<String>,
     onUserClick: (String) -> Unit,
     onPersistedPhotoMissing: (Long) -> Unit,
     openDebitsTabInitially: Boolean,
@@ -224,7 +225,7 @@ internal fun CanyonDetailContent(
                 if (detail.debits.isNotEmpty()) {
                     item { DebitSeasonalityCard(debits = detail.debits) }
                 }
-                debitItems(detail.debits, isLoadingDebits, debitError, onUserClick)
+                debitItems(detail.debits, isLoadingDebits, debitError, memberAuthors, onUserClick)
             }
         }
     }
@@ -287,7 +288,13 @@ private fun DetailRefreshingBanner(modifier: Modifier = Modifier) {
     }
 }
 
-private fun LazyListScope.debitItems(debits: List<Debit>, isLoadingDebits: Boolean, debitError: String?, onUserClick: (String) -> Unit) {
+private fun LazyListScope.debitItems(
+    debits: List<Debit>,
+    isLoadingDebits: Boolean,
+    debitError: String?,
+    memberAuthors: Set<String>,
+    onUserClick: (String) -> Unit,
+) {
     if (isLoadingDebits && debits.isEmpty()) {
         item {
             LoadingSectionItem(text = stringResource(R.string.loading_debits))
@@ -323,7 +330,8 @@ private fun LazyListScope.debitItems(debits: List<Debit>, isLoadingDebits: Boole
             DebitListItem(
                 debit = debit,
                 isLatest = debit == debits.first(),
-                onAuthorClick = onUserClick,
+                // A name typed without an account has no profile.
+                onAuthorClick = onUserClick.takeIf { debit.auteur in memberAuthors },
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp),
             )
         }

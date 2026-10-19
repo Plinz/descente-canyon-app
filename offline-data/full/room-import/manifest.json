@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-07-16T17:08:39.702763+00:00",
+  "generatedAt": "2026-10-19T07:45:00.445578+00:00",
   "tables": {
     "canyons": "canyons.json",
     "geo_points": "geo_points.json",
@@ -21,11 +21,11 @@
     "canyon_regulations": 2697,
     "watersheds": 3694,
     "tracks": 0,
-    "forum_users": 9475
+    "forum_users": 4416
   },
   "versions": {
     "watersheds": "2026-05-14T17:07:30.427930+00:00",
     "overlays": "2026-07-16T17:08:39.702763+00:00",
-    "forum_users": "2026-06-29T15:49:05.652949+00:00"
+    "forum_users": "2026-10-19T07:45:00.445578+00:00"
   }
 }

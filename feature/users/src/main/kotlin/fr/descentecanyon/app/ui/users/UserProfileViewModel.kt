@@ -11,7 +11,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -20,17 +20,18 @@ class UserProfileViewModel @Inject constructor(
     private val forumUserRepository: ForumUserRepository,
     private val notificationCenterRepository: NotificationCenterRepository,
 ) : ViewModel() {
-    private val normalizedUsername: String = checkNotNull(savedStateHandle["normalizedUsername"])
-    private val _uiState = MutableStateFlow(UserProfileUiState())
+    private val username: String = checkNotNull(savedStateHandle["username"])
+    private val _uiState = MutableStateFlow(UserProfileUiState(username = username))
     val uiState: StateFlow<UserProfileUiState> = _uiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            val user = forumUserRepository.getByNormalizedUsername(normalizedUsername)
-            val followed = notificationCenterRepository.observeIsUserFollowed(normalizedUsername).first()
-            _uiState.value = UserProfileUiState(user = user, isFollowed = followed)
-            notificationCenterRepository.observeIsUserFollowed(normalizedUsername).collect {
-                _uiState.value = _uiState.value.copy(isFollowed = it)
+            val user = forumUserRepository.getByUsername(username)
+            _uiState.update { it.copy(user = user, isLoaded = true) }
+        }
+        viewModelScope.launch {
+            notificationCenterRepository.observeIsUserFollowed(username).collect { followed ->
+                _uiState.update { it.copy(isFollowed = followed) }
             }
         }
     }
@@ -41,4 +42,10 @@ class UserProfileViewModel @Inject constructor(
     }
 }
 
-data class UserProfileUiState(val user: ForumUser? = null, val isFollowed: Boolean = false)
+data class UserProfileUiState(
+    val username: String,
+    val user: ForumUser? = null,
+    /** Whether the catalog was read: until then, a missing [user] is not "not found". */
+    val isLoaded: Boolean = false,
+    val isFollowed: Boolean = false,
+)

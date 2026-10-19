@@ -786,20 +786,60 @@ def parse_html_line_breaks(container: Any) -> list[str]:
     return [line for line in (clean_text(part) for part in text.splitlines()) if line]
 
 
-def parse_observation_details(detail_row: Any) -> list[dict[str, str | None]]:
+# Titles of the counters the site shows under a member's name in a report remark.
+SITE_MEMBER_STAT_KEYS = {
+    "contribution aux fiches-canyons": "canyonSheetContributions",
+    "géolocalisation": "geolocations",
+    "débits signalés": "debitReports",
+    "photos": "photos",
+    "forums": "forumPosts",
+}
+
+
+def parse_report_author_block(user_block: Any) -> dict[str, Any]:
+    """
+    The author block of a report remark: a member shows the site counters (fiches, geolocations,
+    debits, photos, forum posts), a name typed without an account shows "Utilisateur non
+    enregistré". The avatar file is named after the member's forum id.
+    """
+    name_node = user_block.select_one("b")
+    stats_node = user_block.select_one("div.poids")
+    registered: bool | None = None
+    stats: dict[str, int] = {}
+    if stats_node is not None:
+        if "non enregistre" in normalize_text(stats_node.get_text(" ", strip=True)):
+            registered = False
+        else:
+            for counter in stats_node.select("span[title]"):
+                key = SITE_MEMBER_STAT_KEYS.get(clean_text(counter.get("title")) or "")
+                value = re.sub(r"\D", "", str(counter.previous_sibling or ""))
+                if key and value:
+                    stats[key] = int(value)
+            registered = True if stats else None
+    avatar = user_block.select_one("div.av img[src]")
+    avatar_match = re.search(r"avatar=(\d+)", avatar.get("src", "")) if avatar is not None else None
+    return {
+        "author": clean_text(name_node.get_text(" ", strip=True) if name_node else None),
+        "registered": registered,
+        "forumUserId": int(avatar_match.group(1)) if avatar_match and registered else None,
+        "siteStats": stats or None,
+    }
+
+
+def parse_observation_details(detail_row: Any) -> list[dict[str, Any]]:
     if detail_row is None:
         return []
 
-    users = [clean_text(user_block.select_one("b").get_text(" ", strip=True) if user_block.select_one("b") else None) for user_block in detail_row.select("div.userc")]
+    authors = [parse_report_author_block(user_block) for user_block in detail_row.select("div.userc")]
     comments = [clean_text(paragraph.get_text(" ", strip=True)) for paragraph in detail_row.select("p")]
-    count = max(len(users), len(comments))
-    details: list[dict[str, str | None]] = []
+    count = max(len(authors), len(comments))
+    details: list[dict[str, Any]] = []
     for index in range(count):
-        author = users[index] if index < len(users) else None
+        profile = authors[index] if index < len(authors) else {"author": None, "registered": None, "forumUserId": None, "siteStats": None}
         comment = comments[index] if index < len(comments) else None
-        if author is None and comment is None:
+        if profile["author"] is None and comment is None:
             continue
-        details.append({"author": author, "comment": comment})
+        details.append({**profile, "comment": comment})
     return details
 
 
@@ -814,6 +854,10 @@ def parse_canyon_debit_page(
     BeautifulSoup = get_beautiful_soup()
     document = BeautifulSoup(html, "html.parser")
     rows = document.select("table#listedebit tbody tr")
+    # Remarks are hidden rows "tr#tr<id>": indexed once, a lookup per report is quadratic.
+    remark_rows: dict[str, Any] = {}
+    for remark_row in document.select("tr[id^=tr]"):
+        remark_rows.setdefault(remark_row.get("id"), remark_row)
     events: list[dict[str, Any]] = []
 
     for row_index, row in enumerate(rows, start=1):
@@ -850,7 +894,7 @@ def parse_canyon_debit_page(
             if raw_id and raw_id.startswith("r"):
                 remark_id = raw_id[1:]
 
-        detail_row = document.select_one(f"tr#tr{remark_id}") if remark_id else None
+        detail_row = remark_rows.get(f"tr{remark_id}") if remark_id else None
         observation_details = parse_observation_details(detail_row)
         detail_comments = unique_non_blank([detail.get("comment") for detail in observation_details])
         primary_comment = "\n\n---\n\n".join(detail_comments) if detail_comments else None
@@ -887,6 +931,12 @@ def parse_canyon_debit_page(
                 "airTemperature": clean_text(cells[5].get_text(" ", strip=True)) if len(cells) > 5 else None,
                 "comment": primary_comment,
                 "comments": detail_comments,
+                # Only the authors who wrote a remark: whether they have an account, and their counters.
+                "authorProfiles": [
+                    {key: detail[key] for key in ("author", "registered", "forumUserId", "siteStats")}
+                    for detail in observation_details
+                    if detail.get("author")
+                ],
                 "remarkId": remark_id,
                 "observationTitle": observation_title,
                 "sourceUrl": source_url,

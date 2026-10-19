@@ -1,6 +1,7 @@
 package fr.descentecanyon.app.data.repository
 
 import fr.descentecanyon.app.data.mapper.toDomain
+import fr.descentecanyon.app.data.remote.SiteUrls
 import fr.descentecanyon.app.data.remote.scraper.CanyonScraper
 import fr.descentecanyon.app.domain.model.CachedItems
 import fr.descentecanyon.app.domain.model.ForumActiveTopic
@@ -40,8 +41,8 @@ class ForumRepositoryImpl @Inject constructor(private val scraper: CanyonScraper
             CachedItems(items = categories, syncedAtEpochMs = syncedAtEpochMs)
         }
 
-    override suspend fun refreshUserPosts(authorId: Int): Result<List<ForumUserPost>> =
-        scraper.scrapeForumUserPosts(authorId).map { posts ->
+    override suspend fun refreshUserPosts(username: String, authorId: Int?): Result<List<ForumUserPost>> =
+        scraper.scrapeForumUserPosts(authorId?.let(SiteUrls::forumUserPosts) ?: SiteUrls.forumUserPostsByName(username)).map { posts ->
             posts.map {
                 ForumUserPost(
                     postId = it.postId,

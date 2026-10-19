@@ -13,6 +13,8 @@ The pipeline is split into these stages:
    - reuses a persistent HTML cache in `build/debit-pipeline/cache/debit-html`
    - automatically reuses an older cache in `<output-dir>/html-cache` if it already contains more files
    - parses one observation event per debit row
+   - records in `authorProfiles`, for each author who wrote a remark, whether they have a site account, their forum id
+     (avatar file name) and the site counters; `scripts/app/extract_forum_users.py` builds the app's members from it
    - applies conservative quality filtering
    - excludes known false debit posts via `scripts/debits/observation_overrides.json`
 

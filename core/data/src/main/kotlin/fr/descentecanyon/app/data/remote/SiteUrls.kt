@@ -1,5 +1,7 @@
 package fr.descentecanyon.app.data.remote
 
+import java.net.URLEncoder
+
 /** Addresses of the descente-canyon.com pages the app reads or posts to. */
 object SiteUrls {
     const val BASE_URL = "https://www.descente-canyon.com"
@@ -24,4 +26,8 @@ object SiteUrls {
     fun interestRating(canyonId: Int): String = "$BASE_URL/canyoning/canyon-interet/$canyonId/interet.html"
 
     fun forumUserPosts(authorId: Int): String = "$BASE_URL/forums/search.php?author_id=$authorId&sr=posts&sk=t&sd=d"
+
+    /** The same search by account name: it works without being logged in, unlike the member profiles. */
+    fun forumUserPostsByName(username: String): String =
+        "$BASE_URL/forums/search.php?author=${URLEncoder.encode(username, "UTF-8")}&sr=posts&sk=t&sd=d"
 }

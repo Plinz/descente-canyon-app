@@ -20,7 +20,7 @@ interface NotificationCenterRepository {
 
     fun observeIsForumThreadFollowed(topicId: Int): Flow<Boolean>
 
-    fun observeIsUserFollowed(normalizedUsername: String): Flow<Boolean>
+    fun observeIsUserFollowed(username: String): Flow<Boolean>
 
     suspend fun toggleCanyonFollow(canyonId: Int, canyonName: String, baselineDebits: List<Debit>)
 
@@ -36,7 +36,7 @@ interface NotificationCenterRepository {
 
     suspend fun toggleUserFollow(user: ForumUser)
 
-    suspend fun removeUserFollow(normalizedUsername: String)
+    suspend fun removeUserFollow(username: String)
 
     suspend fun clearRecentActivity()
 

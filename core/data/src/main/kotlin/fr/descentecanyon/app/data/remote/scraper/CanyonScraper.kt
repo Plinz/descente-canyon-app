@@ -68,8 +68,9 @@ class CanyonScraper @Inject constructor(private val siteClient: SiteHttpClient) 
         parsing { ForumParser.parseCategories(document) }
     }
 
-    suspend fun scrapeForumUserPosts(authorId: Int): Result<List<ScrapedForumUserPost>> = suspendRunCatching {
-        val document = siteClient.get(SiteUrls.forumUserPosts(authorId)).document
+    /** A forum search of a member's posts, [SiteUrls.forumUserPosts] or [SiteUrls.forumUserPostsByName]. */
+    suspend fun scrapeForumUserPosts(searchUrl: String): Result<List<ScrapedForumUserPost>> = suspendRunCatching {
+        val document = siteClient.get(searchUrl).document
         parsing { ForumParser.parseUserPosts(document) }
     }
 

@@ -23,11 +23,9 @@ class ForumNotificationSyncWorker(appContext: Context, params: WorkerParameters)
             .items
         repository.syncFetchedForumTopics(topics)
         val userPosts = state.followedUsers.mapNotNull { followed ->
-            followed.forumUserId?.let { authorId ->
-                entryPoint.forumRepository().refreshUserPosts(authorId).getOrNull()
-            }
+            entryPoint.forumRepository().refreshUserPosts(followed.username, followed.forumUserId).getOrNull()
         }.flatten()
-        if (userPosts.isNotEmpty() || state.followedUsers.any { it.forumUserId != null }) {
+        if (userPosts.isNotEmpty()) {
             repository.syncFetchedUserPosts(userPosts)
         }
         val pendingEvents = repository.pendingEvents(TrackedActivityType.FORUM)

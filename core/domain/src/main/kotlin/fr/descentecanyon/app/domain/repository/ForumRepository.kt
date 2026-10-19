@@ -18,5 +18,6 @@ interface ForumRepository {
 
     suspend fun refreshCategories(): Result<CachedItems<ForumCategory>>
 
-    suspend fun refreshUserPosts(authorId: Int): Result<List<ForumUserPost>>
+    /** The latest forum posts of a member, searched by [authorId] when known, else by [username]. */
+    suspend fun refreshUserPosts(username: String, authorId: Int?): Result<List<ForumUserPost>>
 }

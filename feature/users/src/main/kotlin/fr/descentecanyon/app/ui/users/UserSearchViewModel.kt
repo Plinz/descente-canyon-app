@@ -3,6 +3,7 @@ package fr.descentecanyon.app.ui.users
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.descentecanyon.app.domain.model.FollowedUser
 import fr.descentecanyon.app.domain.model.ForumUser
 import fr.descentecanyon.app.domain.repository.ForumUserRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
@@ -37,7 +38,7 @@ class UserSearchViewModel @Inject constructor(
         }
         viewModelScope.launch {
             notificationCenterRepository.observeState().collect { state ->
-                _uiState.update { it.copy(followedUsernames = state.followedUsers.map { user -> user.normalizedUsername }.toSet()) }
+                _uiState.update { it.copy(followedUsers = state.followedUsers) }
             }
         }
     }
@@ -65,7 +66,9 @@ data class UserSearchUiState(
     val users: List<ForumUser> = emptyList(),
     /** The text [users] were found for: the search of the text typed comes a moment later. */
     val searchedQuery: String = "",
-    val followedUsernames: Set<String> = emptySet(),
+    val followedUsers: List<FollowedUser> = emptyList(),
 ) {
     val isSearching: Boolean get() = query != searchedQuery
+
+    fun isFollowed(user: ForumUser): Boolean = followedUsers.any { it.hasUsername(user.username) }
 }
