@@ -21,6 +21,15 @@
     <string name="home_debit_external_only">Beschreibung nicht lokal verfügbar - wird auf Descente-Canyon geöffnet</string>
     <string name="home_debit_filter_no_results_title">Keine aktuellen Wasserstände in diesem Gebiet</string>
     <string name="home_debit_filter_no_results_body">Ändere das Land oder die Unterteilung, um die Liste zu erweitern.</string>
+    <string name="home_zone_filter_title">Gebiet</string>
+    <string name="home_zone_filter_all">Alle Gebiete</string>
+    <string name="home_zone_filter_whole_country">Ganzes Land</string>
+    <string name="home_zone_filter_search">Land oder Unterteilung suchen</string>
+    <string name="home_zone_filter_hint">Anzahl aktueller Wasserstände pro Gebiet</string>
+    <string name="home_forum_filter_hint">Anzahl aktiver Themen pro Bereich</string>
+    <string name="home_forum_filter_no_results_title">Keine aktiven Themen in diesem Bereich</string>
+    <string name="home_forum_filter_no_results_body">Hier stehen nur die neuesten aktiven Themen des Forums. Verfolge den Bereich, um über neue Beiträge benachrichtigt zu werden, oder öffne ihn im Forum.</string>
+    <string name="home_forum_filter_open">Bereich öffnen</string>
     <string name="home_forum_title">Aktive Themen</string>
     <string name="home_forum_subtitle">Kürzlich aktualisierte Diskussionen auf Descente-Canyon.</string>
     <string name="home_offline_banner_title">Offline-Modus</string>

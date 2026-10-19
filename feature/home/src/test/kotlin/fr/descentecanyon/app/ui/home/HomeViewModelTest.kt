@@ -237,6 +237,34 @@ class HomeViewModelTest {
     }
 
     @Test
+    fun `forum filter counts the active topics of each forum and filters them`() = runTest {
+        every { connectivityObserver.observe() } returns MutableStateFlow(true)
+        every { connectivityObserver.isCurrentlyOnline() } returns true
+        preferences.selectedHomeFeed = HomeFeedType.FORUM
+        val swissTopics = listOf(sampleTopic(), sampleTopic().copy(topicId = 28126))
+        val italianTopic = sampleTopic().copy(topicId = 30001, forumId = 15, forumName = "ITALIE")
+        coEvery { debitRepository.getCachedLatestDebits(any()) } returns CachedItems(emptyList(), null)
+        coEvery { forumRepository.getCachedActiveTopics(any()) } returns CachedItems(emptyList(), null)
+        coEvery { forumRepository.getCachedCategories() } returns CachedItems(emptyList(), null)
+        coEvery { debitRepository.refreshLatestDebits(any()) } returns Result.success(CachedItems(emptyList(), 1234L))
+        coEvery { forumRepository.refreshActiveTopics(any()) } returns Result.success(CachedItems(swissTopics + italianTopic, 5678L))
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        val filter = viewModel.uiState.value.forumFilter
+        assertEquals(mapOf("forum:16" to 2, "forum:15" to 1), filter.topicCounts)
+        assertEquals(3, filter.totalTopicCount)
+
+        viewModel.selectForumCategory(sampleCategory().key())
+        advanceUntilIdle()
+
+        assertEquals(sampleCategory(), viewModel.uiState.value.forumFilter.selectedCategory())
+        assertEquals(listOf(28125, 28126), viewModel.uiState.value.forumFeed.items.map { it.topicId })
+        assertEquals(mapOf("forum:16" to 2, "forum:15" to 1), viewModel.uiState.value.forumFilter.topicCounts)
+    }
+
+    @Test
     fun `latest debits are displayed by pages of twenty`() = runTest {
         val connectivity = MutableStateFlow(true)
         var currentOnline = true
@@ -297,15 +325,23 @@ class HomeViewModelTest {
         val viewModel = createViewModel()
         advanceUntilIdle()
 
-        viewModel.selectDebitCountry("France")
+        assertEquals(
+            listOf(
+                HomeZoneCountry("Espagne", 5, listOf(HomeZoneSubdivision("Huesca", 5))),
+                HomeZoneCountry("France", 22, listOf(HomeZoneSubdivision("Ain", 2), HomeZoneSubdivision("Alpes-Maritimes", 20))),
+            ),
+            viewModel.uiState.value.debitGeoFilter.countries,
+        )
+        assertEquals(27, viewModel.uiState.value.debitGeoFilter.totalCount)
+
+        viewModel.selectDebitZone("France")
         advanceUntilIdle()
 
         assertEquals(20, viewModel.uiState.value.debitFeed.items.size)
         assertEquals(22, viewModel.uiState.value.debitGeoFilter.filteredCount)
         assertTrue(viewModel.uiState.value.debitGeoFilter.canLoadMore)
-        assertEquals(listOf("Ain", "Alpes-Maritimes"), viewModel.uiState.value.debitGeoFilter.availableDepartments)
 
-        viewModel.selectDebitDepartment("Ain")
+        viewModel.selectDebitZone("France", "Ain")
         advanceUntilIdle()
 
         assertEquals(listOf(1, 2), viewModel.uiState.value.debitFeed.items.map { it.canyonId })

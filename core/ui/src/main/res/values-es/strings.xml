@@ -21,6 +21,15 @@
     <string name="home_debit_external_only">Ficha no incluida - apertura en Descente-Canyon</string>
     <string name="home_debit_filter_no_results_title">No hay caudales recientes en esta zona</string>
     <string name="home_debit_filter_no_results_body">Modifica el país o la subdivisión para ampliar la lista.</string>
+    <string name="home_zone_filter_title">Zona</string>
+    <string name="home_zone_filter_all">Todas las zonas</string>
+    <string name="home_zone_filter_whole_country">Todo el país</string>
+    <string name="home_zone_filter_search">Buscar un país o una subdivisión</string>
+    <string name="home_zone_filter_hint">Número de caudales recientes por zona</string>
+    <string name="home_forum_filter_hint">Número de temas activos por sección</string>
+    <string name="home_forum_filter_no_results_title">No hay temas activos en esta sección</string>
+    <string name="home_forum_filter_no_results_body">Aquí solo aparecen los últimos temas activos del foro. Sigue la sección para recibir un aviso de sus nuevos mensajes, o ábrela en el foro.</string>
+    <string name="home_forum_filter_open">Abrir la sección</string>
     <string name="home_forum_title">Temas activos</string>
     <string name="home_forum_subtitle">Las conversaciones actualizadas recientemente en Descente-Canyon.</string>
     <string name="home_offline_banner_title">Modo sin conexión</string>

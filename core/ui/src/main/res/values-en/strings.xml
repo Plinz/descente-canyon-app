@@ -21,6 +21,15 @@
     <string name="home_debit_external_only">Route page not embedded - opening on Descente-Canyon</string>
     <string name="home_debit_filter_no_results_title">No recent flow reports in this area</string>
     <string name="home_debit_filter_no_results_body">Change the country or subdivision to broaden the list.</string>
+    <string name="home_zone_filter_title">Area</string>
+    <string name="home_zone_filter_all">All areas</string>
+    <string name="home_zone_filter_whole_country">Whole country</string>
+    <string name="home_zone_filter_search">Search a country or subdivision</string>
+    <string name="home_zone_filter_hint">Number of recent flow reports per area</string>
+    <string name="home_forum_filter_hint">Number of active topics per section</string>
+    <string name="home_forum_filter_no_results_title">No active topic in this section</string>
+    <string name="home_forum_filter_no_results_body">Only the latest active topics of the forum are listed here. Track the section to be notified of its new posts, or open it on the forum.</string>
+    <string name="home_forum_filter_open">Open the section</string>
     <string name="home_forum_title">Active topics</string>
     <string name="home_forum_subtitle">Recent discussions on Descente-Canyon.</string>
     <string name="home_offline_banner_title">Offline mode</string>

@@ -133,6 +133,7 @@ class HomeFeedSnapshotStore @Inject constructor(private val keyValueDao: KeyValu
                         forumId = item.forumId,
                         forumName = item.forumName,
                         forumUrl = item.forumUrl,
+                        section = item.section,
                     )
                 },
                 syncedAtEpochMs = snapshot.syncedAtEpochMs,
@@ -149,6 +150,7 @@ class HomeFeedSnapshotStore @Inject constructor(private val keyValueDao: KeyValu
                         forumId = category.forumId,
                         forumName = category.forumName,
                         forumUrl = category.forumUrl,
+                        section = category.section,
                     )
                 },
             ),
@@ -202,7 +204,12 @@ class HomeFeedSnapshotStore @Inject constructor(private val keyValueDao: KeyValu
     private data class ForumCategoriesSnapshotDto(val syncedAtEpochMs: Long, val items: List<ForumCategoryItemDto>)
 
     @Serializable
-    private data class ForumCategoryItemDto(val forumId: Int? = null, val forumName: String, val forumUrl: String)
+    private data class ForumCategoryItemDto(
+        val forumId: Int? = null,
+        val forumName: String,
+        val forumUrl: String,
+        val section: String? = null,
+    )
 
     private companion object {
         const val LATEST_DEBITS_KEY = "home.latest_debits.snapshot"

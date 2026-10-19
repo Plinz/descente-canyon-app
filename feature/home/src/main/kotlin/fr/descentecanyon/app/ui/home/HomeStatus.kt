@@ -35,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.ForumCategory
 import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.ui.design.DcCard
@@ -134,6 +135,9 @@ internal fun HomeEmptyState(
     hasCachedForum: Boolean,
     isDebitFilterActive: Boolean,
     onClearDebitFilters: () -> Unit,
+    forumFilterCategory: ForumCategory?,
+    onOpenForumCategory: (ForumCategory) -> Unit,
+    onClearForumFilter: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     when (selectedFeed) {
@@ -208,6 +212,20 @@ internal fun HomeEmptyState(
                 onSecondaryAction = hasCachedDebits.takeIf { it }?.let { onShowDebits },
                 modifier = modifier,
             )
+
+            // Only the latest topics of the whole forum are listed: a quiet section is often empty.
+            null -> if (forumFilterCategory != null) {
+                HomeStatusCard(
+                    icon = Icons.Default.FilterList,
+                    title = stringResource(R.string.home_forum_filter_no_results_title),
+                    body = stringResource(R.string.home_forum_filter_no_results_body),
+                    primaryActionLabel = stringResource(R.string.home_forum_filter_open),
+                    onPrimaryAction = { onOpenForumCategory(forumFilterCategory) },
+                    secondaryActionLabel = stringResource(R.string.search_clear_filters),
+                    onSecondaryAction = onClearForumFilter,
+                    modifier = modifier,
+                )
+            }
 
             else -> Unit
         }

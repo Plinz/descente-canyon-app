@@ -25,6 +25,8 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
+import java.text.Collator
+import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,8 +52,9 @@ data class HomeFeedSectionState<T>(
 data class HomeDebitGeoFilterState(
     val selectedCountry: String? = null,
     val selectedDepartment: String? = null,
-    val availableCountries: List<String> = emptyList(),
-    val availableDepartments: List<String> = emptyList(),
+    /** The countries of the latest reports, each with its subdivisions, in alphabetical order. */
+    val countries: List<HomeZoneCountry> = emptyList(),
+    val totalCount: Int = 0,
     val displayedCount: Int = 0,
     val filteredCount: Int = 0,
     val canLoadMore: Boolean = false,
@@ -59,9 +62,25 @@ data class HomeDebitGeoFilterState(
     fun hasActiveFilter(): Boolean = selectedCountry != null || selectedDepartment != null
 }
 
-data class HomeForumFilterState(val selectedCategoryKey: String? = null, val availableCategories: List<ForumCategory> = emptyList()) {
+/** A country of the latest reports and how many of them were made there. */
+data class HomeZoneCountry(val name: String, val reportCount: Int, val subdivisions: List<HomeZoneSubdivision>)
+
+data class HomeZoneSubdivision(val name: String, val reportCount: Int)
+
+data class HomeForumFilterState(
+    val selectedCategoryKey: String? = null,
+    /** The forums in the order of the site's forum index. */
+    val availableCategories: List<ForumCategory> = emptyList(),
+    /** How many of the active topics each forum holds, by category key. */
+    val topicCounts: Map<String, Int> = emptyMap(),
+    val totalTopicCount: Int = 0,
+) {
     fun hasActiveFilter(): Boolean = selectedCategoryKey != null
+
+    fun selectedCategory(): ForumCategory? = selectedCategoryKey?.let { key -> availableCategories.firstOrNull { it.key() == key } }
 }
+
+internal fun ForumCategory.key(): String = forumCategoryKey(forumId, forumName)
 
 data class HomeUiState(
     val selectedFeed: HomeFeedType = HomeFeedType.DEBITS,
@@ -195,27 +214,16 @@ class HomeViewModel @Inject constructor(
         refreshFeed(uiState.value.selectedFeed)
     }
 
-    fun selectDebitCountry(country: String?) {
+    /** A [subdivision] is only kept with its [country]. */
+    fun selectDebitZone(country: String?, subdivision: String? = null) {
         visibleDebitLimit = LATEST_DEBITS_PAGE_SIZE
+        val selectedCountry = country?.takeIf { it.isNotBlank() }
         _uiState.update { state ->
             state.copy(
                 debitGeoFilter = state.debitGeoFilter.copy(
-                    selectedCountry = country?.takeIf { it.isNotBlank() },
-                    selectedDepartment = null,
+                    selectedCountry = selectedCountry,
+                    selectedDepartment = subdivision?.takeIf { it.isNotBlank() && selectedCountry != null },
                 ),
-            ).withDebitPresentation()
-        }
-        saveReportZone()
-    }
-
-    fun selectDebitDepartment(department: String?) {
-        visibleDebitLimit = LATEST_DEBITS_PAGE_SIZE
-        _uiState.update { state ->
-            val selectedDepartment = department
-                ?.takeIf { it.isNotBlank() }
-                ?.takeIf { state.debitGeoFilter.selectedCountry != null }
-            state.copy(
-                debitGeoFilter = state.debitGeoFilter.copy(selectedDepartment = selectedDepartment),
             ).withDebitPresentation()
         }
         saveReportZone()
@@ -555,8 +563,8 @@ class HomeViewModel @Inject constructor(
         return copy(
             debitFeed = debitFeed.copy(items = presentation.visibleItems),
             debitGeoFilter = debitGeoFilter.copy(
-                availableCountries = presentation.availableCountries,
-                availableDepartments = presentation.availableDepartments,
+                countries = presentation.countries,
+                totalCount = allLatestDebits.size,
                 displayedCount = presentation.visibleItems.size,
                 filteredCount = presentation.filteredCount,
                 canLoadMore = presentation.canLoadMore,
@@ -573,6 +581,10 @@ class HomeViewModel @Inject constructor(
         }
         return copy(
             forumFeed = forumFeed.copy(items = filteredTopics),
+            forumFilter = forumFilter.copy(
+                topicCounts = allForumTopics.groupingBy { topic -> forumCategoryKey(topic.forumId, topic.forumName) }.eachCount(),
+                totalTopicCount = allForumTopics.size,
+            ),
         )
     }
 
@@ -590,8 +602,7 @@ private enum class HomeFeedFailureKind {
 
 private data class DebitPresentation(
     val visibleItems: List<Debit>,
-    val availableCountries: List<String>,
-    val availableDepartments: List<String>,
+    val countries: List<HomeZoneCountry>,
     val filteredCount: Int,
     val canLoadMore: Boolean,
 )
@@ -602,33 +613,14 @@ private fun buildDebitPresentation(
     filter: HomeDebitGeoFilterState,
     visibleLimit: Int,
 ): DebitPresentation {
-    val debitCanyonIds = allDebits.asSequence().map { it.canyonId }.toSet()
-    val catalogByLatestDebitId = catalog
-        .filter { it.id in debitCanyonIds }
-        .associateBy { it.id }
-    val catalogItems = catalogByLatestDebitId.values.toList()
-    val availableCountries = catalogItems.asSequence()
-        .flatMap { it.countryTokens.asSequence() }
-        .distinct()
-        .sorted()
-        .toList()
-    val countryMatches = catalogItems.asSequence()
-        .filter { it.matchesCountry(filter.selectedCountry) }
-        .toList()
-    val availableDepartments = if (filter.selectedCountry == null) {
-        emptyList()
-    } else {
-        countryMatches.asSequence()
-            .flatMap { it.subdivisionsFor(filter.selectedCountry).asSequence() }
-            .distinct()
-            .sorted()
-            .toList()
-    }
+    val debitCanyonIds = allDebits.mapTo(HashSet()) { it.canyonId }
+    val reportedCanyons = catalog.filter { it.id in debitCanyonIds }.associateBy { it.id }
 
     val filteredDebits = if (!filter.hasActiveFilter()) {
         allDebits
     } else {
-        val matchingIds = countryMatches.asSequence()
+        val matchingIds = reportedCanyons.values.asSequence()
+            .filter { it.matchesCountry(filter.selectedCountry) }
             .filter { it.matchesDepartment(filter.selectedCountry, filter.selectedDepartment) }
             .map { it.id }
             .toSet()
@@ -638,11 +630,35 @@ private fun buildDebitPresentation(
 
     return DebitPresentation(
         visibleItems = filteredDebits.take(effectiveLimit),
-        availableCountries = availableCountries,
-        availableDepartments = availableDepartments,
+        countries = buildZoneCountries(allDebits.mapNotNull { reportedCanyons[it.canyonId] }),
         filteredCount = filteredDebits.size,
         canLoadMore = filteredDebits.size > effectiveLimit,
     )
+}
+
+/** Each report counts in every country (and subdivision) of its canyon: some canyons lie on a border. */
+private fun buildZoneCountries(reportedCanyons: List<CanyonSearchItem>): List<HomeZoneCountry> {
+    val countryCounts = mutableMapOf<String, Int>()
+    val subdivisionCounts = mutableMapOf<String, MutableMap<String, Int>>()
+    reportedCanyons.forEach { canyon ->
+        canyon.countryTokens.distinct().forEach { country ->
+            countryCounts.merge(country, 1, Int::plus)
+            val counts = subdivisionCounts.getOrPut(country) { mutableMapOf() }
+            canyon.subdivisionsFor(country).distinct().forEach { subdivision -> counts.merge(subdivision, 1, Int::plus) }
+        }
+    }
+    val collator = Collator.getInstance(Locale.FRENCH).apply { strength = Collator.PRIMARY }
+    return countryCounts.entries
+        .sortedWith(compareBy(collator) { it.key })
+        .map { (country, count) ->
+            HomeZoneCountry(
+                name = country,
+                reportCount = count,
+                subdivisions = subdivisionCounts[country].orEmpty().entries
+                    .sortedWith(compareBy(collator) { it.key })
+                    .map { (subdivision, subdivisionCount) -> HomeZoneSubdivision(subdivision, subdivisionCount) },
+            )
+        }
 }
 
 private fun CanyonSearchItem.matchesCountry(country: String?): Boolean = country == null || countryTokens.any {

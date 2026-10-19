@@ -222,10 +222,9 @@ fun HomeScreen(
 
                 if (selectedFeed == HomeFeedType.DEBITS) {
                     item {
-                        HomeDebitGeoFilterControls(
+                        HomeDebitZoneFilter(
                             filterState = homeState.debitGeoFilter,
-                            onCountrySelected = homeViewModel::selectDebitCountry,
-                            onDepartmentSelected = homeViewModel::selectDebitDepartment,
+                            onZoneSelected = homeViewModel::selectDebitZone,
                             onClear = homeViewModel::clearDebitGeoFilter,
                         )
                     }
@@ -233,14 +232,12 @@ fun HomeScreen(
 
                 if (selectedFeed == HomeFeedType.FORUM) {
                     item {
-                        HomeForumFilterControls(
+                        HomeForumCategoryFilter(
                             filterState = homeState.forumFilter,
-                            onCategorySelected = homeViewModel::selectForumCategory,
-                            onClear = homeViewModel::clearForumCategoryFilter,
                             followedCategoryKeys = homeState.followedForumCategoryKeys,
+                            onCategorySelected = homeViewModel::selectForumCategory,
                             onToggleCategoryFollow = { category ->
-                                val isFollowed =
-                                    forumCategoryKey(category.forumId, category.forumName) in homeState.followedForumCategoryKeys
+                                val isFollowed = category.key() in homeState.followedForumCategoryKeys
                                 toggleFollowAskingPermission(isFollowed) { homeViewModel.toggleForumCategoryFollow(category) }
                             },
                         )
@@ -286,6 +283,9 @@ fun HomeScreen(
                             hasCachedForum = homeState.forumFeed.items.isNotEmpty(),
                             isDebitFilterActive = homeState.debitGeoFilter.hasActiveFilter(),
                             onClearDebitFilters = homeViewModel::clearDebitGeoFilter,
+                            forumFilterCategory = homeState.forumFilter.selectedCategory(),
+                            onOpenForumCategory = { category -> openExternalUrl(context, category.forumUrl) },
+                            onClearForumFilter = homeViewModel::clearForumCategoryFilter,
                         )
                     }
                 }

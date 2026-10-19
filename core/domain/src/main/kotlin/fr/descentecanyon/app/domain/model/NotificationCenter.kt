@@ -44,8 +44,9 @@ data class FollowedForumThread(
     val seenTopicMarkers: List<String> = emptyList(),
 )
 
+/** A forum of the site; [section] is the heading it is listed under on the forum index. */
 @Serializable
-data class ForumCategory(val forumId: Int?, val forumName: String, val forumUrl: String)
+data class ForumCategory(val forumId: Int?, val forumName: String, val forumUrl: String, val section: String? = null)
 
 @Serializable
 data class TrackedActivityEvent(

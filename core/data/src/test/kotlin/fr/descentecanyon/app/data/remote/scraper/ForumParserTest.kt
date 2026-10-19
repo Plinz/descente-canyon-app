@@ -57,21 +57,68 @@ class ForumParserTest {
     }
 
     @Test
-    fun `parse categories extracts all forum sections uniquely`() {
+    fun `parse categories keeps the forum index order and the heading of each block`() {
+        val doc = Jsoup.parse(
+            """
+            <html>
+            <body>
+              <div class="forabg">
+                <ul class="topiclist">
+                  <li class="header"><dl class="row-item">
+                    <dt><div class="list-inner"><a href="./viewforum.php?f=32&amp;sid=abc123">Les forums généralistes</a></div></dt>
+                  </dl></li>
+                </ul>
+                <ul class="topiclist forums">
+                  <li class="row"><a href="./viewforum.php?f=3&amp;sid=abc123" class="forumtitle">Matériel, techniques...</a></li>
+                  <li class="row"><a href="./viewforum.php?f=21&amp;sid=abc123" class="forumtitle">Petites annonces</a></li>
+                </ul>
+              </div>
+              <div class="forabg">
+                <ul class="topiclist">
+                  <li class="header"><dl class="row-item">
+                    <dt><div class="list-inner"><a href="./viewforum.php?f=33&amp;sid=abc123">Régions &amp; canyons en particulier</a></div></dt>
+                  </dl></li>
+                </ul>
+                <ul class="topiclist forums">
+                  <li class="row">
+                    <a href="https://www.descente-canyon.com/canyoning/derniers-debits" class="forumtitle">Niveaux d'eau...</a>
+                  </li>
+                  <li class="row"><a href="./viewforum.php?f=6&amp;sid=abc123" class="forumtitle">FR - Alpes du Sud</a></li>
+                  <li class="row"><a href="./viewforum.php?f=16&amp;sid=abc123" class="forumtitle">SUISSE</a></li>
+                  <li class="row"><a href="./viewforum.php?f=6&amp;sid=def456" class="forumtitle">FR - Alpes du Sud</a></li>
+                </ul>
+              </div>
+            </body>
+            </html>
+            """.trimIndent(),
+            "https://www.descente-canyon.com/forums/",
+        )
+
+        val result = ForumParser.parseCategories(doc)
+
+        assertEquals(listOf(3, 21, 6, 16), result.map { it.forumId })
+        assertEquals(
+            listOf(
+                "Les forums généralistes",
+                "Les forums généralistes",
+                "Régions & canyons en particulier",
+                "Régions & canyons en particulier",
+            ),
+            result.map { it.section },
+        )
+        assertEquals("https://www.descente-canyon.com/forums/viewforum.php?f=16", result[3].forumUrl)
+    }
+
+    @Test
+    fun `parse categories without index blocks keeps the page order`() {
         val doc = Jsoup.parse(
             """
             <html>
             <body>
               <ul class="topiclist forums">
-                <li class="row">
-                  <a class="forumtitle" href="./viewforum.php?f=16&amp;sid=abc123">SUISSE</a>
-                </li>
-                <li class="row">
-                  <a class="forumtitle" href="./viewforum.php?f=17&amp;sid=abc123">ITALIE</a>
-                </li>
-                <li class="row">
-                  <a class="forumtitle" href="./viewforum.php?f=16&amp;sid=def456">SUISSE</a>
-                </li>
+                <li class="row"><a class="forumtitle" href="./viewforum.php?f=16&amp;sid=abc123">SUISSE</a></li>
+                <li class="row"><a class="forumtitle" href="./viewforum.php?f=17&amp;sid=abc123">ITALIE</a></li>
+                <li class="row"><a class="forumtitle" href="./viewforum.php?f=16&amp;sid=def456">SUISSE</a></li>
               </ul>
             </body>
             </html>
@@ -81,13 +128,7 @@ class ForumParserTest {
 
         val result = ForumParser.parseCategories(doc)
 
-        assertEquals(2, result.size)
-        assertEquals("ITALIE", result[0].forumName)
-        assertEquals("SUISSE", result[1].forumName)
-        assertEquals(16, result[1].forumId)
-        assertEquals(
-            "https://www.descente-canyon.com/forums/viewforum.php?f=16",
-            result[1].forumUrl,
-        )
+        assertEquals(listOf("SUISSE", "ITALIE"), result.map { it.forumName })
+        assertEquals(listOf(null, null), result.map { it.section })
     }
 }

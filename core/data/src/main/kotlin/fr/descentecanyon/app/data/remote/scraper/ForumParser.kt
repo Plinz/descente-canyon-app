@@ -10,20 +10,34 @@ import org.jsoup.nodes.Element
 
 internal object ForumParser {
 
+    /**
+     * The forums in the order of the forum index, each with the heading of its block ("Les forums
+     * généralistes", "Régions & canyons en particulier"...). The headings themselves hold no topic
+     * and link forums (the "Niveaux d'eau" entry points to the reports page) have no forum id: both
+     * are left out.
+     */
     fun parseCategories(doc: Document): List<ScrapedForumCategory> {
-        return doc.select("a.forumtitle, a[href*=viewforum]")
-            .mapNotNull { anchor ->
-                val forumName = anchor.text().trim().takeIf { it.isNotBlank() } ?: return@mapNotNull null
-                val forumUrl = sanitizeForumUrl(anchor.absUrl("href").ifBlank { anchor.attr("href") })
-                val forumId = forumUrl.extractQueryInt("f")
-                ScrapedForumCategory(
-                    forumId = forumId,
-                    forumName = forumName,
-                    forumUrl = forumUrl,
-                )
+        val blocks = doc.select("div.forabg")
+        val categories = if (blocks.isEmpty()) {
+            doc.select("a.forumtitle").mapNotNull { parseCategory(it, section = null) }
+        } else {
+            blocks.flatMap { block ->
+                val section = block.selectFirst("li.header dt")?.text()?.trim()?.takeIf { it.isNotBlank() }
+                block.select("a.forumtitle").mapNotNull { parseCategory(it, section) }
             }
-            .distinctBy { category -> category.forumId ?: category.forumName.lowercase() }
-            .sortedBy { it.forumName.lowercase() }
+        }
+        return categories.distinctBy { it.forumId }
+    }
+
+    private fun parseCategory(anchor: Element, section: String?): ScrapedForumCategory? {
+        val forumName = anchor.text().trim().takeIf { it.isNotBlank() } ?: return null
+        val forumUrl = sanitizeForumUrl(anchor.absUrl("href").ifBlank { anchor.attr("href") })
+        return ScrapedForumCategory(
+            forumId = forumUrl.takeIf { "viewforum" in it }?.extractQueryInt("f") ?: return null,
+            forumName = forumName,
+            forumUrl = forumUrl,
+            section = section,
+        )
     }
 
     fun parseActiveTopics(doc: Document): List<ScrapedForumActiveTopic> =

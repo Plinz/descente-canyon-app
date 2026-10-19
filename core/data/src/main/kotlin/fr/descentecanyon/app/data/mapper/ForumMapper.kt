@@ -23,4 +23,5 @@ fun ScrapedForumCategory.toDomain(): ForumCategory = ForumCategory(
     forumId = forumId,
     forumName = forumName,
     forumUrl = forumUrl,
+    section = section,
 )

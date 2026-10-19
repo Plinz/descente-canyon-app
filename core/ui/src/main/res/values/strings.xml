@@ -21,6 +21,15 @@
     <string name="home_debit_external_only">Fiche non embarquée - ouverture sur Descente-Canyon</string>
     <string name="home_debit_filter_no_results_title">Aucun débit récent dans cette zone</string>
     <string name="home_debit_filter_no_results_body">Modifiez le pays ou la subdivision pour élargir la liste.</string>
+    <string name="home_zone_filter_title">Zone</string>
+    <string name="home_zone_filter_all">Toutes les zones</string>
+    <string name="home_zone_filter_whole_country">Tout le pays</string>
+    <string name="home_zone_filter_search">Rechercher un pays ou une subdivision</string>
+    <string name="home_zone_filter_hint">Nombre de débits récents par zone</string>
+    <string name="home_forum_filter_hint">Nombre de sujets actifs par rubrique</string>
+    <string name="home_forum_filter_no_results_title">Aucun sujet actif dans cette rubrique</string>
+    <string name="home_forum_filter_no_results_body">Seuls les derniers sujets actifs du forum sont listés ici. Suivez la rubrique pour être averti de ses nouveaux messages, ou ouvrez-la sur le forum.</string>
+    <string name="home_forum_filter_open">Ouvrir la rubrique</string>
     <string name="home_forum_title">Sujets actifs</string>
     <string name="home_forum_subtitle">Les discussions récemment alimentées sur Descente-Canyon.</string>
     <string name="home_offline_banner_title">Mode hors ligne</string>

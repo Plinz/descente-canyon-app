@@ -21,6 +21,15 @@
     <string name="home_debit_external_only">Scheda non integrata - apertura su Descente-Canyon</string>
     <string name="home_debit_filter_no_results_title">Nessuna portata recente in questa zona</string>
     <string name="home_debit_filter_no_results_body">Modifica il paese o la suddivisione per ampliare la lista.</string>
+    <string name="home_zone_filter_title">Zona</string>
+    <string name="home_zone_filter_all">Tutte le zone</string>
+    <string name="home_zone_filter_whole_country">Tutto il paese</string>
+    <string name="home_zone_filter_search">Cerca un paese o una suddivisione</string>
+    <string name="home_zone_filter_hint">Numero di portate recenti per zona</string>
+    <string name="home_forum_filter_hint">Numero di discussioni attive per sezione</string>
+    <string name="home_forum_filter_no_results_title">Nessuna discussione attiva in questa sezione</string>
+    <string name="home_forum_filter_no_results_body">Qui compaiono solo le ultime discussioni attive del forum. Segui la sezione per essere avvisato dei nuovi messaggi, oppure aprila sul forum.</string>
+    <string name="home_forum_filter_open">Apri la sezione</string>
     <string name="home_forum_title">Argomenti attivi</string>
     <string name="home_forum_subtitle">Le discussioni aggiornate di recente su Descente-Canyon.</string>
     <string name="home_offline_banner_title">Modalità offline</string>
