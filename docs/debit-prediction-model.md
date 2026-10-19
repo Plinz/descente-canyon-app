@@ -203,6 +203,122 @@ stationnement…), auxquels le modèle donnait à raison une probabilité quasi 
   catégorie) ne séparait pas les bonnes réponses des mauvaises (AUC 0,53 contre 0,73) : près d'une
   limite, la fourchette couvre déjà les deux niveaux.
 
+## Analyse des leviers (octobre 2026)
+
+Question posée : qu'est-ce qui limite encore la prévision, et le jeu de données doit-il être
+nettoyé ? Méthode : prédictions croisées sur tout l'historique (6 groupes d'années), classifieur du
+commentaire seul (TF-IDF + régression logistique, 0,72 d'exactitude) pour auditer les labels, et
+banc d'essai rapide (CatBoost lr 0,15, périodes 2024 et 2025 → oct. 2026, bootstrap apparié par
+canyon). Repère : changer la seule graine aléatoire de CatBoost déplace le RPS de ±0,0002 et
+l'exactitude de 0,8 point. Un écart plus petit que cela n'est pas un résultat.
+
+### Le plafond vient des labels
+
+Sur les 12 566 canyons-jours notés par au moins deux personnes :
+
+| Niveau noté par l'un | L'autre note pareil | Niveau voisin le plus fréquent |
+| --- | ---: | --- |
+| SEC | 84 % | FILET 12 % |
+| FILET | 55 % | CORRECT 41 % |
+| CORRECT | 86 % | FILET 7 %, GROS 6 % |
+| GROS | 52 % | CORRECT 42 % |
+| TRÈS GROS | 44 % | GROS 36 % |
+| CRUE | 50 % | CORRECT 19 % |
+
+Le modèle se trompe aux mêmes frontières et dans les mêmes proportions (FILET prédit CORRECT 46 %,
+GROS prédit CORRECT 38 %). FILET et GROS portent la moitié du RPS. L'essentiel de l'erreur restante
+est la subjectivité de l'échelle, que ni le modèle ni un nettoyage ne peuvent supprimer.
+
+### Où le modèle perd encore
+
+L'information décisive est un report récent du canyon lui-même :
+
+| Dernier report du canyon | 1 j | 2 j | 3 j | 4–7 j | 8–14 j | 15–30 j | 31–90 j | 91–365 j | > 1 an |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Exactitude v5 | 0,84 | 0,81 | 0,80 | 0,78 | 0,75 | 0,73 | 0,70 | 0,66 | 0,66 |
+
+Les canyons sans report depuis plus de 30 jours représentent 29 % des lignes de test et 38 % de
+l'erreur (le printemps est le pire cas, 0,64). En usage réel, cette part est sans doute plus forte :
+on consulte aussi des canyons peu fréquentés.
+
+Ablation (période 2025-2026, RPS 0,0354) : sans historique du canyon +0,0035, sans état
+hydrologique +0,0018, sans sources temps réel +0,0016, sans descripteurs statiques +0,0011. Courbe
+d'apprentissage : 25 % des lignes donnent 0,0369, 50 % 0,0361 et 100 % 0,0354, soit environ −2 % de
+RPS par doublement des données.
+
+### Nettoyage du jeu de données
+
+* Les erreurs grossières sont rares : p(label) < 1 % pour 0,7 % des lignes. Seuls 312 reports sont
+  contredits à la fois par la météo et par leur propre commentaire (liste à relire, générée
+  localement : `build/debit-model/audit/suspicious_reports.csv`), dont une minorité d'erreurs réelles. Les 941
+  décisions manuelles et le filtre des messages ont déjà retiré l'essentiel. Une version élargie du
+  filtre ne trouve qu'une vingtaine de cas de plus.
+* Retirer ou dépondérer les labels « improbables » n'améliore pas et tend à dégrader (+0,0003 à
+  +0,0004 de RPS sur 2024) : ces cas portent l'incertitude réelle que le modèle doit apprendre.
+* Les reports « non parcouru » (5,7 % des lignes) ont une erreur 3,6 fois plus forte, mais ils portent
+  94 % des CRUE. Les garder. Retirer ceux sans commentaire n'aide pas non plus.
+* Les reports saisis plus de 60 jours après la sortie (ordre des identifiants de remarque) : 1,7 %
+  des lignes, +40 % d'erreur. Les retirer n'apporte rien de significatif.
+* Le biais propre à chaque auteur est stable (corrélation 0,51 entre deux moitiés de ses reports),
+  mais il n'explique que 2 % de la variance. Le drapeau `regulatedCatchment` ne marque que 6 canyons
+  alors qu'environ 70 citent souvent un barrage ou une prise d'eau.
+
+Testés sans gain reproductible sur les deux périodes : labels souples tirés des nuances du
+commentaire (« DC- », « DC+ », « entre GD et TGD », 4 % des reports), dernier report corrigé de ces
+nuances ou du biais de son auteur, biais d'auteur à l'entraînement, analogues hydrologiques (reports
+passés du canyon dans un état similaire), taux de mention de barrages, reports régionaux à 30–80 km,
+cumuls météo 14 à 365 jours. Le modèle exploite déjà l'information disponible.
+
+### Réalisme de l'évaluation
+
+* Délai de publication : environ 70–75 % des reports paraissent le jour de la sortie, 83 % le
+  lendemain, 95 % sous une semaine. Le matin, l'app ne voit donc qu'une partie des reports de la
+  veille. Avec ce délai simulé, J0 perd 0,2 à 0,45 point d'exactitude (RPS 0,0354 → 0,0356 en
+  2025-2026). Entraîner avec ce délai n'améliore rien.
+* J+1/J+2 : l'évaluation laissait voir à l'historique du canyon les reports de la veille de J,
+  inconnus de l'app le matin. Corrigé, J+1 passe de 0,0361 à 0,0365 de RPS (exactitude 0,765 →
+  0,761 en 2025-2026). Réentraîner avec l'historique décalé n'améliore pas.
+
+### Indicateurs physiques testés (radar, barrages, alertes)
+
+* **Radar COMEPHORE** (réanalyse Météo-France radar + pluviomètres, 1 km, horaire, open data depuis
+  1997, publiée avec deux mois de retard) : 2004 → août 2026 extrait sur le bassin versant de 2 896
+  canyons. Contrôle : corrélation journalière médiane de 0,96 avec les pluviomètres situés à moins de
+  3 km. Les pluies radar des 24 h à 7 jours (cumul, intensité horaire maximale, maximum sur le bassin
+  et à 5 km) ne gagnent que sur 2024 (−0,00057 de RPS) et rien sur 2025-2026 (+0,00003). Même la
+  pluie réelle du jour J à 1 km, inconnue le matin (borne haute d'une prévision parfaite), n'apporte
+  pas plus : sur les gros débits en France, −1 à −2 % de RPS une fois retiré le bruit d'entraînement.
+  Ajouter un état hydrologique piloté par la pluie radar donne le signal le plus cohérent, mais
+  faible : −1,4 % (2024) et −0,4 % (2025-2026). La pluie n'est donc pas le facteur limitant. En temps réel, seules des mosaïques
+  radar 5 min sans correction par les pluviomètres sont disponibles (API Météo-France avec clé, BUFR
+  ou HDF5, pas de cumul 1 h ou 24 h), ce qui imposerait un serveur.
+* **Barrages** : descripteurs OpenStreetMap par bassin (barrages, seuils, conduites forcées, canaux)
+  pour 3 767 canyons, dont 674 régulés (Fournel, Giffre, Ordiceto, Massaschlucht, Verdon… bien
+  détectés). Gain sur 2024 (−0,00052), aucun sur 2025-2026 (+0,00012) : non retenu. Les canyons
+  régulés ne sont d'ailleurs pas plus mal prédits (RPS 0,034 contre 0,036). Les débits mesurés
+  Hub'Eau n'aident pas, même sur ces canyons. EDF « Ma rivière et moi » ne garde que 24 h
+  d'historique (5 spots canyoning, déjà affichés dans l'app pour 4 d'entre eux) : utile en
+  affichage, impossible à apprendre.
+* **Vigilance Météo-France** (orages, pluie-inondation, crues ; archive depuis le 28/11/2022) : les
+  jours d'alerte, la fréquence observée des gros débits égale déjà la probabilité prédite (pluie
+  jaune : 22,5 % observés pour 21,8 % prédits). Rien à gagner.
+* Non testables sans clé ou quota payant : humidité du sol et CAPE ERA5 (Open-Meteo gratuit trop
+  limité pour 3 330 points sur 20 ans), AROME 1,3 km historique. Les hauteurs de neige des postes
+  (Nivôse compris) avaient déjà été testées sans gain.
+
+### Leviers qui changeraient vraiment la prévision
+
+1. **Plus de reports** (produit) : un report de la veille vaut près de 19 points d'exactitude par
+   rapport à un canyon sans report depuis un an, et profite aussi aux canyons voisins dans un rayon
+   de 30 km. Rendre la saisie très rapide dans l'app (rappel après une sortie, niveau en un geste)
+   améliore la prévision de tous.
+2. **Afficher une fourchette quand le modèle hésite** : si la probabilité du niveau affiché est
+   inférieure à 0,6 (22 % des cas), afficher aussi le niveau voisin le plus probable (« correct à
+   gros »). Le niveau unique est alors juste 84 % du temps, la fourchette 88 %, soit 85 % au global
+   contre 76 % pour un niveau unique.
+3. **Radar et barrages** : testés (voir ci-dessus), gains inférieurs à 1 % et non reproductibles.
+   Un serveur de traitement radar ne se justifie pas aujourd'hui.
+
 ## Limites connues et pistes
 
 * Les orages très locaux d'été restent la principale source de gros débits manqués. Les
