@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -45,6 +46,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonWeather
@@ -52,6 +54,7 @@ import fr.descentecanyon.app.domain.model.DailyDebitPrediction
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.PredictedDebitLevel
 import fr.descentecanyon.app.domain.model.PredictionConfidence
+import fr.descentecanyon.app.ui.components.debitLevelShortLabel
 import fr.descentecanyon.app.ui.components.debitRangeLabel
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.theme.DebitCorrect
@@ -233,7 +236,7 @@ private fun PredictionSummaryLine(predictions: CanyonDebitPredictions?, isLoadin
     val todayPrediction = predictions.predictions.firstOrNull { it.horizonDays == 0 }
         ?: predictions.predictions.firstOrNull()
     val tomorrowPrediction = predictions.predictions.firstOrNull { it.horizonDays == 1 }
-    // Same height for both tiles when one value wraps ("Débit correct probable" on a narrow phone).
+    // Same height for both tiles when one value wraps ("Très gros à crue" on a narrow phone).
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -298,7 +301,7 @@ private fun PredictionCompactTile(label: String, value: String, color: Color, mo
 
 @Composable
 private fun predictionSummaryValue(prediction: DailyDebitPrediction): String = prediction.likelyRange()?.let { debitRangeLabel(it) }
-    ?: prediction.ordinalLevel?.let { ordinalLevelTitle(it) }
+    ?: prediction.ordinalLevel?.let { debitLevelShortLabel(it) }
     ?: levelLabel(prediction.level)
 
 @Composable
@@ -439,15 +442,18 @@ private fun DebitOrdinalGauge(score: Double, ordinalCutpoints: List<Double>, sho
             )
         }
         if (showLabels) {
+            val labelStyle = MaterialTheme.typography.labelSmall
             Row(modifier = Modifier.fillMaxWidth()) {
                 ORDINAL_GAUGE_LEVELS.forEach { gaugeLevel ->
                     Text(
-                        text = ordinalLevelShortLabel(gaugeLevel),
+                        text = debitLevelShortLabel(gaugeLevel),
                         modifier = Modifier.weight(1f),
-                        style = MaterialTheme.typography.labelSmall,
+                        style = labelStyle,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         textAlign = TextAlign.Center,
                         maxLines = 1,
+                        // A sixth of the card is narrow: a long name ("Hochwasser") shrinks instead of being cut.
+                        autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = labelStyle.fontSize),
                     )
                 }
             }
@@ -474,28 +480,6 @@ private fun levelLabel(level: PredictedDebitLevel): String = when (level) {
     PredictedDebitLevel.LOW -> stringResource(R.string.prediction_level_low)
     PredictedDebitLevel.MEDIUM -> stringResource(R.string.prediction_level_medium)
     PredictedDebitLevel.HIGH -> stringResource(R.string.prediction_level_high)
-}
-
-@Composable
-private fun ordinalLevelTitle(level: NiveauDebit): String = when (level) {
-    NiveauDebit.SEC -> stringResource(R.string.prediction_ordinal_sec)
-    NiveauDebit.FILET -> stringResource(R.string.prediction_ordinal_filet)
-    NiveauDebit.CORRECT -> stringResource(R.string.prediction_ordinal_correct)
-    NiveauDebit.GROS -> stringResource(R.string.prediction_ordinal_gros)
-    NiveauDebit.TRES_GROS -> stringResource(R.string.prediction_ordinal_tres_gros)
-    NiveauDebit.CRUE -> stringResource(R.string.prediction_ordinal_crue)
-    NiveauDebit.INCONNU -> stringResource(R.string.debit_level_inconnu)
-}
-
-@Composable
-private fun ordinalLevelShortLabel(level: NiveauDebit): String = when (level) {
-    NiveauDebit.SEC -> stringResource(R.string.debit_level_sec)
-    NiveauDebit.FILET -> stringResource(R.string.debit_level_filet_short)
-    NiveauDebit.CORRECT -> stringResource(R.string.debit_level_correct)
-    NiveauDebit.GROS -> stringResource(R.string.debit_level_gros)
-    NiveauDebit.TRES_GROS -> stringResource(R.string.debit_level_tres_gros)
-    NiveauDebit.CRUE -> stringResource(R.string.debit_level_crue_short)
-    NiveauDebit.INCONNU -> stringResource(R.string.debit_level_inconnu)
 }
 
 @Composable

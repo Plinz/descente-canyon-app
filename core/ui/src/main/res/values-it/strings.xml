@@ -337,18 +337,10 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="prediction_level_low">Basso</string>
     <string name="prediction_level_medium">Medio</string>
     <string name="prediction_level_high">Alto</string>
-    <string name="prediction_ordinal_sec">Probabilmente asciutto</string>
-    <string name="prediction_ordinal_filet">Probabile filo d\'acqua</string>
-    <string name="prediction_ordinal_correct">Probabile portata corretta</string>
-    <string name="prediction_ordinal_gros">Probabile portata alta</string>
-    <string name="prediction_ordinal_tres_gros">Probabile portata molto alta</string>
-    <string name="prediction_ordinal_crue">Probabile piena</string>
     <string name="prediction_high_flow_risk">Rischio di portata alta o superiore: %1$d%%</string>
     <string name="prediction_confidence_high">Fiducia alta</string>
     <string name="prediction_confidence_medium">Fiducia media</string>
     <string name="prediction_confidence_low">Fiducia bassa</string>
-    <string name="debit_level_filet_short">Filo</string>
-    <string name="debit_level_crue_short">Piena</string>
     <string name="prediction_info_title">Capire la stima</string>
     <string name="prediction_info_error">Impossibile caricare le informazioni sulla stima.</string>
     <string name="prediction_info_intro_title">Che cosa mostra questa stima</string>
@@ -662,7 +654,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="weather_condition_unknown">meteo sconosciuto</string>
     <string name="prediction_range">da %1$s a %2$s</string>
     <string name="prediction_range_level_sec">secco</string>
-    <string name="prediction_range_level_filet">filo d\'acqua</string>
+    <string name="prediction_range_level_filet">filo</string>
     <string name="prediction_range_level_correct">normale</string>
     <string name="prediction_range_level_gros">alto</string>
     <string name="prediction_range_level_tres_gros">molto alto</string>

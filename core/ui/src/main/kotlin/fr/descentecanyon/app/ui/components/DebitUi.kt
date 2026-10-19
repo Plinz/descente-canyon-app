@@ -58,10 +58,17 @@ private const val RELATIVE_DAYS_LIMIT = 30L
 
 /** "Correct à gros": two adjacent levels the flow estimate hesitates between. */
 @Composable
-fun debitRangeLabel(range: DebitLevelRange): String {
+fun debitRangeLabel(range: DebitLevelRange): String =
+    capitalized(stringResource(R.string.prediction_range, debitRangeWord(range.low), debitRangeWord(range.high)))
+
+/** "Très gros": a level as the flow estimate names it, without the word "débit". */
+@Composable
+fun debitLevelShortLabel(level: NiveauDebit): String = capitalized(debitRangeWord(level))
+
+@Composable
+private fun capitalized(text: String): String {
     val locale = LocalLocale.current.platformLocale
-    return stringResource(R.string.prediction_range, debitRangeWord(range.low), debitRangeWord(range.high))
-        .replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
+    return text.replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
 }
 
 /** Short lower-case name of a level, to build ranges and legends. */

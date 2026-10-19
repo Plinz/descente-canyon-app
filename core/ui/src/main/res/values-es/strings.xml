@@ -337,18 +337,10 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="prediction_level_low">Bajo</string>
     <string name="prediction_level_medium">Medio</string>
     <string name="prediction_level_high">Alto</string>
-    <string name="prediction_ordinal_sec">Seco probable</string>
-    <string name="prediction_ordinal_filet">Hilo de agua probable</string>
-    <string name="prediction_ordinal_correct">Caudal correcto probable</string>
-    <string name="prediction_ordinal_gros">Caudal alto probable</string>
-    <string name="prediction_ordinal_tres_gros">Caudal muy alto probable</string>
-    <string name="prediction_ordinal_crue">Crecida probable</string>
     <string name="prediction_high_flow_risk">Riesgo de caudal alto o superior: %1$d %%</string>
     <string name="prediction_confidence_high">Confianza alta</string>
     <string name="prediction_confidence_medium">Confianza media</string>
     <string name="prediction_confidence_low">Confianza baja</string>
-    <string name="debit_level_filet_short">Hilo</string>
-    <string name="debit_level_crue_short">Crecida</string>
     <string name="prediction_info_title">Entender la estimación</string>
     <string name="prediction_info_error">No se puede cargar la información sobre la estimación.</string>
     <string name="prediction_info_intro_title">Qué muestra esta estimación</string>
@@ -662,7 +654,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="weather_condition_unknown">tiempo desconocido</string>
     <string name="prediction_range">%1$s a %2$s</string>
     <string name="prediction_range_level_sec">seco</string>
-    <string name="prediction_range_level_filet">hilo de agua</string>
+    <string name="prediction_range_level_filet">hilo</string>
     <string name="prediction_range_level_correct">normal</string>
     <string name="prediction_range_level_gros">alto</string>
     <string name="prediction_range_level_tres_gros">muy alto</string>
