@@ -11,6 +11,8 @@ import fr.descentecanyon.app.domain.model.ForumCategory
 import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.ReportZone
+import fr.descentecanyon.app.domain.model.ZoneCountry
+import fr.descentecanyon.app.domain.model.buildZoneTree
 import fr.descentecanyon.app.domain.model.forumCategoryKey
 import fr.descentecanyon.app.domain.model.subdivisionsFor
 import fr.descentecanyon.app.domain.repository.CanyonRepository
@@ -25,8 +27,6 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
-import java.text.Collator
-import java.util.Locale
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -53,7 +53,7 @@ data class HomeDebitGeoFilterState(
     val selectedCountry: String? = null,
     val selectedDepartment: String? = null,
     /** The countries of the latest reports, each with its subdivisions, in alphabetical order. */
-    val countries: List<HomeZoneCountry> = emptyList(),
+    val countries: List<ZoneCountry> = emptyList(),
     val totalCount: Int = 0,
     val displayedCount: Int = 0,
     val filteredCount: Int = 0,
@@ -61,11 +61,6 @@ data class HomeDebitGeoFilterState(
 ) {
     fun hasActiveFilter(): Boolean = selectedCountry != null || selectedDepartment != null
 }
-
-/** A country of the latest reports and how many of them were made there. */
-data class HomeZoneCountry(val name: String, val reportCount: Int, val subdivisions: List<HomeZoneSubdivision>)
-
-data class HomeZoneSubdivision(val name: String, val reportCount: Int)
 
 data class HomeForumFilterState(
     val selectedCategoryKey: String? = null,
@@ -602,7 +597,7 @@ private enum class HomeFeedFailureKind {
 
 private data class DebitPresentation(
     val visibleItems: List<Debit>,
-    val countries: List<HomeZoneCountry>,
+    val countries: List<ZoneCountry>,
     val filteredCount: Int,
     val canLoadMore: Boolean,
 )
@@ -630,35 +625,11 @@ private fun buildDebitPresentation(
 
     return DebitPresentation(
         visibleItems = filteredDebits.take(effectiveLimit),
-        countries = buildZoneCountries(allDebits.mapNotNull { reportedCanyons[it.canyonId] }),
+        // Counted per report: a canyon with three recent reports weighs three.
+        countries = buildZoneTree(allDebits.mapNotNull { reportedCanyons[it.canyonId] }),
         filteredCount = filteredDebits.size,
         canLoadMore = filteredDebits.size > effectiveLimit,
     )
-}
-
-/** Each report counts in every country (and subdivision) of its canyon: some canyons lie on a border. */
-private fun buildZoneCountries(reportedCanyons: List<CanyonSearchItem>): List<HomeZoneCountry> {
-    val countryCounts = mutableMapOf<String, Int>()
-    val subdivisionCounts = mutableMapOf<String, MutableMap<String, Int>>()
-    reportedCanyons.forEach { canyon ->
-        canyon.countryTokens.distinct().forEach { country ->
-            countryCounts.merge(country, 1, Int::plus)
-            val counts = subdivisionCounts.getOrPut(country) { mutableMapOf() }
-            canyon.subdivisionsFor(country).distinct().forEach { subdivision -> counts.merge(subdivision, 1, Int::plus) }
-        }
-    }
-    val collator = Collator.getInstance(Locale.FRENCH).apply { strength = Collator.PRIMARY }
-    return countryCounts.entries
-        .sortedWith(compareBy(collator) { it.key })
-        .map { (country, count) ->
-            HomeZoneCountry(
-                name = country,
-                reportCount = count,
-                subdivisions = subdivisionCounts[country].orEmpty().entries
-                    .sortedWith(compareBy(collator) { it.key })
-                    .map { (subdivision, subdivisionCount) -> HomeZoneSubdivision(subdivision, subdivisionCount) },
-            )
-        }
 }
 
 private fun CanyonSearchItem.matchesCountry(country: String?): Boolean = country == null || countryTokens.any {

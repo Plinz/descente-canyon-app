@@ -21,10 +21,10 @@
     <string name="home_debit_external_only">Route page not embedded - opening on Descente-Canyon</string>
     <string name="home_debit_filter_no_results_title">No recent flow reports in this area</string>
     <string name="home_debit_filter_no_results_body">Change the country or subdivision to broaden the list.</string>
-    <string name="home_zone_filter_title">Area</string>
-    <string name="home_zone_filter_all">All areas</string>
-    <string name="home_zone_filter_whole_country">Whole country</string>
-    <string name="home_zone_filter_search">Search a country or subdivision</string>
+    <string name="zone_filter_title">Area</string>
+    <string name="zone_filter_all">All areas</string>
+    <string name="zone_filter_whole_country">Whole country</string>
+    <string name="zone_filter_search">Search a country or subdivision</string>
     <string name="home_zone_filter_hint">Number of recent flow reports per area</string>
     <string name="home_forum_filter_hint">Number of active topics per section</string>
     <string name="home_forum_filter_no_results_title">No active topic in this section</string>
@@ -167,6 +167,12 @@ Search for a canyon and add it to your favorites.</string>
     <string name="search_sort_length">Length</string>
     <string name="search_sort_max_waterfall">Max waterfall</string>
     <string name="search_sort_distance">Distance</string>
+    <string name="search_zone_filter_hint">Number of canyons per area</string>
+    <string name="search_sort_order">Order</string>
+    <string name="search_sort_ascending">Ascending</string>
+    <string name="search_sort_descending">Descending</string>
+    <string name="search_sort_nearest_first">Nearest first</string>
+    <string name="search_sort_farthest_first">Farthest first</string>
     <string name="quick_search_title">Quick search</string>
     <string name="search_canyon_action">Search for a canyon</string>
     <string name="support_donation_title">Donate</string>
@@ -533,6 +539,7 @@ Search for a canyon and add it to your favorites.</string>
     </plurals>
     <string name="refresh">Refresh</string>
     <string name="cancel">Cancel</string>
+    <string name="ok">OK</string>
     <string name="pending_debits_title">Flow reports waiting to be sent</string>
     <string name="pending_debits_empty_title">No flow report waiting</string>
     <string name="pending_debits_empty_body">Flow reports written without network show up here until they are sent.</string>

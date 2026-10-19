@@ -21,10 +21,10 @@
     <string name="home_debit_external_only">Fiche non embarquée - ouverture sur Descente-Canyon</string>
     <string name="home_debit_filter_no_results_title">Aucun débit récent dans cette zone</string>
     <string name="home_debit_filter_no_results_body">Modifiez le pays ou la subdivision pour élargir la liste.</string>
-    <string name="home_zone_filter_title">Zone</string>
-    <string name="home_zone_filter_all">Toutes les zones</string>
-    <string name="home_zone_filter_whole_country">Tout le pays</string>
-    <string name="home_zone_filter_search">Rechercher un pays ou une subdivision</string>
+    <string name="zone_filter_title">Zone</string>
+    <string name="zone_filter_all">Toutes les zones</string>
+    <string name="zone_filter_whole_country">Tout le pays</string>
+    <string name="zone_filter_search">Rechercher un pays ou une subdivision</string>
     <string name="home_zone_filter_hint">Nombre de débits récents par zone</string>
     <string name="home_forum_filter_hint">Nombre de sujets actifs par rubrique</string>
     <string name="home_forum_filter_no_results_title">Aucun sujet actif dans cette rubrique</string>
@@ -167,6 +167,12 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="search_sort_length">Longueur</string>
     <string name="search_sort_max_waterfall">Cascade max</string>
     <string name="search_sort_distance">Distance</string>
+    <string name="search_zone_filter_hint">Nombre de canyons par zone</string>
+    <string name="search_sort_order">Ordre</string>
+    <string name="search_sort_ascending">Croissant</string>
+    <string name="search_sort_descending">Décroissant</string>
+    <string name="search_sort_nearest_first">Plus proches</string>
+    <string name="search_sort_farthest_first">Plus éloignés</string>
     <string name="quick_search_title">Recherche rapide</string>
     <string name="search_canyon_action">Rechercher un canyon</string>
     <string name="support_donation_title">Faire un don</string>
@@ -539,6 +545,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     </plurals>
     <string name="refresh">Actualiser</string>
     <string name="cancel">Annuler</string>
+    <string name="ok">OK</string>
     <string name="pending_debits_title">Débits en attente d\'envoi</string>
     <string name="pending_debits_empty_title">Aucun débit en attente</string>
     <string name="pending_debits_empty_body">Les débits saisis sans réseau apparaissent ici jusqu\'à leur envoi.</string>

@@ -1,8 +1,6 @@
 package fr.descentecanyon.app.ui.outing
 
 import android.Manifest
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.content.Intent
 import android.text.format.DateFormat
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -71,6 +69,8 @@ import fr.descentecanyon.app.ui.components.debitLevelLabel
 import fr.descentecanyon.app.ui.components.debitRangeLabel
 import fr.descentecanyon.app.ui.components.relativeDayLabel
 import fr.descentecanyon.app.ui.design.DcCard
+import fr.descentecanyon.app.ui.design.DcDatePickerDialog
+import fr.descentecanyon.app.ui.design.DcTimePickerDialog
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.test.TestTags
@@ -208,6 +208,22 @@ private fun WhenCard(state: OutingPlanUiState, onDateSelected: (LocalDate) -> Un
     val context = LocalContext.current
     val date = state.choices.date
     val tomorrow = state.today.plusDays(1)
+    var showDatePicker by remember { mutableStateOf(false) }
+    var showTimePicker by remember { mutableStateOf(false) }
+    if (showDatePicker) {
+        DcDatePickerDialog(initialDate = date, onDateSelected = onDateSelected, onDismiss = {
+            showDatePicker = false
+        }, minDate = state.today)
+    }
+    if (showTimePicker) {
+        DcTimePickerDialog(
+            title = stringResource(R.string.outing_start_label),
+            initialTime = state.choices.startTime,
+            is24Hour = DateFormat.is24HourFormat(context),
+            onTimeSelected = onTimeSelected,
+            onDismiss = { showTimePicker = false },
+        )
+    }
     val dateLabel = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(LocalLocale.current.platformLocale).format(date)
     DcCard(modifier = Modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -221,17 +237,7 @@ private fun WhenCard(state: OutingPlanUiState, onDateSelected: (LocalDate) -> Un
                 }, label = { Text(stringResource(R.string.outing_day_tomorrow)) })
                 FilterChip(
                     selected = date != state.today && date != tomorrow,
-                    onClick = {
-                        DatePickerDialog(
-                            context,
-                            { _, year, month, day -> onDateSelected(LocalDate.of(year, month + 1, day)) },
-                            date.year,
-                            date.monthValue - 1,
-                            date.dayOfMonth,
-                        )
-                            .apply { datePicker.minDate = System.currentTimeMillis() - 1_000 }
-                            .show()
-                    },
+                    onClick = { showDatePicker = true },
                     label = { Text(stringResource(R.string.outing_day_other)) },
                 )
             }
@@ -243,15 +249,7 @@ private fun WhenCard(state: OutingPlanUiState, onDateSelected: (LocalDate) -> Un
             )
             Text(stringResource(R.string.outing_start_label), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
             OutlinedButton(
-                onClick = {
-                    TimePickerDialog(
-                        context,
-                        { _, hour, minute -> onTimeSelected(LocalTime.of(hour, minute)) },
-                        state.choices.startTime.hour,
-                        state.choices.startTime.minute,
-                        DateFormat.is24HourFormat(context),
-                    ).show()
-                },
+                onClick = { showTimePicker = true },
                 modifier = Modifier.testTag(TestTags.OUTING_START_TIME),
             ) {
                 Icon(Icons.Default.AccessTime, contentDescription = stringResource(R.string.outing_change_time))

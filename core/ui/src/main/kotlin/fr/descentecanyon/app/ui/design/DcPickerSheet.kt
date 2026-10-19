@@ -67,6 +67,7 @@ data class DcPickerOption<out T>(
     override val key: String,
     val value: T,
     val label: String,
+    val icon: ImageVector? = null,
     val count: Int? = null,
     val isSelected: Boolean = false,
     val isNested: Boolean = false,
@@ -77,7 +78,8 @@ data class DcPickerOption<out T>(
 
 /**
  * A list to pick one value from, in a bottom sheet. Picking an option closes the sheet; a group
- * option calls [onToggle] and stays open. The search field is shown when [query] is not null.
+ * option calls [onToggle] and stays open. The search field is shown when [query] is not null, and
+ * [header] (a setting that applies to every option, like the sort order) above the list.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,6 +95,7 @@ fun <T> DcPickerSheet(
     onQueryChange: (String) -> Unit = {},
     searchPlaceholder: String = "",
     emptyText: String? = null,
+    header: (@Composable () -> Unit)? = null,
 ) {
     val colors = LocalDcColors.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
@@ -126,6 +129,7 @@ fun <T> DcPickerSheet(
             if (query != null) {
                 DcPickerSearchField(query = query, onQueryChange = onQueryChange, placeholder = searchPlaceholder)
             }
+            header?.invoke()
             LazyColumn(
                 state = listState,
                 modifier = Modifier
@@ -227,6 +231,14 @@ private fun DcPickerOptionRow(option: DcPickerOption<*>, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(10.dp),
         ) {
+            option.icon?.let { icon ->
+                Icon(
+                    icon,
+                    contentDescription = null,
+                    tint = if (option.isSelected) accent else colors.textMuted,
+                    modifier = Modifier.size(20.dp),
+                )
+            }
             Text(
                 text = option.label,
                 modifier = Modifier.weight(1f),

@@ -1,8 +1,6 @@
 package fr.descentecanyon.app.ui.home
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,11 +22,12 @@ import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FolderSpecial
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -56,6 +55,8 @@ import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.ui.common.openUrl
 import fr.descentecanyon.app.ui.components.DebitBadge
 import fr.descentecanyon.app.ui.components.debitLevelColor
+import fr.descentecanyon.app.ui.design.DcDropdownMenu
+import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.format.DateTimeFormatter
 
@@ -336,35 +337,29 @@ internal fun ForumTopicCard(
                             tint = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                     }
-                    androidx.compose.material3.DropdownMenu(
+                    DcDropdownMenu(
                         expanded = menuExpanded,
                         onDismissRequest = { menuExpanded = false },
                     ) {
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    if (isThreadFollowed) {
-                                        stringResource(R.string.notifications_forum_thread_unfollow_action)
-                                    } else {
-                                        stringResource(R.string.notifications_forum_thread_follow_action)
-                                    },
-                                )
+                        DcDropdownMenuItem(
+                            text = if (isThreadFollowed) {
+                                stringResource(R.string.notifications_forum_thread_unfollow_action)
+                            } else {
+                                stringResource(R.string.notifications_forum_thread_follow_action)
                             },
+                            icon = if (isThreadFollowed) Icons.Default.NotificationsActive else Icons.Default.NotificationsNone,
                             onClick = {
                                 menuExpanded = false
                                 onToggleThreadFollow()
                             },
                         )
-                        DropdownMenuItem(
-                            text = {
-                                Text(
-                                    if (isCategoryFollowed) {
-                                        stringResource(R.string.notifications_forum_unfollow_action)
-                                    } else {
-                                        stringResource(R.string.notifications_forum_follow_action)
-                                    },
-                                )
+                        DcDropdownMenuItem(
+                            text = if (isCategoryFollowed) {
+                                stringResource(R.string.notifications_forum_unfollow_action)
+                            } else {
+                                stringResource(R.string.notifications_forum_follow_action)
                             },
+                            icon = Icons.Default.FolderSpecial,
                             onClick = {
                                 menuExpanded = false
                                 onToggleCategoryFollow()

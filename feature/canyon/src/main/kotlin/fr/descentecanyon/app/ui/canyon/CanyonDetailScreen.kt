@@ -3,8 +3,6 @@ package fr.descentecanyon.app.ui.canyon
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -42,12 +40,9 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -68,7 +63,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -84,6 +78,9 @@ import fr.descentecanyon.app.ui.common.startActivitySafely
 import fr.descentecanyon.app.ui.components.AppFloatingActionButton
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.EmergencyIconButton
+import fr.descentecanyon.app.ui.design.DcDropdownMenu
+import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
+import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.test.TestTags
 
@@ -374,32 +371,22 @@ private fun CanyonMoreActions(
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
             )
         }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(
-                text = {
-                    val label = if (isFollowingDebits) {
-                        R.string.notifications_canyon_unfollow_action
-                    } else {
-                        R.string.notifications_canyon_follow_action
-                    }
-                    Text(stringResource(label))
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = if (isFollowingDebits) Icons.Default.NotificationsActive else Icons.Default.NotificationsNone,
-                        contentDescription = null,
-                        tint = if (isFollowingDebits) MaterialTheme.colorScheme.primary else LocalContentColor.current,
-                    )
-                },
+        DcDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DcDropdownMenuItem(
+                text = stringResource(
+                    if (isFollowingDebits) R.string.notifications_canyon_unfollow_action else R.string.notifications_canyon_follow_action,
+                ),
+                icon = if (isFollowingDebits) Icons.Default.NotificationsActive else Icons.Default.NotificationsNone,
+                iconTint = if (isFollowingDebits) null else LocalDcColors.current.textSecondary,
                 onClick = {
                     expanded = false
                     onToggleFollowDebits()
                 },
                 modifier = Modifier.testTag(TestTags.DETAIL_DEBIT_NOTIFICATION_BUTTON),
             )
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.interest_rating_add_action)) },
-                leadingIcon = { Icon(Icons.Default.Star, contentDescription = null) },
+            DcDropdownMenuItem(
+                text = stringResource(R.string.interest_rating_add_action),
+                icon = Icons.Default.Star,
                 onClick = {
                     expanded = false
                     onRateInterestClick()
@@ -407,9 +394,9 @@ private fun CanyonMoreActions(
                 modifier = Modifier.testTag(TestTags.DETAIL_RATE_INTEREST_BUTTON),
             )
             if (canyon != null) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.share_canyon)) },
-                    leadingIcon = { Icon(Icons.Default.Share, contentDescription = null) },
+                DcDropdownMenuItem(
+                    text = stringResource(R.string.share_canyon),
+                    icon = Icons.Default.Share,
                     onClick = {
                         expanded = false
                         context.shareCanyon(canyon)
@@ -417,9 +404,9 @@ private fun CanyonMoreActions(
                 )
             }
             if (canyon?.url?.startsWith("https://") == true) {
-                DropdownMenuItem(
-                    text = { Text(stringResource(R.string.open_on_site)) },
-                    leadingIcon = { Icon(Icons.AutoMirrored.Filled.OpenInNew, contentDescription = null) },
+                DcDropdownMenuItem(
+                    text = stringResource(R.string.open_on_site),
+                    icon = Icons.AutoMirrored.Filled.OpenInNew,
                     onClick = {
                         expanded = false
                         context.openUrl(canyon.url)

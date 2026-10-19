@@ -17,7 +17,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -26,7 +25,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.filled.Sort
@@ -36,11 +34,10 @@ import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
@@ -75,9 +72,6 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonSummary
-import fr.descentecanyon.app.domain.model.CotationRating
-import fr.descentecanyon.app.domain.model.IntRangeFilter
-import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
 import fr.descentecanyon.app.domain.model.toSummary
@@ -279,44 +273,18 @@ fun SearchScreen(
                     modifier = Modifier.weight(1f),
                 )
 
-                Box(modifier = Modifier.weight(1f)) {
-                    SearchControlButton(
-                        title = stringResource(R.string.search_sort_title),
-                        value = sortLabel(uiState.criteria.sortField),
-                        leadingIcon = Icons.AutoMirrored.Filled.Sort,
-                        trailingIcon = if (uiState.criteria.sortDirection == SortDirection.ASC) {
-                            Icons.Default.ArrowUpward
-                        } else {
-                            Icons.Default.ArrowDownward
-                        },
-                        onClick = { showSortMenu = true },
-                        modifier = Modifier.fillMaxWidth(),
-                    )
-                    DropdownMenu(expanded = showSortMenu, onDismissRequest = { showSortMenu = false }) {
-                        SearchSortField.entries.forEach { field ->
-                            DropdownMenuItem(
-                                text = {
-                                    Text(
-                                        if (uiState.criteria.sortField == field) {
-                                            sortLabel(field) + directionSuffix(uiState.criteria.sortDirection)
-                                        } else {
-                                            sortLabel(field)
-                                        },
-                                    )
-                                },
-                                onClick = {
-                                    showSortMenu = false
-                                    if (field == SearchSortField.DISTANCE) {
-                                        requestCurrentLocation(applyDistanceSortWhenReady = true)
-                                    } else {
-                                        pendingDistanceSort = false
-                                        viewModel.onSortSelected(field)
-                                    }
-                                },
-                            )
-                        }
-                    }
-                }
+                SearchControlButton(
+                    title = stringResource(R.string.search_sort_title),
+                    value = sortLabel(uiState.criteria.sortField),
+                    leadingIcon = Icons.AutoMirrored.Filled.Sort,
+                    trailingIcon = when {
+                        uiState.criteria.sortField == SearchSortField.RELEVANCE -> Icons.Default.ExpandMore
+                        uiState.criteria.sortDirection == SortDirection.ASC -> Icons.Default.ArrowUpward
+                        else -> Icons.Default.ArrowDownward
+                    },
+                    onClick = { showSortMenu = true },
+                    modifier = Modifier.weight(1f),
+                )
             }
 
             if (activeFilters.isNotEmpty()) {
@@ -475,8 +443,7 @@ fun SearchScreen(
         SearchFiltersSheet(
             uiState = SearchFiltersSheetState(
                 criteria = uiState.criteria,
-                availableCountries = uiState.availableCountries,
-                availableDepartments = uiState.availableDepartments,
+                zones = uiState.zones,
                 totalResultsCount = uiState.totalResultsCount,
             ),
             onDismiss = { showFiltersSheet = false },
@@ -485,8 +452,31 @@ fun SearchScreen(
         )
     }
 
+    if (showSortMenu) {
+        SearchSortSheet(
+            field = uiState.criteria.sortField,
+            direction = uiState.criteria.sortDirection,
+            onFieldSelected = { field ->
+                if (field == SearchSortField.DISTANCE) {
+                    requestCurrentLocation(applyDistanceSortWhenReady = true)
+                } else {
+                    pendingDistanceSort = false
+                    viewModel.onSortSelected(field)
+                }
+            },
+            onDirectionSelected = viewModel::onSortDirectionSelected,
+            onDismiss = { showSortMenu = false },
+        )
+    }
+
     uiState.selectedCanyon?.let { selectedCanyon ->
-        ModalBottomSheet(onDismissRequest = viewModel::clearSelectedCanyon) {
+        ModalBottomSheet(
+            onDismissRequest = viewModel::clearSelectedCanyon,
+            containerColor = LocalDcColors.current.backgroundElevated,
+            contentColor = LocalDcColors.current.textPrimary,
+            shape = RoundedCornerShape(topStart = 36.dp, topEnd = 36.dp),
+            dragHandle = { BottomSheetDefaults.DragHandle(color = LocalDcColors.current.textMuted.copy(alpha = 0.4f)) },
+        ) {
             SelectedCanyonSheetContent(
                 canyon = selectedCanyon.toSummary(),
                 onOpen = {

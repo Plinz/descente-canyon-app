@@ -63,8 +63,8 @@ fun CanyonSearchItem.toSummary(): CanyonSummary = CanyonSummary(
 
 data class SearchResultSet(
     val results: List<CanyonSearchItem> = emptyList(),
-    val availableCountries: List<String> = emptyList(),
-    val availableDepartments: List<String> = emptyList(),
+    /** The areas of the canyons matching the text query, whatever the other filters. */
+    val zones: List<ZoneCountry> = emptyList(),
     val totalResultsCount: Int = results.size,
     val isResultListDeferred: Boolean = false,
 )

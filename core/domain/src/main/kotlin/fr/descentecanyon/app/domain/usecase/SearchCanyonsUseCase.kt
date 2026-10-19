@@ -6,6 +6,7 @@ import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchResultSet
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
+import fr.descentecanyon.app.domain.model.buildZoneTree
 import fr.descentecanyon.app.domain.model.haversineKm
 import fr.descentecanyon.app.domain.model.matches
 import fr.descentecanyon.app.domain.model.normalizeForSearch
@@ -29,24 +30,10 @@ class SearchCanyonsUseCase @Inject constructor(private val canyonRepository: Can
             .filter { matchesBaseFilters(it, criteria, normalizedQuery, queryTokens) }
             .toList()
 
-        val availableCountries = geoOptionMatches.asSequence()
-            .flatMap { it.countryTokens.asSequence() }
-            .distinct()
-            .sorted()
-            .toList()
-
-        val countryOptionMatches = geoOptionMatches.asSequence()
-            .filter { matchesCountry(it, criteria.selectedCountry) }
-            .toList()
+        val zones = buildZoneTree(geoOptionMatches)
 
         val countryMatches = baseMatches.asSequence()
             .filter { matchesCountry(it, criteria.selectedCountry) }
-            .toList()
-
-        val availableDepartments = countryOptionMatches.asSequence()
-            .flatMap { it.subdivisionsFor(criteria.selectedCountry).asSequence() }
-            .distinct()
-            .sorted()
             .toList()
 
         val results = countryMatches.asSequence()
@@ -56,8 +43,7 @@ class SearchCanyonsUseCase @Inject constructor(private val canyonRepository: Can
         if (shouldDeferResults) {
             return SearchResultSet(
                 results = emptyList(),
-                availableCountries = availableCountries,
-                availableDepartments = availableDepartments,
+                zones = zones,
                 totalResultsCount = results.size,
                 isResultListDeferred = true,
             )
@@ -65,8 +51,7 @@ class SearchCanyonsUseCase @Inject constructor(private val canyonRepository: Can
 
         return SearchResultSet(
             results = sortItems(results, criteria),
-            availableCountries = availableCountries,
-            availableDepartments = availableDepartments,
+            zones = zones,
             totalResultsCount = results.size,
         )
     }

@@ -305,8 +305,7 @@ fun MapScreen(
         SearchFiltersSheet(
             uiState = SearchFiltersSheetState(
                 criteria = uiState.criteria,
-                availableCountries = uiState.availableCountries,
-                availableDepartments = uiState.availableDepartments,
+                zones = uiState.zones,
                 totalResultsCount = uiState.totalResultsCount,
             ),
             onDismiss = { showFiltersSheet = false },

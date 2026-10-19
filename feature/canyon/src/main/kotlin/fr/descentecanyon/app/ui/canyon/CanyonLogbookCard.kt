@@ -1,6 +1,5 @@
 package fr.descentecanyon.app.ui.canyon
 
-import android.app.DatePickerDialog
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,7 +23,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
@@ -34,10 +32,10 @@ import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.ui.design.DcCard
+import fr.descentecanyon.app.ui.design.DcDatePickerDialog
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.LocalDate
-import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
@@ -109,28 +107,20 @@ internal fun CanyonLogbookCard(
 
 @Composable
 private fun AddToLogbookDialog(formatter: DateTimeFormatter, onDismiss: () -> Unit, onConfirm: (LocalDate, String?) -> Unit) {
-    val context = LocalContext.current
     var date by remember { mutableStateOf(LocalDate.now()) }
     var note by rememberSaveable { mutableStateOf("") }
+    var showDatePicker by remember { mutableStateOf(false) }
+    if (showDatePicker) {
+        DcDatePickerDialog(initialDate = date, onDateSelected = {
+            date = it
+        }, onDismiss = { showDatePicker = false }, maxDate = LocalDate.now())
+    }
     AlertDialog(
         onDismissRequest = onDismiss,
         title = { Text(stringResource(R.string.logbook_add_title)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = {
-                    DatePickerDialog(
-                        context,
-                        { _, year, month, day -> date = LocalDate.of(year, month + 1, day) },
-                        date.year,
-                        date.monthValue - 1,
-                        date.dayOfMonth,
-                    )
-                        .apply {
-                            datePicker.maxDate =
-                                LocalDate.now().plusDays(1).atStartOfDay(ZoneId.systemDefault()).toInstant().toEpochMilli() - 1
-                        }
-                        .show()
-                }) {
+                OutlinedButton(onClick = { showDatePicker = true }) {
                     Icon(Icons.Default.CalendarMonth, contentDescription = stringResource(R.string.logbook_change_date))
                     Text(stringResource(R.string.logbook_date, date.format(formatter)), modifier = Modifier.padding(start = 8.dp))
                 }

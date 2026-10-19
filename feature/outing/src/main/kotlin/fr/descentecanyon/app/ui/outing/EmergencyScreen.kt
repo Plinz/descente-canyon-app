@@ -41,8 +41,6 @@ import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -86,6 +84,8 @@ import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
+import fr.descentecanyon.app.ui.design.DcDropdownMenu
+import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.location.DeviceFix
@@ -322,19 +322,11 @@ private fun OtherCanyonsChooser(state: EmergencyUiState, onSelectCanyon: (Int) -
         TextButton(onClick = { expanded = true }, modifier = Modifier.testTag(TestTags.EMERGENCY_OTHER_CANYON)) {
             Text(stringResource(R.string.emergency_other_canyon))
         }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+        DcDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
             state.otherCanyons.forEach { other ->
-                DropdownMenuItem(
-                    text = {
-                        Column {
-                            Text(other.summary.nom, fontWeight = FontWeight.SemiBold)
-                            Text(
-                                formatDistance((other.distanceKm * 1000).roundToInt(), locale),
-                                style = MaterialTheme.typography.bodySmall,
-                                color = LocalDcColors.current.textSecondary,
-                            )
-                        }
-                    },
+                DcDropdownMenuItem(
+                    text = other.summary.nom,
+                    supportingText = formatDistance((other.distanceKm * 1000).roundToInt(), locale),
                     onClick = {
                         expanded = false
                         onSelectCanyon(other.summary.id)

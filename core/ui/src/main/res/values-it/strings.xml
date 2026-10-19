@@ -21,10 +21,10 @@
     <string name="home_debit_external_only">Scheda non integrata - apertura su Descente-Canyon</string>
     <string name="home_debit_filter_no_results_title">Nessuna portata recente in questa zona</string>
     <string name="home_debit_filter_no_results_body">Modifica il paese o la suddivisione per ampliare la lista.</string>
-    <string name="home_zone_filter_title">Zona</string>
-    <string name="home_zone_filter_all">Tutte le zone</string>
-    <string name="home_zone_filter_whole_country">Tutto il paese</string>
-    <string name="home_zone_filter_search">Cerca un paese o una suddivisione</string>
+    <string name="zone_filter_title">Zona</string>
+    <string name="zone_filter_all">Tutte le zone</string>
+    <string name="zone_filter_whole_country">Tutto il paese</string>
+    <string name="zone_filter_search">Cerca un paese o una suddivisione</string>
     <string name="home_zone_filter_hint">Numero di portate recenti per zona</string>
     <string name="home_forum_filter_hint">Numero di discussioni attive per sezione</string>
     <string name="home_forum_filter_no_results_title">Nessuna discussione attiva in questa sezione</string>
@@ -167,6 +167,12 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="search_sort_length">Lunghezza</string>
     <string name="search_sort_max_waterfall">Cascata max</string>
     <string name="search_sort_distance">Distanza</string>
+    <string name="search_zone_filter_hint">Numero di canyon per zona</string>
+    <string name="search_sort_order">Ordine</string>
+    <string name="search_sort_ascending">Crescente</string>
+    <string name="search_sort_descending">Decrescente</string>
+    <string name="search_sort_nearest_first">Più vicine</string>
+    <string name="search_sort_farthest_first">Più lontane</string>
     <string name="quick_search_title">Ricerca rapida</string>
     <string name="search_canyon_action">Cerca un canyon</string>
     <string name="support_donation_title">Fai una donazione</string>
@@ -539,6 +545,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     </plurals>
     <string name="refresh">Aggiorna</string>
     <string name="cancel">Annulla</string>
+    <string name="ok">OK</string>
     <string name="pending_debits_title">Portate in attesa di invio</string>
     <string name="pending_debits_empty_title">Nessuna portata in attesa</string>
     <string name="pending_debits_empty_body">Le portate inserite senza rete compaiono qui finché non vengono inviate.</string>

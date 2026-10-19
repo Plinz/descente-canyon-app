@@ -12,6 +12,7 @@ import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchResultSet
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
+import fr.descentecanyon.app.domain.model.ZoneCountry
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
 import fr.descentecanyon.app.perf.PerformanceTrace
@@ -55,8 +56,7 @@ data class SearchUiState(
     val isSearching: Boolean = false,
     val error: UiText? = null,
     val resultViewMode: SearchResultViewMode = SearchResultViewMode.LIST,
-    val availableCountries: List<String> = emptyList(),
-    val availableDepartments: List<String> = emptyList(),
+    val zones: List<ZoneCountry> = emptyList(),
     val activeFilterCount: Int = 0,
     val totalResultsCount: Int = 0,
     val isResultListDeferred: Boolean = false,
@@ -162,8 +162,7 @@ class SearchViewModel @Inject constructor(
                         isSearching = false,
                         error = null,
                         resultViewMode = resultViewMode,
-                        availableCountries = computed.resultSet.availableCountries,
-                        availableDepartments = computed.resultSet.availableDepartments,
+                        zones = computed.resultSet.zones,
                         activeFilterCount = computed.criteria.activeFilterCount(),
                         totalResultsCount = computed.resultSet.totalResultsCount,
                         isResultListDeferred = computed.resultSet.isResultListDeferred,
@@ -268,15 +267,19 @@ class SearchViewModel @Inject constructor(
         }
     }
 
+    /** A new field starts in its natural order (A to Z, nearest, best first); the current one is kept as is. */
     fun onSortSelected(field: SearchSortField) {
         val current = criteriaInputFlow.value.filters
-        val next = if (current.sortField == field) {
-            current.copy(sortDirection = current.sortDirection.toggle())
-        } else {
-            current.copy(sortField = field, sortDirection = field.defaultDirection())
-        }
+        if (current.sortField == field) return
         _uiState.update { it.copy(error = null) }
-        onCriteriaChanged(next)
+        onCriteriaChanged(current.copy(sortField = field, sortDirection = field.defaultDirection()))
+    }
+
+    fun onSortDirectionSelected(direction: SortDirection) {
+        val current = criteriaInputFlow.value.filters
+        if (current.sortDirection == direction) return
+        _uiState.update { it.copy(error = null) }
+        onCriteriaChanged(current.copy(sortDirection = direction))
     }
 
     fun onResultViewModeChanged(mode: SearchResultViewMode) {
@@ -382,8 +385,6 @@ class SearchViewModel @Inject constructor(
     private fun persistResultViewMode(mode: SearchResultViewMode) {
         savedStateHandle[SEARCH_RESULT_VIEW_MODE_KEY] = mode.name
     }
-
-    private fun SortDirection.toggle(): SortDirection = if (this == SortDirection.ASC) SortDirection.DESC else SortDirection.ASC
 
     private fun SearchSortField.defaultDirection(): SortDirection = when (this) {
         SearchSortField.NAME, SearchSortField.DISTANCE -> SortDirection.ASC

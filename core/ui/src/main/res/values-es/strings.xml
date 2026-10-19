@@ -21,10 +21,10 @@
     <string name="home_debit_external_only">Ficha no incluida - apertura en Descente-Canyon</string>
     <string name="home_debit_filter_no_results_title">No hay caudales recientes en esta zona</string>
     <string name="home_debit_filter_no_results_body">Modifica el país o la subdivisión para ampliar la lista.</string>
-    <string name="home_zone_filter_title">Zona</string>
-    <string name="home_zone_filter_all">Todas las zonas</string>
-    <string name="home_zone_filter_whole_country">Todo el país</string>
-    <string name="home_zone_filter_search">Buscar un país o una subdivisión</string>
+    <string name="zone_filter_title">Zona</string>
+    <string name="zone_filter_all">Todas las zonas</string>
+    <string name="zone_filter_whole_country">Todo el país</string>
+    <string name="zone_filter_search">Buscar un país o una subdivisión</string>
     <string name="home_zone_filter_hint">Número de caudales recientes por zona</string>
     <string name="home_forum_filter_hint">Número de temas activos por sección</string>
     <string name="home_forum_filter_no_results_title">No hay temas activos en esta sección</string>
@@ -167,6 +167,12 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="search_sort_length">Longitud</string>
     <string name="search_sort_max_waterfall">Cascada máx.</string>
     <string name="search_sort_distance">Distancia</string>
+    <string name="search_zone_filter_hint">Número de barrancos por zona</string>
+    <string name="search_sort_order">Orden</string>
+    <string name="search_sort_ascending">Ascendente</string>
+    <string name="search_sort_descending">Descendente</string>
+    <string name="search_sort_nearest_first">Más cercanos</string>
+    <string name="search_sort_farthest_first">Más lejanos</string>
     <string name="quick_search_title">Búsqueda rápida</string>
     <string name="search_canyon_action">Buscar un barranco</string>
     <string name="support_donation_title">Hacer una donación</string>
@@ -539,6 +545,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     </plurals>
     <string name="refresh">Actualizar</string>
     <string name="cancel">Cancelar</string>
+    <string name="ok">Aceptar</string>
     <string name="pending_debits_title">Caudales pendientes de envío</string>
     <string name="pending_debits_empty_title">Ningún caudal pendiente</string>
     <string name="pending_debits_empty_body">Los caudales registrados sin conexión aparecen aquí hasta que se envían.</string>

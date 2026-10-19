@@ -126,6 +126,10 @@ val DcLightColors = DcColors(
     flowUnknown = Color(0xFF777F84),
 )
 
+/**
+ * Every role is mapped: the ones left out keep Material's purple-grey defaults, which showed in
+ * the dialogs, menus, date pickers and sheets (surfaceContainer*), and in snackbar actions.
+ */
 fun DcColors.toMaterialColorScheme(darkTheme: Boolean): ColorScheme = if (darkTheme) {
     darkColorScheme(
         primary = primaryAction,
@@ -138,16 +142,31 @@ fun DcColors.toMaterialColorScheme(darkTheme: Boolean): ColorScheme = if (darkTh
         onSecondaryContainer = Color(0xFFD2F8E7),
         tertiary = rock,
         onTertiary = Color(0xFF2F1600),
+        tertiaryContainer = rock.copy(alpha = 0.24f),
+        onTertiaryContainer = rockLight,
         background = backgroundBase,
         onBackground = textPrimary,
         surface = surfaceBase,
         onSurface = textPrimary,
         surfaceVariant = surfaceRaised,
         onSurfaceVariant = textSecondary,
+        surfaceTint = primaryAction,
+        inverseSurface = snow,
+        inverseOnSurface = Color(0xFF122029),
+        inversePrimary = Color(0xFF087E93),
         outline = borderStrong,
         outlineVariant = borderSubtle,
         error = riskExtreme,
         onError = Color.White,
+        errorContainer = riskExtreme.copy(alpha = 0.24f),
+        onErrorContainer = Color(0xFFFFDADB),
+        surfaceBright = surfaceRaised,
+        surfaceDim = backgroundBase,
+        surfaceContainerLowest = backgroundBase,
+        surfaceContainerLow = backgroundElevated,
+        surfaceContainer = surfaceBase,
+        surfaceContainerHigh = backgroundElevated,
+        surfaceContainerHighest = surfaceRaised,
     )
 } else {
     lightColorScheme(
@@ -161,16 +180,31 @@ fun DcColors.toMaterialColorScheme(darkTheme: Boolean): ColorScheme = if (darkTh
         onSecondaryContainer = Color(0xFF06351F),
         tertiary = rock,
         onTertiary = Color.White,
+        tertiaryContainer = Color(0xFFF3DCC8),
+        onTertiaryContainer = Color(0xFF3B1E05),
         background = backgroundBase,
         onBackground = textPrimary,
         surface = surfaceBase,
         onSurface = textPrimary,
         surfaceVariant = surfaceRaised,
         onSurfaceVariant = textSecondary,
+        surfaceTint = primaryAction,
+        inverseSurface = textPrimary,
+        inverseOnSurface = snow,
+        inversePrimary = Color(0xFF55D6EA),
         outline = borderStrong,
         outlineVariant = borderSubtle,
         error = riskExtreme,
         onError = Color.White,
+        errorContainer = Color(0xFFF9DADC),
+        onErrorContainer = Color(0xFF410009),
+        surfaceBright = surfaceBase,
+        surfaceDim = backgroundBase,
+        surfaceContainerLowest = surfaceBase,
+        surfaceContainerLow = backgroundElevated,
+        surfaceContainer = surfaceBase,
+        surfaceContainerHigh = backgroundElevated,
+        surfaceContainerHighest = surfaceRaised,
     )
 }
 

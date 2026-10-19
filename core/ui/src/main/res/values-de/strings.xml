@@ -21,10 +21,10 @@
     <string name="home_debit_external_only">Beschreibung nicht lokal verfügbar - wird auf Descente-Canyon geöffnet</string>
     <string name="home_debit_filter_no_results_title">Keine aktuellen Wasserstände in diesem Gebiet</string>
     <string name="home_debit_filter_no_results_body">Ändere das Land oder die Unterteilung, um die Liste zu erweitern.</string>
-    <string name="home_zone_filter_title">Gebiet</string>
-    <string name="home_zone_filter_all">Alle Gebiete</string>
-    <string name="home_zone_filter_whole_country">Ganzes Land</string>
-    <string name="home_zone_filter_search">Land oder Unterteilung suchen</string>
+    <string name="zone_filter_title">Gebiet</string>
+    <string name="zone_filter_all">Alle Gebiete</string>
+    <string name="zone_filter_whole_country">Ganzes Land</string>
+    <string name="zone_filter_search">Land oder Unterteilung suchen</string>
     <string name="home_zone_filter_hint">Anzahl aktueller Wasserstände pro Gebiet</string>
     <string name="home_forum_filter_hint">Anzahl aktiver Themen pro Bereich</string>
     <string name="home_forum_filter_no_results_title">Keine aktiven Themen in diesem Bereich</string>
@@ -167,6 +167,12 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="search_sort_length">Länge</string>
     <string name="search_sort_max_waterfall">Max. Wasserfall</string>
     <string name="search_sort_distance">Entfernung</string>
+    <string name="search_zone_filter_hint">Anzahl Canyons pro Gebiet</string>
+    <string name="search_sort_order">Reihenfolge</string>
+    <string name="search_sort_ascending">Aufsteigend</string>
+    <string name="search_sort_descending">Absteigend</string>
+    <string name="search_sort_nearest_first">Nächste zuerst</string>
+    <string name="search_sort_farthest_first">Entfernteste zuerst</string>
     <string name="quick_search_title">Schnellsuche</string>
     <string name="search_canyon_action">Canyon suchen</string>
     <string name="support_donation_title">Spenden</string>
@@ -533,6 +539,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     </plurals>
     <string name="refresh">Aktualisieren</string>
     <string name="cancel">Abbrechen</string>
+    <string name="ok">OK</string>
     <string name="pending_debits_title">Wartende Wasserstandsberichte</string>
     <string name="pending_debits_empty_title">Keine wartenden Wasserstandsberichte</string>
     <string name="pending_debits_empty_body">Ohne Netz erfasste Wasserstandsberichte erscheinen hier, bis sie gesendet sind.</string>

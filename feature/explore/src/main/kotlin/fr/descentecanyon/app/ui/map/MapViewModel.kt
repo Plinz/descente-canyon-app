@@ -8,6 +8,7 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.MapPosition
 import fr.descentecanyon.app.domain.model.SearchCriteria
+import fr.descentecanyon.app.domain.model.ZoneCountry
 import fr.descentecanyon.app.domain.model.toSummary
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
@@ -42,8 +43,7 @@ data class MapUiState(
     val cameraState: MapCameraState? = null,
     val focusLocationRequestId: Int = 0,
     val criteria: SearchCriteria = SearchCriteria(),
-    val availableCountries: List<String> = emptyList(),
-    val availableDepartments: List<String> = emptyList(),
+    val zones: List<ZoneCountry> = emptyList(),
     val totalResultsCount: Int = 0,
 )
 
@@ -97,8 +97,7 @@ class MapViewModel @Inject constructor(
                             item.takeIf { it.representativeLat != null && it.representativeLng != null }?.toSummary()
                         },
                         criteria = criteria,
-                        availableCountries = resultSet.availableCountries,
-                        availableDepartments = resultSet.availableDepartments,
+                        zones = resultSet.zones,
                         totalResultsCount = resultSet.totalResultsCount,
                         catalogSize = catalog.size,
                     )
@@ -138,8 +137,7 @@ class MapViewModel @Inject constructor(
                             isSelectedCanyonFavorite = selectedCanyon?.id?.let(favoriteCanyonIds::contains) == true,
                             isLoading = false,
                             criteria = catalogState.criteria,
-                            availableCountries = catalogState.availableCountries,
-                            availableDepartments = catalogState.availableDepartments,
+                            zones = catalogState.zones,
                             totalResultsCount = catalogState.totalResultsCount,
                         )
                     }
@@ -278,8 +276,7 @@ class MapViewModel @Inject constructor(
 private data class MapCatalogState(
     val mapCanyons: List<CanyonSummary>,
     val criteria: SearchCriteria,
-    val availableCountries: List<String>,
-    val availableDepartments: List<String>,
+    val zones: List<ZoneCountry>,
     val totalResultsCount: Int,
     val catalogSize: Int,
 )

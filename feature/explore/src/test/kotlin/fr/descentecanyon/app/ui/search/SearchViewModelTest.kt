@@ -1,7 +1,6 @@
 package fr.descentecanyon.app.ui.search
 
 import androidx.lifecycle.SavedStateHandle
-import fr.descentecanyon.app.domain.coroutines.DefaultDispatcher
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.CotationRating
@@ -73,7 +72,7 @@ class SearchViewModelTest {
         assertEquals(emptyList<Int>(), viewModel.uiState.value.results.map { it.id })
         assertEquals(true, viewModel.uiState.value.isResultListDeferred)
         assertEquals(2, viewModel.uiState.value.totalResultsCount)
-        assertEquals(listOf("Espagne", "France"), viewModel.uiState.value.availableCountries)
+        assertEquals(listOf("Espagne", "France"), viewModel.uiState.value.zones.map { it.name })
     }
 
     @Test
@@ -131,9 +130,17 @@ class SearchViewModelTest {
         assertEquals(listOf(1), viewModel.uiState.value.results.map { it.id })
         assertEquals(2, viewModel.uiState.value.scrollResetRequestId)
 
+        // Picking the current field again changes nothing: the order has its own control.
         viewModel.onSortSelected(SearchSortField.NAME)
         advanceTimeBy(250)
         advanceUntilIdle()
+        assertEquals(SortDirection.ASC, viewModel.uiState.value.criteria.sortDirection)
+        assertEquals(2, viewModel.uiState.value.scrollResetRequestId)
+
+        viewModel.onSortDirectionSelected(SortDirection.DESC)
+        advanceTimeBy(250)
+        advanceUntilIdle()
+        assertEquals(SearchSortField.NAME, viewModel.uiState.value.criteria.sortField)
         assertEquals(SortDirection.DESC, viewModel.uiState.value.criteria.sortDirection)
         assertEquals(listOf(1), viewModel.uiState.value.results.map { it.id })
         assertEquals(3, viewModel.uiState.value.scrollResetRequestId)

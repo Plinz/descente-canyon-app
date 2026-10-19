@@ -225,7 +225,6 @@ fun HomeScreen(
                         HomeDebitZoneFilter(
                             filterState = homeState.debitGeoFilter,
                             onZoneSelected = homeViewModel::selectDebitZone,
-                            onClear = homeViewModel::clearDebitGeoFilter,
                         )
                     }
                 }

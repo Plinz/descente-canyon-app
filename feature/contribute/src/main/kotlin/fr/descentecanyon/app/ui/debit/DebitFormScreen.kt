@@ -1,6 +1,5 @@
 package fr.descentecanyon.app.ui.debit
 
-import android.app.DatePickerDialog
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -63,6 +62,7 @@ import fr.descentecanyon.app.ui.auth.LoginDialog
 import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.debitLevelColor
+import fr.descentecanyon.app.ui.design.DcDatePickerDialog
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
 import fr.descentecanyon.app.ui.design.LocalDcSpacing
@@ -221,23 +221,7 @@ fun DebitFormScreen(
                 )
             }
 
-            DatePickerField(
-                date = uiState.observationDate,
-                onDateSelected = viewModel::onObservationDateSelected,
-                showDatePicker = { currentDate, onDateSelected ->
-                    DatePickerDialog(
-                        context,
-                        { _, year, month, dayOfMonth ->
-                            onDateSelected(LocalDate.of(year, month + 1, dayOfMonth))
-                        },
-                        currentDate.year,
-                        currentDate.monthValue - 1,
-                        currentDate.dayOfMonth,
-                    ).apply {
-                        datePicker.maxDate = System.currentTimeMillis()
-                    }.show()
-                },
-            )
+            DatePickerField(date = uiState.observationDate, onDateSelected = viewModel::onObservationDateSelected)
 
             FormChoiceSection(
                 title = stringResource(R.string.debit_observation_type),
@@ -630,12 +614,14 @@ private fun CompactChoiceChip(title: String, selected: Boolean, onClick: () -> U
 }
 
 @Composable
-private fun DatePickerField(
-    date: LocalDate,
-    onDateSelected: (LocalDate) -> Unit,
-    showDatePicker: (LocalDate, (LocalDate) -> Unit) -> Unit,
-) {
+private fun DatePickerField(date: LocalDate, onDateSelected: (LocalDate) -> Unit) {
     val locale = LocalLocale.current.platformLocale
+    var showDatePicker by remember { mutableStateOf(false) }
+    if (showDatePicker) {
+        DcDatePickerDialog(initialDate = date, onDateSelected = onDateSelected, onDismiss = {
+            showDatePicker = false
+        }, maxDate = LocalDate.now())
+    }
     Box(modifier = Modifier.fillMaxWidth()) {
         OutlinedTextField(
             value = date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale)),
@@ -648,7 +634,7 @@ private fun DatePickerField(
             modifier = Modifier
                 .matchParentSize()
                 .testTag(TestTags.DEBIT_OBSERVATION_DATE_FIELD)
-                .clickable { showDatePicker(date, onDateSelected) },
+                .clickable { showDatePicker = true },
         )
     }
 }

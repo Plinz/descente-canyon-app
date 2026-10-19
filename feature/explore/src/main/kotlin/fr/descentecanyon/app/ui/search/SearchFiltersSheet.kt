@@ -8,26 +8,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material3.Button
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -35,26 +28,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CotationRating
 import fr.descentecanyon.app.domain.model.IntRangeFilter
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
-import fr.descentecanyon.app.domain.model.SortDirection
+import fr.descentecanyon.app.domain.model.ZoneCountry
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
+import fr.descentecanyon.app.ui.design.DcDropdownMenu
+import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.design.DcSectionHeader
+import fr.descentecanyon.app.ui.design.DcSelectField
+import fr.descentecanyon.app.ui.design.DcZonePickerSheet
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
-import java.text.Normalizer
+import fr.descentecanyon.app.ui.design.zoneFieldValue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -68,6 +64,20 @@ fun SearchFiltersSheet(
     val sheetState = androidx.compose.material3.rememberModalBottomSheetState(skipPartiallyExpanded = true)
     val colors = LocalDcColors.current
     val shapes = LocalDcShapes.current
+    var showZonePicker by rememberSaveable { mutableStateOf(false) }
+
+    if (showZonePicker) {
+        DcZonePickerSheet(
+            zones = uiState.zones,
+            selectedCountry = criteria.selectedCountry,
+            selectedSubdivision = criteria.selectedDepartment,
+            subtitle = stringResource(R.string.search_zone_filter_hint),
+            onZoneSelected = { country, subdivision ->
+                onCriteriaChanged(criteria.copy(selectedCountry = country, selectedDepartment = subdivision))
+            },
+            onDismiss = { showZonePicker = false },
+        )
+    }
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -94,27 +104,15 @@ fun SearchFiltersSheet(
             )
 
             FilterSection(title = stringResource(R.string.location)) {
-                SearchableStringPickerField(
-                    label = stringResource(R.string.search_filter_country),
-                    selected = criteria.selectedCountry,
-                    emptyLabel = stringResource(R.string.search_filter_any_country),
-                    options = uiState.availableCountries,
-                    onSelected = { country ->
-                        onCriteriaChanged(criteria.copy(selectedCountry = country, selectedDepartment = null))
-                    },
+                DcSelectField(
+                    icon = Icons.Default.Place,
+                    label = stringResource(R.string.zone_filter_title),
+                    value = zoneFieldValue(criteria.selectedCountry, criteria.selectedDepartment),
+                    isActive = criteria.selectedCountry != null,
+                    enabled = uiState.zones.isNotEmpty() || criteria.selectedCountry != null,
+                    onClick = { showZonePicker = true },
+                    onClear = { onCriteriaChanged(criteria.copy(selectedCountry = null, selectedDepartment = null)) },
                 )
-                if (criteria.selectedCountry != null) {
-                    SearchableStringPickerField(
-                        label = stringResource(R.string.search_filter_department),
-                        selected = criteria.selectedDepartment,
-                        emptyLabel = stringResource(R.string.search_filter_any_department),
-                        options = uiState.availableDepartments,
-                        enabled = uiState.availableDepartments.isNotEmpty(),
-                        onSelected = { department ->
-                            onCriteriaChanged(criteria.copy(selectedDepartment = department))
-                        },
-                    )
-                }
             }
 
             FilterSection(title = stringResource(R.string.search_filter_cotation)) {
@@ -142,7 +140,7 @@ fun SearchFiltersSheet(
             }
 
             FilterSection(title = stringResource(R.string.search_filter_interests_title)) {
-                FloatDropdownField(
+                ValueDropdownField(
                     label = stringResource(R.string.search_filter_interest_min),
                     selected = criteria.interestMin,
                     options = listOf(1f, 1.5f, 2f, 2.5f, 3f, 3.5f, 4f),
@@ -197,12 +195,7 @@ fun SearchFiltersSheet(
     }
 }
 
-data class SearchFiltersSheetState(
-    val criteria: SearchCriteria,
-    val availableCountries: List<String>,
-    val availableDepartments: List<String>,
-    val totalResultsCount: Int,
-)
+data class SearchFiltersSheetState(val criteria: SearchCriteria, val zones: List<ZoneCountry>, val totalResultsCount: Int)
 
 @Composable
 private fun FilterSection(title: String, content: @Composable () -> Unit) {
@@ -221,140 +214,6 @@ private fun FilterSection(title: String, content: @Composable () -> Unit) {
 }
 
 @Composable
-private fun SearchableStringPickerField(
-    label: String,
-    selected: String?,
-    emptyLabel: String,
-    options: List<String>,
-    onSelected: (String?) -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-) {
-    var showPicker by remember { mutableStateOf(false) }
-    var query by remember { mutableStateOf("") }
-    val filteredOptions = remember(options, query) {
-        if (query.isBlank()) options else options.filter { it.matchesPickerQuery(query) }
-    }
-
-    Box(modifier = modifier.fillMaxWidth()) {
-        OutlinedButton(
-            onClick = {
-                query = ""
-                showPicker = true
-            },
-            enabled = enabled,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp),
-            ) {
-                Text(
-                    text = label,
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1,
-                )
-                Text(
-                    text = selected ?: emptyLabel,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
-        }
-
-        if (showPicker) {
-            AlertDialog(
-                onDismissRequest = { showPicker = false },
-                title = { Text(label) },
-                text = {
-                    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-                        OutlinedTextField(
-                            value = query,
-                            onValueChange = { query = it },
-                            modifier = Modifier.fillMaxWidth(),
-                            placeholder = { Text(stringResource(R.string.search_filter_option_search)) },
-                            singleLine = true,
-                        )
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .heightIn(max = 360.dp),
-                        ) {
-                            item {
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            text = emptyLabel,
-                                            color = if (selected ==
-                                                null
-                                            ) {
-                                                MaterialTheme.colorScheme.primary
-                                            } else {
-                                                MaterialTheme.colorScheme.onSurface
-                                            },
-                                        )
-                                    },
-                                    onClick = {
-                                        showPicker = false
-                                        onSelected(null)
-                                    },
-                                )
-                            }
-                            if (filteredOptions.isEmpty()) {
-                                item {
-                                    Text(
-                                        text = stringResource(R.string.search_filter_option_no_results),
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 14.dp),
-                                    )
-                                }
-                            } else {
-                                items(filteredOptions) { option ->
-                                    DropdownMenuItem(
-                                        text = {
-                                            Text(
-                                                text = option,
-                                                color = if (option ==
-                                                    selected
-                                                ) {
-                                                    MaterialTheme.colorScheme.primary
-                                                } else {
-                                                    MaterialTheme.colorScheme.onSurface
-                                                },
-                                            )
-                                        },
-                                        onClick = {
-                                            showPicker = false
-                                            onSelected(option)
-                                        },
-                                    )
-                                }
-                            }
-                        }
-                    }
-                },
-                confirmButton = {
-                    TextButton(onClick = { showPicker = false }) {
-                        Text(stringResource(R.string.close))
-                    }
-                },
-            )
-        }
-    }
-}
-
-private fun String.matchesPickerQuery(query: String): Boolean = normalizedPickerText().contains(query.normalizedPickerText())
-
-private fun String.normalizedPickerText(): String = Normalizer
-    .normalize(this, Normalizer.Form.NFD)
-    .replace(DiacriticsRegex, "")
-    .lowercase()
-
-private val DiacriticsRegex = Regex("\\p{Mn}+")
-
-@Composable
 private fun RangeDropdownRow(
     label: String,
     range: IntRangeFilter,
@@ -365,7 +224,7 @@ private fun RangeDropdownRow(
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(text = label, style = MaterialTheme.typography.labelLarge)
         Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-            IntDropdownField(
+            ValueDropdownField(
                 label = stringResource(R.string.search_filter_min),
                 selected = range.min,
                 options = options,
@@ -373,7 +232,7 @@ private fun RangeDropdownRow(
                 modifier = Modifier.weight(1f),
                 onSelected = { onRangeChanged(range.copy(min = it)) },
             )
-            IntDropdownField(
+            ValueDropdownField(
                 label = stringResource(R.string.search_filter_max),
                 selected = range.max,
                 options = options,
@@ -418,65 +277,38 @@ private fun NumericField(label: String, value: String, onValueChange: (String) -
     )
 }
 
+/** A few values under a field, "any" first; the chosen one is checked. */
 @Composable
-private fun IntDropdownField(
+private fun <T> ValueDropdownField(
     label: String,
-    selected: Int?,
-    options: List<Int>,
-    optionLabel: (Int) -> String,
-    onSelected: (Int?) -> Unit,
+    selected: T?,
+    options: List<T>,
+    optionLabel: (T) -> String,
+    onSelected: (T?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
+    val anyLabel = stringResource(R.string.search_filter_any)
     Box(modifier = modifier) {
-        OutlinedButton(onClick = { expanded = true }, modifier = Modifier.fillMaxWidth()) {
-            Text(text = "$label: ${selected?.let(optionLabel) ?: stringResource(R.string.search_filter_any)}")
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.search_filter_any)) },
+        DcSelectField(
+            label = label,
+            value = selected?.let(optionLabel) ?: anyLabel,
+            isActive = selected != null,
+            onClick = { expanded = true },
+        )
+        DcDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DcDropdownMenuItem(
+                text = anyLabel,
+                isSelected = selected == null,
                 onClick = {
                     expanded = false
                     onSelected(null)
                 },
             )
             options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(optionLabel(option)) },
-                    onClick = {
-                        expanded = false
-                        onSelected(option)
-                    },
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun FloatDropdownField(
-    label: String,
-    selected: Float?,
-    options: List<Float>,
-    optionLabel: (Float) -> String,
-    onSelected: (Float?) -> Unit,
-) {
-    var expanded by remember { mutableStateOf(false) }
-    Box {
-        OutlinedButton(onClick = { expanded = true }) {
-            Text(text = "$label: ${selected?.let(optionLabel) ?: stringResource(R.string.search_filter_any)}")
-        }
-        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.search_filter_any)) },
-                onClick = {
-                    expanded = false
-                    onSelected(null)
-                },
-            )
-            options.forEach { option ->
-                DropdownMenuItem(
-                    text = { Text(optionLabel(option)) },
+                DcDropdownMenuItem(
+                    text = optionLabel(option),
+                    isSelected = option == selected,
                     onClick = {
                         expanded = false
                         onSelected(option)
@@ -585,8 +417,6 @@ fun sortLabel(field: SearchSortField): String = when (field) {
     SearchSortField.MAX_WATERFALL -> stringResource(R.string.search_sort_max_waterfall)
     SearchSortField.DISTANCE -> stringResource(R.string.search_sort_distance)
 }
-
-fun directionSuffix(direction: SortDirection): String = if (direction == SortDirection.ASC) " ↑" else " ↓"
 
 private fun rangeLabel(prefix: String, range: IntRangeFilter): String = when {
     range.min != null && range.max != null -> "$prefix ${range.min}-${range.max}"

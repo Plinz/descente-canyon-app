@@ -6,6 +6,8 @@ import fr.descentecanyon.app.domain.model.IntRangeFilter
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
+import fr.descentecanyon.app.domain.model.ZoneCountry
+import fr.descentecanyon.app.domain.model.ZoneSubdivision
 import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import io.mockk.mockk
@@ -120,9 +122,14 @@ class SearchCanyonsUseCaseTest {
         )
 
         assertEquals(listOf(1), result.results.map { it.id })
-        assertEquals(listOf("Espagne", "France"), result.availableCountries)
-        assertEquals(listOf("Huesca"), result.availableDepartments)
-        assertEquals(listOf("Pyrenees-Atlantiques"), franceResult.availableDepartments)
+        assertEquals(listOf(1), franceResult.results.map { it.id })
+        assertEquals(
+            listOf(
+                ZoneCountry("Espagne", 1, listOf(ZoneSubdivision("Huesca", 1))),
+                ZoneCountry("France", 1, listOf(ZoneSubdivision("Pyrenees-Atlantiques", 1))),
+            ),
+            result.zones,
+        )
     }
 
     @Test

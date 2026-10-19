@@ -11,6 +11,8 @@ import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.NotificationCenterState
 import fr.descentecanyon.app.domain.model.ReportZone
+import fr.descentecanyon.app.domain.model.ZoneCountry
+import fr.descentecanyon.app.domain.model.ZoneSubdivision
 import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
@@ -327,8 +329,8 @@ class HomeViewModelTest {
 
         assertEquals(
             listOf(
-                HomeZoneCountry("Espagne", 5, listOf(HomeZoneSubdivision("Huesca", 5))),
-                HomeZoneCountry("France", 22, listOf(HomeZoneSubdivision("Ain", 2), HomeZoneSubdivision("Alpes-Maritimes", 20))),
+                ZoneCountry("Espagne", 5, listOf(ZoneSubdivision("Huesca", 5))),
+                ZoneCountry("France", 22, listOf(ZoneSubdivision("Ain", 2), ZoneSubdivision("Alpes-Maritimes", 20))),
             ),
             viewModel.uiState.value.debitGeoFilter.countries,
         )
