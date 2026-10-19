@@ -28,12 +28,21 @@ class AndroidConnectivityObserver @Inject constructor(@param:ApplicationContext 
 
         // Only the default network: another network appearing or vanishing says nothing about it.
         val callback = object : ConnectivityManager.NetworkCallback() {
+            // Doze or battery saver can cut the app off while in the background: the network keeps
+            // reporting itself validated, so it only counts once the block is lifted.
+            private var blocked = false
+
             override fun onCapabilitiesChanged(network: Network, networkCapabilities: NetworkCapabilities) {
-                trySend(networkCapabilities.reachesInternet())
+                trySend(!blocked && networkCapabilities.reachesInternet())
             }
 
             override fun onLost(network: Network) {
                 trySend(isCurrentlyOnline())
+            }
+
+            override fun onBlockedStatusChanged(network: Network, blocked: Boolean) {
+                this.blocked = blocked
+                trySend(!blocked && isCurrentlyOnline())
             }
         }
 

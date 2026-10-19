@@ -36,6 +36,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.Debit
@@ -86,6 +87,11 @@ fun HomeScreen(
     val selectFeed: (HomeFeedType) -> Unit = { type ->
         selectedFeedOverride = type
         homeViewModel.selectFeed(type)
+    }
+
+    LifecycleResumeEffect(homeViewModel) {
+        homeViewModel.recheckConnectivity()
+        onPauseOrDispose {}
     }
 
     LaunchedEffect(homeState.selectedFeed, selectedFeedOverride) {

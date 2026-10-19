@@ -390,6 +390,109 @@ class HomeViewModelTest {
         assertEquals(3, viewModel.uiState.value.debitFeed.items.size)
     }
 
+    @Test
+    fun `a refresh that succeeds clears an offline banner the connectivity flow left behind`() = runTest {
+        // The flow said "offline" and never said "online" again (e.g. the app was blocked in the background).
+        val connectivity = MutableStateFlow(false)
+        every { connectivityObserver.observe() } returns connectivity
+        every { connectivityObserver.isCurrentlyOnline() } returns false
+        preferences.selectedHomeFeed = HomeFeedType.DEBITS
+        coEvery { debitRepository.getCachedLatestDebits(any()) } returns CachedItems(listOf(sampleDebit()), 1L)
+        coEvery { forumRepository.getCachedActiveTopics(any()) } returns CachedItems(emptyList(), null)
+        coEvery { forumRepository.getCachedCategories() } returns CachedItems(emptyList(), null)
+        coEvery { debitRepository.refreshLatestDebits(any()) } returns Result.success(CachedItems(listOf(sampleDebit()), 1234L))
+        coEvery { forumRepository.refreshActiveTopics(any()) } returns Result.success(CachedItems(emptyList(), 1234L))
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        assertEquals(HomeFeedNotice.OFFLINE_BANNER, viewModel.uiState.value.debitFeed.notice)
+
+        every { connectivityObserver.isCurrentlyOnline() } returns true
+        viewModel.refreshSelectedFeed()
+        advanceUntilIdle()
+
+        assertEquals(1234L, viewModel.uiState.value.debitFeed.lastSyncedAtEpochMs)
+        assertTrue(viewModel.uiState.value.isOnline)
+        assertEquals(null, viewModel.uiState.value.debitFeed.notice)
+    }
+
+    @Test
+    fun `a momentary offline check does not stick while the connectivity flow stays online`() = runTest {
+        val connectivity = MutableStateFlow(true)
+        var currentOnline = true
+        every { connectivityObserver.observe() } returns connectivity
+        every { connectivityObserver.isCurrentlyOnline() } answers { currentOnline }
+        preferences.selectedHomeFeed = HomeFeedType.DEBITS
+        coEvery { debitRepository.getCachedLatestDebits(any()) } returns CachedItems(emptyList(), null)
+        coEvery { forumRepository.getCachedActiveTopics(any()) } returns CachedItems(emptyList(), null)
+        coEvery { forumRepository.getCachedCategories() } returns CachedItems(emptyList(), null)
+        coEvery { debitRepository.refreshLatestDebits(any()) } returns Result.success(CachedItems(listOf(sampleDebit()), 1234L))
+        coEvery { forumRepository.refreshActiveTopics(any()) } returns Result.success(CachedItems(emptyList(), 1234L))
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        currentOnline = false
+        viewModel.selectFeed(HomeFeedType.DEBITS)
+        advanceUntilIdle()
+        currentOnline = true
+        viewModel.selectFeed(HomeFeedType.FORUM)
+        viewModel.selectFeed(HomeFeedType.DEBITS)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.isOnline)
+        assertEquals(null, viewModel.uiState.value.debitFeed.notice)
+    }
+
+    @Test
+    fun `coming back to the screen online refreshes the feeds the connectivity flow left offline`() = runTest {
+        val connectivity = MutableStateFlow(false)
+        every { connectivityObserver.observe() } returns connectivity
+        every { connectivityObserver.isCurrentlyOnline() } returns false
+        preferences.selectedHomeFeed = HomeFeedType.DEBITS
+        coEvery { debitRepository.getCachedLatestDebits(any()) } returns CachedItems(listOf(sampleDebit()), 1L)
+        coEvery { forumRepository.getCachedActiveTopics(any()) } returns CachedItems(emptyList(), null)
+        coEvery { forumRepository.getCachedCategories() } returns CachedItems(emptyList(), null)
+        coEvery { debitRepository.refreshLatestDebits(any()) } returns Result.success(CachedItems(listOf(sampleDebit()), 1234L))
+        coEvery { forumRepository.refreshActiveTopics(any()) } returns Result.success(CachedItems(emptyList(), 1234L))
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        every { connectivityObserver.isCurrentlyOnline() } returns true
+        viewModel.recheckConnectivity()
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.isOnline)
+        assertEquals(null, viewModel.uiState.value.debitFeed.notice)
+        assertEquals(1234L, viewModel.uiState.value.debitFeed.lastSyncedAtEpochMs)
+        assertEquals(1234L, viewModel.uiState.value.forumFeed.lastSyncedAtEpochMs)
+    }
+
+    @Test
+    fun `coming back to the screen online retries a feed a blocked refresh left offline`() = runTest {
+        // The flow said online while the app was still cut off: the refresh it started found no network.
+        val connectivity = MutableStateFlow(true)
+        var currentOnline = false
+        every { connectivityObserver.observe() } returns connectivity
+        every { connectivityObserver.isCurrentlyOnline() } answers { currentOnline }
+        preferences.selectedHomeFeed = HomeFeedType.DEBITS
+        coEvery { debitRepository.getCachedLatestDebits(any()) } returns CachedItems(listOf(sampleDebit()), 1L)
+        coEvery { forumRepository.getCachedActiveTopics(any()) } returns CachedItems(emptyList(), null)
+        coEvery { forumRepository.getCachedCategories() } returns CachedItems(emptyList(), null)
+        coEvery { debitRepository.refreshLatestDebits(any()) } returns Result.success(CachedItems(listOf(sampleDebit()), 1234L))
+        coEvery { forumRepository.refreshActiveTopics(any()) } returns Result.success(CachedItems(emptyList(), 1234L))
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        viewModel.selectFeed(HomeFeedType.DEBITS)
+        advanceUntilIdle()
+        assertEquals(HomeFeedNotice.OFFLINE_BANNER, viewModel.uiState.value.debitFeed.notice)
+
+        currentOnline = true
+        viewModel.recheckConnectivity()
+        advanceUntilIdle()
+
+        assertEquals(null, viewModel.uiState.value.debitFeed.notice)
+        assertEquals(1234L, viewModel.uiState.value.debitFeed.lastSyncedAtEpochMs)
+    }
+
     private fun createViewModel(): HomeViewModel {
         every { canyonRepository.observeSearchCatalog() } returns searchCatalog
         every { notificationCenterRepository.observeState() } returns MutableStateFlow(NotificationCenterState())

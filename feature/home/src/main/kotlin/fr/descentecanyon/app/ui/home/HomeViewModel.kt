@@ -205,8 +205,21 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    /** Asked by the user, who may know better than Android that the network works: it is always tried. */
     fun refreshSelectedFeed() {
-        refreshFeed(uiState.value.selectedFeed)
+        refreshFeed(uiState.value.selectedFeed, userInitiated = true)
+    }
+
+    /** Back on screen: a connectivity change missed meanwhile must not leave the offline banner behind. */
+    fun recheckConnectivity() {
+        val state = uiState.value
+        val looksOffline = !state.isOnline || state.debitFeed.notice in OFFLINE_NOTICES || state.forumFeed.notice in OFFLINE_NOTICES
+        if (!looksOffline || !connectivityObserver.isCurrentlyOnline()) return
+
+        previousOnline = true
+        _uiState.update { it.withConnectivity(online = true) }
+        refreshFeed(state.selectedFeed)
+        refreshFeed(otherFeedOf(state.selectedFeed), backgroundOnly = true)
     }
 
     /** A [subdivision] is only kept with its [country]. */
@@ -321,38 +334,40 @@ class HomeViewModel @Inject constructor(
 
     private fun observeConnectivity() {
         viewModelScope.launch {
-            connectivityObserver.observe().collect { online ->
-                val shouldRefresh = previousOnline == false && online
-                previousOnline = online
-
-                _uiState.update { state ->
-                    state.copy(
-                        isOnline = online,
-                        debitFeed = state.debitFeed.copy(
-                            notice = resolvePassiveNotice(
-                                items = state.debitFeed.items,
-                                isOnline = online,
-                                currentNotice = state.debitFeed.notice,
-                            ),
-                        ),
-                        forumFeed = state.forumFeed.copy(
-                            notice = resolvePassiveNotice(
-                                items = state.forumFeed.items,
-                                isOnline = online,
-                                currentNotice = state.forumFeed.notice,
-                            ),
-                        ),
-                    )
-                }
-
-                if (shouldRefresh) {
-                    val selectedFeed = uiState.value.selectedFeed
-                    refreshFeed(selectedFeed)
-                    refreshFeed(otherFeedOf(selectedFeed), backgroundOnly = true)
-                }
-            }
+            connectivityObserver.observe().collect(::onConnectivityChanged)
         }
     }
+
+    private fun onConnectivityChanged(online: Boolean) {
+        val shouldRefresh = previousOnline == false && online
+        previousOnline = online
+
+        _uiState.update { state -> state.withConnectivity(online) }
+
+        if (shouldRefresh) {
+            val selectedFeed = uiState.value.selectedFeed
+            refreshFeed(selectedFeed)
+            refreshFeed(otherFeedOf(selectedFeed), backgroundOnly = true)
+        }
+    }
+
+    private fun HomeUiState.withConnectivity(online: Boolean): HomeUiState = copy(
+        isOnline = online,
+        debitFeed = debitFeed.copy(
+            notice = resolvePassiveNotice(
+                items = debitFeed.items,
+                isOnline = online,
+                currentNotice = debitFeed.notice,
+            ),
+        ),
+        forumFeed = forumFeed.copy(
+            notice = resolvePassiveNotice(
+                items = forumFeed.items,
+                isOnline = online,
+                currentNotice = forumFeed.notice,
+            ),
+        ),
+    )
 
     private fun observeTrackedForumCategories() {
         viewModelScope.launch {
@@ -367,12 +382,16 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun refreshFeed(feedType: HomeFeedType, backgroundOnly: Boolean = false) {
-        if (!connectivityObserver.isCurrentlyOnline()) {
+    /**
+     * Without [userInitiated], a device Android reports offline is not even tried. Only the feed's notice
+     * says so: [HomeUiState.isOnline] follows the connectivity flow, which a one-off check must not
+     * override, since nothing would bring it back.
+     */
+    private fun refreshFeed(feedType: HomeFeedType, backgroundOnly: Boolean = false, userInitiated: Boolean = false) {
+        if (!userInitiated && !connectivityObserver.isCurrentlyOnline()) {
             _uiState.update { state ->
                 when (feedType) {
                     HomeFeedType.DEBITS -> state.copy(
-                        isOnline = false,
                         debitFeed = state.debitFeed.copy(
                             isLoading = false,
                             notice = resolveNotice(
@@ -384,7 +403,6 @@ class HomeViewModel @Inject constructor(
                     )
 
                     HomeFeedType.FORUM -> state.copy(
-                        isOnline = false,
                         forumFeed = state.forumFeed.copy(
                             isLoading = false,
                             notice = resolveNotice(
@@ -415,14 +433,17 @@ class HomeViewModel @Inject constructor(
                         onSuccess = { cached ->
                             allLatestDebits = cached.items
                             visibleDebitLimit = LATEST_DEBITS_PAGE_SIZE
+                            // The site answered: whatever Android last said, the device is online. The other feed keeps its
+                            // notice until its own refresh.
                             _uiState.update { state ->
                                 state.copy(
+                                    isOnline = true,
                                     debitFeed = state.debitFeed.copy(
                                         items = cached.items,
                                         isLoading = false,
                                         notice = resolveNotice(
                                             items = cached.items,
-                                            isOnline = state.isOnline,
+                                            isOnline = true,
                                             failureKind = null,
                                         ),
                                         lastSyncedAtEpochMs = cached.syncedAtEpochMs,
@@ -464,12 +485,13 @@ class HomeViewModel @Inject constructor(
                             allForumTopics = cached.items
                             _uiState.update { state ->
                                 state.copy(
+                                    isOnline = true,
                                     forumFeed = state.forumFeed.copy(
                                         items = cached.items,
                                         isLoading = false,
                                         notice = resolveNotice(
                                             items = cached.items,
-                                            isOnline = state.isOnline,
+                                            isOnline = true,
                                             failureKind = null,
                                         ),
                                         lastSyncedAtEpochMs = cached.syncedAtEpochMs,
@@ -501,7 +523,7 @@ class HomeViewModel @Inject constructor(
     private fun resolvePassiveNotice(items: List<*>, isOnline: Boolean, currentNotice: HomeFeedNotice?): HomeFeedNotice? = when {
         !isOnline && items.isNotEmpty() -> HomeFeedNotice.OFFLINE_BANNER
         !isOnline && items.isEmpty() -> HomeFeedNotice.OFFLINE_EMPTY
-        isOnline && (currentNotice == HomeFeedNotice.OFFLINE_BANNER || currentNotice == HomeFeedNotice.OFFLINE_EMPTY) -> null
+        isOnline && currentNotice in OFFLINE_NOTICES -> null
         else -> currentNotice
     }
 
@@ -587,6 +609,7 @@ class HomeViewModel @Inject constructor(
         const val LATEST_DEBITS_PAGE_SIZE = 20
         const val LATEST_DEBITS_CACHE_LIMIT = Int.MAX_VALUE
         const val ACTIVE_TOPICS_LIMIT = 12
+        val OFFLINE_NOTICES = setOf(HomeFeedNotice.OFFLINE_BANNER, HomeFeedNotice.OFFLINE_EMPTY)
     }
 }
 
