@@ -62,7 +62,7 @@
     <string name="close">Schließen</string>
     <string name="login">Anmelden</string>
     <string name="logout">Abmelden</string>
-    <string name="username">Benutzername</string>
+    <string name="username">Anmeldename</string>
     <string name="password">Passwort</string>
     <string name="login_error">Anmeldefehler</string>
     <string name="no_favorites">Derzeit keine Favoriten.
@@ -202,7 +202,7 @@ Suche einen Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="debit_comment">Bemerkung</string>
     <string name="debit_comment_help">Bemerkung zur Begehung oder Beobachtung (für alle sichtbar).</string>
     <string name="debit_personal_comment">Persönlicher Kommentar</string>
-    <string name="debit_personal_comment_help">Persönlicher Kommentar (für andere Nutzer nicht sichtbar), abrufbar über &quot;Meine Tourenliste&quot; (Menü &quot;Mein Konto&quot;).</string>
+    <string name="debit_personal_comment_help">Persönlicher Kommentar (nur für dich sichtbar), abrufbar über &quot;Meine Tourenliste&quot; (Menü &quot;Mein Konto&quot;).</string>
     <string name="debit_submit">Diese Informationen speichern</string>
     <string name="interest_rating_add_action">Diesen Canyon bewerten</string>
     <string name="interest_rating_form_title">Canyon bewerten</string>
@@ -237,7 +237,7 @@ Suche einen Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="no_debits">Kein Wasserstand gemeldet</string>
     <string name="no_photos">Keine Fotos verfügbar</string>
     <string name="no_offline_photos_without_network">Für diesen Canyon sind keine Fotos gespeichert und es gibt kein Netz, um jene von Descente-Canyon zu laden.</string>
-    <string name="user_account">Benutzerkonto</string>
+    <string name="user_account">Mein Konto</string>
     <string name="location">Standort</string>
     <string name="region">Region</string>
     <string name="department">Unterteilung</string>

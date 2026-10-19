@@ -107,7 +107,7 @@
     <string name="close">Schließen</string>
     <string name="login">Anmelden</string>
     <string name="logout">Abmelden</string>
-    <string name="username">Benutzername</string>
+    <string name="username">Anmeldename</string>
     <string name="password">Passwort</string>
     <string name="login_error">Anmeldefehler</string>
     <string name="no_favorites">Noch keine Favoriten.
@@ -254,7 +254,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="debit_comment">Bemerkung</string>
     <string name="debit_comment_help">Bemerkung zur Begehung oder Beobachtung (für alle sichtbar).</string>
     <string name="debit_personal_comment">Persönlicher Kommentar</string>
-    <string name="debit_personal_comment_help">Persönlicher Kommentar (für andere Nutzer nicht sichtbar), abrufbar über &quot;Meine Tourenliste&quot; (Menü &quot;Mein Konto&quot;).</string>
+    <string name="debit_personal_comment_help">Persönlicher Kommentar (nur für dich sichtbar), abrufbar über &quot;Meine Tourenliste&quot; (Menü &quot;Mein Konto&quot;).</string>
     <string name="debit_submit">Diese Informationen speichern</string>
     <string name="interest_rating_add_action">Diesen Canyon bewerten</string>
     <string name="interest_rating_form_title">Canyon bewerten</string>
@@ -289,7 +289,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="no_debits">Kein Wasserstand gemeldet</string>
     <string name="no_photos">Keine Fotos verfügbar</string>
     <string name="no_offline_photos_without_network">Für diesen Canyon sind keine Fotos gespeichert und es gibt kein Netz, um Fotos von Descente-Canyon zu laden.</string>
-    <string name="user_account">Benutzerkonto</string>
+    <string name="user_account">Mein Konto</string>
     <string name="location">Standort</string>
     <string name="region">Region</string>
     <string name="department">Unterteilung</string>
@@ -473,14 +473,14 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="error_rejected_with_reason">Die Website hat die Übermittlung abgelehnt: %1$s</string>
     <string name="error_authentication_required">Melde dich bei deinem Descente-Canyon-Konto an, um fortzufahren.</string>
     <string name="error_session_expired">Deine Descente-Canyon-Sitzung ist abgelaufen. Bitte melde dich erneut an.</string>
-    <string name="error_invalid_credentials">Benutzername oder Passwort falsch.</string>
+    <string name="error_invalid_credentials">Anmeldename oder Passwort falsch.</string>
     <string name="error_storage">Die Daten konnten nicht auf dem Gerät gespeichert werden.</string>
     <string name="notification_debit_rejected_title">Wasserstandsbericht abgelehnt</string>
     <string name="notification_debit_rejected_body">Die Website hat deinen offline gespeicherten Wasserstandsbericht vom %1$s nicht angenommen.</string>
     <string name="debit_submission_sent_unconfirmed">Wasserstandsbericht gesendet, aber die Website zeigt ihn noch nicht an. Prüfe es auf descente-canyon.com.</string>
     <string name="users_title">Mitglieder</string>
     <string name="users_search_label">Mitglied suchen</string>
-    <string name="users_search_hint_title">Suche nach einem Benutzernamen</string>
+    <string name="users_search_hint_title">Suche nach einem Mitgliedsnamen</string>
     <string name="users_search_hint_body">Mitglieder von descente-canyon.com, die einen Wasserstand gemeldet oder im Forum geschrieben haben. Namen, die ohne Konto unter einem Wasserstandsbericht eingegeben wurden, gehören nicht dazu.</string>
     <string name="users_search_empty_title">Keine Mitglieder</string>
     <string name="users_search_empty_body">Kein Mitgliedsname passt zu dieser Suche.</string>
@@ -491,7 +491,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="user_activity_forum_count">Forum %1$d</string>
     <string name="user_follow">Folgen</string>
     <string name="user_following">Gefolgt</string>
-    <string name="user_follow_hint">Wenn du folgst, wirst du über neue Forumsbeiträge informiert. Wasserstandsberichten kann nicht gefolgt werden: Die Website listet sie nicht nach Autor.</string>
+    <string name="user_follow_hint">Wenn du folgst, wirst du über neue Forumsbeiträge informiert. Wasserstandsberichten kann nicht gefolgt werden: Die Website ordnet sie keinem Mitglied zu.</string>
     <string name="user_metric_debits">Wasserstandsberichte</string>
     <string name="user_metric_posts">Forumsbeiträge</string>
     <string name="user_metric_photos">Fotos</string>
@@ -698,7 +698,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="outing_conditions_last_report">Zuletzt gemeldeter Abfluss: %1$s, %2$s</string>
     <string name="outing_conditions_no_forecast">Keine Wettervorhersage für diesen Tag (zu weit entfernt oder offline).</string>
     <string name="outing_alert_title">Angehörige informieren</string>
-    <string name="outing_alert_body">Senden Sie Ihren Plan an jemanden, der nicht mitkommt. Ohne Nachricht von Ihnen zur Alarmzeit ruft diese Person den Notruf.</string>
+    <string name="outing_alert_body">Senden Sie Ihren Plan an eine Person, die nicht mitkommt. Ohne Nachricht von Ihnen zur Alarmzeit ruft diese Person den Notruf.</string>
     <string name="outing_alert_margin">Spielraum vor dem Alarm</string>
     <string name="outing_alert_margin_value">+%1$d Std.</string>
     <string name="outing_alert_time">Alarm um %1$s</string>
