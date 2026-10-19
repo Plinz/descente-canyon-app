@@ -5,10 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.MenuBook
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -66,16 +69,28 @@ internal fun CanyonLogbookCard(
                     text = if (entries.isEmpty()) {
                         stringResource(R.string.logbook_card_empty)
                     } else {
-                        pluralStringResource(R.plurals.logbook_card_count, entries.size, entries.size) + " · " +
-                            stringResource(R.string.logbook_card_last, entries.first().date.format(formatter))
+                        pluralStringResource(R.plurals.logbook_card_count, entries.size, entries.size)
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = LocalDcColors.current.textSecondary,
                 )
+                // A line of its own, so that next to the add button it does not break mid-phrase.
+                entries.firstOrNull()?.let { last ->
+                    Text(
+                        text = stringResource(R.string.logbook_card_last, last.date.format(formatter)),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = LocalDcColors.current.textSecondary,
+                    )
+                }
             }
-        }
-        OutlinedButton(onClick = { showAddDialog = true }, modifier = Modifier.padding(top = 8.dp).testTag(TestTags.DETAIL_LOGBOOK_ADD)) {
-            Text(stringResource(R.string.logbook_add_action))
+            OutlinedButton(
+                onClick = { showAddDialog = true },
+                contentPadding = ButtonDefaults.ButtonWithIconContentPadding,
+                modifier = Modifier.testTag(TestTags.DETAIL_LOGBOOK_ADD),
+            ) {
+                Icon(Icons.Default.Add, contentDescription = null, modifier = Modifier.size(ButtonDefaults.IconSize))
+                Text(stringResource(R.string.logbook_save), modifier = Modifier.padding(start = ButtonDefaults.IconSpacing))
+            }
         }
     }
 

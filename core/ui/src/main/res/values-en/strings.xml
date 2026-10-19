@@ -759,7 +759,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="logbook_card_title">My logbook</string>
     <string name="logbook_card_empty">Not descended yet</string>
     <string name="logbook_card_last">Last time on %1$s</string>
-    <string name="logbook_add_action">I descended this canyon</string>
     <string name="logbook_add_title">Add to my logbook</string>
     <string name="logbook_date">Date: %1$s</string>
     <string name="logbook_change_date">Change the date</string>

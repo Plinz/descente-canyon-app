@@ -773,7 +773,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="logbook_card_title">Il mio diario</string>
     <string name="logbook_card_empty">Non ancora disceso</string>
     <string name="logbook_card_last">Ultima volta il %1$s</string>
-    <string name="logbook_add_action">Ho disceso questa forra</string>
     <string name="logbook_add_title">Aggiungi al diario</string>
     <string name="logbook_date">Data: %1$s</string>
     <string name="logbook_change_date">Cambia la data</string>
