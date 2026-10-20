@@ -30,9 +30,11 @@ import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.filled.Source
+import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -72,6 +74,8 @@ import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
 fun SettingsScreen(
     onBackClick: () -> Unit,
     onOpenPendingDebits: () -> Unit,
+    onOpenOutingSettings: () -> Unit,
+    onOpenPlaces: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: SettingsViewModel = hiltViewModel(),
@@ -143,6 +147,22 @@ fun SettingsScreen(
                             title = stringResource(R.string.settings_notifications_system),
                             subtitle = stringResource(R.string.settings_notifications_system_hint),
                             onClick = { context.openAppNotificationSettings() },
+                        )
+                    }
+                }
+                item {
+                    SettingsSection(title = stringResource(R.string.settings_section_outings)) {
+                        SettingsLinkRow(
+                            icon = Icons.Default.Tune,
+                            title = stringResource(R.string.outing_settings_title),
+                            subtitle = stringResource(R.string.settings_outings_hint),
+                            onClick = onOpenOutingSettings,
+                        )
+                        SettingsLinkRow(
+                            icon = Icons.Default.Place,
+                            title = stringResource(R.string.places_title),
+                            subtitle = stringResource(R.string.settings_places_hint),
+                            onClick = onOpenPlaces,
                         )
                     }
                 }

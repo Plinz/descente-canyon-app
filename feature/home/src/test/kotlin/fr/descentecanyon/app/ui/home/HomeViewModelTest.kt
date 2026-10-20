@@ -54,7 +54,7 @@ class HomeViewModelTest {
     private val notificationCenterRepository = mockk<NotificationCenterRepository>()
     private val preferences = FakePreferencesRepository()
     private val outingRepository = mockk<OutingRepository>(relaxUnitFun = true) {
-        every { observeCurrent() } returns flowOf(null)
+        every { observeAll() } returns flowOf(emptyList())
     }
     private val pendingDebitCount = MutableStateFlow(0)
     private val debitSubmissionRepository = mockk<DebitSubmissionRepository> {
@@ -509,6 +509,7 @@ class HomeViewModelTest {
             debitSubmissionRepository = debitSubmissionRepository,
             outingRepository = outingRepository,
             endOutingUseCase = EndOutingUseCase(outingRepository, mockk(relaxed = true), Clock.systemDefaultZone()),
+            clock = Clock.systemDefaultZone(),
         )
     }
 

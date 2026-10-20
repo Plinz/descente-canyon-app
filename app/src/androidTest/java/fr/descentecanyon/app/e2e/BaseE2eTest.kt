@@ -8,12 +8,17 @@ import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import dagger.hilt.android.testing.HiltAndroidRule
+import fr.descentecanyon.app.domain.model.GearListSettings
+import fr.descentecanyon.app.domain.model.OutingSettings
+import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
+import fr.descentecanyon.app.domain.repository.PlaceRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.e2e.fakes.E2eFixtureState
 import fr.descentecanyon.app.e2e.fakes.FakeConnectivityObserver
 import fr.descentecanyon.app.ui.MainActivity
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
@@ -36,6 +41,12 @@ abstract class BaseE2eTest {
     @Inject
     lateinit var outingRepository: OutingRepository
 
+    @Inject
+    lateinit var placeRepository: PlaceRepository
+
+    @Inject
+    lateinit var outingPreferencesRepository: OutingPreferencesRepository
+
     private var scenario: ActivityScenario<MainActivity>? = null
 
     @Before
@@ -46,6 +57,9 @@ abstract class BaseE2eTest {
         runBlocking {
             preferencesRepository.setLatestReportsZone(null)
             outingRepository.clear()
+            placeRepository.observeAll().first().forEach { placeRepository.delete(it.id) }
+            outingPreferencesRepository.setSettings(OutingSettings())
+            outingPreferencesRepository.setGearList(GearListSettings())
         }
         fakeConnectivityObserver.setOnline(true)
         launchMainActivity()

@@ -8,21 +8,19 @@ import fr.descentecanyon.app.domain.repository.OutingRepository
 import java.time.Clock
 import java.time.Duration
 import javax.inject.Inject
-import kotlinx.coroutines.flow.first
 
 /**
- * "I'm back": the current outing goes to the logbook, on the day it started, with the time from the
- * planned start to now, and is cleared, which cancels its notifications. Returns the outing ended,
- * or null when there was none for [canyonId].
+ * "I'm back": the outing goes to the logbook, on the day it started, with the time from leaving the
+ * car to now, and is removed, which cancels its notifications. Returns the outing ended, or null
+ * when there was none with this id.
  */
 class EndOutingUseCase @Inject constructor(
     private val outingRepository: OutingRepository,
     private val logbookRepository: LogbookRepository,
     private val clock: Clock,
 ) {
-    suspend operator fun invoke(canyonId: Int? = null): PlannedOuting? {
-        val outing = outingRepository.observeCurrent().first() ?: return null
-        if (canyonId != null && outing.canyonId != canyonId) return null
+    suspend operator fun invoke(outingId: Long): PlannedOuting? {
+        val outing = outingRepository.get(outingId) ?: return null
         val minutes = Duration.between(outing.start, clock.instant()).toMinutes()
         logbookRepository.record(
             LogbookEntry(
@@ -34,7 +32,7 @@ class EndOutingUseCase @Inject constructor(
                 source = LogbookSource.OUTING,
             ),
         )
-        outingRepository.clear()
+        outingRepository.delete(outing.id)
         return outing
     }
 }

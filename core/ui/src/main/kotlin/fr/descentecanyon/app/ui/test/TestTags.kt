@@ -23,6 +23,7 @@ object TestTags {
     const val DETAIL_NEARBY_SECTION = "detail_nearby_section"
     const val DETAIL_SEASONALITY = "detail_seasonality"
     const val DETAIL_PLAN_OUTING = "detail_plan_outing"
+    const val DETAIL_LIST = "detail_list"
     const val OUTING_PLAN_LIST = "outing_plan_list"
     const val OUTING_START_TIME = "outing_start_time"
     const val OUTING_TIMELINE = "outing_timeline"
@@ -55,6 +56,25 @@ object TestTags {
     const val MY_ACCOUNT_LIST = "my_account_list"
     const val MY_ACCOUNT_LOGBOOK = "my_account_logbook"
     const val MY_ACCOUNT_IMPORT_SITE = "my_account_import_site"
+    const val MY_ACCOUNT_OUTINGS = "my_account_outings"
+    const val OUTING_TOP_SAVE = "outing_top_save"
+    const val OUTING_STATUS = "outing_status"
+    const val OUTING_PLACE_FIELD = "outing_place_field"
+    const val OUTING_DRIVE = "outing_drive"
+    const val OUTING_GROUP_SIZE = "outing_group_size"
+    const val OUTING_UPDATE_BUTTON = "outing_update_button"
+    const val OUTING_DELAY_BUTTON = "outing_delay_button"
+    const val OUTING_GEAR = "outing_gear"
+    const val OUTING_MESSAGES = "outing_messages"
+    const val OUTING_MESSAGE_PREVIEW = "outing_message_preview"
+    const val OUTINGS_LIST = "outings_list"
+    const val HOME_UPCOMING_OUTINGS = "home_upcoming_outings"
+    const val PLACES_LIST = "places_list"
+    const val PLACES_ADD = "places_add"
+    const val PLACE_SAVE = "place_save"
+    const val PLACE_NAME = "place_name"
+    const val OUTING_SETTINGS_LIST = "outing_settings_list"
+    const val STAY_LIST = "stay_list"
 
     fun canyonCard(id: Int): String = "canyon_card_$id"
 
@@ -67,4 +87,14 @@ object TestTags {
     fun detailNearbyCanyon(id: Int): String = "detail_nearby_canyon_$id"
 
     fun emergencyNumber(number: String): String = "emergency_number_$number"
+
+    fun outingAudience(name: String): String = "outing_audience_$name"
+
+    fun outingRow(id: Long): String = "outing_row_$id"
+
+    fun placePlan(id: Long): String = "place_plan_$id"
+
+    fun stayCandidate(id: Int): String = "stay_candidate_$id"
+
+    fun stayDay(canyonId: Int, date: String): String = "stay_day_${canyonId}_$date"
 }

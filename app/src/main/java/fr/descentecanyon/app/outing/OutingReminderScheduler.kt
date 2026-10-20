@@ -23,9 +23,11 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 /**
- * Follows the planned outing. On the way and during it, a silent notification keeps the emergency
- * screen one tap away, lock screen included. At the expected return, a reminder asks how it went
- * and offers to report the flow (a fresh report is the best input of everyone's flow estimates).
+ * Follows the planned outings. From the drive to the canyon and during each one, a silent
+ * notification keeps the emergency screen one tap away, lock screen included. At its latest return,
+ * a reminder asks how it went and offers to report the flow (a fresh report is the best input of
+ * everyone's flow estimates). When a relative received the plan, a reminder comes shortly before the
+ * alert time.
  */
 @Singleton
 class OutingReminderScheduler @Inject constructor(
@@ -39,62 +41,55 @@ class OutingReminderScheduler @Inject constructor(
 
     fun start() {
         if (!started.compareAndSet(false, true)) return
-        scope.launch {
-            outingRepository.observeCurrent().collect { outing ->
-                if (outing == null) cancel() else schedule(outing)
+        scope.launch { outingRepository.observeAll().collect(::schedule) }
+    }
+
+    /** Schedules the outings once, when the app is not running (after a reboot or an update). */
+    suspend fun restore() = schedule(outingRepository.observeAll().first())
+
+    private fun schedule(outings: List<PlannedOuting>) {
+        val workManager = WorkManager.getInstance(context)
+        // Outings ended or cancelled: nothing about them is left, scheduled or shown.
+        workManager.cancelAllWorkByTag(OUTING_WORK_TAG)
+        notificationPublisher.cancelOutingNotificationsExcept(outings.mapTo(mutableSetOf()) { it.id })
+        val now = clock.instant()
+        outings.forEach { outing ->
+            // Past reminders are not replayed: the outing is over or was planned after the fact. A
+            // reminder already shown stays until the user is back.
+            if (now.isBefore(outing.latestBack)) {
+                enqueue(OutingReminderWorker.KIND_ONGOING, outing, at = outing.departure ?: outing.start.minus(ONGOING_LEAD), now = now)
+                enqueue(OutingReminderWorker.KIND_END, outing, at = outing.latestBack, now = now)
+            }
+            val alertSoon = outing.alertAt.minus(ALERT_LEAD)
+            if (outing.relativeInformed && now.isBefore(alertSoon)) {
+                enqueue(OutingReminderWorker.KIND_ALERT_SOON, outing, at = alertSoon, now = now)
             }
         }
     }
 
-    /** Schedules the current outing once, when the app is not running (after a reboot or an update). */
-    suspend fun restore() {
-        val outing = outingRepository.observeCurrent().first()
-        if (outing == null) cancel() else schedule(outing)
-    }
-
-    private fun schedule(outing: PlannedOuting) {
-        val now = clock.instant()
-        // Past reminders are not replayed: the outing is over or was planned after the fact. The end
-        // reminder already shown stays until the user is back.
-        if (!now.isBefore(outing.expectedBack)) return cancelWork()
-        enqueue(ONGOING_WORK_NAME, OutingReminderWorker.KIND_ONGOING, outing, at = outing.start.minus(ONGOING_LEAD), now = now)
-        enqueue(END_WORK_NAME, OutingReminderWorker.KIND_END, outing, at = outing.expectedBack, now = now)
-    }
-
-    private fun enqueue(name: String, kind: String, outing: PlannedOuting, at: Instant, now: Instant) {
+    private fun enqueue(kind: String, outing: PlannedOuting, at: Instant, now: Instant) {
         val delay = Duration.between(now, at).coerceAtLeast(Duration.ZERO)
         val request = OneTimeWorkRequestBuilder<OutingReminderWorker>()
             .setInitialDelay(delay.toMillis(), TimeUnit.MILLISECONDS)
+            .addTag(OUTING_WORK_TAG)
             .setInputData(
                 workDataOf(
                     OutingReminderWorker.KEY_KIND to kind,
-                    OutingReminderWorker.KEY_CANYON_ID to outing.canyonId,
-                    OutingReminderWorker.KEY_CANYON_NAME to outing.canyonName,
-                    OutingReminderWorker.KEY_EXPECTED_BACK to outing.expectedBack.toEpochMilli(),
+                    OutingReminderWorker.KEY_OUTING_ID to outing.id,
+                    OutingReminderWorker.KEY_REFERENCE to OutingReminderWorker.referenceTime(kind, outing),
                 ),
             )
             .build()
-        WorkManager.getInstance(context).enqueueUniqueWork(name, ExistingWorkPolicy.REPLACE, request)
-    }
-
-    /** No outing any more: nothing about it is left, scheduled or shown. */
-    private fun cancel() {
-        cancelWork()
-        notificationPublisher.cancelOutingNotifications()
-    }
-
-    private fun cancelWork() {
-        WorkManager.getInstance(context).run {
-            cancelUniqueWork(ONGOING_WORK_NAME)
-            cancelUniqueWork(END_WORK_NAME)
-        }
+        WorkManager.getInstance(context).enqueueUniqueWork("outing-$kind-${outing.id}", ExistingWorkPolicy.REPLACE, request)
     }
 
     private companion object {
-        const val ONGOING_WORK_NAME = "outing-ongoing"
-        const val END_WORK_NAME = "outing-end-reminder"
+        const val OUTING_WORK_TAG = "outing"
 
-        /** The notification is there from the drive to the canyon. */
+        /** Without a known drive, the notification is there an hour before the walk. */
         val ONGOING_LEAD: Duration = Duration.ofHours(1)
+
+        /** Time to call or text the relative before they worry. */
+        val ALERT_LEAD: Duration = Duration.ofMinutes(30)
     }
 }

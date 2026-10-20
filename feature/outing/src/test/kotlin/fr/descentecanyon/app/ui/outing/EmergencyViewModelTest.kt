@@ -10,9 +10,9 @@ import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.repository.CanyonRepository
-import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.usecase.FindCanyonsAroundUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonPreviewUseCase
+import fr.descentecanyon.app.testutil.FakeOutingRepository
 import fr.descentecanyon.app.testutil.MainDispatcherRule
 import fr.descentecanyon.app.ui.location.DeviceFix
 import io.mockk.coEvery
@@ -24,7 +24,6 @@ import java.time.Duration
 import java.time.Instant
 import java.time.ZoneId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
@@ -45,16 +44,7 @@ class EmergencyViewModelTest {
 
     private val now = Instant.parse("2026-07-14T10:00:00Z")
     private val clock = Clock.fixed(now, ZoneId.of("Europe/Paris"))
-    private val outing = MutableStateFlow<PlannedOuting?>(null)
-    private val outingRepository = object : OutingRepository {
-        override fun observeCurrent() = outing
-        override suspend fun save(outing: PlannedOuting) {
-            this@EmergencyViewModelTest.outing.value = outing
-        }
-        override suspend fun clear() {
-            outing.value = null
-        }
-    }
+    private val outingRepository = FakeOutingRepository()
 
     /** Riolan in France and its neighbour, Ecouges in Switzerland for the numbers, 2.5 km apart. */
     private val canyonRepository = mockk<CanyonRepository> {
@@ -107,8 +97,15 @@ class EmergencyViewModelTest {
 
     @Test
     fun `the outing under way gives the canyon, with its expected return`() = runTest {
-        outing.value =
-            PlannedOuting(42, "Riolan", now.minus(Duration.ofHours(2)), now.plus(Duration.ofHours(3)), now.plus(Duration.ofHours(5)))
+        val outing = PlannedOuting(
+            canyonId = 42,
+            canyonName = "Riolan",
+            start = now.minus(Duration.ofHours(2)),
+            expectedBack = now.plus(Duration.ofHours(3)),
+            alertAt = now.plus(Duration.ofHours(5)),
+            id = 1,
+        )
+        outingRepository.outings.value = listOf(outing)
 
         val viewModel = viewModel()
         advanceUntilIdle()
@@ -116,7 +113,7 @@ class EmergencyViewModelTest {
         val state = viewModel.uiState.value
         assertEquals(EmergencyCanyonOrigin.OUTING, state.origin)
         assertEquals("Riolan", state.canyon?.name)
-        assertEquals(outing.value, state.outing)
+        assertEquals(outing, state.outing)
         assertEquals(listOf("112", "15", "18", "17"), state.numbers.map { it.number })
         // Without position, the escape route comes first.
         assertEquals(GeoPointType.ECHAPPATOIRE, state.points.first().point.type)
@@ -125,7 +122,8 @@ class EmergencyViewModelTest {
     @Test
     fun `without page nor outing, the canyon around the position is found and can be corrected`() = runTest {
         // An outing planned for tomorrow is not the one under way.
-        outing.value = PlannedOuting(42, "Riolan", now.plus(Duration.ofDays(1)), now.plus(Duration.ofDays(1)), now.plus(Duration.ofDays(1)))
+        outingRepository.outings.value =
+            listOf(PlannedOuting(42, "Riolan", now.plus(Duration.ofDays(1)), now.plus(Duration.ofDays(1)), now.plus(Duration.ofDays(1))))
         val viewModel = viewModel()
         runCurrent()
         assertTrue(viewModel.uiState.value.isLocatingCanyon)

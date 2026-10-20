@@ -63,6 +63,7 @@ import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
@@ -295,7 +296,7 @@ private fun CanyonCard(state: EmergencyUiState, onSelectCanyon: (Int) -> Unit) {
     }
 }
 
-/** The outing under way, and how far the canyon is from the position. */
+/** The outing under way (its return and how many people, which the rescue asks), and how far the canyon is from the position. */
 @Composable
 private fun canyonContextLines(state: EmergencyUiState): List<String> {
     val locale = LocalLocale.current.platformLocale
@@ -304,6 +305,7 @@ private fun canyonContextLines(state: EmergencyUiState): List<String> {
             .format(outing.expectedBack.atZone(ZoneId.systemDefault()))
         stringResource(R.string.emergency_canyon_outing, back)
     }
+    val groupLine = state.outing?.groupSize?.let { size -> pluralStringResource(R.plurals.emergency_group, size, size) }
     val distanceLine = state.canyonDistanceMeters?.let { distance ->
         if (distance <= ON_ROUTE_METERS) {
             stringResource(R.string.emergency_canyon_here)
@@ -311,7 +313,7 @@ private fun canyonContextLines(state: EmergencyUiState): List<String> {
             stringResource(R.string.emergency_canyon_around, formatDistance(distance, locale))
         }
     }
-    return listOfNotNull(outingLine, distanceLine)
+    return listOfNotNull(outingLine, groupLine, distanceLine)
 }
 
 @Composable

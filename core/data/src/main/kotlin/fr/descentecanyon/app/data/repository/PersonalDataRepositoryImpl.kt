@@ -3,8 +3,10 @@ package fr.descentecanyon.app.data.repository
 import fr.descentecanyon.app.data.local.user.dao.CanyonNoteDao
 import fr.descentecanyon.app.data.local.user.dao.FavoriteDao
 import fr.descentecanyon.app.data.local.user.dao.LogbookDao
+import fr.descentecanyon.app.data.local.user.dao.PlaceDao
 import fr.descentecanyon.app.data.local.user.entity.CanyonNoteEntity
 import fr.descentecanyon.app.data.local.user.entity.FavoriteEntity
+import fr.descentecanyon.app.data.local.user.entity.PlaceEntity
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.appError
 import fr.descentecanyon.app.domain.error.suspendRunCatching
@@ -29,6 +31,7 @@ class PersonalDataRepositoryImpl @Inject constructor(
     private val logbookDao: LogbookDao,
     private val canyonNoteDao: CanyonNoteDao,
     private val favoriteDao: FavoriteDao,
+    private val placeDao: PlaceDao,
     private val logbookRepository: LogbookRepository,
     private val clock: Clock,
 ) : PersonalDataRepository {
@@ -40,6 +43,7 @@ class PersonalDataRepositoryImpl @Inject constructor(
             logbook = logbookDao.getAll().mapNotNull { it.toDomain() }.map { it.toItem() },
             memos = canyonNoteDao.getAll().map { MemoItem(it.canyonId, it.text, it.updatedAt) },
             favorites = favoriteDao.observeIds().first(),
+            places = placeDao.getAll().map { PlaceItem(it.name, it.latitude, it.longitude, it.stayStart, it.stayEnd) },
         ),
     )
 
@@ -72,6 +76,19 @@ class PersonalDataRepositoryImpl @Inject constructor(
         val knownFavorites = favoriteDao.observeIds().first().toSet()
         val newFavorites = file.favorites.distinct().filterNot { it in knownFavorites }
         favoriteDao.insertAll(newFavorites.map { FavoriteEntity(canyonId = it, addedAt = clock.millis()) })
+        val knownPlaces = placeDao.getAll().map { Triple(it.name, it.latitude, it.longitude) }.toSet()
+        file.places.filter { it.name.isNotBlank() && Triple(it.name, it.latitude, it.longitude) !in knownPlaces }.forEach { place ->
+            placeDao.upsert(
+                PlaceEntity(
+                    name = place.name,
+                    latitude = place.latitude,
+                    longitude = place.longitude,
+                    stayStart = place.stayStart,
+                    stayEnd = place.stayEnd,
+                    createdAt = clock.millis(),
+                ),
+            )
+        }
         PersonalDataImport(outings = outings, memos = memos, favorites = newFavorites.size)
     }
 
@@ -132,6 +149,8 @@ internal data class PersonalDataFile(
     val logbook: List<LogbookItem> = emptyList(),
     val memos: List<MemoItem> = emptyList(),
     val favorites: List<Int> = emptyList(),
+    /** Starting places of outings; absent from the files of older versions. */
+    val places: List<PlaceItem> = emptyList(),
 )
 
 @Serializable
@@ -149,3 +168,12 @@ internal data class LogbookItem(
 
 @Serializable
 internal data class MemoItem(val canyonId: Int, val text: String, val updatedAt: Long)
+
+@Serializable
+internal data class PlaceItem(
+    val name: String,
+    val latitude: Double,
+    val longitude: Double,
+    val stayStart: String? = null,
+    val stayEnd: String? = null,
+)

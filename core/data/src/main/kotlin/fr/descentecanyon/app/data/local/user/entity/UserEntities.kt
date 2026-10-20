@@ -114,3 +114,48 @@ data class LogbookEntryEntity(
     val siteObservationId: Long? = null,
     val updatedAt: Long? = null,
 )
+
+/** An outing the user planned; [choicesJson] keeps their choices so the plan reopens as it was. */
+@Entity(tableName = "planned_outings", indices = [Index("start")])
+data class PlannedOutingEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val canyonId: Int,
+    val canyonName: String,
+    /** Leaving the car on foot, epoch ms. */
+    val start: Long,
+    val expectedBack: Long,
+    val latestBack: Long,
+    val alertAt: Long,
+    /** Leaving the starting place, epoch ms. */
+    val departure: Long? = null,
+    val groupSize: Int? = null,
+    val relativeInformed: Boolean = false,
+    val choicesJson: String? = null,
+    val updatedAt: Long,
+)
+
+/** A place outings start from; [stayStart] and [stayEnd] are ISO dates. */
+@Entity(tableName = "places")
+data class PlaceEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val name: String,
+    val latitude: Double,
+    val longitude: Double,
+    val stayStart: String? = null,
+    val stayEnd: String? = null,
+    val lastUsedAt: Long = 0,
+    val createdAt: Long,
+)
+
+/** Drive time from a place to the parking of a canyon at [toLatitude], [toLongitude]; [source] is a DriveTimeSource name. */
+@Entity(tableName = "drive_times", primaryKeys = ["placeId", "canyonId"])
+data class DriveTimeEntity(
+    val placeId: Long,
+    val canyonId: Int,
+    val toLatitude: Double,
+    val toLongitude: Double,
+    val minutes: Int,
+    val distanceKm: Double? = null,
+    val source: String,
+    val updatedAt: Long,
+)

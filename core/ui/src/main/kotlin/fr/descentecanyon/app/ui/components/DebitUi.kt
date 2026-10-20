@@ -1,9 +1,11 @@
 package fr.descentecanyon.app.ui.components
 
+import android.content.res.Resources
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLocale
-import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDuration
@@ -20,6 +22,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.time.temporal.ChronoUnit
+import java.util.Locale
 
 fun debitLevelColor(niveau: NiveauDebit): Color = when (niveau) {
     NiveauDebit.SEC -> DebitSec
@@ -32,25 +35,32 @@ fun debitLevelColor(niveau: NiveauDebit): Color = when (niveau) {
 }
 
 @Composable
-fun debitLevelLabel(niveau: NiveauDebit): String = when (niveau) {
-    NiveauDebit.SEC -> stringResource(R.string.debit_level_sec)
-    NiveauDebit.FILET -> stringResource(R.string.debit_level_filet)
-    NiveauDebit.CORRECT -> stringResource(R.string.debit_level_correct)
-    NiveauDebit.GROS -> stringResource(R.string.debit_level_gros)
-    NiveauDebit.TRES_GROS -> stringResource(R.string.debit_level_tres_gros)
-    NiveauDebit.CRUE -> stringResource(R.string.debit_level_crue)
-    NiveauDebit.INCONNU -> stringResource(R.string.debit_level_inconnu)
+fun debitLevelLabel(niveau: NiveauDebit): String = stringResource(debitLevelLabelRes(niveau))
+
+@StringRes
+fun debitLevelLabelRes(niveau: NiveauDebit): Int = when (niveau) {
+    NiveauDebit.SEC -> R.string.debit_level_sec
+    NiveauDebit.FILET -> R.string.debit_level_filet
+    NiveauDebit.CORRECT -> R.string.debit_level_correct
+    NiveauDebit.GROS -> R.string.debit_level_gros
+    NiveauDebit.TRES_GROS -> R.string.debit_level_tres_gros
+    NiveauDebit.CRUE -> R.string.debit_level_crue
+    NiveauDebit.INCONNU -> R.string.debit_level_inconnu
 }
 
 /** "Today", "Yesterday", "3 days ago", then the short date: how fresh an observation is. */
 @Composable
-fun relativeDayLabel(date: LocalDate, today: LocalDate = LocalDate.now()): String {
+fun relativeDayLabel(date: LocalDate, today: LocalDate = LocalDate.now()): String =
+    relativeDayLabel(LocalResources.current, date, today, LocalLocale.current.platformLocale)
+
+/** [relativeDayLabel] in the language of [resources], for text written in another language than the app's. */
+fun relativeDayLabel(resources: Resources, date: LocalDate, today: LocalDate, locale: Locale): String {
     val days = ChronoUnit.DAYS.between(date, today)
     return when {
-        days <= 0L -> stringResource(R.string.relative_today)
-        days == 1L -> stringResource(R.string.relative_yesterday)
-        days < RELATIVE_DAYS_LIMIT -> pluralStringResource(R.plurals.relative_days_ago, days.toInt(), days.toInt())
-        else -> date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))
+        days <= 0L -> resources.getString(R.string.relative_today)
+        days == 1L -> resources.getString(R.string.relative_yesterday)
+        days < RELATIVE_DAYS_LIMIT -> resources.getQuantityString(R.plurals.relative_days_ago, days.toInt(), days.toInt())
+        else -> date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(locale))
     }
 }
 
@@ -73,14 +83,17 @@ private fun capitalized(text: String): String {
 
 /** Short lower-case name of a level, to build ranges and legends. */
 @Composable
-fun debitRangeWord(level: NiveauDebit): String = when (level) {
-    NiveauDebit.SEC -> stringResource(R.string.prediction_range_level_sec)
-    NiveauDebit.FILET -> stringResource(R.string.prediction_range_level_filet)
-    NiveauDebit.CORRECT -> stringResource(R.string.prediction_range_level_correct)
-    NiveauDebit.GROS -> stringResource(R.string.prediction_range_level_gros)
-    NiveauDebit.TRES_GROS -> stringResource(R.string.prediction_range_level_tres_gros)
-    NiveauDebit.CRUE -> stringResource(R.string.prediction_range_level_crue)
-    NiveauDebit.INCONNU -> stringResource(R.string.debit_level_inconnu)
+fun debitRangeWord(level: NiveauDebit): String = stringResource(debitRangeWordRes(level))
+
+@StringRes
+fun debitRangeWordRes(level: NiveauDebit): Int = when (level) {
+    NiveauDebit.SEC -> R.string.prediction_range_level_sec
+    NiveauDebit.FILET -> R.string.prediction_range_level_filet
+    NiveauDebit.CORRECT -> R.string.prediction_range_level_correct
+    NiveauDebit.GROS -> R.string.prediction_range_level_gros
+    NiveauDebit.TRES_GROS -> R.string.prediction_range_level_tres_gros
+    NiveauDebit.CRUE -> R.string.prediction_range_level_crue
+    NiveauDebit.INCONNU -> R.string.debit_level_inconnu
 }
 
 /**

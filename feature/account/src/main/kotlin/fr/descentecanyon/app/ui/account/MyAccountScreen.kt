@@ -101,7 +101,8 @@ fun MyAccountScreen(
     onBackClick: () -> Unit,
     onOpenLogbook: (LogbookTab) -> Unit,
     onOpenMemberProfile: (String) -> Unit,
-    onOpenOuting: (Int) -> Unit,
+    onOpenOuting: (canyonId: Int, outingId: Long) -> Unit,
+    onOpenOutings: () -> Unit,
     onOpenPendingDebits: () -> Unit,
     onOpenNotifications: () -> Unit,
     onOpenSettings: () -> Unit,
@@ -224,8 +225,12 @@ fun MyAccountScreen(
                         }, onForget = viewModel::clearContributorIdentity)
                     }
                 }
-                state.outing?.let { outing ->
-                    item(key = "outing") { OutingCard(outing = outing, onClick = { onOpenOuting(outing.canyonId) }) }
+                item(key = "outings") {
+                    OutingsSummary(
+                        outings = state.outings,
+                        onOpen = { outing -> onOpenOuting(outing.canyonId, outing.id) },
+                        onOpenAll = onOpenOutings,
+                    )
                 }
                 item(key = "logbook") {
                     LogbookSummary(
@@ -427,23 +432,41 @@ private fun ContributorIdentityCard(identity: ContributorIdentity, onEdit: () ->
     }
 }
 
+/** The outings planned (the one under way first) and the way to all of them, the starting places and the stays. */
 @Composable
-private fun OutingCard(outing: PlannedOuting, onClick: () -> Unit) {
+private fun OutingsSummary(outings: List<PlannedOuting>, onOpen: (PlannedOuting) -> Unit, onOpenAll: () -> Unit) {
     val locale = LocalLocale.current.platformLocale
     val zone = ZoneId.systemDefault()
-    val start = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(locale).format(outing.start.atZone(zone))
-    val back = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale).format(outing.expectedBack.atZone(zone))
-    DcCard(onClick = onClick, modifier = Modifier.fillMaxWidth(), contentPadding = 14.dp) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Icon(Icons.Default.Hiking, contentDescription = null, tint = LocalDcColors.current.primaryAction)
-            Column(modifier = Modifier.weight(1f)) {
-                Text(outing.canyonName, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
-                Text(stringResource(R.string.outing_active_summary, start, back), style = MaterialTheme.typography.bodySmall)
-            }
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = LocalDcColors.current.textMuted)
+    AccountSection(stringResource(R.string.outings_title), modifier = Modifier.testTag(TestTags.MY_ACCOUNT_OUTINGS)) {
+        if (outings.isEmpty()) {
+            Text(
+                stringResource(R.string.outings_empty_title),
+                style = MaterialTheme.typography.bodyMedium,
+                color = LocalDcColors.current.textSecondary,
+            )
         }
+        outings.take(SHOWN_OUTINGS).forEach { outing ->
+            val start = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(locale)
+                .format((outing.departure ?: outing.start).atZone(zone))
+            val back = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale).format(outing.expectedBack.atZone(zone))
+            Row(
+                modifier = Modifier.fillMaxWidth().clickable { onOpen(outing) }.padding(vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                Icon(Icons.Default.Hiking, contentDescription = null, tint = LocalDcColors.current.primaryAction)
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(outing.canyonName, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.outing_active_summary, start, back), style = MaterialTheme.typography.bodySmall)
+                }
+                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = LocalDcColors.current.textMuted)
+            }
+        }
+        TextButton(onClick = onOpenAll) { Text(stringResource(R.string.account_outings_all)) }
     }
 }
+
+private const val SHOWN_OUTINGS = 3
 
 @Composable
 private fun LogbookSummary(

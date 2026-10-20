@@ -14,6 +14,7 @@ import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.LogbookStats
 import fr.descentecanyon.app.domain.model.NotificationCenterState
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.agenda
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
@@ -52,7 +53,8 @@ data class MyAccountUiState(
     val member: ForumUser? = null,
     /** Name and e-mail kept for reports sent without an account. */
     val contributorIdentity: ContributorIdentity? = null,
-    val outing: PlannedOuting? = null,
+    /** The outing under way first, then those to come. */
+    val outings: List<PlannedOuting> = emptyList(),
     val stats: LogbookStats = LogbookStats(0, 0, 0),
     val recentEntries: List<LogbookEntry> = emptyList(),
     val memoCount: Int = 0,
@@ -93,8 +95,8 @@ class MyAccountViewModel @Inject constructor(
         observeLogbook()
         observeMemos()
         viewModelScope.launch {
-            outingRepository.observeCurrent().collect { outing ->
-                _uiState.update { it.copy(outing = outing?.takeUnless { o -> o.isStale(clock.instant()) }) }
+            outingRepository.observeAll().agenda(clock).collect { agenda ->
+                _uiState.update { it.copy(outings = listOfNotNull(agenda.underway) + agenda.upcoming) }
             }
         }
         viewModelScope.launch {

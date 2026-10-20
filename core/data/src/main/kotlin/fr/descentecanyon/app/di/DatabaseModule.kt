@@ -23,11 +23,14 @@ import fr.descentecanyon.app.data.local.user.UserDatabase
 import fr.descentecanyon.app.data.local.user.dao.CanyonNoteDao
 import fr.descentecanyon.app.data.local.user.dao.DailyWeatherDao
 import fr.descentecanyon.app.data.local.user.dao.DebitDao
+import fr.descentecanyon.app.data.local.user.dao.DriveTimeDao
 import fr.descentecanyon.app.data.local.user.dao.FavoriteDao
 import fr.descentecanyon.app.data.local.user.dao.KeyValueDao
 import fr.descentecanyon.app.data.local.user.dao.LogbookDao
 import fr.descentecanyon.app.data.local.user.dao.PendingDebitSubmissionDao
 import fr.descentecanyon.app.data.local.user.dao.PhotoDao
+import fr.descentecanyon.app.data.local.user.dao.PlaceDao
+import fr.descentecanyon.app.data.local.user.dao.PlannedOutingDao
 import fr.descentecanyon.app.data.local.user.dao.RecentCanyonDao
 import javax.inject.Singleton
 
@@ -94,4 +97,10 @@ object DatabaseModule {
     @Provides fun provideCanyonNoteDao(database: UserDatabase): CanyonNoteDao = database.canyonNoteDao()
 
     @Provides fun provideLogbookDao(database: UserDatabase): LogbookDao = database.logbookDao()
+
+    @Provides fun providePlannedOutingDao(database: UserDatabase): PlannedOutingDao = database.plannedOutingDao()
+
+    @Provides fun providePlaceDao(database: UserDatabase): PlaceDao = database.placeDao()
+
+    @Provides fun provideDriveTimeDao(database: UserDatabase): DriveTimeDao = database.driveTimeDao()
 }

@@ -15,6 +15,7 @@ import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.bearingDegrees
 import fr.descentecanyon.app.domain.model.distanceToCanyonKm
 import fr.descentecanyon.app.domain.model.haversineKm
+import fr.descentecanyon.app.domain.model.underwayAt
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.usecase.FindCanyonsAroundUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonPreviewUseCase
@@ -125,7 +126,7 @@ class EmergencyViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val outing = outingRepository.observeCurrent().first()?.takeIf { it.isUnderway(clock.instant()) }
+            val outing = outingRepository.observeAll().first().underwayAt(clock.instant())
             when {
                 canyonId > 0 -> show(canyonId, EmergencyCanyonOrigin.PAGE, outing)
 

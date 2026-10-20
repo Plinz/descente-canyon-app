@@ -129,6 +129,10 @@ object E2eFixtureState {
             cotation = "v3a3III",
             interet = 4.2f,
             url = "/canyoning/canyon/101/Riolan.html",
+            cordeMin = 40,
+            tempsApproche = "20min",
+            tempsDescente = "2h",
+            tempsRetour = "10min",
         )
         val aiglun = Canyon(
             id = 102,

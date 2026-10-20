@@ -48,9 +48,10 @@ class AppLaunchTargetIntentTest {
 
     @Test
     fun `notification targets of an outing survive the intent round trip`() {
-        listOf(AppLaunchTarget.OutingBack(42), AppLaunchTarget.DebitForm(42)).forEach { target ->
+        listOf(AppLaunchTarget.OutingBack(7, 42), AppLaunchTarget.OutingPlan(7, 42), AppLaunchTarget.DebitForm(42)).forEach { target ->
             assertEquals(target, consumeLaunchTarget(Intent().putLaunchTarget(target)))
         }
-        assertEquals(AppLaunchTarget.None, consumeLaunchTarget(Intent().putLaunchTarget(AppLaunchTarget.OutingBack(0))))
+        assertEquals(AppLaunchTarget.None, consumeLaunchTarget(Intent().putLaunchTarget(AppLaunchTarget.OutingBack(0, 42))))
+        assertEquals(AppLaunchTarget.None, consumeLaunchTarget(Intent().putLaunchTarget(AppLaunchTarget.OutingPlan(7, 0))))
     }
 }

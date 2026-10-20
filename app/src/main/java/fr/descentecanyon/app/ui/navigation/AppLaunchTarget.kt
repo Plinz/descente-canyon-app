@@ -12,7 +12,10 @@ sealed interface AppLaunchTarget {
     data class DebitForm(val canyonId: Int) : AppLaunchTarget
 
     /** "I'm back" from an outing notification: the outing ends, then the flow seen is reported. */
-    data class OutingBack(val canyonId: Int) : AppLaunchTarget
+    data class OutingBack(val outingId: Long, val canyonId: Int) : AppLaunchTarget
+
+    /** The plan of a saved outing, to push its alert back or end it (notification before the alert). */
+    data class OutingPlan(val outingId: Long, val canyonId: Int) : AppLaunchTarget
 
     /** A screen without arguments, opened from a notification or a launcher shortcut. */
     data class Section(val section: LaunchSection, val clearBackStack: Boolean = true) : AppLaunchTarget
@@ -41,6 +44,11 @@ fun Intent.putLaunchTarget(target: AppLaunchTarget): Intent = when (target) {
 
     is AppLaunchTarget.OutingBack -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_OUTING_BACK)
         .putExtra(EXTRA_CANYON_ID, target.canyonId)
+        .putExtra(EXTRA_OUTING_ID, target.outingId)
+
+    is AppLaunchTarget.OutingPlan -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_OUTING_PLAN)
+        .putExtra(EXTRA_CANYON_ID, target.canyonId)
+        .putExtra(EXTRA_OUTING_ID, target.outingId)
 
     is AppLaunchTarget.Section -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_SECTION)
         .putExtra(EXTRA_SECTION, target.section.name)
@@ -72,10 +80,9 @@ fun consumeLaunchTarget(intent: Intent?): AppLaunchTarget {
             ?.let { AppLaunchTarget.DebitForm(it) }
             ?: AppLaunchTarget.None
 
-        TARGET_OUTING_BACK -> intent.getIntExtra(EXTRA_CANYON_ID, 0)
-            .takeIf { it > 0 }
-            ?.let { AppLaunchTarget.OutingBack(it) }
-            ?: AppLaunchTarget.None
+        TARGET_OUTING_BACK -> outingTarget(intent, AppLaunchTarget::OutingBack)
+
+        TARGET_OUTING_PLAN -> outingTarget(intent, AppLaunchTarget::OutingPlan)
 
         TARGET_SECTION -> LaunchSection.entries.firstOrNull { it.name == intent.getStringExtra(EXTRA_SECTION) }
             ?.let { section ->
@@ -90,7 +97,14 @@ fun consumeLaunchTarget(intent: Intent?): AppLaunchTarget {
     intent.removeExtra(EXTRA_OPEN_DEBITS_TAB)
     intent.removeExtra(EXTRA_CLEAR_BACKSTACK)
     intent.removeExtra(EXTRA_SECTION)
+    intent.removeExtra(EXTRA_OUTING_ID)
     return target
+}
+
+private fun outingTarget(intent: Intent, target: (Long, Int) -> AppLaunchTarget): AppLaunchTarget {
+    val canyonId = intent.getIntExtra(EXTRA_CANYON_ID, 0)
+    val outingId = intent.getLongExtra(EXTRA_OUTING_ID, 0L)
+    return if (canyonId > 0 && outingId > 0) target(outingId, canyonId) else AppLaunchTarget.None
 }
 
 internal fun parseLaunchTargetFromUri(uri: Uri?): AppLaunchTarget = parseLaunchTargetFromUrl(uri?.toString())
@@ -110,11 +124,13 @@ private const val EXTRA_CANYON_ID = "launch_target_canyon_id"
 private const val EXTRA_OPEN_DEBITS_TAB = "launch_target_open_debits_tab"
 private const val EXTRA_CLEAR_BACKSTACK = "launch_target_clear_backstack"
 private const val EXTRA_SECTION = "launch_target_section"
+private const val EXTRA_OUTING_ID = "launch_target_outing_id"
 private const val TARGET_NOTIFICATIONS = "notifications"
 private const val TARGET_CANYON_DETAIL = "canyon_detail"
 private const val TARGET_SECTION = "section"
 private const val TARGET_DEBIT_FORM = "debit_form"
 private const val TARGET_OUTING_BACK = "outing_back"
+private const val TARGET_OUTING_PLAN = "outing_plan"
 private val DESCENTE_CANYON_DETAIL_URL_REGEX = Regex(
     pattern = """https://(?:www\.)?descente-canyon\.com/canyoning/canyon/(\d+)(?:[/?#].*)?""",
     option = RegexOption.IGNORE_CASE,

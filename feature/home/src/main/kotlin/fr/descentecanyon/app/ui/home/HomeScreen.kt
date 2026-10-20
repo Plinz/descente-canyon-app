@@ -46,6 +46,7 @@ import fr.descentecanyon.app.domain.model.ForumCategory
 import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.forumCategoryKey
 import fr.descentecanyon.app.ui.common.rememberFollowWithNotificationPermission
+import fr.descentecanyon.app.ui.common.shareOutingBackMessage
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.EmergencyIconButton
 import fr.descentecanyon.app.ui.design.LocalDcColors
@@ -65,7 +66,8 @@ fun HomeScreen(
     onPendingDebitsClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
     onAccountClick: () -> Unit = {},
-    onOutingClick: (Int) -> Unit = {},
+    onOutingClick: (canyonId: Int, outingId: Long) -> Unit = { _, _ -> },
+    onOutingsClick: () -> Unit = {},
     onOutingEnded: (Int) -> Unit = {},
     onEmergencyClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -176,12 +178,23 @@ fun HomeScreen(
                     item {
                         ActiveOutingCard(
                             outing = outing,
-                            onOpen = { onOutingClick(outing.canyonId) },
+                            onOpen = { onOutingClick(outing.canyonId, outing.id) },
                             onBack = {
                                 homeViewModel.endOuting()
+                                // The relative who received the plan waits for this news.
+                                if (outing.relativeInformed) context.shareOutingBackMessage(outing.canyonName)
                                 onOutingEnded(outing.canyonId)
                             },
                             onEmergency = { onEmergencyClick(outing.canyonId) },
+                        )
+                    }
+                }
+                if (homeState.upcomingOutings.isNotEmpty()) {
+                    item {
+                        UpcomingOutingsCard(
+                            outings = homeState.upcomingOutings,
+                            onOpen = { outing -> onOutingClick(outing.canyonId, outing.id) },
+                            onSeeAll = onOutingsClick,
                         )
                     }
                 }

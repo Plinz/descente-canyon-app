@@ -2,6 +2,7 @@ package fr.descentecanyon.app.ui.home
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.EventAvailable
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material.icons.filled.WifiOff
@@ -40,6 +42,7 @@ import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
+import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.Instant
 import java.time.ZoneId
@@ -357,6 +360,51 @@ internal fun ActiveOutingCard(
                     Text(stringResource(R.string.outing_emergency_action), color = MaterialTheme.colorScheme.error)
                 }
             }
+        }
+    }
+}
+
+/** The next outings planned, each opening its plan, and the list of all of them. */
+@Composable
+internal fun UpcomingOutingsCard(
+    outings: List<PlannedOuting>,
+    onOpen: (PlannedOuting) -> Unit,
+    onSeeAll: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val locale = LocalLocale.current.platformLocale
+    val zone = ZoneId.systemDefault()
+    val formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(locale)
+    DcCard(modifier = modifier.fillMaxWidth().testTag(TestTags.HOME_UPCOMING_OUTINGS)) {
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Icon(Icons.Default.EventAvailable, contentDescription = null)
+                Text(
+                    stringResource(R.string.home_upcoming_outings),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.weight(1f),
+                )
+            }
+            outings.forEach { outing ->
+                Row(
+                    modifier = Modifier.fillMaxWidth().clickable { onOpen(outing) }.padding(vertical = 6.dp),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                ) {
+                    Text(
+                        outing.canyonName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight.SemiBold,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Text(
+                        formatter.format((outing.departure ?: outing.start).atZone(zone)),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = LocalDcColors.current.textSecondary,
+                    )
+                }
+            }
+            TextButton(onClick = onSeeAll) { Text(stringResource(R.string.home_all_outings)) }
         }
     }
 }

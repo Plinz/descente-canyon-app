@@ -11,6 +11,7 @@ import fr.descentecanyon.app.data.repository.DebitPredictionRepositoryImpl
 import fr.descentecanyon.app.data.repository.DebitPredictionSupportRepositoryImpl
 import fr.descentecanyon.app.data.repository.DebitRepositoryImpl
 import fr.descentecanyon.app.data.repository.DebitSubmissionRepositoryImpl
+import fr.descentecanyon.app.data.repository.DriveTimeRepositoryImpl
 import fr.descentecanyon.app.data.repository.EdfPracticabilityRepositoryImpl
 import fr.descentecanyon.app.data.repository.FavoritesRepositoryImpl
 import fr.descentecanyon.app.data.repository.ForumRepositoryImpl
@@ -18,9 +19,11 @@ import fr.descentecanyon.app.data.repository.ForumUserRepositoryImpl
 import fr.descentecanyon.app.data.repository.InterestRatingRepositoryImpl
 import fr.descentecanyon.app.data.repository.LogbookRepositoryImpl
 import fr.descentecanyon.app.data.repository.NotificationCenterRepositoryImpl
+import fr.descentecanyon.app.data.repository.OutingPreferencesRepositoryImpl
 import fr.descentecanyon.app.data.repository.OutingRepositoryImpl
 import fr.descentecanyon.app.data.repository.PersonalDataRepositoryImpl
 import fr.descentecanyon.app.data.repository.PhotoRepositoryImpl
+import fr.descentecanyon.app.data.repository.PlaceRepositoryImpl
 import fr.descentecanyon.app.data.repository.PreferencesRepositoryImpl
 import fr.descentecanyon.app.data.repository.RecentCanyonsRepositoryImpl
 import fr.descentecanyon.app.data.repository.SiteAccountRepositoryImpl
@@ -32,6 +35,7 @@ import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionSupportRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
+import fr.descentecanyon.app.domain.repository.DriveTimeRepository
 import fr.descentecanyon.app.domain.repository.EdfPracticabilityRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
 import fr.descentecanyon.app.domain.repository.ForumRepository
@@ -39,9 +43,11 @@ import fr.descentecanyon.app.domain.repository.ForumUserRepository
 import fr.descentecanyon.app.domain.repository.InterestRatingRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
+import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PersonalDataRepository
 import fr.descentecanyon.app.domain.repository.PhotoRepository
+import fr.descentecanyon.app.domain.repository.PlaceRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.repository.SiteAccountRepository
@@ -123,6 +129,18 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindOutingRepository(impl: OutingRepositoryImpl): OutingRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindPlaceRepository(impl: PlaceRepositoryImpl): PlaceRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDriveTimeRepository(impl: DriveTimeRepositoryImpl): DriveTimeRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindOutingPreferencesRepository(impl: OutingPreferencesRepositoryImpl): OutingPreferencesRepository
 
     @Binds
     @Singleton

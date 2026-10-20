@@ -122,7 +122,7 @@ internal fun CanyonDetailContent(
 
     LazyColumn(
         state = listState,
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize().testTag(TestTags.DETAIL_LIST),
         contentPadding = PaddingValues(bottom = bottomContentPadding),
         verticalArrangement = Arrangement.spacedBy(0.dp),
     ) {

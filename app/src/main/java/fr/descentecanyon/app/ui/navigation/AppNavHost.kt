@@ -41,7 +41,12 @@ import fr.descentecanyon.app.ui.interest.InterestRatingFormScreen
 import fr.descentecanyon.app.ui.map.MapScreen
 import fr.descentecanyon.app.ui.notifications.NotificationCenterScreen
 import fr.descentecanyon.app.ui.outing.EmergencyScreen
+import fr.descentecanyon.app.ui.outing.OutingPlanRequest
 import fr.descentecanyon.app.ui.outing.OutingPlanScreen
+import fr.descentecanyon.app.ui.outing.OutingSettingsScreen
+import fr.descentecanyon.app.ui.outing.OutingsScreen
+import fr.descentecanyon.app.ui.outing.PlacesScreen
+import fr.descentecanyon.app.ui.outing.StayPlannerScreen
 import fr.descentecanyon.app.ui.pending.PendingDebitsScreen
 import fr.descentecanyon.app.ui.search.SearchScreen
 import fr.descentecanyon.app.ui.settings.SettingsScreen
@@ -94,7 +99,10 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onPendingDebitsClick = dropUnlessResumed {
                     navController.navigateSingleTop(Screen.PendingDebits)
                 },
-                onOutingClick = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.OutingPlan(canyonId)) },
+                onOutingClick = dropUnlessResumedWith { canyonId: Int, outingId: Long ->
+                    navController.navigateSingleTop(Screen.OutingPlan(canyonId, outingId))
+                },
+                onOutingsClick = dropUnlessResumed { navController.navigateSingleTop(Screen.Outings) },
                 // Back from the outing: the flow seen is the most useful report.
                 onOutingEnded = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.DebitForm(canyonId)) },
                 onEmergencyClick = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.Emergency(canyonId)) },
@@ -269,6 +277,8 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
             SettingsScreen(
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
                 onOpenPendingDebits = dropUnlessResumed { navController.navigateSingleTop(Screen.PendingDebits) },
+                onOpenOutingSettings = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingSettings) },
+                onOpenPlaces = dropUnlessResumed { navController.navigateSingleTop(Screen.Places) },
                 contentPadding = topLevelContentPadding,
             )
         }
@@ -278,6 +288,36 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
                 onOpenEmergency = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.Emergency(canyonId)) },
                 onReportFlow = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.DebitForm(canyonId)) },
+                onManagePlaces = dropUnlessResumed { navController.navigateSingleTop(Screen.Places) },
+                onOpenOutingSettings = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingSettings) },
+            )
+        }
+
+        composable<Screen.Outings> {
+            OutingsScreen(
+                onBackClick = dropUnlessResumed { navController.popBackStack() },
+                onOpenOuting = dropUnlessResumedWith { request: OutingPlanRequest -> navController.openOutingPlan(request) },
+                onPlanStay = dropUnlessResumedWith { placeId: Long -> navController.navigateSingleTop(Screen.StayPlanner(placeId)) },
+                onManagePlaces = dropUnlessResumed { navController.navigateSingleTop(Screen.Places) },
+            )
+        }
+
+        composable<Screen.Places> {
+            PlacesScreen(
+                onBackClick = dropUnlessResumed { navController.popBackStack() },
+                onPlanStay = dropUnlessResumedWith { placeId: Long -> navController.navigateSingleTop(Screen.StayPlanner(placeId)) },
+            )
+        }
+
+        composable<Screen.OutingSettings> {
+            OutingSettingsScreen(onBackClick = dropUnlessResumed { navController.popBackStack() })
+        }
+
+        composable<Screen.StayPlanner> {
+            StayPlannerScreen(
+                onBackClick = dropUnlessResumed { navController.popBackStack() },
+                onPlanDay = dropUnlessResumedWith { request: OutingPlanRequest -> navController.openOutingPlan(request) },
+                onEditPlace = dropUnlessResumed { navController.navigateSingleTop(Screen.Places) },
             )
         }
 
@@ -295,7 +335,10 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onOpenMemberProfile = dropUnlessResumedWith { username: String ->
                     navController.navigateSingleTop(Screen.UserProfile(username))
                 },
-                onOpenOuting = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.OutingPlan(canyonId)) },
+                onOpenOuting = dropUnlessResumedWith { canyonId: Int, outingId: Long ->
+                    navController.navigateSingleTop(Screen.OutingPlan(canyonId, outingId))
+                },
+                onOpenOutings = dropUnlessResumed { navController.navigateSingleTop(Screen.Outings) },
                 onOpenPendingDebits = dropUnlessResumed { navController.navigateSingleTop(Screen.PendingDebits) },
                 onOpenNotifications = dropUnlessResumed { navController.navigateSingleTop(Screen.Notifications) },
                 onOpenSettings = dropUnlessResumed { navController.navigateSingleTop(Screen.Settings) },
@@ -351,6 +394,17 @@ private fun <T> dropUnlessResumedWith(block: (T) -> Unit): (T) -> Unit {
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     return { value -> if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) block(value) }
 }
+
+/** [dropUnlessResumed] for a click that carries two values (the canyon and the outing clicked). */
+@Composable
+private fun <A, B> dropUnlessResumedWith(block: (A, B) -> Unit): (A, B) -> Unit {
+    val lifecycle = LocalLifecycleOwner.current.lifecycle
+    return { first, second -> if (lifecycle.currentState.isAtLeast(Lifecycle.State.RESUMED)) block(first, second) }
+}
+
+private fun NavHostController.openOutingPlan(request: OutingPlanRequest) = navigateSingleTop(
+    Screen.OutingPlan(request.canyonId, request.outingId, request.date?.toString(), request.placeId),
+)
 
 private const val DEBIT_SUBMISSION_REFRESH_KEY = "debit_submission_refresh"
 private const val INTEREST_RATING_REFRESH_KEY = "interest_rating_refresh"

@@ -67,7 +67,7 @@ class MyAccountViewModelTest {
         coEvery { getCanyonSummaries(setOf(26)) } returns
             listOf(CanyonSummary(id = 26, nom = "Furon", pays = "France", cotation = "v3a3II", url = ""))
     }
-    private val outingRepository = mockk<OutingRepository> { every { observeCurrent() } returns flowOf(null) }
+    private val outingRepository = mockk<OutingRepository> { every { observeAll() } returns flowOf(emptyList()) }
     private val debitSubmissionRepository = mockk<DebitSubmissionRepository> { every { observePendingCount() } returns flowOf(1) }
     private val notificationCenterRepository = mockk<NotificationCenterRepository> {
         every { observeState() } returns

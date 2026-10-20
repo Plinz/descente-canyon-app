@@ -54,8 +54,24 @@ sealed interface Screen {
     @Serializable
     data object Settings : Screen
 
+    /** The plan of an outing: saved ([outingId]), else new, on [date] (ISO) from the place [placeId] when given. */
     @Serializable
-    data class OutingPlan(val canyonId: Int) : Screen
+    data class OutingPlan(val canyonId: Int, val outingId: Long = 0, val date: String? = null, val placeId: Long = 0) : Screen
+
+    /** The outings planned and the places they start from. */
+    @Serializable
+    data object Outings : Screen
+
+    @Serializable
+    data object Places : Screen
+
+    /** The coefficients and times of outings. */
+    @Serializable
+    data object OutingSettings : Screen
+
+    /** Several outings from the place [placeId]: canyons around and the weather of each day. */
+    @Serializable
+    data class StayPlanner(val placeId: Long) : Screen
 
     /** The logbook, opened on [tab] (LogbookTab ordinal: outings, canyons, figures). */
     @Serializable

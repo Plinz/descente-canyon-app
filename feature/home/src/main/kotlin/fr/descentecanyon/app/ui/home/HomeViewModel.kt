@@ -12,6 +12,7 @@ import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.ReportZone
 import fr.descentecanyon.app.domain.model.ZoneCountry
+import fr.descentecanyon.app.domain.model.agenda
 import fr.descentecanyon.app.domain.model.buildZoneTree
 import fr.descentecanyon.app.domain.model.forumCategoryKey
 import fr.descentecanyon.app.domain.model.subdivisionsFor
@@ -27,6 +28,7 @@ import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
+import java.time.Clock
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -92,8 +94,10 @@ data class HomeUiState(
     val followedForumThreadIds: Set<Int> = emptySet(),
     /** Debit reports written offline and not sent yet. */
     val pendingDebitCount: Int = 0,
-    /** The outing the user announced, until they are back. */
+    /** The outing under way, until the user is back. */
     val activeOuting: PlannedOuting? = null,
+    /** The next outings planned. */
+    val upcomingOutings: List<PlannedOuting> = emptyList(),
 )
 
 @HiltViewModel
@@ -107,6 +111,7 @@ class HomeViewModel @Inject constructor(
     private val debitSubmissionRepository: DebitSubmissionRepository,
     private val outingRepository: OutingRepository,
     private val endOutingUseCase: EndOutingUseCase,
+    private val clock: Clock,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HomeUiState())
@@ -133,14 +138,16 @@ class HomeViewModel @Inject constructor(
 
     private fun observeActiveOuting() {
         viewModelScope.launch {
-            outingRepository.observeCurrent().collect { outing -> _uiState.update { it.copy(activeOuting = outing) } }
+            outingRepository.observeAll().agenda(clock).collect { agenda ->
+                _uiState.update { it.copy(activeOuting = agenda.underway, upcomingOutings = agenda.upcoming.take(UPCOMING_OUTINGS_SHOWN)) }
+            }
         }
     }
 
     /** "I'm back": the outing goes to the logbook and its notifications are cancelled. */
     fun endOuting() {
         val outing = uiState.value.activeOuting ?: return
-        viewModelScope.launch { endOutingUseCase(outing.canyonId) }
+        viewModelScope.launch { endOutingUseCase(outing.id) }
     }
 
     private fun observePendingDebits() {
@@ -609,6 +616,7 @@ class HomeViewModel @Inject constructor(
         const val LATEST_DEBITS_PAGE_SIZE = 20
         const val LATEST_DEBITS_CACHE_LIMIT = Int.MAX_VALUE
         const val ACTIVE_TOPICS_LIMIT = 12
+        const val UPCOMING_OUTINGS_SHOWN = 3
         val OFFLINE_NOTICES = setOf(HomeFeedNotice.OFFLINE_BANNER, HomeFeedNotice.OFFLINE_EMPTY)
     }
 }

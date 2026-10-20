@@ -59,6 +59,7 @@ import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.startup.AppStartupCoordinator
 import fr.descentecanyon.app.startup.StartupLaunchMode
+import fr.descentecanyon.app.ui.common.shareOutingBackMessage
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.navigation.AppLaunchTarget
 import fr.descentecanyon.app.ui.navigation.AppNavHost
@@ -127,11 +128,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    /** "I'm back" from a notification ends the outing here; the screens then show the flow report form. */
+    /**
+     * "I'm back" from a notification ends the outing here; the relative who received its plan is told
+     * at once, then the screens show the flow report form.
+     */
     private fun resolveLaunchTarget(intent: android.content.Intent?): AppLaunchTarget {
         val target = consumeLaunchTarget(intent)
         if (target !is AppLaunchTarget.OutingBack) return target
-        lifecycleScope.launch { endOutingUseCase(target.canyonId) }
+        lifecycleScope.launch {
+            val ended = endOutingUseCase(target.outingId)
+            if (ended?.relativeInformed == true) shareOutingBackMessage(ended.canyonName)
+        }
         return AppLaunchTarget.DebitForm(target.canyonId)
     }
 }
@@ -271,6 +278,8 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
 
                 // Resolved by the activity, which ends the outing first.
                 is AppLaunchTarget.OutingBack -> navController.openDebitForm(target.canyonId)
+
+                is AppLaunchTarget.OutingPlan -> navController.navigateSingleTop(Screen.OutingPlan(target.canyonId, target.outingId))
 
                 is AppLaunchTarget.CanyonDetail -> {
                     if (target.clearBackStack) {

@@ -176,6 +176,51 @@ class UserDatabaseMigrationTest {
     }
 
     @Test
+    fun `version 5 turns the outing under way into the first planned outing`() = runTest {
+        createDatabase(schemaVersion = 5) { db ->
+            db.insert(
+                "key_values",
+                null,
+                values(
+                    "key" to "outing.current",
+                    "value" to "{\"canyonId\":101,\"canyonName\":\"Riolan\",\"startEpochMs\":1000,\"expectedBackEpochMs\":5000," +
+                        "\"alertAtEpochMs\":9000}",
+                    "updatedAt" to 500L,
+                ),
+            )
+            db.insert("key_values", null, values("key" to "contributor.name", "value" to "Antoine", "updatedAt" to 3_000L))
+        }
+
+        val database = Room.databaseBuilder(context, UserDatabase::class.java, TEST_DATABASE)
+            .addMigrations(*UserDatabase.MIGRATIONS)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val outing = database.plannedOutingDao().observeAll().first().single()
+            assertEquals(101, outing.canyonId)
+            assertEquals(1000L, outing.start)
+            assertEquals(5000L, outing.expectedBack)
+            assertEquals(5000L, outing.latestBack)
+            assertEquals(9000L, outing.alertAt)
+            assertEquals(null, database.keyValueDao().get("outing.current"))
+            assertEquals("Antoine", database.keyValueDao().get("contributor.name"))
+
+            val placeId = database.placeDao().upsert(
+                fr.descentecanyon.app.data.local.user.entity.PlaceEntity(
+                    name = "Camping",
+                    latitude = 44.0,
+                    longitude = 6.0,
+                    createdAt = 1L,
+                ),
+            )
+            assertEquals(listOf("Camping"), database.placeDao().getAll().map { it.name })
+            assertEquals(1L, placeId)
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
     fun `recently viewed canyons are trimmed to the most recent ones`() = runTest {
         val database = TestDatabases.user()
         try {
