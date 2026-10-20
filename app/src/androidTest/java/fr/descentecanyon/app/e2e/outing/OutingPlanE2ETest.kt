@@ -2,12 +2,14 @@ package fr.descentecanyon.app.e2e.outing
 
 import android.Manifest
 import android.os.Build
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
 import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -54,9 +56,12 @@ class OutingPlanE2ETest : BaseE2eTest() {
 
         waitForTag(TestTags.DETAIL_LIST)
         composeRule.onNodeWithTag(TestTags.DETAIL_LIST).performScrollToNode(hasTestTag(TestTags.DETAIL_PLAN_OUTING))
-        composeRule.onNodeWithTag(TestTags.DETAIL_PLAN_OUTING, useUnmergedTree = true).performClick()
+        // The page runs under the bottom bar: on a small screen (CI) the scroll leaves the card behind it, a tap would hit the bar.
+        composeRule.onNodeWithTag(TestTags.DETAIL_PLAN_OUTING).performSemanticsAction(SemanticsActions.OnClick)
 
-        waitForTag(TestTags.OUTING_TIMELINE)
+        // The list shows once the plan is loaded; on a small screen the cards below the first ones are not composed yet.
+        waitForTag(TestTags.OUTING_PLAN_LIST)
+        composeRule.onNodeWithTag(TestTags.OUTING_PLAN_LIST).performScrollToNode(hasTestTag(TestTags.OUTING_GROUP_SIZE))
         composeRule.onNodeWithText(plural(R.plurals.outing_group_size, 4)).assertExists()
         composeRule.onNodeWithContentDescription(string(R.string.outing_group_more)).performClick()
         composeRule.waitUntil(5_000) {
