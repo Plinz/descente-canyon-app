@@ -2,7 +2,9 @@ package fr.descentecanyon.app.data.repository
 
 import android.app.Application
 import fr.descentecanyon.app.data.local.user.UserDatabase
+import fr.descentecanyon.app.domain.model.CanyonLink
 import fr.descentecanyon.app.domain.model.GroupLevel
+import fr.descentecanyon.app.domain.model.NextCanyon
 import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingPhase
@@ -60,6 +62,10 @@ class OutingRepositoryImplTest {
             checkedGear = setOf("gear:HELMET", "hint:ROPE"),
             meetAtPlace = true,
             note = "Covoiturage depuis le camping",
+            nextCanyons = listOf(
+                NextCanyon(43, "Partie aval", adjustments = mapOf(OutingPhase.DESCENT to 15), from = now.plus(Duration.ofHours(29))),
+                NextCanyon(44, "Voisin", link = CanyonLink.BY_CAR),
+            ),
         )
         val later = repository.save(
             outing(42, startInHours = 26).let {

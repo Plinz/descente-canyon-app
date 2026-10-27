@@ -1068,7 +1068,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="outing_pace_beginners">principiantes %1$s</string>
     <string name="outing_pace_descent">Descenso %1$s: %2$s.</string>
     <string name="outing_pace_discovery">descubrimiento %1$s</string>
-    <string name="outing_phase_shuttle">Combinación de vehículos</string>
     <string name="outing_place_hint">Añada un camping, un alojamiento o su casa para contar el trayecto.</string>
     <string name="outing_place_label">¿Desde dónde sale?</string>
     <string name="outing_place_none">Ninguno: desde el aparcamiento</string>
@@ -1139,7 +1138,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="places_delete_confirm">¿Eliminar «%1$s»? También sus estancias y sus borradores; las salidas con seguimiento conservan sus horarios.</string>
     <string name="places_empty">Ningún lugar de salida</string>
     <string name="places_intro">Camping, alojamiento, casa: el trayecto hasta el aparcamiento se suma a los horarios de la salida.</string>
-    <string name="places_map_hint">Mueva el mapa para poner el marcador sobre el lugar.</string>
+    <string name="places_map_hint">Bajo el marcador: %1$s. Busque el lugar o mueva el mapa.</string>
     <string name="places_my_position">Mi posición</string>
     <string name="places_name">Nombre</string>
     <string name="places_name_hint">Camping del cañón, Casa…</string>
@@ -1249,4 +1248,40 @@ Busca un barranco y añádelo a tus favoritos.</string>
         <item quantity="many">%1$d salidas previstas</item>
         <item quantity="other">%1$d salidas previstas</item>
     </plurals>
+    <string name="places_search_hint">Dirección, camping, pueblo…</string>
+    <string name="places_search_clear">Borrar la búsqueda</string>
+    <string name="places_search_empty">No se ha encontrado ningún lugar. Pruebe otro nombre o mueva el mapa.</string>
+    <string name="places_search_failed">La búsqueda no está disponible ahora (¿sin red?). Sitúe el lugar moviendo el mapa.</string>
+    <string name="places_search_attribution">Búsqueda Photon · © colaboradores de OpenStreetMap</string>
+    <string name="places_kind_campsite">Camping</string>
+    <string name="places_kind_lodging">Alojamiento</string>
+    <string name="stay_dates_value">Del %1$s al %2$s</string>
+    <string name="stay_dates_change">Cambiar las fechas</string>
+    <plurals name="stay_dates_hint">
+        <item quantity="one">Toque el primer día y luego el último, %1$d día como máximo.</item>
+        <item quantity="other">Toque el primer día y luego el último, %1$d días como máximo.</item>
+    </plurals>
+    <string name="outing_canyons_label">Barrancos del día</string>
+    <string name="outing_canyons_add_hint">Encadenar otro barranco</string>
+    <string name="outing_canyons_intro">Una integral (tramo superior y luego inferior) o dos barrancos cercanos en la misma salida: los horarios se encadenan, con una sola hora de alerta para el día.</string>
+    <string name="outing_canyons_add">Añadir un barranco</string>
+    <string name="outing_canyons_remove">Quitar %1$s</string>
+    <string name="outing_canyons_search_hint">Nombre del barranco</string>
+    <string name="outing_canyons_nearby">Alrededor de %1$s</string>
+    <string name="outing_canyons_none">No se ha encontrado ningún barranco.</string>
+    <plurals name="outing_canyons_max">
+        <item quantity="one">%1$d barranco como máximo por salida.</item>
+        <item quantity="other">%1$d barrancos como máximo por salida.</item>
+    </plurals>
+    <string name="outing_link_on_foot">A pie</string>
+    <string name="outing_link_by_car">En coche</string>
+    <string name="outing_link_by_car_drive">En coche · %1$s</string>
+    <string name="outing_step_descent_start_of">Inicio de %1$s</string>
+    <string name="outing_step_descent_end_of">Fin de %1$s</string>
+    <string name="outing_step_out_of">Salida de %1$s</string>
+    <string name="outing_step_walk_to">Camino hacia %1$s</string>
+    <string name="outing_step_transfer">Recoger, %1$s de carretera y preparación</string>
+    <string name="outing_step_start_to">Salida a pie hacia %1$s</string>
+    <string name="outing_step_back_at_car">De vuelta al coche</string>
+    <string name="outing_durations_source_of">%1$s, según la ficha: aproximación %2$s, descenso %3$s, retorno %4$s.</string>
 </resources>

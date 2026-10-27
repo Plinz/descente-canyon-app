@@ -74,6 +74,7 @@ fun MapLibreView(
     showWatershed: Boolean = false,
     persistedCameraState: MapCameraState? = null,
     focusLocationRequestId: Int = 0,
+    focusRequest: MapFocusRequest? = null,
     resetNorthRequestId: Int = 0,
     styleUri: String = MAP_STYLE_URI,
     modifier: Modifier = Modifier,
@@ -178,6 +179,7 @@ fun MapLibreView(
                 showWatershed = showWatershed,
                 persistedCameraState = persistedCameraState,
                 focusLocationRequestId = focusLocationRequestId,
+                focusRequest = focusRequest,
                 resetNorthRequestId = resetNorthRequestId,
                 styleUri = styleUri,
             )
@@ -263,6 +265,8 @@ private class MapRenderState(private val context: android.content.Context) {
     private var persistedCameraState: MapCameraState? = null
     private var focusLocationRequestId: Int = 0
     private var lastFocusedLocationRequestId: Int = 0
+    private var focusRequest: MapFocusRequest? = null
+    private var lastFocusRequestId: Int = 0
     private var resetNorthRequestId: Int = 0
     private var lastResetNorthRequestId: Int = 0
     private var lastFollowSignature: Int? = null
@@ -332,6 +336,7 @@ private class MapRenderState(private val context: android.content.Context) {
         showWatershed: Boolean,
         persistedCameraState: MapCameraState?,
         focusLocationRequestId: Int,
+        focusRequest: MapFocusRequest?,
         resetNorthRequestId: Int,
         styleUri: String,
     ) {
@@ -357,6 +362,7 @@ private class MapRenderState(private val context: android.content.Context) {
         this.showWatershed = showWatershed
         this.persistedCameraState = persistedCameraState
         this.focusLocationRequestId = focusLocationRequestId
+        this.focusRequest = focusRequest
         this.resetNorthRequestId = resetNorthRequestId
         map?.let(::configureCompass)
 
@@ -386,6 +392,17 @@ private class MapRenderState(private val context: android.content.Context) {
 
         maybeResetNorth()
         maybeFocusOnLocation()
+        maybeFocusOnRequest()
+    }
+
+    private fun maybeFocusOnRequest() {
+        val map = map ?: return
+        val request = focusRequest ?: return
+        if (request.id == lastFocusRequestId) return
+
+        lastFocusRequestId = request.id
+        didFitCamera = true
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(LatLng(request.latitude, request.longitude), request.zoom), 500)
     }
 
     private fun attachListeners(map: MapLibreMap) {

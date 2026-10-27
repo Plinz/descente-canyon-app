@@ -68,11 +68,18 @@ object TestTags {
     const val PLACES_ADD = "places_add"
     const val PLACE_SAVE = "place_save"
     const val PLACE_NAME = "place_name"
+    const val PLACE_SEARCH = "place_search"
+    const val PLACE_SEARCH_RESULTS = "place_search_results"
+    const val DATE_RANGE_CONFIRM = "date_range_confirm"
     const val OUTING_SETTINGS_LIST = "outing_settings_list"
     const val STAY_LIST = "stay_list"
     const val OUTING_DAY_ROW = "outing_day_row"
     const val OUTING_DEPARTURE_ROW = "outing_departure_row"
     const val OUTING_GROUP_ROW = "outing_group_row"
+    const val OUTING_CANYONS_ROW = "outing_canyons_row"
+    const val OUTING_ADD_CANYON = "outing_add_canyon"
+    const val OUTING_CANYON_SEARCH = "outing_canyon_search"
+    const val OUTING_CANYON_CANDIDATES = "outing_canyon_candidates"
     const val OUTING_SUMMARY = "outing_summary"
     const val OUTING_ALERT_ROW = "outing_alert_row"
     const val OUTING_ACTIVATE_BUTTON = "outing_activate_button"
@@ -82,6 +89,7 @@ object TestTags {
     const val OUTING_BAG = "outing_bag"
     const val OUTINGS_NEW_STAY = "outings_new_stay"
     const val STAY_EDIT_SAVE = "stay_edit_save"
+    const val STAY_DATES = "stay_dates"
     const val STAY_ADD_PLACE = "stay_add_place"
     const val STAY_PICKER_LIST = "stay_picker_list"
     const val DETAIL_START_NOW = "detail_start_now"
@@ -107,6 +115,10 @@ object TestTags {
     fun stayDay(date: String): String = "stay_day_$date"
 
     fun stayChoose(date: String): String = "stay_choose_$date"
+
+    fun outingCanyonCandidate(canyonId: Int): String = "outing_canyon_candidate_$canyonId"
+
+    fun outingNextCanyon(index: Int): String = "outing_next_canyon_$index"
 
     fun stayRow(id: Long): String = "stay_row_$id"
 

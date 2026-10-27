@@ -1044,7 +1044,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="outing_pace_beginners">Einsteigende %1$s</string>
     <string name="outing_pace_descent">Begehung %1$s: %2$s.</string>
     <string name="outing_pace_discovery">Schnuppertour %1$s</string>
-    <string name="outing_phase_shuttle">Shuttle</string>
     <string name="outing_place_hint">Fügen Sie einen Campingplatz, eine Unterkunft oder Ihr Zuhause hinzu, um die Fahrt mitzurechnen.</string>
     <string name="outing_place_label">Wo starten Sie?</string>
     <string name="outing_place_none">Keiner: ab dem Parkplatz</string>
@@ -1115,7 +1114,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="places_delete_confirm">„%1$s“ löschen? Auch seine Aufenthalte und deren Entwürfe; begleitete Touren behalten ihre Zeiten.</string>
     <string name="places_empty">Kein Startort</string>
     <string name="places_intro">Campingplatz, Unterkunft, Zuhause: die Fahrt zum Parkplatz kommt zu den Zeiten der Tour hinzu.</string>
-    <string name="places_map_hint">Verschieben Sie die Karte, bis die Markierung auf dem Ort liegt.</string>
+    <string name="places_map_hint">Unter der Markierung: %1$s. Suchen Sie den Ort oder verschieben Sie die Karte.</string>
     <string name="places_my_position">Mein Standort</string>
     <string name="places_name">Name</string>
     <string name="places_name_hint">Campingplatz an der Schlucht, Zuhause…</string>
@@ -1217,4 +1216,40 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
         <item quantity="one">%1$d Tour geplant</item>
         <item quantity="other">%1$d Touren geplant</item>
     </plurals>
+    <string name="places_search_hint">Adresse, Campingplatz, Ort…</string>
+    <string name="places_search_clear">Suche löschen</string>
+    <string name="places_search_empty">Kein Ort gefunden. Versuchen Sie einen anderen Namen oder verschieben Sie die Karte.</string>
+    <string name="places_search_failed">Suche gerade nicht möglich (kein Netz?). Setzen Sie den Ort, indem Sie die Karte verschieben.</string>
+    <string name="places_search_attribution">Suche: Photon · © OpenStreetMap-Mitwirkende</string>
+    <string name="places_kind_campsite">Campingplatz</string>
+    <string name="places_kind_lodging">Unterkunft</string>
+    <string name="stay_dates_value">%1$s bis %2$s</string>
+    <string name="stay_dates_change">Daten ändern</string>
+    <plurals name="stay_dates_hint">
+        <item quantity="one">Tippen Sie auf den ersten und dann auf den letzten Tag, höchstens %1$d Tag.</item>
+        <item quantity="other">Tippen Sie auf den ersten und dann auf den letzten Tag, höchstens %1$d Tage.</item>
+    </plurals>
+    <string name="outing_canyons_label">Canyons des Tages</string>
+    <string name="outing_canyons_add_hint">Weiteren Canyon anschließen</string>
+    <string name="outing_canyons_intro">Eine Integrale (oberer, dann unterer Teil) oder zwei nahe Canyons in einer Tour: die Zeiten folgen aufeinander, mit einer einzigen Alarmzeit für den Tag.</string>
+    <string name="outing_canyons_add">Canyon hinzufügen</string>
+    <string name="outing_canyons_remove">%1$s entfernen</string>
+    <string name="outing_canyons_search_hint">Name des Canyons</string>
+    <string name="outing_canyons_nearby">Rund um %1$s</string>
+    <string name="outing_canyons_none">Kein Canyon gefunden.</string>
+    <plurals name="outing_canyons_max">
+        <item quantity="one">Höchstens %1$d Canyon pro Tour.</item>
+        <item quantity="other">Höchstens %1$d Canyons pro Tour.</item>
+    </plurals>
+    <string name="outing_link_on_foot">Zu Fuß</string>
+    <string name="outing_link_by_car">Mit dem Auto</string>
+    <string name="outing_link_by_car_drive">Mit dem Auto · %1$s</string>
+    <string name="outing_step_descent_start_of">Beginn von %1$s</string>
+    <string name="outing_step_descent_end_of">Ende von %1$s</string>
+    <string name="outing_step_out_of">Ausstieg aus %1$s</string>
+    <string name="outing_step_walk_to">Fußweg zu %1$s</string>
+    <string name="outing_step_transfer">Packen, %1$s Fahrt und Vorbereitung</string>
+    <string name="outing_step_start_to">Aufbruch zu Fuß zu %1$s</string>
+    <string name="outing_step_back_at_car">Zurück am Auto</string>
+    <string name="outing_durations_source_of">%1$s laut Steckbrief: Zustieg %2$s, Begehung %3$s, Rückweg %4$s.</string>
 </resources>

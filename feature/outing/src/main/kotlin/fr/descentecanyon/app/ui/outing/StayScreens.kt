@@ -24,6 +24,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EventAvailable
@@ -89,7 +90,7 @@ import fr.descentecanyon.app.ui.components.debitLevelColor
 import fr.descentecanyon.app.ui.components.debitLevelLabel
 import fr.descentecanyon.app.ui.components.relativeDayLabel
 import fr.descentecanyon.app.ui.design.DcCard
-import fr.descentecanyon.app.ui.design.DcDatePickerDialog
+import fr.descentecanyon.app.ui.design.DcDateRangePickerDialog
 import fr.descentecanyon.app.ui.design.DcDropdownMenu
 import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.design.DcEmptyState
@@ -102,7 +103,6 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlin.math.roundToInt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -181,13 +181,10 @@ class StayEditViewModel @Inject constructor(
 
     fun selectPlace(id: Long) = form.update { it?.copy(placeId = id) }
 
-    /** The first day: the stay moves with it and keeps its length. */
-    fun selectStart(date: LocalDate) = form.update { form ->
-        form?.let { form.copy(start = date, end = minOf(date.plusDays(ChronoUnit.DAYS.between(it.start, it.end)), lastDay(date))) }
-    }
-
-    fun selectEnd(date: LocalDate) = form.update { form ->
-        form?.copy(end = date, start = if (date.isBefore(form.start)) date else form.start)
+    /** The first and last days, the stay cut to [Stay.MAX_DAYS]. */
+    fun selectDates(start: LocalDate, end: LocalDate) = form.update { form ->
+        val first = minOf(start, end)
+        form?.copy(start = first, end = minOf(maxOf(start, end), lastDay(first)))
     }
 
     /** A new place, placed in the editor, becomes the place of the stay. */
@@ -222,7 +219,7 @@ fun StayEditScreen(onClose: () -> Unit, onSaved: (stayId: Long, isNew: Boolean) 
     val colors = LocalDcColors.current
     val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(LocalLocale.current.platformLocale)
     var addingPlace by rememberSaveable { mutableStateOf(false) }
-    var picking by rememberSaveable { mutableStateOf<String?>(null) }
+    var pickingDates by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(state.savedId) { state.savedId?.let { onSaved(it, state.isNew) } }
     if (addingPlace) {
         PlaceEditor(
@@ -235,14 +232,12 @@ fun StayEditScreen(onClose: () -> Unit, onSaved: (stayId: Long, isNew: Boolean) 
             onDismiss = { addingPlace = false },
         )
     }
-    when (picking) {
-        START -> DcDatePickerDialog(initialDate = state.start, onDateSelected = viewModel::selectStart, onDismiss = { picking = null })
-
-        END -> DcDatePickerDialog(
-            initialDate = state.end,
-            onDateSelected = viewModel::selectEnd,
-            onDismiss = { picking = null },
-            maxDate = StayEditViewModel.lastDay(state.start),
+    if (pickingDates) {
+        DcDateRangePickerDialog(
+            initialStart = state.start,
+            initialEnd = state.end,
+            onRangeSelected = viewModel::selectDates,
+            onDismiss = { pickingDates = false },
         )
     }
     Scaffold(
@@ -283,23 +278,33 @@ fun StayEditScreen(onClose: () -> Unit, onSaved: (stayId: Long, isNew: Boolean) 
                 Text(stringResource(R.string.places_add), modifier = Modifier.padding(start = 8.dp))
             }
             Text(stringResource(R.string.stay_dates_label), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                OutlinedButton(onClick = { picking = START }) { Text(state.start.format(formatter)) }
-                Text("→")
-                OutlinedButton(onClick = { picking = END }) { Text(state.end.format(formatter)) }
-            }
             val days = (state.end.toEpochDay() - state.start.toEpochDay() + 1).toInt()
+            DcCard(modifier = Modifier.fillMaxWidth().testTag(TestTags.STAY_DATES), onClick = { pickingDates = true }) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Icon(Icons.Default.DateRange, contentDescription = null, tint = colors.textSecondary)
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            stringResource(R.string.stay_dates_value, state.start.format(formatter), state.end.format(formatter)),
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Text(
+                            pluralStringResource(R.plurals.stay_days_count, days, days),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = colors.textSecondary,
+                        )
+                    }
+                    Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.stay_dates_change), tint = colors.textMuted)
+                }
+            }
             Text(
-                pluralStringResource(R.plurals.stay_days_count, days, days),
+                pluralStringResource(R.plurals.stay_dates_hint, Stay.MAX_DAYS, Stay.MAX_DAYS),
                 style = MaterialTheme.typography.bodySmall,
-                color = colors.textSecondary,
+                color = colors.textMuted,
             )
         }
     }
 }
-
-private const val START = "start"
-private const val END = "end"
 
 // ---------------------------------------------------------------------------------------------
 // The program of a stay, day by day.
@@ -580,7 +585,7 @@ private fun StayOutingRow(outing: PlannedOuting, onClick: () -> Unit) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Icon(Icons.Default.Hiking, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
             Column(modifier = Modifier.weight(1f)) {
-                Text(outing.canyonName, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+                Text(outing.title, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
                 Text(
                     stringResource(
                         if (outing.departure !=

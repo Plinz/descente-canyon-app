@@ -77,11 +77,14 @@ internal fun outingMessageData(state: OutingPlanUiState, resources: Resources, l
     val back = schedule.backAtCar
     val gear = state.gear
     fun gearOf(group: GearGroup) = gear.filter { it.group == group }.map { gearLabel(resources, it) }
+    // Several canyons: the message names them all; the durations of one sheet would say too little.
+    val sheets = listOf(canyon) + state.nextCanyons.mapNotNull { it.detail?.canyon }
+    val single = state.nextCanyons.isEmpty()
     val place = listOfNotNull(canyon.commune.takeIf { it.isNotBlank() }, canyon.departement, canyon.pays.takeIf { it.isNotBlank() })
         .joinToString(", ")
     return OutingMessageData(
-        canyonName = canyon.nom,
-        cotation = canyon.cotation,
+        canyonName = state.title ?: canyon.nom,
+        cotation = sheets.map { it.cotation }.filter { it.isNotBlank() }.joinToString(" + "),
         place = place,
         day = day,
         startingPlace = state.place?.name,
@@ -98,7 +101,7 @@ internal fun outingMessageData(state: OutingPlanUiState, resources: Resources, l
         approachDuration = schedule.spans[OutingPhase.APPROACH]
             ?.takeIf { it.likely > 0 }?.let { formatMinutes(it.likely) },
         inCanyonDuration = schedule.descentStart?.let { start ->
-            schedule.descentEnd?.let { end -> formatDuration(Duration.between(start.estimate, end.estimate)) }
+            schedule.lastDescentEnd?.let { end -> formatDuration(Duration.between(start.estimate, end.estimate)) }
         },
         groupSize = state.choices.groupSize,
         alertTime = state.alertAt?.let { timeOfOuting(it, state.choices.date, locale) }.orEmpty(),
@@ -106,11 +109,11 @@ internal fun outingMessageData(state: OutingPlanUiState, resources: Resources, l
         downstreamParking = state.downstreamParking,
         upstreamParking = state.upstreamParking.takeIf { state.withShuttle || state.downstreamParking == null },
         shuttleKm = state.sheetShuttle?.takeIf { state.withShuttle }?.distanceKm?.roundToInt(),
-        sheetApproach = state.approach.takeUnless { it == CanyonDuration.Unknown }?.let { durationLabel(resources, it) },
-        sheetDescent = state.descent.takeUnless { it == CanyonDuration.Unknown }?.let { durationLabel(resources, it) },
-        sheetBack = state.back.takeUnless { it == CanyonDuration.Unknown }?.let { durationLabel(resources, it) },
-        cascadeMax = canyon.cascadeMax,
-        rope = canyon.cordeMin,
+        sheetApproach = state.approach.takeUnless { it == CanyonDuration.Unknown || !single }?.let { durationLabel(resources, it) },
+        sheetDescent = state.descent.takeUnless { it == CanyonDuration.Unknown || !single }?.let { durationLabel(resources, it) },
+        sheetBack = state.back.takeUnless { it == CanyonDuration.Unknown || !single }?.let { durationLabel(resources, it) },
+        cascadeMax = sheets.mapNotNull { it.cascadeMax }.maxOrNull(),
+        rope = sheets.mapNotNull { it.cordeMin }.maxOrNull(),
         forecast = state.dayWeather?.let { forecastText(resources, it, locale) },
         storm = state.dayWeather?.condition == WeatherCondition.THUNDERSTORM,
         flowEstimate = state.estimate?.let { estimate ->
@@ -129,7 +132,7 @@ internal fun outingMessageData(state: OutingPlanUiState, resources: Resources, l
         guestsBring = gearOf(GearGroup.GUESTS_BRING),
         guestsProvided = gearOf(GearGroup.GUESTS_PROVIDED),
         note = state.choices.note,
-        sheetUrl = canyon.url,
+        sheetUrl = sheets.joinToString("\n") { it.url },
     )
 }
 

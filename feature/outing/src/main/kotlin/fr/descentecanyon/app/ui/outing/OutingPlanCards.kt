@@ -36,6 +36,7 @@ import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Landscape
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.WarningAmber
@@ -137,11 +138,26 @@ internal fun OutingSheet(title: String, onDismiss: () -> Unit, modifier: Modifie
     }
 }
 
-/** The three choices of the plan, one line each: the day, the departure and the group; a tap opens each. */
+/** The choices of the plan, one line each: the canyons, the day, the departure and the group; a tap opens each. */
 @Composable
-internal fun PlanSettingsCard(state: OutingPlanUiState, onDayClick: () -> Unit, onDepartureClick: () -> Unit, onGroupClick: () -> Unit) {
+internal fun PlanSettingsCard(
+    state: OutingPlanUiState,
+    onCanyonsClick: () -> Unit,
+    onDayClick: () -> Unit,
+    onDepartureClick: () -> Unit,
+    onGroupClick: () -> Unit,
+) {
     val colors = LocalDcColors.current
     DcCard(modifier = Modifier.fillMaxWidth(), contentPadding = 4.dp) {
+        SettingRow(
+            icon = Icons.Default.Landscape,
+            label = stringResource(R.string.outing_canyons_label),
+            value = canyonNames(state).joinToString("\n"),
+            hint = stringResource(R.string.outing_canyons_add_hint).takeIf { state.nextCanyons.isEmpty() },
+            onClick = onCanyonsClick,
+            modifier = Modifier.testTag(TestTags.OUTING_CANYONS_ROW),
+        )
+        HorizontalDivider(color = colors.borderSubtle, modifier = Modifier.padding(horizontal = 12.dp))
         SettingRow(
             icon = Icons.Default.CalendarMonth,
             label = stringResource(R.string.outing_date_label),
@@ -169,7 +185,14 @@ internal fun PlanSettingsCard(state: OutingPlanUiState, onDayClick: () -> Unit, 
 }
 
 @Composable
-private fun SettingRow(icon: ImageVector, label: String, value: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+private fun SettingRow(
+    icon: ImageVector,
+    label: String,
+    value: String,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    hint: String? = null,
+) {
     val colors = LocalDcColors.current
     Row(
         modifier = modifier
@@ -184,6 +207,7 @@ private fun SettingRow(icon: ImageVector, label: String, value: String, onClick:
         Column(modifier = Modifier.weight(1f)) {
             Text(label, style = MaterialTheme.typography.labelMedium, color = colors.textSecondary)
             Text(value, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+            hint?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary) }
         }
         Icon(Icons.Default.ChevronRight, contentDescription = null, tint = colors.textMuted)
     }
@@ -495,7 +519,12 @@ internal fun SummaryCard(state: OutingPlanUiState, timeFormatter: DateTimeFormat
                 val meeting = if (state.withShuttle) R.string.outing_step_meeting_downstream else R.string.outing_step_arrive_parking
                 KeyTimeRow(stringResource(meeting), TimeWindow.at(schedule.arriveParking), timeFormatter)
             }
-            KeyTimeRow(stringResource(R.string.outing_step_descent_start), schedule.descentStart, timeFormatter, showRange = false)
+            val names = canyonNames(state)
+            val chained = state.nextCanyons.isNotEmpty()
+            KeyTimeRow(descentStartLabel(names[0], chained), schedule.descentStart, timeFormatter, showRange = false)
+            schedule.nextCanyons.forEachIndexed { index, next ->
+                KeyTimeRow(descentStartLabel(names[index + 1], chained), next.descentStart, timeFormatter, showRange = false)
+            }
             KeyTimeRow(stringResource(R.string.outing_step_back), schedule.backAtCar, timeFormatter, emphasized = true)
             state.alertAt?.let { alertAt ->
                 Row(

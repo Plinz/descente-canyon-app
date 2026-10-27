@@ -8,6 +8,8 @@ import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonDuration
+import fr.descentecanyon.app.domain.model.CanyonLink
+import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonWeather
 import fr.descentecanyon.app.domain.model.DailyDebitPrediction
 import fr.descentecanyon.app.domain.model.DailyWeather
@@ -26,6 +28,8 @@ import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.GroupLevel
 import fr.descentecanyon.app.domain.model.MessageAudience
 import fr.descentecanyon.app.domain.model.MessageSection
+import fr.descentecanyon.app.domain.model.NextCanyon
+import fr.descentecanyon.app.domain.model.NextCanyonInput
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingPace
 import fr.descentecanyon.app.domain.model.OutingPhase
@@ -41,8 +45,11 @@ import fr.descentecanyon.app.domain.model.SunCalculator
 import fr.descentecanyon.app.domain.model.agenda
 import fr.descentecanyon.app.domain.model.defaultFor
 import fr.descentecanyon.app.domain.model.gearChecklist
+import fr.descentecanyon.app.domain.model.haversineKm
 import fr.descentecanyon.app.domain.model.meetingParking
+import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
+import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.DriveTimeRepository
 import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
@@ -74,6 +81,8 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -83,6 +92,21 @@ import kotlinx.coroutines.sync.withLock
 
 /** The drive time known for a place and a parking. */
 data class DriveState(val placeId: Long, val destination: GeoPoint, val time: DriveTime)
+
+/** A canyon after the first one of the outing, with what the plan knows of it. */
+data class NextCanyonState(
+    val canyon: NextCanyon,
+    /** Null while loading, or when the canyon is no longer in the catalog. */
+    val detail: CanyonDetail? = null,
+    /** By car: the drive from the parking of the canyon before, estimated. */
+    val drive: DriveTime? = null,
+)
+
+/** A canyon that can follow the last one of the outing; [distanceKm] in a straight line from it. */
+data class CanyonCandidate(val id: Int, val name: String, val cotation: String, val distanceKm: Double?)
+
+/** The canyons offered to follow the last one: those around it, or those matching the name typed. */
+data class CanyonPickerState(val query: String = "", val candidates: List<CanyonCandidate> = emptyList(), val isLoading: Boolean = true)
 
 /** Where the outing on screen stands, which decides the main action of the screen. */
 enum class OutingStage {
@@ -148,7 +172,16 @@ data class OutingPlanUiState(
     val alertChangedSinceInformed: Boolean = false,
     /** "I'm leaving now" just turned the follow-up on: the screen asks for notifications and offers to tell a relative. */
     val startedNow: Boolean = false,
+    /** The canyons after the first one, in their order. */
+    val nextCanyons: List<NextCanyonState> = emptyList(),
 ) {
+    /** "Pissarde (partie amont) + Pissarde (partie aval)". */
+    val title: String?
+        get() = canyon?.canyon?.nom?.let { first -> (listOf(first) + nextCanyons.map { it.canyon.name }).joinToString(" + ") }
+
+    /** Another canyon can follow the last one. */
+    val canAddCanyon: Boolean get() = nextCanyons.size + 1 < OutingChoices.MAX_CANYONS
+
     val withBeginners: Boolean get() = choices.groupLevel != GroupLevel.AUTONOMOUS
 }
 
@@ -164,6 +197,7 @@ data class OutingPlanUiState(
 class OutingPlanViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle,
     private val getCanyonPreviewUseCase: GetCanyonPreviewUseCase,
+    private val canyonRepository: CanyonRepository,
     private val getCanyonWeatherUseCase: GetCanyonWeatherUseCase,
     private val getCanyonDebitPredictionsUseCase: GetCanyonDebitPredictionsUseCase,
     private val debitRepository: DebitRepository,
@@ -197,6 +231,21 @@ class OutingPlanViewModel @Inject constructor(
     val uiState: StateFlow<OutingPlanUiState> = combine(choices, sources, ::buildState)
         .stateIn(viewModelScope, SharingStarted.Eagerly, buildState(choices.value, sources.value))
 
+    /** Null while no canyon is being added: the catalog is read only then. */
+    private val pickerQuery = MutableStateFlow<String?>(null)
+
+    val canyonPicker: StateFlow<CanyonPickerState> = pickerQuery
+        .flatMapLatest { query ->
+            if (query == null) {
+                flowOf(CanyonPickerState(isLoading = false))
+            } else {
+                canyonRepository.observeSearchCatalog().map { catalog ->
+                    CanyonPickerState(query, candidates(catalog, query), isLoading = false)
+                }
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), CanyonPickerState())
+
     init {
         load()
         viewModelScope.launch {
@@ -224,6 +273,7 @@ class OutingPlanViewModel @Inject constructor(
         viewModelScope.launch { getPersonalPaceUseCase().let { pace -> sources.update { it.copy(personalPace = pace) } } }
         viewModelScope.launch { initChoices() }
         viewModelScope.launch { followDrive() }
+        viewModelScope.launch { loadNextCanyons() }
         viewModelScope.launch { followComputedTimes() }
     }
 
@@ -243,9 +293,67 @@ class OutingPlanViewModel @Inject constructor(
 
     fun selectAlertMargin(hours: Int) = updateChoices { it.copy(alertMarginHours = hours) }
 
-    /** Lengthens or shortens a step for this outing; 0 brings back the computed time. */
-    fun adjustPhase(phase: OutingPhase, minutes: Int) = updateChoices { choices ->
-        choices.copy(adjustments = if (minutes == 0) choices.adjustments - phase else choices.adjustments + (phase to minutes))
+    /** Lengthens or shortens a step of the [canyon]-th canyon (0: the first) for this outing; 0 minutes brings back the computed time. */
+    fun adjustPhase(canyon: Int, phase: OutingPhase, minutes: Int) = updateChoices { choices ->
+        fun Map<OutingPhase, Int>.adjusted() = if (minutes == 0) this - phase else this + (phase to minutes)
+        if (canyon == 0) {
+            choices.copy(adjustments = choices.adjustments.adjusted())
+        } else {
+            choices.withNextCanyon(canyon - 1) { it.copy(adjustments = it.adjustments.adjusted()) }
+        }
+    }
+
+    /** Looks for a canyon to follow the last one: around it while [query] is blank, else by name. */
+    fun searchCanyons(query: String) {
+        pickerQuery.value = query
+    }
+
+    fun closeCanyonPicker() {
+        pickerQuery.value = null
+    }
+
+    /** The canyon comes after the last one, on foot when it is close, else by car. */
+    fun addCanyon(candidate: CanyonCandidate) {
+        pickerQuery.value = null
+        updateChoices { choices ->
+            val ids = listOf(canyonId) + choices.nextCanyons.map { it.canyonId }
+            if (candidate.id in ids || ids.size >= OutingChoices.MAX_CANYONS) return@updateChoices choices
+            val link = if ((candidate.distanceKm ?: 0.0) > ON_FOOT_MAX_KM) CanyonLink.BY_CAR else CanyonLink.ON_FOOT
+            choices.copy(nextCanyons = choices.nextCanyons + NextCanyon(candidate.id, candidate.name, link))
+        }
+    }
+
+    /** [index] counts the canyons after the first one. */
+    fun removeCanyon(index: Int) = updateChoices { choices ->
+        choices.copy(nextCanyons = choices.nextCanyons.filterIndexed { i, _ -> i != index })
+    }
+
+    fun selectLink(index: Int, link: CanyonLink) = updateChoices { choices -> choices.withNextCanyon(index) { it.copy(link = link) } }
+
+    private fun OutingChoices.withNextCanyon(index: Int, change: (NextCanyon) -> NextCanyon) =
+        copy(nextCanyons = nextCanyons.mapIndexed { i, canyon -> if (i == index) change(canyon) else canyon })
+
+    /** Around the last canyon of the outing, nearest first, or matching [query]; the canyons of the outing left out. */
+    private fun candidates(catalog: List<CanyonSearchItem>, query: String): List<CanyonCandidate> {
+        val ids = listOf(canyonId) + choices.value?.nextCanyons.orEmpty().map { it.canyonId }
+        val origin = catalog.firstOrNull { it.id == ids.last() }
+        val text = query.normalizeForSearch()
+        return catalog.asSequence()
+            .filter { it.id !in ids }
+            .filter { text.isEmpty() || it.normalizedNom.contains(text) || it.normalizedNomComplet.contains(text) }
+            .map { item -> CanyonCandidate(item.id, item.nom, item.cotation, origin?.distanceKmTo(item)) }
+            .filter { text.isNotEmpty() || (it.distanceKm != null && it.distanceKm <= NEARBY_KM) }
+            .sortedWith(compareBy(nullsLast()) { it.distanceKm })
+            .take(MAX_CANDIDATES)
+            .toList()
+    }
+
+    private fun CanyonSearchItem.distanceKmTo(other: CanyonSearchItem): Double? {
+        val latitude = representativeLat ?: return null
+        val longitude = representativeLng ?: return null
+        val otherLatitude = other.representativeLat ?: return null
+        val otherLongitude = other.representativeLng ?: return null
+        return haversineKm(latitude, longitude, otherLatitude, otherLongitude)
     }
 
     /** The user's own drive time from the place to the parking, kept for the next outings; null forgets it. */
@@ -367,7 +475,8 @@ class OutingPlanViewModel @Inject constructor(
         }
     }
 
-    private fun PlannedOuting.times() = listOf(start, expectedBack, latestBack, alertAt, departure, groupSize)
+    private fun PlannedOuting.times() =
+        listOf(start, expectedBack, latestBack, alertAt, departure, groupSize, choices?.nextCanyons?.map { it.from })
 
     private fun updateGearList(change: (GearListSettings) -> GearListSettings) {
         val updated = change(sources.value.gearList)
@@ -479,6 +588,16 @@ class OutingPlanViewModel @Inject constructor(
         }
     }
 
+    /** The sheets of the canyons added after the first one, each read once. */
+    private suspend fun loadNextCanyons() {
+        choices.map { it?.nextCanyons.orEmpty().map(NextCanyon::canyonId) }.distinctUntilChanged().collect { ids ->
+            ids.filterNot { it in sources.value.nextDetails }.forEach { id ->
+                val detail = getCanyonPreviewUseCase(id).getOrNull()
+                sources.update { it.copy(nextDetails = it.nextDetails + (id to detail)) }
+            }
+        }
+    }
+
     private fun buildState(choices: OutingChoices?, sources: Sources): OutingPlanUiState {
         val today = LocalDate.now(clock)
         val settings = sources.settings
@@ -489,12 +608,21 @@ class OutingPlanViewModel @Inject constructor(
         val approach = CanyonDuration.parse(canyon?.tempsApproche)
         val descent = CanyonDuration.parse(canyon?.tempsDescente)
         val back = CanyonDuration.parse(canyon?.tempsRetour)
-        val sheetShuttle = Shuttle.parse(canyon?.navette)
+        val nextCanyons = nextCanyonStates(detail, current.nextCanyons, sources.nextDetails)
+        val nextLoaded = current.nextCanyons.all { it.canyonId in sources.nextDetails }
+        val lastDetail = nextCanyons.lastOrNull()?.detail ?: detail
+        // The shuttle of the day joins the end of the last canyon to the start of the first one.
+        val shuttles = (listOf(canyon) + nextCanyons.map { it.detail?.canyon }).mapNotNull { Shuttle.parse(it?.navette) }
+        val sheetShuttle = shuttles.takeIf { it.isNotEmpty() }?.let { Shuttle(it.sumOf(Shuttle::distanceKm)) }
         val withShuttle = sheetShuttle != null && current.withShuttle != false
         val place = sources.places.firstOrNull { it.id == current.placeId }
-        val meetingParking = detail?.meetingParking(withShuttle)
+        val meetingParking = if (withShuttle) {
+            lastDetail?.geoPoints?.firstOrNull { it.type == GeoPointType.PARKING_AVAL } ?: detail?.meetingParking(true)
+        } else {
+            detail?.meetingParking(false)
+        }
         val drive = sources.drive?.takeIf { it.placeId == place?.id && it.destination == meetingParking }?.time
-        val schedule = detail?.let {
+        val schedule = detail?.takeIf { nextLoaded }?.let {
             OutingSchedule.compute(
                 OutingScheduleInput(
                     date = current.date,
@@ -508,6 +636,17 @@ class OutingPlanViewModel @Inject constructor(
                     pace = pace,
                     settings = settings,
                     adjustments = current.adjustments,
+                    nextCanyons = nextCanyons.map { next ->
+                        val sheet = next.detail?.canyon
+                        NextCanyonInput(
+                            link = next.canyon.link,
+                            approach = CanyonDuration.parse(sheet?.tempsApproche),
+                            descent = CanyonDuration.parse(sheet?.tempsDescente),
+                            back = CanyonDuration.parse(sheet?.tempsRetour),
+                            driveMinutes = next.drive?.minutes,
+                            adjustments = next.canyon.adjustments,
+                        )
+                    },
                 ),
             )
         }
@@ -542,7 +681,7 @@ class OutingPlanViewModel @Inject constructor(
             estimate = sources.predictions?.predictions?.firstOrNull { it.date == current.date },
             lastReport = sources.lastReport,
             emergencyNumbers = canyon?.pays?.let(EmergencyNumbers::forCountries) ?: listOf(EmergencyNumbers.EUROPEAN),
-            downstreamParking = detail?.geoPoints?.firstOrNull { it.type == GeoPointType.PARKING_AVAL },
+            downstreamParking = lastDetail?.geoPoints?.firstOrNull { it.type == GeoPointType.PARKING_AVAL },
             upstreamParking = detail?.geoPoints?.firstOrNull { it.type == GeoPointType.PARKING_AMONT },
             savedOuting = saved,
             stage = when {
@@ -560,7 +699,11 @@ class OutingPlanViewModel @Inject constructor(
             gear = gearChecklist(
                 sources.gearList,
                 GearContext(
-                    ropeLengthMeters = canyon?.cordeMin,
+                    ropeLengthMeters = (
+                        listOf(canyon?.cordeMin) + nextCanyons.map {
+                            it.detail?.canyon?.cordeMin
+                        }
+                        ).filterNotNull().maxOrNull(),
                     shuttleKm = sheetShuttle?.takeIf { withShuttle }?.distanceKm?.roundToInt(),
                     longestOnFootMinutes = schedule?.longestOnFoot?.toMinutes(),
                 ),
@@ -568,7 +711,30 @@ class OutingPlanViewModel @Inject constructor(
             messageSections = sources.messageSections,
             alertChangedSinceInformed = informedAlertAt != null && alertAt != null && informedAlertAt != alertAt.toInstant(),
             startedNow = sources.startedNow,
+            nextCanyons = nextCanyons,
         )
+    }
+
+    /** The canyons after the first one, with the drive from the end of the one before when they are reached by car. */
+    private fun nextCanyonStates(first: CanyonDetail?, next: List<NextCanyon>, details: Map<Int, CanyonDetail?>): List<NextCanyonState> {
+        var previous = first
+        return next.map { canyon ->
+            val detail = details[canyon.canyonId]
+            val from = previous?.let {
+                it.geoPoints.firstOrNull { point -> point.type == GeoPointType.PARKING_AVAL }
+                    ?: it.meetingParking(false)
+            }
+            val to = detail?.meetingParking(false)
+            val drive = if (from != null &&
+                to != null
+            ) {
+                DriveTime.estimate(from.latitude, from.longitude, to.latitude, to.longitude)
+            } else {
+                null
+            }
+            previous = detail
+            NextCanyonState(canyon, detail, drive)
+        }
     }
 
     private fun OutingPlanUiState.toPlannedOuting(): PlannedOuting? {
@@ -583,7 +749,12 @@ class OutingPlanViewModel @Inject constructor(
             latestBack = latestBack?.toInstant() ?: return null,
             departure = schedule.leavePlace?.toInstant(),
             groupSize = choices.groupSize,
-            choices = choices,
+            choices = choices.copy(
+                nextCanyons = choices.nextCanyons.mapIndexed { index, next ->
+                    val previousEnd = if (index == 0) schedule.descentEnd else schedule.nextCanyons.getOrNull(index - 1)?.descentEnd
+                    next.copy(from = previousEnd?.estimate?.toInstant())
+                },
+            ),
         )
     }
 
@@ -615,6 +786,8 @@ class OutingPlanViewModel @Inject constructor(
         val places: List<Place> = emptyList(),
         val stays: List<Stay> = emptyList(),
         val drive: DriveState? = null,
+        /** The sheets of the canyons after the first one, by id; null when one could not be read. */
+        val nextDetails: Map<Int, CanyonDetail?> = emptyMap(),
         val gearList: GearListSettings = GearListSettings(),
         val messageSections: Map<MessageAudience, Set<MessageSection>> = MessageAudience.entries.associateWith { it.defaultSections },
         val startedNow: Boolean = false,
@@ -625,6 +798,13 @@ class OutingPlanViewModel @Inject constructor(
         val UNKNOWN_DURATION_ASSUMPTION: Duration = Duration.ofHours(8)
 
         const val MAX_NOTE_LENGTH = 500
+
+        /** Farther than this in a straight line, the next canyon is reached by car. */
+        const val ON_FOOT_MAX_KM = 2.0
+
+        private const val NEARBY_KM = 30.0
+        private const val MAX_CANDIDATES = 20
+        private const val STOP_TIMEOUT_MS = 5_000L
 
         /** Today at the next quarter hour in the morning, else tomorrow at nine. */
         internal fun defaultChoices(now: LocalDateTime): OutingChoices = if (now.hour < LATEST_SAME_DAY_START_HOUR) {

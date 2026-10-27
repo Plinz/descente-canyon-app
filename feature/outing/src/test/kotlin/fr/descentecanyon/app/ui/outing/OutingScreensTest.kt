@@ -60,7 +60,7 @@ class OutingScreensTest {
     private val clock = Clock.fixed(now, zone)
 
     @Test
-    fun `a new stay takes a place added on the map and a week, then opens`() = runTest {
+    fun `a new stay takes a place added on the map and its dates, then opens`() = runTest {
         val places = FakePlaceRepository()
         val stays = FakeStayRepository()
         val viewModel = StayEditViewModel(
@@ -75,13 +75,17 @@ class OutingScreensTest {
         assertEquals(false, viewModel.uiState.value.canSave)
 
         viewModel.addPlace(Place("Camping", 44.0, 6.8))
-        viewModel.selectStart(LocalDate.of(2026, 7, 20))
         advanceUntilIdle()
-        val state = viewModel.uiState.value
-        assertEquals(LocalDate.of(2026, 7, 26), state.end)
-        assertTrue(state.canSave)
+        // A week from today until the dates are picked.
+        assertEquals(LocalDate.of(2026, 7, 20), viewModel.uiState.value.end)
+        assertTrue(viewModel.uiState.value.canSave)
 
-        viewModel.selectEnd(LocalDate.of(2026, 7, 18))
+        // Six weeks are cut to the longest stay.
+        viewModel.selectDates(LocalDate.of(2026, 7, 20), LocalDate.of(2026, 8, 31))
+        advanceUntilIdle()
+        assertEquals(LocalDate.of(2026, 8, 19), viewModel.uiState.value.end)
+
+        viewModel.selectDates(LocalDate.of(2026, 7, 18), LocalDate.of(2026, 7, 18))
         viewModel.save()
         advanceUntilIdle()
         val stay = stays.stays.value.single()

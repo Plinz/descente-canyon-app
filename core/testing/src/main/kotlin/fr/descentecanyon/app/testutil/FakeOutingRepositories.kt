@@ -2,6 +2,7 @@ package fr.descentecanyon.app.testutil
 
 import fr.descentecanyon.app.domain.model.DriveTime
 import fr.descentecanyon.app.domain.model.DriveTimeSource
+import fr.descentecanyon.app.domain.model.FoundPlace
 import fr.descentecanyon.app.domain.model.GearListSettings
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.MessageAudience
@@ -14,6 +15,7 @@ import fr.descentecanyon.app.domain.repository.DriveTimeRepository
 import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PlaceRepository
+import fr.descentecanyon.app.domain.repository.PlaceSearchRepository
 import fr.descentecanyon.app.domain.repository.StayRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -110,6 +112,16 @@ class FakeDriveTimeRepository(var route: DriveTime? = null) : DriveTimeRepositor
 
     override suspend fun clear(placeId: Long, canyonId: Int) {
         manual.remove(placeId to canyonId)
+    }
+}
+
+/** [PlaceSearchRepository] answering [results] (or failing when null), with the searches made. */
+class FakePlaceSearchRepository(var results: List<FoundPlace>? = emptyList()) : PlaceSearchRepository {
+    val queries = mutableListOf<String>()
+
+    override suspend fun search(query: String, nearLatitude: Double?, nearLongitude: Double?, language: String?): Result<List<FoundPlace>> {
+        queries += query
+        return results?.let { Result.success(it) } ?: Result.failure(IllegalStateException("Offline"))
     }
 }
 

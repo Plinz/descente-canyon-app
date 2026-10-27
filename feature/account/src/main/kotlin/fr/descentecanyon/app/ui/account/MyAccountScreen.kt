@@ -456,7 +456,7 @@ private fun OutingsSummary(outings: List<PlannedOuting>, onOpen: (PlannedOuting)
             ) {
                 Icon(Icons.Default.Hiking, contentDescription = null, tint = LocalDcColors.current.primaryAction)
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(outing.canyonName, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                    Text(outing.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
                     Text(stringResource(R.string.outing_active_summary, start, back), style = MaterialTheme.typography.bodySmall)
                 }
                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = LocalDcColors.current.textMuted)

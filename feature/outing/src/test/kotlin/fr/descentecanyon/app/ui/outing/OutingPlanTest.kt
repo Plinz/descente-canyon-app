@@ -4,6 +4,9 @@ import androidx.lifecycle.SavedStateHandle
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.domain.model.Canyon
 import fr.descentecanyon.app.domain.model.CanyonDetail
+import fr.descentecanyon.app.domain.model.CanyonLink
+import fr.descentecanyon.app.domain.model.CanyonSearchItem
+import fr.descentecanyon.app.domain.model.CotationRating
 import fr.descentecanyon.app.domain.model.DaylightCheck
 import fr.descentecanyon.app.domain.model.DriveTime
 import fr.descentecanyon.app.domain.model.DriveTimeSource
@@ -22,6 +25,7 @@ import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingPhase
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.Stay
+import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
@@ -52,6 +56,7 @@ import java.time.ZoneId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -181,7 +186,7 @@ class OutingPlanTest {
         val first = viewModel()
         advanceUntilIdle()
         first.selectGroupLevel(GroupLevel.WITH_BEGINNERS)
-        first.adjustPhase(OutingPhase.DESCENT, 30)
+        first.adjustPhase(0, OutingPhase.DESCENT, 30)
         advanceUntilIdle()
         val id = outingRepository.outings.value.single().id
 
@@ -253,6 +258,59 @@ class OutingPlanTest {
         viewModel.selectDate(LocalDate.of(2026, 7, 20))
         advanceUntilIdle()
         assertNull(outingRepository.outings.value.single().stayId)
+    }
+
+    @Test
+    fun `a canyon chained on foot follows the end of the first one, with the shuttle of the day and one alert`() = runTest {
+        val viewModel = viewModel()
+        backgroundScope.launch { viewModel.canyonPicker.collect {} }
+        advanceUntilIdle()
+
+        // Around the canyon: the next part of the stream, not the canyon 50 km away.
+        viewModel.searchCanyons("")
+        advanceUntilIdle()
+        val candidate = viewModel.canyonPicker.value.candidates.single()
+        assertEquals(43, candidate.id)
+        viewModel.searchCanyons("loin")
+        advanceUntilIdle()
+        assertEquals(listOf(44), viewModel.canyonPicker.value.candidates.map { it.id })
+
+        viewModel.addCanyon(candidate)
+        advanceUntilIdle()
+        val state = viewModel.uiState.value
+        assertEquals("Riolan + Riolan aval", state.title)
+        assertEquals(CanyonLink.ON_FOOT, state.nextCanyons.single().canyon.link)
+        // The shuttle of the lower part: the cars meet at its end, 20 min of shuttle, 20 min to gear up.
+        assertEquals(4.0, state.sheetShuttle?.distanceKm)
+        assertEquals(at(8, 55), state.schedule?.walkStart)
+        // 30 min + 2 h in the Riolan, 1 h out of it, 10 min to the lower part, 1 h in it and 20 min back.
+        assertEquals(at(12, 35), state.schedule?.nextCanyons?.single()?.descentStart?.estimate)
+        assertEquals(at(13, 55), state.expectedBack)
+        val draft = outingRepository.outings.value.single()
+        assertEquals(listOf(42, 43), draft.canyonIds)
+        assertEquals(at(11, 25).atZone(zone).toInstant(), draft.choices?.nextCanyons?.single()?.from)
+
+        // By car: packing up, the drive between the parkings and gearing up again.
+        viewModel.selectLink(0, CanyonLink.BY_CAR)
+        advanceUntilIdle()
+        val drive = viewModel.uiState.value.nextCanyons.single().drive!!
+        val byCar = viewModel.uiState.value.schedule?.nextCanyons?.single()
+        assertEquals(at(12, 25).plusMinutes(40L + drive.minutes + 10), byCar?.descentStart?.estimate)
+
+        viewModel.adjustPhase(1, OutingPhase.DESCENT, 15)
+        advanceUntilIdle()
+        assertEquals(mapOf(OutingPhase.DESCENT to 15), outingRepository.outings.value.single().choices?.nextCanyons?.single()?.adjustments)
+
+        // Back from both: each canyon goes to the logbook.
+        viewModel.activateTracking()
+        viewModel.markBack()
+        advanceUntilIdle()
+        assertEquals(listOf(42, 43), logged.map { it.canyonId })
+
+        viewModel.removeCanyon(0)
+        advanceUntilIdle()
+        assertEquals("Riolan", viewModel.uiState.value.title)
+        assertEquals(at(12, 5), viewModel.uiState.value.expectedBack)
     }
 
     @Test
@@ -426,6 +484,22 @@ class OutingPlanTest {
                     geoPoints = listOf(GeoPoint(canyonId = 42, type = GeoPointType.PARKING_AMONT, latitude = 43.95, longitude = 6.9)),
                 ),
             )
+            coEvery { getCanyonPreview(43) } returns Result.success(
+                CanyonDetail(
+                    canyon = Canyon(
+                        id = 43, nom = "Riolan aval", nomComplet = "Riolan aval", pays = "France", commune = "Sigale", cotation = "v3a3II",
+                        url = "https://example.test/43", tempsApproche = "10min", tempsDescente = "1h", tempsRetour = "20min",
+                        cordeMin = 30, navette = "4km",
+                    ),
+                    geoPoints = listOf(
+                        GeoPoint(canyonId = 43, type = GeoPointType.PARKING_AMONT, latitude = 43.96, longitude = 6.9),
+                        GeoPoint(canyonId = 43, type = GeoPointType.PARKING_AVAL, latitude = 43.97, longitude = 6.92),
+                    ),
+                ),
+            )
+            every { observeSearchCatalog() } returns flowOf(
+                listOf(searchItem(42, "Riolan", 43.95, 6.9), searchItem(43, "Riolan aval", 43.96, 6.9), searchItem(44, "Loin", 44.4, 6.9)),
+            )
         }
         val weather = mockk<WeatherRepository> { coEvery { getCachedCanyonWeather(42) } returns null }
         val predictions = mockk<DebitPredictionRepository> { coEvery { getCachedPredictions(42) } returns null }
@@ -443,6 +517,7 @@ class OutingPlanTest {
                 ).toMap(),
             ),
             getCanyonPreviewUseCase = GetCanyonPreviewUseCase(canyonRepository),
+            canyonRepository = canyonRepository,
             getCanyonWeatherUseCase = GetCanyonWeatherUseCase(weather),
             getCanyonDebitPredictionsUseCase = GetCanyonDebitPredictionsUseCase(predictions),
             debitRepository = debits,
@@ -459,6 +534,21 @@ class OutingPlanTest {
             clock = clock,
         )
     }
+
+    private fun searchItem(id: Int, name: String, latitude: Double, longitude: Double) = CanyonSearchItem(
+        id = id,
+        nom = name,
+        nomComplet = name,
+        pays = "France",
+        cotation = "v3a3II",
+        cotationRating = CotationRating.parse("v3a3II"),
+        representativeLat = latitude,
+        representativeLng = longitude,
+        url = "https://example.test/$id",
+        searchableText = name.normalizeForSearch(),
+        normalizedNom = name.normalizeForSearch(),
+        normalizedNomComplet = name.normalizeForSearch(),
+    )
 
     private companion object {
         /** An Int: in a map with the Long outing id, a bare 42 would be read as a Long. */

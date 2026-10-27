@@ -1068,7 +1068,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="outing_pace_beginners">principianti %1$s</string>
     <string name="outing_pace_descent">Discesa %1$s: %2$s.</string>
     <string name="outing_pace_discovery">scoperta %1$s</string>
-    <string name="outing_phase_shuttle">Navetta</string>
     <string name="outing_place_hint">Aggiungete un campeggio, un alloggio o casa vostra per contare il tragitto.</string>
     <string name="outing_place_label">Da dove partite?</string>
     <string name="outing_place_none">Nessuno: dal parcheggio</string>
@@ -1139,7 +1138,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="places_delete_confirm">Eliminare «%1$s»? Anche i suoi soggiorni e le loro bozze; le uscite monitorate mantengono i loro orari.</string>
     <string name="places_empty">Nessun luogo di partenza</string>
     <string name="places_intro">Campeggio, alloggio, casa: il tragitto fino al parcheggio si aggiunge agli orari dell\'uscita.</string>
-    <string name="places_map_hint">Spostate la mappa per mettere il segnaposto sul luogo.</string>
+    <string name="places_map_hint">Sotto il segnaposto: %1$s. Cercate il luogo o spostate la mappa.</string>
     <string name="places_my_position">La mia posizione</string>
     <string name="places_name">Nome</string>
     <string name="places_name_hint">Campeggio delle gole, Casa…</string>
@@ -1249,4 +1248,40 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
         <item quantity="many">%1$d uscite previste</item>
         <item quantity="other">%1$d uscite previste</item>
     </plurals>
+    <string name="places_search_hint">Indirizzo, campeggio, paese…</string>
+    <string name="places_search_clear">Cancella la ricerca</string>
+    <string name="places_search_empty">Nessun luogo trovato. Provate un altro nome o spostate la mappa.</string>
+    <string name="places_search_failed">Ricerca non disponibile per ora (niente rete?). Posizionate il luogo spostando la mappa.</string>
+    <string name="places_search_attribution">Ricerca Photon · © contributori di OpenStreetMap</string>
+    <string name="places_kind_campsite">Campeggio</string>
+    <string name="places_kind_lodging">Alloggio</string>
+    <string name="stay_dates_value">Dal %1$s al %2$s</string>
+    <string name="stay_dates_change">Cambia le date</string>
+    <plurals name="stay_dates_hint">
+        <item quantity="one">Toccate il primo giorno poi l\'ultimo, al massimo %1$d giorno.</item>
+        <item quantity="other">Toccate il primo giorno poi l\'ultimo, al massimo %1$d giorni.</item>
+    </plurals>
+    <string name="outing_canyons_label">Canyon della giornata</string>
+    <string name="outing_canyons_add_hint">Concatenare un altro canyon</string>
+    <string name="outing_canyons_intro">Un\'integrale (parte alta poi bassa) o due canyon vicini nella stessa uscita: gli orari si susseguono, con un solo orario di allerta per la giornata.</string>
+    <string name="outing_canyons_add">Aggiungi un canyon</string>
+    <string name="outing_canyons_remove">Togli %1$s</string>
+    <string name="outing_canyons_search_hint">Nome del canyon</string>
+    <string name="outing_canyons_nearby">Intorno a %1$s</string>
+    <string name="outing_canyons_none">Nessun canyon trovato.</string>
+    <plurals name="outing_canyons_max">
+        <item quantity="one">Al massimo %1$d canyon per uscita.</item>
+        <item quantity="other">Al massimo %1$d canyon per uscita.</item>
+    </plurals>
+    <string name="outing_link_on_foot">A piedi</string>
+    <string name="outing_link_by_car">In auto</string>
+    <string name="outing_link_by_car_drive">In auto · %1$s</string>
+    <string name="outing_step_descent_start_of">Inizio di %1$s</string>
+    <string name="outing_step_descent_end_of">Fine di %1$s</string>
+    <string name="outing_step_out_of">Uscita da %1$s</string>
+    <string name="outing_step_walk_to">Cammino verso %1$s</string>
+    <string name="outing_step_transfer">Riordino, %1$s di strada e preparazione</string>
+    <string name="outing_step_start_to">Partenza a piedi verso %1$s</string>
+    <string name="outing_step_back_at_car">Ritorno all\'auto</string>
+    <string name="outing_durations_source_of">%1$s, secondo la scheda: avvicinamento %2$s, discesa %3$s, rientro %4$s.</string>
 </resources>

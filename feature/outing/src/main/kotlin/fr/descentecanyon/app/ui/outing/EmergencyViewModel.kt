@@ -126,11 +126,19 @@ class EmergencyViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val outing = outingRepository.observeAll().first().underwayAt(clock.instant())
+            val now = clock.instant()
+            val outing = outingRepository.observeAll().first().underwayAt(now)
             when {
-                canyonId > 0 -> show(canyonId, EmergencyCanyonOrigin.PAGE, outing)
+                // A canyon of the outing under way (its notification, a page): the one the group should be in now.
+                canyonId > 0 -> show(
+                    outing?.takeIf {
+                        canyonId in it.canyonIds
+                    }?.canyonIdAt(now) ?: canyonId,
+                    EmergencyCanyonOrigin.PAGE,
+                    outing,
+                )
 
-                outing != null -> show(outing.canyonId, EmergencyCanyonOrigin.OUTING, outing)
+                outing != null -> show(outing.canyonIdAt(now), EmergencyCanyonOrigin.OUTING, outing)
 
                 else -> {
                     locatesByPosition = true
@@ -229,7 +237,7 @@ class EmergencyViewModel @Inject constructor(
             it.copy(
                 canyon = canyon,
                 origin = origin,
-                outing = outing?.takeIf { underway -> underway.canyonId == id },
+                outing = outing?.takeIf { underway -> id in underway.canyonIds },
                 isLocatingCanyon = false,
                 canyonDistanceMeters = it.position?.let { fix -> canyon.distanceMetersFrom(fix) } ?: distanceKm?.toMeters(),
                 points = sortedPoints(canyon.points, it.position),

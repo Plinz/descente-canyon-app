@@ -137,7 +137,7 @@ class MainActivity : ComponentActivity() {
         if (target !is AppLaunchTarget.OutingBack) return target
         lifecycleScope.launch {
             val ended = endOutingUseCase(target.outingId)
-            if (ended?.relativeInformed == true) shareOutingBackMessage(ended.canyonName)
+            if (ended?.relativeInformed == true) shareOutingBackMessage(ended.title)
         }
         return AppLaunchTarget.DebitForm(target.canyonId)
     }

@@ -37,6 +37,7 @@ import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PersonalDataRepository
 import fr.descentecanyon.app.domain.repository.PhotoRepository
 import fr.descentecanyon.app.domain.repository.PlaceRepository
+import fr.descentecanyon.app.domain.repository.PlaceSearchRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.repository.SiteAccountRepository
@@ -53,6 +54,7 @@ import fr.descentecanyon.app.e2e.fakes.FakeFavoritesRepository
 import fr.descentecanyon.app.e2e.fakes.FakeForumRepository
 import fr.descentecanyon.app.e2e.fakes.FakeInterestRatingRepository
 import fr.descentecanyon.app.e2e.fakes.FakePhotoRepository
+import fr.descentecanyon.app.e2e.fakes.FakePlaceSearchRepository
 import fr.descentecanyon.app.e2e.fakes.FakeSiteAccountRepository
 import fr.descentecanyon.app.e2e.fakes.FakeWeatherRepository
 import javax.inject.Singleton
@@ -120,6 +122,9 @@ object TestRepositoryModule {
 
     @Provides @Singleton
     fun providePlaceRepository(impl: PlaceRepositoryImpl): PlaceRepository = impl
+
+    @Provides @Singleton
+    fun providePlaceSearchRepository(fake: FakePlaceSearchRepository): PlaceSearchRepository = fake
 
     @Provides @Singleton
     fun provideStayRepository(impl: StayRepositoryImpl): StayRepository = impl

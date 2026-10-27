@@ -2,7 +2,9 @@ package fr.descentecanyon.app.data.repository
 
 import fr.descentecanyon.app.data.local.user.dao.PlannedOutingDao
 import fr.descentecanyon.app.data.local.user.entity.PlannedOutingEntity
+import fr.descentecanyon.app.domain.model.CanyonLink
 import fr.descentecanyon.app.domain.model.GroupLevel
+import fr.descentecanyon.app.domain.model.NextCanyon
 import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingPhase
@@ -91,6 +93,7 @@ class OutingRepositoryImpl @Inject constructor(private val dao: PlannedOutingDao
         val checkedGear: List<String> = emptyList(),
         val meetAtPlace: Boolean = false,
         val note: String = "",
+        val nextCanyons: List<StoredNextCanyon> = emptyList(),
     ) {
         fun toDomain(): OutingChoices? {
             val day = runCatching { LocalDate.parse(date) }.getOrNull() ?: return null
@@ -105,12 +108,11 @@ class OutingRepositoryImpl @Inject constructor(private val dao: PlannedOutingDao
                 withShuttle = withShuttle,
                 alertMarginHours = alertMarginHours,
                 alertDelayMinutes = alertDelayMinutes,
-                adjustments = adjustments.mapNotNull { (name, minutes) ->
-                    OutingPhase.entries.firstOrNull { it.name == name }?.let { it to minutes }
-                }.toMap(),
+                adjustments = phasesOf(adjustments),
                 checkedGear = checkedGear.toSet(),
                 meetAtPlace = meetAtPlace,
                 note = note,
+                nextCanyons = nextCanyons.map { it.toDomain() },
             )
         }
 
@@ -129,11 +131,45 @@ class OutingRepositoryImpl @Inject constructor(private val dao: PlannedOutingDao
                 checkedGear = choices.checkedGear.sorted(),
                 meetAtPlace = choices.meetAtPlace,
                 note = choices.note,
+                nextCanyons = choices.nextCanyons.map(StoredNextCanyon::of),
+            )
+        }
+    }
+
+    /** A [NextCanyon]; [from] in epoch ms. */
+    @Serializable
+    private data class StoredNextCanyon(
+        val canyonId: Int,
+        val name: String,
+        val link: String = CanyonLink.ON_FOOT.name,
+        val adjustments: Map<String, Int> = emptyMap(),
+        val from: Long? = null,
+    ) {
+        fun toDomain() = NextCanyon(
+            canyonId = canyonId,
+            name = name,
+            link = CanyonLink.entries.firstOrNull { it.name == link } ?: CanyonLink.ON_FOOT,
+            adjustments = phasesOf(adjustments),
+            from = from?.let(Instant::ofEpochMilli),
+        )
+
+        companion object {
+            fun of(canyon: NextCanyon) = StoredNextCanyon(
+                canyonId = canyon.canyonId,
+                name = canyon.name,
+                link = canyon.link.name,
+                adjustments = canyon.adjustments.mapKeys { it.key.name },
+                from = canyon.from?.toEpochMilli(),
             )
         }
     }
 
     private companion object {
         val json = Json { ignoreUnknownKeys = true }
+
+        /** Steps by name; a step unknown to this version is dropped. */
+        fun phasesOf(adjustments: Map<String, Int>): Map<OutingPhase, Int> = adjustments.mapNotNull { (name, minutes) ->
+            OutingPhase.entries.firstOrNull { it.name == name }?.let { it to minutes }
+        }.toMap()
     }
 }

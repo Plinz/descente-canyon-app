@@ -33,6 +33,8 @@ data class OutingChoices(
     val meetAtPlace: Boolean = false,
     /** Free text added to the messages. */
     val note: String = "",
+    /** The canyons done after the first one, in their order: an "intégrale", or two canyons of a valley. */
+    val nextCanyons: List<NextCanyon> = emptyList(),
 ) {
     /** From [placeId] (null: none): the time set is then leaving it, else arriving at the parking. */
     fun withPlace(placeId: Long?): OutingChoices =
@@ -42,8 +44,34 @@ data class OutingChoices(
         const val DEFAULT_ALERT_MARGIN_HOURS = 2
         val ALERT_MARGINS = listOf(1, 2, 3)
         const val ADJUSTMENT_STEP_MINUTES = 15
+
+        /** Canyons in one outing, the first one included. */
+        const val MAX_CANYONS = 4
     }
 }
+
+/** How the group goes from a canyon to the next one of the day. */
+enum class CanyonLink {
+    /** Out of the canyon and on to the next one on foot: parts of one stream, canyons side by side. */
+    ON_FOOT,
+
+    /** Back to the car, a drive to the next parking, and getting ready again. */
+    BY_CAR,
+}
+
+/** A canyon done after the first one of the outing, such as the lower part after the upper part. */
+data class NextCanyon(
+    val canyonId: Int,
+    val name: String,
+    val link: CanyonLink = CanyonLink.ON_FOOT,
+    /** Minutes added to (or taken from) the way to it, its descent and its return, for this outing. */
+    val adjustments: Map<OutingPhase, Int> = emptyMap(),
+    /**
+     * The end of the descent before it, as last computed: from then on the group is on its way to
+     * this canyon, which the emergency screen then shows.
+     */
+    val from: Instant? = null,
+)
 
 /**
  * An outing the user planned. A draft ([tracked] false) is only kept; once the user turns the
@@ -75,6 +103,16 @@ data class PlannedOuting(
 ) {
     /** The plan went to a relative: they wait for news at the return. */
     val relativeInformed: Boolean get() = informedAlertAt != null
+
+    /** The canyons of the outing, in their order. */
+    val canyonIds: List<Int> get() = listOf(canyonId) + choices?.nextCanyons.orEmpty().map { it.canyonId }
+
+    /** "Pissarde (partie amont) + Pissarde (partie aval)". */
+    val title: String get() = (listOf(canyonName) + choices?.nextCanyons.orEmpty().map { it.name }).joinToString(" + ")
+
+    /** The canyon the group should be in or on its way to at [now], by the times last computed. */
+    fun canyonIdAt(now: Instant): Int =
+        choices?.nextCanyons.orEmpty().lastOrNull { it.from != null && !now.isBefore(it.from) }?.canyonId ?: canyonId
 
     /** The relative was told another alert time than the one planned now. */
     val alertChangedSinceInformed: Boolean get() = informedAlertAt != null && informedAlertAt != alertAt

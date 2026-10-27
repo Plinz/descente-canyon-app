@@ -79,7 +79,7 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
      */
     fun publishOutingOngoing(outing: PlannedOuting): Boolean {
         if (!canPostNotifications(OUTINGS_CHANNEL_ID)) return false
-        val name = outing.canyonName.ifBlank { context.getString(R.string.canyon_fallback_title, outing.canyonId) }
+        val name = outing.title.ifBlank { context.getString(R.string.canyon_fallback_title, outing.canyonId) }
         val back = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).format(outing.expectedBack.atZone(ZoneId.systemDefault()))
         val body = context.getString(R.string.notification_outing_ongoing_body, back)
         val emergency = emergencyPendingIntent(outing.canyonId)
@@ -113,7 +113,7 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
     fun publishOutingEndReminder(outing: PlannedOuting): Boolean {
         NotificationManagerCompat.from(context).cancel(outingNotificationId(OUTING_ONGOING_NOTIFICATION_BASE, outing.id))
         if (!canPostNotifications(OUTINGS_CHANNEL_ID)) return false
-        val name = outing.canyonName.ifBlank { context.getString(R.string.canyon_fallback_title, outing.canyonId) }
+        val name = outing.title.ifBlank { context.getString(R.string.canyon_fallback_title, outing.canyonId) }
         val body = context.getString(R.string.notification_outing_end_body, name)
         val notification = NotificationCompat.Builder(context, OUTINGS_CHANNEL_ID)
             .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)

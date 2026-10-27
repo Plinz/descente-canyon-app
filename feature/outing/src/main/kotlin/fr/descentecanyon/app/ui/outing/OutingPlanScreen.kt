@@ -67,7 +67,7 @@ import java.util.Locale
 import kotlinx.coroutines.launch
 
 /** What opens over the plan: one sheet or dialog at a time. */
-private enum class PlanOverlay { DAY, DEPARTURE, GROUP, ALERT_MARGIN, NOTIFY, BAG, DELETE }
+private enum class PlanOverlay { CANYONS, DAY, DEPARTURE, GROUP, ALERT_MARGIN, NOTIFY, BAG, DELETE }
 
 /**
  * The plan of an outing, answer first: the day, the departure and the group in three lines, the key
@@ -85,6 +85,7 @@ fun OutingPlanScreen(
     viewModel: OutingPlanViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val canyonPicker by viewModel.canyonPicker.collectAsStateWithLifecycle()
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -152,7 +153,7 @@ fun OutingPlanScreen(
         modifier = modifier,
         topBar = {
             CompactAppBar(
-                title = state.canyon?.canyon?.nom ?: stringResource(R.string.outing_plan_title),
+                title = state.title ?: stringResource(R.string.outing_plan_title),
                 navigation = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
@@ -264,6 +265,7 @@ fun OutingPlanScreen(
                 item(key = "settings") {
                     PlanSettingsCard(
                         state = state,
+                        onCanyonsClick = { overlay = PlanOverlay.CANYONS },
                         onDayClick = { overlay = PlanOverlay.DAY },
                         onDepartureClick = { overlay = PlanOverlay.DEPARTURE },
                         onGroupClick = { overlay = PlanOverlay.GROUP },
@@ -289,6 +291,17 @@ fun OutingPlanScreen(
 
     val dismiss = { overlay = null }
     when (overlay) {
+        PlanOverlay.CANYONS -> CanyonsSheet(
+            state = state,
+            picker = canyonPicker,
+            onDismiss = dismiss,
+            onSearch = viewModel::searchCanyons,
+            onClosePicker = viewModel::closeCanyonPicker,
+            onAdd = viewModel::addCanyon,
+            onRemove = viewModel::removeCanyon,
+            onLinkSelected = viewModel::selectLink,
+        )
+
         PlanOverlay.DAY -> DcDatePickerDialog(
             initialDate = state.choices.date,
             onDateSelected = viewModel::selectDate,
@@ -372,14 +385,14 @@ fun OutingPlanScreen(
 private fun backMessage(context: Context, state: OutingPlanUiState, locale: Locale): String {
     val strings = ResourceOutingMessageStrings(context.resources)
     val now = LocalDateTime.now(ZoneId.systemDefault())
-    return strings.back(state.canyon?.canyon?.nom.orEmpty(), timeOfOuting(now, now.toLocalDate(), locale))
+    return strings.back(state.title.orEmpty(), timeOfOuting(now, now.toLocalDate(), locale))
 }
 
 /** The new alert time, for the relative who waits for news. */
 private fun delayMessage(context: Context, state: OutingPlanUiState, alertAt: LocalDateTime, locale: Locale): String {
     val strings = ResourceOutingMessageStrings(context.resources)
     return strings.delay(
-        state.canyon?.canyon?.nom.orEmpty(),
+        state.title.orEmpty(),
         timeOfOuting(alertAt, state.choices.date, locale),
         state.emergencyNumbers.first().number,
     )
@@ -387,7 +400,7 @@ private fun delayMessage(context: Context, state: OutingPlanUiState, alertAt: Lo
 
 /** An event of the whole day in the calendar app, with the message for the team as its description. */
 private fun addToCalendar(context: Context, state: OutingPlanUiState, locale: Locale) {
-    val canyon = state.canyon?.canyon ?: return
+    val title = state.title ?: return
     val schedule = state.schedule ?: return
     val begin = schedule.leavePlace ?: schedule.arriveParking
     val end = schedule.backAtPlace?.estimate ?: schedule.readyToLeave?.estimate ?: state.expectedBack ?: return
@@ -405,7 +418,7 @@ private fun addToCalendar(context: Context, state: OutingPlanUiState, locale: Lo
         .setData(CalendarContract.Events.CONTENT_URI)
         .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, begin.atZone(zone).toInstant().toEpochMilli())
         .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, end.atZone(zone).toInstant().toEpochMilli())
-        .putExtra(CalendarContract.Events.TITLE, resources.getString(R.string.outing_calendar_title, canyon.nom))
+        .putExtra(CalendarContract.Events.TITLE, resources.getString(R.string.outing_calendar_title, title))
         .putExtra(CalendarContract.Events.DESCRIPTION, description)
     state.meetingParking?.let { point ->
         intent.putExtra(CalendarContract.Events.EVENT_LOCATION, String.format(Locale.ROOT, "%.5f, %.5f", point.latitude, point.longitude))

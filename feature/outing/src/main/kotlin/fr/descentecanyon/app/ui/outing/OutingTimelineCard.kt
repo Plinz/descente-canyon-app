@@ -32,6 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.CanyonDuration
+import fr.descentecanyon.app.domain.model.CanyonLink
 import fr.descentecanyon.app.domain.model.GroupLevel
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingPhase
@@ -45,7 +47,9 @@ import java.time.format.DateTimeFormatter
 /** One line of the day: a moment, or the step that leads to the next moment. */
 private sealed interface DayLine {
     data class Moment(val label: String, val window: TimeWindow?, val emphasized: Boolean = false) : DayLine
-    data class Step(val label: String, val span: TimeSpan?, val phase: OutingPhase? = null) : DayLine
+
+    /** [canyon] counts the canyons of the outing from 0: the step of [phase] is adjusted for that one. */
+    data class Step(val label: String, val span: TimeSpan?, val phase: OutingPhase? = null, val canyon: Int = 0) : DayLine
 }
 
 /**
@@ -58,17 +62,21 @@ internal fun DayDetailCard(
     timeFormatter: DateTimeFormatter,
     expanded: Boolean,
     onToggle: () -> Unit,
-    onAdjust: (OutingPhase, Int) -> Unit,
+    onAdjust: (canyon: Int, OutingPhase, Int) -> Unit,
 ) {
     val schedule = state.schedule ?: return
     val colors = LocalDcColors.current
-    var adjusting by remember { mutableStateOf<OutingPhase?>(null) }
-    adjusting?.let { phase ->
+    val lines = dayLines(state)
+    var adjusting by remember { mutableStateOf<DayLine.Step?>(null) }
+    adjusting?.let { step ->
+        val phase = step.phase ?: return@let
+        // The line as computed now: the dialog follows the adjustment.
+        val current = lines.filterIsInstance<DayLine.Step>().firstOrNull { it.phase == phase && it.canyon == step.canyon } ?: step
         AdjustPhaseDialog(
-            phase = phase,
-            span = schedule.spans[phase],
-            adjustment = state.choices.adjustments[phase] ?: 0,
-            onAdjust = { onAdjust(phase, it) },
+            title = current.label,
+            span = current.span,
+            adjustment = state.adjustment(step.canyon, phase),
+            onAdjust = { onAdjust(step.canyon, phase, it) },
             onDismiss = { adjusting = null },
         )
     }
@@ -101,14 +109,14 @@ internal fun DayDetailCard(
             verticalArrangement = Arrangement.spacedBy(4.dp),
         ) {
             Text(stringResource(R.string.outing_detail_hint), style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
-            dayLines(state).forEach { line ->
+            lines.forEach { line ->
                 when (line) {
                     is DayLine.Moment -> MomentRow(line, timeFormatter)
 
                     is DayLine.Step -> StepRow(
                         line = line,
-                        adjustment = line.phase?.let { state.choices.adjustments[it] } ?: 0,
-                        onClick = line.phase?.takeIf { line.span != null }?.let { phase -> { adjusting = phase } },
+                        adjustment = line.phase?.let { state.adjustment(line.canyon, it) } ?: 0,
+                        onClick = line.phase?.takeIf { line.span != null }?.let { { adjusting = line } },
                     )
                 }
             }
@@ -117,26 +125,60 @@ internal fun DayDetailCard(
                 style = MaterialTheme.typography.labelLarge,
                 modifier = Modifier.padding(top = 8.dp),
             )
-            Text(
-                text = stringResource(
-                    R.string.outing_durations_source,
-                    durationLabel(state.approach),
-                    durationLabel(state.descent),
-                    durationLabel(state.back),
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = colors.textMuted,
-            )
+            if (state.nextCanyons.isEmpty()) {
+                Text(
+                    text = stringResource(
+                        R.string.outing_durations_source,
+                        durationLabel(state.approach),
+                        durationLabel(state.descent),
+                        durationLabel(state.back),
+                    ),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colors.textMuted,
+                )
+            } else {
+                val sheets = listOf(state.canyon?.canyon) + state.nextCanyons.map { it.detail?.canyon }
+                sheets.zip(canyonNames(state)).forEach { (sheet, name) ->
+                    Text(
+                        text = stringResource(
+                            R.string.outing_durations_source_of,
+                            name,
+                            durationLabel(CanyonDuration.parse(sheet?.tempsApproche)),
+                            durationLabel(CanyonDuration.parse(sheet?.tempsDescente)),
+                            durationLabel(CanyonDuration.parse(sheet?.tempsRetour)),
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colors.textMuted,
+                    )
+                }
+            }
             PaceBreakdown(state)
             if (state.place != null) DriveLine(state = state, onSetManualDrive = null)
         }
     }
 }
 
-/** The moments of the day and the steps between them, from the starting place back to it. */
+/** The minutes the user added to a step of the [canyon]-th canyon of the outing. */
+private fun OutingPlanUiState.adjustment(canyon: Int, phase: OutingPhase): Int = if (canyon == 0) {
+    choices.adjustments[phase] ?: 0
+} else {
+    choices.nextCanyons.getOrNull(canyon - 1)?.adjustments?.get(phase) ?: 0
+}
+
+/** The names of the canyons of the outing, in their order. */
+internal fun canyonNames(state: OutingPlanUiState): List<String> =
+    listOf(state.canyon?.canyon?.nom.orEmpty()) + state.nextCanyons.map { it.canyon.name }
+
+/**
+ * The moments of the day and the steps between them, from the starting place back to it. With
+ * several canyons, each one follows the end of the descent before: out of it and on foot to the
+ * next one, or back to the car and a drive.
+ */
 @Composable
 private fun dayLines(state: OutingPlanUiState): List<DayLine> {
     val schedule = state.schedule ?: return emptyList()
+    val names = canyonNames(state)
+    val chained = state.nextCanyons.isNotEmpty()
     val place = state.place?.takeIf { schedule.leavePlace != null }
     val drive = schedule.driveMinutes?.toLong()?.let(TimeSpan::exactly)
     val shuttleKm = state.sheetShuttle?.takeIf { state.withShuttle }?.distanceKm?.toInt()?.coerceAtLeast(1)
@@ -161,10 +203,61 @@ private fun dayLines(state: OutingPlanUiState): List<DayLine> {
         add(DayLine.Step(stringResource(R.string.outing_step_prep), schedule.spans[OutingPhase.PREP], OutingPhase.PREP))
         add(DayLine.Moment(stringResource(R.string.outing_step_start), TimeWindow.at(schedule.walkStart)))
         add(DayLine.Step(stringResource(R.string.outing_step_approach), schedule.spans[OutingPhase.APPROACH], OutingPhase.APPROACH))
-        add(DayLine.Moment(stringResource(R.string.outing_step_descent_start), schedule.descentStart))
+        add(DayLine.Moment(descentStartLabel(names[0], chained), schedule.descentStart))
         add(DayLine.Step(stringResource(R.string.outing_step_descent), schedule.spans[OutingPhase.DESCENT], OutingPhase.DESCENT))
-        add(DayLine.Moment(stringResource(R.string.outing_step_descent_end), schedule.descentEnd))
-        add(DayLine.Step(stringResource(R.string.outing_step_return), schedule.spans[OutingPhase.RETURN], OutingPhase.RETURN))
+        add(
+            DayLine.Moment(
+                if (chained) {
+                    stringResource(
+                        R.string.outing_step_descent_end_of,
+                        names[0],
+                    )
+                } else {
+                    stringResource(R.string.outing_step_descent_end)
+                },
+                schedule.descentEnd,
+            ),
+        )
+        var previousReturn = schedule.spans[OutingPhase.RETURN]
+        schedule.nextCanyons.forEachIndexed { index, next ->
+            val canyon = index + 1
+            val name = names[canyon]
+            when (next.link) {
+                CanyonLink.ON_FOOT -> {
+                    add(DayLine.Step(stringResource(R.string.outing_step_out_of, names[index]), previousReturn, OutingPhase.RETURN, index))
+                    add(
+                        DayLine.Step(
+                            stringResource(R.string.outing_step_walk_to, name),
+                            next.spans[OutingPhase.APPROACH],
+                            OutingPhase.APPROACH,
+                            canyon,
+                        ),
+                    )
+                }
+
+                CanyonLink.BY_CAR -> {
+                    val drive = state.nextCanyons[index].drive?.minutes?.let { formatMinutes(it.toLong()) }
+                        ?: stringResource(R.string.duration_unknown)
+                    add(DayLine.Step(stringResource(R.string.outing_step_return), previousReturn, OutingPhase.RETURN, index))
+                    add(DayLine.Moment(stringResource(R.string.outing_step_back_at_car), next.backAtCarBefore))
+                    add(DayLine.Step(stringResource(R.string.outing_step_transfer, drive), next.transfer))
+                    add(DayLine.Moment(stringResource(R.string.outing_step_start_to, name), next.walkStart))
+                    add(
+                        DayLine.Step(
+                            stringResource(R.string.outing_step_approach),
+                            next.spans[OutingPhase.APPROACH],
+                            OutingPhase.APPROACH,
+                            canyon,
+                        ),
+                    )
+                }
+            }
+            add(DayLine.Moment(descentStartLabel(name, chained), next.descentStart))
+            add(DayLine.Step(stringResource(R.string.outing_step_descent), next.spans[OutingPhase.DESCENT], OutingPhase.DESCENT, canyon))
+            add(DayLine.Moment(stringResource(R.string.outing_step_descent_end_of, name), next.descentEnd))
+            previousReturn = next.spans[OutingPhase.RETURN]
+        }
+        add(DayLine.Step(stringResource(R.string.outing_step_return), previousReturn, OutingPhase.RETURN, state.nextCanyons.size))
         add(DayLine.Moment(stringResource(R.string.outing_step_back), schedule.backAtCar, emphasized = true))
         add(
             DayLine.Step(
@@ -180,6 +273,11 @@ private fun dayLines(state: OutingPlanUiState): List<DayLine> {
         }
     }
 }
+
+/** "Début de la descente", or with several canyons "Début de Pissarde (partie aval)". */
+@Composable
+internal fun descentStartLabel(name: String, chained: Boolean): String =
+    if (chained) stringResource(R.string.outing_step_descent_start_of, name) else stringResource(R.string.outing_step_descent_start)
 
 @Composable
 private fun MomentRow(line: DayLine.Moment, timeFormatter: DateTimeFormatter) {
@@ -288,11 +386,11 @@ private fun PaceBreakdown(state: OutingPlanUiState) {
 }
 
 @Composable
-private fun AdjustPhaseDialog(phase: OutingPhase, span: TimeSpan?, adjustment: Int, onAdjust: (Int) -> Unit, onDismiss: () -> Unit) {
+private fun AdjustPhaseDialog(title: String, span: TimeSpan?, adjustment: Int, onAdjust: (Int) -> Unit, onDismiss: () -> Unit) {
     val step = OutingChoices.ADJUSTMENT_STEP_MINUTES
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(phaseLabel(phase)) },
+        title = { Text(title) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 span?.let {
@@ -319,15 +417,3 @@ private fun AdjustPhaseDialog(phase: OutingPhase, span: TimeSpan?, adjustment: I
         },
     )
 }
-
-@Composable
-private fun phaseLabel(phase: OutingPhase): String = stringResource(
-    when (phase) {
-        OutingPhase.SHUTTLE -> R.string.outing_phase_shuttle
-        OutingPhase.PREP -> R.string.outing_step_prep
-        OutingPhase.APPROACH -> R.string.outing_step_approach
-        OutingPhase.DESCENT -> R.string.outing_step_descent
-        OutingPhase.RETURN -> R.string.outing_step_return
-        OutingPhase.PACK_UP -> R.string.outing_step_pack_up
-    },
-)

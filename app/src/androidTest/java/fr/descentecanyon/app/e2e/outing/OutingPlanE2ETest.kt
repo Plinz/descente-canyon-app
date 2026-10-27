@@ -16,11 +16,13 @@ import androidx.test.espresso.Espresso
 import androidx.test.platform.app.InstrumentationRegistry
 import dagger.hilt.android.testing.HiltAndroidTest
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.CanyonLink
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.e2e.BaseE2eTest
+import fr.descentecanyon.app.e2e.fakes.FakePlaceSearchRepository
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.Duration
 import java.time.Instant
@@ -37,7 +39,8 @@ import org.junit.Test
 
 /**
  * An outing is planned from the canyon page and its follow-up turned on, then found again from the
- * home screen and the list of outings; a stay gets a canyon for one of its days.
+ * home screen and the list of outings; a second canyon is chained to it; a stay is made at a
+ * campsite found by its name, and gets a canyon for one of its days.
  */
 @HiltAndroidTest
 class OutingPlanE2ETest : BaseE2eTest() {
@@ -95,6 +98,64 @@ class OutingPlanE2ETest : BaseE2eTest() {
             ),
         )
         waitForTag(TestTags.OUTING_STATUS)
+    }
+
+    @Test
+    fun aSecondCanyonIsChainedToTheOutingFromTheCanyonsAround() {
+        openRiolan()
+        composeRule.onNodeWithTag(TestTags.DETAIL_LIST).performScrollToNode(hasTestTag(TestTags.DETAIL_PLAN_OUTING))
+        composeRule.onNodeWithTag(TestTags.DETAIL_PLAN_OUTING).performSemanticsAction(SemanticsActions.OnClick)
+
+        waitForTag(TestTags.OUTING_CANYONS_ROW)
+        composeRule.onNodeWithTag(TestTags.OUTING_CANYONS_ROW).performClick()
+        waitForTag(TestTags.OUTING_ADD_CANYON)
+        composeRule.onNodeWithTag(TestTags.OUTING_ADD_CANYON).performSemanticsAction(SemanticsActions.OnClick)
+        // Aiglun, 13 km from the Riolan, is among the canyons around.
+        waitForTag(TestTags.outingCanyonCandidate(102))
+        composeRule.onNodeWithTag(TestTags.outingCanyonCandidate(102)).performSemanticsAction(SemanticsActions.OnClick)
+        waitForTag(TestTags.outingNextCanyon(0))
+
+        // Kept at once as one outing of two canyons, reached by car.
+        composeRule.waitUntil(10_000) {
+            runBlocking { outingRepository.observeAll().first().singleOrNull()?.canyonIds == listOf(101, 102) }
+        }
+        val draft = runBlocking { outingRepository.observeAll().first().single() }
+        assertEquals("Riolan + Aiglun", draft.title)
+        assertEquals(CanyonLink.BY_CAR, draft.choices?.nextCanyons?.single()?.link)
+    }
+
+    @Test
+    fun aStayIsMadeAtACampsiteFoundByItsName() {
+        composeRule.onNodeWithTag(TestTags.HOME_ACCOUNT_BUTTON, useUnmergedTree = true).performClick()
+        waitForTag(TestTags.MY_ACCOUNT_LIST)
+        composeRule.onNodeWithTag(TestTags.MY_ACCOUNT_LIST).performScrollToNode(hasText(string(R.string.account_outings_all)))
+        composeRule.onNodeWithText(string(R.string.account_outings_all)).performClick()
+        waitForTag(TestTags.OUTINGS_NEW_STAY)
+        composeRule.onNodeWithTag(TestTags.OUTINGS_NEW_STAY).performClick()
+        waitForTag(TestTags.STAY_ADD_PLACE)
+        composeRule.onNodeWithTag(TestTags.STAY_ADD_PLACE).performClick()
+
+        // The campsite is found by its name, and the map moves to it.
+        waitForTag(TestTags.PLACE_SEARCH)
+        composeRule.onNodeWithTag(TestTags.PLACE_SEARCH).performTextInput("torrent")
+        waitForTag(TestTags.PLACE_SEARCH_RESULTS)
+        composeRule.onNodeWithText(FakePlaceSearchRepository.CAMPSITE.name).performClick()
+        composeRule.onNodeWithTag(TestTags.PLACE_SAVE).performClick()
+        composeRule.waitUntil(10_000) { runBlocking { placeRepository.observeAll().first().isNotEmpty() } }
+        val place = runBlocking { placeRepository.observeAll().first().single() }
+        assertEquals(FakePlaceSearchRepository.CAMPSITE.name, place.name)
+        assertEquals(FakePlaceSearchRepository.CAMPSITE.latitude, place.latitude, 0.001)
+        assertEquals(FakePlaceSearchRepository.CAMPSITE.longitude, place.longitude, 0.001)
+
+        // The dates are one field: the calendar of a span of days.
+        composeRule.onNodeWithTag(TestTags.STAY_DATES).performClick()
+        waitForTag(TestTags.DATE_RANGE_CONFIRM)
+        composeRule.onNodeWithTag(TestTags.DATE_RANGE_CONFIRM).performClick()
+        composeRule.onNodeWithTag(TestTags.STAY_EDIT_SAVE).performClick()
+        composeRule.waitUntil(10_000) { runBlocking { stayRepository.observeAll().first().isNotEmpty() } }
+        val stay = runBlocking { stayRepository.observeAll().first().single() }
+        assertEquals(place.id, stay.placeId)
+        assertEquals(LocalDate.now().plusDays(Stay.DEFAULT_DAYS - 1), stay.end)
     }
 
     @Test
