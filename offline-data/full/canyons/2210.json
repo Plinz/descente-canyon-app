@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:32.646318+00:00",
+  "scrapedAt": "2026-10-27T16:44:02.447800+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2210,
@@ -51,13 +51,13 @@
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "De Molinges, Direction Vulvoz par D63. Peu avant le village, prendre à droite le chemin qui mène au Moulins (gite) et se garer avant le pont carrossable qui mène à l'habitation. Attention : places limitées !",
+      "accesAval": "De Molinges, Direction Vulvoz par D63.\n\nPeu avant le village, repérer à droite le chemin désormais barré qui mène au Moulins (gite). L'accès et surtout le stationnement sont désormais réglementés : Interdiction de circulation jusqu'au 30 septembre, et stationnement interdit toute l'année, sauf ayants droit et clients du gite.\n\nVous êtes désormais contraints de, soit stationner à proximité comme vous le pouvez et SANS GÊNER la circulation (possibilités rares), soit poursuivre et vous garer au village ou un peu avant.",
       "accesAmont": null,
-      "approche": "Prendre à droite le sentier descendant balisé, menant aux cascades.\n\nLa première difficulté (C3) se trouve en traversant le pont pédestre en pierre, puis en montant immédiatement à gauche une sente qui vous fait longer l'ancien réservoir, puis marcher sur l'ancien canal sur une trentaine de mètres.",
-      "descente": "Il s'agit ici d'un magnifique mini canyon, où sur quelques mètres seulement, tous les obstacles du canyoning sont concentrés. Du fait de son équipement assez complet, c'est un canyon école.\n\nLe premier obstacle peut se descendre sur corde (chaîne discrète en RD), ou se sauter depuis la RG. Attention cependant : Depuis la crue de 2019 et la destruction du mini barrage du toboggan, la profondeur du petit bassin de réception est devenue ridicule, donc bien visualiser votre réception...\n\nLa C8 qui suit est descendable en glissade, ou sur corde depuis un des arbres en RG.\n\nPossibilité également d'équiper la MC rappelable qui mène sous le pont par une vire en RD (4 points + relais chaîné).\n\nUne belle marmite déverse alors ses flots dans le vide d'une C25 par un magnifique trou circulaire (équipement sur chaînes des deux côtés + MC en RG).\n\nSous le surplomb de la C25, se cache un relais tout inox mais complétement plein vide, pour par exemple s'entrainer aux grandes verticales des Préalpes.\n\nEn bordure RD du bassin de réception, se trouvent 2 broches au sol pour rappel guidé/tyro\n\nUn sentier en RD permet de remonter et de ... recommencer à volonté !",
+      "approche": "A pied, une fois de retour à la route barrée, descendre jusqu'à la petite place.\n\nPrendre à droite le sentier descendant balisé, menant au pont et aux cascades.\n\nLa première difficulté (C3) se trouve en traversant le pont pédestre en pierre, puis en montant immédiatement à gauche une sente qui vous fait longer l'ancien réservoir, puis marcher sur l'ancien canal sur une trentaine de mètres.",
+      "descente": "Il s'agit ici d'un magnifique mini canyon, où sur quelques mètres seulement, tous les obstacles du canyoning sont concentrés. Du fait de son équipement assez complet, c'est un canyon école.\n\nLe premier obstacle peut se descendre sur corde (chaîne discrète en RD), ou se sauter depuis la RG. Attention cependant : Depuis la crue de 2019 et la destruction du mini barrage du toboggan, la profondeur du petit bassin de réception est devenue ridicule, donc bien visualiser votre réception...\n\nLa C8 qui suit est descendable en glissade, ou sur corde depuis un des arbres en RG équipé d'une chaîne + maillon.\n\nPossibilité également d'équiper la MC rappelable qui mène sous le pont par une vire en RD (4 points + relais chaîné).\n\nUne belle marmite déverse alors ses flots dans le vide d'une C25 par un magnifique trou circulaire (équipement sur chaînes des deux côtés + MC en RG).\n\nSous le surplomb de la C25 en rive gauche, se cache un relais tout inox mais complétement plein vide, pour par exemple s'entrainer aux grandes verticales des Préalpes.\n\nEn bordure RD du bassin de réception, se trouvent 2 broches au sol pour rappel guidé/tyro\n\nUn sentier en RD permet de remonter et de ... recommencer à volonté !",
       "retour": "Sentier en RD",
       "engagement": "Canyon très très court (hélas), où seule la marmite sous le pont est sans échappatoire.\n\nPas de difficultés particulières.",
-      "periode": "Eau froide, abondante et claire même au cœur de l'été.\n\nDébit permettant la descente (à l'exception des crues) presque toute l'année.",
+      "periode": "Eau froide, abondante et claire même au cœur de l'été.\n\nDébit permettant la descente (à l'exception des crues) presque toute l'année.\n\nAttention, site sensible : tout se déroule sur des terrains privés, et la surfréquentation et surtout les incivilités de certains, ont conduit à une réglementation. Merci de respecter les lieux !",
       "geologie": "Un court et esthétique passage souterrain.",
       "historique": "Equipé par D. Guyétand à partir de 1991.",
       "remarques": "Site idéal pour l'apprentissage des diverses techniques Canyon :\n\n- rappels sur arbre nu et chaines\n\n- Sauts divers\n\n- Toboggan éjectable (le plus beau du Jura !)\n\n- C8 équipée plein gaz avec accès par MC rappelable.\n\n- Accès C25 équipé avec MC\n\n- Amarrages en bas de C25 pour rappel guidé.\n\n- Rappel guidé possible de C8 à sommet C25.\n\n- Relais \"pieds dans le vide\" sous le suplomb de la C25"
@@ -96,14 +96,39 @@
       "isForbidden": false,
       "rules": [
         {
-          "id": 610,
+          "id": 613,
           "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté préfectoral (Jura) - 25 sept 2026",
+          "summary": "Dans le cadre des mesures de restriction des usages de l'eau liées à la sécheresse, la préfecture a décidé que la pratique du canyonisme sur les canyons situés sur les bassins de l'Ain, de la Saine, du Tacon, de la Bienne et de leurs affluents est interdite, sauf entre 08h00 et 12h00.",
+          "remark": "1er arrêté abrogé le 09/09/2026 mais réglementation réactivée le 25/09/2026 par un nouvel arrêté.",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026\n\nArrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026\n\nArrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+          "effectiveDate": "25 sept 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/613/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj2.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj1.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj3.pdf"
+            }
+          ]
+        },
+        {
+          "id": 610,
+          "status": "Obsolète",
           "action": "Réglemente",
           "title": "Arrêté préfectoral (Jura) - 10 juil 2026",
           "summary": "Dans le cadre des mesures de restriction des usages de l'eau liées à la sécheresse, la préfecture a décidé que la pratique du canyonisme sur les canyons situés sur les cours d'eau du Tacon, de la Bienne et de leurs affluents est interdite, sauf entre 08h00 et 12h00.",
-          "remark": null,
-          "details": "Arrêté préfectoral n°2026-07-10-001 (Jura) du 10 juillet 2026\n\nCommuniqué de presse d'activation de mesure de restrictions concernant les activités aquatiques et nautiques (10 juillet 2026)",
-          "effectiveDate": "10 juil 2026",
+          "remark": "Arrête abrogé le 30/07/2026 et remplacé par l'arrêté n° 2026-07-28-002",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral n°2026-07-10-001 (Jura) du 10 juillet 2026\n\nCommuniqué de presse d'activation de mesure de restrictions concernant les activités aquatiques et nautiques (10 juillet 2026)",
+          "effectiveDate": "30 juil 2026",
           "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/610/legislation.html",
           "attachments": [
             {

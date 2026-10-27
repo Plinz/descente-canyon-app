@@ -1,77 +1,5 @@
 [
   {
-    "canyonId": 23109,
-    "type": "POINT_REMARQUABLE",
-    "rawType": "point_externe",
-    "latitude": 47.547527,
-    "longitude": 11.909946,
-    "label": "traverser la rivière Brandenburger Ache"
-  },
-  {
-    "canyonId": 23110,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 47.424255,
-    "longitude": 12.386119,
-    "label": null
-  },
-  {
-    "canyonId": 23110,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 47.432373,
-    "longitude": 12.393517,
-    "label": null
-  },
-  {
-    "canyonId": 23110,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 47.432892,
-    "longitude": 12.393651,
-    "label": null
-  },
-  {
-    "canyonId": 23111,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 47.376774,
-    "longitude": 11.284725,
-    "label": null
-  },
-  {
-    "canyonId": 23111,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 47.379215,
-    "longitude": 11.283652,
-    "label": null
-  },
-  {
-    "canyonId": 23111,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 47.385853,
-    "longitude": 11.266894,
-    "label": null
-  },
-  {
-    "canyonId": 23112,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 47.378075,
-    "longitude": 9.742412,
-    "label": "E1 depart Feienbach"
-  },
-  {
-    "canyonId": 23112,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 47.384251,
-    "longitude": 9.743999,
-    "label": "Depart pour Feienbach inf. (Fallbach) - C110"
-  },
-  {
     "canyonId": 23112,
     "type": "SORTIE",
     "rawType": "arrivee",
@@ -1997,6 +1925,78 @@
     "rawType": "depart",
     "latitude": 42.699234,
     "longitude": -0.130396,
+    "label": null
+  },
+  {
+    "canyonId": 23193,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 42.694386,
+    "longitude": -0.106828,
+    "label": null
+  },
+  {
+    "canyonId": 23194,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 42.248806,
+    "longitude": 8.723156,
+    "label": null
+  },
+  {
+    "canyonId": 23194,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 42.250362,
+    "longitude": 8.724755,
+    "label": null
+  },
+  {
+    "canyonId": 23194,
+    "type": "POINT_REMARQUABLE",
+    "rawType": "point_externe",
+    "latitude": 42.249672,
+    "longitude": 8.725259,
+    "label": "sente d'accés"
+  },
+  {
+    "canyonId": 23195,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 42.304214,
+    "longitude": 8.877906,
+    "label": null
+  },
+  {
+    "canyonId": 23195,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 42.303593,
+    "longitude": 8.880154,
+    "label": null
+  },
+  {
+    "canyonId": 23195,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 42.297085,
+    "longitude": 8.885304,
+    "label": null
+  },
+  {
+    "canyonId": 23196,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 42.448486,
+    "longitude": 8.866879,
+    "label": null
+  },
+  {
+    "canyonId": 23196,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 42.44313,
+    "longitude": 8.866804,
     "label": null
   }
 ]

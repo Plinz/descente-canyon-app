@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:57:08.867157+00:00",
+  "scrapedAt": "2026-10-27T16:48:55.246425+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2677,
@@ -31,9 +31,9 @@
       "coursEau": "Riale Lesgiüna"
     },
     "rating": {
-      "cotation": "v4a2III",
+      "cotation": "v4a4III",
       "interet": 3.5,
-      "nbVotes": 100
+      "nbVotes": 103
     },
     "metrics": {
       "altitudeDepartM": 530,

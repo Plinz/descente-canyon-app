@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:56:18.878592+00:00",
+  "scrapedAt": "2026-10-27T16:46:15.511412+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2410,
@@ -46,16 +46,16 @@
       "navette": "néant"
     },
     "timings": {
-      "approche": "45min",
+      "approche": "50min",
       "descente": "2h",
       "retour": "15min"
     },
     "topo": {
       "accesAval": "D'Ornans rejoindre Lods puis Mouthier-Haute-Pierre. Dès l'entrée du village, prendre la première route qui descend vers la Loue en direction du camping. Se garer au parking canoë.",
       "accesAmont": null,
-      "approche": "Du parking, prendre le GR qui monte vers Chatelet.",
+      "approche": "Attention la marche d'approche est assez compliqué a comprendre. A partir du parking Milouf (lieu de stationnement) monter dans la ville en suivant le GR. Arrivé dans la ville, prendre à droite route des Gorges de Nouailles.\n\nContinuer sur la route puis prendre à gauche rue du Petit Mont.\n\nA l'entrée de cette rue se trouve une petit source d'eau potable.\n\nMonter la rue, prendre la première à droite en direction de la Source de la Loue (sentier de randonnée qui monte durant 25 minutes). En haut du sentier, vous allez arriver à a une carrière avec un panneau vous expliquant qu'il faut traverser lechamps et puis continuer sur 150 mètres (dans mes souvenirs).\n\nSi vous continuee vous arriverez au début des cascades de Syratus.\n\nIl vous faudra simplement descendre à a coté du lit de la rivière pour arriver au premier rappel de 50 mètres.",
       "descente": "Enchaînement de cascades non encaissées. Relais sous forme de corde et de maillons autour des arbres.",
-      "retour": "Suivre la route en direction de la source de la Loue pour retrouver le sentier utilisé durant l'approche.",
+      "retour": "Suivre la route en direction de la ville. Vous passerez devant le cimetière pour ensuite empruntrer la route menant au parking.",
       "engagement": "Il est possible de shunter la première cascade de 50m en prenant un vague sentier à gauche dans la première épingle du GR après avoir traversé la route. On longe alors par le haut cette route le long des ouvrages de protection routiers. A l'inverse, échapatoire possible.",
       "periode": "Possible toute l'année mais canyon interdit du 15 Février au 15 Juin.\n\nSe parcours en cascade de glace durant les hiver très froid!",
       "geologie": null,

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:58:27.709547+00:00",
+  "scrapedAt": "2026-10-27T16:52:47.695605+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21019,
@@ -34,8 +34,8 @@
     },
     "rating": {
       "cotation": "v4a4II",
-      "interet": 3.3,
-      "nbVotes": 41
+      "interet": 3.4,
+      "nbVotes": 44
     },
     "metrics": {
       "altitudeDepartM": 1280,
@@ -114,7 +114,7 @@
           "publicationYear": 2016,
           "reference": null,
           "editor": null,
-          "status": "stock très réduit !\n\n- 27,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/1107/Canyons-du-Haut-Piemont-italien.html"
         },
         {

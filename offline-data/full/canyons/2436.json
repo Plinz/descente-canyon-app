@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:56:23.549807+00:00",
+  "scrapedAt": "2026-10-27T16:46:32.268010+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2436,
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v3a4III",
       "interet": 3.2,
-      "nbVotes": 98
+      "nbVotes": 99
     },
     "metrics": {
       "altitudeDepartM": 1400,
@@ -51,11 +51,11 @@
       "retour": "30min"
     },
     "topo": {
-      "accesAval": "Depuis Vicdessos, prendre la direction de Marc puis de l'Artigue. Se garer dans le virage en épingle avant le hameau (parking)",
+      "accesAval": "Depuis Vicdessos, prendre la direction de Marc puis de l'Artigue. Se garer dans le virage en épingle avant le hameau (parking en contrebas sur la gauche)",
       "accesAmont": null,
-      "approche": "Prendre le sentier qui part du fond du parking, passer le petit barrage qui permet de consulter la première échelle limigraphique colorée, peu précise. Si on veut plus de précision sur le débit, prendre 100m plus loin à gauche au premier croisement (direction Montcalm), puis continuer 200m, passer la passerelle, aller au bout à droite de la dalle rocheuse où se trouve la deuxième échelle, plus significative. Revenir sur ses pas jusqu'au croisement et prendre le sentier qui monte (GRT, direction port de l'Artigue). Le sentier reste rive gauche de la rivière pour aboutir à une passerelle, point de départ de la course.",
-      "descente": "Très belle descente dans un superbe paysage de montagne. Il s'agit d'un torrent de montagne, l'eau y est assez froide, et les mouvements peuvent surprendre et poser des problèmes.",
-      "retour": "Après le dernier saut (8m - Rive Droite - Dans une belle vasque) prendre le sentier rive droite, qui nous ramène au barrage puis au parking (chemin de descente du Montcalm)",
+      "approche": "Prendre le sentier qui part du fond du parking, suivre la route, passer un panneau d'indication, passer le petit barrage qui permet de consulter la première échelle limigraphique colorée, peu précise. Si on veut plus de précision sur le débit, prendre 100m plus loin à gauche au premier croisement (direction Montcalm), puis continuer 200m, passer la passerelle, aller au bout à droite de la dalle rocheuse où se trouve la deuxième échelle, plus significative. Revenir sur ses pas jusqu'au croisement et prendre le sentier qui monte à droite (GRT, direction sur le panneau port de l'Artigue). Le sentier fait un grand lacet à gauche près du pré et d'une borde réaménagée, reste ensuite dans des petits sous-bois en hauteur, reste rive gauche de la rivière, 30 min de montée solide, avant que le sentier devienne plus plat, traverse quelques clarières au soleil avant de redescendre vers le vallon, pour aboutir à une passerelle, point de départ du canyon.",
+      "descente": "Très belle descente dans un superbe paysage de montagne. Il s'agit d'un torrent de montagne, l'eau y est assez froide, et les mouvements peuvent surprendre et poser des problèmes.\n\nQuelques petits toboggans, puis une première vasque, avec un point rive gauche, au dessus d'une petite cascade qui se saute.\n\nLa plupart des vasques se sautent., mais parfois avec précaution.",
+      "retour": "Après une très belle chute d'eau main droite, sous la forme d'une cassure qui rejoint le cours d'eau, le dernier saut (8m - Rive Droite - Dans une belle vasque) dans une zone souvent fréquenté par les touristes, prendre le sentier rive droite, qui nous ramène au barrage puis au parking (chemin de descente du Montcalm).",
       "engagement": "Course relativement engagée. Une fois dedans difficile d'en sortir. A noter toutefois une échappatoire rive gauche (exposée et délicate) au niveau de la main courante (mi-parcours environ)",
       "periode": "Attention aux orages (violents) et à la période de fonte des neiges - eaux froides tout le long de l'année. Ne pas hésiter a consulter l'échelle limigraphique :\n\nRouge : descente impossible\n\nJaune : descente très dificile à impossible\n\nVert : OK\n\nMais ce code couleur prête à confusion : cf topic\n\nhttp://www.descente-canyon.com/forums/viewtopic.php?pid=42545 Il vaut mieux lui préférer l'échelle au petit pont 300m en amont (sentier de retour) : gros débits à 45cm",
       "geologie": null,

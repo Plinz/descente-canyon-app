@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:07:12.171098+00:00",
+  "scrapedAt": "2026-10-27T17:20:51.109895+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 23763,
@@ -33,7 +33,7 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "v4a2II",
+      "cotation": "v4a1II",
       "interet": 2.7,
       "nbVotes": 3
     },
@@ -41,7 +41,7 @@
       "altitudeDepartM": 1395,
       "deniveleM": 295,
       "longueurM": 850,
-      "cascadeMaxM": 65,
+      "cascadeMaxM": 70,
       "cordeMiniM": 40,
       "navette": "néant"
     },

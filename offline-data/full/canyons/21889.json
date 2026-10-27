@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:01:22.350846+00:00",
+  "scrapedAt": "2026-10-27T17:02:11.752452+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21889,
@@ -16,7 +16,7 @@
     "id": 21889,
     "identity": {
       "nom": "Amblard",
-      "nomComplet": "Cascade d' Amblard",
+      "nomComplet": "Cascade d' Amblard, Torrent de Crupillouse",
       "prefixeNom": "Cascade d'",
       "url": "https://www.descente-canyon.com/canyoning/canyon/21889/Amblard.html"
     },
@@ -30,7 +30,7 @@
       ],
       "massif": "Ecrins - Oisans - Champsaur",
       "bassin": "Drac",
-      "coursEau": null
+      "coursEau": "Torrent de Crupillouse"
     },
     "rating": {
       "cotation": "v4a2III",
@@ -46,8 +46,8 @@
       "navette": "néant"
     },
     "timings": {
-      "approche": "45min",
-      "descente": "2h30",
+      "approche": "45min à 1h",
+      "descente": "2h30 à 3h",
       "retour": "20min"
     },
     "topo": {

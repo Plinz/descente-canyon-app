@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:56:36.872180+00:00",
+  "scrapedAt": "2026-10-27T16:47:13.632254+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2522,
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 3.3,
-      "nbVotes": 182
+      "nbVotes": 186
     },
     "metrics": {
       "altitudeDepartM": 435,
@@ -51,9 +51,9 @@
       "retour": "10min"
     },
     "topo": {
-      "accesAval": "De l'autoroute \"dei fiori\", sortir à Ventimiglia. Du péage 2 itinéraires:\n\n- Tourner à droite, direction Vintimille, traverser la ville et remonter le val Nervia. Peu après Dolceacqua, prendre à gauche.\n\n- Continuer direction vallée de la Roya, et à la sortie du 1° hameau (Porra) prendre à droite la SP92. Moins de 300 mètres, tourner à gauche direction Verrandi, que l'on traverse, puis en qq minutes rejoindre la SP69 que l'on suit à gauche jusqu'à Rocchetta Nervina. Cet itinéraire est intéressant et a le gros avantage d'éviter la traversée de Vintimille.\n\nSe garer sur le parking aménagé à gauche à l'entrée du village.",
+      "accesAval": "De l'autoroute \"dei fiori\", sortir à Ventimiglia. Du péage 2 itinéraires:\n\n- Tourner à droite, direction Vintimille, traverser la ville et remonter le val Nervia. Peu après Dolceacqua, prendre à gauche.\n\n- Continuer direction vallée de la Roya, et à la sortie du 1° hameau (Porra) prendre à droite la SP92. Moins de 300 mètres, tourner à gauche direction Verrandi, que l'on traverse, puis en qq minutes rejoindre la SP69 que l'on suit à gauche jusqu'à Rocchetta Nervina. Cet itinéraire est intéressant et a le gros avantage d'éviter la traversée de Vintimille.\n\nSe garer sur le parking aménagé à gauche à l'entrée du village. Si ce parking est plein, redescendre aux parkings aménagés plus bas, cela rajoute une dizaine de minutes de marche.",
       "accesAmont": null,
-      "approche": "Du parking rejoindre la première place du village, passer le pont en pierre, prendre d'abord à droite qq mètres, puis le chemin montant à gauche (pavé).\n\nPoursuivre le sentier évident qui monte rapidement au dessus du court d'eau.\n\nDépasser une petite falaise puis prendre le premier sentier suffisamment large à gauche en direction du ponte di Cin, Alt. 435 m, point de départ du canyon.",
+      "approche": "Du parking rejoindre la première place du village, passer le pont en pierre, prendre ensuite à droite sur quelques mètres, puis commencer à monter en prenant une ruelle pavée quasiment à 180° sur la gauche.\n\nPoursuivre le sentier évident d’abord pavé qui monte assez raide au dessus du court d'eau, vous croiserez une chapelle, signe que vous êtes sur la bonne route et qu’il faut continuer pendant une petite trentaine de minutes (environ 2km).\n\nDépasser d’abord une falaise en main droite puis descendre peu après sur le premier sentier suffisamment large et marqué à gauche en direction du Ponte di Cin, Alt. 435 m, point de départ du canyon.",
       "descente": "La descente peut commencer par le fameux saut du pont (8,60m; difficile), on a ensuite une partie de marche puis qq très beaux passages dont la C11 (rappel en de nombreux endroits ou saut de 9m) suivie d'un toboggan avant d'arriver dans une partie plus encaissée faisant penser à la clue de la Maglia (2 sauts possibles de 6 et 8m ou rappels + un rappel rive D).\n\nEnfin, un chaos de blocs amène au barrage marquant la fin du canyon!\n\nSa couleur exceptionnelle s'apprécie encore plus par un temps ensoleillé...",
       "retour": "Un sentier en RD juste après le barrage ramène rapidement au village et au parking.",
       "engagement": "Canyon peu engagé avec des échappatoires balisées.\n\nPlusieurs sauts non obligatoires d'une hauteur égale ou supérieure à 8 mètres sont possibles. Ne pas perdre de vue que ces sauts sont des exercices réservés à des pratiquants habitués et que cette hauteur représente déjà un danger potentiel.",

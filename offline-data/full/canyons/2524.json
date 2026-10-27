@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:56:35.441015+00:00",
+  "scrapedAt": "2026-10-27T16:47:13.767141+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2524,
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v4a3III",
       "interet": 2.6,
-      "nbVotes": 11
+      "nbVotes": 12
     },
     "metrics": {
       "altitudeDepartM": 1550,
@@ -101,7 +101,7 @@
           "publicationYear": 2004,
           "reference": "ISBN: 2741702888",
           "editor": "GAP",
-          "status": "stock très réduit !\n\n- 16,99 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "status": "derniers exemplaires !\n\n- 16,99 € -\n\nCommandez cet ouvrage dès maintenant !",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/128/Canyons-de-Haute-Savoie.html"
         },
         {

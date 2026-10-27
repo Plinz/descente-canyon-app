@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:29.984713+00:00",
+  "scrapedAt": "2026-10-27T16:43:55.921929+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2204,
@@ -53,7 +53,7 @@
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "Se rendre au parking des cascades du Hérisson (4 euros en saison ou certains week-ends)",
+      "accesAval": "Se rendre au parking des cascades du Hérisson. Parking payant entre le 1er juillet et le 30 septembre (10 euros par véhicule pour une durée de 1h à 4h et 15 euros pour une durée de plus de 4 heures).",
       "accesAmont": null,
       "approche": "Suivre le sentier touristique balisé jusqu'en haut du Saut de la Forge, point de départ de la course.",
       "descente": "Le saut de la Forge (C10) s'équipe sur un arbre en RG. Le grand saut se descend en deux fois en RG (arbre ou désescalade engagée plus deux spits et arbre pour la longueur suivante ). L'éventail se descend en deux fois en RG (2 fractionnements possibles : 2 plaquettes en RG ou 2 broches + anneau de corde au centre)",
@@ -105,6 +105,31 @@
       "hasSpecificRegulation": true,
       "isForbidden": false,
       "rules": [
+        {
+          "id": 613,
+          "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté préfectoral (Jura) - 25 sept 2026",
+          "summary": "Dans le cadre des mesures de restriction des usages de l'eau liées à la sécheresse, la préfecture a décidé que la pratique du canyonisme sur les canyons situés sur les bassins de l'Ain, de la Saine, du Tacon, de la Bienne et de leurs affluents est interdite, sauf entre 08h00 et 12h00.",
+          "remark": "1er arrêté abrogé le 09/09/2026 mais réglementation réactivée le 25/09/2026 par un nouvel arrêté.",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026\n\nArrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026\n\nArrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+          "effectiveDate": "25 sept 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/613/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj2.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj1.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj3.pdf"
+            }
+          ]
+        },
         {
           "id": 491,
           "status": "Abrogé",

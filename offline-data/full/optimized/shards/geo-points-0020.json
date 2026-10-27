@@ -1,77 +1,5 @@
 [
   {
-    "canyonId": 21796,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 42.955853,
-    "longitude": 2.517226,
-    "label": null
-  },
-  {
-    "canyonId": 21796,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 42.956051,
-    "longitude": 2.518155,
-    "label": null
-  },
-  {
-    "canyonId": 21797,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 45.990833,
-    "longitude": 6.638611,
-    "label": null
-  },
-  {
-    "canyonId": 21797,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 45.988808,
-    "longitude": 6.634056,
-    "label": null
-  },
-  {
-    "canyonId": 21797,
-    "type": "PARKING_AMONT",
-    "rawType": "parking_amont",
-    "latitude": 45.990833,
-    "longitude": 6.638083,
-    "label": null
-  },
-  {
-    "canyonId": 21797,
-    "type": "PARKING_AVAL",
-    "rawType": "parking_aval",
-    "latitude": 45.987499,
-    "longitude": 6.632222,
-    "label": null
-  },
-  {
-    "canyonId": 21798,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 45.941944,
-    "longitude": 6.554028,
-    "label": null
-  },
-  {
-    "canyonId": 21798,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 45.938084,
-    "longitude": 6.560972,
-    "label": null
-  },
-  {
-    "canyonId": 21798,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 45.934444,
-    "longitude": 6.579444,
-    "label": null
-  },
-  {
     "canyonId": 21799,
     "type": "PARKING_AVAL",
     "rawType": "parking",
@@ -1998,5 +1926,77 @@
     "latitude": 43.395912,
     "longitude": 5.683043,
     "label": "C30"
+  },
+  {
+    "canyonId": 21891,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 44.326866,
+    "longitude": 3.511489,
+    "label": null
+  },
+  {
+    "canyonId": 21891,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 44.33025,
+    "longitude": 3.507535,
+    "label": null
+  },
+  {
+    "canyonId": 21891,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 44.332005,
+    "longitude": 3.512439,
+    "label": null
+  },
+  {
+    "canyonId": 21891,
+    "type": "POINT_REMARQUABLE",
+    "rawType": "point_externe",
+    "latitude": 44.336987,
+    "longitude": 3.504081,
+    "label": "Montbrun"
+  },
+  {
+    "canyonId": 21892,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 44.894234,
+    "longitude": 2.922986,
+    "label": null
+  },
+  {
+    "canyonId": 21893,
+    "type": "PARKING_AMONT",
+    "rawType": "parking_amont",
+    "latitude": 42.480961,
+    "longitude": 2.313824,
+    "label": null
+  },
+  {
+    "canyonId": 21893,
+    "type": "PARKING_AVAL",
+    "rawType": "parking_aval",
+    "latitude": 42.487415,
+    "longitude": 2.321484,
+    "label": null
+  },
+  {
+    "canyonId": 21894,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 45.02,
+    "longitude": 6.469444,
+    "label": null
+  },
+  {
+    "canyonId": 21894,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 45.018612,
+    "longitude": 6.469167,
+    "label": null
   }
 ]

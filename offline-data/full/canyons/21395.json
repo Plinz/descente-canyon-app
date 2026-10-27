@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:59:43.853461+00:00",
+  "scrapedAt": "2026-10-27T16:56:54.263885+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21395,
@@ -97,14 +97,39 @@
       "isForbidden": false,
       "rules": [
         {
-          "id": 610,
+          "id": 613,
           "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté préfectoral (Jura) - 25 sept 2026",
+          "summary": "Dans le cadre des mesures de restriction des usages de l'eau liées à la sécheresse, la préfecture a décidé que la pratique du canyonisme sur les canyons situés sur les bassins de l'Ain, de la Saine, du Tacon, de la Bienne et de leurs affluents est interdite, sauf entre 08h00 et 12h00.",
+          "remark": "1er arrêté abrogé le 09/09/2026 mais réglementation réactivée le 25/09/2026 par un nouvel arrêté.",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026\n\nArrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026\n\nArrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+          "effectiveDate": "25 sept 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/613/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj2.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj1.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj3.pdf"
+            }
+          ]
+        },
+        {
+          "id": 610,
+          "status": "Obsolète",
           "action": "Réglemente",
           "title": "Arrêté préfectoral (Jura) - 10 juil 2026",
           "summary": "Dans le cadre des mesures de restriction des usages de l'eau liées à la sécheresse, la préfecture a décidé que la pratique du canyonisme sur les canyons situés sur les cours d'eau du Tacon, de la Bienne et de leurs affluents est interdite, sauf entre 08h00 et 12h00.",
-          "remark": null,
-          "details": "Arrêté préfectoral n°2026-07-10-001 (Jura) du 10 juillet 2026\n\nCommuniqué de presse d'activation de mesure de restrictions concernant les activités aquatiques et nautiques (10 juillet 2026)",
-          "effectiveDate": "10 juil 2026",
+          "remark": "Arrête abrogé le 30/07/2026 et remplacé par l'arrêté n° 2026-07-28-002",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral n°2026-07-10-001 (Jura) du 10 juillet 2026\n\nCommuniqué de presse d'activation de mesure de restrictions concernant les activités aquatiques et nautiques (10 juillet 2026)",
+          "effectiveDate": "30 juil 2026",
           "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/610/legislation.html",
           "attachments": [
             {

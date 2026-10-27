@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:40.492157+00:00",
+  "scrapedAt": "2026-10-27T16:44:11.838705+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2212,
@@ -34,34 +34,34 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "v3a3II",
-      "interet": 3.0,
-      "nbVotes": 118
+      "cotation": "",
+      "interet": null,
+      "nbVotes": 0
     },
     "metrics": {
       "altitudeDepartM": 715,
       "deniveleM": 90,
       "longueurM": 500,
-      "cascadeMaxM": 12,
-      "cordeMiniM": 12,
-      "navette": "néant"
+      "cascadeMaxM": null,
+      "cordeMiniM": null,
+      "navette": null
     },
     "timings": {
-      "approche": "20min",
-      "descente": "3-6h",
-      "retour": "30mn à 1h"
+      "approche": null,
+      "descente": null,
+      "retour": null
     },
     "topo": {
-      "accesAval": "Depuis Villefort, prendre la D906 en direction de Prévenchères et la Bastide-Puylaurent. 200 mètres après avoir passé la route à droite qui mène à la Garde-Guérin, tournez à droite sur une petite route en direction du belvédère du Chassezac : garez-vous sur le parking aménagé de ce belvédère (panneaux, barrières).",
+      "accesAval": null,
       "accesAmont": null,
-      "approche": "Une fois prêt, vous sortez du parking à droite et suivez la voie verte jusqu'au premier chemin sur la droite. Laissez sur votre droite un sentier et suivez le sentier jusqu'à la rivière.",
-      "descente": "La durée de la descente dépend grandement du monde rencontré et de l'époque à laquelle vous y allez. 3h30 jusqu'au premier échappatoire, 4 heures jusqu'au deuxième. Ces temps correspondent à un groupe de 7 personnes et à un parcours avec une forte fréquentation (attente...).\n\nRemarque : Le passage de la Rajole à été rééquipé en main courantes fixes, qu'il est obligatoire d'utiliser. En effet, le passage de la Rajole présentait un bloc potentiellement siphonnant, ayant été déjà à l'origine de plusieurs accidents mortels. Il avait été supprimé. Cependant, au niveau e du passage clef, là où le bloc avait été enlevé pour supprimer le siphon, il demeurait un piège à pied (coincement) qui, malgré le fait qu'il était précisé, a coûté la vie à une nouvelle personne. Aussi, cette partie est désormais interdite, et il est impératif d'utiliser la main courante pour la contourner !",
-      "retour": "Plusieurs sorties possibles balisées par des points de couleur (jaune, vert, rouge et bleu)",
-      "engagement": "Très bon équipement. Toujours possible de prendre un autre amarrage si ça bouchonne. Plusieurs échappatoires sur toute la descente car très encaissé (voir plan de secours)\n\nAttention aux montées des eaux : à proscrire en période orageuse.",
-      "periode": "Canyon très ensoleillé en journée.",
+      "approche": null,
+      "descente": null,
+      "retour": null,
+      "engagement": null,
+      "periode": null,
       "geologie": null,
       "historique": null,
-      "remarques": "Au delà du dernier chemin retour (balisage bleu), une dernière partie était parfois fréquentée. Elle ne représente que 3 toboggans et 2 sauts sur les 4h de rando restante : cette partie est donc sans véritable intérêt canyon. De plus elle vous mène 8km plus bas que Villefort donc deux véhicules sont indispensables."
+      "remarques": null
     },
     "geoPoints": [
       {
@@ -71,37 +71,13 @@
         "latitude": 44.4902,
         "longitude": 3.944236,
         "label": "position approximative"
-      },
-      {
-        "canyonId": 2212,
-        "rawType": "parking_amont",
-        "type": "PARKING_AMONT",
-        "latitude": 44.489098,
-        "longitude": 3.938859,
-        "label": "(parking amont si intégrale / parking unique si sortie après Rajolle)"
-      },
-      {
-        "canyonId": 2212,
-        "rawType": "point_externe",
-        "type": "POINT_REMARQUABLE",
-        "latitude": 44.482731,
-        "longitude": 3.938586,
-        "label": "Sentier de sortie après la Rajolle (ou echappatoire si descente intégrale)"
-      },
-      {
-        "canyonId": 2212,
-        "rawType": "point_interne",
-        "type": "POINT_REMARQUABLE",
-        "latitude": 44.483345,
-        "longitude": 3.939062,
-        "label": "Passage de la Rajolle"
       }
     ],
     "representativePoint": {
-      "type": "PARKING_AMONT",
-      "latitude": 44.489098,
-      "longitude": 3.938859,
-      "label": "(parking amont si intégrale / parking unique si sortie après Rajolle)"
+      "type": "ENTREE",
+      "latitude": 44.4902,
+      "longitude": 3.944236,
+      "label": "position approximative"
     },
     "bibliography": {
       "topoguides": [
@@ -180,8 +156,33 @@
     },
     "reglementation": {
       "hasSpecificRegulation": true,
-      "isForbidden": false,
+      "isForbidden": true,
       "rules": [
+        {
+          "id": 619,
+          "status": "Actif",
+          "action": "Interdit",
+          "title": "Arrêté municipal (Pied-de-Borne, Prévenchères) - 04 sept 2026",
+          "summary": "Du dimanche 06 septembre au vendredi 02 octobre 2026, le canyon du Chassezac est interdit en raison de la \"mise en transparence\" du barrage du Rachas pour des travaux d'entretien à l'usine du Beyssac.",
+          "remark": "Interdiction prolongée jusqu'au 2 novembre 2026 par arrêtés des deux communes.",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté municipal (Prévenchères) N°AR_067_2026 du 2 octobre 2026\n\nArrêté municipal (Prévenchères) N°AR_064_2026 du 04 septembre 2026\n\nArrêté municipal (Pied-de-Borne) N°2026_067 du 1er octobre 2026",
+          "effectiveDate": "02 nov 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/619/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté municipal (Prévenchères) N°AR_067_2026 du 2 octobre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem619_pj2.pdf"
+            },
+            {
+              "label": "Arrêté municipal (Prévenchères) N°AR_064_2026 du 04 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem619_pj1.pdf"
+            },
+            {
+              "label": "Arrêté municipal (Pied-de-Borne) N°2026_067 du 1er octobre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem619_pj3.pdf"
+            }
+          ]
+        },
         {
           "id": 584,
           "status": "Abrogé",

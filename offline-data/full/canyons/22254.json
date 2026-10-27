@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:02:31.033985+00:00",
+  "scrapedAt": "2026-10-27T17:05:57.067114+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 22254,
@@ -9,7 +9,7 @@
       "description": "https://www.descente-canyon.com/canyoning/canyon-description/22254/topo.html",
       "map": "https://www.descente-canyon.com/canyoning/canyon-carte/22254/carte.html",
       "bibliography": "https://www.descente-canyon.com/canyoning/canyon-bibliographie/22254/guides-et-cartes.html",
-      "regulation": null
+      "regulation": "https://www.descente-canyon.com/canyoning/canyon-reglementation/22254/legislation.html"
     }
   },
   "canyon": {
@@ -100,9 +100,27 @@
       "resources": []
     },
     "reglementation": {
-      "hasSpecificRegulation": false,
-      "rules": [],
-      "isForbidden": false
+      "hasSpecificRegulation": true,
+      "isForbidden": false,
+      "rules": [
+        {
+          "id": 616,
+          "status": "Obsolète",
+          "action": "Interdit",
+          "title": "Arrêté municipal (Le Grand-Bornand) - 11 août 2026",
+          "summary": "La pratique du canyoning est interdite dans le torrent du Chinaillon à partir du 11 août 2026 et jusqu'au 15 octobre 2026 inclus en raison de la sécheresse exceptionnelle.",
+          "remark": null,
+          "details": "Arrêté municipal (Le Grand-Bornand) n°ARR2026/260 du 11 août 2026",
+          "effectiveDate": "16 oct 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/616/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté municipal (Le Grand-Bornand) n°ARR2026/260 du 11 août 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem616_pj1.pdf"
+            }
+          ]
+        }
+      ]
     }
   }
 }

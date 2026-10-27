@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:02:01.874680+00:00",
+  "scrapedAt": "2026-10-27T17:04:28.902489+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 22112,
@@ -9,7 +9,7 @@
       "description": "https://www.descente-canyon.com/canyoning/canyon-description/22112/topo.html",
       "map": "https://www.descente-canyon.com/canyoning/canyon-carte/22112/carte.html",
       "bibliography": "https://www.descente-canyon.com/canyoning/canyon-bibliographie/22112/guides-et-cartes.html",
-      "regulation": null
+      "regulation": "https://www.descente-canyon.com/canyoning/canyon-reglementation/22112/legislation.html"
     }
   },
   "canyon": {
@@ -124,9 +124,27 @@
       ]
     },
     "reglementation": {
-      "hasSpecificRegulation": false,
-      "rules": [],
-      "isForbidden": false
+      "hasSpecificRegulation": true,
+      "isForbidden": false,
+      "rules": [
+        {
+          "id": 621,
+          "status": "Obsolète",
+          "action": "Interdit",
+          "title": "Arrêté municipal (Talloires-Montmin) - 21 sept 2026",
+          "summary": "Canyon interdit par arrêté municipal la semaine du 21 au 25 septembre 2026 pour cause de travaux de dépollution.",
+          "remark": null,
+          "details": "Arrêté municipal (Talloires-montmin) n°114/2026 du 4 septembre 2026",
+          "effectiveDate": "26 sept 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/621/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté municipal (Talloires-montmin) n°114/2026 du 4 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem621_pj1.pdf"
+            }
+          ]
+        }
+      ]
     }
   }
 }

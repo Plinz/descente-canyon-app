@@ -1,77 +1,5 @@
 [
   {
-    "canyonId": 22741,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 32.788403,
-    "longitude": -17.098558,
-    "label": null
-  },
-  {
-    "canyonId": 22741,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 32.793835,
-    "longitude": -17.112774,
-    "label": null
-  },
-  {
-    "canyonId": 22741,
-    "type": "PARKING_AMONT",
-    "rawType": "parking_amont",
-    "latitude": 32.765099,
-    "longitude": -17.101437,
-    "label": null
-  },
-  {
-    "canyonId": 22741,
-    "type": "PARKING_AVAL",
-    "rawType": "parking_aval",
-    "latitude": 32.796684,
-    "longitude": -17.11404,
-    "label": null
-  },
-  {
-    "canyonId": 22741,
-    "type": "POINT_REMARQUABLE",
-    "rawType": "point_interne",
-    "latitude": 32.790291,
-    "longitude": -17.104521,
-    "label": "Levada Do Norte: apporche partie basse ou échappatoire"
-  },
-  {
-    "canyonId": 22742,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 46.476681,
-    "longitude": 8.82253,
-    "label": null
-  },
-  {
-    "canyonId": 22743,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 32.813251,
-    "longitude": -17.073847,
-    "label": null
-  },
-  {
-    "canyonId": 22743,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 32.81345,
-    "longitude": -17.072624,
-    "label": null
-  },
-  {
-    "canyonId": 22744,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 32.785202,
-    "longitude": -17.111,
-    "label": "Départ de la Levada do Seixal"
-  },
-  {
     "canyonId": 22744,
     "type": "SORTIE",
     "rawType": "arrivee",
@@ -1998,5 +1926,77 @@
     "latitude": 46.005367,
     "longitude": 8.329525,
     "label": null
+  },
+  {
+    "canyonId": 22829,
+    "type": "PARKING_AMONT",
+    "rawType": "parking_amont",
+    "latitude": 46.0145,
+    "longitude": 8.332234,
+    "label": null
+  },
+  {
+    "canyonId": 22830,
+    "type": "PARKING_AVAL",
+    "rawType": "parking_aval",
+    "latitude": 46.171242,
+    "longitude": 8.348172,
+    "label": null
+  },
+  {
+    "canyonId": 22831,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 46.171124,
+    "longitude": 8.34815,
+    "label": null
+  },
+  {
+    "canyonId": 22832,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 43.91703,
+    "longitude": 6.750283,
+    "label": null
+  },
+  {
+    "canyonId": 22832,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 43.925556,
+    "longitude": 6.774724,
+    "label": null
+  },
+  {
+    "canyonId": 22832,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 43.926334,
+    "longitude": 6.779852,
+    "label": null
+  },
+  {
+    "canyonId": 22833,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 46.128757,
+    "longitude": 8.397632,
+    "label": null
+  },
+  {
+    "canyonId": 22834,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 46.060753,
+    "longitude": 8.591228,
+    "label": "depart partie inf."
+  },
+  {
+    "canyonId": 22834,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 46.071514,
+    "longitude": 8.600562,
+    "label": "pont"
   }
 ]

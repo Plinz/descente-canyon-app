@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:07:00.638445+00:00",
+  "scrapedAt": "2026-10-27T17:20:11.089677+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 23698,
@@ -15,10 +15,10 @@
   "canyon": {
     "id": 23698,
     "identity": {
-      "nom": "Frenay (Partie Amont)",
-      "nomComplet": "Canyon de Frenay (Partie Amont), Vedun, Le Vertosan",
+      "nom": "Frenay (amont)",
+      "nomComplet": "Canyon de Frenay (amont), Vedun, Le Vertosan",
       "prefixeNom": "Canyon de",
-      "url": "https://www.descente-canyon.com/canyoning/canyon/23698/Frenay-Partie-Amont.html"
+      "url": "https://www.descente-canyon.com/canyoning/canyon/23698/Frenay-amont.html"
     },
     "location": {
       "pays": "Italie",
@@ -35,8 +35,8 @@
     },
     "rating": {
       "cotation": "v4a3III",
-      "interet": 2.7,
-      "nbVotes": 3
+      "interet": 2.3,
+      "nbVotes": 4
     },
     "metrics": {
       "altitudeDepartM": 1515,
@@ -55,13 +55,13 @@
       "accesAval": "A Aoste, se diriger vers le tunnel du Mont Blanc par la route nationale. Après Arvier, tourner à droite en direction d'Avise à un rond-point. A l'entrée d'Avise, prendre le tunnel qui shunte le village et continuer à monter en direction de Cérellaz. 1 km environ avant Cérellaz, il y a un aménagement touristique du nom de Lo Crou avec des parkings bien visibles à gauche puis à droite de la route. Y laisser la voiture aval. Le sentier de retour arrive juste en dessous du 1er parking de gauche (panneau indicateur \"Cascade de Frenay\")",
       "accesAmont": "continuer à monter, traverser Cérellaz et prendre la 1ère à gauche en épingle à cheveu peu après ce village, direction Vedun. A Vedun, terminus de la route, se garer sur la petite place après avoir enjambé le Vertosan.",
       "approche": "Du pont de départ, descendre dans le torrent en RG coté amont",
-      "descente": "Toujours bien en eau, Frenay Amont se présente comme une succession quasi ininterrompue de rappels (18 m maxi) avant d'arriver à la cascade terminale de 55 m.\n\nCelle-ci, équipée en RD, est fractionnée en 3 longueurs : 15 m (arbre) + 15 m (2 points à coté d'un arbre) + 25 m (1 point à doubler)\n\nA noter que la cascade visible depuis la route nationale en fond de vallée n'est pas cette cascade, mais la cascade terminale de Frenay Aval qui lui ressemble.",
+      "descente": "Toujours bien en eau, Frenay Amont se présente comme une succession quasi ininterrompue de rappels sans caractère, ni esthétique (18 m maxi) avant d'arriver à la cascade terminale de 55 m.\n\nCelle-ci, équipée en RD, est fractionnée en 3 longueurs : 15 m (arbre) + 15 m (2 points à coté d'un arbre) + 25 m (1 point à doubler)\n\nA noter que la cascade visible depuis la route nationale en fond de vallée n'est pas cette cascade, mais la cascade terminale de Frenay Aval qui lui ressemble.",
       "retour": "En bas de la cascade terminale, emprunter un court moment le canal de prise d'eau, puis prendre à droite le sentier qui amène les touristes en bas de la cascade. A la 1ère intersection, prendre à gauche pour rejoindre Lo Crou (panneau en place).",
       "engagement": "2 échappatoires (non testés) visibles dans le canyon :\n\n- avant le rappel précédent la ligne haute tension : en RG, un canal de prise d'eau.\n\n- après le rappel suivant la ligne haute tension : en RD, un pré vient border le torrent. Il semble possible de remonter à Vedun par celui-ci.",
-      "periode": "Le bassin d'alimentation du canyon est important (la Combe du Vertosan). Le débit du canyon, important au printemps, devient acceptable en début d'été. La période idéale va de juillet à septembre.",
+      "periode": "Le bassin d'alimentation du canyon est important (la Combe du Vertosan). Le débit du canyon, important au printemps, devient acceptable en début d'été. La période idéale va de juillet à septembre. Attention, prise d'eau en amont",
       "geologie": "Roches métamorphiques",
       "historique": "1ère descente effectuée le 07/08/2016 par E Dommergues, F Lété, I Ayari, JM Aguilar (Club Afegc) et A Vialon (Clubs Scof/Sccm)",
-      "remarques": "Le canyon peut être enchaîné avec Frenay Aval (voir fiche) pour faire une course de belle ampleur.\n\nEquipement de 1ère en 2016. Les rappels de faibles hauteurs sont mono-point. Prendre de quoi rééquiper."
+      "remarques": "Le canyon peut être enchaîné avec Frenay aval (voir fiche) pour faire une course de belle ampleur.\n\nÉquipement de 1ère en 2016. Les rappels de faibles hauteurs sont mono-point. Prendre de quoi rééquiper. Les amarrages sont pratiquement toujours hors d'eau, pas idéalement placés"
     },
     "geoPoints": [
       {

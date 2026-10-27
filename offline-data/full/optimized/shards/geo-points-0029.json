@@ -1,77 +1,5 @@
 [
   {
-    "canyonId": 22614,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 44.04055,
-    "longitude": 7.03419,
-    "label": null
-  },
-  {
-    "canyonId": 22615,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 44.188641,
-    "longitude": 3.244611,
-    "label": null
-  },
-  {
-    "canyonId": 22615,
-    "type": "PARKING_AVAL",
-    "rawType": "parking_aval",
-    "latitude": 44.172138,
-    "longitude": 3.245306,
-    "label": null
-  },
-  {
-    "canyonId": 22615,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 44.189327,
-    "longitude": 3.210778,
-    "label": "village de Peyreleau"
-  },
-  {
-    "canyonId": 22616,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 43.734577,
-    "longitude": 6.392541,
-    "label": null
-  },
-  {
-    "canyonId": 22616,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 43.73233,
-    "longitude": 6.388142,
-    "label": null
-  },
-  {
-    "canyonId": 22616,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 43.730026,
-    "longitude": 6.387048,
-    "label": null
-  },
-  {
-    "canyonId": 22616,
-    "type": "POINT_REMARQUABLE",
-    "rawType": "point_externe",
-    "latitude": 43.730034,
-    "longitude": 6.386855,
-    "label": "sentier de retour (marques bleu et parfois rouge)"
-  },
-  {
-    "canyonId": 22617,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 44.031418,
-    "longitude": 7.048373,
-    "label": null
-  },
-  {
     "canyonId": 22617,
     "type": "SORTIE",
     "rawType": "arrivee",
@@ -1998,5 +1926,77 @@
     "latitude": 43.900597,
     "longitude": 6.209893,
     "label": "Début du chemin"
+  },
+  {
+    "canyonId": 22741,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 32.788403,
+    "longitude": -17.098558,
+    "label": null
+  },
+  {
+    "canyonId": 22741,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 32.793835,
+    "longitude": -17.112774,
+    "label": null
+  },
+  {
+    "canyonId": 22741,
+    "type": "PARKING_AMONT",
+    "rawType": "parking_amont",
+    "latitude": 32.765099,
+    "longitude": -17.101437,
+    "label": null
+  },
+  {
+    "canyonId": 22741,
+    "type": "PARKING_AVAL",
+    "rawType": "parking_aval",
+    "latitude": 32.796684,
+    "longitude": -17.11404,
+    "label": null
+  },
+  {
+    "canyonId": 22741,
+    "type": "POINT_REMARQUABLE",
+    "rawType": "point_interne",
+    "latitude": 32.790291,
+    "longitude": -17.104521,
+    "label": "Levada Do Norte: apporche partie basse ou échappatoire"
+  },
+  {
+    "canyonId": 22742,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 46.476681,
+    "longitude": 8.82253,
+    "label": null
+  },
+  {
+    "canyonId": 22743,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 32.813251,
+    "longitude": -17.073847,
+    "label": null
+  },
+  {
+    "canyonId": 22743,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 32.81345,
+    "longitude": -17.072624,
+    "label": null
+  },
+  {
+    "canyonId": 22744,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 32.785202,
+    "longitude": -17.111,
+    "label": "Départ de la Levada do Seixal"
   }
 ]

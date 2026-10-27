@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:08:21.518958+00:00",
+  "scrapedAt": "2026-10-27T17:24:33.041742+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 24133,
@@ -33,34 +33,34 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "v6a3IV",
+      "cotation": "v5a2V",
       "interet": 3.0,
       "nbVotes": 1
     },
     "metrics": {
-      "altitudeDepartM": 1170,
-      "deniveleM": 395,
-      "longueurM": 900,
-      "cascadeMaxM": 50,
-      "cordeMiniM": 50,
+      "altitudeDepartM": 1775,
+      "deniveleM": 1000,
+      "longueurM": 1700,
+      "cascadeMaxM": 120,
+      "cordeMiniM": 60,
       "navette": "néant"
     },
     "timings": {
-      "approche": "1h45",
-      "descente": "4h30",
+      "approche": "3h30",
+      "descente": "9-10 h",
       "retour": "10min"
     },
     "topo": {
       "accesAval": null,
       "accesAmont": null,
-      "approche": null,
-      "descente": "Imposant et majestueux canyon, peu ludique mais continue et technique.",
-      "retour": null,
-      "engagement": null,
-      "periode": null,
+      "approche": "Suivez les panneaux indiquant le sentier G10 en direction de Busin di Sopra / Alpe Groppo. Le sentier remonte la rive gauche des gorges, balisé mais peu fréquenté, avec des passages escarpés et des marches en pierre. Passez l'alpage de Bochi à 930 m et continuez jusqu'à environ 1180 m, où, au niveau d'une paroi rocheuse, un sentier étroit bifurque et descend à mi-pente vers l'accès à la partie inférieure (voir note). Poursuivez jusqu'à Busin di Sotto (1527 m) puis, sur des pentes plus douces, jusqu'à Busin di Sopra (1696 m). De là, le sentier quitte la crête et descend à mi-pente, moins visible, jusqu'à rejoindre un affluent de la rive gauche et, 5 minutes plus tard, le ruisseau Usella à 1775 m.",
+      "descente": "Imposant et majesteux canyon, peu ludique (pas de vasques) mais continue et technique.\n\nLe ruisseau coule dans une spectaculaire entaille rocheuse de la vallée d'Antigorio, formant une gorge étroite, continue et glaciale. Les névés en amont et le tracé sans courbes du ruisseau créent une sorte de climatisation naturelle depuis les hauteurs jusqu'aux abords. Les descentes sont presque toujours balayées par le jet de la cascade. La dernière descente verticale, d'environ 120 mètres de long et 75 mètres de dénivelé positif, ne présente pas de difficulté particulière (fractionnèe 50+30+40). La descente complète est un véritable défi, tant physiquement que mentalement.",
+      "retour": "Par le prés, on rejoint le chemin de terre qui ramène rapidement au parking.",
+      "engagement": "Vous vous trouvez en pleine nature, en terrain d'aventure pure, avec un accès difficile, très peu de zones de sécurité et une seule voie de repli évidente. Cette descente, pratiquement au fond des gorges, doit être entreprise par temps parfaitement stable.",
+      "periode": "Le canyon doit être entrepris par faible débit (août-septembre)",
       "geologie": null,
-      "historique": null,
-      "remarques": null
+      "historique": "Partie inférieure (1170 m) 15-16 août 2014 - G. Armaroli, L. Bianchi, C. Mimmo, M. Pilato, N. Pizzorni, R. Schenone, S. Corbetta\n\nPartie supérieure (1775 m) 27 août 2016 - G. Armaroli, L. Bianchi, N. Pizzorni, R. Schenone, S. Carlarino, A. Piazza, L. Politi",
+      "remarques": "EMPORTER DE QUOI REEQUIPPER - Explo du 2016\n\nACCÈS À LA PARTIE INFÉRIEURE : Sur le sentier d'approche, à environ 1 180 mètres d'altitude, près d'une paroi rocheuse, un sentier étroit bifurque à gauche – plus loin, balisé par des cairns (posés en 2016) – et remonte à mi-pente vers l'accès à la partie inférieure. Un repère assez évident : après 50 mètres sur le sentier, on aperçoit une énorme souche d'arbre. Plus loin, le sentier devient moins visible, avec quelques courtes montées et descentes ; il faut cependant maintenir son altitude. La gorge étant maintenant en vue, il faut traverser la forêt très escarpée (attention !). On atteint finalement une corniche à environ 1 180 mètres, d'où l'on peut descendre en rappel dans la gorge. Comptez environ 25 minutes à partir du moment où vous quittez le sentier balisé, pour un total d'environ 1 heure et 45 minutes.\n\nDESCENTE COMPLÈTE : Il est fortement recommandé de monter la veille et de passer la nuit à l'Alpe Groppo, un bivouac confortable à 2 017 mètres. Comptez 1 heure de marche en continuant sur le sentier après l'entrée de la gorge. Le refuge est équipé de tables, de réchauds et de gaz. Il y a 5 couchages sur lits de camp (moustiquaires et matelas dormiben) et 2 couchages supplémentaires au sol. Il vous suffit d'apporter un sac de couchage léger et votre propre nourriture. Si la fontaine derrière le refuge est à sec, suivez le sentier vers le nord pendant 15 minutes jusqu'à un ruisseau.\n\nCompte tenu de la proximité de la carrière (avec les fortes explosions qui y sont associées et les risques de chutes de débris sur la dernière partie), nous recommandons de descendre uniquement les samedis et dimanches."
     },
     "geoPoints": [
       {

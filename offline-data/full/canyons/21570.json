@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:00:20.194769+00:00",
+  "scrapedAt": "2026-10-27T16:58:47.555470+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21570,
@@ -47,20 +47,20 @@
     },
     "timings": {
       "approche": "15min",
-      "descente": "50min",
+      "descente": "1h30",
       "retour": "néant"
     },
     "topo": {
-      "accesAval": "De Bagnères de Luchon, prendre la direction Hospice de France. Juste avant l'Hospice, au panneau \"cascade du Parisien\" sur la droite, sortie du canyon. Se garer.",
+      "accesAval": "De Bagnères de Luchon, prendre la direction Hospice de France. Juste avant l'Hospice, au panneau \"cascade du Parisien\" sur la droite, sortie du canyon. Se garer pas très loin dans un virage, ou au parking de l'Hospice de France à 200 m.",
       "accesAmont": null,
       "approche": "Continuer sur la route jusqu'à l'Hospice puis prendre le sentier en direction du Port de Venasque (sud-ouest). Au bout d'une petite dizaine de minutes, prendre à droite vers l'ancien centre de vacances où le canyon débute.",
-      "descente": "Ca démarre tranquille puis enchaînement de petites cascades jusqu'au troncs vus de la route.",
+      "descente": "Ça démarre tranquille puis enchaînement de petites cascades jusqu’aux troncs vus de la route. Environ 7 à 8 rappels, dont parfois la corde de 30 m est plus adaptée.",
       "retour": null,
-      "engagement": "Pas d'échappatoire mais canyon court.",
+      "engagement": "Canyon court avec parfois des échappatoires sur les côtés",
       "periode": "Printemps-été",
       "geologie": "Schiste",
       "historique": null,
-      "remarques": "Rocher glissant."
+      "remarques": "Rocher parfois glissant, et surtout sur les troncs d'arbres"
     },
     "geoPoints": [
       {

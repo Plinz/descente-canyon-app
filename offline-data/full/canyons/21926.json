@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:01:28.671943+00:00",
+  "scrapedAt": "2026-10-27T17:02:34.458299+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21926,
@@ -9,7 +9,7 @@
       "description": "https://www.descente-canyon.com/canyoning/canyon-description/21926/topo.html",
       "map": "https://www.descente-canyon.com/canyoning/canyon-carte/21926/carte.html",
       "bibliography": "https://www.descente-canyon.com/canyoning/canyon-bibliographie/21926/guides-et-cartes.html",
-      "regulation": null
+      "regulation": "https://www.descente-canyon.com/canyoning/canyon-reglementation/21926/legislation.html"
     }
   },
   "canyon": {
@@ -52,7 +52,7 @@
       "retour": "10min"
     },
     "topo": {
-      "accesAval": "Sur la RN135, entre Arlos et Fos, prendre une route à droite au niveau du cimetière. Se garer au bout de la route (départ de randonnées).",
+      "accesAval": "Canyon interdit sauf aux professionnels ayant signé une convention avec la marie d'Arlos (cf règlementation).\n\nSur la RN135, entre Arlos et Fos, prendre une route à droite au niveau du cimetière. Se garer au bout de la route (départ de randonnées).",
       "accesAmont": null,
       "approche": "Depuis le parking, prendre la piste vers le SO de l'autre côté des parcs à bestiaux. Prendre le GR10 à droite après le pont et le remonter sur 200 mètres environ.",
       "descente": "La première partie de la descente comprend une succession de petits toboggans. L'enchainement finl, situé sous le pont comprend 3 cascades joliment sculptées.\n\nLa corde n'est nécessaire que par gros débit.",
@@ -109,9 +109,22 @@
       "resources": []
     },
     "reglementation": {
-      "hasSpecificRegulation": false,
-      "rules": [],
-      "isForbidden": false
+      "hasSpecificRegulation": true,
+      "isForbidden": false,
+      "rules": [
+        {
+          "id": 622,
+          "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté municipal (Arlos) - 27 mars 2026",
+          "summary": "Le canyon d'Arlos est interdit suite à des soucis de dangerosité du chemin d'accès dit du Boucouas et du pont qui surplombe le canyon.\n\nSeuls les professionnels ayant signé une convention avec la mairie et ayant également payé un droit d'accès au canyon pour la saison peuvent emprunter le chemin et encadrer dans le canyon.",
+          "remark": null,
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.",
+          "effectiveDate": "27 mars 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/622/legislation.html",
+          "attachments": []
+        }
+      ]
     }
   }
 }

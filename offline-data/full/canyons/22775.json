@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:04:07.775162+00:00",
+  "scrapedAt": "2026-10-27T17:11:10.470840+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 22775,
@@ -15,10 +15,10 @@
   "canyon": {
     "id": 22775,
     "identity": {
-      "nom": "Saufla Aval",
-      "nomComplet": "Canyon de la Saufla Aval, Le Roc Coupé, Saufla",
+      "nom": "Saufla (aval)",
+      "nomComplet": "Canyon de la Saufla (aval), Le Roc Coupé",
       "prefixeNom": "Canyon de la",
-      "url": "https://www.descente-canyon.com/canyoning/canyon/22775/Saufla-Aval.html"
+      "url": "https://www.descente-canyon.com/canyoning/canyon/22775/Saufla-aval.html"
     },
     "location": {
       "pays": "Suisse",
@@ -28,12 +28,12 @@
       "communes": [],
       "massif": null,
       "bassin": "Vièze",
-      "coursEau": "Saufla"
+      "coursEau": null
     },
     "rating": {
       "cotation": "v5a5V",
       "interet": 3.8,
-      "nbVotes": 22
+      "nbVotes": 23
     },
     "metrics": {
       "altitudeDepartM": 1350,

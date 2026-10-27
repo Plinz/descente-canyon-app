@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:02:03.066339+00:00",
+  "scrapedAt": "2026-10-27T17:04:33.237304+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 22119,
@@ -33,29 +33,29 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "??",
+      "cotation": "v4a3III",
       "interet": 2.5,
       "nbVotes": 11
     },
     "metrics": {
       "altitudeDepartM": null,
-      "deniveleM": null,
-      "longueurM": null,
+      "deniveleM": 200,
+      "longueurM": 900,
       "cascadeMaxM": 20,
       "cordeMiniM": 25,
       "navette": "néant"
     },
     "timings": {
       "approche": "25min",
-      "descente": "1 - 2h",
+      "descente": "2h-3h",
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "Parking à côté du pont.",
+      "accesAval": "Sortir de Benasque direction hospital de Benasque, et à l'entrée de l'hotel Turpi et des balnéarios. Parking à côté du pont qui croise le canyon Literola.",
       "accesAmont": null,
-      "approche": "RG de la Literola.",
-      "descente": "Encaissement et cascades. Tout n'est pas esthétique. Des blocs.",
-      "retour": null,
+      "approche": "RG prendre le sentier de Literola, on traverse une zone arborée de pins noirs, jusqu'à un pré. puis à gauche, on découvre un sentier qui descende dans le canyon.",
+      "descente": "Encaissement et cascades. Tout n'est pas esthétique. Des blocs.\n\nPrincipalement une succession de rappels (21 max).\n\nSortie au niveau du pont du parking.",
+      "retour": "Très facile, à coté du parking.",
       "engagement": "Pas d'échappatoires.",
       "periode": "Dangereux en début de saison.",
       "geologie": null,

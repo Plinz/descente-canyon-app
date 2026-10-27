@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:58:24.193183+00:00",
+  "scrapedAt": "2026-10-27T16:52:35.738672+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2999,
@@ -9,7 +9,7 @@
       "description": "https://www.descente-canyon.com/canyoning/canyon-description/2999/topo.html",
       "map": "https://www.descente-canyon.com/canyoning/canyon-carte/2999/carte.html",
       "bibliography": "https://www.descente-canyon.com/canyoning/canyon-bibliographie/2999/guides-et-cartes.html",
-      "regulation": null
+      "regulation": "https://www.descente-canyon.com/canyoning/canyon-reglementation/2999/legislation.html"
     }
   },
   "canyon": {
@@ -34,34 +34,34 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "v3a3III",
-      "interet": 2.7,
-      "nbVotes": 31
+      "cotation": "",
+      "interet": null,
+      "nbVotes": 0
     },
     "metrics": {
       "altitudeDepartM": 390,
       "deniveleM": 180,
       "longueurM": 1200,
-      "cascadeMaxM": 21,
-      "cordeMiniM": 25,
-      "navette": "néant"
+      "cascadeMaxM": null,
+      "cordeMiniM": null,
+      "navette": null
     },
     "timings": {
-      "approche": "45min",
-      "descente": "4h",
-      "retour": "15min"
+      "approche": null,
+      "descente": null,
+      "retour": null
     },
     "topo": {
-      "accesAval": "Sur la côte ouest du lac de Côme, entre MENAGGIO et COMO par la SS340, aller se garer au sanctuaire de ACQUA FREDDA (discrétion recommandée, vous êtes à côté d'une église !).\n\nOn peut aussi stationner plus près de la sortie du canyon (parking), où il y a plus de place (difficile à décrire : dans le village, à gauche en montant, au plus près du canyon en rive gauche, environ 300m de distance et 50 m de dénivelé plus bas que Acqua Fredda).",
+      "accesAval": null,
       "accesAmont": null,
-      "approche": "Du sanctuaire, remonter le chemin pavé qui part plein ouest et monte en direction du monastère San Bendetto.\n\nAu bout de 20min, il n'y a plus de peinture au sol ; prendre à gauche un sentier qui descend : c'est une piste herbeuse qui se transforme rapidement en sentier horizontal dans la forêt. Le départ du sentier est repéré par une construction qui surplombe la piste à droite face au départ. Si vous apercevez une petite maison en contrebas à votre gauche c'est que vous êtes allés trop loin.\n\nLe sentier est bien marqué de peinture jaune (attention sur les autres topos on indique de la peinture bleue ; celle-ci a été recouverte de jaune, facile !). Il remonte le long du canyon à l'horizontal pendant une vingtaine de minutes et fini par descendre dans le canyon par un accès délicat mais équipé de main-courantes en chaîne.",
-      "descente": "Parcours varié et amusant, avec des 16 rappels de 21m maxi ; des toboggans; des sauts... et une magnifique grotte qui vaut le détour...\n\nMalheur à ceux qui n'ont pas pris la frontale... Vraiment très joli...\n\nLes obstacles sont espacés au début, dans un calcaire pourri pour finalement arriver à la partie finale avec sa superbe grotte.",
-      "retour": "Ne pas sortir à gauche avant le pont du village (propriété privée), mais à droite juste après le pont. Sauter le muret du canal pour sortir entre les maisons (discrétion de rigueur !).\n\nNB: Il reste quelques cascades en aval de cette sortie. Elles ne semblent pas équipées.",
-      "engagement": "Peu d'échappatoires au début. Quelques sorties possibles par la suite.\n\nIl n'y a que la partie de la grotte qui peut poser un vrai problème si on a pas de lampe... On y voit strictement rien... et l'eau s'engouffre dans un puits. Je vais laisser le suspens de la hauteur de ce puits... La lampe est indispensable si on fait le canyon de nuit !",
-      "periode": "De mai à septembre",
+      "approche": null,
+      "descente": null,
+      "retour": null,
+      "engagement": null,
+      "periode": null,
       "geologie": null,
       "historique": "1ère descente par D Basola, Donini, Filipazzi et M Miragoli en 1995",
-      "remarques": "Prendre au moins une lampe pour le groupe (la grotte est courte).\n\nTrès beau canyon avec une grande ambiance vers la fin... La partie terminale est véritablement la plus intéressante."
+      "remarques": null
     },
     "geoPoints": [
       {
@@ -79,20 +79,12 @@
         "latitude": 45.97488,
         "longitude": 9.181137,
         "label": null
-      },
-      {
-        "canyonId": 2999,
-        "rawType": "parking",
-        "type": "PARKING_AVAL",
-        "latitude": 45.974239,
-        "longitude": 9.183326,
-        "label": null
       }
     ],
     "representativePoint": {
-      "type": "PARKING_AVAL",
-      "latitude": 45.974239,
-      "longitude": 9.183326,
+      "type": "ENTREE",
+      "latitude": 45.981472,
+      "longitude": 9.171095,
       "label": null
     },
     "bibliography": {
@@ -146,7 +138,7 @@
           "publicationYear": 2005,
           "reference": "ISBN 88-901753-0-3",
           "editor": "Edizioni TopCanyon",
-          "status": "derniers exemplaires !\n\n- 24,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "status": "en stock\n\n- 24,90 € -\n\nCommandez cet ouvrage dès maintenant !",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/18/Canyoning-in-Lombardia.html"
         },
         {
@@ -178,9 +170,22 @@
       "resources": []
     },
     "reglementation": {
-      "hasSpecificRegulation": false,
-      "rules": [],
-      "isForbidden": false
+      "hasSpecificRegulation": true,
+      "isForbidden": true,
+      "rules": [
+        {
+          "id": 624,
+          "status": "Actif",
+          "action": "Interdit",
+          "title": "Arrêté - 31 août 2026",
+          "summary": "Canyon interdit pour cause de travaux importants (tunnel et pont) à partir du 31 août 2026 pour 4 à 5 ans.",
+          "remark": "https://www.laprovinciadicomo.it/stories/premium/lago-e-valli/variante-tremezzina-nuovi-interventi-a-fine-mese-operai-nella-valle-perlana-o_3931042_11/",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.",
+          "effectiveDate": "31 août 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/624/legislation.html",
+          "attachments": []
+        }
+      ]
     }
   }
 }

@@ -6461,7 +6461,7 @@
       "accesAval": "De Seix, prendre la D3, puis la D8 en direction de Guzet. Continuer sur la D38 vers cirque de Cagateille.\n\nAvant Stillom prendre la direction du hameau d'Ossèse",
       "accesAmont": null,
       "approche": "Sentier balisé du Port de Marterat. Arrivé au plat de Lauze, au niveau d'un virage en épingle, prendre à droite vers une ruine (pas de sentier) et trouver peu après la ruine l'amorce d'une sente qui se dirige d'abord vers l'ouest puis vers le sud (la sente a quasiment disparue au début sous la végétation). Lorsque vous apercevez un peu plus loin le cours d'eau, il faut rester à isoaltitude (hors sente) pour arriver à l'amont de la première gorge.",
-      "descente": "2 petits toboggans > marche 50m > gorge avec 7 rappels semi-verticaux.\n\nA partir du \"balcon\", 4 ou 5 rappels plus verticaux dont 1 très arrosé (la douche).\n\nPour la dernière cascade, possibilité de fractionner mais le rappel intégral de 85m est beaucoup plus intéressant et esthétique car il nous fait descendre au milieu des filets d'eau dans la deuxième partie de la cascade. Si le relais intermédiaire est utilisé, le dernier rappel se déroule en dehors de l'actif. Il est rive gauche et permet de fractionner en 55+ 42",
+      "descente": "2 petits toboggans > marche 50m > gorge avec 7 rappels semi-verticaux.\n\nA partir du \"balcon\", 4 ou 5 rappels plus verticaux dont 1 très arrosé (la douche).\n\nPour la dernière cascade, possibilité de fractionner mais le rappel intégral de 85m est beaucoup plus intéressant et esthétique car il nous fait descendre au milieu des filets d'eau dans la deuxième partie de la cascade. Si le relais intermédiaire est utilisé, le dernier rappel se déroule en dehors de l'actif. Il est rive gauche et permet de fractionner en 55+42. Possibilité de fractionner rd (actif) sous un surplomb quasi à la même hauteur que rg",
       "retour": "Sentier en rive droite",
       "engagement": "Un seul échappatoire au niveau du balcon en rive droite.",
       "periode": "D'août à octobre.",
@@ -7377,7 +7377,7 @@
     "rating": {
       "cotation": "v4a3II",
       "interet": 2.4,
-      "nbVotes": 8
+      "nbVotes": 9
     },
     "metrics": {
       "altitudeDepartM": 820,
@@ -7495,7 +7495,7 @@
     "rating": {
       "cotation": "v4a4IV",
       "interet": 2.9,
-      "nbVotes": 15
+      "nbVotes": 16
     },
     "metrics": {
       "altitudeDepartM": 580,
@@ -8380,7 +8380,7 @@
     "rating": {
       "cotation": "v4a1III",
       "interet": 2.2,
-      "nbVotes": 8
+      "nbVotes": 10
     },
     "metrics": {
       "altitudeDepartM": 880,
@@ -9365,7 +9365,7 @@
     "rating": {
       "cotation": "v3a3III",
       "interet": 2.3,
-      "nbVotes": 22
+      "nbVotes": 23
     },
     "metrics": {
       "altitudeDepartM": 460,
@@ -9652,7 +9652,7 @@
     "rating": {
       "cotation": "v3a2II",
       "interet": 2.1,
-      "nbVotes": 8
+      "nbVotes": 9
     },
     "metrics": {
       "altitudeDepartM": 390,
@@ -9670,7 +9670,7 @@
     "topo": {
       "accesAval": "De Riazzino vers Bugaro, 100m devant Piandessio garer la 2ème voiture",
       "accesAmont": null,
-      "approche": "la route 100m retour et prendre le sentier vers \"Peross\". 30m après une porte à droite vers le ruisseau.",
+      "approche": "Au pont du parking amont, remonter la route sur 100m et prendre le sentier vers \"Peross\".\n\nA 5min Prendre les escaliers à droite et arriver sur une porte en bois a refermer après votre passage\n\n30m après la porte à droite aller vers le ruisseau.",
       "descente": "Succession de rappels et marche, belles cascades finales",
       "retour": "Après les cascades finales sortie à droite et aller à la 1ère voiture au parking publique",
       "engagement": null,
@@ -10931,7 +10931,7 @@
     "rating": {
       "cotation": "v4a4III",
       "interet": 3.0,
-      "nbVotes": 15
+      "nbVotes": 16
     },
     "metrics": {
       "altitudeDepartM": 520,
@@ -13030,7 +13030,7 @@
     "rating": {
       "cotation": "v4a2II",
       "interet": 0.8,
-      "nbVotes": 3
+      "nbVotes": 4
     },
     "metrics": {
       "altitudeDepartM": 467,

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:57:28.157595+00:00",
+  "scrapedAt": "2026-10-27T16:49:54.076992+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2762,
@@ -9,7 +9,7 @@
       "description": "https://www.descente-canyon.com/canyoning/canyon-description/2762/topo.html",
       "map": "https://www.descente-canyon.com/canyoning/canyon-carte/2762/carte.html",
       "bibliography": "https://www.descente-canyon.com/canyoning/canyon-bibliographie/2762/guides-et-cartes.html",
-      "regulation": null
+      "regulation": "https://www.descente-canyon.com/canyoning/canyon-reglementation/2762/legislation.html"
     }
   },
   "canyon": {
@@ -130,9 +130,31 @@
       "resources": []
     },
     "reglementation": {
-      "hasSpecificRegulation": false,
-      "rules": [],
-      "isForbidden": false
+      "hasSpecificRegulation": true,
+      "isForbidden": false,
+      "rules": [
+        {
+          "id": 615,
+          "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté préfectoral (Aveyron) - 08 août 2026",
+          "summary": "En cas de niveau d'alerte sécheresse de niveau \"Crise\" dans une zone d'un bassin, les activités aquatiques sont interdites dans le \"lit mouillé\" des cours d'eau de la zone concernée par l'alerte.",
+          "remark": "Il faut surveiller les communications de la préfecture à cette adresse : https://www.aveyron.gouv.fr/Actions-de-l-Etat/Environnement/Gestion-de-l-eau/Secheresse/Arretes-de-restrictions",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral (Aveyron) n°12-2026-08-04-00007 du 4 août 2026\n\nArrêté préfectoral (Aveyron) n°12-2026-08-11-00001 du 11 août 2026",
+          "effectiveDate": "08 août 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/615/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté préfectoral (Aveyron) n°12-2026-08-04-00007 du 4 août 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem615_pj1.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Aveyron) n°12-2026-08-11-00001 du 11 août 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem615_pj2.pdf"
+            }
+          ]
+        }
+      ]
     }
   }
 }

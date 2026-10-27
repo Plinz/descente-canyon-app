@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:06:17.432283+00:00",
+  "scrapedAt": "2026-10-27T17:17:47.407903+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 23453,
@@ -16,17 +16,17 @@
     "id": 23453,
     "identity": {
       "nom": "Salette",
-      "nomComplet": "Ruisseau de la Salette",
+      "nomComplet": "Ruisseau de la Salette, Ruisseau de la Sézia",
       "prefixeNom": "Ruisseau de la",
       "url": "https://www.descente-canyon.com/canyoning/canyon/23453/Salette.html"
     },
     "location": {
       "pays": "France",
-      "region": "Provence-Alpes-Côte d'Azur",
-      "departement": "Hautes-Alpes",
-      "communePrincipale": "Aspres-lès-Corps",
+      "region": "Auvergne-Rhône-Alpes",
+      "departement": "Isère",
+      "communePrincipale": "La Salette-Fallavaux",
       "communes": [
-        "Aspres-lès-Corps"
+        "La Salette-Fallavaux"
       ],
       "massif": "Ecrins - Oisans - Champsaur",
       "bassin": "Drac",
@@ -51,12 +51,12 @@
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "De Corps, prendre à droite la D212C vers La Salette. Faire 2,4km et prendre (juste avant le pont des Gourniers) à droite la piste qui longe le ruisseau jusqu'au terminus; se garer sans gêner. Pour le parking amont reprendre la D212C, passez le cimetière canadien, prendre la première à droite. Quelques mètres pour une bonne place à gauche.",
+      "accesAval": "De Corps, prendre à droite la D212C vers La Salette. Faire 2,4 kms et prendre (juste avant le pont des Gourniers) à droite la piste qui longe le ruisseau jusqu'au terminus ; se garer sans gêner. Pour le parking amont reprendre la D212C, passez le cimetière canadien, prendre la première à droite. Quelques mètres pour une bonne place à gauche.",
       "accesAmont": null,
-      "approche": "Immédiat.",
+      "approche": "Longer le mur nord du cimetière et rejoindre au mieux le ruisseau par une sente de pêcheurs.",
       "descente": "Marche entrecoupée de quelques ressauts ou cascades parfois ludiques.",
-      "retour": "Sente rive G.",
-      "engagement": "Aucun engagement , on peut se mettre à l'abris tout le temps. De nombreuses sentes de pêcheurs le long du parcours.",
+      "retour": "Prendre une sente rive gauche juste au-dessus du petit barrage.",
+      "engagement": "Aucun engagement, on peut se mettre à l’abri tout le temps. De nombreuses sentes de pêcheurs le long du parcours.",
       "periode": "En eau toute l'année. Éviter tout de même la période de fonte des neiges (bassin versant assez important) mais pas très haut (2400m).",
       "geologie": null,
       "historique": null,

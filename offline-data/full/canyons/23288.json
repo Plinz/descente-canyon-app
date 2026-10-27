@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:05:45.467411+00:00",
+  "scrapedAt": "2026-10-27T17:16:13.457134+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 23288,
@@ -15,8 +15,8 @@
   "canyon": {
     "id": 23288,
     "identity": {
-      "nom": "Roumi amont",
-      "nomComplet": "Vallon de Roumi amont",
+      "nom": "Roumi (amont)",
+      "nomComplet": "Vallon de Roumi (amont)",
       "prefixeNom": "Vallon de",
       "url": "https://www.descente-canyon.com/canyoning/canyon/23288/Roumi-amont.html"
     },
@@ -56,11 +56,11 @@
       "approche": "Du parking amont, longer à gauche la route qui descend et rejoindre, 350m plus loin, la borne kilométrique 28 « Moustiers 17 – Riez 32, » à côté d’un poteau téléphonique. Du poteau, repérer et rejoindre le seul chêne visible situé de l’autre côté du champ ; arrivé à ce chêne, descendre sur des dalles de rochers jusqu’à un second chêne situé une vingtaine de mètres en contrebas à partir duquel se dessine le vallon. Descendre alors au mieux en suivant le creux du vallon qui se faufile entre de petites barres de rochers jusqu’en haut d’une falaise (950m) ou l’on trouve le 1er rappel.",
       "descente": "Vallon sec coulant aux pluies avec 11 rappels dont 8 qui s’enchaînent avec C30 maxi en fil d'araignée!!!\n\n1-C20 sur buis et genévrier (cordes + maillon).\n\nProgression dans le maquis, avec peu d'aroumi, pendant 10 minutes.\n\nDébut effectif de la descente, presque sans dékiter :\n\n2-C12 RD/arbre avec corde + maillon, descente dans un couloir peu incliné.\n\n3-C15, RD/plaquette avec corde + maillon, partiellement surplombante.\n\n4-D10.\n\n5-C20 RG/plaquette avec corde + maillon, début d’encaissement.\n\n6-C8 RD/arbre avec corde + maillon.\n\n7-C30, RD/plaquette avec corde + maillon.\n\n8-C15 RD/arbre avec corde + maillon, partiellement surplombante.\n\n9-C15 RD/arbre avec corde + maillon.\n\n10-C30, RG/2 plaquettes avec corde + maillon, frottement et descente en fil d’araignée.\n\n11-C12 RG/arbre avec corde + maillon.\n\n12-D3.\n\n13-C8 RG/arbre avec corde + maillon qui mène sur le sentier du Bastidon.",
       "retour": "Suivre le sentier du Bastidon vers la gauche (RG) qui ramène au parking aval.",
-      "engagement": "Pas d'échappatoire. Equipement monopoint, plaquette ou arbre avec corde & maillon.",
+      "engagement": "Pas d'échappatoire. Équipement monopoint, plaquette ou arbre avec corde & maillon.",
       "periode": "Ravin sec qui coule bien aux pluies.",
       "geologie": null,
       "historique": "Parcours du 29/06/2014 de Mitch.83, Salsera, JC Peira & Boustourou.",
-      "remarques": "« Aroumi en provençal désigne les ronces rencontrées surtout dans les éboulis au pied des parois » : Roger VERDEGEN dans son livre « EXTRAORDINAIRE ET MERVEILLEUX VERDON », page 156 « La Porte des Abeilles », paragraphe 2-Edition « Les créations du Verdon - 1981 ».\n\nCarte IGN 3442 OT, pli C7."
+      "remarques": "« Aroumi en provençal désigne les ronces rencontrées surtout dans les éboulis au pied des parois » : Roger Verdegen dans son livre « Extraordinaire et merveilleux Verdon », page 156 « La Porte des Abeilles », paragraphe 2-Edition « Les créations du Verdon - 1981 ».\n\nCarte IGN 3442 OT, pli C7."
     },
     "geoPoints": [
       {

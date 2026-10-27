@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:34.661262+00:00",
+  "scrapedAt": "2026-10-27T16:44:09.863483+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2217,
@@ -33,34 +33,34 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "??",
-      "interet": 2.6,
-      "nbVotes": 8
+      "cotation": "",
+      "interet": null,
+      "nbVotes": 0
     },
     "metrics": {
       "altitudeDepartM": 260,
       "deniveleM": 140,
       "longueurM": 1600,
-      "cascadeMaxM": 15,
-      "cordeMiniM": 20,
-      "navette": "néant"
+      "cascadeMaxM": null,
+      "cordeMiniM": null,
+      "navette": null
     },
     "timings": {
-      "approche": "20mn",
-      "descente": "2h",
-      "retour": "10mn"
+      "approche": null,
+      "descente": null,
+      "retour": null
     },
     "topo": {
-      "accesAval": "Se rendre au centre du village de Saint-Georges-les-Bains et se garer sur le parking à côté du garage",
+      "accesAval": null,
       "accesAmont": null,
-      "approche": "Il suffit de remonter la route",
+      "approche": null,
       "descente": null,
-      "retour": "Prendre le chemin qui remonte jusqu'au parking",
-      "engagement": "Moyen, Canyon assez ouvert. Même si les dangers liés à l'eau sont faibles, ils peuvent être sévères pour des néophites. Attention, de même, aux sauts et aux toboggans. Il y a de nombreux blocs et les Toboggans ne sont que rarement réguliers.",
-      "periode": "La pratique du canyon est autorisé uniquement sur la partie haute du 1er avril au 30 juin et du 1er septembre au 31 octobre",
+      "retour": null,
+      "engagement": null,
+      "periode": null,
       "geologie": null,
       "historique": "Le Canyon a été rééquipé en mars 2022",
-      "remarques": "Seulement la partie haute du canyon est autorisé il est impératif de sortir au niveau du pont"
+      "remarques": null
     },
     "geoPoints": [
       {
@@ -78,28 +78,12 @@
         "latitude": 44.854916,
         "longitude": 4.807422,
         "label": null
-      },
-      {
-        "canyonId": 2217,
-        "rawType": "parking_amont",
-        "type": "PARKING_AMONT",
-        "latitude": 44.85593,
-        "longitude": 4.795385,
-        "label": null
-      },
-      {
-        "canyonId": 2217,
-        "rawType": "parking_aval",
-        "type": "PARKING_AVAL",
-        "latitude": 44.851761,
-        "longitude": 4.811143,
-        "label": null
       }
     ],
     "representativePoint": {
-      "type": "PARKING_AMONT",
-      "latitude": 44.85593,
-      "longitude": 4.795385,
+      "type": "ENTREE",
+      "latitude": 44.854706,
+      "longitude": 4.79606,
       "label": null
     },
     "bibliography": {
@@ -125,8 +109,25 @@
     },
     "reglementation": {
       "hasSpecificRegulation": true,
-      "isForbidden": false,
+      "isForbidden": true,
       "rules": [
+        {
+          "id": 617,
+          "status": "Actif",
+          "action": "Interdit",
+          "title": "Arrêté municipal (Saint-Georges-les-Bains) - 21 août 2026",
+          "summary": "Du fait de la sécheresse exceptionnelle, la pratique du canyoning est interdite dans les cascades du Turzon du 1er septembre 2026 au 30 octobre 2026.",
+          "remark": "La pratique est déjà interdite chaque année aux mois de juillet et août.",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté municipal (Saint-Georges-les-Bains) n°2026-071 du 20 août 2026",
+          "effectiveDate": "30 oct 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/617/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté municipal (Saint-Georges-les-Bains) n°2026-071 du 20 août 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem617_pj1.pdf"
+            }
+          ]
+        },
         {
           "id": 504,
           "status": "Actif",

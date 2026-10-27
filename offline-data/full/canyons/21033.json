@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:58:31.032929+00:00",
+  "scrapedAt": "2026-10-27T16:52:56.024913+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21033,
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v5a2III",
       "interet": 2.6,
-      "nbVotes": 16
+      "nbVotes": 17
     },
     "metrics": {
       "altitudeDepartM": 1400,
@@ -46,8 +46,8 @@
       "navette": "néant"
     },
     "timings": {
-      "approche": "1h",
-      "descente": "2h",
+      "approche": "1-1h30",
+      "descente": "2-3h30",
       "retour": "2min"
     },
     "topo": {
@@ -60,7 +60,7 @@
       "periode": "Avant, ces cascades étaient quasiment infaisables du fait de la présence en amont du glacier de Chalance et de la Rouye. Du fait du réchauffement climatique cette descente est à présent envisageable plutôt. Mais assurez vous du débit en bas. Vous devez voir au travers du jet sans aucune difficulté. Les passages dans l'actif sont obligatoires avec des vasques intermédiaires traîtres. Ne vous engagez donc pas si vous doutez de vos capacités.",
       "geologie": "Gneiss",
       "historique": null,
-      "remarques": "Une belle descente à ne pas prendre à la légère."
+      "remarques": "Une belle descente à ne pas prendre à la légère.\n\nLes temps de marche d'approche indiqués sont de 1h pour l'accès au départ de la partie aval (montée RG) et 1h30 minimum pour la partie amont ou l'intégrale directement du hameau (montée RD).\n\nPareil pour les temps de descente (2h pour l'aval et 3h30 pour l'intégralité)"
     },
     "geoPoints": [
       {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:58:36.515270+00:00",
+  "scrapedAt": "2026-10-27T16:53:18.006683+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21065,
@@ -33,7 +33,7 @@
       "coursEau": "Giffre des Fonts"
     },
     "rating": {
-      "cotation": "v6a6VI",
+      "cotation": "v6a6IV",
       "interet": 3.1,
       "nbVotes": 36
     },
@@ -41,26 +41,26 @@
       "altitudeDepartM": 1270,
       "deniveleM": 250,
       "longueurM": 2000,
-      "cascadeMaxM": 15,
-      "cordeMiniM": 20,
+      "cascadeMaxM": 20,
+      "cordeMiniM": 25,
       "navette": "néant"
     },
     "timings": {
       "approche": "1h",
-      "descente": "6h",
+      "descente": "4 à 5h",
       "retour": "10min"
     },
     "topo": {
       "accesAval": "A noter tout de même que la route vers le Lignon (parking) est interdite à la circulation dès les premières neiges (route non déneigée) au niveau du tremplin de saut à ski.\n\nPrendre direction la cascade de rouget, 500m après il y a un sentier qui part sur la gauche (fléché Refuge des fonds 1h15). Se garer à gauche le long de la route!",
       "accesAmont": null,
       "approche": "Route du Ligon ouverte :\n\nDu parking, descendre 10min par le sentier qui mène au refuge de Tine des Fonds. On passe par une passerelle qui marque la fin de canyon.\n\n5min après on rejoint la piste carrossable qui rejoint en 45min le refuge.\n\nJuste avant le refuge, au niveau de la passerelle, descendre dans la rivière.\n\nRoute du Lignon fermée :\n\nLa fermeture de la route rallonge très nettement la marche d'approche en empruntant la piste raquettes. (RD du canyon)",
-      "descente": "L’ensemble commence par une marche de 500m (20mn).\n\nLe premier encaissement est constitué de 5 obstacles qui ne dépassent pas les 4m. Si dans cette partie vous vous faites brasser, vous pouvez sortir à l’échappatoire RD qui se trouve juste à la fin.\n\nL’ensemble continue dans un goulet et se ré-encaisse fortement. A partir de là plus aucune échappatoire n’est possible.\n\nRapidement vous tombez sur une C8 suivie d’une C5, C3, puis d’une C4. L’obstacle suivant doit être pris avec délicatesse, parce que la C3 amène sur un siphon plus ou moins facile à négocier en fonction du débit.\n\nOn continue sur un bel enchaînement de petits rappels...\n\nAprès 5 à 10min de marche vous tombez sur un l’affluent RG (ruisseau d’Anterne) et juste après se trouve l’échappatoire évidente RD.\n\nEncore une C4 et C5 on arrive à la passerelle.",
+      "descente": "L’ensemble commence par une marche de 500m (20mn).\n\nSi vous vous faites brasser dans la 1ère partie, vous pouvez sortir à l’échappatoire RD qui se trouve juste à la fin.\n\nL’ensemble continue dans un goulet et se ré-encaisse fortement. A partir de là plus aucune échappatoire n’est possible.\n\nAprès 5 à 10min de marche vous tombez sur un l’affluent RG (ruisseau d’Anterne) et juste après se trouve l’échappatoire évidente RD.",
       "retour": "A la passerelle\n\nsi la route était ouverte, remonter par le même sentier en RG.\n\nsi la route était fermée et quel voiture est tout en bas, prenez en RD et en 5min vous êtes sur la piste du refuge.",
-      "engagement": "Engagement total, aucune échappatoire dans la partie technique (soit les 2/3 du canyon)\n\nQualité de l’équipement : en septembre 2018, tous les rappels sont équipés.\n\nLa plus part des points sont en monopoint inox + anneau soudé, la plus part ont été posé à \"l’abri des crues\".\n\nAu vue des crues titanesques, prendre de quoi ré-équiper !",
-      "periode": "Qualité de l’eau : excellente\n\nCaractère aquatique : gros débit perpétuel. A n’engager qu’après un étiage total.\n\nA savoir : après une période sans pluie, sans neige (risque d’avalanche) et quand il gèle dur. Température de l’eau : glaciale",
+      "engagement": "Engagement total, aucune échappatoire dans la partie technique (soit les 2/3 du canyon)\n\nQualité de l’équipement : en août 2026, tous les rappels sont équipés.\n\nLa plus part des points sont en mono point inox + anneau soudé, la plus part ont été posé à \"l’abri des crues\".\n\nAu vue des crues titanesques, prendre de quoi ré-équiper !",
+      "periode": "Qualité de l’eau : excellente\n\nCaractère aquatique : gros débit perpétuel. A n’engager qu’après un étiage total.",
       "geologie": "Schiste noir veiné de gypse.",
       "historique": "Spéléo club d'Annemasse et Groupe Spéléo Hauteville-Lompnès en 1988",
-      "remarques": "Vous vous demandez si la réputation de la Tines des Fonts aval n’est pas surfaite ? Vous vous dîtes qu’encore une fois les auteurs du topo ont exagéré ?\n\nEt bien rassurez vous, tout est vrai !\n\nVous pensez aussi que ce n’est pas si rare de trouver les bonnes conditions aquatiques à la différence de ce que vous avez lu ? Vous ajoutez que de toute façon vous vous débrouillerez bien ?\n\nEt bien, nous avons attendu 3 ans pour descendre ce canyon et nous avons eu bien raison !\n\nIl est toujours difficile lorsqu’on écrit un topo de trouver les mots justes pour informer le lecteur. Il est délicat de trouver les bonnes formules entre avertir honnêtement des dangers et ne pas trop en rajouter pour des questions de responsabilité. Pour ce cas, Bruno Hugon et sa bande n’ont pas exagéré. La tines des fonts c’est dur, c’est rarement en conditions, mais c’est magnifique.\n\nAfin de mieux vous conseiller, nous allons faire la listes des conditions que nous avons rempli pour faire la descente :\n\nLe débit : Il n’est pas possible de se faire une idée à la passerelle du bas. Mais Au mieux si à ce niveau les micros vasques sont déjà bouillonnantes il est inutile de vous dire ce qu’il faut faire. Lorsque vous aurez engagé la descente si dans le premier encaissement vous vous faîtes méchant brassé aux 4 micros obstacles prenez de suite à sa sortie l’échappatoire RD.\n\nLes conditions météos : Pour trouver les bonnes conditions (et encore), il ne faut pas qu’il y ait eu des pluies violentes durant les 10J qui précèdent votre descente. Le niveau d’enneigement doit être quasi-nul (risques d’avalanches). Il doit geler dur le matin. Mais attention si vous attendez trop, les coussinets de glaces gêneront la descente. Si vous avez un doute, faîtes la veille Tré la Tête et voyez vos réactions. Le lendemain ce sera pire.\n\nLe matériel : 1 combi 5mm sans trou+1 shorti (ou combi 2-3 mm) ou combi 7mm titanium.\n\nChaussettes 5mm+chaussette en laine.\n\nGants 5mm\n\nCrampons voire piolets\n\nBidon : Point chaud+couvertures de survie+coupe vent+vêtements secs (Vous devez avoir de quoi survivre une nuit)\n\nPharmacie\n\nBougies\n\nBriquet et tout le matériel habituel nécessaire\n\nPerforateur avec 20pts pour changer la moitié des amarrages défoncés et pour équiper en artif une sortie en catastrophe.\n\nTempérature : Entre 0 et -7°. Attention par de tels froid on n'arrive plus à faire tourner les viroles. Tout gèle instantanément sur place. Le seul moyen pour faire fondre la glace et de se remettre dans l’eau (et oui :-( )\n\nEnfin, je ne parlerais pas de l’équipement qui est systématiquement broyé mais j’insisterais plutôt sur le lit du cours d’eau qui change chaque année. Les cascades se déplacent, se creusent ou se comblent. Je vous avouerais que le relevé que j’ai fait n’a plus rien à voir avec celui réalisé par Bruno Hugon et ses compères. Même si on considère la marge de 20% d’erreurs. Par extension cela signifie que la profondeur des vasques est aléatoire. L’absence de point ne signifie pas la possibilité d’un saut."
+      "remarques": "Remarque précédente laissée pour l'historique, mais au vu du réchauffement climatique, le canyon passe à partir de fin juillet (en fonction des pluies et fonte sur les hauteurs).\n\n(Vous vous demandez si la réputation de la Tines des Fonts aval n’est pas surfaite ? Vous vous dîtes qu’encore une fois les auteurs du topo ont exagéré ?\n\nEt bien rassurez vous, tout est vrai !\n\nVous pensez aussi que ce n’est pas si rare de trouver les bonnes conditions aquatiques à la différence de ce que vous avez lu ? Vous ajoutez que de toute façon vous vous débrouillez bien ?\n\nEt bien, nous avons attendu 3 ans pour descendre ce canyon et nous avons eu bien raison !\n\nIl est toujours difficile lorsqu’on écrit un topo de trouver les mots justes pour informer le lecteur. Il est délicat de trouver les bonnes formules entre avertir honnêtement des dangers et ne pas trop en rajouter pour des questions de responsabilité. Pour ce cas, Bruno Hugon et sa bande n’ont pas exagéré. La tines des fonts c’est dur, c’est rarement en conditions, mais c’est magnifique.\n\nAfin de mieux vous conseiller, nous allons faire la listes des conditions que nous avons rempli pour faire la descente :\n\nLe débit : Il n’est pas possible de se faire une idée à la passerelle du bas. Mais Au mieux si à ce niveau les micros vasques sont déjà bouillonnantes il est inutile de vous dire ce qu’il faut faire. Lorsque vous aurez engagé la descente si dans le premier encaissement vous vous faîtes méchant brassé aux 4 micros obstacles prenez de suite à sa sortie l’échappatoire RD.\n\nLes conditions météos : Pour trouver les bonnes conditions (et encore), il ne faut pas qu’il y ait eu des pluies violentes durant les 10J qui précèdent votre descente. Le niveau d’enneigement doit être quasi-nul (risques d’avalanches). Il doit geler dur le matin. Mais attention si vous attendez trop, les coussinets de glaces gêneront la descente. Si vous avez un doute, faîtes la veille Tré la Tête et voyez vos réactions. Le lendemain ce sera pire.\n\nLe matériel : 1 combi 5mm sans trou+1 shorti (ou combi 2-3 mm) ou combi 7mm titanium.\n\nChaussettes 5mm+chaussette en laine.\n\nGants 5mm\n\nCrampons voire piolets\n\nBidon : Point chaud+couvertures de survie+coupe vent+vêtements secs (Vous devez avoir de quoi survivre une nuit)\n\nPharmacie\n\nBougies\n\nBriquet et tout le matériel habituel nécessaire\n\nPerforateur avec 20pts pour changer la moitié des amarrages défoncés et pour équiper en artif une sortie en catastrophe.\n\nTempérature : Entre 0 et -7°. Attention par de tels froid on n'arrive plus à faire tourner les viroles. Tout gèle instantanément sur place. Le seul moyen pour faire fondre la glace et de se remettre dans l’eau (et oui :-( )\n\nEnfin, je ne parlerais pas de l’équipement qui est systématiquement broyé mais j’insisterais plutôt sur le lit du cours d’eau qui change chaque année. Les cascades se déplacent, se creusent ou se comblent. Je vous avouerais que le relevé que j’ai fait n’a plus rien à voir avec celui réalisé par Bruno Hugon et ses compères. Même si on considère la marge de 20% d’erreurs. Par extension cela signifie que la profondeur des vasques est aléatoire. L’absence de point ne signifie pas la possibilité d’un saut.)"
     },
     "geoPoints": [
       {
@@ -122,7 +122,7 @@
           "publicationYear": 2004,
           "reference": "ISBN: 2741702888",
           "editor": "GAP",
-          "status": "stock très réduit !\n\n- 16,99 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "status": "derniers exemplaires !\n\n- 16,99 € -\n\nCommandez cet ouvrage dès maintenant !",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/128/Canyons-de-Haute-Savoie.html"
         },
         {

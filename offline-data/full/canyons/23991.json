@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:07:52.175055+00:00",
+  "scrapedAt": "2026-10-27T17:23:03.581482+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 23991,
@@ -16,7 +16,7 @@
     "id": 23991,
     "identity": {
       "nom": "Val Estrèche",
-      "nomComplet": "Torrent de Val Estrèche, Oules des Baumes",
+      "nomComplet": "Torrent de Val Estrèche, Oules des Baumes, Oules de Valestrèche",
       "prefixeNom": "Torrent de",
       "url": "https://www.descente-canyon.com/canyoning/canyon/23991/Val-Estreche.html"
     },
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v3a2II",
       "interet": 2.7,
-      "nbVotes": 13
+      "nbVotes": 14
     },
     "metrics": {
       "altitudeDepartM": 1460,
@@ -46,17 +46,17 @@
       "navette": "néant"
     },
     "timings": {
-      "approche": "20min",
+      "approche": "15min",
       "descente": "1h",
-      "retour": "6min"
+      "retour": "5min"
     },
     "topo": {
       "accesAval": "Quitter la R.N. 85 Gap-Grenoble et prendre la direction d'Orcières-Merlette. 3,7 km après Pont-du-Fossé, remonter la vallée du Drac Blanc (vallée du Champoléon).\n\n700m après les Gondouins, se garer à côté de la microcentrale à gauche avant le pont pour l'exploitation de l'eau, en rive droite de notre torrent.",
       "accesAmont": null,
-      "approche": "Attaquer droit par une sente, puis un pré (ne pas le traverser, rester sur le côté) retrouver une sente qui rejoint une piste. Après la prise d'eau, descendre une petite pente pour prendre pied dans le torrent.",
-      "descente": "Encaissement profond et sculpté, goulottes, geysers, vasque suspendue, c'est court mais vraiment très classe.\n\nUne main-courante en rive droite nous mène au relais de la C20 qui marque l'entrée du canyon.\n\nUn peu de marche, un petit toboggan puis c'est le deuxième encaissement.\n\nLa suite est soutenue, C8, une belle goulotte, C6 et C6. Une petite marche pour arriver à la dernière C3 où s'achève cette petite aventure.",
+      "approche": "Attaquer droit par une sente, puis un pré (ne pas le traverser, rester sur le côté) retrouver une sente qui rejoint une piste. Avant la prise d'eau, descendre une petite pente pour prendre pied dans le torrent quelques mètres avant la C20.",
+      "descente": "Encaissement profond et sculpté, goulottes, geysers, vasque suspendue, c'est court mais vraiment très classe.\n\nUne main-courante en rive droite nous mène au relais de la C20 qui marque l'entrée du canyon.\n\nUn peu de marche, un petit toboggan puis c'est le deuxième encaissement.\n\nLa suite est soutenue, C8 équipée RG ou RD, une belle goulotte, C6 et C6. Une petite marche pour arriver à la dernière C3 où s'achève cette petite aventure.",
       "retour": "A la sortie de l'encaissement, observer le beau changement de roche.\n\nUne fois les belles dalles noires passées, prendre une sente rive droite, au niveau d'un petit ressaut (R1), cairns en place. Rejoindre la route par une sente évidente.",
-      "engagement": "Une échappatoire après la 1ere cascade, en rive droite.",
+      "engagement": "Une échappatoire après la 1ère cascade, en rive droite.",
       "periode": "Equipement récent (rééquipé sept 2023) permet un parcours par débit un peu plus conséquent (sans abuser toutefois...). Quelques petites vasques peu profondes.",
       "geologie": "Gneiss. Point culminant 3058m d'altitude.",
       "historique": "Le canyon est cité dans le Topo de canyons des hautes Alpes d'Henri Vincens dans la catégorie \"des canyons auxquels vous avez échappé...\" (les bouses). Incompréhensible ?",

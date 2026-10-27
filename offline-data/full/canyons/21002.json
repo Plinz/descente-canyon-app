@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:58:24.700978+00:00",
+  "scrapedAt": "2026-10-27T16:52:37.260333+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21002,
@@ -60,7 +60,7 @@
       "periode": "Court mais trés aquatique.",
       "geologie": null,
       "historique": "Première le 07/1982.",
-      "remarques": "Barrage du Tech en amont : se renseigner impérativement sur https://www.niv-eau.fr/#/entite/46/carte/activite/8"
+      "remarques": "Barrage du Tech en amont : se renseigner impérativement sur https://mariviereetmoi.edf.fr/#/map"
     },
     "geoPoints": [
       {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:21.737614+00:00",
+  "scrapedAt": "2026-10-27T16:43:30.453827+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2172,
@@ -32,33 +32,33 @@
     },
     "rating": {
       "cotation": "v3a2II",
-      "interet": 0.8,
-      "nbVotes": 7
+      "interet": 1.0,
+      "nbVotes": 8
     },
     "metrics": {
-      "altitudeDepartM": null,
-      "deniveleM": null,
+      "altitudeDepartM": 859,
+      "deniveleM": 200,
       "longueurM": 1200,
       "cascadeMaxM": 20,
       "cordeMiniM": 25,
       "navette": "5.7km"
     },
     "timings": {
-      "approche": "10min",
-      "descente": "1h30",
+      "approche": "2min",
+      "descente": "2h",
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "Accès aval : de Lalleyriat, prendre la D 55b. A 2.5 kms du carrefour, juste avant de rejoindre la N84, on coupe le mythique Bief à la Dame. Stationner au mieux.\n\nAccès amont : revenir à Lalleyriat et prendre la D55 jusqu'au Poizat. A l'entrée du vaillage, prendre une route à droite qui descend dans le village. Au bout de 350 m, prendre une piste et stationner sans gêner. La station d'épuration doit être en vue...",
+      "accesAval": "Accès parking aval : de Nantua, de St-Germain de Joux ou de Lalleyriat, prendre la D 55b, on coupe le mythique Bief à la Dame dans une grande épingle (607 sur l'IGN) où on peut stationner plusieurs véhicules au départ de la piste forestière qui longe le ruisseau.\n\nAccès parking amont : revenir à Lalleyriat et prendre la D 55 jusqu'au Poizat. Dans le village prendre la D 55c en direction de Nantua et des Neyrolles jusqu'au hameau du Replat. Se garer juste après le panneau \"LE REPLAT\" sur un parking avec un table de pique-nique (aire de pique-nique sur l'IGN).",
       "accesAmont": null,
-      "approche": "De la station d'épuration, rejoindre le bief dans le lequel se déversent les effluents (épurés en théorie !) de la station. Descendre dans la pente jusqu'à arriver au premier obstacle intéressant.",
-      "descente": "Une petite succession de cascades bien équipées au départ puis de la marche et quelques obstacles peu intéressants.",
-      "retour": "Sortir au mieux RG et rejoindre une piste forestière qui mène à la voiture.",
-      "engagement": "Peu engagé.",
-      "periode": "Il faut qu'il y ait assez d'eau pour que la dillution des effluents de la station soit suffisante...",
+      "approche": "De l'aire de pique-nique, rejoindre le pont sur le bief 100 m en contrebas et suivre la route qui devient rapidement un chemin forestier. Entrez au mieux dans le bief qui se trouve juste à gauche (vague sente après un tas de compostage).",
+      "descente": "Une succession de cascades variées bien équipées avec des sections de marche plus ou moins longues.\n\nLes 2 premières cascades C10 et C18 ne sont pas décrites dans le topo-guide du GSHL. Après ces 2 premières cascades on croise un chemin de randonnée. C'est de là que commence la descente décrite dans le topo-guide.\n\nOn descend la C5 (plutôt C7) et la C20 caractéristique en escalier (relais récent inox en rive D en tête de cascade, 25 mètres de corde nécessaire). Ensuite on descend les 2 cascades C5 avec des relais acier rouillés et une C4 avec un monopoint inox. On accède alors à un encaissement qui débouche sur la C10.\n\nLorsqu'on rejoint une piste forestière après la C10, on peut l’utiliser pour éviter les 3 derniers obstacles ou finir la descente dans le cours d'eau. La descente du topo-guide se termine par une cascade en goulotte caractéristique suivie d'un toboggan. A cet endroit une sente remonte en rive G jusqu'à la piste forestière.",
+      "retour": "Emprunter la piste forestière qui mène à la voiture.",
+      "engagement": "Canyon peu engagé mais avec des portions de marche et des encaissements qui peuvent être encombrées par des arbres.",
+      "periode": "Plusieurs vasques sont obligatoires lors de la descente, il faut donc qu'il y ait assez d'eau pour que la dilution des effluents des stations d'épuration en amont soit suffisante.",
       "geologie": null,
-      "historique": "Denis Gritti et Bruno Hugon du GSHL et Joël Mercier de la Tribu Canyon.",
-      "remarques": "Descente à éviter."
+      "historique": "Première descente par Denis Gritti et Bruno Hugon du Groupe Spéléo Hauteville-Lompnes (GSHL) et Joël Mercier de la Tribu Canyon.\n\nTopo-guide du Groupe Spéléo Hauteville-Lompnes (2002)",
+      "remarques": "Canyon assez glissant. Le lit du cours d'eau verdit après la seconde centrale d'épuration. Descente à éviter en période de sécheresse ou alors sans se mouiller, l'eau étant uniquement celle des rejets d'épuration."
     },
     "geoPoints": [
       {

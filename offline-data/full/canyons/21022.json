@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:58:28.746008+00:00",
+  "scrapedAt": "2026-10-27T16:52:49.307109+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21022,
@@ -33,7 +33,7 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "v2a2II",
+      "cotation": "v3a3III",
       "interet": 2.7,
       "nbVotes": 3
     },
@@ -41,26 +41,26 @@
       "altitudeDepartM": 1490,
       "deniveleM": 90,
       "longueurM": 200,
-      "cascadeMaxM": 11,
+      "cascadeMaxM": 14,
       "cordeMiniM": 15,
       "navette": "néant"
     },
     "timings": {
       "approche": "45min",
-      "descente": "1h20",
+      "descente": "1h45",
       "retour": "25min"
     },
     "topo": {
       "accesAval": "A Loudenvieille prendre la D725 jusqu'au Pont du Prat (centrale de Tramezaygues).",
       "accesAmont": null,
       "approche": "Depuis le parking, prendre la direction du vallon de la Pez (itinéraire fléché 19). Après le pont sur la Pez (sortie du canyon), remonter les lacets et continuer sur environ 100 m sur le sentier. Puis repérer un petit kairn sur un bloc au pied de 5 arbres d'où part une sente à gauche (peu marquée) parallèle à la gorge et qui vous mène à la retenue d'eau (depart du canyon juste en dessous).",
-      "descente": "Descente avec 7 rappels parfois arrosés\n\nAttention : en raison des installations hydro-électriques, il est déconseillé de le descendre surtout dans le cas d'augmentation du débit en amont de l'ouvrage (précipitations, fonte des neiges, etc...).",
+      "descente": "Descente avec 9 rappels parfois arrosés\n\nAttention : en raison des installations hydro-électriques, il est déconseillé de le descendre surtout dans le cas d'augmentation du débit en amont de l'ouvrage (précipitations, fonte des neiges, etc...).",
       "retour": "Par le même itinéraire qu'à la montée.",
-      "engagement": "Une échappatoire RD avant les deux dernières cascades.",
+      "engagement": "Une échappatoire RG avant les deux dernières cascades.",
       "periode": "Août et mois suivants",
       "geologie": null,
       "historique": "Mickael Ménager 09/2003",
-      "remarques": "Canyon sous un ouvrage hydro electrique avec risque de lâcher aléatoire.\n\nLe CDS 65 mène des négociations avec le SHEM local.\n\nDescente FORTEMENT DECONSEILLEE tant qu'un accord de pratique n'a pas été trouvé."
+      "remarques": "Canyon sous un ouvrage hydroélectrique avec risque de lâcher aléatoire.\n\nLe CDS 65 mène des négociations avec la SHEM locale.\n\nDescente FORTEMENT DECONSEILLEE tant qu'un accord de pratique n'a pas été trouvé."
     },
     "geoPoints": [
       {

@@ -432,22 +432,6 @@
     "label": null
   },
   {
-    "canyonId": 223,
-    "type": "PARKING_AMONT",
-    "rawType": "parking_amont",
-    "latitude": 45.8218,
-    "longitude": 5.468273,
-    "label": null
-  },
-  {
-    "canyonId": 223,
-    "type": "PARKING_AVAL",
-    "rawType": "parking_aval",
-    "latitude": 45.808998,
-    "longitude": 5.453682,
-    "label": null
-  },
-  {
     "canyonId": 224,
     "type": "ENTREE",
     "rawType": "depart",
@@ -1998,5 +1982,21 @@
     "latitude": 43.935848,
     "longitude": 6.721806,
     "label": "depart sup. pour Saint-Jean partie amont"
+  },
+  {
+    "canyonId": 2107,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 43.941917,
+    "longitude": 6.688828,
+    "label": null
+  },
+  {
+    "canyonId": 2107,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 43.942036,
+    "longitude": 6.690062,
+    "label": null
   }
 ]

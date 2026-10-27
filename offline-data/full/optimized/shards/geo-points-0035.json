@@ -1,77 +1,5 @@
 [
   {
-    "canyonId": 23193,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 42.694386,
-    "longitude": -0.106828,
-    "label": null
-  },
-  {
-    "canyonId": 23194,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 42.248806,
-    "longitude": 8.723156,
-    "label": null
-  },
-  {
-    "canyonId": 23194,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 42.250362,
-    "longitude": 8.724755,
-    "label": null
-  },
-  {
-    "canyonId": 23194,
-    "type": "POINT_REMARQUABLE",
-    "rawType": "point_externe",
-    "latitude": 42.249672,
-    "longitude": 8.725259,
-    "label": "sente d'accés"
-  },
-  {
-    "canyonId": 23195,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 42.304214,
-    "longitude": 8.877906,
-    "label": null
-  },
-  {
-    "canyonId": 23195,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 42.303593,
-    "longitude": 8.880154,
-    "label": null
-  },
-  {
-    "canyonId": 23195,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 42.297085,
-    "longitude": 8.885304,
-    "label": null
-  },
-  {
-    "canyonId": 23196,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 42.448486,
-    "longitude": 8.866879,
-    "label": null
-  },
-  {
-    "canyonId": 23196,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 42.44313,
-    "longitude": 8.866804,
-    "label": null
-  },
-  {
     "canyonId": 23196,
     "type": "PARKING_AVAL",
     "rawType": "parking",
@@ -1998,5 +1926,77 @@
     "latitude": 43.883389,
     "longitude": 7.236675,
     "label": "A côté du cimetière du Cros d'Utelle."
+  },
+  {
+    "canyonId": 23307,
+    "type": "PARKING_AVAL",
+    "rawType": "parking_aval",
+    "latitude": 43.884434,
+    "longitude": 7.245605,
+    "label": null
+  },
+  {
+    "canyonId": 23307,
+    "type": "POINT_REMARQUABLE",
+    "rawType": "point_externe",
+    "latitude": 43.887314,
+    "longitude": 7.243137,
+    "label": "Point ou il faut quitter le GR pour suivre la sente qui va tout droit pour rejoindre le ruisseau."
+  },
+  {
+    "canyonId": 23308,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 45.201305,
+    "longitude": 2.509927,
+    "label": null
+  },
+  {
+    "canyonId": 23308,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 45.203934,
+    "longitude": 2.512837,
+    "label": null
+  },
+  {
+    "canyonId": 23308,
+    "type": "PARKING_AMONT",
+    "rawType": "parking_amont",
+    "latitude": 45.201496,
+    "longitude": 2.506183,
+    "label": null
+  },
+  {
+    "canyonId": 23308,
+    "type": "PARKING_AVAL",
+    "rawType": "parking_aval",
+    "latitude": 45.209759,
+    "longitude": 2.506569,
+    "label": null
+  },
+  {
+    "canyonId": 23309,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 43.917744,
+    "longitude": 7.193007,
+    "label": null
+  },
+  {
+    "canyonId": 23309,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 43.918766,
+    "longitude": 7.190021,
+    "label": null
+  },
+  {
+    "canyonId": 23309,
+    "type": "PARKING_AMONT",
+    "rawType": "parking_amont",
+    "latitude": 43.92411,
+    "longitude": 7.186635,
+    "label": null
   }
 ]

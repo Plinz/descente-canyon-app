@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:00:42.366823+00:00",
+  "scrapedAt": "2026-10-27T17:00:02.658373+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21688,
@@ -34,8 +34,8 @@
     },
     "rating": {
       "cotation": "v4a2III",
-      "interet": 2.3,
-      "nbVotes": 19
+      "interet": 2.4,
+      "nbVotes": 20
     },
     "metrics": {
       "altitudeDepartM": 1630,
@@ -46,21 +46,21 @@
       "navette": "néant"
     },
     "timings": {
-      "approche": "1h",
-      "descente": "2h30",
-      "retour": "15min"
+      "approche": "1h45",
+      "descente": "3h",
+      "retour": "20min"
     },
     "topo": {
-      "accesAval": "Le départ se situe dans la vallée de Champoléon, au niveau du village des Borels. On peut se garer soit au village, soit 500m avant prendre une piste qui démarre juste après un pont sous lequel coule le torrent de Méollion. Le niveau d'eau depuis ce pont, n'est pas représentatif du débit dans le canyon.",
+      "accesAval": "Le départ se situe dans la vallée de Champoléon, au niveau du village des Borels. On peut se garer soit au grand parking du village, soit 500m avant prendre une piste qui démarre juste après un pont sous lequel coule le torrent de Méollion. Le niveau d'eau depuis ce pont n'est pas représentatif du débit dans le canyon.",
       "accesAmont": null,
-      "approche": "Depuis le village des Borels, suivre le chemin qui mène au vallon et au village abandonné de Méollion (400m de déniv., 1h).\n\nEn arrivant au village, prendre une sente descendante à droite (au niveau d'un panneau en bois). la suivre pour passer sous le village, et rejoindre le torrent. On arrive alors quasiment directement au départ du premier rappel (C3).",
-      "descente": "La descente est composée de 2 parties séparées par env. 600m de marche. L'équipement est constitué de broches inox pour les départs de mains courantes, et de relais chainés inox pour les relais.\n\n- Le premier encaissement est composé de 5 verticales, 22m, 12m en 2 ressauts, 3m, 7m et 14m.\n\n- 3 rappels équipés dans la partie médiane.\n\n- le 2eme encaissement comprend quelques ressauts et 2 verticales (15 et 37m) avec main courantes d'accès. Il y à deux broches de déviations largable en RD pour la C15 en cas de gros débit.\n\nAttention, la zone située à coté du relais de la C37 est instable, à surveiller ou purger avant de s'engager.",
-      "retour": "Poursuivre dans le torrent pendant 5/10min, pour retrouver le chemin de montée. Ensuite 10mn de marche retour.",
+      "approche": "Depuis le village des Borels, suivre le chemin balisé en direction du hameau de Méollion. Peu après avoir s'être rapproché du vallon, au niveau d'un grand panneau d'information en bois situé 100m après le point IGN 1307m, prendre le sentier du haut en direction de l'ancienne ferme des Champets. On traverse les torrents du Champets puis du Forest avant de redescendre et de rejoindre le sentier du bas au point 1613m. Continuer et traverser à gué la combe de Méolion puis, en arrivant à Méollion, prendre une sente descendante à droite (au niveau d'un gros panneau en bois d'information). La suivre pour passer sous le village, et rejoindre le torrent. On arrive alors quasiment directement au départ du premier rappel (C3).",
+      "descente": "La descente est composée de 2 parties séparées par env. 600m de marche. L'équipement est constitué de broches inox pour les départs de mains courantes, et de relais chainés inox pour les relais.\n\n- Le premier encaissement est composé de 5 verticales, 22m, 12m en 2 ressauts, 3m, 7m et 14m.\n\n- 3 rappels équipés dans la partie médiane.\n\n- le 2eme encaissement comprend quelques ressauts et 2 verticales (15 et 37m) avec main courantes d'accès. Il y à deux broches de déviations largable en RD pour la C15 en cas de gros débit.\n\nAttention, la zone située à coté du relais de la C37 est instable, à surveiller ou purger avant de s'engager.\n\nAprès la C37 continuer pendant 10min pour trouver le chemin de retour à la confluence avec le torrent du Forest en RD.",
+      "retour": "Comptez environ 20min pour revenir au parking.",
       "engagement": "Moyen, bien que chaque encaissement soit court, une fois engagé on ne peut pas s'échapper.\n\nIl existe 2 échappatoires.\n\nLa première juste après la dernière verticale du premier encaissement, en RD, des cordes fixes sont en place.\n\nLa deuxième à la fin de la partie médiane, en RD dans des pentes herbeuses. Difficile si le terrain est humide !!\n\nL'équipement est bon mais en cas de fort débit, certaines portions doivent être très problématiques car il faut souvent croiser la veine d'eau.",
       "periode": "Caractère aquatique faible. Quelques petits toboggans.\n\nPraticable à partir de juillet (ou dès que la neige a fondu sur les sommets) et jusqu'en novembre.",
-      "geologie": "le canyon est creusé dans les Grès de Champoléon. On longe en rive gauche de très belles falaises avec des strates mouvementées.",
+      "geologie": "Le canyon est creusé dans les grès de Champoléon. On longe en rive gauche de très belles falaises avec des strates mouvementées.",
       "historique": null,
-      "remarques": "Le canyon de Méollion à été entièrement rééquipé.\n\nAfin de pérenniser et sécuriser la pratique du canyon, ce projet a été mené en collaboration avec le Comité Départemental de Spéléologie, des professionnels de l'activité canyonisme et soutenu par la commune de Champoléon.\n\nOn y trouve désormais des broches inox pour les mains-courantes et des relais avec chaînes et anneaux inox.\n\nCertaines mains-courantes sont maintenant obligatoires pour accéder aux relais.\n\nLes lignes de descente ont été équipées au mieux, pour rendre la progression agréable, en essayant de protéger les amarrages des crues (parfois énormes dans ce canyon!).\n\nLa qualité médiocre de la roche ne nous a pas toujours permis d'équiper les lignes les plus évidentes.\n\nNe pas s'engager dans le canyon en cas de fort débit, certaines descentes se font dans l'actif.\n\nVous évoluez dans un espace naturel qui comporte des risques, vous êtes entièrement responsable de votre pratique. Les crues, le gel l’hiver, les chutes de pierres sont autant d’éléments qu’il est impossible de prévoir à l’avance. Avec le statut de milieu spécifique, le pratiquant accepte le risque et se doit de vérifier les équipements sur lesquels il progresse."
+      "remarques": "Pour l'approche, le sentier du bas serait bien plus court (400m de déniv., 1h) mais il est interdit par arrêté municipal depuis 2024 suite à l'effondrement d'une falaise le surplombant.\n\nLe canyon de Méollion à été entièrement rééquipé.\n\nAfin de pérenniser et sécuriser la pratique du canyon, ce projet a été mené en collaboration avec le Comité Départemental de Spéléologie, des professionnels de l'activité canyonisme et soutenu par la commune de Champoléon.\n\nOn y trouve désormais des broches inox pour les mains-courantes et des relais avec chaînes et anneaux inox.\n\nCertaines mains-courantes sont maintenant obligatoires pour accéder aux relais.\n\nLes lignes de descente ont été équipées au mieux, pour rendre la progression agréable, en essayant de protéger les amarrages des crues (parfois énormes dans ce canyon!).\n\nLa qualité médiocre de la roche ne nous a pas toujours permis d'équiper les lignes les plus évidentes.\n\nNe pas s'engager dans le canyon en cas de fort débit, certaines descentes se font dans l'actif.\n\nVous évoluez dans un espace naturel qui comporte des risques, vous êtes entièrement responsable de votre pratique. Les crues, le gel l’hiver, les chutes de pierres sont autant d’éléments qu’il est impossible de prévoir à l’avance. Avec le statut de milieu spécifique, le pratiquant accepte le risque et se doit de vérifier les équipements sur lesquels il progresse."
     },
     "geoPoints": [
       {

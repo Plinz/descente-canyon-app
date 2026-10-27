@@ -1,61 +1,5 @@
 [
   {
-    "canyonId": 2602,
-    "type": "POINT_REMARQUABLE",
-    "rawType": "point_externe",
-    "latitude": 45.643719,
-    "longitude": 10.863204,
-    "label": "approche pedestre par rive droite"
-  },
-  {
-    "canyonId": 2602,
-    "type": "POINT_REMARQUABLE",
-    "rawType": "point_externe",
-    "latitude": 45.646267,
-    "longitude": 10.871315,
-    "label": "approche pedestre par rive gauche"
-  },
-  {
-    "canyonId": 2603,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 45.654247,
-    "longitude": 10.734542,
-    "label": null
-  },
-  {
-    "canyonId": 2603,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 45.657249,
-    "longitude": 10.727742,
-    "label": null
-  },
-  {
-    "canyonId": 2603,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 45.656948,
-    "longitude": 10.727334,
-    "label": null
-  },
-  {
-    "canyonId": 2604,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 45.878761,
-    "longitude": 11.069707,
-    "label": null
-  },
-  {
-    "canyonId": 2604,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 45.879368,
-    "longitude": 11.06261,
-    "label": null
-  },
-  {
     "canyonId": 2604,
     "type": "PARKING_AMONT",
     "rawType": "parking_amont",
@@ -1998,5 +1942,61 @@
     "latitude": 46.22176,
     "longitude": 8.75843,
     "label": "Fin de Grande Superiore. Début de Grande Inferiore"
+  },
+  {
+    "canyonId": 2683,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 46.22176,
+    "longitude": 8.7583,
+    "label": null
+  },
+  {
+    "canyonId": 2683,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 46.223763,
+    "longitude": 8.750414,
+    "label": null
+  },
+  {
+    "canyonId": 2683,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 46.221657,
+    "longitude": 8.746262,
+    "label": null
+  },
+  {
+    "canyonId": 2684,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 46.251812,
+    "longitude": 8.710613,
+    "label": null
+  },
+  {
+    "canyonId": 2684,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 46.250092,
+    "longitude": 8.705893,
+    "label": null
+  },
+  {
+    "canyonId": 2685,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 46.318916,
+    "longitude": 8.803117,
+    "label": null
+  },
+  {
+    "canyonId": 2686,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 46.142185,
+    "longitude": 8.841537,
+    "label": null
   }
 ]

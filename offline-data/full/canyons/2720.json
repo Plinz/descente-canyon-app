@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:57:19.020052+00:00",
+  "scrapedAt": "2026-10-27T16:49:25.644427+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2720,
@@ -136,6 +136,23 @@
       "hasSpecificRegulation": true,
       "isForbidden": false,
       "rules": [
+        {
+          "id": 625,
+          "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté - 06 juil 2026",
+          "summary": "La pratique du canyonisme est interdite dans la zone cœur du Parc national des Pyrénées à l’exception des canyons nommément autorisés dans l'arrêté.",
+          "remark": null,
+          "details": "Arrêté temporaire (Parc national des Pyrénées) n°2026-46 du 6 juillet 2026",
+          "effectiveDate": "31 oct 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/625/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté temporaire (Parc national des Pyrénées) n°2026-46 du 6 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem625_pj1.pdf"
+            }
+          ]
+        },
         {
           "id": 386,
           "status": "Obsolète",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:55.483232+00:00",
+  "scrapedAt": "2026-10-27T16:45:11.023909+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2311,
@@ -230,6 +230,23 @@
       "hasSpecificRegulation": true,
       "isForbidden": false,
       "rules": [
+        {
+          "id": 620,
+          "status": "Obsolète",
+          "action": "Réglemente",
+          "title": "Arrêté préfectoral (Corse-du-Sud) - 29 mai 2026",
+          "summary": "Du 1er juin au 15 octobre 2026, le canyon est interdit à toute personne qui n'est pas encadré par un professionnel (ou un moniteur fédéral).\n\nContrôles prévus et amendes de 4ème classe pour les contrevenants (jusqu'à 750€).",
+          "remark": null,
+          "details": "Arrété préfectoral (Corse du Sud) n°2A-2026-05-29-00005 du 29 mai 2026",
+          "effectiveDate": "15 oct 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/620/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrété préfectoral (Corse du Sud) n°2A-2026-05-29-00005 du 29 mai 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem620_pj1.pdf"
+            }
+          ]
+        },
         {
           "id": 541,
           "status": "Actif",

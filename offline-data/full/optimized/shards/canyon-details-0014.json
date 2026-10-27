@@ -6399,17 +6399,17 @@
     "id": 23453,
     "identity": {
       "nom": "Salette",
-      "nomComplet": "Ruisseau de la Salette",
+      "nomComplet": "Ruisseau de la Salette, Ruisseau de la Sézia",
       "prefixeNom": "Ruisseau de la",
       "url": "https://www.descente-canyon.com/canyoning/canyon/23453/Salette.html"
     },
     "location": {
       "pays": "France",
-      "region": "Provence-Alpes-Côte d'Azur",
-      "departement": "Hautes-Alpes",
-      "communePrincipale": "Aspres-lès-Corps",
+      "region": "Auvergne-Rhône-Alpes",
+      "departement": "Isère",
+      "communePrincipale": "La Salette-Fallavaux",
       "communes": [
-        "Aspres-lès-Corps"
+        "La Salette-Fallavaux"
       ],
       "massif": "Ecrins - Oisans - Champsaur",
       "bassin": "Drac",
@@ -6434,12 +6434,12 @@
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "De Corps, prendre à droite la D212C vers La Salette. Faire 2,4km et prendre (juste avant le pont des Gourniers) à droite la piste qui longe le ruisseau jusqu'au terminus; se garer sans gêner. Pour le parking amont reprendre la D212C, passez le cimetière canadien, prendre la première à droite. Quelques mètres pour une bonne place à gauche.",
+      "accesAval": "De Corps, prendre à droite la D212C vers La Salette. Faire 2,4 kms et prendre (juste avant le pont des Gourniers) à droite la piste qui longe le ruisseau jusqu'au terminus ; se garer sans gêner. Pour le parking amont reprendre la D212C, passez le cimetière canadien, prendre la première à droite. Quelques mètres pour une bonne place à gauche.",
       "accesAmont": null,
-      "approche": "Immédiat.",
+      "approche": "Longer le mur nord du cimetière et rejoindre au mieux le ruisseau par une sente de pêcheurs.",
       "descente": "Marche entrecoupée de quelques ressauts ou cascades parfois ludiques.",
-      "retour": "Sente rive G.",
-      "engagement": "Aucun engagement , on peut se mettre à l'abris tout le temps. De nombreuses sentes de pêcheurs le long du parcours.",
+      "retour": "Prendre une sente rive gauche juste au-dessus du petit barrage.",
+      "engagement": "Aucun engagement, on peut se mettre à l’abri tout le temps. De nombreuses sentes de pêcheurs le long du parcours.",
       "periode": "En eau toute l'année. Éviter tout de même la période de fonte des neiges (bassin versant assez important) mais pas très haut (2400m).",
       "geologie": null,
       "historique": null,
@@ -7060,8 +7060,8 @@
     },
     "rating": {
       "cotation": "v5a3III",
-      "interet": 2.3,
-      "nbVotes": 6
+      "interet": 2.4,
+      "nbVotes": 7
     },
     "metrics": {
       "altitudeDepartM": 2050,
@@ -8189,7 +8189,7 @@
     },
     "timings": {
       "approche": "1h30",
-      "descente": "3h00",
+      "descente": "4h00",
       "retour": "45min"
     },
     "topo": {
@@ -8824,8 +8824,8 @@
     },
     "rating": {
       "cotation": "v5a5II",
-      "interet": 2.4,
-      "nbVotes": 4
+      "interet": 2.5,
+      "nbVotes": 5
     },
     "metrics": {
       "altitudeDepartM": 1880,
@@ -9295,7 +9295,7 @@
     "rating": {
       "cotation": "v3a2II",
       "interet": 2.2,
-      "nbVotes": 8
+      "nbVotes": 9
     },
     "metrics": {
       "altitudeDepartM": 1500,
@@ -9313,8 +9313,8 @@
     "topo": {
       "accesAval": "De Castejon de Sos, prendre la N260 en direction de Bisaurri / Laspaules sur environ 1 km. Prendre sur la gauche la route qui monte en direction du village de Liri. Se garer dans un virage en montée en bas du village sur un parking un peu plus haut. Possibilité de monter par la piste en voiture (si la chainette n’est pas mise) un peu avant l’ermitage. Après il faut un 4x4 pour aller sur le petit parking du haut.",
       "accesAmont": null,
-      "approche": "Du parking, continuer la route en montée qui sort du village et prendre la première piste a droite (direction N) dans un virage 100m après le village de Liri (indication \"Barranco Gordo o de Racuáns\"). La suivre pendant 25min, passer devant un ermitage, continuer et quand la piste commence a descendre, prendre le chemin qui part direction NE dans une épingle a droite (poteau barranco) pour arriver à un joli pont roman par où l'on traverse le Gordo. Suivre un chemin rive gauche pendant 5min de montée que l'on abandonne tout de suite, de nouveau à gauche pour accéder au canyon juste au niveau du R1.",
-      "descente": "Descente très ludique avec un enchainement de 6 rappels et plusieurs toboggans. Avec débit important, le R2 sous cascade s'évite RG avec main courante et rappel en sec (attention aux chutes de pierres). Le R5 est une grande cascade de 24 mètres.",
+      "approche": "Du parking, continuer la route en montée qui sort du village et prendre la première piste a droite (direction N) dans un virage 100m après le village de Liri (indication \"Barranco Gordo o de Racuáns\"). La suivre pendant 25min, passer devant un ermitage, continuer et quand la piste commence a descendre, prendre le chemin qui part direction NE dans une épingle a droite (poteau barranco) pour arriver à un joli pont roman par où l'on traverse le Gordo. Suivre un chemin muletier rive gauche pendant 5min de montée que l'on abandonne tout de suite, de nouveau à gauche, dans une épingle (pas forcément visible), pour accéder au canyon juste au niveau du R1.",
+      "descente": "Descente très ludique avec un enchainement de 6 rappels et plusieurs toboggans. Avec débit important, le R2 sous cascade s'évite RG avec main courante et rappel en sec (attention aux chutes de pierres). Le R5 est une grande cascade ouverte de 24 mètres, un peu glissante mais sans difficultés.\n\nIl faut amortir en bas des toboggans, les vasques ne sont pas toujours très profondes.",
       "retour": "Après les derniers toboggans et une longue marche en RG ou RD dans une végétation dense (15-20min), on arrive à un petit pont de béton où l'on sort du rio rive droite par une piste, puis a un carrefour, reprendre a droite la route qui monte pour arriver directement sur le parking donc au village de Liri. Pancarte en place au niveau du pont.",
       "engagement": "Plusieurs échappatoires : entre R1 et R2 RD, au niveau du pont, juste avant la grande cascade (R5) RD et après le toboggan qui vient après le R5",
       "periode": "Débit moyen qui tend à devenir plus important après des périodes de pluie.",
@@ -12089,7 +12089,7 @@
     "rating": {
       "cotation": "v5a5IV",
       "interet": 3.7,
-      "nbVotes": 16
+      "nbVotes": 18
     },
     "metrics": {
       "altitudeDepartM": 2120,
@@ -12146,7 +12146,7 @@
     "rating": {
       "cotation": "v6a4IV",
       "interet": 3.5,
-      "nbVotes": 7
+      "nbVotes": 8
     },
     "metrics": {
       "altitudeDepartM": 2009,
@@ -12439,7 +12439,7 @@
     "rating": {
       "cotation": "v4a2III",
       "interet": 2.5,
-      "nbVotes": 2
+      "nbVotes": 3
     },
     "metrics": {
       "altitudeDepartM": 2150,
@@ -14062,7 +14062,7 @@
     "rating": {
       "cotation": "v3a5III",
       "interet": 2.9,
-      "nbVotes": 18
+      "nbVotes": 20
     },
     "metrics": {
       "altitudeDepartM": 615,

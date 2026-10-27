@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:06:53.912597+00:00",
+  "scrapedAt": "2026-10-27T17:19:48.502902+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 23660,
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v3a2II",
       "interet": 1.8,
-      "nbVotes": 2
+      "nbVotes": 3
     },
     "metrics": {
       "altitudeDepartM": 750,

@@ -3336,7 +3336,7 @@
     "rating": {
       "cotation": "v4a2II",
       "interet": 2.5,
-      "nbVotes": 5
+      "nbVotes": 6
     },
     "metrics": {
       "altitudeDepartM": 2250,
@@ -3394,8 +3394,8 @@
     },
     "rating": {
       "cotation": "v4a2III",
-      "interet": 1.4,
-      "nbVotes": 3
+      "interet": 1.5,
+      "nbVotes": 4
     },
     "metrics": {
       "altitudeDepartM": 2200,
@@ -4321,7 +4321,7 @@
     "rating": {
       "cotation": "v3a2II",
       "interet": 1.8,
-      "nbVotes": 2
+      "nbVotes": 3
     },
     "metrics": {
       "altitudeDepartM": 750,
@@ -6493,10 +6493,10 @@
   {
     "id": 23698,
     "identity": {
-      "nom": "Frenay (Partie Amont)",
-      "nomComplet": "Canyon de Frenay (Partie Amont), Vedun, Le Vertosan",
+      "nom": "Frenay (amont)",
+      "nomComplet": "Canyon de Frenay (amont), Vedun, Le Vertosan",
       "prefixeNom": "Canyon de",
-      "url": "https://www.descente-canyon.com/canyoning/canyon/23698/Frenay-Partie-Amont.html"
+      "url": "https://www.descente-canyon.com/canyoning/canyon/23698/Frenay-amont.html"
     },
     "location": {
       "pays": "Italie",
@@ -6513,8 +6513,8 @@
     },
     "rating": {
       "cotation": "v4a3III",
-      "interet": 2.7,
-      "nbVotes": 3
+      "interet": 2.3,
+      "nbVotes": 4
     },
     "metrics": {
       "altitudeDepartM": 1515,
@@ -6533,13 +6533,13 @@
       "accesAval": "A Aoste, se diriger vers le tunnel du Mont Blanc par la route nationale. Après Arvier, tourner à droite en direction d'Avise à un rond-point. A l'entrée d'Avise, prendre le tunnel qui shunte le village et continuer à monter en direction de Cérellaz. 1 km environ avant Cérellaz, il y a un aménagement touristique du nom de Lo Crou avec des parkings bien visibles à gauche puis à droite de la route. Y laisser la voiture aval. Le sentier de retour arrive juste en dessous du 1er parking de gauche (panneau indicateur \"Cascade de Frenay\")",
       "accesAmont": "continuer à monter, traverser Cérellaz et prendre la 1ère à gauche en épingle à cheveu peu après ce village, direction Vedun. A Vedun, terminus de la route, se garer sur la petite place après avoir enjambé le Vertosan.",
       "approche": "Du pont de départ, descendre dans le torrent en RG coté amont",
-      "descente": "Toujours bien en eau, Frenay Amont se présente comme une succession quasi ininterrompue de rappels (18 m maxi) avant d'arriver à la cascade terminale de 55 m.\n\nCelle-ci, équipée en RD, est fractionnée en 3 longueurs : 15 m (arbre) + 15 m (2 points à coté d'un arbre) + 25 m (1 point à doubler)\n\nA noter que la cascade visible depuis la route nationale en fond de vallée n'est pas cette cascade, mais la cascade terminale de Frenay Aval qui lui ressemble.",
+      "descente": "Toujours bien en eau, Frenay Amont se présente comme une succession quasi ininterrompue de rappels sans caractère, ni esthétique (18 m maxi) avant d'arriver à la cascade terminale de 55 m.\n\nCelle-ci, équipée en RD, est fractionnée en 3 longueurs : 15 m (arbre) + 15 m (2 points à coté d'un arbre) + 25 m (1 point à doubler)\n\nA noter que la cascade visible depuis la route nationale en fond de vallée n'est pas cette cascade, mais la cascade terminale de Frenay Aval qui lui ressemble.",
       "retour": "En bas de la cascade terminale, emprunter un court moment le canal de prise d'eau, puis prendre à droite le sentier qui amène les touristes en bas de la cascade. A la 1ère intersection, prendre à gauche pour rejoindre Lo Crou (panneau en place).",
       "engagement": "2 échappatoires (non testés) visibles dans le canyon :\n\n- avant le rappel précédent la ligne haute tension : en RG, un canal de prise d'eau.\n\n- après le rappel suivant la ligne haute tension : en RD, un pré vient border le torrent. Il semble possible de remonter à Vedun par celui-ci.",
-      "periode": "Le bassin d'alimentation du canyon est important (la Combe du Vertosan). Le débit du canyon, important au printemps, devient acceptable en début d'été. La période idéale va de juillet à septembre.",
+      "periode": "Le bassin d'alimentation du canyon est important (la Combe du Vertosan). Le débit du canyon, important au printemps, devient acceptable en début d'été. La période idéale va de juillet à septembre. Attention, prise d'eau en amont",
       "geologie": "Roches métamorphiques",
       "historique": "1ère descente effectuée le 07/08/2016 par E Dommergues, F Lété, I Ayari, JM Aguilar (Club Afegc) et A Vialon (Clubs Scof/Sccm)",
-      "remarques": "Le canyon peut être enchaîné avec Frenay Aval (voir fiche) pour faire une course de belle ampleur.\n\nEquipement de 1ère en 2016. Les rappels de faibles hauteurs sont mono-point. Prendre de quoi rééquiper."
+      "remarques": "Le canyon peut être enchaîné avec Frenay aval (voir fiche) pour faire une course de belle ampleur.\n\nÉquipement de 1ère en 2016. Les rappels de faibles hauteurs sont mono-point. Prendre de quoi rééquiper. Les amarrages sont pratiquement toujours hors d'eau, pas idéalement placés"
     },
     "representativePoint": {
       "type": "PARKING_AMONT",
@@ -6553,10 +6553,10 @@
   {
     "id": 23699,
     "identity": {
-      "nom": "Frenay (Partie Aval)",
-      "nomComplet": "Canyon de Frenay (Partie Aval), Vedun, Le Vertosan",
+      "nom": "Frenay (aval)",
+      "nomComplet": "Canyon de Frenay (aval), Vedun, Le Vertosan",
       "prefixeNom": "Canyon de",
-      "url": "https://www.descente-canyon.com/canyoning/canyon/23699/Frenay-Partie-Aval.html"
+      "url": "https://www.descente-canyon.com/canyoning/canyon/23699/Frenay-aval.html"
     },
     "location": {
       "pays": "Italie",
@@ -6984,7 +6984,7 @@
     "rating": {
       "cotation": "v4a3IV",
       "interet": 3.1,
-      "nbVotes": 27
+      "nbVotes": 32
     },
     "metrics": {
       "altitudeDepartM": 1000,
@@ -7100,7 +7100,7 @@
     "rating": {
       "cotation": "v3a5III",
       "interet": 2.8,
-      "nbVotes": 9
+      "nbVotes": 11
     },
     "metrics": {
       "altitudeDepartM": 1800,
@@ -7157,9 +7157,9 @@
       "coursEau": "Var"
     },
     "rating": {
-      "cotation": "v4a4I",
-      "interet": 2.5,
-      "nbVotes": 3
+      "cotation": "v4a4II",
+      "interet": 2.7,
+      "nbVotes": 6
     },
     "metrics": {
       "altitudeDepartM": 1760,
@@ -7172,7 +7172,7 @@
     "timings": {
       "approche": "5min",
       "descente": "1h30",
-      "retour": "??"
+      "retour": "20min"
     },
     "topo": {
       "accesAval": "D'Entraunes, poursuivez en direction du col de la Cayolle. A Estenc, garez-vous en face du relais du col de la Cayolle.",
@@ -7180,11 +7180,11 @@
       "approche": "2 options:\n\n1 Vous prenez la petite route partant derrière l'auberge pour vous mettre à l'eau au niveau du pont. Une marche en rivière de 200m vous mènera aux 1ères difficultés\n\n2 Si vous détestez la marche en rivière, vous pouvez aussi prendre la route en direction d'Entraunes pour trouver 100m plus loin un sentier à gauche en direction du ruisseau. Prenez à la bifurcation à gauche pour arriver à la passerelle au dessus des 1ères difficultés. Passez en rive gauche, pour trouver un accès au torrent une vingtaine de mètres en amont.",
       "descente": "Si accès au pont :\n\nMarche et désescalades 200m\n\nPasserelle\n\nMarche 10m\n\nR2 avec vasque compliquée par fort débit\n\nMarche 10m\n\nC18 avec 1 ou 2 points de déviation\n\nC10 avec déviation sur l'ancien relais\n\nC7 arrivée dans vasque profonde\n\nR3\n\nMarche et désescalades 50m\n\nrappel de 19m jusqu'au relais (C15 vasque profonde + garder corde pour attraper le relais\n\nC20",
       "retour": "Après la dernière cascade, poursuivez 100m dans le lit du torrent. Au niveau d'un affluent rive gauche, remontez (rive gauche) pour rejoindre rapidement un sentier que vous suivez à gauche vers les maisons. Le sentier vous amène à la passerelle. Traversez le ruisseau et prenez à droite pour rejoindre la route et votre véhicule",
-      "engagement": "Peu engagé du fait de sa longueur",
+      "engagement": "Peu engagé du fait de sa longueur... ceci dit une fois passé la \"vasque compliquée\" (juste après l'échappatoire délicate possible sur la gauche sur vire herbeuse raide) l'unique sortie sera par le bas.",
       "periode": "Très grand bassin versant. Attendre l'étiage prononcé en fin d'été.",
       "geologie": null,
       "historique": null,
-      "remarques": null
+      "remarques": "NE PAS TOUCHER à la prise d'eau au départ de la première cascade, elle est utilisée depuis des générations par les agriculteurs locaux et ils n'apprécient que moyennement qu'on leur coupe l'eau lors du passage des pratiquants. Merci de votre vigilance."
     },
     "representativePoint": {
       "type": "ENTREE",
@@ -7508,8 +7508,8 @@
     },
     "rating": {
       "cotation": "v5a3III",
-      "interet": 2.7,
-      "nbVotes": 2
+      "interet": 2.5,
+      "nbVotes": 3
     },
     "metrics": {
       "altitudeDepartM": 2120,
@@ -10305,7 +10305,7 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "v4a2II",
+      "cotation": "v4a1II",
       "interet": 2.7,
       "nbVotes": 3
     },
@@ -10313,7 +10313,7 @@
       "altitudeDepartM": 1395,
       "deniveleM": 295,
       "longueurM": 850,
-      "cascadeMaxM": 65,
+      "cascadeMaxM": 70,
       "cordeMiniM": 40,
       "navette": "néant"
     },

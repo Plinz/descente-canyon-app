@@ -1,77 +1,5 @@
 [
   {
-    "canyonId": 23039,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 46.867996,
-    "longitude": 9.205813,
-    "label": null
-  },
-  {
-    "canyonId": 23039,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 46.858082,
-    "longitude": 9.209032,
-    "label": null
-  },
-  {
-    "canyonId": 23039,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 46.82156,
-    "longitude": 9.265423,
-    "label": null
-  },
-  {
-    "canyonId": 23040,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 46.883514,
-    "longitude": 9.310012,
-    "label": null
-  },
-  {
-    "canyonId": 23040,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 46.876564,
-    "longitude": 9.303274,
-    "label": null
-  },
-  {
-    "canyonId": 23040,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 46.83847,
-    "longitude": 9.279327,
-    "label": null
-  },
-  {
-    "canyonId": 23041,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 45.202541,
-    "longitude": 7.061977,
-    "label": null
-  },
-  {
-    "canyonId": 23041,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 45.191429,
-    "longitude": 7.025435,
-    "label": null
-  },
-  {
-    "canyonId": 23041,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 45.188007,
-    "longitude": 7.01896,
-    "label": null
-  },
-  {
     "canyonId": 23042,
     "type": "ENTREE",
     "rawType": "depart",
@@ -1998,5 +1926,77 @@
     "latitude": 47.567585,
     "longitude": 11.956102,
     "label": "5 : traverser la crete (pas de sente)"
+  },
+  {
+    "canyonId": 23109,
+    "type": "POINT_REMARQUABLE",
+    "rawType": "point_externe",
+    "latitude": 47.547527,
+    "longitude": 11.909946,
+    "label": "traverser la rivière Brandenburger Ache"
+  },
+  {
+    "canyonId": 23110,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 47.424255,
+    "longitude": 12.386119,
+    "label": null
+  },
+  {
+    "canyonId": 23110,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 47.432373,
+    "longitude": 12.393517,
+    "label": null
+  },
+  {
+    "canyonId": 23110,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 47.432892,
+    "longitude": 12.393651,
+    "label": null
+  },
+  {
+    "canyonId": 23111,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 47.376774,
+    "longitude": 11.284725,
+    "label": null
+  },
+  {
+    "canyonId": 23111,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 47.379215,
+    "longitude": 11.283652,
+    "label": null
+  },
+  {
+    "canyonId": 23111,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 47.385853,
+    "longitude": 11.266894,
+    "label": null
+  },
+  {
+    "canyonId": 23112,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 47.378075,
+    "longitude": 9.742412,
+    "label": "E1 depart Feienbach"
+  },
+  {
+    "canyonId": 23112,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 47.384251,
+    "longitude": 9.743999,
+    "label": "Depart pour Feienbach inf. (Fallbach) - C110"
   }
 ]

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:58:35.122338+00:00",
+  "scrapedAt": "2026-10-27T16:53:12.563091+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21057,
@@ -16,7 +16,7 @@
     "id": 21057,
     "identity": {
       "nom": "Cagateille",
-      "nomComplet": "Canyon de Cagateille, Ruisseau des cors",
+      "nomComplet": "Canyon de Cagateille, Ruisseau des Cors",
       "prefixeNom": "Canyon de",
       "url": "https://www.descente-canyon.com/canyoning/canyon/21057/Cagateille.html"
     },
@@ -30,15 +30,15 @@
       ],
       "massif": null,
       "bassin": null,
-      "coursEau": "Ruisseau des cors"
+      "coursEau": "Ruisseau des Cors"
     },
     "rating": {
       "cotation": "v3a3III",
       "interet": 2.5,
-      "nbVotes": 22
+      "nbVotes": 23
     },
     "metrics": {
-      "altitudeDepartM": null,
+      "altitudeDepartM": 1120,
       "deniveleM": 130,
       "longueurM": 500,
       "cascadeMaxM": 20,
@@ -51,16 +51,16 @@
       "retour": "10min"
     },
     "topo": {
-      "accesAval": "A st lizier continuer la D38, traverser Portet, Ariail, à Stillon passer le pont, traverser le village, traverser Bourdex, Cabousset et continuer jusqu'au bout de la route. Parking",
+      "accesAval": "A Saint-Lizier continuer la D38, traverser Portet, Ariail, à Stillon passer le pont, traverser le village, traverser Bourdex, Cabousset et continuer jusqu'au bout de la route. Parking.",
       "accesAmont": null,
       "approche": "Prendre le sentier du cirque de Cagateille. Environ 20 a 30 min de marche vous amène a la sortie du bois dans une grande jasse ou coule le ruisseau des cors. Des la sortie du bois descendre en direction du cours d'eau. De la, progresser en RD sur une cinquantaine de mètres pour atteindre le départ.",
-      "descente": null,
-      "retour": "Sortir du bois puis remonter en 5 mn en RD pour rejoindre le parking",
-      "engagement": "première partie assez ouverte\n\nensuite encaissée",
+      "descente": "Petite marche, avant un premier ressaut (vasque peu profonde), une deuxième après deux gros bloc (saut possible), une marche de 5-10 min sur un replat, assez glissant, et la partie la plus intéressante du canyon démarre :\n\nUn premier rappel de 13 mètres, soit à rive droite au sec, soit rive gauche avec un relais dans l actif, soit une main courante qui mène a un rappel vertical.\n\nPuis un très beau rétrécissement, la rampe avec la fissure dangereuse à gauche ou l'eau s'engouffre ce désescalade par la droite, une belle vasque et un deuxième rappel qui peut se faire dans l'actif, ou en tyrolienne laissée par les pros locaux (merci de ré-enrouler les deux cordes pour éviter les tonches).\n\nUn nouveau rétrécissement ponctué de quelques petites désescalades dans une partie bien encaissé, (points et lunules pour équiper des cordes si gros débits), derniers saut de 5 mètres après une main courante sur la gauche (viser loin à gauche).\n\nMarcher 200m et l'arrivée se fait au niveau d'une grande vasque, peu profonde.\n\nRemonté sur un replat dans la hétraie sur la droite et longé le ruisseau en le surplombant sur un chemin marqué.\n\nPossibilité de poursuivre, mais beaucoup moins intéressant.",
+      "retour": "Marcher 5min en RD dans le bois au dessus du cours d'eau pour rejoindre le parking",
+      "engagement": "Première partie assez ouverte, ensuite encaissée à partir du rappel, derniers échappatoires en haut de la deuxième cascades avec le rappel guidé,\n\nCe méfier de l'étroiture finale par gros débits.",
       "periode": "à l'étiage, juin / juillet / août / septembre",
       "geologie": null,
       "historique": null,
-      "remarques": "petit canyon sympa\n\nAttention : un rappel mène dans la veine d'eau dans une faille. Possibilité de l'éviter en empruntant une main courante pour s'échapper rive droite."
+      "remarques": null
     },
     "geoPoints": [
       {

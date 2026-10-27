@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:47.696163+00:00",
+  "scrapedAt": "2026-10-27T16:44:46.528196+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2277,
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v5a5IV",
       "interet": 3.1,
-      "nbVotes": 79
+      "nbVotes": 80
     },
     "metrics": {
       "altitudeDepartM": 1650,
@@ -43,7 +43,7 @@
       "longueurM": 1150,
       "cascadeMaxM": 30,
       "cordeMiniM": 30,
-      "navette": "néant"
+      "navette": "3.5km"
     },
     "timings": {
       "approche": "néant",

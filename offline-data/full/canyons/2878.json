@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:57:55.214462+00:00",
+  "scrapedAt": "2026-10-27T16:51:15.130132+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2878,
@@ -9,7 +9,7 @@
       "description": "https://www.descente-canyon.com/canyoning/canyon-description/2878/topo.html",
       "map": "https://www.descente-canyon.com/canyoning/canyon-carte/2878/carte.html",
       "bibliography": "https://www.descente-canyon.com/canyoning/canyon-bibliographie/2878/guides-et-cartes.html",
-      "regulation": null
+      "regulation": "https://www.descente-canyon.com/canyoning/canyon-reglementation/2878/legislation.html"
     }
   },
   "canyon": {
@@ -58,7 +58,7 @@
       "periode": "Gros volume d'eau, assez froide. Mouvements d'eau marqués dans les vasques.",
       "geologie": "Gneiss et schistes. Le canyon est creusé dans les profondeur des chevauchements de Gavarnie. Les calcaires des affluents ont fourni des blocs, mais le substrat est schisteux et granitique.",
       "historique": "Ouverture en 1994 par S. Boyer, S. Clément et F. Flandin.",
-      "remarques": "Parcours intéressant pour les conditions aquatiques."
+      "remarques": "La commission canyon du CDSC65 rappelle que l'équipement \"light\" réalisé en septembre 2026 était uniquement destiné à permettre la descente ponctuelle avec les instances du Parc National.\n\nEn l'état, cet équipement est strictement provisoire et ne respecte pas les normes fédérales d'aménagement.\n\nArrêté temporaire du Parc National interdisant la pratique à partir du 1 er novembre.\n\nNous vous recommandons de prévoir du matériel de rééquipement d'urgence avant de vous engager dans le canyon et de toujours contrôler les relais sur les lesquels vous allez évoluer. N'hésitez pas à contacter le CDSC65."
     },
     "geoPoints": [
       {
@@ -90,9 +90,27 @@
       "resources": []
     },
     "reglementation": {
-      "hasSpecificRegulation": false,
-      "rules": [],
-      "isForbidden": false
+      "hasSpecificRegulation": true,
+      "isForbidden": false,
+      "rules": [
+        {
+          "id": 625,
+          "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté - 06 juil 2026",
+          "summary": "La pratique du canyonisme est interdite dans la zone cœur du Parc national des Pyrénées à l’exception des canyons nommément autorisés dans l'arrêté.",
+          "remark": null,
+          "details": "Arrêté temporaire (Parc national des Pyrénées) n°2026-46 du 6 juillet 2026",
+          "effectiveDate": "31 oct 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/625/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté temporaire (Parc national des Pyrénées) n°2026-46 du 6 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem625_pj1.pdf"
+            }
+          ]
+        }
+      ]
     }
   }
 }

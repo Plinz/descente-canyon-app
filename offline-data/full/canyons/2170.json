@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:21.357408+00:00",
+  "scrapedAt": "2026-10-27T16:43:29.036835+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2170,
@@ -33,7 +33,7 @@
       "coursEau": "Albarine"
     },
     "rating": {
-      "cotation": "v5a2II",
+      "cotation": "v5a1II",
       "interet": 2.0,
       "nbVotes": 15
     },
@@ -42,20 +42,20 @@
       "deniveleM": 160,
       "longueurM": 80,
       "cascadeMaxM": 70,
-      "cordeMiniM": 70,
+      "cordeMiniM": 80,
       "navette": "8.0km"
     },
     "timings": {
-      "approche": "20/10min",
+      "approche": "20/5 min",
       "descente": "2h30",
-      "retour": "15min"
+      "retour": "35 min"
     },
     "topo": {
       "accesAval": "Deux accès sont possibles : un par la D21 en se garant à Nantuy de l'autre côté du pont sur l'Albarine puis à pied traverser le village par la route qui passe devant une fontaine, qui, plus loin se transforme en sentier (suivre les panneaux \"cascade\"). Le second par la D21 se garer sur le parking dans le virage du golet du Thiou.",
       "accesAmont": null,
       "approche": "Par le sentier qui part de Nantuy en direction des tunnels et de la cascade (20 minutes).\n\nPar le parking de la roche coupée sentier (5 minutes).",
-      "descente": "Il existe en 2024, 2 lignes de rappel distinctes existent : une en rive droite (historique) et une en rive gauche (récente sur scellements inox) de la cascade. Après la première verticale C40 il est possible de réchapper en passant derrière la cascade et en rejoignant le Golet du Thiou par une sente.\n\nEn rive gauche, la seconde cascade (C70) se franchit en plusieurs rappels dont le plus long fait 45 mètres. Des cordes de 50 mètres sont confortables pour ce dernier rappel.\n\nLe 3ème ressaut (C25) se franchit en 1 ou 2 rappels sur la rive gauche hors d'eau.\n\nIl est possible ensuite de traverser la rivière (plusieurs relais en place pour installation d'une main courante rappelable) puis un rappel rive droite de 15 mètres conduit au chemin de retour. En cas de fort débit,il est préférable de rester en rive gauche pour descendre sur un arbre.",
-      "retour": "Plusieurs options :\n\n1. de la rive gauche, en remontant à travers bois puis dans les pierrier en rive gauche en direction de la route et du Golet du Thiou (pénible 30 min).\n\n2. de la rive droite, par le sentier qui longe la rivière Albarine et qui arrive au moulin de Charabotte (20 minutes) puis retour en navette ou à pied par le sentier des tunnels (interdits en 2024) ou le plateau de la Ragiaz.\n\n2 bis. depuis le sentier le long de l'Albarine en rejoignant directement le sentier des tunnels puis la Ragiaz par les résurgences des Demoiselles en cheminant dans des vires (complexe mais intéressant).",
+      "descente": "Il existe en 2024, 2 lignes de rappel distinctes existent : une en rive droite (historique) et une en rive gauche (récente sur scellements inox) de la cascade. Après la première verticale C40 il est possible de réchapper en passant derrière la cascade et en rejoignant le Golet du Thiou par une sente.\n\nEn rive gauche, la seconde cascade (C70) se franchit en plusieurs rappels dont le plus long fait 45 mètres. Des cordes de 50 mètres sont confortables pour ce dernier rappel.\n\nLe 3ème ressaut (C25) se franchit en 1 ou 2 rappels sur la rive gauche hors d'eau.\n\nIl est possible ensuite de traverser la rivière (plusieurs relais en place pour installation d'une main courante rappelable) puis un rappel rive droite de 15 mètres conduit au chemin de retour. En cas de fort débit, il est préférable de rester en rive gauche, relais sous la vire.\n\nDernière cascade c25 en cas de fort débit vasque dangereuse.\n\nAttention aux frottements, débrayage sur tous les rappels",
+      "retour": "Plusieurs options :\n\n1. de la rive gauche, en remontant à travers bois puis dans les pierrier en rive gauche en direction de la route et du Golet du Thiou (pénible 30 min).\n\n2. de la rive droite, par le sentier qui longe la rivière Albarine et qui arrive au moulin de Charabotte (35 minutes) puis retour en navette ou à pied par le sentier des tunnels (interdits en 2024) ou le plateau de la Ragiaz.\n\n2 bis. depuis le sentier le long de l'Albarine en rejoignant directement le sentier des tunnels puis la Ragiaz par les résurgences des Demoiselles en cheminant dans des vires (complexe mais intéressant).",
       "engagement": "Échappatoire après la première cascade.",
       "periode": "Les cascades de Charabotte coulent peu à l'étiage au cœur de l'été bien qu'il y ait toujours un filet d'eau (débit de réserve de la centrale d'épuration d'Hauteville). En période de pluie, les cascades prennent une taille qui peut rendre la descente très aquatique.",
       "geologie": null,

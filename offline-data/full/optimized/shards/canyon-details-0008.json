@@ -435,7 +435,7 @@
     "rating": {
       "cotation": "v5a5IV",
       "interet": 3.1,
-      "nbVotes": 66
+      "nbVotes": 67
     },
     "metrics": {
       "altitudeDepartM": 1798,
@@ -1476,7 +1476,7 @@
     "rating": {
       "cotation": "v5a2II",
       "interet": 2.1,
-      "nbVotes": 22
+      "nbVotes": 24
     },
     "metrics": {
       "altitudeDepartM": 1859,
@@ -1592,7 +1592,7 @@
     "rating": {
       "cotation": "??",
       "interet": 1.7,
-      "nbVotes": 12
+      "nbVotes": 13
     },
     "metrics": {
       "altitudeDepartM": null,
@@ -3258,7 +3258,7 @@
     "id": 21889,
     "identity": {
       "nom": "Amblard",
-      "nomComplet": "Cascade d' Amblard",
+      "nomComplet": "Cascade d' Amblard, Torrent de Crupillouse",
       "prefixeNom": "Cascade d'",
       "url": "https://www.descente-canyon.com/canyoning/canyon/21889/Amblard.html"
     },
@@ -3272,7 +3272,7 @@
       ],
       "massif": "Ecrins - Oisans - Champsaur",
       "bassin": "Drac",
-      "coursEau": null
+      "coursEau": "Torrent de Crupillouse"
     },
     "rating": {
       "cotation": "v4a2III",
@@ -3288,8 +3288,8 @@
       "navette": "néant"
     },
     "timings": {
-      "approche": "45min",
-      "descente": "2h30",
+      "approche": "45min à 1h",
+      "descente": "2h30 à 3h",
       "retour": "20min"
     },
     "topo": {
@@ -3743,8 +3743,8 @@
     },
     "rating": {
       "cotation": "v4a3II",
-      "interet": 2.3,
-      "nbVotes": 29
+      "interet": 2.4,
+      "nbVotes": 30
     },
     "metrics": {
       "altitudeDepartM": 1735,
@@ -5240,7 +5240,7 @@
     "rating": {
       "cotation": "v3a3III",
       "interet": 2.6,
-      "nbVotes": 22
+      "nbVotes": 23
     },
     "metrics": {
       "altitudeDepartM": 990,
@@ -5375,7 +5375,7 @@
       "retour": "10min"
     },
     "topo": {
-      "accesAval": "Sur la RN135, entre Arlos et Fos, prendre une route à droite au niveau du cimetière. Se garer au bout de la route (départ de randonnées).",
+      "accesAval": "Canyon interdit sauf aux professionnels ayant signé une convention avec la marie d'Arlos (cf règlementation).\n\nSur la RN135, entre Arlos et Fos, prendre une route à droite au niveau du cimetière. Se garer au bout de la route (départ de randonnées).",
       "accesAmont": null,
       "approche": "Depuis le parking, prendre la piste vers le SO de l'autre côté des parcs à bestiaux. Prendre le GR10 à droite après le pont et le remonter sur 200 mètres environ.",
       "descente": "La première partie de la descente comprend une succession de petits toboggans. L'enchainement finl, situé sous le pont comprend 3 cascades joliment sculptées.\n\nLa corde n'est nécessaire que par gros débit.",
@@ -5392,7 +5392,7 @@
       "longitude": 0.707964,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -6056,8 +6056,8 @@
     },
     "rating": {
       "cotation": "v3a3II",
-      "interet": 2.1,
-      "nbVotes": 5
+      "interet": 2.5,
+      "nbVotes": 6
     },
     "metrics": {
       "altitudeDepartM": 300,
@@ -7237,7 +7237,7 @@
     "rating": {
       "cotation": "v3a1I",
       "interet": 2.1,
-      "nbVotes": 13
+      "nbVotes": 14
     },
     "metrics": {
       "altitudeDepartM": 700,
@@ -8057,7 +8057,7 @@
     "rating": {
       "cotation": "v4a2IV",
       "interet": 3.1,
-      "nbVotes": 17
+      "nbVotes": 19
     },
     "metrics": {
       "altitudeDepartM": 860,
@@ -9095,8 +9095,8 @@
     },
     "rating": {
       "cotation": "??",
-      "interet": 2.3,
-      "nbVotes": 6
+      "interet": 2.4,
+      "nbVotes": 7
     },
     "metrics": {
       "altitudeDepartM": 1450,
@@ -9502,7 +9502,7 @@
     "rating": {
       "cotation": "v4a5IV",
       "interet": 3.8,
-      "nbVotes": 48
+      "nbVotes": 49
     },
     "metrics": {
       "altitudeDepartM": 1060,
@@ -10520,7 +10520,7 @@
       "remarques": "À pratiquer plutôt le matin pour profiter du soleil. Plus à l'ombre l'après-midi."
     },
     "representativePoint": null,
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {

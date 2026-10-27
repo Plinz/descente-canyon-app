@@ -973,18 +973,6 @@
     "attachments": []
   },
   {
-    "id": 108,
-    "status": "Actif",
-    "action": "Interdit",
-    "title": "Arrêté (Parc du Mont Perdu) - 17 mars 1995",
-    "summary": "La pratique de la descente de canyon n'est pas autorisé dans le parc national du Mont Perdu.",
-    "remark": null,
-    "details": "Consultez le\n\ntexte (ou extrait)\n\nARRÊTÉ ROYAL 409/1995 du 17 mars 1995, qui approuve le plan directeur d’utilisation et de gestion du Parc National Ordesa et du Mont Perdu.\n\nJournal officiel n°112 du 11 mai 1995\n\n(…)\n\n3. Gestion\n\nb) Activités sportives. Le parc national fait l’objet de nombreuses activités sportives de montagne. L'aménagement et le règlement le cas échéant de ces pratiques sera effectué selon les principes suivants :\n\n1. Les pratiques sportives seront toujours soumises aux intérêts de conservation, de recherche et d'intérêt.\n\n2. Les activités sportives autorisées seront la randonnée, l'escalade, le ski de randonnée et la spéléologie. Pour des raisons de conservation, de sécurité ou de pratique excessive à certaines époques, la la nécessité d’obtenir une autorisation de la part de l’administration du parc pourra être nécessaire.\n\n3. La compétition sportive est interdite\n\nDISPOSITIONS GENERALES\n\nSont interdits :\n\nle creusement du sol et de la roche mère,\n\nla récolte de terres, stériles, pierres, roches, minéraux, fossiles ou tout autre matériau géologique,\n\nla recherche, l’exploration ou l’exploitation de minéraux,\n\nla déviation, la rétention le captage des eaux superficielles et souterraines,\n\nle déversement dans les eaux de détergents, savons, eau de javel ou autre type de produits,\n\nla baignade ou toute autre activité dans les cours d’eau ou lacs,\n\nla cueillette de végétaux,\n\nle piégeage, la persécution, la gêne, les dommages, la capture ou la chasse d'animaux et le ramassage de ses restes ou résidus d’activité,\n\nl’implantation d'espèces animales ou végétales domestiques ou sauvage,\n\nl'utilisation de feu, à l'exception de l'utilisation d'appareils de camping-gaz pour cuisiner ou produire de la lumière au bivouac,\n\nle déversement, l’abandon de déchets divers (plastiques, détritus, papiers, verre…)\n\nl’utilisation de terrains du Parc National d’Ordesa et du Mont Perdu pour se garer en dehors des zones prévue à cet effet, ainsi que l’utilisation dans tout le parc de mobilier (hamac, tables, chaises ou autre matériel de ce type)\n\nla pratique d'activités sportives non permises dans le plan directeur d’utilisation et de gestion ou de celles permises sans autorisation en période de réglementation et dans tous les cas la pratique de compétitions sportives.\n\nl’installation d’antennes, d’écrans ou tout autre matériel pouvant dégrader le paysage,\n\nla projection de pierres ou autre, ainsi que l’utilisation d’engins volants (montgolfières, ailes delta, parapentes…)\n\nle survol avec quelconque objet volant à moins de 1000m d’altitude par rapport au sol,\n\nla détérioration ou la destruction des objets appartenant au parc,\n\nla réalisation d’inscriptions, marques, balises sur les rochers, arbres ou sur les biens meubles et immeubles appartenant au parc,\n\nl’utilisation de mégaphones, radios ou hauts parleur avec un volume pouvant être gênant.\n\nl’installation ou l’utilisation de panneaux publicitaires,\n\nl’utilisation des ressources naturelles du Parc, en particulier la pêche et la chasse,\n\ntransporter à l’extérieur des véhicules armes ou morceaux d’armes ou tout autre matériel pouvant servir à persécuter, blesser, attraper ou tuer les animaux,\n\nemmener les chiens dans le parc\n\nTexte original : REAL DECRETO 409/1995 de 17 de marzo de 1995, por el que se aprueba el Plan Rector de Uso y Gestión del Parque Nacional de Ordesa y Monte Perdido.",
-    "effectiveDate": "17 mars 1995",
-    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/108/legislation.html",
-    "attachments": []
-  },
-  {
     "id": 109,
     "status": "Obsolète",
     "action": "Réglemente",
@@ -8350,7 +8338,7 @@
   },
   {
     "id": 600,
-    "status": "Actif",
+    "status": "Temporairement abrogé",
     "action": "Réglemente",
     "title": "Arrêté municipal (La Bâthie) - 23 jan 2026",
     "summary": "En raison d'opérations programmées de nettoyage par chasses manuelles du dessableur, l’accès au torrent du Bénétant et au ruisseau d’Arbine est interdit à toutes personnes de l’aval immédiat du dessableur de la Ravoire jusqu’à la confluence avec l’Isère, pendant la durée des opérations :\n\nle mardi 21 avril 2026\n\nle mardi 04 août 2026\n\nle mardi 13 octobre 2026",
@@ -8510,13 +8498,13 @@
   },
   {
     "id": 610,
-    "status": "Actif",
+    "status": "Obsolète",
     "action": "Réglemente",
     "title": "Arrêté préfectoral (Jura) - 10 juil 2026",
     "summary": "Dans le cadre des mesures de restriction des usages de l'eau liées à la sécheresse, la préfecture a décidé que la pratique du canyonisme sur les canyons situés sur les cours d'eau du Tacon, de la Bienne et de leurs affluents est interdite, sauf entre 08h00 et 12h00.",
-    "remark": null,
-    "details": "Arrêté préfectoral n°2026-07-10-001 (Jura) du 10 juillet 2026\n\nCommuniqué de presse d'activation de mesure de restrictions concernant les activités aquatiques et nautiques (10 juillet 2026)",
-    "effectiveDate": "10 juil 2026",
+    "remark": "Arrête abrogé le 30/07/2026 et remplacé par l'arrêté n° 2026-07-28-002",
+    "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral n°2026-07-10-001 (Jura) du 10 juillet 2026\n\nCommuniqué de presse d'activation de mesure de restrictions concernant les activités aquatiques et nautiques (10 juillet 2026)",
+    "effectiveDate": "30 juil 2026",
     "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/610/legislation.html",
     "attachments": [
       {
@@ -8543,6 +8531,275 @@
       {
         "label": "Arrêté préfectoral (Ain) du 21 mai 1997",
         "url": "https://static.descente-canyon.com/canyoning/reglem/reglem611_pj1.pdf"
+      }
+    ]
+  },
+  {
+    "id": 612,
+    "status": "Obsolète",
+    "action": "Réglemente",
+    "title": "Arrêté municipal (La Bâthie) - 17 juil 2026",
+    "summary": "En raison d'opérations programmées de nettoyage par chasses manuelles du dessableur, l’accès au torrent du Bénétant et au ruisseau d’Arbine est interdit à toutes personnes de l’aval immédiat du dessableur de la Ravoire jusqu’à la confluence avec l’Isère, pendant la durée des opérations :\n\nle mardi 21 avril 2026\n\nle mardi 04 août 2026\n\ndu mercredi 30 septembre à 14h au jeudi 1er octobre 2026 à 17h",
+    "remark": "L'arrêté n°74/2026 vient modifier la dernière date d'intervention programmée annoncée dans l'arrêté municipal (La Bâthie) n°08/2026 du 23 janvier 2026.",
+    "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté municipal (La Bâthie) n°74/2026 du 17 juillet 2026",
+    "effectiveDate": "02 oct 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/612/legislation.html",
+    "attachments": [
+      {
+        "label": "Arrêté municipal (La Bâthie) n°74/2026 du 17 juillet 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem612_pj1.pdf"
+      }
+    ]
+  },
+  {
+    "id": 613,
+    "status": "Actif",
+    "action": "Réglemente",
+    "title": "Arrêté préfectoral (Jura) - 25 sept 2026",
+    "summary": "Dans le cadre des mesures de restriction des usages de l'eau liées à la sécheresse, la préfecture a décidé que la pratique du canyonisme sur les canyons situés sur les bassins de l'Ain, de la Saine, du Tacon, de la Bienne et de leurs affluents est interdite, sauf entre 08h00 et 12h00.",
+    "remark": "1er arrêté abrogé le 09/09/2026 mais réglementation réactivée le 25/09/2026 par un nouvel arrêté.",
+    "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026\n\nArrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026\n\nArrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+    "effectiveDate": "25 sept 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/613/legislation.html",
+    "attachments": [
+      {
+        "label": "Arrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj2.pdf"
+      },
+      {
+        "label": "Arrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj1.pdf"
+      },
+      {
+        "label": "Arrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj3.pdf"
+      }
+    ]
+  },
+  {
+    "id": 614,
+    "status": "Actif",
+    "action": "Interdit",
+    "title": "Arrêté - 08 avr 2015",
+    "summary": "La pratique du canyoning est interdite dans le parc national d'Ordesa y Monte Perdido (articles 9.1.3 alinéa d et 9.2.1.2.6 du PRUG)",
+    "remark": "Le barranco Lugar, situé pile en limite de parc, est considéré depuis plusieurs années comme interdit par les gardes du parc national.",
+    "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nPlan Rector de Uso y Gestión del Parque Nacional de Ordesa y Monte Perdido (Gobierno de Aragón) du 8 avril 2015 (extrait du décret)",
+    "effectiveDate": "08 avr 2015",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/614/legislation.html",
+    "attachments": [
+      {
+        "label": "Plan Rector de Uso y Gestión del Parque Nacional de Ordesa y Monte Perdido (Gobierno de Aragón) du 8 avril 2015 (extrait du décret)",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem614_pj1.pdf"
+      }
+    ]
+  },
+  {
+    "id": 615,
+    "status": "Actif",
+    "action": "Réglemente",
+    "title": "Arrêté préfectoral (Aveyron) - 08 août 2026",
+    "summary": "En cas de niveau d'alerte sécheresse de niveau \"Crise\" dans une zone d'un bassin, les activités aquatiques sont interdites dans le \"lit mouillé\" des cours d'eau de la zone concernée par l'alerte.",
+    "remark": "Il faut surveiller les communications de la préfecture à cette adresse : https://www.aveyron.gouv.fr/Actions-de-l-Etat/Environnement/Gestion-de-l-eau/Secheresse/Arretes-de-restrictions",
+    "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral (Aveyron) n°12-2026-08-04-00007 du 4 août 2026\n\nArrêté préfectoral (Aveyron) n°12-2026-08-11-00001 du 11 août 2026",
+    "effectiveDate": "08 août 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/615/legislation.html",
+    "attachments": [
+      {
+        "label": "Arrêté préfectoral (Aveyron) n°12-2026-08-04-00007 du 4 août 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem615_pj1.pdf"
+      },
+      {
+        "label": "Arrêté préfectoral (Aveyron) n°12-2026-08-11-00001 du 11 août 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem615_pj2.pdf"
+      }
+    ]
+  },
+  {
+    "id": 616,
+    "status": "Obsolète",
+    "action": "Interdit",
+    "title": "Arrêté municipal (Le Grand-Bornand) - 11 août 2026",
+    "summary": "La pratique du canyoning est interdite dans le torrent du Chinaillon à partir du 11 août 2026 et jusqu'au 15 octobre 2026 inclus en raison de la sécheresse exceptionnelle.",
+    "remark": null,
+    "details": "Arrêté municipal (Le Grand-Bornand) n°ARR2026/260 du 11 août 2026",
+    "effectiveDate": "16 oct 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/616/legislation.html",
+    "attachments": [
+      {
+        "label": "Arrêté municipal (Le Grand-Bornand) n°ARR2026/260 du 11 août 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem616_pj1.pdf"
+      }
+    ]
+  },
+  {
+    "id": 617,
+    "status": "Actif",
+    "action": "Interdit",
+    "title": "Arrêté municipal (Saint-Georges-les-Bains) - 21 août 2026",
+    "summary": "Du fait de la sécheresse exceptionnelle, la pratique du canyoning est interdite dans les cascades du Turzon du 1er septembre 2026 au 30 octobre 2026.",
+    "remark": "La pratique est déjà interdite chaque année aux mois de juillet et août.",
+    "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté municipal (Saint-Georges-les-Bains) n°2026-071 du 20 août 2026",
+    "effectiveDate": "30 oct 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/617/legislation.html",
+    "attachments": [
+      {
+        "label": "Arrêté municipal (Saint-Georges-les-Bains) n°2026-071 du 20 août 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem617_pj1.pdf"
+      }
+    ]
+  },
+  {
+    "id": 618,
+    "status": "Actif",
+    "action": "Réglemente",
+    "title": "Convention - 01 juil 2026",
+    "summary": "Les professionnels se sont accordés à respecter une charte de fonctionnement et de bons usages quant à l'encadrement de l'activité canyoning sur le site de la Haute Ardèche :\n\n- respect des entrée et sortie matérialisées\n\n- respect des lieux et des riverains\n\n- respect des horaires et jours de pratique en saison (du deuxième samedi de juillet à l'avant-dernier dimanche d'août inclus) : pas de pratique les samedis et dimanches, limitation des groupes",
+    "remark": null,
+    "details": "Charte de fonctionnement du canyon de la Haute-Ardèche du 1er juillet 2026",
+    "effectiveDate": "01 juil 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/618/legislation.html",
+    "attachments": [
+      {
+        "label": "Charte de fonctionnement du canyon de la Haute-Ardèche du 1er juillet 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem618_pj1.pdf"
+      }
+    ]
+  },
+  {
+    "id": 619,
+    "status": "Actif",
+    "action": "Interdit",
+    "title": "Arrêté municipal (Pied-de-Borne, Prévenchères) - 04 sept 2026",
+    "summary": "Du dimanche 06 septembre au vendredi 02 octobre 2026, le canyon du Chassezac est interdit en raison de la \"mise en transparence\" du barrage du Rachas pour des travaux d'entretien à l'usine du Beyssac.",
+    "remark": "Interdiction prolongée jusqu'au 2 novembre 2026 par arrêtés des deux communes.",
+    "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté municipal (Prévenchères) N°AR_067_2026 du 2 octobre 2026\n\nArrêté municipal (Prévenchères) N°AR_064_2026 du 04 septembre 2026\n\nArrêté municipal (Pied-de-Borne) N°2026_067 du 1er octobre 2026",
+    "effectiveDate": "02 nov 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/619/legislation.html",
+    "attachments": [
+      {
+        "label": "Arrêté municipal (Prévenchères) N°AR_067_2026 du 2 octobre 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem619_pj2.pdf"
+      },
+      {
+        "label": "Arrêté municipal (Prévenchères) N°AR_064_2026 du 04 septembre 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem619_pj1.pdf"
+      },
+      {
+        "label": "Arrêté municipal (Pied-de-Borne) N°2026_067 du 1er octobre 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem619_pj3.pdf"
+      }
+    ]
+  },
+  {
+    "id": 620,
+    "status": "Obsolète",
+    "action": "Réglemente",
+    "title": "Arrêté préfectoral (Corse-du-Sud) - 29 mai 2026",
+    "summary": "Du 1er juin au 15 octobre 2026, le canyon est interdit à toute personne qui n'est pas encadré par un professionnel (ou un moniteur fédéral).\n\nContrôles prévus et amendes de 4ème classe pour les contrevenants (jusqu'à 750€).",
+    "remark": null,
+    "details": "Arrété préfectoral (Corse du Sud) n°2A-2026-05-29-00005 du 29 mai 2026",
+    "effectiveDate": "15 oct 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/620/legislation.html",
+    "attachments": [
+      {
+        "label": "Arrété préfectoral (Corse du Sud) n°2A-2026-05-29-00005 du 29 mai 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem620_pj1.pdf"
+      }
+    ]
+  },
+  {
+    "id": 621,
+    "status": "Obsolète",
+    "action": "Interdit",
+    "title": "Arrêté municipal (Talloires-Montmin) - 21 sept 2026",
+    "summary": "Canyon interdit par arrêté municipal la semaine du 21 au 25 septembre 2026 pour cause de travaux de dépollution.",
+    "remark": null,
+    "details": "Arrêté municipal (Talloires-montmin) n°114/2026 du 4 septembre 2026",
+    "effectiveDate": "26 sept 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/621/legislation.html",
+    "attachments": [
+      {
+        "label": "Arrêté municipal (Talloires-montmin) n°114/2026 du 4 septembre 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem621_pj1.pdf"
+      }
+    ]
+  },
+  {
+    "id": 622,
+    "status": "Actif",
+    "action": "Réglemente",
+    "title": "Arrêté municipal (Arlos) - 27 mars 2026",
+    "summary": "Le canyon d'Arlos est interdit suite à des soucis de dangerosité du chemin d'accès dit du Boucouas et du pont qui surplombe le canyon.\n\nSeuls les professionnels ayant signé une convention avec la mairie et ayant également payé un droit d'accès au canyon pour la saison peuvent emprunter le chemin et encadrer dans le canyon.",
+    "remark": null,
+    "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.",
+    "effectiveDate": "27 mars 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/622/legislation.html",
+    "attachments": []
+  },
+  {
+    "id": 623,
+    "status": "Actif",
+    "action": "Interdit",
+    "title": "Arrêté municipal (Serrières-de-Briord) - 01 sept 2026",
+    "summary": "En raison de travaux de sécurisation d'une falaise dominant le canyon, l'accès à la Pernaz ainsi qu'au sentier de randonnée est strictement interdit du 1er septembre au 13 novembre 2026.",
+    "remark": null,
+    "details": "Arrêté municipal (Serrières-de-Briord) n°A_2026_07_22 du 21 juillet 2026",
+    "effectiveDate": "13 nov 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/623/legislation.html",
+    "attachments": [
+      {
+        "label": "Arrêté municipal (Serrières-de-Briord) n°A_2026_07_22 du 21 juillet 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem623_pj1.pdf"
+      }
+    ]
+  },
+  {
+    "id": 624,
+    "status": "Actif",
+    "action": "Interdit",
+    "title": "Arrêté - 31 août 2026",
+    "summary": "Canyon interdit pour cause de travaux importants (tunnel et pont) à partir du 31 août 2026 pour 4 à 5 ans.",
+    "remark": "https://www.laprovinciadicomo.it/stories/premium/lago-e-valli/variante-tremezzina-nuovi-interventi-a-fine-mese-operai-nella-valle-perlana-o_3931042_11/",
+    "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.",
+    "effectiveDate": "31 août 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/624/legislation.html",
+    "attachments": []
+  },
+  {
+    "id": 625,
+    "status": "Actif",
+    "action": "Réglemente",
+    "title": "Arrêté - 06 juil 2026",
+    "summary": "La pratique du canyonisme est interdite dans la zone cœur du Parc national des Pyrénées à l’exception des canyons nommément autorisés dans l'arrêté.",
+    "remark": null,
+    "details": "Arrêté temporaire (Parc national des Pyrénées) n°2026-46 du 6 juillet 2026",
+    "effectiveDate": "31 oct 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/625/legislation.html",
+    "attachments": [
+      {
+        "label": "Arrêté temporaire (Parc national des Pyrénées) n°2026-46 du 6 juillet 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem625_pj1.pdf"
+      }
+    ]
+  },
+  {
+    "id": 626,
+    "status": "Actif",
+    "action": "Réglemente",
+    "title": "Arrêté municipal (La Bâthie) - 12 oct 2026",
+    "summary": "Nouvelle date de chasses manuelles du dessableur du captage en amont du torrent du Bénétant : le mardi 03 novembre 2026, où le canyon sera donc doublement interdit.",
+    "remark": null,
+    "details": "Arrêté municipal (La Bathie) n°95/2026 du 08 octobre 2026\n\nArrêté municipal (La Bathie) n°97/2026 du 12 octobre 2026",
+    "effectiveDate": "04 nov 2026",
+    "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/626/legislation.html",
+    "attachments": [
+      {
+        "label": "Arrêté municipal (La Bathie) n°95/2026 du 08 octobre 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem626_pj1.pdf"
+      },
+      {
+        "label": "Arrêté municipal (La Bathie) n°97/2026 du 12 octobre 2026",
+        "url": "https://static.descente-canyon.com/canyoning/reglem/reglem626_pj2.pdf"
       }
     ]
   }

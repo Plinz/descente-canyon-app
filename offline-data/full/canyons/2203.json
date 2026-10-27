@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:30.454649+00:00",
+  "scrapedAt": "2026-10-27T16:43:55.890145+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2203,
@@ -33,9 +33,9 @@
       "coursEau": "La Saine"
     },
     "rating": {
-      "cotation": "v3a4I",
+      "cotation": "v2a3I",
       "interet": 2.6,
-      "nbVotes": 20
+      "nbVotes": 21
     },
     "metrics": {
       "altitudeDepartM": 770,
@@ -51,16 +51,16 @@
       "retour": "20min"
     },
     "topo": {
-      "accesAval": "A Foncine-le-Bas, prendre la route des Douanets par le viaduc ( parking tram jurassienne).\n\nInterdit de franchir le pont de garer sur parking aménagé (ancienne voie de tramway désaffectée, elle longe les gorges jusqu'aux Planches-en-Montagne (Langouette), c'est l'accès au Bief de la Ruine.",
+      "accesAval": "A Foncine-le-Bas, prendre la route des Douanets, se garer sur le parking dédié au canyoneurs situé à gauche avant le viaduc (parking tram jurassienne).\n\nL'arrêté municipal relatif au canyonisme interdit aux pratiquants de se garer et de se changer à d'autres endroit du village, notamment au milieu du village, sur le parking du garage automobile et de l'autre côté du pont.",
       "accesAmont": null,
-      "approche": "Poursuivre sur 500m environ et se mettre à l'eau au niveau de la barrière métallique et du petit ressaut.",
+      "approche": "Poursuivre sur 500m environ sur l'ancienne voie du tram et se mettre à l'eau au niveau de la barrière en bois et du petit ressaut.",
       "descente": "Randonnée aquatique.\n\nLa gorge est ouverte est large. Alternance de petits rapides et de petits ressauts avec des possibilités de nage et de sauts latéraux.\n\nUne seule vraie cascade vers la fin, mais contournable (main-courante) avec de belles possibilités de sauts jusqu'à 7 m.\n\nPossibilité de tirer un guidé depuis le relais de la dernière cascade",
       "retour": "150m après la C15, chercher une sente montant en rive droite (cairn) sur la voie du tram empruntée à l'aller. PRÉVOIR UNE LAMPE POUR LE FRANCHISSEMENT DU TUNNEL !",
       "engagement": "Aucun engagement, pas d'encaissement, possibilité de schunter les difficultés.",
       "periode": "Torrent puissant qui nécessite l'étiage pour être pratiqué commodément.\n\nAttention, une grosse marmite siphonnante (précédée d'une C4) est à éviter absolument même par débit raisonnable ! Attention aux étourdis !\n\nMême à l'étiage, l'eau n'est pas très limpide, prudence lors des sauts !",
       "geologie": null,
       "historique": null,
-      "remarques": "Penser à prendre une lampe pour le groupe pour le franchissement du tunnel au retour.\n\nVous partagez ici un lieux sauvage avec d'autres passionnés : les pêcheurs !\n\nLe plus grand respect est donc de rigueur. On évitera les descentes à l'aube et en fin de soirée."
+      "remarques": "Penser à prendre une lampe pour le groupe pour le franchissement du tunnel au retour.\n\nVous partagez ici un lieu sauvage avec d'autres passionnés : les pêcheurs !\n\nLe plus grand respect est donc de rigueur.\n\nHoraire autorisé de 8h à 18h30 de juin à septembre par arrêté municipal."
     },
     "geoPoints": [
       {
@@ -95,6 +95,31 @@
       "hasSpecificRegulation": true,
       "isForbidden": false,
       "rules": [
+        {
+          "id": 613,
+          "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté préfectoral (Jura) - 25 sept 2026",
+          "summary": "Dans le cadre des mesures de restriction des usages de l'eau liées à la sécheresse, la préfecture a décidé que la pratique du canyonisme sur les canyons situés sur les bassins de l'Ain, de la Saine, du Tacon, de la Bienne et de leurs affluents est interdite, sauf entre 08h00 et 12h00.",
+          "remark": "1er arrêté abrogé le 09/09/2026 mais réglementation réactivée le 25/09/2026 par un nouvel arrêté.",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026\n\nArrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026\n\nArrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+          "effectiveDate": "25 sept 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/613/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj2.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj1.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj3.pdf"
+            }
+          ]
+        },
         {
           "id": 536,
           "status": "Actif",

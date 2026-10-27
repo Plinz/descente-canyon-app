@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:57.852244+00:00",
+  "scrapedAt": "2026-10-27T16:45:21.102533+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2328,
@@ -16,7 +16,7 @@
     "id": 2328,
     "identity": {
       "nom": "Richiusa",
-      "nomComplet": "Canyon de la Richiusa, Ruisseau de Cardiccia, Ruisseau de Cardiccia",
+      "nomComplet": "Canyon de la Richiusa, Ruisseau de Cardiccia",
       "prefixeNom": "Canyon de la",
       "url": "https://www.descente-canyon.com/canyoning/canyon/2328/Richiusa.html"
     },
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v3a3III",
       "interet": 3.2,
-      "nbVotes": 139
+      "nbVotes": 142
     },
     "metrics": {
       "altitudeDepartM": 820,
@@ -53,10 +53,10 @@
     "topo": {
       "accesAval": "Rejoindre Bocognano, à la sortie du Village après un pont, panneau à gauche indiquant Richuisa.\n\nEmprunter la route jusqu'à une centrale électrique.\n\nSe garer sur le parking avant (peu de place).",
       "accesAmont": null,
-      "approche": "Prendre un chemin qui se rend vers le cours d'eau, emprunter une passerelle et suivre le sentier tout de suite à droite (balisage jaune) qui monte en rive droite du cour d'eau.\n\nContinuer sur le chemin jusqu'à ce que le balisage jaune se divise en 2, descendre vers la rivière et prendre une deuxième passerelle qui enjambe le bas du canyon. Suivre le chemin toujours balisé jaune jusqu'à un promontoire dominant la vallée.\n\nTout de suite après, prendre le chemin de gauche sur la patte d'oie qui va jusqu'au refuge que l'on peut observer au loin.\n\nEnviron 500m avant le refuge, suivre des cairns et entrer dans le cours d'eau à ce niveau.",
+      "approche": "Prendre un chemin qui se rend vers le cours d'eau, emprunter une passerelle et suivre le sentier tout de suite à droite (balisage jaune) qui monte en rive droite du cour d'eau.\n\nSuivre les panneaux indiquant la bergerie du Mattone.\n\nContinuer sur le chemin jusqu'à ce que le balisage jaune se divise en 2, descendre vers la rivière et prendre une deuxième passerelle qui enjambe le bas du canyon. Suivre le chemin toujours balisé jaune jusqu'à un promontoire dominant la vallée.\n\nTout de suite après, prendre le chemin de droite sur la patte d'oie qui va jusqu’aux bergeries.\n\n50 mètres après les bergeries vous y êtes dans le cours d'eau.",
       "descente": "Le plus connu et le plus ludique de l'île dans une eau turquoise... Successions de 5 vasques franchissables en toboggans. 3 sauts, encore 3 toboggans et une cascade de 12m suivie d'un toboggan. A partir de là, la gorge se resserre. 6 sauts successifs.\n\nUne belle descente...",
-      "retour": "A la fin du canyon, parcourir 150m en rivière, puis sortir par le site d'escalade à gauche signalé par un cairn.",
-      "engagement": "Moyen, il n'y a pas de grosses difficultés et il est quasiment possible d'éviter tous les obstacles. En revanche, en cas d'orage local courant sur le coin, le canyon peut se transformer en un piège infernal.",
+      "retour": "A la fin du canyon, parcourir 150m en rivière, puis sortir par le site d'escalade à gauche signalé par un cairn, et retrouvez le sentier d’approche.",
+      "engagement": "Moyen, il n'y a pas de grosses difficultés. En revanche, en cas d'orage local courant sur le coin, le canyon peut se transformer en un piège infernal.",
       "periode": "La partie étroite est très ludique par son enchainement de vasques.",
       "geologie": null,
       "historique": null,

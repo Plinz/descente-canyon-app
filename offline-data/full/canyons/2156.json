@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:17.960774+00:00",
+  "scrapedAt": "2026-10-27T16:43:17.762015+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2156,
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v2a3I",
       "interet": 2.4,
-      "nbVotes": 95
+      "nbVotes": 96
     },
     "metrics": {
       "altitudeDepartM": 700,
@@ -54,13 +54,13 @@
       "accesAval": "De pont du loup, remonter les gorges du Loup (D6-D3) jusqu'à gréolières. Suivre la D79 en direction de Andon sur environ 3 km. Passer un premier vallon et stationner sur un parking peu avant un second vallon (point IGN côté: 801m).",
       "accesAmont": null,
       "approche": "Du parking, descendre par une piste qui passe sous la route jusqu'à un replat. Continuer par le sentier quelques mètres puis prendre un sente sur la droite (panneau) qui mène en quelques minutes au départ du canyon.",
-      "descente": null,
+      "descente": "Suivre le cours de la rivière jusqu’à un premier petit rappel, s'ensuit une alternance de vasques, petites cascades et courtes zones de marche. Au fil de la descente, plusieurs ressauts nécessitent l’usage de la corde contrairement à d’autres où les sauts sont possibles. À mi-parcours, un enchaînement de deux cascades à fort débit s’évite par la rive gauche. Après un dernier resserrement, une large vasque entourée de rives boisées marque la fin de la descente.",
       "retour": "Au niveau d'une grande vasque (sortie évidente, point IGN côté: 631m), remonter RG par une sente pour rejoindre l'aqueduc. Le suivre vers l'Ouest pour atteindre le sentier de départ.",
       "engagement": "Faible.",
       "periode": "C'est un parcours estival, au printemps le débit important et l'eau glaciale pourraient surprendre.",
       "geologie": null,
       "historique": null,
-      "remarques": null
+      "remarques": "Idéal pour l'initiation, ce petit canyon est rempli de groupes encadrés en été"
     },
     "geoPoints": [
       {

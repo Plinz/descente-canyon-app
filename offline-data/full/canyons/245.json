@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:54:46.474404+00:00",
+  "scrapedAt": "2026-10-27T16:41:50.005255+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 245,
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v3a5III",
       "interet": 3.2,
-      "nbVotes": 100
+      "nbVotes": 101
     },
     "metrics": {
       "altitudeDepartM": 1356,
@@ -48,7 +48,7 @@
     "timings": {
       "approche": "1h20",
       "descente": "4h",
-      "retour": "1h"
+      "retour": "1h15"
     },
     "topo": {
       "accesAval": "Depuis Villefranche de Conflent, se diriger en direction de Vernet les Bains, passer le village et poursuivre la D116 jusqu'à Casteil.\n\nDans casteil, prendre à droite la route qui monte au col de Jou (départ de la randonnée du Canigou par le refuge de Mariailles), stationnement pour une vingtaine de véhicules au col de Jou (parking amont).\n\nSoit se garer sur le parking en main droite face au transformateur (parking de la randonnée des gorges du Cady vers les cascades du Cady).\n\nSi celui-ci est plein, continuer cinquante mètre plus haut sur la route, passer la rivière par le petit pont et stationner là où se situent quelques emplacements (parking aval).\n\nNavette à faire car la marche sur la route est épuisante, trois kilomètres séparent les deux parkings.",

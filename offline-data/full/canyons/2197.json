@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:27.985634+00:00",
+  "scrapedAt": "2026-10-27T16:43:51.355801+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2197,
@@ -37,7 +37,7 @@
     "rating": {
       "cotation": "v3a4III",
       "interet": 3.2,
-      "nbVotes": 101
+      "nbVotes": 105
     },
     "metrics": {
       "altitudeDepartM": 620,
@@ -56,7 +56,7 @@
       "accesAval": "De St-Claude, D124 direction Les Bouchoux, puis Coiserette par D290. Se garer 150 m après le hameau \"vers la croix\" et 250 m avant le panneau de Coiserette (parking à droite et à gauche dans un virage à droite).\n\nCoord GPS : 46.346487 ; 5,83717\n\nIMPORTANT : Au stationnement, il est impératif de bien respecter les usagers de la route et les riverains, vite excédés par les incivilités répétées des pratiquants, notamment les jours d'affluence.\n\nLa partie goudronnée de la route n'est pas un vestiaire, ni un entrepôt de matériel !\n\nIl serait dommage qu'une interdiction tombe juste pour un problème lié à la circulation !",
       "accesAmont": null,
       "approche": "Poursuivre et se diriger en direction des maisons, puis descendre à gauche le pré en lisière du bois (sentier). La première cascade est visible de la route.",
-      "descente": "Succession de 3 encaissements très marqués, à l'exception du 2ème plus ouvert.\n\nPremière partie :\n\nUn très profond encaissement débute par une C20, puis rapidement une C8 en RG hors actif ou une C6 en RD dans l'actif ( attention au débit, vasque piège ) qui vous emmène dans un long et étroit corridor encombré de tronc et de branches compactés par les crues.\n\nDeuxième partie : L'encaissement est moins marqué, saut possible à l'arche, petites cascades et biefs.\n\nTroisième partie : Après avoir traversé une faille avec saut possible en RG et une petite desescalade dans l'actif ( monopoint en place ) on retrouve à nouveau un encaissement très important (30 à 50 m pour 50 cm de large parfois).\n\nEntre les encaissements 2 et 3, empruntez impérativement le sentier en sous bois en RG (respect du lit et marche plus aisée)",
+      "descente": "Succession de 3 encaissements très marqués, à l'exception du 2ème plus ouvert.\n\nPremière partie :\n\nUn très profond encaissement débute par une C20 que l'on peut descendre en rappel ou que l'on peut éviter en passant par un court sentier rive gauche permettant un potentiel saut ou de faire un relais intermédiaire humain avec un toboggan sec à partir d'une margelle plus bas. Utile pour emmener des débutants. Puis rapidement une C8 en RG hors actif ou une C6 en RD dans l'actif ( attention au débit, vasque piège ) qui vous emmène dans un long et étroit corridor encombré de tronc et de branches compactés par les crues.\n\nDeuxième partie : L'encaissement est moins marqué, saut possible à l'arche, petites cascades et biefs.\n\nTroisième partie : Après avoir traversé une faille avec saut possible en RG et une petite desescalade dans l'actif ( monopoint en place ) on retrouve à nouveau un encaissement très important (30 à 50 m pour 50 cm de large parfois).\n\nEntre les encaissements 2 et 3, empruntez impérativement le sentier en sous bois en RG (respect du lit et marche plus aisée)",
       "retour": "Nouveau cheminement :\n\nA la fin de la 3ème partie, prendre à gauche au panneau sortie. D'abord pleine pente, il bifurque ensuite à gauche pour remonter (à l'ombre) le canyon en balcon (le balcon du Chamois). On recoupera les échappatoires 2 puis 1. On arrive directement au parking sans monter à la route comme auparavant, et surtout on évite complétement les pâtures et ses vaches potentiellement agressives. Temps : moins de 20 mn.",
       "engagement": "Course la plus engagée de la région, qui mérite son appellation CANYON.\n\nL'encaissement, le débit parfois important et la relative lenteur de déplacement dans le lit tortueux très encombré d'arbres, en font un canyon engagé.\n\nLa première partie présente la particularité peu banale de changer de physionomie à chaque crue importante, créant de nouvelles cascades ou comblant les anciennes !!! La prudence est donc de rigueur, et du matériel spitage est recommandé, ainsi que sangles et maillons.\n\nLes principaux rappels sont équipés sur chaque rive et hors frottement. Ils permettent de passer avec un débit assez conséquent.\n\nEchappatoires avec sentier en RG entre les 3 encaissements.",
       "periode": "Des crues de 10 voir 15 m3/seconde peuvent passer dans les étroits...\n\nAttendre donc l'étiage pour atteindre environ 300l/seconde.\n\nTrès aquatique, néo complète obligatoire. Beaucoup de nage.\n\nLes profondeur de bassins changent avec le débit, à cause des \"barrages filtrants\" et sont très encombrés de troncs, malgré les nombreux efforts des amoureux du site ! Attention donc, vérifier les sauts impérativement.\n\nPériode conseillée : La belle saison...",
@@ -134,14 +134,39 @@
       "isForbidden": false,
       "rules": [
         {
-          "id": 610,
+          "id": 613,
           "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté préfectoral (Jura) - 25 sept 2026",
+          "summary": "Dans le cadre des mesures de restriction des usages de l'eau liées à la sécheresse, la préfecture a décidé que la pratique du canyonisme sur les canyons situés sur les bassins de l'Ain, de la Saine, du Tacon, de la Bienne et de leurs affluents est interdite, sauf entre 08h00 et 12h00.",
+          "remark": "1er arrêté abrogé le 09/09/2026 mais réglementation réactivée le 25/09/2026 par un nouvel arrêté.",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026\n\nArrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026\n\nArrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+          "effectiveDate": "25 sept 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/613/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj2.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj1.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj3.pdf"
+            }
+          ]
+        },
+        {
+          "id": 610,
+          "status": "Obsolète",
           "action": "Réglemente",
           "title": "Arrêté préfectoral (Jura) - 10 juil 2026",
           "summary": "Dans le cadre des mesures de restriction des usages de l'eau liées à la sécheresse, la préfecture a décidé que la pratique du canyonisme sur les canyons situés sur les cours d'eau du Tacon, de la Bienne et de leurs affluents est interdite, sauf entre 08h00 et 12h00.",
-          "remark": null,
-          "details": "Arrêté préfectoral n°2026-07-10-001 (Jura) du 10 juillet 2026\n\nCommuniqué de presse d'activation de mesure de restrictions concernant les activités aquatiques et nautiques (10 juillet 2026)",
-          "effectiveDate": "10 juil 2026",
+          "remark": "Arrête abrogé le 30/07/2026 et remplacé par l'arrêté n° 2026-07-28-002",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral n°2026-07-10-001 (Jura) du 10 juillet 2026\n\nCommuniqué de presse d'activation de mesure de restrictions concernant les activités aquatiques et nautiques (10 juillet 2026)",
+          "effectiveDate": "30 juil 2026",
           "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/610/legislation.html",
           "attachments": [
             {

@@ -1,77 +1,5 @@
 [
   {
-    "canyonId": 21891,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 44.326866,
-    "longitude": 3.511489,
-    "label": null
-  },
-  {
-    "canyonId": 21891,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 44.33025,
-    "longitude": 3.507535,
-    "label": null
-  },
-  {
-    "canyonId": 21891,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 44.332005,
-    "longitude": 3.512439,
-    "label": null
-  },
-  {
-    "canyonId": 21891,
-    "type": "POINT_REMARQUABLE",
-    "rawType": "point_externe",
-    "latitude": 44.336987,
-    "longitude": 3.504081,
-    "label": "Montbrun"
-  },
-  {
-    "canyonId": 21892,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 44.894234,
-    "longitude": 2.922986,
-    "label": null
-  },
-  {
-    "canyonId": 21893,
-    "type": "PARKING_AMONT",
-    "rawType": "parking_amont",
-    "latitude": 42.480961,
-    "longitude": 2.313824,
-    "label": null
-  },
-  {
-    "canyonId": 21893,
-    "type": "PARKING_AVAL",
-    "rawType": "parking_aval",
-    "latitude": 42.487415,
-    "longitude": 2.321484,
-    "label": null
-  },
-  {
-    "canyonId": 21894,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 45.02,
-    "longitude": 6.469444,
-    "label": null
-  },
-  {
-    "canyonId": 21894,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 45.018612,
-    "longitude": 6.469167,
-    "label": null
-  },
-  {
     "canyonId": 21894,
     "type": "PARKING_AVAL",
     "rawType": "parking",
@@ -1998,5 +1926,77 @@
     "latitude": 44.270908,
     "longitude": 6.070869,
     "label": null
+  },
+  {
+    "canyonId": 21988,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 44.27108,
+    "longitude": 6.070054,
+    "label": null
+  },
+  {
+    "canyonId": 21988,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 44.270035,
+    "longitude": 6.077027,
+    "label": null
+  },
+  {
+    "canyonId": 21989,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 42.173279,
+    "longitude": -0.090744,
+    "label": null
+  },
+  {
+    "canyonId": 21989,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 42.087288,
+    "longitude": -0.10952,
+    "label": null
+  },
+  {
+    "canyonId": 21989,
+    "type": "PARKING_AMONT",
+    "rawType": "parking_amont",
+    "latitude": 42.171997,
+    "longitude": -0.091002,
+    "label": null
+  },
+  {
+    "canyonId": 21989,
+    "type": "PARKING_AVAL",
+    "rawType": "parking_aval",
+    "latitude": 42.120415,
+    "longitude": -0.093631,
+    "label": "Alternative 1 (pour une sortie vers Abiego)"
+  },
+  {
+    "canyonId": 21989,
+    "type": "PARKING_AVAL",
+    "rawType": "parking_aval",
+    "latitude": 42.087234,
+    "longitude": -0.107632,
+    "label": "Alternative 2 (Faminosa integral)"
+  },
+  {
+    "canyonId": 21989,
+    "type": "POINT_REMARQUABLE",
+    "rawType": "point_interne",
+    "latitude": 42.162895,
+    "longitude": -0.093008,
+    "label": "piste venant de Bierge"
+  },
+  {
+    "canyonId": 21989,
+    "type": "POINT_REMARQUABLE",
+    "rawType": "point_interne",
+    "latitude": 42.152729,
+    "longitude": -0.106859,
+    "label": "confluence avec Rio Isuala"
   }
 ]

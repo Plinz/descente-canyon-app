@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:54:41.801456+00:00",
+  "scrapedAt": "2026-10-27T16:41:35.854666+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 229,
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v5a3IV",
       "interet": 3.2,
-      "nbVotes": 82
+      "nbVotes": 84
     },
     "metrics": {
       "altitudeDepartM": 1660,
@@ -51,9 +51,9 @@
       "retour": "45min"
     },
     "topo": {
-      "accesAval": "Du centre ville de Vernet-Les-Bains, suivre les panneaux \"Gorge du Saint Vincent\" puis \"cascade des Anglais\" et se garer sur le grand parking aménagé.",
+      "accesAval": "Du centre ville de Vernet-Les-Bains, suivre les panneaux \"Gorge du Saint-Vincent\" puis \"Cascade des Anglais\" et se garer sur le grand parking aménagé.",
       "accesAmont": null,
-      "approche": "Prendre la piste de la cascade des Anglais pendant une dizaine de minutes.\n\nA l'intersection (petit parking rond), l'abandonner en suivant le sentier à droite indiqué par le panneau \"Col du Llavent/Pic de l'Alzina\" et en laissant à gauche la piste de la \"cascade des Anglais\" (chemin de retour).\n\nAux panneaux suivants, suivre la direction \"Pic du Bosquet/Pic de l'alzina\" puis la direction du \"Sentier du bois de la ville\".\n\nOn compte deux heures de montée parfois raide, mais toujours ombragées qui mène au niveau d'immenses casse-crues en béton.\n\nDescendre sous le dernier casse-crues pour rejoindre le sommet de belles dalles sculptées par la rive droite.",
+      "approche": "Prendre la piste de la cascade des Anglais pendant une dizaine de minutes.\n\nA l'intersection (petit parking rond), l'abandonner en suivant le sentier à droite indiqué par le panneau \"Col du Llavent/Pic de l'Alzina\" et en laissant à gauche la piste de la \"cascade des Anglais\" (chemin de retour).\n\nAux panneaux suivants, suivre la direction \"Pic du Bosquet/Pic de l'alzina\" puis la direction du \"Sentier du bois de la ville\".\n\nSuivre le balisage rouge.\n\nOn compte deux heures de montée parfois raide, mais toujours ombragée qui mène au niveau d'immenses casse-crues en béton.\n\nDescendre sous le dernier casse-crues pour rejoindre le sommet de belles dalles sculptées par la rive droite.",
       "descente": "Magnifique gorge en plein cœur du massif du Canigou, c'est le canyon le plus long et sportif des Pyrénées-Orientales.\n\nÀ la fois technique et ludique, on compte au total quarante cinq cascades dont trente six rappels qui défilent dans la face nord du massif.\n\nRn°1: C37 (bloc centre)\n\nRn°2: C42 AN RG (shunt RD)\n\nRn°3: C6 RG\n\nRn°4: T7/C15 RG\n\nRn°5: C20 RD\n\nRn°6: T8/C8 RG\n\nRn°7: C41 RG\n\nRn°8: C20 RG\n\nRn°9: C3 RD\n\nRn°10: C5 RG\n\nT3\n\nRn°11: C14 RG\n\nT8 + T4\n\nRn°12: C25 RG\n\nRn°13: C21RG\n\nRn°14: C17 RD\n\nT2 + T2 + T6\n\nRn°15 Cascade en S: C35 fractionnée = R17 RD + Rn°16: R28 RG\n\nRn°17: C12 RG\n\nT4\n\nRn°17: C8 RG\n\nRn°18: C3 RD\n\nRn°19: C4 RD\n\nRn°20: C7 RD\n\nRn°21 Étroiture: C11 fractionnée = R6 RG + Rn°22: R15 RG\n\nRn°23: C30 RG\n\nRn°24: MC C8 RD\n\nT6\n\nRn°25: C12 RG\n\nRn°26: C4 RD\n\nRn°27 Forat de la Tomba: C75 fractionnée = R35 RG + Rn°28: R40 RG soit (R17 + R13 + R40).\n\nRn°29: S6/C6 RD\n\nRn°30: C12 RD\n\nRn°31: C15 RG\n\nRn°32: C14 RD\n\nRn°33: C12 RG\n\nRn°34: MC C18 RD\n\nRn°35: C16 RG\n\nT6\n\nRn°36 Cascade des Anglais: C18 RD",
       "retour": "Suivre le retour bien tracé et évident par les passerelles jusqu'au parking.",
       "engagement": "Des parties très encaissées entrecoupées, il y a des sections en forêt où l'on peut se mettre hors crues mais les échappatoires sont longs et malaisés.\n\nUn échappatoire est possible en haut de la C75 en rive gauche, il peut aussi être un départ pour faire uniquement la partie finale du Saint-Vincent.",

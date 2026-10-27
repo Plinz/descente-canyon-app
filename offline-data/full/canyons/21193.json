@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:59:02.540736+00:00",
+  "scrapedAt": "2026-10-27T16:54:40.089232+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21193,
@@ -9,7 +9,7 @@
       "description": "https://www.descente-canyon.com/canyoning/canyon-description/21193/topo.html",
       "map": "https://www.descente-canyon.com/canyoning/canyon-carte/21193/carte.html",
       "bibliography": "https://www.descente-canyon.com/canyoning/canyon-bibliographie/21193/guides-et-cartes.html",
-      "regulation": null
+      "regulation": "https://www.descente-canyon.com/canyoning/canyon-reglementation/21193/legislation.html"
     }
   },
   "canyon": {
@@ -31,31 +31,31 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "??",
-      "interet": 2.8,
-      "nbVotes": 1
+      "cotation": "",
+      "interet": null,
+      "nbVotes": 0
     },
     "metrics": {
       "altitudeDepartM": null,
       "deniveleM": null,
       "longueurM": null,
-      "cascadeMaxM": 45,
-      "cordeMiniM": 55,
-      "navette": "néant"
+      "cascadeMaxM": null,
+      "cordeMiniM": null,
+      "navette": null
     },
     "timings": {
-      "approche": "2h30",
-      "descente": "3h",
-      "retour": "1h30"
+      "approche": null,
+      "descente": null,
+      "retour": null
     },
     "topo": {
-      "accesAval": "Par la D922, de Gedre prendre la petite route du barrage des Gloriettes. Stationner sur le parking sup au niveau du barrage",
+      "accesAval": null,
       "accesAmont": null,
-      "approche": "Du parking poursuivre a pied par le sentier du fond du cirque d'Estaubé jusqu'au pied de la cascade finale 1h30. De là, remonter en rive gauche par un système de vires dans les pelouses pour rejoindre le ruisseau.",
+      "approche": null,
       "descente": null,
-      "retour": "Au bas de la cascade reprendre le meme chemin pour remonter.",
+      "retour": null,
       "engagement": null,
-      "periode": "étiage d'été",
+      "periode": null,
       "geologie": null,
       "historique": null,
       "remarques": null
@@ -68,9 +68,27 @@
       "resources": []
     },
     "reglementation": {
-      "hasSpecificRegulation": false,
-      "rules": [],
-      "isForbidden": false
+      "hasSpecificRegulation": true,
+      "isForbidden": true,
+      "rules": [
+        {
+          "id": 625,
+          "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté - 06 juil 2026",
+          "summary": "La pratique du canyonisme est interdite dans la zone cœur du Parc national des Pyrénées à l’exception des canyons nommément autorisés dans l'arrêté.",
+          "remark": null,
+          "details": "Arrêté temporaire (Parc national des Pyrénées) n°2026-46 du 6 juillet 2026",
+          "effectiveDate": "31 oct 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/625/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté temporaire (Parc national des Pyrénées) n°2026-46 du 6 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem625_pj1.pdf"
+            }
+          ]
+        }
+      ]
     }
   }
 }

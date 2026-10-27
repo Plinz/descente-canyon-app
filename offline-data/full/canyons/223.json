@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:54:37.571080+00:00",
+  "scrapedAt": "2026-10-27T16:41:28.304863+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 223,
@@ -34,34 +34,34 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "v2a4I",
-      "interet": 2.6,
-      "nbVotes": 111
+      "cotation": "",
+      "interet": null,
+      "nbVotes": 0
     },
     "metrics": {
       "altitudeDepartM": 360,
       "deniveleM": 90,
       "longueurM": 2000,
-      "cascadeMaxM": 10,
-      "cordeMiniM": 15,
-      "navette": "3.5km"
+      "cascadeMaxM": null,
+      "cordeMiniM": null,
+      "navette": null
     },
     "timings": {
-      "approche": "??",
-      "descente": "1h30",
-      "retour": "10min"
+      "approche": null,
+      "descente": null,
+      "retour": null
     },
     "topo": {
-      "accesAval": "se garer au niveau du nouveau parking aménagé (rue du Pont) par la municipalité (WC publiques disponibles) (coordonnées GPS : 45°48'33.3\"N 5°27'12.8\"E) (Le silo a disparu en 2022-2023 au profit de ce parking)\n\nNota : ne plus utiliser le parking de l'église, trop gênant pour les riverains et maintenant interdit sauf possesseurs d'une carte de stationnement.",
-      "accesAmont": "de Serrières-de-Briord prendre la D32 en direction de Bénonces sur un peu plus de 2km. Puis descendre à droite un chemin carrossable vers le cours d'eau (300m). Se garer au niveau du pont (pancarte d'information).",
-      "approche": "Marche d'approche sans voiture possible en empruntant le chemin de l'Eglise puis en suivant le sentier parallèle à la RD32 (compter 30-35 min)",
-      "descente": "Une descente très ludique avec beaucoup de petits sauts et toboggans, à sonder bien évidemment (les vasques ont tendance à se charger en gravier) et une fin magnifique pour ceux qui en veulent un peu plus...\n\nAssez discontinu (pas mal de marche mais jamais trop longues) un marquage éphémère de deux vagues bleues a été mis en place en lien avec rivières sauvages pour éviter le cours d'eau quand les obstacles ne sont pas d’un intérêt particulier pour le canyoniste et ainsi préserver la faune et la flore du lit du cours d’eau.",
-      "retour": "Un sentier évident en RD nous ramène au village.",
-      "engagement": "Il est toujours possible de sortir du canyon mise à part sur 2 ou 3 courts passages.",
-      "periode": "Nombreuses vasques avec parfois quelques brasses à faire.\n\nAttention à la réglementation spécifique (période de pratique autorisée : 15 avril au 31 juillet et du 1er septembre au 31 octobre).",
+      "accesAval": null,
+      "accesAmont": null,
+      "approche": null,
+      "descente": null,
+      "retour": null,
+      "engagement": null,
+      "periode": null,
       "geologie": null,
       "historique": null,
-      "remarques": "Pas mal pour les débutants.\n\nIl ne sert à rien de remonter à la confluence: pas d'obstacle. Passez votre chemin sous le pont, et prenez le sentier 15m en aval en RG.\n\nPeu d'intérêt à l'étiage."
+      "remarques": null
     },
     "geoPoints": [
       {
@@ -71,28 +71,12 @@
         "latitude": 45.821682,
         "longitude": 5.467672,
         "label": null
-      },
-      {
-        "canyonId": 223,
-        "rawType": "parking_amont",
-        "type": "PARKING_AMONT",
-        "latitude": 45.8218,
-        "longitude": 5.468273,
-        "label": null
-      },
-      {
-        "canyonId": 223,
-        "rawType": "parking_aval",
-        "type": "PARKING_AVAL",
-        "latitude": 45.808998,
-        "longitude": 5.453682,
-        "label": null
       }
     ],
     "representativePoint": {
-      "type": "PARKING_AMONT",
-      "latitude": 45.8218,
-      "longitude": 5.468273,
+      "type": "ENTREE",
+      "latitude": 45.821682,
+      "longitude": 5.467672,
       "label": null
     },
     "bibliography": {
@@ -110,8 +94,25 @@
     },
     "reglementation": {
       "hasSpecificRegulation": true,
-      "isForbidden": false,
+      "isForbidden": true,
       "rules": [
+        {
+          "id": 623,
+          "status": "Actif",
+          "action": "Interdit",
+          "title": "Arrêté municipal (Serrières-de-Briord) - 01 sept 2026",
+          "summary": "En raison de travaux de sécurisation d'une falaise dominant le canyon, l'accès à la Pernaz ainsi qu'au sentier de randonnée est strictement interdit du 1er septembre au 13 novembre 2026.",
+          "remark": null,
+          "details": "Arrêté municipal (Serrières-de-Briord) n°A_2026_07_22 du 21 juillet 2026",
+          "effectiveDate": "13 nov 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/623/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté municipal (Serrières-de-Briord) n°A_2026_07_22 du 21 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem623_pj1.pdf"
+            }
+          ]
+        },
         {
           "id": 345,
           "status": "Abrogé",

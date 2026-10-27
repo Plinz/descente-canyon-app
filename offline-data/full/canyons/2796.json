@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:57:35.621694+00:00",
+  "scrapedAt": "2026-10-27T16:50:16.242804+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2796,
@@ -16,7 +16,7 @@
     "id": 2796,
     "identity": {
       "nom": "Niscoude (inférieur)",
-      "nomComplet": "La Niscoude (inférieur), Ruisseau de la Niscoude",
+      "nomComplet": "La Niscoude (inférieur)",
       "prefixeNom": "La",
       "url": "https://www.descente-canyon.com/canyoning/canyon/2796/Niscoude-inferieur.html"
     },
@@ -31,7 +31,7 @@
       ],
       "massif": "Le Lustou",
       "bassin": "Lustou",
-      "coursEau": "Ruisseau de la Niscoude"
+      "coursEau": null
     },
     "rating": {
       "cotation": "v4a3III",
@@ -57,7 +57,7 @@
       "approche": "Du parking, prendre la piste à gauche qui traverse le cours d’eau du Rioumajou. Après 15 minutes, la laisser avant qu’elle n’enjambe le ruisseau de Péguère et emprunter le chemin à gauche vers le Lustou. Après avoir traversé un ruisseau, le chemin bifurque à droite. Le quitter 200 m plus loin vers la droite pour accéder à une prairie (grange). Remonter cette prairie, pour retrouver en haut à gauche le sentier s’enfonçant dans les bois (ça monte très raide). Vers 1930 m d'altitude, quitter le sentier pour descendre dans un éboulis, puis sentes pour atteindre le haut de la cascade aperçue un peu auparavant du chemin ( altitude 1830m).",
       "descente": "Un encaissement se présente avec un rappel de 35 m dans une cascade qui s'étale (queue de cheval). Les cinq rappels suivant s’effectuent depuis des arbres. Pour atteindre le départ du rappel de 30m, s’assurer depuis un arbre. 2 autres rappels nous amènent à une cascade plongeant dans une belle vasque (saut possible). Une main courante est à installer depuis un arbre pour atteindre le relais. Peu après, nous arrivons à une rampe de 20 m (s’assurer en fonction du débit). Un rappel de 15 m dans une étroiture mène à une petite vasque (attention, ça tourne). Une désescalade, un petit ressaut et nous arrivons au très beau final (échappatoire rive droite). Attention au débit. Le dernier rappel débute par une rampe puis plonge le long de la cascade qui décolle de la paroi.",
       "retour": "50 mètres après la cascade, prendre un sentier à droite qui se prolonge par une piste nous amenant à la prairie traversée pendant l’approche.",
-      "engagement": "Cette descente demeure un canyon aventure : certains passages nécessitent un équipement en fonction du débit. Des échappatoires sont possibles rive droite.",
+      "engagement": "Des échappatoires sont possibles rive droite.",
       "periode": "Août - septembre. Possible en Juillet suivant les conditions.",
       "geologie": "Schistes et gneiss",
       "historique": "le 31 juillet et le 1er août 2004 par Pascal Caunègre et Mickaël Ménager.",

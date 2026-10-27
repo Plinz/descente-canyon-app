@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:58:44.078103+00:00",
+  "scrapedAt": "2026-10-27T16:53:39.187145+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21099,
@@ -44,20 +44,20 @@
       "longueurM": 3000,
       "cascadeMaxM": 25,
       "cordeMiniM": 30,
-      "navette": "2.0km"
+      "navette": "néant"
     },
     "timings": {
-      "approche": "5min",
+      "approche": "10 min",
       "descente": "3h",
-      "retour": "30"
+      "retour": "40 min"
     },
     "topo": {
-      "accesAval": "se rendre à Aullène. Là, prendre la direction de Cargiaca par la D69. Passer le pont de Scopamene, une stèle, un premier caveau. 2km plus loin se garer devant un autre caveau, au niveau d'une épingle à droite caractéristique (large parking, point coté 486 sur IGN)",
-      "accesAmont": "remonter la D69 sur 2km jusqu'au premier tombeau, et se garer juste après sur la droite (élargissement avant un petit pont, point coté 534 sur IGN)\n\nIl est possible de ne pas faire de navette : approche 20min, retour 30min",
-      "approche": "Descendre au mieux vers la rivière, il y a un genre de sentier à droite du caveau, mais qui très vite devient un chemin de sanglier…",
+      "accesAval": "se rendre à Aullène. Là, prendre la direction de Cargiaca par la D69. Passer le pont de Scopamene, une stèle, un premier caveau. 2km plus loin se garer devant un autre caveau, au niveau d'une épingle à droite (caveau Rocca-Serra)",
+      "accesAmont": null,
+      "approche": "Partir à pied sur la route en direction d’Aullène. A environ 1100 mètres de marche un sentier peu visible descend rapidement dans la rivière.",
       "descente": "Cette descente débute par une marche en rivière sans intérêt d'une dizaine de minutes. Par la suite les obstacles se succèdent avec des belles cascades.",
       "retour": "Une fois le dernier rappel effectué dans un bassin assez grand, marcher environ 10/15 minutes jusqu'à des dalles rocheuses. A ce niveau il y a un sentier peu visible en RD. Montée raide, chemin peu visible, mieux vaut avoir la carte pour trouver l endroit idéal pour quitter le canyon.",
-      "engagement": null,
+      "engagement": "Attention par gros débit plusieurs mouvement d’eau pourraient être dangereux",
       "periode": "A n'entreprendre qu'à l'étiage estival. Très aquatique.",
       "geologie": null,
       "historique": "Intégrale par i Toppi Pinutti en août 93",

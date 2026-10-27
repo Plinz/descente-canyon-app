@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:10.279033+00:00",
+  "scrapedAt": "2026-10-27T16:42:52.626306+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2128,
@@ -42,7 +42,7 @@
       "deniveleM": 160,
       "longueurM": 470,
       "cascadeMaxM": 25,
-      "cordeMiniM": 25,
+      "cordeMiniM": 30,
       "navette": "néant"
     },
     "timings": {

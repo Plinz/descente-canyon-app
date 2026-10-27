@@ -1,77 +1,5 @@
 [
   {
-    "canyonId": 23651,
-    "type": "PARKING_AMONT",
-    "rawType": "parking_amont",
-    "latitude": 47.494591,
-    "longitude": 10.837602,
-    "label": null
-  },
-  {
-    "canyonId": 23651,
-    "type": "PARKING_AVAL",
-    "rawType": "parking_aval",
-    "latitude": 47.508339,
-    "longitude": 10.840478,
-    "label": null
-  },
-  {
-    "canyonId": 23651,
-    "type": "POINT_REMARQUABLE",
-    "rawType": "point_externe",
-    "latitude": 47.503922,
-    "longitude": 10.809922,
-    "label": "à droite vers Bertlshütte"
-  },
-  {
-    "canyonId": 23651,
-    "type": "POINT_REMARQUABLE",
-    "rawType": "point_externe",
-    "latitude": 47.50779,
-    "longitude": 10.807154,
-    "label": "vers nord-ouest"
-  },
-  {
-    "canyonId": 23651,
-    "type": "POINT_REMARQUABLE",
-    "rawType": "point_externe",
-    "latitude": 47.508972,
-    "longitude": 10.805523,
-    "label": "prendre la sente à droite avant le Kreidebach"
-  },
-  {
-    "canyonId": 23651,
-    "type": "POINT_REMARQUABLE",
-    "rawType": "point_externe",
-    "latitude": 47.506096,
-    "longitude": 10.82138,
-    "label": "traverser le col"
-  },
-  {
-    "canyonId": 23652,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 47.518124,
-    "longitude": 10.826321,
-    "label": "Entrée 1: au-dessus de C25 et C15 (1360m alt. environ)."
-  },
-  {
-    "canyonId": 23652,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 47.518185,
-    "longitude": 10.832281,
-    "label": "Entrée 2 : au-dessous de C25 et C15, traverse du sentier, 1290m altitude."
-  },
-  {
-    "canyonId": 23652,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 47.52005,
-    "longitude": 10.837763,
-    "label": null
-  },
-  {
     "canyonId": 23652,
     "type": "PARKING_AVAL",
     "rawType": "parking",
@@ -1997,6 +1925,78 @@
     "rawType": "parking_aval",
     "latitude": 30.980736,
     "longitude": 35.645615,
+    "label": null
+  },
+  {
+    "canyonId": 23732,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 30.908941,
+    "longitude": 35.470715,
+    "label": "de arrivée du canyon vers le-haut et depart et retour"
+  },
+  {
+    "canyonId": 23732,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 30.910587,
+    "longitude": 35.466961,
+    "label": null
+  },
+  {
+    "canyonId": 23732,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 30.913363,
+    "longitude": 35.464039,
+    "label": null
+  },
+  {
+    "canyonId": 23733,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 31.579023,
+    "longitude": 35.567768,
+    "label": "de l\"arrivée\" remonter jusqu'à \"depart\" et retour"
+  },
+  {
+    "canyonId": 23733,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 31.578058,
+    "longitude": 35.55743,
+    "label": "de \"l'arrivée\" vers le-haut jusqu'à \"depart\" et retour"
+  },
+  {
+    "canyonId": 23733,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 31.577473,
+    "longitude": 35.555904,
+    "label": null
+  },
+  {
+    "canyonId": 23734,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 31.54484,
+    "longitude": 35.566784,
+    "label": null
+  },
+  {
+    "canyonId": 23734,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 31.545012,
+    "longitude": 35.557518,
+    "label": "remonter de l''arrivée\" vers le-haut jusqu'à \"depart\" et retour"
+  },
+  {
+    "canyonId": 23734,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 31.545391,
+    "longitude": 35.556923,
     "label": null
   }
 ]

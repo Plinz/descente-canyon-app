@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:59:02.552818+00:00",
+  "scrapedAt": "2026-10-27T16:54:39.269009+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21192,
@@ -9,7 +9,7 @@
       "description": "https://www.descente-canyon.com/canyoning/canyon-description/21192/topo.html",
       "map": "https://www.descente-canyon.com/canyoning/canyon-carte/21192/carte.html",
       "bibliography": "https://www.descente-canyon.com/canyoning/canyon-bibliographie/21192/guides-et-cartes.html",
-      "regulation": null
+      "regulation": "https://www.descente-canyon.com/canyoning/canyon-reglementation/21192/legislation.html"
     }
   },
   "canyon": {
@@ -41,22 +41,22 @@
       "longueurM": 1000,
       "cascadeMaxM": 40,
       "cordeMiniM": 50,
-      "navette": "3.0km"
+      "navette": "5.0km"
     },
     "timings": {
-      "approche": "??",
-      "descente": "2h",
-      "retour": "10min"
+      "approche": "1min",
+      "descente": "4h",
+      "retour": "3min"
     },
     "topo": {
-      "accesAval": "De Gedre prendre la route qui monte au cirque de Troumousse jusqu'a l'hostellerie du Maillet.\n\nOn peut laisser, si on a 2 vehicules, une voiture juste avant la cabane \"péage\" afin d'éviter de faire payer deux voitures \"Grrrrrrr\".",
+      "accesAval": "De Gedre prendre la route qui monte au cirque de Troumousse jusqu'a l'hostellerie du Maillet.\n\n( Route interdite après )\n\nRoute gratuite au 10/08/26\n\nParking immense",
       "accesAmont": null,
       "approche": "Immediat de l'hostellerie\n\nou dans l'enchainement des cascades du Cot.",
       "descente": "Descente équipé, bien juger les tobogans avant de s'engager dedans par fort débit.",
-      "retour": "avec 2 voitures, descendre jusqu'à la cabane Péage. Si une seule, remonter à la fin des difficultes à l'hostellerie",
+      "retour": "Avec 2 voitures, faire la navette, si une seule, remonter à la fin des difficultés à l'hostellerie",
       "engagement": "Possibilité de sortir à tous moments",
       "periode": "Attendre l'étiage d'été... ou pas complètement mais alors ça bouge...",
-      "geologie": null,
+      "geologie": "Schiste",
       "historique": null,
       "remarques": null
     },
@@ -106,9 +106,27 @@
       "resources": []
     },
     "reglementation": {
-      "hasSpecificRegulation": false,
-      "rules": [],
-      "isForbidden": false
+      "hasSpecificRegulation": true,
+      "isForbidden": false,
+      "rules": [
+        {
+          "id": 625,
+          "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté - 06 juil 2026",
+          "summary": "La pratique du canyonisme est interdite dans la zone cœur du Parc national des Pyrénées à l’exception des canyons nommément autorisés dans l'arrêté.",
+          "remark": null,
+          "details": "Arrêté temporaire (Parc national des Pyrénées) n°2026-46 du 6 juillet 2026",
+          "effectiveDate": "31 oct 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/625/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté temporaire (Parc national des Pyrénées) n°2026-46 du 6 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem625_pj1.pdf"
+            }
+          ]
+        }
+      ]
     }
   }
 }

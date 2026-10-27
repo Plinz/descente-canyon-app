@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:09.323781+00:00",
+  "scrapedAt": "2026-10-27T16:42:44.905768+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2114,
@@ -38,8 +38,8 @@
     },
     "rating": {
       "cotation": "v4a6II",
-      "interet": 2.9,
-      "nbVotes": 94
+      "interet": 3.0,
+      "nbVotes": 101
     },
     "metrics": {
       "altitudeDepartM": 350,
@@ -55,7 +55,7 @@
       "retour": "30min"
     },
     "topo": {
-      "accesAval": "Continuer la N6. A Saint-Béron, suivre Saint-Geoires-en-Valdaine, puis Voissant. A un grand carrefour avec une statue (buste), continuer à droite sur la D82k, traverser le village (mairie), puis poursuivre la montée jusqu'à une grande épingle vers la droite (marquage \"CH\" au sol en 2018). Le chemin arrive en contrebas de celle-ci. Stationner sans gêner la circulation.",
+      "accesAval": "Continuer la N6. A Saint-Béron, suivre Saint-Geoires-en-Valdaine, puis Voissant. A un grand carrefour avec une statue (buste), continuer à droite sur la D82k, traverser le village (mairie), puis poursuivre la montée jusqu'à une grande épingle vers la droite (marquage \"CH\" au sol en 2018). Le chemin arrive en contrebas de celle-ci. Stationner sans gêner la circulation. Il est préférable de se garer à l'église (grand parking).",
       "accesAmont": null,
       "approche": "Face au parking passer sous le parapet de la route au niveau d'une panneau d'informations EDF et suivre sur quelques dizaines de mètres la sente qui longe le parapet. Descendre la sente très raide jusqu'au ruisseau.",
       "descente": "Après une marche d'une centaine de mètres, un petit ressaut nous conduit dons une première vasque profonde et large. A son extrémité, une partie de l'eau passe sous un gros bloc (premier siphon) que l’on contourne aisément d'un coté comme de l’autre. On trouve alors une première verticale de 6 mètres au bas de laquelle il y a bien du remous. On rejoint ensuite un long bief étroit et profond.\n\nIl faut franchir une seconde cascade pour atteindre le siphon le plus impressionnant de cette descente. L'eau chute de quatre mètres dans une vasque siphonnante : faire très attention car le passage sous l’eau est assez profond et on ne voit rien sous l’eau. Prévoir une corde pour remonter au cas où car le bouillon rend le risque de noyade important. Une progression facile par une vire en rive droite permet de franchir cet obstacle, en sautant dans la vasque en aval, qui débouche sur un bief. Celui-ci nous conduit ensuite au sommet d'une petite cascade de 4m suivie de nouveau par une portion de nage. La progression est ralentie par un petit ressaut insignifiant au pied duquel on trouve de nouveau un siphon. Il est possible de l'éviter par une vire en rive gauche.\n\nA cause du gros débit quasi-permanent, il faut éviter la dernière C10. On veillera, dans le bief qui la précède à ne pas rater une petite lucarne à droite qui permet de rejoindre une longue main courante au bout de laquelle, après une remontée athlétique, un rappel de 25 mètres nous ramène dans le Guiers.\n\nPlusieurs biefs profonds se suivent jusqu’au dernier de près de 400 mètres de long.",
@@ -64,7 +64,7 @@
       "periode": "Canyon très aquatique de part le débit maintenu par EDF et la longueur des biefs (dont un de près de 400 mètres).",
       "geologie": null,
       "historique": null,
-      "remarques": "Ce canyon est placé à l'aval d'un barrage. Bien se conformer aux indications sur les panneaux d'information.\n\nIl peut être judicieux de prendre des sacs flottants ou de se munir d'un gilet, limitant la fatigue due aux longues parties nagées."
+      "remarques": "Ce canyon est placé à l'aval d'un barrage. Panneaux d'information obsolète.\n\nIl peut être judicieux de prendre des sacs flottants ou de se munir d'un gilet, limitant la fatigue due aux longues parties nagées."
     },
     "geoPoints": [
       {

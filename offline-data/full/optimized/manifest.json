@@ -1,13 +1,13 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-07-16T17:08:39.653193+00:00",
+  "generatedAt": "2026-10-27T17:26:31.632128+00:00",
   "counts": {
     "canyons": 4127,
-    "geoPoints": 11027,
+    "geoPoints": 11018,
     "bibliographyEntries": 2004,
     "canyonBibliographyLinks": 7608,
-    "regulationTexts": 552,
-    "canyonRegulations": 2697
+    "regulationTexts": 566,
+    "canyonRegulations": 2752
   },
   "files": {
     "searchIndex": "search-index.json",
@@ -264,7 +264,7 @@
       },
       {
         "path": "geo-points-0045.json",
-        "count": 27
+        "count": 18
       }
     ]
   }

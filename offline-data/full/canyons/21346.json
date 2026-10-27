@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:59:34.489142+00:00",
+  "scrapedAt": "2026-10-27T16:56:23.114209+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21346,
@@ -15,10 +15,10 @@
   "canyon": {
     "id": 21346,
     "identity": {
-      "nom": "Four à chaux",
-      "nomComplet": "Ruisseau du Four à chaux, Ruisseau du four à chaux",
+      "nom": "Four à Chaux",
+      "nomComplet": "Ruisseau du Four à Chaux",
       "prefixeNom": "Ruisseau du",
-      "url": "https://www.descente-canyon.com/canyoning/canyon/21346/Four-a-chaux.html"
+      "url": "https://www.descente-canyon.com/canyoning/canyon/21346/Four-a-Chaux.html"
     },
     "location": {
       "pays": "France",
@@ -28,7 +28,7 @@
       "communes": [],
       "massif": "Jura",
       "bassin": "Ain",
-      "coursEau": "Ruisseau du four à chaux"
+      "coursEau": null
     },
     "rating": {
       "cotation": "??",
@@ -49,16 +49,16 @@
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "De COISIA, prendre au Sud la D60 direction THOIRETTE. A l'extrémité de la plaine, prendre à droite sur 250 m d'un bon chemin repartant vers le village. Garer les véhicules vers le ruisseau recoupant le chemin, à l'amorce d'un sentier qui vous emprunterez au retour.",
-      "accesAmont": "Du village, prendre la direction d'Arinthod par la D60E, puis la D109 (remarquez au passage le site géologique unique avec des traces de dinosaures !) jusqu'au parking de la colonie (à droite, belvédère). Le ruisseau traverse la route par un petit tunnel",
-      "approche": "A pied, descendre par la gauche au bas des vieux murs, et les longer jusqu'au tunel, (C 8).",
-      "descente": "Dès sa sortie du tunnel, l'eau se précipite dans une chute de 8 m très concrétionnée. ( chaine inox en RD). Après quelques ressauts et un passage sous la route de COISIA, elle pénètre un sous bois dense pour ensuite dévaler une succession de cascades (R2, C8, C40 fractionnée), à peine entrecoupées de courts planioles.",
+      "accesAval": "de Coisia, prendre au Sud la D60 direction Thoirette. A l'extrémité de la plaine, prendre à droite sur 250 m d'un bon chemin repartant vers le village. Garer les véhicules vers le ruisseau recoupant le chemin, à l'amorce d'un sentier qui vous emprunterez au retour.",
+      "accesAmont": "du village, prendre la direction d'Arinthod par la D60E, puis la D109 (remarquez au passage le site géologique unique avec des traces de dinosaures !) jusqu'au parking de la colonie (à droite, belvédère). Le ruisseau traverse la route par un petit tunnel.",
+      "approche": "A pied, descendre par la gauche au bas des vieux murs, et les longer jusqu'au tunnel, (C 8).",
+      "descente": "Dès sa sortie du tunnel, l'eau se précipite dans une chute de 8 m très concrétionnée. ( chaine inox en RD). Après quelques ressauts et un passage sous la route de Coisia, elle pénètre un sous bois dense pour ensuite dévaler une succession de cascades (R2, C8, C40 fractionnée), à peine entrecoupées de courts planioles.",
       "retour": "La dernière chute descendue (C8), rejoindre un sentier conduisant aux voitures en quelques minutes.",
-      "engagement": "Ruisseau sans encaissement, et aux difficultés évitables ou contournables. Les verticales sont de hauteurs progressives, souvent obliques et très adhérentes. Descente agréable et facile pour une première approche du Canyoning vertical. Comporte toutefois un relais fractionnant la grande cascade de 40 m.",
+      "engagement": "Ruisseau sans encaissement, et aux difficultés évitables ou contournables. Les verticales sont de hauteurs progressives, souvent obliques et très adhérentes. Descente agréable et facile pour une première approche du canyoning vertical. Comporte toutefois un relais fractionnant la grande cascade de 40 m.",
       "periode": "Ruisseau temporaire et peu puissant. S'amorce aux premières pluies. Ne comportant ni marmite ni bassin profond. On ne rencontrera donc pas de nage et encore moins de saut. Intéressant à parcourir en hautes eaux ( printemps, automne). A la belle saison, peu se pratiquer avec un simple K.WAY, ou une néoprène légère.",
-      "geologie": "Intense calcification (Tuf).",
-      "historique": "Première descente sportive, équipement et nettoyage, Haut-Jura Canyon 1992, par Dominique GUYETAND et Guy MEUNIER.",
-      "remarques": "Canyon connu par les locaux mais très peu pratiqué. Prévoir la scie pour les premiers qui iront le découvrir ou le redécouvrir (non entretenu depuis plus de 10 ans ...)\n\nPossibilité de gagner l'amont sans navette :\n\nDe l'aval, prendre le chemin en direction de COISIA. A gauche, remonter sous la conduite de gaz enterrée (c'est raide). Arrivée sur la D 60, viser le poteau électrique à droite de la maison sous la colonie. Au bout du champ, on découvre une amorçe de sentier qui conduit au belvédère."
+      "geologie": "Intense calcification (tuf).",
+      "historique": "Première descente sportive, équipement et nettoyage, Haut-Jura Canyon 1992, par Dominique Guyetand et Guy Meunier.",
+      "remarques": "Canyon connu par les locaux mais très peu pratiqué. Prévoir la scie pour les premiers qui iront le découvrir ou le redécouvrir (non entretenu depuis plus de 10 ans ...)\n\nPossibilité de gagner l'amont sans navette :\n\nDe l'aval, prendre le chemin en direction de Coisia. A gauche, remonter sous la conduite de gaz enterrée (c'est raide). Arrivée sur la D 60, viser le poteau électrique à droite de la maison sous la colonie. Au bout du champ, on découvre une amorce de sentier qui conduit au belvédère."
     },
     "geoPoints": [
       {
@@ -101,6 +101,31 @@
       "hasSpecificRegulation": true,
       "isForbidden": false,
       "rules": [
+        {
+          "id": 613,
+          "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté préfectoral (Jura) - 25 sept 2026",
+          "summary": "Dans le cadre des mesures de restriction des usages de l'eau liées à la sécheresse, la préfecture a décidé que la pratique du canyonisme sur les canyons situés sur les bassins de l'Ain, de la Saine, du Tacon, de la Bienne et de leurs affluents est interdite, sauf entre 08h00 et 12h00.",
+          "remark": "1er arrêté abrogé le 09/09/2026 mais réglementation réactivée le 25/09/2026 par un nouvel arrêté.",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026\n\nArrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026\n\nArrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+          "effectiveDate": "25 sept 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/613/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-09-01-002 du 9 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj2.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-07-28-002 du 30 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj1.pdf"
+            },
+            {
+              "label": "Arrêté préfectoral (Jura) n°2026-09-22-002 du 25 septembre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem613_pj3.pdf"
+            }
+          ]
+        },
         {
           "id": 491,
           "status": "Abrogé",

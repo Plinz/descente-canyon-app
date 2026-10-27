@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:59:20.550884+00:00",
+  "scrapedAt": "2026-10-27T16:55:38.392363+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21283,
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 2.2,
-      "nbVotes": 12
+      "nbVotes": 13
     },
     "metrics": {
       "altitudeDepartM": 562,
@@ -53,7 +53,7 @@
     "topo": {
       "accesAval": "En arrivant de Montezic, prendre deux fois à gauche après le grand pont et se garer à la carrière.",
       "accesAmont": "Depuis le Brezou monter jusqu'au poste de Rueyre. Après les installations électriques, prendre à gauche et se garer au bout à proximité d'un garage à droite.",
-      "approche": "Du parking amont, prendre tout droit sans suivre le chemin qui part sur la gauche. Passer au fond d'une petite dépression sur un chemin peu marqué. Après avoir traversé, le chemin se fait plus net. Descendre. Au bout de quelques lacets, le barrage désaffecté apparait. Si vous arrivez à la porte, vous êtes allés trop loin car dans le dernier virage à gauche, une sente très raide qui part à droite permet de rejoindre la Bromme (MC en place)",
+      "approche": "Du parking amont, prendre le chemin en face du cimetière (44.781015, 2.691742). Au bout de 250m un ancien abri va apparaître à votre droite, continuez sur 20m et tournez à droite pour commencer à descendre dans la vallée (44.782528, 2.689335).\n\nAu bout de quelques lacets, le barrage désaffecté apparait. Si vous arrivez à la porte, vous êtes allés trop loin car dans le dernier virage à gauche, une sente très raide qui part à droite permet de rejoindre la Bromme (MC en place).",
       "descente": "Le départ est assez insolite, on passe dans un barrage désaffecté.\n\nRandonnée aquatique avec des sauts, un joli passage bien poli.\n\nL'eau n'est pas limpide.\n\nÉquipement sur broche et chaines. Un passage dans de grands blocs équipé RG peut être shunté, sauf si beaucoup d'eau.",
       "retour": "Longue marche fastidieuse en rivière pour rejoindre la carrière RG où l'on est garé. Ou bien on peut remonter le canyon (aussi long).\n\nLorsque les obstacles ont été franchis, chercher deux sentiers successifs RD perchés à 5m / 10m au dessus de la rivière.",
       "engagement": "Faible",

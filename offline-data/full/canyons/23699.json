@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:07:00.995558+00:00",
+  "scrapedAt": "2026-10-27T17:20:11.451117+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 23699,
@@ -15,10 +15,10 @@
   "canyon": {
     "id": 23699,
     "identity": {
-      "nom": "Frenay (Partie Aval)",
-      "nomComplet": "Canyon de Frenay (Partie Aval), Vedun, Le Vertosan",
+      "nom": "Frenay (aval)",
+      "nomComplet": "Canyon de Frenay (aval), Vedun, Le Vertosan",
       "prefixeNom": "Canyon de",
-      "url": "https://www.descente-canyon.com/canyoning/canyon/23699/Frenay-Partie-Aval.html"
+      "url": "https://www.descente-canyon.com/canyoning/canyon/23699/Frenay-aval.html"
     },
     "location": {
       "pays": "Italie",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:07:03.072686+00:00",
+  "scrapedAt": "2026-10-27T17:20:17.752450+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 23709,
@@ -33,9 +33,9 @@
       "coursEau": "Var"
     },
     "rating": {
-      "cotation": "v4a4I",
-      "interet": 2.5,
-      "nbVotes": 3
+      "cotation": "v4a4II",
+      "interet": 2.7,
+      "nbVotes": 6
     },
     "metrics": {
       "altitudeDepartM": 1760,
@@ -48,7 +48,7 @@
     "timings": {
       "approche": "5min",
       "descente": "1h30",
-      "retour": "??"
+      "retour": "20min"
     },
     "topo": {
       "accesAval": "D'Entraunes, poursuivez en direction du col de la Cayolle. A Estenc, garez-vous en face du relais du col de la Cayolle.",
@@ -56,11 +56,11 @@
       "approche": "2 options:\n\n1 Vous prenez la petite route partant derrière l'auberge pour vous mettre à l'eau au niveau du pont. Une marche en rivière de 200m vous mènera aux 1ères difficultés\n\n2 Si vous détestez la marche en rivière, vous pouvez aussi prendre la route en direction d'Entraunes pour trouver 100m plus loin un sentier à gauche en direction du ruisseau. Prenez à la bifurcation à gauche pour arriver à la passerelle au dessus des 1ères difficultés. Passez en rive gauche, pour trouver un accès au torrent une vingtaine de mètres en amont.",
       "descente": "Si accès au pont :\n\nMarche et désescalades 200m\n\nPasserelle\n\nMarche 10m\n\nR2 avec vasque compliquée par fort débit\n\nMarche 10m\n\nC18 avec 1 ou 2 points de déviation\n\nC10 avec déviation sur l'ancien relais\n\nC7 arrivée dans vasque profonde\n\nR3\n\nMarche et désescalades 50m\n\nrappel de 19m jusqu'au relais (C15 vasque profonde + garder corde pour attraper le relais\n\nC20",
       "retour": "Après la dernière cascade, poursuivez 100m dans le lit du torrent. Au niveau d'un affluent rive gauche, remontez (rive gauche) pour rejoindre rapidement un sentier que vous suivez à gauche vers les maisons. Le sentier vous amène à la passerelle. Traversez le ruisseau et prenez à droite pour rejoindre la route et votre véhicule",
-      "engagement": "Peu engagé du fait de sa longueur",
+      "engagement": "Peu engagé du fait de sa longueur... ceci dit une fois passé la \"vasque compliquée\" (juste après l'échappatoire délicate possible sur la gauche sur vire herbeuse raide) l'unique sortie sera par le bas.",
       "periode": "Très grand bassin versant. Attendre l'étiage prononcé en fin d'été.",
       "geologie": null,
       "historique": null,
-      "remarques": null
+      "remarques": "NE PAS TOUCHER à la prise d'eau au départ de la première cascade, elle est utilisée depuis des générations par les agriculteurs locaux et ils n'apprécient que moyennement qu'on leur coupe l'eau lors du passage des pratiquants. Merci de votre vigilance."
     },
     "geoPoints": [
       {

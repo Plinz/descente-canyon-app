@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:59:13.552850+00:00",
+  "scrapedAt": "2026-10-27T16:55:15.648163+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21247,
@@ -53,7 +53,7 @@
     "topo": {
       "accesAval": "idem Argensous : se garer au niveau du panneau d'information, le long de la route, en face du pont sous le village de (H)ourre.",
       "accesAmont": null,
-      "approche": "Approche comme la partie basse de l'Argensou (marquage bleu) : 150m avant le départ \"classique\", avant de basculer vers le ruisseau, emprunter le chemin bien marqué qui commence par suivre une vague murette et qui remonte vers le GR10. Suivre le GR sur le canal en dur jusqu'à l'Argensous.",
+      "approche": "Approche comme la partie basse de l'Argensou (marquage bleu) : 150m avant le départ \"classique\", avant de basculer vers le ruisseau, prendre à gauche le chemin bien marqué qui commence par suivre une vague murette et qui remonte vers le GR10. Suivre le GR sur le canal en dur jusqu'à l'Argensous.",
       "descente": "Succession quasi ininterrompue de cascades, dont la plupart dépassent 20m.",
       "retour": "On peut enchainer direct avec le bas, ou revenir en quelques minutes par le chemin de l'accès \"classique\" (marquage bleu)",
       "engagement": null,

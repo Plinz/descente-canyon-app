@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:11.215602+00:00",
+  "scrapedAt": "2026-10-27T16:42:55.718209+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2130,
@@ -53,14 +53,14 @@
     "topo": {
       "accesAval": "Se garer au niveau de l'épingle cotée 634m.",
       "accesAmont": "Continuer la route, se garer dans le village juste après le pont.\n\nLa navette est évitable en remontant rive droite depuis l'épingle du parking aval. Un petit sentier d'abord discret, puis bien tracé mène en un petit quart d'heure au pont de départ.",
-      "approche": null,
+      "approche": "Entrée obligatoire : une fois le pont traversé, suivre le panneau routier indiquant \"canyoning\", aller au fond du parking pour rejoindre le sentier qui descend dans le canyon en rive gauche.",
       "descente": "Le départ du pont est désormais interdit. Composé de nombreuses cascades arrosés, permettant selon les conditions quelques sauts ou toboggans dans une eau souvent fraiche, le tout est espacé par de petites marches jamais longues.",
       "retour": "Après avoir remonté les échelles en place RD, remonter le long du chemin (balisé en vert sur les arbres) pour récupérer la route.",
       "engagement": "Pas d'échappatoire avant les échelles RD qui marquent la sortie obligatoire de la première partie.",
       "periode": null,
       "geologie": null,
       "historique": null,
-      "remarques": "Un fois au pont, l'accès au canyon se fait par une petite barrière en rive gauche en amont du pont donnant l'impression de rentrer chez les riverains. Bien refermer les barrière."
+      "remarques": null
     },
     "geoPoints": [
       {

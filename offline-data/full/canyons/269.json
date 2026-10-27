@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:54:55.982383+00:00",
+  "scrapedAt": "2026-10-27T16:42:13.413236+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 269,
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v3a2II",
       "interet": 2.8,
-      "nbVotes": 88
+      "nbVotes": 89
     },
     "metrics": {
       "altitudeDepartM": 1070,
@@ -53,14 +53,14 @@
     "topo": {
       "accesAval": "Depuis Vicdessos prendre la direction de Marc. Se Garer sur le parking à l'entrée du village (à droite avant l'église - Parking - Panneau d'information du canyon)",
       "accesAmont": null,
-      "approche": "Suivre la route, puis dans le virage a gauche prendre tout droit le sentier qui monte en sous bois ( rive droite ). Après avoir retrouvé la route, la poursuivre sur 100 m environ juisqu'à un sentier bien marqué sur la droite qui descend jusqu'au ruisseau.",
-      "descente": "Magnifique mais très courte descente. Prévoir un mousqueton en acier ou une poulie pour la tyrolienne.",
-      "retour": "Après le dernier saut et la dernière vasque, continuer dans le lit du ruisseau jusqu'à un sentier sur la droite qui monte directement au parking. NE PAS SORTIR DIRECTEMENT APRÈS LA VASQUE POUR REJOINDRE LA ROUTE !",
+      "approche": "Suivre la route, puis dans le virage a gauche prendre tout droit le sentier qui monte en sous bois ( rive droite ). Après avoir retrouvé la route, la poursuivre sur 100 m environ juisqu'à un sentier bien marqué sur la droite qui descend très raide, qui suit le ruisseau rive gauche, jusqu'a un replat bien marqué, juste au-dessus du ruisseau.",
+      "descente": "Magnifique mais très courte descente. Prévoir un mousqueton en acier ou une poulie pour la tyrolienne.\n\nAprès la tyrolienne, main courante rive gauche pour le plus long rappel (environ 18 m). Il est possible de sauter depuis une petite plateforme au dessus.\n\nSur la suite, possibilité encore de sauter, mais attention (bien indiqué par un panneau jaune), saut dangereux depuis la rive gauche. Plutôt prendre appel sur le bloc rive droite.",
+      "retour": "Il reste 2 jolis saut après le pont de pierre. Après le dernier saut et la dernière vasque, continuer dans le lit du ruisseau jusqu'à un sentier sur la droite qui monte directement au parking. NE PAS SORTIR DIRECTEMENT APRÈS LA VASQUE POUR REJOINDRE LA ROUTE !",
       "engagement": "Course très courte ne présentant pas d'échappatoire",
       "periode": null,
       "geologie": null,
       "historique": null,
-      "remarques": "ATTENTION: A proximité du village, éviter de faire du bruit en criant ! Restez discret par respect pour les habitants !"
+      "remarques": "ATTENTION : à proximité du village, éviter de faire du bruit en criant ! Restez discret par respect pour les habitants !"
     },
     "geoPoints": [
       {

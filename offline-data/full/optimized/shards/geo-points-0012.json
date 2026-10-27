@@ -1,77 +1,5 @@
 [
   {
-    "canyonId": 21044,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 42.596813,
-    "longitude": 0.128322,
-    "label": null
-  },
-  {
-    "canyonId": 21044,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 42.598263,
-    "longitude": 0.130393,
-    "label": null
-  },
-  {
-    "canyonId": 21044,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 42.595676,
-    "longitude": 0.128314,
-    "label": null
-  },
-  {
-    "canyonId": 21045,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 42.533665,
-    "longitude": 0.049072,
-    "label": null
-  },
-  {
-    "canyonId": 21045,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 42.531006,
-    "longitude": 0.042652,
-    "label": null
-  },
-  {
-    "canyonId": 21045,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 42.537899,
-    "longitude": 0.04968,
-    "label": null
-  },
-  {
-    "canyonId": 21046,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 42.335461,
-    "longitude": 0.349438,
-    "label": null
-  },
-  {
-    "canyonId": 21046,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 42.325684,
-    "longitude": 0.352249,
-    "label": null
-  },
-  {
-    "canyonId": 21046,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 42.325459,
-    "longitude": 0.351959,
-    "label": null
-  },
-  {
     "canyonId": 21047,
     "type": "ENTREE",
     "rawType": "depart",
@@ -1998,5 +1926,77 @@
     "latitude": 43.347,
     "longitude": 5.496871,
     "label": "Hameau de la Folie"
+  },
+  {
+    "canyonId": 21142,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 44.441807,
+    "longitude": 5.319057,
+    "label": "Positionnement approximatif"
+  },
+  {
+    "canyonId": 21142,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 44.429703,
+    "longitude": 5.318584,
+    "label": null
+  },
+  {
+    "canyonId": 21142,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 44.427986,
+    "longitude": 5.318767,
+    "label": "Dans les places amenagées à l'entrée du village"
+  },
+  {
+    "canyonId": 21142,
+    "type": "POINT_REMARQUABLE",
+    "rawType": "point_externe",
+    "latitude": 44.42733,
+    "longitude": 5.317533,
+    "label": "Départ de l'approche (piste au départ, balisages + panneau sens interdit)"
+  },
+  {
+    "canyonId": 21143,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 44.432598,
+    "longitude": 5.273738,
+    "label": null
+  },
+  {
+    "canyonId": 21143,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 44.431099,
+    "longitude": 5.277364,
+    "label": null
+  },
+  {
+    "canyonId": 21143,
+    "type": "PARKING_AVAL",
+    "rawType": "parking_aval",
+    "latitude": 44.431221,
+    "longitude": 5.277386,
+    "label": "Ou parking si vous choissez de remonter le canyon"
+  },
+  {
+    "canyonId": 21144,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 44.195309,
+    "longitude": 6.681673,
+    "label": null
+  },
+  {
+    "canyonId": 21144,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 44.195545,
+    "longitude": 6.660936,
+    "label": null
   }
 ]

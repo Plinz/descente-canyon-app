@@ -915,7 +915,7 @@
       "descente": "Parcours d'envergure dans une succession de gorges étroites. Plus de 35 rappels ponctuent le parcours. Le défilé central est extrêmement étroit (50 cm) et une montée des eaux y serait fatale. Pas de vasques profondes mais des ressauts multiples et variés. Le grand couloir final offre une perspective grandiose.\n\nSortie possible à la prise d'eau. Au delà, il reste 10 obstacles d'une hauteur maximum de 25m.",
       "retour": "Si l'on sort par le bas, tranverser le Gave d'Ossau, remonter en rive droite et gagner la route par un bon chemin vers le Nord. Suivre la route vers le haut (Sud) jusqu'aux thermes des Eaux Chaudes.\n\nSi l'on sort à la prise d'eau, prendre le sentier rive droite qui remonte jusqu'à un pylone avant de redescnedre doucement aux Eaux Chaudes. Le sentier déouche sur les balcons des thermes. Prendre à main gauche (Nord). Le sentier tourne rapidement au Sud, remonte jusqu'à une passerelle d'où on accède aux thermes.",
       "engagement": "Engagement extrême. Sortie impossible par les bords.\n\n1 echapatoire a mi parcours (prise d'eau) en rive droite attention au debit",
-      "periode": "Attentre le débit d'étiage qui peut arriver en juin ou début juillet.\n\nOn peut observer le débit depuis la route en accèdant aux Eaux Chaudes.\n\nAttention aux lâchés des retenues d'eau sur le gave d'Ossau qu'il faudra traverser : ces lâchers peuvent être faits sans aucun avertissement.\n\nLa partie inférieure peut être sèche si le tuyau de débit réservé est bouché > le déboucher et attendre 1/4h",
+      "periode": "Attentre le débit d'étiage qui peut arriver en juin ou début juillet.\n\nOn peut observer le débit depuis la route en accèdant aux Eaux Chaudes.\n\nAttention aux lâchés des retenues d'eau sur le gave d'Ossau qu'il faudra traverser : ces lâchers peuvent être faits sans aucun avertissement.\n\nLa partie inférieure peut être sèche si le tuyau de débit réservé est bouché > le déboucher et attendre 1/4h\n\nCotation partie Inférieure : v3 a2 III",
       "geologie": "Calcaire partiellement dolomitisé (dur).",
       "historique": null,
       "remarques": "Broché en 2009 et 2014.\n\nLa partie basse est équipée \"école\"."
@@ -1554,20 +1554,20 @@
       "longueurM": 3000,
       "cascadeMaxM": 25,
       "cordeMiniM": 30,
-      "navette": "2.0km"
+      "navette": "néant"
     },
     "timings": {
-      "approche": "5min",
+      "approche": "10 min",
       "descente": "3h",
-      "retour": "30"
+      "retour": "40 min"
     },
     "topo": {
-      "accesAval": "se rendre à Aullène. Là, prendre la direction de Cargiaca par la D69. Passer le pont de Scopamene, une stèle, un premier caveau. 2km plus loin se garer devant un autre caveau, au niveau d'une épingle à droite caractéristique (large parking, point coté 486 sur IGN)",
-      "accesAmont": "remonter la D69 sur 2km jusqu'au premier tombeau, et se garer juste après sur la droite (élargissement avant un petit pont, point coté 534 sur IGN)\n\nIl est possible de ne pas faire de navette : approche 20min, retour 30min",
-      "approche": "Descendre au mieux vers la rivière, il y a un genre de sentier à droite du caveau, mais qui très vite devient un chemin de sanglier…",
+      "accesAval": "se rendre à Aullène. Là, prendre la direction de Cargiaca par la D69. Passer le pont de Scopamene, une stèle, un premier caveau. 2km plus loin se garer devant un autre caveau, au niveau d'une épingle à droite (caveau Rocca-Serra)",
+      "accesAmont": null,
+      "approche": "Partir à pied sur la route en direction d’Aullène. A environ 1100 mètres de marche un sentier peu visible descend rapidement dans la rivière.",
       "descente": "Cette descente débute par une marche en rivière sans intérêt d'une dizaine de minutes. Par la suite les obstacles se succèdent avec des belles cascades.",
       "retour": "Une fois le dernier rappel effectué dans un bassin assez grand, marcher environ 10/15 minutes jusqu'à des dalles rocheuses. A ce niveau il y a un sentier peu visible en RD. Montée raide, chemin peu visible, mieux vaut avoir la carte pour trouver l endroit idéal pour quitter le canyon.",
-      "engagement": null,
+      "engagement": "Attention par gros débit plusieurs mouvement d’eau pourraient être dangereux",
       "periode": "A n'entreprendre qu'à l'étiage estival. Très aquatique.",
       "geologie": null,
       "historique": "Intégrale par i Toppi Pinutti en août 93",
@@ -1664,7 +1664,7 @@
     "rating": {
       "cotation": "v3a3III",
       "interet": 2.4,
-      "nbVotes": 17
+      "nbVotes": 18
     },
     "metrics": {
       "altitudeDepartM": 735,
@@ -2374,7 +2374,7 @@
     "rating": {
       "cotation": "v3a4III",
       "interet": 3.0,
-      "nbVotes": 34
+      "nbVotes": 36
     },
     "metrics": {
       "altitudeDepartM": 1220,
@@ -5196,7 +5196,7 @@
     "rating": {
       "cotation": "v3a4III",
       "interet": 2.3,
-      "nbVotes": 16
+      "nbVotes": 17
     },
     "metrics": {
       "altitudeDepartM": 1580,
@@ -6857,22 +6857,22 @@
       "longueurM": 1000,
       "cascadeMaxM": 40,
       "cordeMiniM": 50,
-      "navette": "3.0km"
+      "navette": "5.0km"
     },
     "timings": {
-      "approche": "??",
-      "descente": "2h",
-      "retour": "10min"
+      "approche": "1min",
+      "descente": "4h",
+      "retour": "3min"
     },
     "topo": {
-      "accesAval": "De Gedre prendre la route qui monte au cirque de Troumousse jusqu'a l'hostellerie du Maillet.\n\nOn peut laisser, si on a 2 vehicules, une voiture juste avant la cabane \"péage\" afin d'éviter de faire payer deux voitures \"Grrrrrrr\".",
+      "accesAval": "De Gedre prendre la route qui monte au cirque de Troumousse jusqu'a l'hostellerie du Maillet.\n\n( Route interdite après )\n\nRoute gratuite au 10/08/26\n\nParking immense",
       "accesAmont": null,
       "approche": "Immediat de l'hostellerie\n\nou dans l'enchainement des cascades du Cot.",
       "descente": "Descente équipé, bien juger les tobogans avant de s'engager dedans par fort débit.",
-      "retour": "avec 2 voitures, descendre jusqu'à la cabane Péage. Si une seule, remonter à la fin des difficultes à l'hostellerie",
+      "retour": "Avec 2 voitures, faire la navette, si une seule, remonter à la fin des difficultés à l'hostellerie",
       "engagement": "Possibilité de sortir à tous moments",
       "periode": "Attendre l'étiage d'été... ou pas complètement mais alors ça bouge...",
-      "geologie": null,
+      "geologie": "Schiste",
       "historique": null,
       "remarques": null
     },
@@ -6882,7 +6882,7 @@
       "longitude": 0.086453,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -6904,38 +6904,38 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "??",
-      "interet": 2.8,
-      "nbVotes": 1
+      "cotation": "",
+      "interet": null,
+      "nbVotes": 0
     },
     "metrics": {
       "altitudeDepartM": null,
       "deniveleM": null,
       "longueurM": null,
-      "cascadeMaxM": 45,
-      "cordeMiniM": 55,
-      "navette": "néant"
+      "cascadeMaxM": null,
+      "cordeMiniM": null,
+      "navette": null
     },
     "timings": {
-      "approche": "2h30",
-      "descente": "3h",
-      "retour": "1h30"
+      "approche": null,
+      "descente": null,
+      "retour": null
     },
     "topo": {
-      "accesAval": "Par la D922, de Gedre prendre la petite route du barrage des Gloriettes. Stationner sur le parking sup au niveau du barrage",
+      "accesAval": null,
       "accesAmont": null,
-      "approche": "Du parking poursuivre a pied par le sentier du fond du cirque d'Estaubé jusqu'au pied de la cascade finale 1h30. De là, remonter en rive gauche par un système de vires dans les pelouses pour rejoindre le ruisseau.",
+      "approche": null,
       "descente": null,
-      "retour": "Au bas de la cascade reprendre le meme chemin pour remonter.",
+      "retour": null,
       "engagement": null,
-      "periode": "étiage d'été",
+      "periode": null,
       "geologie": null,
       "historique": null,
       "remarques": null
     },
     "representativePoint": null,
-    "hasSpecificRegulation": false,
-    "isForbidden": false
+    "hasSpecificRegulation": true,
+    "isForbidden": true
   },
   {
     "id": 21194,
@@ -7048,7 +7048,7 @@
       "longitude": 0.097675,
       "label": "Le départ se situe à 5 min du parking du cirque de Troumouse"
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -7270,7 +7270,7 @@
       "remarques": "Canyon reequipe en 2000 par Enrique Salamero et Jacques Cohen, mais les amarrages ont tendance, allez savoir pourquoi, a disparaitre...\n\nDans la partie amont, depuis le lac des aires, une belle etroiture merite d'etre parcourue... est elle equipée ?"
     },
     "representativePoint": null,
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -7344,7 +7344,7 @@
       "coursEau": "Riu de la Coma"
     },
     "rating": {
-      "cotation": "v3a1II",
+      "cotation": "v3a3II",
       "interet": 1.9,
       "nbVotes": 2
     },
@@ -7364,7 +7364,7 @@
     "topo": {
       "accesAval": "Entre Soldeu et Canillo au km 13, prendre la route qui monte vers le village de Ransol et Els Plan. Dans le village de Ransol, lorsque la route passe au dessus du cours d'eau, prendre le pont de gauche qui descend et conduit en 50m à un grand parking. Se garer.",
       "accesAmont": null,
-      "approche": "Le canyon démarre là, au pied du parking.",
+      "approche": "Le canyon démarre là, au pied du parking accès RG descendre le long du bâtiment",
       "descente": "Courte descente encaissée composée de 5 rappels.",
       "retour": "Lorsqu'on aperçoit la station service et un pont, remonter par un petit sentier raide RG. Monter pendant 15 minutes dans les hautes herbes pour rejoindre la route principale au coeur du village de Ransol.",
       "engagement": "Pas d'échappatoire possible du fait de l'encaissement de la gorge.",
@@ -9883,7 +9883,7 @@
     "topo": {
       "accesAval": "idem Argensous : se garer au niveau du panneau d'information, le long de la route, en face du pont sous le village de (H)ourre.",
       "accesAmont": null,
-      "approche": "Approche comme la partie basse de l'Argensou (marquage bleu) : 150m avant le départ \"classique\", avant de basculer vers le ruisseau, emprunter le chemin bien marqué qui commence par suivre une vague murette et qui remonte vers le GR10. Suivre le GR sur le canal en dur jusqu'à l'Argensous.",
+      "approche": "Approche comme la partie basse de l'Argensou (marquage bleu) : 150m avant le départ \"classique\", avant de basculer vers le ruisseau, prendre à gauche le chemin bien marqué qui commence par suivre une vague murette et qui remonte vers le GR10. Suivre le GR sur le canal en dur jusqu'à l'Argensous.",
       "descente": "Succession quasi ininterrompue de cascades, dont la plupart dépassent 20m.",
       "retour": "On peut enchainer direct avec le bas, ou revenir en quelques minutes par le chemin de l'accès \"classique\" (marquage bleu)",
       "engagement": null,
@@ -11521,7 +11521,7 @@
     "rating": {
       "cotation": "v2a3II",
       "interet": 2.5,
-      "nbVotes": 43
+      "nbVotes": 44
     },
     "metrics": {
       "altitudeDepartM": 550,
@@ -11898,7 +11898,7 @@
       "longitude": 2.732828,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -11924,7 +11924,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 2.2,
-      "nbVotes": 12
+      "nbVotes": 13
     },
     "metrics": {
       "altitudeDepartM": 562,
@@ -11942,7 +11942,7 @@
     "topo": {
       "accesAval": "En arrivant de Montezic, prendre deux fois à gauche après le grand pont et se garer à la carrière.",
       "accesAmont": "Depuis le Brezou monter jusqu'au poste de Rueyre. Après les installations électriques, prendre à gauche et se garer au bout à proximité d'un garage à droite.",
-      "approche": "Du parking amont, prendre tout droit sans suivre le chemin qui part sur la gauche. Passer au fond d'une petite dépression sur un chemin peu marqué. Après avoir traversé, le chemin se fait plus net. Descendre. Au bout de quelques lacets, le barrage désaffecté apparait. Si vous arrivez à la porte, vous êtes allés trop loin car dans le dernier virage à gauche, une sente très raide qui part à droite permet de rejoindre la Bromme (MC en place)",
+      "approche": "Du parking amont, prendre le chemin en face du cimetière (44.781015, 2.691742). Au bout de 250m un ancien abri va apparaître à votre droite, continuez sur 20m et tournez à droite pour commencer à descendre dans la vallée (44.782528, 2.689335).\n\nAu bout de quelques lacets, le barrage désaffecté apparait. Si vous arrivez à la porte, vous êtes allés trop loin car dans le dernier virage à gauche, une sente très raide qui part à droite permet de rejoindre la Bromme (MC en place).",
       "descente": "Le départ est assez insolite, on passe dans un barrage désaffecté.\n\nRandonnée aquatique avec des sauts, un joli passage bien poli.\n\nL'eau n'est pas limpide.\n\nÉquipement sur broche et chaines. Un passage dans de grands blocs équipé RG peut être shunté, sauf si beaucoup d'eau.",
       "retour": "Longue marche fastidieuse en rivière pour rejoindre la carrière RG où l'on est garé. Ou bien on peut remonter le canyon (aussi long).\n\nLorsque les obstacles ont été franchis, chercher deux sentiers successifs RD perchés à 5m / 10m au dessus de la rivière.",
       "engagement": "Faible",

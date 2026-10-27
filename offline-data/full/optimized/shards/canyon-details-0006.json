@@ -53,7 +53,7 @@
       "longitude": 2.721047,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -539,7 +539,7 @@
     "rating": {
       "cotation": "v5a5V",
       "interet": 3.3,
-      "nbVotes": 21
+      "nbVotes": 23
     },
     "metrics": {
       "altitudeDepartM": 1110,
@@ -1046,10 +1046,10 @@
   {
     "id": 21346,
     "identity": {
-      "nom": "Four à chaux",
-      "nomComplet": "Ruisseau du Four à chaux, Ruisseau du four à chaux",
+      "nom": "Four à Chaux",
+      "nomComplet": "Ruisseau du Four à Chaux",
       "prefixeNom": "Ruisseau du",
-      "url": "https://www.descente-canyon.com/canyoning/canyon/21346/Four-a-chaux.html"
+      "url": "https://www.descente-canyon.com/canyoning/canyon/21346/Four-a-Chaux.html"
     },
     "location": {
       "pays": "France",
@@ -1059,7 +1059,7 @@
       "communes": [],
       "massif": "Jura",
       "bassin": "Ain",
-      "coursEau": "Ruisseau du four à chaux"
+      "coursEau": null
     },
     "rating": {
       "cotation": "??",
@@ -1080,16 +1080,16 @@
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "De COISIA, prendre au Sud la D60 direction THOIRETTE. A l'extrémité de la plaine, prendre à droite sur 250 m d'un bon chemin repartant vers le village. Garer les véhicules vers le ruisseau recoupant le chemin, à l'amorce d'un sentier qui vous emprunterez au retour.",
-      "accesAmont": "Du village, prendre la direction d'Arinthod par la D60E, puis la D109 (remarquez au passage le site géologique unique avec des traces de dinosaures !) jusqu'au parking de la colonie (à droite, belvédère). Le ruisseau traverse la route par un petit tunnel",
-      "approche": "A pied, descendre par la gauche au bas des vieux murs, et les longer jusqu'au tunel, (C 8).",
-      "descente": "Dès sa sortie du tunnel, l'eau se précipite dans une chute de 8 m très concrétionnée. ( chaine inox en RD). Après quelques ressauts et un passage sous la route de COISIA, elle pénètre un sous bois dense pour ensuite dévaler une succession de cascades (R2, C8, C40 fractionnée), à peine entrecoupées de courts planioles.",
+      "accesAval": "de Coisia, prendre au Sud la D60 direction Thoirette. A l'extrémité de la plaine, prendre à droite sur 250 m d'un bon chemin repartant vers le village. Garer les véhicules vers le ruisseau recoupant le chemin, à l'amorce d'un sentier qui vous emprunterez au retour.",
+      "accesAmont": "du village, prendre la direction d'Arinthod par la D60E, puis la D109 (remarquez au passage le site géologique unique avec des traces de dinosaures !) jusqu'au parking de la colonie (à droite, belvédère). Le ruisseau traverse la route par un petit tunnel.",
+      "approche": "A pied, descendre par la gauche au bas des vieux murs, et les longer jusqu'au tunnel, (C 8).",
+      "descente": "Dès sa sortie du tunnel, l'eau se précipite dans une chute de 8 m très concrétionnée. ( chaine inox en RD). Après quelques ressauts et un passage sous la route de Coisia, elle pénètre un sous bois dense pour ensuite dévaler une succession de cascades (R2, C8, C40 fractionnée), à peine entrecoupées de courts planioles.",
       "retour": "La dernière chute descendue (C8), rejoindre un sentier conduisant aux voitures en quelques minutes.",
-      "engagement": "Ruisseau sans encaissement, et aux difficultés évitables ou contournables. Les verticales sont de hauteurs progressives, souvent obliques et très adhérentes. Descente agréable et facile pour une première approche du Canyoning vertical. Comporte toutefois un relais fractionnant la grande cascade de 40 m.",
+      "engagement": "Ruisseau sans encaissement, et aux difficultés évitables ou contournables. Les verticales sont de hauteurs progressives, souvent obliques et très adhérentes. Descente agréable et facile pour une première approche du canyoning vertical. Comporte toutefois un relais fractionnant la grande cascade de 40 m.",
       "periode": "Ruisseau temporaire et peu puissant. S'amorce aux premières pluies. Ne comportant ni marmite ni bassin profond. On ne rencontrera donc pas de nage et encore moins de saut. Intéressant à parcourir en hautes eaux ( printemps, automne). A la belle saison, peu se pratiquer avec un simple K.WAY, ou une néoprène légère.",
-      "geologie": "Intense calcification (Tuf).",
-      "historique": "Première descente sportive, équipement et nettoyage, Haut-Jura Canyon 1992, par Dominique GUYETAND et Guy MEUNIER.",
-      "remarques": "Canyon connu par les locaux mais très peu pratiqué. Prévoir la scie pour les premiers qui iront le découvrir ou le redécouvrir (non entretenu depuis plus de 10 ans ...)\n\nPossibilité de gagner l'amont sans navette :\n\nDe l'aval, prendre le chemin en direction de COISIA. A gauche, remonter sous la conduite de gaz enterrée (c'est raide). Arrivée sur la D 60, viser le poteau électrique à droite de la maison sous la colonie. Au bout du champ, on découvre une amorçe de sentier qui conduit au belvédère."
+      "geologie": "Intense calcification (tuf).",
+      "historique": "Première descente sportive, équipement et nettoyage, Haut-Jura Canyon 1992, par Dominique Guyetand et Guy Meunier.",
+      "remarques": "Canyon connu par les locaux mais très peu pratiqué. Prévoir la scie pour les premiers qui iront le découvrir ou le redécouvrir (non entretenu depuis plus de 10 ans ...)\n\nPossibilité de gagner l'amont sans navette :\n\nDe l'aval, prendre le chemin en direction de Coisia. A gauche, remonter sous la conduite de gaz enterrée (c'est raide). Arrivée sur la D 60, viser le poteau électrique à droite de la maison sous la colonie. Au bout du champ, on découvre une amorce de sentier qui conduit au belvédère."
     },
     "representativePoint": {
       "type": "PARKING_AMONT",
@@ -1494,14 +1494,14 @@
     "topo": {
       "accesAval": "De Saint Girons prendre direction Seix puis Ustou. Tourner à droite vers Ossèse et monter jusqu'au terminus. Se garer sans gêner.",
       "accesAmont": null,
-      "approche": "Du terminus se diriger plein sud comme pour monter à Ossèse sup. Passer une barrière métallique puis descendre par une sente dans la rivière.",
-      "descente": "De courts tobs, deux petits rappels (attention le premier de 8m tonche) puis le goulet central à aborder avec beaucoup de précaution.",
+      "approche": "Du terminus se diriger plein sud comme pour monter à Ossèse sup. Passer une rambarde métallique effondré qui surplombe la seconde cascade, puis descendre 100m plus loin par une sente vers la rivière.",
+      "descente": "Rééquipement août 2026 :\n\n-1ere cascade : équipements sur les deux rives avec des frottements soutenues à gérer dans les deux cas\n\n- 2ème cascade :\n\nRG : longue mc avec point et lunules menant a un relais sur lunules sous une dalle tomber offrant un semblant de plongeoir, Attention il y a seulement 1m70 de fond dans la vasque en 2026 !\n\nEmbâcles faciles à traverser\n\n3ème ressaut avec le goulet étroit et la cascade final:\n\nDeux points de mc en RD pour rejoindre la mc en fixe toute calcifiée en RG vieillissante mais fonctionnelle,\n\nAu départ de celle ci, un relais neuf en hauteur permet de descendre en rappel sur le tronc bloqué et rejoindre l'équipement en RD a la fin de l'étroiture :\n\nDeux pitons dans une fissure dont l'un est relié à un nouveau point de 10 offre une main-courante de stockage de 1m50 laissé en fixe et relié à un nouveau relais chaîner sur le même emplacement que l'ancien tout rouiller, (+ deux points en face dans la vasque a fleur de l eau, pour réaliser un guidé)",
       "retour": "Remonter sur un muret en rive droite à la fin du canyon et traverser les prés pour rejoindre le sentier qui part de la voiture.",
-      "engagement": "Court, mais ne pas s'engager dans le goulet si ça bouillonne. Equipement correct.",
-      "periode": "A faire à l'étiage complet.",
-      "geologie": null,
+      "engagement": "Court, possibilité de sortir entres les obstacles\n\nNe pas s'engager dans le goulet si ça bouillonne en début de saison. Belle réchappe évidente avant ce dernier obstacle.",
+      "periode": "A faire à l'étiage durant l'été",
+      "geologie": "Calcaire",
       "historique": null,
-      "remarques": "Faire attention au goulet central.\n\nCanyon à compléter avec sa partie sup et/ou Calie."
+      "remarques": "Faire attention dans le dernier goulet.\n\nCanyon à compléter avec sa partie sup et/ou Calie."
     },
     "representativePoint": {
       "type": "PARKING_AVAL",
@@ -2513,7 +2513,7 @@
     },
     "rating": {
       "cotation": "v4a3III",
-      "interet": 2.0,
+      "interet": 2.5,
       "nbVotes": 1
     },
     "metrics": {
@@ -3161,7 +3161,7 @@
     "rating": {
       "cotation": "v4a2IV",
       "interet": 3.1,
-      "nbVotes": 43
+      "nbVotes": 46
     },
     "metrics": {
       "altitudeDepartM": 870,
@@ -4384,7 +4384,7 @@
     "rating": {
       "cotation": "v3a1I",
       "interet": 2.1,
-      "nbVotes": 27
+      "nbVotes": 28
     },
     "metrics": {
       "altitudeDepartM": 550,
@@ -4400,7 +4400,7 @@
       "retour": "néant"
     },
     "topo": {
-      "accesAval": "Se garer au niveau du lavoir de Geu.",
+      "accesAval": "Dans Geu au niveau du cimetière, prendre à droite et se garer au parking du lavoir.",
       "accesAmont": null,
       "approche": "Depuis le lavoir, prendre le chemin en rive gauche, qui monte le plus raide. A une intersection, prendre a gauche, pour revenir vers le canyon, que l'on longe a flanc (main courante) pendant quelques dizaines de mêtres.",
       "descente": "Enchainement de 6 rappels, esthétiques, bien équipés.\n\nPresque tous avec main-courante",
@@ -4724,8 +4724,8 @@
     },
     "rating": {
       "cotation": "v3a3II",
-      "interet": 2.6,
-      "nbVotes": 13
+      "interet": 2.4,
+      "nbVotes": 15
     },
     "metrics": {
       "altitudeDepartM": 1640,
@@ -4784,7 +4784,7 @@
     "rating": {
       "cotation": "v3a2I",
       "interet": 2.2,
-      "nbVotes": 3
+      "nbVotes": 4
     },
     "metrics": {
       "altitudeDepartM": 1660,
@@ -4959,7 +4959,7 @@
     "rating": {
       "cotation": "v3a3III",
       "interet": 3.3,
-      "nbVotes": 75
+      "nbVotes": 76
     },
     "metrics": {
       "altitudeDepartM": 580,
@@ -5544,8 +5544,8 @@
     },
     "rating": {
       "cotation": "v3a2II",
-      "interet": 1.5,
-      "nbVotes": 1
+      "interet": 2.0,
+      "nbVotes": 2
     },
     "metrics": {
       "altitudeDepartM": 320,
@@ -5782,7 +5782,7 @@
     "rating": {
       "cotation": "v5a5III",
       "interet": 3.2,
-      "nbVotes": 40
+      "nbVotes": 42
     },
     "metrics": {
       "altitudeDepartM": 2040,
@@ -6077,7 +6077,7 @@
     "rating": {
       "cotation": "v3a2III",
       "interet": 2.6,
-      "nbVotes": 16
+      "nbVotes": 17
     },
     "metrics": {
       "altitudeDepartM": null,
@@ -6458,7 +6458,7 @@
       "longitude": -0.055444,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -8248,7 +8248,7 @@
     "rating": {
       "cotation": "v3a3III",
       "interet": 2.8,
-      "nbVotes": 47
+      "nbVotes": 49
     },
     "metrics": {
       "altitudeDepartM": 1140,
@@ -8499,7 +8499,7 @@
       "accesAval": "Depuis Ordino, continuer la route en direction de la station de ski d'Ordino Arcalis.\n\nSe garer sur le premier grand parking en contrebas de la station.\n\nOn voit la cascade finale de 20m juste devant le parking.",
       "accesAmont": null,
       "approche": "Remonter la route goudronnée pendant 5 minutes. Lorsqu'une piste de ski passe sous la route, remonter la pendant 1/4h jusqu'au barrage.\n\nVous êtes RD du canyon, l'entendez et l'apercevez de temps en temps.",
-      "descente": "La descente commence au barrage. Possibilité d'effectuer un rappel vertical de 10 m sur celui-ci.\n\nPuis succession de 8 cascades plus ou moins encaissées.",
+      "descente": "La descente commence au barrage. Possibilité d'effectuer un rappel vertical de 10 m sur celui-ci.\n\nPuis succession de 8 cascades plus ou moins encaissées.\n\nAttention au 2ème rappel après le barrage : le sapin servant d’AN est a proscrire car il est vermoulu et peut céder à tout moment ; un autre relais plus bas permet une descente en sécurité.",
       "retour": "Après la grande cascade de 20 m, continuer dans le torrent pour rejoindre la voiture.",
       "engagement": "Nombreux échappatoires possibles tout le long du canyon.",
       "periode": "A faire l'été. Attention à l'eau très froide et au débit à la fonte des neiges.",
@@ -9414,7 +9414,7 @@
     "rating": {
       "cotation": "v3a3I",
       "interet": 2.7,
-      "nbVotes": 27
+      "nbVotes": 30
     },
     "metrics": {
       "altitudeDepartM": 550,
@@ -10710,8 +10710,8 @@
     },
     "rating": {
       "cotation": "v3a3II",
-      "interet": 2.6,
-      "nbVotes": 17
+      "interet": 2.5,
+      "nbVotes": 18
     },
     "metrics": {
       "altitudeDepartM": 2160,
@@ -13821,8 +13821,8 @@
     },
     "rating": {
       "cotation": "??",
-      "interet": 2.2,
-      "nbVotes": 3
+      "interet": 2.3,
+      "nbVotes": 4
     },
     "metrics": {
       "altitudeDepartM": 1530,
@@ -14060,20 +14060,20 @@
     },
     "timings": {
       "approche": "15min",
-      "descente": "50min",
+      "descente": "1h30",
       "retour": "néant"
     },
     "topo": {
-      "accesAval": "De Bagnères de Luchon, prendre la direction Hospice de France. Juste avant l'Hospice, au panneau \"cascade du Parisien\" sur la droite, sortie du canyon. Se garer.",
+      "accesAval": "De Bagnères de Luchon, prendre la direction Hospice de France. Juste avant l'Hospice, au panneau \"cascade du Parisien\" sur la droite, sortie du canyon. Se garer pas très loin dans un virage, ou au parking de l'Hospice de France à 200 m.",
       "accesAmont": null,
       "approche": "Continuer sur la route jusqu'à l'Hospice puis prendre le sentier en direction du Port de Venasque (sud-ouest). Au bout d'une petite dizaine de minutes, prendre à droite vers l'ancien centre de vacances où le canyon débute.",
-      "descente": "Ca démarre tranquille puis enchaînement de petites cascades jusqu'au troncs vus de la route.",
+      "descente": "Ça démarre tranquille puis enchaînement de petites cascades jusqu’aux troncs vus de la route. Environ 7 à 8 rappels, dont parfois la corde de 30 m est plus adaptée.",
       "retour": null,
-      "engagement": "Pas d'échappatoire mais canyon court.",
+      "engagement": "Canyon court avec parfois des échappatoires sur les côtés",
       "periode": "Printemps-été",
       "geologie": "Schiste",
       "historique": null,
-      "remarques": "Rocher glissant."
+      "remarques": "Rocher parfois glissant, et surtout sur les troncs d'arbres"
     },
     "representativePoint": {
       "type": "ENTREE",

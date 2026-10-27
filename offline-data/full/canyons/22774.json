@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:04:07.659929+00:00",
+  "scrapedAt": "2026-10-27T17:11:09.632129+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 22774,
@@ -15,10 +15,10 @@
   "canyon": {
     "id": 22774,
     "identity": {
-      "nom": "Saufla Amont",
-      "nomComplet": "Canyon de la Saufla Amont, Le Pas d'Encel, Cascade de la Saufla, Saufla",
+      "nom": "Saufla (amont)",
+      "nomComplet": "Canyon de la Saufla (amont), Le Pas d'Encel, Cascade de la Saufla",
       "prefixeNom": "Canyon de la",
-      "url": "https://www.descente-canyon.com/canyoning/canyon/22774/Saufla-Amont.html"
+      "url": "https://www.descente-canyon.com/canyoning/canyon/22774/Saufla-amont.html"
     },
     "location": {
       "pays": "Suisse",
@@ -28,12 +28,12 @@
       "communes": [],
       "massif": null,
       "bassin": "Vièze",
-      "coursEau": "Saufla"
+      "coursEau": null
     },
     "rating": {
       "cotation": "v4a2V",
       "interet": 3.3,
-      "nbVotes": 10
+      "nbVotes": 11
     },
     "metrics": {
       "altitudeDepartM": 1795,

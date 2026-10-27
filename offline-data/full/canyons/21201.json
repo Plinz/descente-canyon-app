@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:59:04.059735+00:00",
+  "scrapedAt": "2026-10-27T16:54:44.841747+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21201,
@@ -31,7 +31,7 @@
       "coursEau": "Riu de la Coma"
     },
     "rating": {
-      "cotation": "v3a1II",
+      "cotation": "v3a3II",
       "interet": 1.9,
       "nbVotes": 2
     },
@@ -51,7 +51,7 @@
     "topo": {
       "accesAval": "Entre Soldeu et Canillo au km 13, prendre la route qui monte vers le village de Ransol et Els Plan. Dans le village de Ransol, lorsque la route passe au dessus du cours d'eau, prendre le pont de gauche qui descend et conduit en 50m à un grand parking. Se garer.",
       "accesAmont": null,
-      "approche": "Le canyon démarre là, au pied du parking.",
+      "approche": "Le canyon démarre là, au pied du parking accès RG descendre le long du bâtiment",
       "descente": "Courte descente encaissée composée de 5 rappels.",
       "retour": "Lorsqu'on aperçoit la station service et un pont, remonter par un petit sentier raide RG. Monter pendant 15 minutes dans les hautes herbes pour rejoindre la route principale au coeur du village de Ransol.",
       "engagement": "Pas d'échappatoire possible du fait de l'encaissement de la gorge.",

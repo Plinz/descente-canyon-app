@@ -1,77 +1,5 @@
 [
   {
-    "canyonId": 22337,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": -20.951944,
-    "longitude": 55.513138,
-    "label": null
-  },
-  {
-    "canyonId": 22337,
-    "type": "PARKING_AMONT",
-    "rawType": "parking_amont",
-    "latitude": -20.951332,
-    "longitude": 55.517666,
-    "label": null
-  },
-  {
-    "canyonId": 22337,
-    "type": "PARKING_AVAL",
-    "rawType": "parking_aval",
-    "latitude": -20.941723,
-    "longitude": 55.517693,
-    "label": null
-  },
-  {
-    "canyonId": 22337,
-    "type": "POINT_REMARQUABLE",
-    "rawType": "point_externe",
-    "latitude": -20.950417,
-    "longitude": 55.516277,
-    "label": "Départ marche d'approche"
-  },
-  {
-    "canyonId": 22338,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 45.198223,
-    "longitude": 5.491099,
-    "label": null
-  },
-  {
-    "canyonId": 22340,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 46.313206,
-    "longitude": 13.966005,
-    "label": null
-  },
-  {
-    "canyonId": 22340,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 46.302399,
-    "longitude": 13.961198,
-    "label": null
-  },
-  {
-    "canyonId": 22340,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 46.302059,
-    "longitude": 13.960147,
-    "label": null
-  },
-  {
-    "canyonId": 22341,
-    "type": "ENTREE",
-    "rawType": "depart",
-    "latitude": 46.27866,
-    "longitude": 14.001281,
-    "label": null
-  },
-  {
     "canyonId": 22341,
     "type": "SORTIE",
     "rawType": "arrivee",
@@ -1998,5 +1926,77 @@
     "latitude": 44.421368,
     "longitude": 6.709814,
     "label": null
+  },
+  {
+    "canyonId": 22424,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 44.418945,
+    "longitude": 6.709385,
+    "label": null
+  },
+  {
+    "canyonId": 22425,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 32.754284,
+    "longitude": -17.133232,
+    "label": null
+  },
+  {
+    "canyonId": 22426,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 45.583839,
+    "longitude": 6.196915,
+    "label": null
+  },
+  {
+    "canyonId": 22428,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 43.579426,
+    "longitude": 3.005619,
+    "label": null
+  },
+  {
+    "canyonId": 22429,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 43.838333,
+    "longitude": 6.860189,
+    "label": null
+  },
+  {
+    "canyonId": 22429,
+    "type": "SORTIE",
+    "rawType": "arrivee",
+    "latitude": 43.84697,
+    "longitude": 6.893213,
+    "label": null
+  },
+  {
+    "canyonId": 22430,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 39.462513,
+    "longitude": 8.710957,
+    "label": "Entrée 1"
+  },
+  {
+    "canyonId": 22430,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 39.465134,
+    "longitude": 8.721192,
+    "label": "Entrée 2 (départ Sa Spendula - approche rive droite orograf.)"
+  },
+  {
+    "canyonId": 22430,
+    "type": "ENTREE",
+    "rawType": "depart",
+    "latitude": 39.467331,
+    "longitude": 8.72462,
+    "label": "Entrée 3 (approche rive gauche orograf. depuis parking aval)"
   }
 ]

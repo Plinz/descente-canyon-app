@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:58:36.081157+00:00",
+  "scrapedAt": "2026-10-27T16:53:16.282277+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21062,
@@ -9,7 +9,7 @@
       "description": "https://www.descente-canyon.com/canyoning/canyon-description/21062/topo.html",
       "map": "https://www.descente-canyon.com/canyoning/canyon-carte/21062/carte.html",
       "bibliography": "https://www.descente-canyon.com/canyoning/canyon-bibliographie/21062/guides-et-cartes.html",
-      "regulation": null
+      "regulation": "https://www.descente-canyon.com/canyoning/canyon-reglementation/21062/legislation.html"
     }
   },
   "canyon": {
@@ -35,7 +35,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 2.8,
-      "nbVotes": 36
+      "nbVotes": 38
     },
     "metrics": {
       "altitudeDepartM": 1540,
@@ -132,9 +132,27 @@
       "resources": []
     },
     "reglementation": {
-      "hasSpecificRegulation": false,
-      "rules": [],
-      "isForbidden": false
+      "hasSpecificRegulation": true,
+      "isForbidden": false,
+      "rules": [
+        {
+          "id": 625,
+          "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté - 06 juil 2026",
+          "summary": "La pratique du canyonisme est interdite dans la zone cœur du Parc national des Pyrénées à l’exception des canyons nommément autorisés dans l'arrêté.",
+          "remark": null,
+          "details": "Arrêté temporaire (Parc national des Pyrénées) n°2026-46 du 6 juillet 2026",
+          "effectiveDate": "31 oct 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/625/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté temporaire (Parc national des Pyrénées) n°2026-46 du 6 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem625_pj1.pdf"
+            }
+          ]
+        }
+      ]
     }
   }
 }

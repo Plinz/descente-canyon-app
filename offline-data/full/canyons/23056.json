@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:05:01.975181+00:00",
+  "scrapedAt": "2026-10-27T17:13:57.073853+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 23056,
@@ -15,8 +15,8 @@
   "canyon": {
     "id": 23056,
     "identity": {
-      "nom": "Saxetbach amont",
-      "nomComplet": "Saxetbach amont",
+      "nom": "Saxetbach (amont)",
+      "nomComplet": "Saxetbach (amont)",
       "prefixeNom": null,
       "url": "https://www.descente-canyon.com/canyoning/canyon/23056/Saxetbach-amont.html"
     },
@@ -31,7 +31,7 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "??",
+      "cotation": "v3a2III",
       "interet": 2.8,
       "nbVotes": 3
     },
@@ -51,9 +51,9 @@
     "topo": {
       "accesAval": "Traverser le village de Saxeten et se garer quand la route devient interdite aux véhicules.",
       "accesAmont": null,
-      "approche": null,
+      "approche": "Continuer la route à pied sur environ 350m. Arrivé à un embranchement, continuer sur la route à droite.\n\nAprès une épingle à droite, prendre le sentier de randonnée balisé rouge-blanc-rouge vers la gauche, jusqu’à rejoindre à nouveau la route. Poursuivre jusqu’à une ferme. Environ 100m plus loin, un sentier part vers la gauche en aval. Le suivre, puis prendre à gauche sur la piste herbeuse, qui vous amène au départ (150m).",
       "descente": "Enchainement de cascades sans temps mort.",
-      "retour": null,
+      "retour": "Sortie en rive gauche environ 10m après la dernière cascade . Une sente est visible. On sort dans les pré au bord de la route prise à la montée à pied.",
       "engagement": "Fort : pas d'échappatoires.",
       "periode": null,
       "geologie": null,

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:03:17.330532+00:00",
+  "scrapedAt": "2026-10-27T17:08:27.503733+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 22500,
@@ -33,7 +33,7 @@
     "rating": {
       "cotation": "v3a2II",
       "interet": 2.1,
-      "nbVotes": 8
+      "nbVotes": 9
     },
     "metrics": {
       "altitudeDepartM": 390,
@@ -51,7 +51,7 @@
     "topo": {
       "accesAval": "De Riazzino vers Bugaro, 100m devant Piandessio garer la 2ème voiture",
       "accesAmont": null,
-      "approche": "la route 100m retour et prendre le sentier vers \"Peross\". 30m après une porte à droite vers le ruisseau.",
+      "approche": "Au pont du parking amont, remonter la route sur 100m et prendre le sentier vers \"Peross\".\n\nA 5min Prendre les escaliers à droite et arriver sur une porte en bois a refermer après votre passage\n\n30m après la porte à droite aller vers le ruisseau.",
       "descente": "Succession de rappels et marche, belles cascades finales",
       "retour": "Après les cascades finales sortie à droite et aller à la 1ère voiture au parking publique",
       "engagement": null,

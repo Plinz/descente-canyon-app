@@ -1069,8 +1069,8 @@
     },
     "rating": {
       "cotation": "??",
-      "interet": 3.3,
-      "nbVotes": 2
+      "interet": 3.5,
+      "nbVotes": 3
     },
     "metrics": {
       "altitudeDepartM": 800,
@@ -1687,7 +1687,7 @@
       "longitude": 6.225386,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -1957,14 +1957,14 @@
       "navette": "néant"
     },
     "timings": {
-      "approche": "35min",
+      "approche": "25min",
       "descente": "1h30",
       "retour": "10"
     },
     "topo": {
       "accesAval": "Après le tunnel de Bielsa, passer les pare avalanche, passer l'ancien post frontière. Un peu plus loin, tourner à Gauche juste après la centrale électrique en bord de route (K85 sur l'A138) direction refuge d'Urticeto. Traverser le cours d'eau collecteur du Barossa et se garer juste après, sur une large esplanade en terre.",
       "accesAmont": null,
-      "approche": "Emprunter à pied la piste et à la première épingle, traverser le pierrier à niveau. Poursuivre le long du petit canal jusqu'à atteindre des escaliers. Remonter alors raide dans la forêt (sentes peu visibles) en gardant dans un premier temps un visuel sur la gorge du canyon.\n\nAprès 15 bonnes minutes de montée, le chemin par endroit cairné, revient à l'horizontal et mène au bord du ruisseau, départ de la descente.\n\nUne autre option existe sans passer par le pierrier : continuer la piste et à l'épingle suivante, emprunter le très bon sentier plat qui ne tarde pas à dominer le cours d'eau : on pourrait rentrer en rappel sur un gros arbre, mais il y a un accès très facile un peu plus loin, au bout d'un petit pré. Le premier rappel se trouve alors à env 10 min de marche en rivière sans difficulté sur de belles roches.",
+      "approche": "Emprunter à pied la piste et à la première épingle, traverser le pierrier à niveau. Poursuivre le long du petit canal jusqu'à atteindre des escaliers. Remonter alors raide dans la forêt (sentes peu visibles) en gardant dans un premier temps un visuel sur la gorge du canyon.\n\nAprès 15 bonnes minutes de montée, le chemin par endroit cairné, revient à l'horizontal et mène au bord du ruisseau, départ de la descente.\n\nUne autre option existe sans passer par le pierrier : continuer la piste et à l'épingle suivante, emprunter le très bon sentier plat qui ne tarde pas à dominer le cours d'eau : on pourrait rentrer en rappel sur un gros arbre, mais il y a un accès très facile un peu plus loin, au bout d'un petit pré. Le premier rappel se trouve alors à env 10 min de marche en rivière sans difficulté sur de belles roches.\n\nCette 2eme option est bien plus facile . 25 mn pour arriver au torrent.",
       "descente": "Un bel encaissement court aux rappels sympas.\n\nUne cascade très canalisée peut s'éviter suivant le niveau d'eau avec une main-courante avec point(s) intermédiaire(s).",
       "retour": "25m après la dernière cascade, sortir RD : on arrive immédiatement à un joli pré dont on longe le bord amont. La sortie évidente ramène à la piste de l'approche.",
       "engagement": "On peut éventuellement sortir à la prise d'eau en suivant le canal",
@@ -2057,29 +2057,29 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "??",
+      "cotation": "v4a3III",
       "interet": 2.5,
       "nbVotes": 11
     },
     "metrics": {
       "altitudeDepartM": null,
-      "deniveleM": null,
-      "longueurM": null,
+      "deniveleM": 200,
+      "longueurM": 900,
       "cascadeMaxM": 20,
       "cordeMiniM": 25,
       "navette": "néant"
     },
     "timings": {
       "approche": "25min",
-      "descente": "1 - 2h",
+      "descente": "2h-3h",
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "Parking à côté du pont.",
+      "accesAval": "Sortir de Benasque direction hospital de Benasque, et à l'entrée de l'hotel Turpi et des balnéarios. Parking à côté du pont qui croise le canyon Literola.",
       "accesAmont": null,
-      "approche": "RG de la Literola.",
-      "descente": "Encaissement et cascades. Tout n'est pas esthétique. Des blocs.",
-      "retour": null,
+      "approche": "RG prendre le sentier de Literola, on traverse une zone arborée de pins noirs, jusqu'à un pré. puis à gauche, on découvre un sentier qui descende dans le canyon.",
+      "descente": "Encaissement et cascades. Tout n'est pas esthétique. Des blocs.\n\nPrincipalement une succession de rappels (21 max).\n\nSortie au niveau du pont du parking.",
+      "retour": "Très facile, à coté du parking.",
       "engagement": "Pas d'échappatoires.",
       "periode": "Dangereux en début de saison.",
       "geologie": null,
@@ -2118,7 +2118,7 @@
     "rating": {
       "cotation": "v3a4II",
       "interet": 2.8,
-      "nbVotes": 9
+      "nbVotes": 10
     },
     "metrics": {
       "altitudeDepartM": null,
@@ -2473,7 +2473,7 @@
     "rating": {
       "cotation": "v3a2IV",
       "interet": 2.8,
-      "nbVotes": 9
+      "nbVotes": 10
     },
     "metrics": {
       "altitudeDepartM": 320,
@@ -5849,7 +5849,7 @@
     "rating": {
       "cotation": "v4a2IV",
       "interet": 3.2,
-      "nbVotes": 49
+      "nbVotes": 53
     },
     "metrics": {
       "altitudeDepartM": 1520,
@@ -8019,7 +8019,7 @@
       "longitude": 2.688518,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -9704,8 +9704,8 @@
     },
     "rating": {
       "cotation": "v3a2I",
-      "interet": 1.2,
-      "nbVotes": 8
+      "interet": 1.3,
+      "nbVotes": 9
     },
     "metrics": {
       "altitudeDepartM": 605,
@@ -9856,7 +9856,7 @@
       "longitude": 6.445284,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {

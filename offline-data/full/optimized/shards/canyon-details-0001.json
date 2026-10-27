@@ -21,8 +21,8 @@
     },
     "rating": {
       "cotation": "v3a2III",
-      "interet": 2.2,
-      "nbVotes": 38
+      "interet": 2.3,
+      "nbVotes": 40
     },
     "metrics": {
       "altitudeDepartM": 1100,
@@ -141,7 +141,7 @@
     "rating": {
       "cotation": "v3a4II",
       "interet": 2.7,
-      "nbVotes": 107
+      "nbVotes": 109
     },
     "metrics": {
       "altitudeDepartM": 880,
@@ -200,7 +200,7 @@
     "rating": {
       "cotation": "v3a2II",
       "interet": 2.4,
-      "nbVotes": 104
+      "nbVotes": 105
     },
     "metrics": {
       "altitudeDepartM": 736,
@@ -259,7 +259,7 @@
     "rating": {
       "cotation": "v5a2II",
       "interet": 2.8,
-      "nbVotes": 93
+      "nbVotes": 94
     },
     "metrics": {
       "altitudeDepartM": 620,
@@ -319,7 +319,7 @@
     "rating": {
       "cotation": "v3a4II",
       "interet": 2.6,
-      "nbVotes": 150
+      "nbVotes": 152
     },
     "metrics": {
       "altitudeDepartM": 705,
@@ -378,7 +378,7 @@
     "rating": {
       "cotation": "v3a4II",
       "interet": 2.4,
-      "nbVotes": 130
+      "nbVotes": 133
     },
     "metrics": {
       "altitudeDepartM": 400,
@@ -556,7 +556,7 @@
     "rating": {
       "cotation": "v3a3III",
       "interet": 2.7,
-      "nbVotes": 164
+      "nbVotes": 166
     },
     "metrics": {
       "altitudeDepartM": 300,
@@ -616,7 +616,7 @@
     "rating": {
       "cotation": "v5a3IV",
       "interet": 3.4,
-      "nbVotes": 212
+      "nbVotes": 213
     },
     "metrics": {
       "altitudeDepartM": 882,
@@ -676,7 +676,7 @@
     "rating": {
       "cotation": "v4a3III",
       "interet": 3.1,
-      "nbVotes": 206
+      "nbVotes": 209
     },
     "metrics": {
       "altitudeDepartM": 621,
@@ -1032,7 +1032,7 @@
     "rating": {
       "cotation": "v4a1IV",
       "interet": 2.8,
-      "nbVotes": 93
+      "nbVotes": 94
     },
     "metrics": {
       "altitudeDepartM": 910,
@@ -1211,7 +1211,7 @@
     "rating": {
       "cotation": "v2a3I",
       "interet": 2.1,
-      "nbVotes": 34
+      "nbVotes": 35
     },
     "metrics": {
       "altitudeDepartM": 450,
@@ -1329,43 +1329,43 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "v2a4I",
-      "interet": 2.6,
-      "nbVotes": 111
+      "cotation": "",
+      "interet": null,
+      "nbVotes": 0
     },
     "metrics": {
       "altitudeDepartM": 360,
       "deniveleM": 90,
       "longueurM": 2000,
-      "cascadeMaxM": 10,
-      "cordeMiniM": 15,
-      "navette": "3.5km"
+      "cascadeMaxM": null,
+      "cordeMiniM": null,
+      "navette": null
     },
     "timings": {
-      "approche": "??",
-      "descente": "1h30",
-      "retour": "10min"
+      "approche": null,
+      "descente": null,
+      "retour": null
     },
     "topo": {
-      "accesAval": "se garer au niveau du nouveau parking aménagé (rue du Pont) par la municipalité (WC publiques disponibles) (coordonnées GPS : 45°48'33.3\"N 5°27'12.8\"E) (Le silo a disparu en 2022-2023 au profit de ce parking)\n\nNota : ne plus utiliser le parking de l'église, trop gênant pour les riverains et maintenant interdit sauf possesseurs d'une carte de stationnement.",
-      "accesAmont": "de Serrières-de-Briord prendre la D32 en direction de Bénonces sur un peu plus de 2km. Puis descendre à droite un chemin carrossable vers le cours d'eau (300m). Se garer au niveau du pont (pancarte d'information).",
-      "approche": "Marche d'approche sans voiture possible en empruntant le chemin de l'Eglise puis en suivant le sentier parallèle à la RD32 (compter 30-35 min)",
-      "descente": "Une descente très ludique avec beaucoup de petits sauts et toboggans, à sonder bien évidemment (les vasques ont tendance à se charger en gravier) et une fin magnifique pour ceux qui en veulent un peu plus...\n\nAssez discontinu (pas mal de marche mais jamais trop longues) un marquage éphémère de deux vagues bleues a été mis en place en lien avec rivières sauvages pour éviter le cours d'eau quand les obstacles ne sont pas d’un intérêt particulier pour le canyoniste et ainsi préserver la faune et la flore du lit du cours d’eau.",
-      "retour": "Un sentier évident en RD nous ramène au village.",
-      "engagement": "Il est toujours possible de sortir du canyon mise à part sur 2 ou 3 courts passages.",
-      "periode": "Nombreuses vasques avec parfois quelques brasses à faire.\n\nAttention à la réglementation spécifique (période de pratique autorisée : 15 avril au 31 juillet et du 1er septembre au 31 octobre).",
+      "accesAval": null,
+      "accesAmont": null,
+      "approche": null,
+      "descente": null,
+      "retour": null,
+      "engagement": null,
+      "periode": null,
       "geologie": null,
       "historique": null,
-      "remarques": "Pas mal pour les débutants.\n\nIl ne sert à rien de remonter à la confluence: pas d'obstacle. Passez votre chemin sous le pont, et prenez le sentier 15m en aval en RG.\n\nPeu d'intérêt à l'étiage."
+      "remarques": null
     },
     "representativePoint": {
-      "type": "PARKING_AMONT",
-      "latitude": 45.8218,
-      "longitude": 5.468273,
+      "type": "ENTREE",
+      "latitude": 45.821682,
+      "longitude": 5.467672,
       "label": null
     },
     "hasSpecificRegulation": true,
-    "isForbidden": false
+    "isForbidden": true
   },
   {
     "id": 224,
@@ -1390,7 +1390,7 @@
     "rating": {
       "cotation": "v3a3I",
       "interet": 2.8,
-      "nbVotes": 106
+      "nbVotes": 108
     },
     "metrics": {
       "altitudeDepartM": 370,
@@ -1685,7 +1685,7 @@
     "rating": {
       "cotation": "v5a3IV",
       "interet": 3.2,
-      "nbVotes": 82
+      "nbVotes": 84
     },
     "metrics": {
       "altitudeDepartM": 1660,
@@ -1701,9 +1701,9 @@
       "retour": "45min"
     },
     "topo": {
-      "accesAval": "Du centre ville de Vernet-Les-Bains, suivre les panneaux \"Gorge du Saint Vincent\" puis \"cascade des Anglais\" et se garer sur le grand parking aménagé.",
+      "accesAval": "Du centre ville de Vernet-Les-Bains, suivre les panneaux \"Gorge du Saint-Vincent\" puis \"Cascade des Anglais\" et se garer sur le grand parking aménagé.",
       "accesAmont": null,
-      "approche": "Prendre la piste de la cascade des Anglais pendant une dizaine de minutes.\n\nA l'intersection (petit parking rond), l'abandonner en suivant le sentier à droite indiqué par le panneau \"Col du Llavent/Pic de l'Alzina\" et en laissant à gauche la piste de la \"cascade des Anglais\" (chemin de retour).\n\nAux panneaux suivants, suivre la direction \"Pic du Bosquet/Pic de l'alzina\" puis la direction du \"Sentier du bois de la ville\".\n\nOn compte deux heures de montée parfois raide, mais toujours ombragées qui mène au niveau d'immenses casse-crues en béton.\n\nDescendre sous le dernier casse-crues pour rejoindre le sommet de belles dalles sculptées par la rive droite.",
+      "approche": "Prendre la piste de la cascade des Anglais pendant une dizaine de minutes.\n\nA l'intersection (petit parking rond), l'abandonner en suivant le sentier à droite indiqué par le panneau \"Col du Llavent/Pic de l'Alzina\" et en laissant à gauche la piste de la \"cascade des Anglais\" (chemin de retour).\n\nAux panneaux suivants, suivre la direction \"Pic du Bosquet/Pic de l'alzina\" puis la direction du \"Sentier du bois de la ville\".\n\nSuivre le balisage rouge.\n\nOn compte deux heures de montée parfois raide, mais toujours ombragée qui mène au niveau d'immenses casse-crues en béton.\n\nDescendre sous le dernier casse-crues pour rejoindre le sommet de belles dalles sculptées par la rive droite.",
       "descente": "Magnifique gorge en plein cœur du massif du Canigou, c'est le canyon le plus long et sportif des Pyrénées-Orientales.\n\nÀ la fois technique et ludique, on compte au total quarante cinq cascades dont trente six rappels qui défilent dans la face nord du massif.\n\nRn°1: C37 (bloc centre)\n\nRn°2: C42 AN RG (shunt RD)\n\nRn°3: C6 RG\n\nRn°4: T7/C15 RG\n\nRn°5: C20 RD\n\nRn°6: T8/C8 RG\n\nRn°7: C41 RG\n\nRn°8: C20 RG\n\nRn°9: C3 RD\n\nRn°10: C5 RG\n\nT3\n\nRn°11: C14 RG\n\nT8 + T4\n\nRn°12: C25 RG\n\nRn°13: C21RG\n\nRn°14: C17 RD\n\nT2 + T2 + T6\n\nRn°15 Cascade en S: C35 fractionnée = R17 RD + Rn°16: R28 RG\n\nRn°17: C12 RG\n\nT4\n\nRn°17: C8 RG\n\nRn°18: C3 RD\n\nRn°19: C4 RD\n\nRn°20: C7 RD\n\nRn°21 Étroiture: C11 fractionnée = R6 RG + Rn°22: R15 RG\n\nRn°23: C30 RG\n\nRn°24: MC C8 RD\n\nT6\n\nRn°25: C12 RG\n\nRn°26: C4 RD\n\nRn°27 Forat de la Tomba: C75 fractionnée = R35 RG + Rn°28: R40 RG soit (R17 + R13 + R40).\n\nRn°29: S6/C6 RD\n\nRn°30: C12 RD\n\nRn°31: C15 RG\n\nRn°32: C14 RD\n\nRn°33: C12 RG\n\nRn°34: MC C18 RD\n\nRn°35: C16 RG\n\nT6\n\nRn°36 Cascade des Anglais: C18 RD",
       "retour": "Suivre le retour bien tracé et évident par les passerelles jusqu'au parking.",
       "engagement": "Des parties très encaissées entrecoupées, il y a des sections en forêt où l'on peut se mettre hors crues mais les échappatoires sont longs et malaisés.\n\nUn échappatoire est possible en haut de la C75 en rive gauche, il peut aussi être un départ pour faire uniquement la partie finale du Saint-Vincent.",
@@ -2023,7 +2023,7 @@
     "id": 235,
     "identity": {
       "nom": "Baoussous",
-      "nomComplet": "Cascades des Baoussous, Le Nogarède",
+      "nomComplet": "Cascades des Baoussous, Le Nogareda",
       "prefixeNom": "Cascades des",
       "url": "https://www.descente-canyon.com/canyoning/canyon/235/Baoussous.html"
     },
@@ -2037,7 +2037,7 @@
       ],
       "massif": "Pic des Salines",
       "bassin": "Le Tech - Vallespir",
-      "coursEau": "Le Nogarède"
+      "coursEau": "Le Nogareda"
     },
     "rating": {
       "cotation": "v3a2II",
@@ -2060,13 +2060,13 @@
     "topo": {
       "accesAval": "Parking amont: Passer dans Céret et prendre la direction de Fontfrède et Las-Illas.\n\nÀ l’entrée de la place des Tilleuls, prendre à droite la rue des évadés de France (deux voitures ne peuvent se croiser) et prendre de suite à gauche la ruelle étroite qui monte en abandonnant sur la droite la direction de Fontfrède/Las-Illas.\n\nSuivre la rue de la Font Daudet (route du balcon de Céret) et stationner à l'épingle.",
       "accesAmont": null,
-      "approche": "Depuis le parking amont, marcher sur la route en remontant sur une centaine de mètres et emprunter le petit sentier en forme de talus, il se situe de suite sur la gauche et longe un petit canal d'irrigation.\n\nVient ensuite le lieu dit: \"la porte de fer\" un passage bétonné étroit, puis la passerelle en bois.\n\nDescendre de suite après, en prenant le prochain chemin qui descend vers la rivière.\n\nDepuis le parking aval, traverser le \"pont canal\" qui surplombe la rivière de Nogarède et suivre le sentier de randonnée jusqu'à traverser le cours d'eau.\n\nNe pas s'engager sur le premier chemin de droite qui va directement au Salt dels Baossos (fin du canyon) mais plutôt suivre celui de gauche jusqu'à un grillage avec une sente à forte pente à nouveau sur la droite.\n\nSe rendre tout au bout du chemin et retraverser le cours d'eau, remonter un tout petit chemin qui mène aux premières vasques du canyon soit un peu plus haut aux deux premiers rappels de cette course.",
-      "descente": "Canyon d'initiation très complet, aquatique et ludique.\n\nOn y trouve des sauts, des toboggans, des rappels et de la nage en comptant quelques petites oppositions.\n\nLe départ est très ouvert, mais plus on descend et plus le canyon s'encaisse jusqu'à ne plus trouver d'échappatoire possible.\n\nRn°1: C15 RD/AN.centre (rampe)\n\nRn°2: C7 RD (blocs)\n\nT6\n\nT4\n\nRn°3: MC C4 RG/R5 RD (étroit)\n\nS3\n\nRn°4: MC C10 RG/RD\n\nT5\n\nS2/D4 RD\n\nT1\n\nT4\n\nRn°5: MC C6 RG (vasque tube)\n\nOpposition + T3\n\nRn°6: MC.F C17 RG\n\nRn°7: C5 RG/RD\n\nRn°8 Salt dels Baossos : MC C12 RG",
+      "approche": "Depuis le parking amont, marcher sur la route en remontant sur une centaine de mètres et emprunter le petit sentier en forme de talus, il se situe de suite sur la gauche et longe un petit canal d'irrigation.\n\nVient ensuite le lieu dit: \"la porte de fer\" un passage bétonné étroit, puis la passerelle en bois.\n\nDescendre de suite après, en prenant le prochain chemin qui descend vers la rivière.\n\nDepuis le parking aval, \"parking du Canal\" rue de l'Astrabol, traverser le \"pont canal\" qui surplombe la rivière de Nogareda et suivre le sentier de randonnée jusqu'à traverser le cours d'eau.\n\nNe pas s'engager sur le premier chemin de droite qui va directement au Salt dels Baossos (fin du canyon) mais plutôt suivre celui de gauche jusqu'à un grillage avec une sente à forte pente à nouveau sur la droite.\n\nSe rendre tout au bout du chemin et retraverser le cours d'eau, remonter un tout petit chemin qui mène aux premières vasques du canyon soit un peu plus haut aux deux premiers rappels de cette course.",
+      "descente": "Canyon d'initiation très complet, aquatique et ludique.\n\nOn y trouve des sauts, des toboggans, des rappels et de la nage en comptant quelques petites oppositions.\n\nLe départ est très ouvert, mais plus on descend et plus le canyon s'encaisse jusqu'à ne plus trouver d'échappatoire possible.\n\nRn°1: C15 RD/AN.centre (rampe)\n\nRn°2: C7 RD (blocs)\n\nT6\n\nT4\n\nRn°3: MC C4 RG/R5 RD (étroit)\n\nS3\n\nRn°4: MC C10 RG/RD\n\nT5\n\nS2/D4 RD\n\nT1\n\nT4\n\nRn°5: MC C6 RG (vasque tube)\n\nOpposition + T3\n\nRn°6: MC.F C17 RG\n\nRn°7: C5 RG/RD\n\nRn°8 Salt dels Baossos : MC C12 RG\n\nINFORMATIONS IMPORTANTES :\n\nTout le canyon du Baoussous et ses accès sont situés sur des parcelles privées.\n\nAprès discussion avec le propriétaire de toute la rive droite, c’est la première vasque qui pose problème de surfréquentation.\n\nC’est là où depuis 50 ans il vient se baigner et depuis 5 ans avec ses petits enfants. Il souhaite être au calme chez lui.\n\nAlors afin de palier à ce grief sur cette zone, dorénavant nous devons nous équiper au niveau du premier petit rappel de 5m et commencer le canyon d’ici.\n\nPlus personne sur la zone de la vasque et de son toboggan et saut.\n\nComme ça le jour où le propriétaire est présent il peut profiter de son coin tranquille.\n\nPour ceux qui font l’intégrale ou passent par le haut pour l'accès : Sortir à la fin du 2ème rappel, prendre le chemin normal et 30m avant la zone d’habillage prendre à gauche un chemin qui arrive direct au 1er rappel.\n\nA faire et respecter pendant la période de haute saison : 4 juillet au 31 août. C’est à ce prix là et en montrant l’exemple que nous pourrons sauver la pratique sur ce canyon.\n\nPour les parkings : bien se garer, PAS DE CIGARETTE et ramassons les quelques déchets à chaque fois. Merci à toutes et à tous.",
       "retour": null,
       "engagement": "De nombreux échappatoires en rive droite comme en rive gauche, ce sont des chemins de randonnée qui permettent de rejoindre soit le parking amont et le parking aval soit directement la ville de Céret.",
       "periode": "Privilégier les descentes au printemps ou après des grosses averses.\n\nPraticable en saison estivale mais peu d'eau à cette période.",
       "geologie": "Gneiss.",
-      "historique": "Fréquenté depuis des longues années par les jeunes de Céret et des villages au tour.\n\nIl fut un temps, à l'époque, le Salt del Baossos était comme la piscine de la ville, c'était le point de rendez-vous des anciens, il est encore très fréquenté par les lycéens aujourd'hui.\n\nTrès pratiqué par les groupes de colonies de vacances avec les guides locaux du Vallespir.\n\nOuvert et équipé par Jean Guitard et Jean Vilallongue et des équipes de professionnels en 1988.\n\nAnecdote: L'abri de la Porte de Fer est situé sur les hauteurs du ravin de Nogarède. Il s'agit d'un abri sous roche long de huit mètres ayant été fréquenté régulièrement du XI ème siècle au IV ème siècle avant Jésus Christ et sans doute épisodiquement de l'antiquité jusqu'au moyen âge.\n\nOn y a trouvé de nombreux fragments de céramique et de verre ainsi que quelques monnaies romaines.",
+      "historique": "Fréquenté depuis des longues années par les jeunes de Céret et des villages au tour.\n\nIl fut un temps, à l'époque, le Salt del Baossos était comme la piscine de la ville, c'était le point de rendez-vous des anciens, il est encore très fréquenté par les lycéens aujourd'hui.\n\nTrès pratiqué par les groupes avec les guides locaux du Vallespir.\n\nOuvert et équipé par Jean Guitard et Jean Vilallongue et des équipes de professionnels en 1988.\n\nAnecdote: L'abri de la Porte de Fer est situé sur les hauteurs du ravin de Nogareda. Il s'agit d'un abri sous roche long de huit mètres ayant été fréquenté régulièrement du XI ème siècle au IV ème siècle avant Jésus Christ et sans doute épisodiquement de l'antiquité jusqu'au moyen âge.\n\nOn y a trouvé de nombreux fragments de céramique et de verre ainsi que quelques monnaies romaines.",
       "remarques": "Possible enchaînement d'un deuxième canyon la même journée dans le Mas d'en Ribes en amont du cours d'eau."
     },
     "representativePoint": {
@@ -2160,7 +2160,7 @@
     "rating": {
       "cotation": "v3a4III",
       "interet": 3.5,
-      "nbVotes": 255
+      "nbVotes": 257
     },
     "metrics": {
       "altitudeDepartM": 620,
@@ -2396,7 +2396,7 @@
     "rating": {
       "cotation": "v4a4III",
       "interet": 3.0,
-      "nbVotes": 119
+      "nbVotes": 121
     },
     "metrics": {
       "altitudeDepartM": 1080,
@@ -2632,7 +2632,7 @@
     "rating": {
       "cotation": "v3a5III",
       "interet": 3.2,
-      "nbVotes": 100
+      "nbVotes": 101
     },
     "metrics": {
       "altitudeDepartM": 1356,
@@ -2645,7 +2645,7 @@
     "timings": {
       "approche": "1h20",
       "descente": "4h",
-      "retour": "1h"
+      "retour": "1h15"
     },
     "topo": {
       "accesAval": "Depuis Villefranche de Conflent, se diriger en direction de Vernet les Bains, passer le village et poursuivre la D116 jusqu'à Casteil.\n\nDans casteil, prendre à droite la route qui monte au col de Jou (départ de la randonnée du Canigou par le refuge de Mariailles), stationnement pour une vingtaine de véhicules au col de Jou (parking amont).\n\nSoit se garer sur le parking en main droite face au transformateur (parking de la randonnée des gorges du Cady vers les cascades du Cady).\n\nSi celui-ci est plein, continuer cinquante mètre plus haut sur la route, passer la rivière par le petit pont et stationner là où se situent quelques emplacements (parking aval).\n\nNavette à faire car la marche sur la route est épuisante, trois kilomètres séparent les deux parkings.",
@@ -2750,7 +2750,7 @@
     "rating": {
       "cotation": "v2a2V",
       "interet": 3.2,
-      "nbVotes": 143
+      "nbVotes": 147
     },
     "metrics": {
       "altitudeDepartM": 1500,
@@ -2809,11 +2809,11 @@
     "rating": {
       "cotation": "v3a3IV",
       "interet": 3.3,
-      "nbVotes": 130
+      "nbVotes": 132
     },
     "metrics": {
       "altitudeDepartM": 800,
-      "deniveleM": 200,
+      "deniveleM": 50,
       "longueurM": 150,
       "cascadeMaxM": 25,
       "cordeMiniM": 30,
@@ -3340,7 +3340,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 2.9,
-      "nbVotes": 121
+      "nbVotes": 123
     },
     "metrics": {
       "altitudeDepartM": 536,
@@ -4036,7 +4036,7 @@
     "rating": {
       "cotation": "v3a2II",
       "interet": 2.8,
-      "nbVotes": 88
+      "nbVotes": 89
     },
     "metrics": {
       "altitudeDepartM": 1070,
@@ -4054,14 +4054,14 @@
     "topo": {
       "accesAval": "Depuis Vicdessos prendre la direction de Marc. Se Garer sur le parking à l'entrée du village (à droite avant l'église - Parking - Panneau d'information du canyon)",
       "accesAmont": null,
-      "approche": "Suivre la route, puis dans le virage a gauche prendre tout droit le sentier qui monte en sous bois ( rive droite ). Après avoir retrouvé la route, la poursuivre sur 100 m environ juisqu'à un sentier bien marqué sur la droite qui descend jusqu'au ruisseau.",
-      "descente": "Magnifique mais très courte descente. Prévoir un mousqueton en acier ou une poulie pour la tyrolienne.",
-      "retour": "Après le dernier saut et la dernière vasque, continuer dans le lit du ruisseau jusqu'à un sentier sur la droite qui monte directement au parking. NE PAS SORTIR DIRECTEMENT APRÈS LA VASQUE POUR REJOINDRE LA ROUTE !",
+      "approche": "Suivre la route, puis dans le virage a gauche prendre tout droit le sentier qui monte en sous bois ( rive droite ). Après avoir retrouvé la route, la poursuivre sur 100 m environ juisqu'à un sentier bien marqué sur la droite qui descend très raide, qui suit le ruisseau rive gauche, jusqu'a un replat bien marqué, juste au-dessus du ruisseau.",
+      "descente": "Magnifique mais très courte descente. Prévoir un mousqueton en acier ou une poulie pour la tyrolienne.\n\nAprès la tyrolienne, main courante rive gauche pour le plus long rappel (environ 18 m). Il est possible de sauter depuis une petite plateforme au dessus.\n\nSur la suite, possibilité encore de sauter, mais attention (bien indiqué par un panneau jaune), saut dangereux depuis la rive gauche. Plutôt prendre appel sur le bloc rive droite.",
+      "retour": "Il reste 2 jolis saut après le pont de pierre. Après le dernier saut et la dernière vasque, continuer dans le lit du ruisseau jusqu'à un sentier sur la droite qui monte directement au parking. NE PAS SORTIR DIRECTEMENT APRÈS LA VASQUE POUR REJOINDRE LA ROUTE !",
       "engagement": "Course très courte ne présentant pas d'échappatoire",
       "periode": null,
       "geologie": null,
       "historique": null,
-      "remarques": "ATTENTION: A proximité du village, éviter de faire du bruit en criant ! Restez discret par respect pour les habitants !"
+      "remarques": "ATTENTION : à proximité du village, éviter de faire du bruit en criant ! Restez discret par respect pour les habitants !"
     },
     "representativePoint": {
       "type": "PARKING_AVAL",
@@ -4433,7 +4433,7 @@
       "accesAval": "A l'Argentiére prendre la route conduisant à la vallée du Fournel et les mines d'argent du même nom. Suivre la route jusqu'au parking de la mine qui constitue le parking aval (petite cabanne en bois avec cabine téléphonique).",
       "accesAmont": null,
       "approche": "Depuis le parking suivre la route goudronnée en montant jusqu'au départ du canyon (indiqué).",
-      "descente": "La descente est une succession de petits ressauts, toboggans... Au cours de la descente, il y a 3 ou 4 passages sous blocs ou siphons qui agrémentent la descente. Un des siphons est remarquable en milieu de canyon. Les blocs forment un plancher où se situe un siphon au milieu. Malgrés le sentiment d'étroitesse cela passe très bien et on atterit dans la vasque en dessous en une fraction de seconde. Tout peut se faire sans corde sans réels soucis.",
+      "descente": "La descente est une succession de petits ressauts, toboggans... Au cours de la descente, il y a 3 ou 4 passages sous blocs ou siphons qui agrémentent la descente. Un des siphons est remarquable en milieu de canyon. Les blocs forment un plancher où se situe un siphon au milieu. Malgré le sentiment d'étroitesse cela passe très bien et on atterit dans la vasque en dessous en une fraction de seconde. Avoir une corde reste indispensable dans ce canyon et attention à la profondeur des sauts qui peuvent évoluer fortement d'une année à l'autre ou suite à de gros orages.",
       "retour": "Au niveau de la mine sortie en rive gauche par le sentier",
       "engagement": "Le niveau peut évoluer rapidement. Le canyon posséde une multitude d'échapatoire équipées façon via ferrata et surtout bien balisées. En plus une échelle de débit se trouve à l'entrée.",
       "periode": "Juillet à Septembre semble la période la plus propice à ce canyon très fréquenté par les guides.",
@@ -4473,7 +4473,7 @@
     "rating": {
       "cotation": "v3a2III",
       "interet": 2.8,
-      "nbVotes": 125
+      "nbVotes": 126
     },
     "metrics": {
       "altitudeDepartM": 820,
@@ -4591,7 +4591,7 @@
     "rating": {
       "cotation": "v3a1III",
       "interet": 2.4,
-      "nbVotes": 57
+      "nbVotes": 58
     },
     "metrics": {
       "altitudeDepartM": 860,
@@ -4886,7 +4886,7 @@
     "rating": {
       "cotation": "v3a2IV",
       "interet": 2.6,
-      "nbVotes": 67
+      "nbVotes": 70
     },
     "metrics": {
       "altitudeDepartM": 1420,
@@ -6401,7 +6401,7 @@
     "rating": {
       "cotation": "v5a4III",
       "interet": 3.2,
-      "nbVotes": 196
+      "nbVotes": 197
     },
     "metrics": {
       "altitudeDepartM": 400,
@@ -6463,8 +6463,8 @@
     },
     "rating": {
       "cotation": "v4a6II",
-      "interet": 2.9,
-      "nbVotes": 94
+      "interet": 3.0,
+      "nbVotes": 101
     },
     "metrics": {
       "altitudeDepartM": 350,
@@ -6480,7 +6480,7 @@
       "retour": "30min"
     },
     "topo": {
-      "accesAval": "Continuer la N6. A Saint-Béron, suivre Saint-Geoires-en-Valdaine, puis Voissant. A un grand carrefour avec une statue (buste), continuer à droite sur la D82k, traverser le village (mairie), puis poursuivre la montée jusqu'à une grande épingle vers la droite (marquage \"CH\" au sol en 2018). Le chemin arrive en contrebas de celle-ci. Stationner sans gêner la circulation.",
+      "accesAval": "Continuer la N6. A Saint-Béron, suivre Saint-Geoires-en-Valdaine, puis Voissant. A un grand carrefour avec une statue (buste), continuer à droite sur la D82k, traverser le village (mairie), puis poursuivre la montée jusqu'à une grande épingle vers la droite (marquage \"CH\" au sol en 2018). Le chemin arrive en contrebas de celle-ci. Stationner sans gêner la circulation. Il est préférable de se garer à l'église (grand parking).",
       "accesAmont": null,
       "approche": "Face au parking passer sous le parapet de la route au niveau d'une panneau d'informations EDF et suivre sur quelques dizaines de mètres la sente qui longe le parapet. Descendre la sente très raide jusqu'au ruisseau.",
       "descente": "Après une marche d'une centaine de mètres, un petit ressaut nous conduit dons une première vasque profonde et large. A son extrémité, une partie de l'eau passe sous un gros bloc (premier siphon) que l’on contourne aisément d'un coté comme de l’autre. On trouve alors une première verticale de 6 mètres au bas de laquelle il y a bien du remous. On rejoint ensuite un long bief étroit et profond.\n\nIl faut franchir une seconde cascade pour atteindre le siphon le plus impressionnant de cette descente. L'eau chute de quatre mètres dans une vasque siphonnante : faire très attention car le passage sous l’eau est assez profond et on ne voit rien sous l’eau. Prévoir une corde pour remonter au cas où car le bouillon rend le risque de noyade important. Une progression facile par une vire en rive droite permet de franchir cet obstacle, en sautant dans la vasque en aval, qui débouche sur un bief. Celui-ci nous conduit ensuite au sommet d'une petite cascade de 4m suivie de nouveau par une portion de nage. La progression est ralentie par un petit ressaut insignifiant au pied duquel on trouve de nouveau un siphon. Il est possible de l'éviter par une vire en rive gauche.\n\nA cause du gros débit quasi-permanent, il faut éviter la dernière C10. On veillera, dans le bief qui la précède à ne pas rater une petite lucarne à droite qui permet de rejoindre une longue main courante au bout de laquelle, après une remontée athlétique, un rappel de 25 mètres nous ramène dans le Guiers.\n\nPlusieurs biefs profonds se suivent jusqu’au dernier de près de 400 mètres de long.",
@@ -6489,7 +6489,7 @@
       "periode": "Canyon très aquatique de part le débit maintenu par EDF et la longueur des biefs (dont un de près de 400 mètres).",
       "geologie": null,
       "historique": null,
-      "remarques": "Ce canyon est placé à l'aval d'un barrage. Bien se conformer aux indications sur les panneaux d'information.\n\nIl peut être judicieux de prendre des sacs flottants ou de se munir d'un gilet, limitant la fatigue due aux longues parties nagées."
+      "remarques": "Ce canyon est placé à l'aval d'un barrage. Panneaux d'information obsolète.\n\nIl peut être judicieux de prendre des sacs flottants ou de se munir d'un gilet, limitant la fatigue due aux longues parties nagées."
     },
     "representativePoint": {
       "type": "PARKING_AMONT",
@@ -6583,7 +6583,7 @@
     "rating": {
       "cotation": "v4a3II",
       "interet": 2.8,
-      "nbVotes": 138
+      "nbVotes": 139
     },
     "metrics": {
       "altitudeDepartM": 660,
@@ -6643,7 +6643,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 2.7,
-      "nbVotes": 110
+      "nbVotes": 112
     },
     "metrics": {
       "altitudeDepartM": 460,
@@ -6880,7 +6880,7 @@
     "rating": {
       "cotation": "v4a3III",
       "interet": 2.4,
-      "nbVotes": 50
+      "nbVotes": 52
     },
     "metrics": {
       "altitudeDepartM": 880,
@@ -6940,7 +6940,7 @@
     "rating": {
       "cotation": "v4a3III",
       "interet": 3.1,
-      "nbVotes": 132
+      "nbVotes": 135
     },
     "metrics": {
       "altitudeDepartM": 640,
@@ -7006,7 +7006,7 @@
       "deniveleM": 160,
       "longueurM": 470,
       "cascadeMaxM": 25,
-      "cordeMiniM": 25,
+      "cordeMiniM": 30,
       "navette": "néant"
     },
     "timings": {
@@ -7058,7 +7058,7 @@
     "rating": {
       "cotation": "v2a4I",
       "interet": 2.7,
-      "nbVotes": 105
+      "nbVotes": 106
     },
     "metrics": {
       "altitudeDepartM": 610,
@@ -7135,14 +7135,14 @@
     "topo": {
       "accesAval": "Se garer au niveau de l'épingle cotée 634m.",
       "accesAmont": "Continuer la route, se garer dans le village juste après le pont.\n\nLa navette est évitable en remontant rive droite depuis l'épingle du parking aval. Un petit sentier d'abord discret, puis bien tracé mène en un petit quart d'heure au pont de départ.",
-      "approche": null,
+      "approche": "Entrée obligatoire : une fois le pont traversé, suivre le panneau routier indiquant \"canyoning\", aller au fond du parking pour rejoindre le sentier qui descend dans le canyon en rive gauche.",
       "descente": "Le départ du pont est désormais interdit. Composé de nombreuses cascades arrosés, permettant selon les conditions quelques sauts ou toboggans dans une eau souvent fraiche, le tout est espacé par de petites marches jamais longues.",
       "retour": "Après avoir remonté les échelles en place RD, remonter le long du chemin (balisé en vert sur les arbres) pour récupérer la route.",
       "engagement": "Pas d'échappatoire avant les échelles RD qui marquent la sortie obligatoire de la première partie.",
       "periode": null,
       "geologie": null,
       "historique": null,
-      "remarques": "Un fois au pont, l'accès au canyon se fait par une petite barrière en rive gauche en amont du pont donnant l'impression de rentrer chez les riverains. Bien refermer les barrière."
+      "remarques": null
     },
     "representativePoint": {
       "type": "PARKING_AMONT",
@@ -7176,7 +7176,7 @@
     "rating": {
       "cotation": "v5a3IV",
       "interet": 2.8,
-      "nbVotes": 15
+      "nbVotes": 17
     },
     "metrics": {
       "altitudeDepartM": null,
@@ -7234,8 +7234,8 @@
     },
     "rating": {
       "cotation": "v5a4II",
-      "interet": 2.4,
-      "nbVotes": 37
+      "interet": 2.5,
+      "nbVotes": 38
     },
     "metrics": {
       "altitudeDepartM": 550,
@@ -7530,7 +7530,7 @@
     "rating": {
       "cotation": "v3a4II",
       "interet": 2.7,
-      "nbVotes": 40
+      "nbVotes": 41
     },
     "metrics": {
       "altitudeDepartM": null,
@@ -7767,7 +7767,7 @@
     "rating": {
       "cotation": "v4a2IV",
       "interet": 2.8,
-      "nbVotes": 87
+      "nbVotes": 88
     },
     "metrics": {
       "altitudeDepartM": 950,
@@ -8004,7 +8004,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 2.6,
-      "nbVotes": 55
+      "nbVotes": 56
     },
     "metrics": {
       "altitudeDepartM": 700,
@@ -8181,7 +8181,7 @@
     "rating": {
       "cotation": "v2a2II",
       "interet": 2.9,
-      "nbVotes": 189
+      "nbVotes": 190
     },
     "metrics": {
       "altitudeDepartM": 300,
@@ -8299,7 +8299,7 @@
     "rating": {
       "cotation": "v3a2II",
       "interet": 2.8,
-      "nbVotes": 172
+      "nbVotes": 176
     },
     "metrics": {
       "altitudeDepartM": 1300,
@@ -8358,7 +8358,7 @@
     "rating": {
       "cotation": "v5a2III",
       "interet": 3.1,
-      "nbVotes": 77
+      "nbVotes": 78
     },
     "metrics": {
       "altitudeDepartM": 1110,
@@ -8476,7 +8476,7 @@
     "rating": {
       "cotation": "v2a3I",
       "interet": 2.4,
-      "nbVotes": 95
+      "nbVotes": 96
     },
     "metrics": {
       "altitudeDepartM": 700,
@@ -8495,13 +8495,13 @@
       "accesAval": "De pont du loup, remonter les gorges du Loup (D6-D3) jusqu'à gréolières. Suivre la D79 en direction de Andon sur environ 3 km. Passer un premier vallon et stationner sur un parking peu avant un second vallon (point IGN côté: 801m).",
       "accesAmont": null,
       "approche": "Du parking, descendre par une piste qui passe sous la route jusqu'à un replat. Continuer par le sentier quelques mètres puis prendre un sente sur la droite (panneau) qui mène en quelques minutes au départ du canyon.",
-      "descente": null,
+      "descente": "Suivre le cours de la rivière jusqu’à un premier petit rappel, s'ensuit une alternance de vasques, petites cascades et courtes zones de marche. Au fil de la descente, plusieurs ressauts nécessitent l’usage de la corde contrairement à d’autres où les sauts sont possibles. À mi-parcours, un enchaînement de deux cascades à fort débit s’évite par la rive gauche. Après un dernier resserrement, une large vasque entourée de rives boisées marque la fin de la descente.",
       "retour": "Au niveau d'une grande vasque (sortie évidente, point IGN côté: 631m), remonter RG par une sente pour rejoindre l'aqueduc. Le suivre vers l'Ouest pour atteindre le sentier de départ.",
       "engagement": "Faible.",
       "periode": "C'est un parcours estival, au printemps le débit important et l'eau glaciale pourraient surprendre.",
       "geologie": null,
       "historique": null,
-      "remarques": null
+      "remarques": "Idéal pour l'initiation, ce petit canyon est rempli de groupes encadrés en été"
     },
     "representativePoint": {
       "type": "PARKING_AVAL",
@@ -8535,7 +8535,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 2.5,
-      "nbVotes": 113
+      "nbVotes": 114
     },
     "metrics": {
       "altitudeDepartM": 404,
@@ -8889,7 +8889,7 @@
     "rating": {
       "cotation": "v4a1II",
       "interet": 2.4,
-      "nbVotes": 41
+      "nbVotes": 42
     },
     "metrics": {
       "altitudeDepartM": 930,
@@ -9007,8 +9007,8 @@
     },
     "rating": {
       "cotation": "v3a2I",
-      "interet": 1.8,
-      "nbVotes": 21
+      "interet": 1.9,
+      "nbVotes": 22
     },
     "metrics": {
       "altitudeDepartM": null,
@@ -9126,7 +9126,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 2.6,
-      "nbVotes": 97
+      "nbVotes": 98
     },
     "metrics": {
       "altitudeDepartM": 600,
@@ -9183,7 +9183,7 @@
       "coursEau": "Albarine"
     },
     "rating": {
-      "cotation": "v5a2II",
+      "cotation": "v5a1II",
       "interet": 2.0,
       "nbVotes": 15
     },
@@ -9192,20 +9192,20 @@
       "deniveleM": 160,
       "longueurM": 80,
       "cascadeMaxM": 70,
-      "cordeMiniM": 70,
+      "cordeMiniM": 80,
       "navette": "8.0km"
     },
     "timings": {
-      "approche": "20/10min",
+      "approche": "20/5 min",
       "descente": "2h30",
-      "retour": "15min"
+      "retour": "35 min"
     },
     "topo": {
       "accesAval": "Deux accès sont possibles : un par la D21 en se garant à Nantuy de l'autre côté du pont sur l'Albarine puis à pied traverser le village par la route qui passe devant une fontaine, qui, plus loin se transforme en sentier (suivre les panneaux \"cascade\"). Le second par la D21 se garer sur le parking dans le virage du golet du Thiou.",
       "accesAmont": null,
       "approche": "Par le sentier qui part de Nantuy en direction des tunnels et de la cascade (20 minutes).\n\nPar le parking de la roche coupée sentier (5 minutes).",
-      "descente": "Il existe en 2024, 2 lignes de rappel distinctes existent : une en rive droite (historique) et une en rive gauche (récente sur scellements inox) de la cascade. Après la première verticale C40 il est possible de réchapper en passant derrière la cascade et en rejoignant le Golet du Thiou par une sente.\n\nEn rive gauche, la seconde cascade (C70) se franchit en plusieurs rappels dont le plus long fait 45 mètres. Des cordes de 50 mètres sont confortables pour ce dernier rappel.\n\nLe 3ème ressaut (C25) se franchit en 1 ou 2 rappels sur la rive gauche hors d'eau.\n\nIl est possible ensuite de traverser la rivière (plusieurs relais en place pour installation d'une main courante rappelable) puis un rappel rive droite de 15 mètres conduit au chemin de retour. En cas de fort débit,il est préférable de rester en rive gauche pour descendre sur un arbre.",
-      "retour": "Plusieurs options :\n\n1. de la rive gauche, en remontant à travers bois puis dans les pierrier en rive gauche en direction de la route et du Golet du Thiou (pénible 30 min).\n\n2. de la rive droite, par le sentier qui longe la rivière Albarine et qui arrive au moulin de Charabotte (20 minutes) puis retour en navette ou à pied par le sentier des tunnels (interdits en 2024) ou le plateau de la Ragiaz.\n\n2 bis. depuis le sentier le long de l'Albarine en rejoignant directement le sentier des tunnels puis la Ragiaz par les résurgences des Demoiselles en cheminant dans des vires (complexe mais intéressant).",
+      "descente": "Il existe en 2024, 2 lignes de rappel distinctes existent : une en rive droite (historique) et une en rive gauche (récente sur scellements inox) de la cascade. Après la première verticale C40 il est possible de réchapper en passant derrière la cascade et en rejoignant le Golet du Thiou par une sente.\n\nEn rive gauche, la seconde cascade (C70) se franchit en plusieurs rappels dont le plus long fait 45 mètres. Des cordes de 50 mètres sont confortables pour ce dernier rappel.\n\nLe 3ème ressaut (C25) se franchit en 1 ou 2 rappels sur la rive gauche hors d'eau.\n\nIl est possible ensuite de traverser la rivière (plusieurs relais en place pour installation d'une main courante rappelable) puis un rappel rive droite de 15 mètres conduit au chemin de retour. En cas de fort débit, il est préférable de rester en rive gauche, relais sous la vire.\n\nDernière cascade c25 en cas de fort débit vasque dangereuse.\n\nAttention aux frottements, débrayage sur tous les rappels",
+      "retour": "Plusieurs options :\n\n1. de la rive gauche, en remontant à travers bois puis dans les pierrier en rive gauche en direction de la route et du Golet du Thiou (pénible 30 min).\n\n2. de la rive droite, par le sentier qui longe la rivière Albarine et qui arrive au moulin de Charabotte (35 minutes) puis retour en navette ou à pied par le sentier des tunnels (interdits en 2024) ou le plateau de la Ragiaz.\n\n2 bis. depuis le sentier le long de l'Albarine en rejoignant directement le sentier des tunnels puis la Ragiaz par les résurgences des Demoiselles en cheminant dans des vires (complexe mais intéressant).",
       "engagement": "Échappatoire après la première cascade.",
       "periode": "Les cascades de Charabotte coulent peu à l'étiage au cœur de l'été bien qu'il y ait toujours un filet d'eau (débit de réserve de la centrale d'épuration d'Hauteville). En période de pluie, les cascades prennent une taille qui peut rendre la descente très aquatique.",
       "geologie": null,
@@ -9300,33 +9300,33 @@
     },
     "rating": {
       "cotation": "v3a2II",
-      "interet": 0.8,
-      "nbVotes": 7
+      "interet": 1.0,
+      "nbVotes": 8
     },
     "metrics": {
-      "altitudeDepartM": null,
-      "deniveleM": null,
+      "altitudeDepartM": 859,
+      "deniveleM": 200,
       "longueurM": 1200,
       "cascadeMaxM": 20,
       "cordeMiniM": 25,
       "navette": "5.7km"
     },
     "timings": {
-      "approche": "10min",
-      "descente": "1h30",
+      "approche": "2min",
+      "descente": "2h",
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "Accès aval : de Lalleyriat, prendre la D 55b. A 2.5 kms du carrefour, juste avant de rejoindre la N84, on coupe le mythique Bief à la Dame. Stationner au mieux.\n\nAccès amont : revenir à Lalleyriat et prendre la D55 jusqu'au Poizat. A l'entrée du vaillage, prendre une route à droite qui descend dans le village. Au bout de 350 m, prendre une piste et stationner sans gêner. La station d'épuration doit être en vue...",
+      "accesAval": "Accès parking aval : de Nantua, de St-Germain de Joux ou de Lalleyriat, prendre la D 55b, on coupe le mythique Bief à la Dame dans une grande épingle (607 sur l'IGN) où on peut stationner plusieurs véhicules au départ de la piste forestière qui longe le ruisseau.\n\nAccès parking amont : revenir à Lalleyriat et prendre la D 55 jusqu'au Poizat. Dans le village prendre la D 55c en direction de Nantua et des Neyrolles jusqu'au hameau du Replat. Se garer juste après le panneau \"LE REPLAT\" sur un parking avec un table de pique-nique (aire de pique-nique sur l'IGN).",
       "accesAmont": null,
-      "approche": "De la station d'épuration, rejoindre le bief dans le lequel se déversent les effluents (épurés en théorie !) de la station. Descendre dans la pente jusqu'à arriver au premier obstacle intéressant.",
-      "descente": "Une petite succession de cascades bien équipées au départ puis de la marche et quelques obstacles peu intéressants.",
-      "retour": "Sortir au mieux RG et rejoindre une piste forestière qui mène à la voiture.",
-      "engagement": "Peu engagé.",
-      "periode": "Il faut qu'il y ait assez d'eau pour que la dillution des effluents de la station soit suffisante...",
+      "approche": "De l'aire de pique-nique, rejoindre le pont sur le bief 100 m en contrebas et suivre la route qui devient rapidement un chemin forestier. Entrez au mieux dans le bief qui se trouve juste à gauche (vague sente après un tas de compostage).",
+      "descente": "Une succession de cascades variées bien équipées avec des sections de marche plus ou moins longues.\n\nLes 2 premières cascades C10 et C18 ne sont pas décrites dans le topo-guide du GSHL. Après ces 2 premières cascades on croise un chemin de randonnée. C'est de là que commence la descente décrite dans le topo-guide.\n\nOn descend la C5 (plutôt C7) et la C20 caractéristique en escalier (relais récent inox en rive D en tête de cascade, 25 mètres de corde nécessaire). Ensuite on descend les 2 cascades C5 avec des relais acier rouillés et une C4 avec un monopoint inox. On accède alors à un encaissement qui débouche sur la C10.\n\nLorsqu'on rejoint une piste forestière après la C10, on peut l’utiliser pour éviter les 3 derniers obstacles ou finir la descente dans le cours d'eau. La descente du topo-guide se termine par une cascade en goulotte caractéristique suivie d'un toboggan. A cet endroit une sente remonte en rive G jusqu'à la piste forestière.",
+      "retour": "Emprunter la piste forestière qui mène à la voiture.",
+      "engagement": "Canyon peu engagé mais avec des portions de marche et des encaissements qui peuvent être encombrées par des arbres.",
+      "periode": "Plusieurs vasques sont obligatoires lors de la descente, il faut donc qu'il y ait assez d'eau pour que la dilution des effluents des stations d'épuration en amont soit suffisante.",
       "geologie": null,
-      "historique": "Denis Gritti et Bruno Hugon du GSHL et Joël Mercier de la Tribu Canyon.",
-      "remarques": "Descente à éviter."
+      "historique": "Première descente par Denis Gritti et Bruno Hugon du Groupe Spéléo Hauteville-Lompnes (GSHL) et Joël Mercier de la Tribu Canyon.\n\nTopo-guide du Groupe Spéléo Hauteville-Lompnes (2002)",
+      "remarques": "Canyon assez glissant. Le lit du cours d'eau verdit après la seconde centrale d'épuration. Descente à éviter en période de sécheresse ou alors sans se mouiller, l'eau étant uniquement celle des rejets d'épuration."
     },
     "representativePoint": {
       "type": "PARKING_AMONT",
@@ -9479,7 +9479,7 @@
     "rating": {
       "cotation": "v2a4IV",
       "interet": 3.3,
-      "nbVotes": 138
+      "nbVotes": 139
     },
     "metrics": {
       "altitudeDepartM": 370,
@@ -9893,7 +9893,7 @@
     "rating": {
       "cotation": "v2a3I",
       "interet": 2.4,
-      "nbVotes": 29
+      "nbVotes": 30
     },
     "metrics": {
       "altitudeDepartM": 730,
@@ -10779,7 +10779,7 @@
     "rating": {
       "cotation": "v3a4III",
       "interet": 3.2,
-      "nbVotes": 101
+      "nbVotes": 105
     },
     "metrics": {
       "altitudeDepartM": 620,
@@ -10798,7 +10798,7 @@
       "accesAval": "De St-Claude, D124 direction Les Bouchoux, puis Coiserette par D290. Se garer 150 m après le hameau \"vers la croix\" et 250 m avant le panneau de Coiserette (parking à droite et à gauche dans un virage à droite).\n\nCoord GPS : 46.346487 ; 5,83717\n\nIMPORTANT : Au stationnement, il est impératif de bien respecter les usagers de la route et les riverains, vite excédés par les incivilités répétées des pratiquants, notamment les jours d'affluence.\n\nLa partie goudronnée de la route n'est pas un vestiaire, ni un entrepôt de matériel !\n\nIl serait dommage qu'une interdiction tombe juste pour un problème lié à la circulation !",
       "accesAmont": null,
       "approche": "Poursuivre et se diriger en direction des maisons, puis descendre à gauche le pré en lisière du bois (sentier). La première cascade est visible de la route.",
-      "descente": "Succession de 3 encaissements très marqués, à l'exception du 2ème plus ouvert.\n\nPremière partie :\n\nUn très profond encaissement débute par une C20, puis rapidement une C8 en RG hors actif ou une C6 en RD dans l'actif ( attention au débit, vasque piège ) qui vous emmène dans un long et étroit corridor encombré de tronc et de branches compactés par les crues.\n\nDeuxième partie : L'encaissement est moins marqué, saut possible à l'arche, petites cascades et biefs.\n\nTroisième partie : Après avoir traversé une faille avec saut possible en RG et une petite desescalade dans l'actif ( monopoint en place ) on retrouve à nouveau un encaissement très important (30 à 50 m pour 50 cm de large parfois).\n\nEntre les encaissements 2 et 3, empruntez impérativement le sentier en sous bois en RG (respect du lit et marche plus aisée)",
+      "descente": "Succession de 3 encaissements très marqués, à l'exception du 2ème plus ouvert.\n\nPremière partie :\n\nUn très profond encaissement débute par une C20 que l'on peut descendre en rappel ou que l'on peut éviter en passant par un court sentier rive gauche permettant un potentiel saut ou de faire un relais intermédiaire humain avec un toboggan sec à partir d'une margelle plus bas. Utile pour emmener des débutants. Puis rapidement une C8 en RG hors actif ou une C6 en RD dans l'actif ( attention au débit, vasque piège ) qui vous emmène dans un long et étroit corridor encombré de tronc et de branches compactés par les crues.\n\nDeuxième partie : L'encaissement est moins marqué, saut possible à l'arche, petites cascades et biefs.\n\nTroisième partie : Après avoir traversé une faille avec saut possible en RG et une petite desescalade dans l'actif ( monopoint en place ) on retrouve à nouveau un encaissement très important (30 à 50 m pour 50 cm de large parfois).\n\nEntre les encaissements 2 et 3, empruntez impérativement le sentier en sous bois en RG (respect du lit et marche plus aisée)",
       "retour": "Nouveau cheminement :\n\nA la fin de la 3ème partie, prendre à gauche au panneau sortie. D'abord pleine pente, il bifurque ensuite à gauche pour remonter (à l'ombre) le canyon en balcon (le balcon du Chamois). On recoupera les échappatoires 2 puis 1. On arrive directement au parking sans monter à la route comme auparavant, et surtout on évite complétement les pâtures et ses vaches potentiellement agressives. Temps : moins de 20 mn.",
       "engagement": "Course la plus engagée de la région, qui mérite son appellation CANYON.\n\nL'encaissement, le débit parfois important et la relative lenteur de déplacement dans le lit tortueux très encombré d'arbres, en font un canyon engagé.\n\nLa première partie présente la particularité peu banale de changer de physionomie à chaque crue importante, créant de nouvelles cascades ou comblant les anciennes !!! La prudence est donc de rigueur, et du matériel spitage est recommandé, ainsi que sangles et maillons.\n\nLes principaux rappels sont équipés sur chaque rive et hors frottement. Ils permettent de passer avec un débit assez conséquent.\n\nEchappatoires avec sentier en RG entre les 3 encaissements.",
       "periode": "Des crues de 10 voir 15 m3/seconde peuvent passer dans les étroits...\n\nAttendre donc l'étiage pour atteindre environ 300l/seconde.\n\nTrès aquatique, néo complète obligatoire. Beaucoup de nage.\n\nLes profondeur de bassins changent avec le débit, à cause des \"barrages filtrants\" et sont très encombrés de troncs, malgré les nombreux efforts des amoureux du site ! Attention donc, vérifier les sauts impérativement.\n\nPériode conseillée : La belle saison...",
@@ -11017,7 +11017,7 @@
     "rating": {
       "cotation": "v2a3II",
       "interet": 2.8,
-      "nbVotes": 20
+      "nbVotes": 21
     },
     "metrics": {
       "altitudeDepartM": 720,
@@ -11133,9 +11133,9 @@
       "coursEau": "La Saine"
     },
     "rating": {
-      "cotation": "v3a4I",
+      "cotation": "v2a3I",
       "interet": 2.6,
-      "nbVotes": 20
+      "nbVotes": 21
     },
     "metrics": {
       "altitudeDepartM": 770,
@@ -11151,16 +11151,16 @@
       "retour": "20min"
     },
     "topo": {
-      "accesAval": "A Foncine-le-Bas, prendre la route des Douanets par le viaduc ( parking tram jurassienne).\n\nInterdit de franchir le pont de garer sur parking aménagé (ancienne voie de tramway désaffectée, elle longe les gorges jusqu'aux Planches-en-Montagne (Langouette), c'est l'accès au Bief de la Ruine.",
+      "accesAval": "A Foncine-le-Bas, prendre la route des Douanets, se garer sur le parking dédié au canyoneurs situé à gauche avant le viaduc (parking tram jurassienne).\n\nL'arrêté municipal relatif au canyonisme interdit aux pratiquants de se garer et de se changer à d'autres endroit du village, notamment au milieu du village, sur le parking du garage automobile et de l'autre côté du pont.",
       "accesAmont": null,
-      "approche": "Poursuivre sur 500m environ et se mettre à l'eau au niveau de la barrière métallique et du petit ressaut.",
+      "approche": "Poursuivre sur 500m environ sur l'ancienne voie du tram et se mettre à l'eau au niveau de la barrière en bois et du petit ressaut.",
       "descente": "Randonnée aquatique.\n\nLa gorge est ouverte est large. Alternance de petits rapides et de petits ressauts avec des possibilités de nage et de sauts latéraux.\n\nUne seule vraie cascade vers la fin, mais contournable (main-courante) avec de belles possibilités de sauts jusqu'à 7 m.\n\nPossibilité de tirer un guidé depuis le relais de la dernière cascade",
       "retour": "150m après la C15, chercher une sente montant en rive droite (cairn) sur la voie du tram empruntée à l'aller. PRÉVOIR UNE LAMPE POUR LE FRANCHISSEMENT DU TUNNEL !",
       "engagement": "Aucun engagement, pas d'encaissement, possibilité de schunter les difficultés.",
       "periode": "Torrent puissant qui nécessite l'étiage pour être pratiqué commodément.\n\nAttention, une grosse marmite siphonnante (précédée d'une C4) est à éviter absolument même par débit raisonnable ! Attention aux étourdis !\n\nMême à l'étiage, l'eau n'est pas très limpide, prudence lors des sauts !",
       "geologie": null,
       "historique": null,
-      "remarques": "Penser à prendre une lampe pour le groupe pour le franchissement du tunnel au retour.\n\nVous partagez ici un lieux sauvage avec d'autres passionnés : les pêcheurs !\n\nLe plus grand respect est donc de rigueur. On évitera les descentes à l'aube et en fin de soirée."
+      "remarques": "Penser à prendre une lampe pour le groupe pour le franchissement du tunnel au retour.\n\nVous partagez ici un lieu sauvage avec d'autres passionnés : les pêcheurs !\n\nLe plus grand respect est donc de rigueur.\n\nHoraire autorisé de 8h à 18h30 de juin à septembre par arrêté municipal."
     },
     "representativePoint": {
       "type": "PARKING_AVAL",
@@ -11212,7 +11212,7 @@
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "Se rendre au parking des cascades du Hérisson (4 euros en saison ou certains week-ends)",
+      "accesAval": "Se rendre au parking des cascades du Hérisson. Parking payant entre le 1er juillet et le 30 septembre (10 euros par véhicule pour une durée de 1h à 4h et 15 euros pour une durée de plus de 4 heures).",
       "accesAmont": null,
       "approche": "Suivre le sentier touristique balisé jusqu'en haut du Saut de la Forge, point de départ de la course.",
       "descente": "Le saut de la Forge (C10) s'équipe sur un arbre en RG. Le grand saut se descend en deux fois en RG (arbre ou désescalade engagée plus deux spits et arbre pour la longueur suivante ). L'éventail se descend en deux fois en RG (2 fractionnements possibles : 2 plaquettes en RG ou 2 broches + anneau de corde au centre)",
@@ -11507,13 +11507,13 @@
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "De Molinges, Direction Vulvoz par D63. Peu avant le village, prendre à droite le chemin qui mène au Moulins (gite) et se garer avant le pont carrossable qui mène à l'habitation. Attention : places limitées !",
+      "accesAval": "De Molinges, Direction Vulvoz par D63.\n\nPeu avant le village, repérer à droite le chemin désormais barré qui mène au Moulins (gite). L'accès et surtout le stationnement sont désormais réglementés : Interdiction de circulation jusqu'au 30 septembre, et stationnement interdit toute l'année, sauf ayants droit et clients du gite.\n\nVous êtes désormais contraints de, soit stationner à proximité comme vous le pouvez et SANS GÊNER la circulation (possibilités rares), soit poursuivre et vous garer au village ou un peu avant.",
       "accesAmont": null,
-      "approche": "Prendre à droite le sentier descendant balisé, menant aux cascades.\n\nLa première difficulté (C3) se trouve en traversant le pont pédestre en pierre, puis en montant immédiatement à gauche une sente qui vous fait longer l'ancien réservoir, puis marcher sur l'ancien canal sur une trentaine de mètres.",
-      "descente": "Il s'agit ici d'un magnifique mini canyon, où sur quelques mètres seulement, tous les obstacles du canyoning sont concentrés. Du fait de son équipement assez complet, c'est un canyon école.\n\nLe premier obstacle peut se descendre sur corde (chaîne discrète en RD), ou se sauter depuis la RG. Attention cependant : Depuis la crue de 2019 et la destruction du mini barrage du toboggan, la profondeur du petit bassin de réception est devenue ridicule, donc bien visualiser votre réception...\n\nLa C8 qui suit est descendable en glissade, ou sur corde depuis un des arbres en RG.\n\nPossibilité également d'équiper la MC rappelable qui mène sous le pont par une vire en RD (4 points + relais chaîné).\n\nUne belle marmite déverse alors ses flots dans le vide d'une C25 par un magnifique trou circulaire (équipement sur chaînes des deux côtés + MC en RG).\n\nSous le surplomb de la C25, se cache un relais tout inox mais complétement plein vide, pour par exemple s'entrainer aux grandes verticales des Préalpes.\n\nEn bordure RD du bassin de réception, se trouvent 2 broches au sol pour rappel guidé/tyro\n\nUn sentier en RD permet de remonter et de ... recommencer à volonté !",
+      "approche": "A pied, une fois de retour à la route barrée, descendre jusqu'à la petite place.\n\nPrendre à droite le sentier descendant balisé, menant au pont et aux cascades.\n\nLa première difficulté (C3) se trouve en traversant le pont pédestre en pierre, puis en montant immédiatement à gauche une sente qui vous fait longer l'ancien réservoir, puis marcher sur l'ancien canal sur une trentaine de mètres.",
+      "descente": "Il s'agit ici d'un magnifique mini canyon, où sur quelques mètres seulement, tous les obstacles du canyoning sont concentrés. Du fait de son équipement assez complet, c'est un canyon école.\n\nLe premier obstacle peut se descendre sur corde (chaîne discrète en RD), ou se sauter depuis la RG. Attention cependant : Depuis la crue de 2019 et la destruction du mini barrage du toboggan, la profondeur du petit bassin de réception est devenue ridicule, donc bien visualiser votre réception...\n\nLa C8 qui suit est descendable en glissade, ou sur corde depuis un des arbres en RG équipé d'une chaîne + maillon.\n\nPossibilité également d'équiper la MC rappelable qui mène sous le pont par une vire en RD (4 points + relais chaîné).\n\nUne belle marmite déverse alors ses flots dans le vide d'une C25 par un magnifique trou circulaire (équipement sur chaînes des deux côtés + MC en RG).\n\nSous le surplomb de la C25 en rive gauche, se cache un relais tout inox mais complétement plein vide, pour par exemple s'entrainer aux grandes verticales des Préalpes.\n\nEn bordure RD du bassin de réception, se trouvent 2 broches au sol pour rappel guidé/tyro\n\nUn sentier en RD permet de remonter et de ... recommencer à volonté !",
       "retour": "Sentier en RD",
       "engagement": "Canyon très très court (hélas), où seule la marmite sous le pont est sans échappatoire.\n\nPas de difficultés particulières.",
-      "periode": "Eau froide, abondante et claire même au cœur de l'été.\n\nDébit permettant la descente (à l'exception des crues) presque toute l'année.",
+      "periode": "Eau froide, abondante et claire même au cœur de l'été.\n\nDébit permettant la descente (à l'exception des crues) presque toute l'année.\n\nAttention, site sensible : tout se déroule sur des terrains privés, et la surfréquentation et surtout les incivilités de certains, ont conduit à une réglementation. Merci de respecter les lieux !",
       "geologie": "Un court et esthétique passage souterrain.",
       "historique": "Equipé par D. Guyétand à partir de 1991.",
       "remarques": "Site idéal pour l'apprentissage des diverses techniques Canyon :\n\n- rappels sur arbre nu et chaines\n\n- Sauts divers\n\n- Toboggan éjectable (le plus beau du Jura !)\n\n- C8 équipée plein gaz avec accès par MC rappelable.\n\n- Accès C25 équipé avec MC\n\n- Amarrages en bas de C25 pour rappel guidé.\n\n- Rappel guidé possible de C8 à sommet C25.\n\n- Relais \"pieds dans le vide\" sous le suplomb de la C25"
@@ -11608,43 +11608,43 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "v3a3II",
-      "interet": 3.0,
-      "nbVotes": 118
+      "cotation": "",
+      "interet": null,
+      "nbVotes": 0
     },
     "metrics": {
       "altitudeDepartM": 715,
       "deniveleM": 90,
       "longueurM": 500,
-      "cascadeMaxM": 12,
-      "cordeMiniM": 12,
-      "navette": "néant"
+      "cascadeMaxM": null,
+      "cordeMiniM": null,
+      "navette": null
     },
     "timings": {
-      "approche": "20min",
-      "descente": "3-6h",
-      "retour": "30mn à 1h"
+      "approche": null,
+      "descente": null,
+      "retour": null
     },
     "topo": {
-      "accesAval": "Depuis Villefort, prendre la D906 en direction de Prévenchères et la Bastide-Puylaurent. 200 mètres après avoir passé la route à droite qui mène à la Garde-Guérin, tournez à droite sur une petite route en direction du belvédère du Chassezac : garez-vous sur le parking aménagé de ce belvédère (panneaux, barrières).",
+      "accesAval": null,
       "accesAmont": null,
-      "approche": "Une fois prêt, vous sortez du parking à droite et suivez la voie verte jusqu'au premier chemin sur la droite. Laissez sur votre droite un sentier et suivez le sentier jusqu'à la rivière.",
-      "descente": "La durée de la descente dépend grandement du monde rencontré et de l'époque à laquelle vous y allez. 3h30 jusqu'au premier échappatoire, 4 heures jusqu'au deuxième. Ces temps correspondent à un groupe de 7 personnes et à un parcours avec une forte fréquentation (attente...).\n\nRemarque : Le passage de la Rajole à été rééquipé en main courantes fixes, qu'il est obligatoire d'utiliser. En effet, le passage de la Rajole présentait un bloc potentiellement siphonnant, ayant été déjà à l'origine de plusieurs accidents mortels. Il avait été supprimé. Cependant, au niveau e du passage clef, là où le bloc avait été enlevé pour supprimer le siphon, il demeurait un piège à pied (coincement) qui, malgré le fait qu'il était précisé, a coûté la vie à une nouvelle personne. Aussi, cette partie est désormais interdite, et il est impératif d'utiliser la main courante pour la contourner !",
-      "retour": "Plusieurs sorties possibles balisées par des points de couleur (jaune, vert, rouge et bleu)",
-      "engagement": "Très bon équipement. Toujours possible de prendre un autre amarrage si ça bouchonne. Plusieurs échappatoires sur toute la descente car très encaissé (voir plan de secours)\n\nAttention aux montées des eaux : à proscrire en période orageuse.",
-      "periode": "Canyon très ensoleillé en journée.",
+      "approche": null,
+      "descente": null,
+      "retour": null,
+      "engagement": null,
+      "periode": null,
       "geologie": null,
       "historique": null,
-      "remarques": "Au delà du dernier chemin retour (balisage bleu), une dernière partie était parfois fréquentée. Elle ne représente que 3 toboggans et 2 sauts sur les 4h de rando restante : cette partie est donc sans véritable intérêt canyon. De plus elle vous mène 8km plus bas que Villefort donc deux véhicules sont indispensables."
+      "remarques": null
     },
     "representativePoint": {
-      "type": "PARKING_AMONT",
-      "latitude": 44.489098,
-      "longitude": 3.938859,
-      "label": "(parking amont si intégrale / parking unique si sortie après Rajolle)"
+      "type": "ENTREE",
+      "latitude": 44.4902,
+      "longitude": 3.944236,
+      "label": "position approximative"
     },
     "hasSpecificRegulation": true,
-    "isForbidden": false
+    "isForbidden": true
   },
   {
     "id": 2213,
@@ -11905,43 +11905,43 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "??",
-      "interet": 2.6,
-      "nbVotes": 8
+      "cotation": "",
+      "interet": null,
+      "nbVotes": 0
     },
     "metrics": {
       "altitudeDepartM": 260,
       "deniveleM": 140,
       "longueurM": 1600,
-      "cascadeMaxM": 15,
-      "cordeMiniM": 20,
-      "navette": "néant"
+      "cascadeMaxM": null,
+      "cordeMiniM": null,
+      "navette": null
     },
     "timings": {
-      "approche": "20mn",
-      "descente": "2h",
-      "retour": "10mn"
+      "approche": null,
+      "descente": null,
+      "retour": null
     },
     "topo": {
-      "accesAval": "Se rendre au centre du village de Saint-Georges-les-Bains et se garer sur le parking à côté du garage",
+      "accesAval": null,
       "accesAmont": null,
-      "approche": "Il suffit de remonter la route",
+      "approche": null,
       "descente": null,
-      "retour": "Prendre le chemin qui remonte jusqu'au parking",
-      "engagement": "Moyen, Canyon assez ouvert. Même si les dangers liés à l'eau sont faibles, ils peuvent être sévères pour des néophites. Attention, de même, aux sauts et aux toboggans. Il y a de nombreux blocs et les Toboggans ne sont que rarement réguliers.",
-      "periode": "La pratique du canyon est autorisé uniquement sur la partie haute du 1er avril au 30 juin et du 1er septembre au 31 octobre",
+      "retour": null,
+      "engagement": null,
+      "periode": null,
       "geologie": null,
       "historique": "Le Canyon a été rééquipé en mars 2022",
-      "remarques": "Seulement la partie haute du canyon est autorisé il est impératif de sortir au niveau du pont"
+      "remarques": null
     },
     "representativePoint": {
-      "type": "PARKING_AMONT",
-      "latitude": 44.85593,
-      "longitude": 4.795385,
+      "type": "ENTREE",
+      "latitude": 44.854706,
+      "longitude": 4.79606,
       "label": null
     },
     "hasSpecificRegulation": true,
-    "isForbidden": false
+    "isForbidden": true
   },
   {
     "id": 2218,
@@ -12025,7 +12025,7 @@
     "rating": {
       "cotation": "v2a3III",
       "interet": 2.7,
-      "nbVotes": 83
+      "nbVotes": 84
     },
     "metrics": {
       "altitudeDepartM": 850,
@@ -12443,7 +12443,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 3.1,
-      "nbVotes": 219
+      "nbVotes": 222
     },
     "metrics": {
       "altitudeDepartM": 760,
@@ -12621,7 +12621,7 @@
     "rating": {
       "cotation": "v2a2II",
       "interet": 2.6,
-      "nbVotes": 140
+      "nbVotes": 141
     },
     "metrics": {
       "altitudeDepartM": 320,
@@ -12739,7 +12739,7 @@
     "rating": {
       "cotation": "v3a4III",
       "interet": 3.6,
-      "nbVotes": 329
+      "nbVotes": 333
     },
     "metrics": {
       "altitudeDepartM": 590,
@@ -12798,7 +12798,7 @@
     "rating": {
       "cotation": "v4a2IV",
       "interet": 3.0,
-      "nbVotes": 149
+      "nbVotes": 151
     },
     "metrics": {
       "altitudeDepartM": 650,
@@ -13153,7 +13153,7 @@
     "rating": {
       "cotation": "v4a2II",
       "interet": 3.0,
-      "nbVotes": 87
+      "nbVotes": 88
     },
     "metrics": {
       "altitudeDepartM": 515,
@@ -13272,7 +13272,7 @@
     "rating": {
       "cotation": "v3a2I",
       "interet": 1.9,
-      "nbVotes": 43
+      "nbVotes": 44
     },
     "metrics": {
       "altitudeDepartM": 1250,
@@ -13331,7 +13331,7 @@
     "rating": {
       "cotation": "v3a2II",
       "interet": 2.0,
-      "nbVotes": 34
+      "nbVotes": 36
     },
     "metrics": {
       "altitudeDepartM": 1400,
@@ -13449,7 +13449,7 @@
     "rating": {
       "cotation": "v4a3III",
       "interet": 2.6,
-      "nbVotes": 40
+      "nbVotes": 43
     },
     "metrics": {
       "altitudeDepartM": 1750,
@@ -13508,7 +13508,7 @@
     "rating": {
       "cotation": "v4a2II",
       "interet": 2.3,
-      "nbVotes": 31
+      "nbVotes": 32
     },
     "metrics": {
       "altitudeDepartM": 1775,
@@ -13567,7 +13567,7 @@
     "rating": {
       "cotation": "v3a3III",
       "interet": 2.5,
-      "nbVotes": 54
+      "nbVotes": 55
     },
     "metrics": {
       "altitudeDepartM": 1680,
@@ -13586,7 +13586,7 @@
       "accesAval": "Dans la vallée de Nevache. Prendre une route en terre à droite juste après le panneau d'entrée de Plampinet. Poursuivre jusqu'au ruisseau et se garer au mieux au bout du chemin (pas mal de passage).\n\nOu bien rentrer dans Plampinet, tourner à droite devant l'auberge de la Clarée, continuer jusqu'à la barrière qui barre la piste des Acles ,se garer au parking.",
       "accesAmont": null,
       "approche": "15min partie aval seule : remonter droit dans la pente au dessus du parking sur environ une centaine de mètres de dénivelé, sans traverser le torrent depuis le parking. Ensuite la sente bifurque sur la droite pour se rapprocher du torrent que l'on surplombe nettement. Là, un spit est installé et permet de descendre en rappel, pour rejoindre le torrent en contre bas. (15 m environ). La partie la plus ludique commence alors.\n\n45min-1h pour l'intégrale : du parking traverser au mieux sur la gauche le bois, pour rejoindre la piste. Suivre celle-ci, 300m après un bunker, une petite sente bien raide descend le long d'un pierrier jusqu'au lit du ruisseau, faire gaffe aux cailloux qui peuvent rouler lors de la descente raide...(généralement un cairn indique la sente)",
-      "descente": "Deux paliers non équipés sont à désescalader par la RG puis par la RD.\n\nUn petit toboggan et on arrive dans le resserrement.\n\nUne C6 équipée en R.D. précède un second obstacle similaire équipé sur ses deux rives.\n\nOn enchaîne ensuite une C3, puis une C4 équipée R.G. avant d'arriver sur la C13 qui est équipé dans l'actif en rive gauche et hors d'eau sur l'autre versant.\n\nUn petit ressaut de 5 mètres qui se désescalade.\n\nOn arrive alors dans la partie la plus ludique (et pratiquée). C'est le départ de la partie intermédiaire qui commence par un T2 puis un T4 (on peut remonter garce aux équipements en place). Un saut bien groupé est même possible en R.G. au dessus du toboggan.\n\nUne C5 dans une partie bien encaissée se descend sous l'eau par la R.D. ou se shunt en R.G. par gros niveau.\n\nOn arrive alors Au clou de ce canyon: la C17 (hors d'eau en R.G. ou dans l'actif de l'autre côté...)\n\nQuelques petits ressauts achèveront cette belle descente.",
+      "descente": "Deux paliers non équipés sont à désescalader par la RG puis par la RD.\n\nUn petit toboggan et on arrive dans le resserrement.\n\nUne C6 équipée en R.D. précède un second obstacle similaire équipé sur ses deux rives.\n\nOn enchaîne ensuite une C3, puis une C4 équipée R.G. avant d'arriver sur la C13 qui est équipé dans l'actif en rive gauche et hors d'eau sur l'autre versant.\n\nUn petit ressaut de 5 mètres qui se désescalade.\n\nOn arrive alors dans la partie la plus ludique (et pratiquée). C'est le départ de la partie intermédiaire qui commence par un T2 puis un T4 (on peut remonter garce aux équipements en place). Un saut bien groupé est même possible en R.G. au dessus du toboggan - Depuis la crue de 2017/2018 toutes les vasques sont peu profondes et remplies de gravillon avec seulement 50cm de fond. Aucun saut ni toboggan n'est possible en 2026.\n\nUne C5 dans une partie bien encaissée se descend sous l'eau par la R.D. ou se shunt en R.G. par gros niveau.\n\nOn arrive alors Au clou de ce canyon: la C17 (hors d'eau en R.G. ou dans l'actif de l'autre côté...)\n\nQuelques petits ressauts achèveront cette belle descente.",
       "retour": "Sortir en RD et marcher sur 200 m avant de retrouver la voiture...",
       "engagement": "Canyon engagé, une seule échappatoire sur main courante (corde).\n\nMais équipé haute et basse eaux.\n\nEn moyenne, partie basse, il est \"bouclé\" en 1h30 à 2 équipiers.\n\npour l'intégrale il faut compter 3h.\n\nAttention aux risques de laves torrentielles lors d'orages d'été.",
       "periode": "Attendez que la neige ait fini de fondre dans cette belle vallée. (mai, juin)\n\nL'eau est froide en permanence. On est dans les Hautes-Alpes à 1500 m...\n\nÉviter absolument les pluies et orages (crues + chutes de pierres)",
@@ -13624,7 +13624,7 @@
     "rating": {
       "cotation": "v4a4II",
       "interet": 2.7,
-      "nbVotes": 64
+      "nbVotes": 65
     },
     "metrics": {
       "altitudeDepartM": 1490,
@@ -13743,7 +13743,7 @@
     "rating": {
       "cotation": "v5a4IV",
       "interet": 2.8,
-      "nbVotes": 93
+      "nbVotes": 98
     },
     "metrics": {
       "altitudeDepartM": 1180,
@@ -13802,7 +13802,7 @@
     "rating": {
       "cotation": "v6a6IV",
       "interet": 3.3,
-      "nbVotes": 93
+      "nbVotes": 97
     },
     "metrics": {
       "altitudeDepartM": 1762,
@@ -13861,11 +13861,11 @@
     "rating": {
       "cotation": "v5a6IV",
       "interet": 3.6,
-      "nbVotes": 154
+      "nbVotes": 157
     },
     "metrics": {
-      "altitudeDepartM": 1740,
-      "deniveleM": 300,
+      "altitudeDepartM": 1770,
+      "deniveleM": 270,
       "longueurM": 850,
       "cascadeMaxM": 33,
       "cordeMiniM": 50,
@@ -13874,7 +13874,7 @@
     "timings": {
       "approche": "45min",
       "descente": "5h",
-      "retour": "5min"
+      "retour": "10min"
     },
     "topo": {
       "accesAval": "RN 94, entre EMBRUN et BRIANCON, peu après LA ROCHE DE RAME, prendre à gauche sous la ligne de chemin de fer et remonter la D38 jusqu'a PALLON (gouffre de GOURFOURAN). remonter la vallée de FREISSINIERES par la D238 jusqu'au bout. Parking de fin de route (alti 1441 m) au pied des cascades de DORMILLOUSE et des OULES DE FREISSINIERES.",
@@ -14038,7 +14038,7 @@
     "rating": {
       "cotation": "v4a2III",
       "interet": 2.1,
-      "nbVotes": 8
+      "nbVotes": 9
     },
     "metrics": {
       "altitudeDepartM": 1490,
@@ -14097,8 +14097,8 @@
     },
     "rating": {
       "cotation": "v4a3III",
-      "interet": 1.9,
-      "nbVotes": 12
+      "interet": 2.0,
+      "nbVotes": 13
     },
     "metrics": {
       "altitudeDepartM": 1070,
@@ -14335,7 +14335,7 @@
     "rating": {
       "cotation": "v5a2III",
       "interet": 2.2,
-      "nbVotes": 16
+      "nbVotes": 17
     },
     "metrics": {
       "altitudeDepartM": 1250,
@@ -14512,7 +14512,7 @@
     "rating": {
       "cotation": "v5a5IV",
       "interet": 3.1,
-      "nbVotes": 79
+      "nbVotes": 80
     },
     "metrics": {
       "altitudeDepartM": 1650,
@@ -14520,7 +14520,7 @@
       "longueurM": 1150,
       "cascadeMaxM": 30,
       "cordeMiniM": 30,
-      "navette": "néant"
+      "navette": "3.5km"
     },
     "timings": {
       "approche": "néant",
@@ -14630,7 +14630,7 @@
     "rating": {
       "cotation": "v5a5IV",
       "interet": 3.4,
-      "nbVotes": 61
+      "nbVotes": 64
     },
     "metrics": {
       "altitudeDepartM": 1570,

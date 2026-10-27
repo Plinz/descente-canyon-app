@@ -378,20 +378,6 @@
     "label": null
   },
   {
-    "canyonId": 223,
-    "type": "PARKING_AMONT",
-    "latitude": 45.8218,
-    "longitude": 5.468273,
-    "label": null
-  },
-  {
-    "canyonId": 223,
-    "type": "PARKING_AVAL",
-    "latitude": 45.808998,
-    "longitude": 5.453682,
-    "label": null
-  },
-  {
     "canyonId": 224,
     "type": "ENTREE",
     "latitude": 45.855808,
@@ -3563,27 +3549,6 @@
     "label": "position approximative"
   },
   {
-    "canyonId": 2212,
-    "type": "PARKING_AMONT",
-    "latitude": 44.489098,
-    "longitude": 3.938859,
-    "label": "(parking amont si intégrale / parking unique si sortie après Rajolle)"
-  },
-  {
-    "canyonId": 2212,
-    "type": "POINT_REMARQUABLE",
-    "latitude": 44.482731,
-    "longitude": 3.938586,
-    "label": "Sentier de sortie après la Rajolle (ou echappatoire si descente intégrale)"
-  },
-  {
-    "canyonId": 2212,
-    "type": "POINT_REMARQUABLE",
-    "latitude": 44.483345,
-    "longitude": 3.939062,
-    "label": "Passage de la Rajolle"
-  },
-  {
     "canyonId": 2213,
     "type": "ENTREE",
     "latitude": 44.391666,
@@ -3658,20 +3623,6 @@
     "type": "SORTIE",
     "latitude": 44.854916,
     "longitude": 4.807422,
-    "label": null
-  },
-  {
-    "canyonId": 2217,
-    "type": "PARKING_AMONT",
-    "latitude": 44.85593,
-    "longitude": 4.795385,
-    "label": null
-  },
-  {
-    "canyonId": 2217,
-    "type": "PARKING_AVAL",
-    "latitude": 44.851761,
-    "longitude": 4.811143,
     "label": null
   },
   {
@@ -18375,13 +18326,6 @@
     "label": null
   },
   {
-    "canyonId": 2999,
-    "type": "PARKING_AVAL",
-    "latitude": 45.974239,
-    "longitude": 9.183326,
-    "label": null
-  },
-  {
     "canyonId": 21000,
     "type": "ENTREE",
     "latitude": 45.989098,
@@ -19261,13 +19205,6 @@
     "type": "SORTIE",
     "latitude": 42.598263,
     "longitude": 0.130393,
-    "label": null
-  },
-  {
-    "canyonId": 21044,
-    "type": "PARKING_AVAL",
-    "latitude": 42.595676,
-    "longitude": 0.128314,
     "label": null
   },
   {

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:57:05.094413+00:00",
+  "scrapedAt": "2026-10-27T16:48:45.552639+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2662,
@@ -33,7 +33,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 3.4,
-      "nbVotes": 110
+      "nbVotes": 113
     },
     "metrics": {
       "altitudeDepartM": 480,
@@ -49,7 +49,7 @@
       "retour": "5min"
     },
     "topo": {
-      "accesAval": "De Bellinzona prendre la direction de Osogna. Après le croisement pour Lodrino sur la gauche, continuer tout droit et tourner a droite 500m après sous la voie ferrée puis prendre à droite. 200m après se garer sur un petit parking a gauche à coté d'un petit ranch, le long de la voie ferrée en face d'un garage Honda.",
+      "accesAval": "De Bellinzona prendre la direction de Osogna.\n\nSe stationner au parking \"canyoning\" à la gare ferroviaire.",
       "accesAmont": null,
       "approche": "A partir du parking, prendre le sentier qui traverse des châtaigneraies, fait passer devant un Bunker et on traverse la rivière pour la 1ère fois. Rester rive gauche jusqu'à retraverser la rivière une 2ème fois et monter pour accéder au départ.",
       "descente": "Succession de vasques profondes où l'ont peut presque toujours sauter (et recommencer), peu aquatique.\n\nUne belle cascade 27m qui peut se finir en toboggan en tirant bien en RG et avec arrivée dans une vasque, suivi d'un toboggan qu'il faut prendre légèrement en RD en dehors de la veine d'eau (ressaut en dessous).",

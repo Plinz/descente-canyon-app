@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:57:09.470519+00:00",
+  "scrapedAt": "2026-10-27T16:48:58.496852+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2685,
@@ -49,11 +49,11 @@
       "retour": "15min"
     },
     "topo": {
-      "accesAval": null,
+      "accesAval": "Depuis la vallée de Verzasca continuer la route qui monte pour se garer dans le parking du village de Gerra.",
       "accesAmont": null,
-      "approche": null,
-      "descente": null,
-      "retour": null,
+      "approche": "Traverser la passerelle suspendu non loin du parking, prendre à droite juste après. Au premier embranchement en fourche prendre à gauche et monter.\n\nPlus haut quitter le GR pour prendre à droite et continuer le chemin jusqu’à arriver au cours d'eau le chemin traverse un petit village.",
+      "descente": "De belles verticales avec de beau enchainements.\n\nSéries d'encaissements puis le canyon s'ouvre avant de se rencaisser plusieurs fois.\n\nTrès beau final (équipé en relais chainée RD avec une petite main courante (monopoint) à récupérer en RD juste après la sortie de l'encaissement, ajouté en 2021).",
+      "retour": "Rejoindre le chemin à droite après le pont puis le suivre jusqu’à la passerelle pour traverser la rivière.",
       "engagement": null,
       "periode": null,
       "geologie": null,

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:18.151961+00:00",
+  "scrapedAt": "2026-10-27T16:43:06.547983+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2132,
@@ -34,8 +34,8 @@
     },
     "rating": {
       "cotation": "v5a4II",
-      "interet": 2.4,
-      "nbVotes": 37
+      "interet": 2.5,
+      "nbVotes": 38
     },
     "metrics": {
       "altitudeDepartM": 550,
@@ -140,8 +140,46 @@
       "isForbidden": false,
       "rules": [
         {
-          "id": 600,
+          "id": 626,
           "status": "Actif",
+          "action": "Réglemente",
+          "title": "Arrêté municipal (La Bâthie) - 12 oct 2026",
+          "summary": "Nouvelle date de chasses manuelles du dessableur du captage en amont du torrent du Bénétant : le mardi 03 novembre 2026, où le canyon sera donc doublement interdit.",
+          "remark": null,
+          "details": "Arrêté municipal (La Bathie) n°95/2026 du 08 octobre 2026\n\nArrêté municipal (La Bathie) n°97/2026 du 12 octobre 2026",
+          "effectiveDate": "04 nov 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/626/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté municipal (La Bathie) n°95/2026 du 08 octobre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem626_pj1.pdf"
+            },
+            {
+              "label": "Arrêté municipal (La Bathie) n°97/2026 du 12 octobre 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem626_pj2.pdf"
+            }
+          ]
+        },
+        {
+          "id": 612,
+          "status": "Obsolète",
+          "action": "Réglemente",
+          "title": "Arrêté municipal (La Bâthie) - 17 juil 2026",
+          "summary": "En raison d'opérations programmées de nettoyage par chasses manuelles du dessableur, l’accès au torrent du Bénétant et au ruisseau d’Arbine est interdit à toutes personnes de l’aval immédiat du dessableur de la Ravoire jusqu’à la confluence avec l’Isère, pendant la durée des opérations :\n\nle mardi 21 avril 2026\n\nle mardi 04 août 2026\n\ndu mercredi 30 septembre à 14h au jeudi 1er octobre 2026 à 17h",
+          "remark": "L'arrêté n°74/2026 vient modifier la dernière date d'intervention programmée annoncée dans l'arrêté municipal (La Bâthie) n°08/2026 du 23 janvier 2026.",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nArrêté municipal (La Bâthie) n°74/2026 du 17 juillet 2026",
+          "effectiveDate": "02 oct 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/612/legislation.html",
+          "attachments": [
+            {
+              "label": "Arrêté municipal (La Bâthie) n°74/2026 du 17 juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem612_pj1.pdf"
+            }
+          ]
+        },
+        {
+          "id": 600,
+          "status": "Temporairement abrogé",
           "action": "Réglemente",
           "title": "Arrêté municipal (La Bâthie) - 23 jan 2026",
           "summary": "En raison d'opérations programmées de nettoyage par chasses manuelles du dessableur, l’accès au torrent du Bénétant et au ruisseau d’Arbine est interdit à toutes personnes de l’aval immédiat du dessableur de la Ravoire jusqu’à la confluence avec l’Isère, pendant la durée des opérations :\n\nle mardi 21 avril 2026\n\nle mardi 04 août 2026\n\nle mardi 13 octobre 2026",

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:56:33.011731+00:00",
+  "scrapedAt": "2026-10-27T16:47:04.364059+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2484,
@@ -42,7 +42,7 @@
       "deniveleM": 120,
       "longueurM": 150,
       "cascadeMaxM": 55,
-      "cordeMiniM": 60,
+      "cordeMiniM": 40,
       "navette": "néant"
     },
     "timings": {
@@ -53,14 +53,14 @@
     "topo": {
       "accesAval": "Depuis Tarascon, se garer juste avant la route d'Arconac, 1km avant Vicdessos.",
       "accesAmont": null,
-      "approche": "Traverser le route et grimper par le chemin en lacets qui amène directement en haut des cascades.",
-      "descente": "2 belles cascades séparées par une plus petite.",
+      "approche": "Traverser le route et grimper par le chemin en lacets qui amène directement en haut des cascades. Le point d'entrée est juste avant une passerelle qui passe au dessus du ruisseau.",
+      "descente": "Premier relais rg sur arbre\n\n2eme relais 2 plaquettes anneau rg\n\n3eme relais chainé rd\n\n4eme relais chaine sur arbre rg\n\n5eme relais anneau de corde sur arbre",
       "retour": "Retour par le sentier qui se rejoint rapidement du pied de la dernière cascade.",
       "engagement": "Tous équipements posés sur les arbres disparaissent rapidement. En conséquence, attention aux frottements. Le reste de l'équipement est moyen.",
       "periode": null,
       "geologie": null,
       "historique": "Juin 94 : J.M. Gibelin, F. Guillot, Ph. Jarlan",
-      "remarques": "Belles cascades avec du débit accessible rapidement depuis la route, à faire pour terminer la journée."
+      "remarques": "Belles cascades avec du débit accessible rapidement depuis la route, à faire pour terminer la journée ou pour faire des manips"
     },
     "geoPoints": [
       {

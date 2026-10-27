@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:04:58.168333+00:00",
+  "scrapedAt": "2026-10-27T17:13:46.198155+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 23037,
@@ -103,6 +103,23 @@
       "hasSpecificRegulation": true,
       "isForbidden": false,
       "rules": [
+        {
+          "id": 618,
+          "status": "Actif",
+          "action": "Réglemente",
+          "title": "Convention - 01 juil 2026",
+          "summary": "Les professionnels se sont accordés à respecter une charte de fonctionnement et de bons usages quant à l'encadrement de l'activité canyoning sur le site de la Haute Ardèche :\n\n- respect des entrée et sortie matérialisées\n\n- respect des lieux et des riverains\n\n- respect des horaires et jours de pratique en saison (du deuxième samedi de juillet à l'avant-dernier dimanche d'août inclus) : pas de pratique les samedis et dimanches, limitation des groupes",
+          "remark": null,
+          "details": "Charte de fonctionnement du canyon de la Haute-Ardèche du 1er juillet 2026",
+          "effectiveDate": "01 juil 2026",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/618/legislation.html",
+          "attachments": [
+            {
+              "label": "Charte de fonctionnement du canyon de la Haute-Ardèche du 1er juillet 2026",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem618_pj1.pdf"
+            }
+          ]
+        },
         {
           "id": 490,
           "status": "Actif",

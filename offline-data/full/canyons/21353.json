@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:59:35.779675+00:00",
+  "scrapedAt": "2026-10-27T16:56:27.487697+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 21353,
@@ -53,14 +53,14 @@
     "topo": {
       "accesAval": "De Saint Girons prendre direction Seix puis Ustou. Tourner à droite vers Ossèse et monter jusqu'au terminus. Se garer sans gêner.",
       "accesAmont": null,
-      "approche": "Du terminus se diriger plein sud comme pour monter à Ossèse sup. Passer une barrière métallique puis descendre par une sente dans la rivière.",
-      "descente": "De courts tobs, deux petits rappels (attention le premier de 8m tonche) puis le goulet central à aborder avec beaucoup de précaution.",
+      "approche": "Du terminus se diriger plein sud comme pour monter à Ossèse sup. Passer une rambarde métallique effondré qui surplombe la seconde cascade, puis descendre 100m plus loin par une sente vers la rivière.",
+      "descente": "Rééquipement août 2026 :\n\n-1ere cascade : équipements sur les deux rives avec des frottements soutenues à gérer dans les deux cas\n\n- 2ème cascade :\n\nRG : longue mc avec point et lunules menant a un relais sur lunules sous une dalle tomber offrant un semblant de plongeoir, Attention il y a seulement 1m70 de fond dans la vasque en 2026 !\n\nEmbâcles faciles à traverser\n\n3ème ressaut avec le goulet étroit et la cascade final:\n\nDeux points de mc en RD pour rejoindre la mc en fixe toute calcifiée en RG vieillissante mais fonctionnelle,\n\nAu départ de celle ci, un relais neuf en hauteur permet de descendre en rappel sur le tronc bloqué et rejoindre l'équipement en RD a la fin de l'étroiture :\n\nDeux pitons dans une fissure dont l'un est relié à un nouveau point de 10 offre une main-courante de stockage de 1m50 laissé en fixe et relié à un nouveau relais chaîner sur le même emplacement que l'ancien tout rouiller, (+ deux points en face dans la vasque a fleur de l eau, pour réaliser un guidé)",
       "retour": "Remonter sur un muret en rive droite à la fin du canyon et traverser les prés pour rejoindre le sentier qui part de la voiture.",
-      "engagement": "Court, mais ne pas s'engager dans le goulet si ça bouillonne. Equipement correct.",
-      "periode": "A faire à l'étiage complet.",
-      "geologie": null,
+      "engagement": "Court, possibilité de sortir entres les obstacles\n\nNe pas s'engager dans le goulet si ça bouillonne en début de saison. Belle réchappe évidente avant ce dernier obstacle.",
+      "periode": "A faire à l'étiage durant l'été",
+      "geologie": "Calcaire",
       "historique": null,
-      "remarques": "Faire attention au goulet central.\n\nCanyon à compléter avec sa partie sup et/ou Calie."
+      "remarques": "Faire attention dans le dernier goulet.\n\nCanyon à compléter avec sa partie sup et/ou Calie."
     },
     "geoPoints": [
       {

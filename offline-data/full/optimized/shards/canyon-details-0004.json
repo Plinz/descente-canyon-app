@@ -22,7 +22,7 @@
     "rating": {
       "cotation": "v3a1IV",
       "interet": 2.5,
-      "nbVotes": 51
+      "nbVotes": 52
     },
     "metrics": {
       "altitudeDepartM": 770,
@@ -258,7 +258,7 @@
     "rating": {
       "cotation": "v3a1III",
       "interet": 2.1,
-      "nbVotes": 30
+      "nbVotes": 31
     },
     "metrics": {
       "altitudeDepartM": 710,
@@ -318,7 +318,7 @@
     "rating": {
       "cotation": "v3a2IV",
       "interet": 2.9,
-      "nbVotes": 99
+      "nbVotes": 100
     },
     "metrics": {
       "altitudeDepartM": 770,
@@ -377,7 +377,7 @@
     "rating": {
       "cotation": "v3a2IV",
       "interet": 3.2,
-      "nbVotes": 87
+      "nbVotes": 88
     },
     "metrics": {
       "altitudeDepartM": 1280,
@@ -1855,7 +1855,7 @@
     "rating": {
       "cotation": "v4a2V",
       "interet": 3.1,
-      "nbVotes": 73
+      "nbVotes": 74
     },
     "metrics": {
       "altitudeDepartM": 1550,
@@ -2445,7 +2445,7 @@
     "rating": {
       "cotation": "v4a3III",
       "interet": 2.9,
-      "nbVotes": 107
+      "nbVotes": 109
     },
     "metrics": {
       "altitudeDepartM": 1040,
@@ -2674,7 +2674,7 @@
     "rating": {
       "cotation": "v3a3III",
       "interet": 2.6,
-      "nbVotes": 46
+      "nbVotes": 48
     },
     "metrics": {
       "altitudeDepartM": 1500,
@@ -2939,7 +2939,7 @@
       "longitude": -0.016944,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -3022,7 +3022,7 @@
     "rating": {
       "cotation": "v5a2II",
       "interet": 2.3,
-      "nbVotes": 34
+      "nbVotes": 35
     },
     "metrics": {
       "altitudeDepartM": 450,
@@ -3348,7 +3348,7 @@
       "longitude": 0.006503,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -3397,7 +3397,7 @@
       "periode": "Gros volume d'eau, assez froide. Mouvements d'eau marqués dans les vasques.",
       "geologie": "Gneiss et schistes. Le canyon est creusé dans les profondeur des chevauchements de Gavarnie. Les calcaires des affluents ont fourni des blocs, mais le substrat est schisteux et granitique.",
       "historique": "Ouverture en 1994 par S. Boyer, S. Clément et F. Flandin.",
-      "remarques": "Parcours intéressant pour les conditions aquatiques."
+      "remarques": "La commission canyon du CDSC65 rappelle que l'équipement \"light\" réalisé en septembre 2026 était uniquement destiné à permettre la descente ponctuelle avec les instances du Parc National.\n\nEn l'état, cet équipement est strictement provisoire et ne respecte pas les normes fédérales d'aménagement.\n\nArrêté temporaire du Parc National interdisant la pratique à partir du 1 er novembre.\n\nNous vous recommandons de prévoir du matériel de rééquipement d'urgence avant de vous engager dans le canyon et de toujours contrôler les relais sur les lesquels vous allez évoluer. N'hésitez pas à contacter le CDSC65."
     },
     "representativePoint": {
       "type": "ENTREE",
@@ -3405,7 +3405,7 @@
       "longitude": -0.008889,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -3462,7 +3462,7 @@
       "longitude": 0.001944,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -3547,7 +3547,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 2.5,
-      "nbVotes": 44
+      "nbVotes": 45
     },
     "metrics": {
       "altitudeDepartM": 1320,
@@ -4487,7 +4487,7 @@
     "rating": {
       "cotation": "v4a2IV",
       "interet": 3.3,
-      "nbVotes": 54
+      "nbVotes": 58
     },
     "metrics": {
       "altitudeDepartM": 1599,
@@ -4546,7 +4546,7 @@
     "rating": {
       "cotation": "v4a1III",
       "interet": 2.8,
-      "nbVotes": 73
+      "nbVotes": 74
     },
     "metrics": {
       "altitudeDepartM": 830,
@@ -4780,7 +4780,7 @@
     "rating": {
       "cotation": "v5a2V",
       "interet": 3.3,
-      "nbVotes": 54
+      "nbVotes": 56
     },
     "metrics": {
       "altitudeDepartM": 2100,
@@ -5885,8 +5885,8 @@
     },
     "rating": {
       "cotation": "v3a2II",
-      "interet": 1.8,
-      "nbVotes": 41
+      "interet": 1.9,
+      "nbVotes": 42
     },
     "metrics": {
       "altitudeDepartM": 837,
@@ -6241,8 +6241,8 @@
     },
     "rating": {
       "cotation": "v4a5III",
-      "interet": 2.3,
-      "nbVotes": 16
+      "interet": 2.4,
+      "nbVotes": 18
     },
     "metrics": {
       "altitudeDepartM": 480,
@@ -8005,7 +8005,7 @@
     "rating": {
       "cotation": "v4a1III",
       "interet": 1.4,
-      "nbVotes": 5
+      "nbVotes": 6
     },
     "metrics": {
       "altitudeDepartM": 2240,
@@ -8064,7 +8064,7 @@
     "rating": {
       "cotation": "v3a4I",
       "interet": 2.8,
-      "nbVotes": 57
+      "nbVotes": 58
     },
     "metrics": {
       "altitudeDepartM": 560,
@@ -8360,7 +8360,7 @@
     "rating": {
       "cotation": "v5a3III",
       "interet": 3.0,
-      "nbVotes": 48
+      "nbVotes": 49
     },
     "metrics": {
       "altitudeDepartM": 1330,
@@ -8419,7 +8419,7 @@
     "rating": {
       "cotation": "v4a4III",
       "interet": 2.6,
-      "nbVotes": 39
+      "nbVotes": 40
     },
     "metrics": {
       "altitudeDepartM": 1280,
@@ -9182,7 +9182,7 @@
     "rating": {
       "cotation": "v6a5III",
       "interet": 3.1,
-      "nbVotes": 17
+      "nbVotes": 18
     },
     "metrics": {
       "altitudeDepartM": 1300,
@@ -9585,7 +9585,7 @@
     "rating": {
       "cotation": "v4a4III",
       "interet": 3.5,
-      "nbVotes": 69
+      "nbVotes": 71
     },
     "metrics": {
       "altitudeDepartM": 650,
@@ -9643,8 +9643,8 @@
     },
     "rating": {
       "cotation": "v3a3I",
-      "interet": 2.8,
-      "nbVotes": 30
+      "interet": 2.7,
+      "nbVotes": 31
     },
     "metrics": {
       "altitudeDepartM": 1300,
@@ -9877,8 +9877,8 @@
     },
     "rating": {
       "cotation": "v2a3II",
-      "interet": 2.3,
-      "nbVotes": 12
+      "interet": 2.2,
+      "nbVotes": 13
     },
     "metrics": {
       "altitudeDepartM": 500,
@@ -10346,43 +10346,43 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "v3a3III",
-      "interet": 2.7,
-      "nbVotes": 31
+      "cotation": "",
+      "interet": null,
+      "nbVotes": 0
     },
     "metrics": {
       "altitudeDepartM": 390,
       "deniveleM": 180,
       "longueurM": 1200,
-      "cascadeMaxM": 21,
-      "cordeMiniM": 25,
-      "navette": "néant"
+      "cascadeMaxM": null,
+      "cordeMiniM": null,
+      "navette": null
     },
     "timings": {
-      "approche": "45min",
-      "descente": "4h",
-      "retour": "15min"
+      "approche": null,
+      "descente": null,
+      "retour": null
     },
     "topo": {
-      "accesAval": "Sur la côte ouest du lac de Côme, entre MENAGGIO et COMO par la SS340, aller se garer au sanctuaire de ACQUA FREDDA (discrétion recommandée, vous êtes à côté d'une église !).\n\nOn peut aussi stationner plus près de la sortie du canyon (parking), où il y a plus de place (difficile à décrire : dans le village, à gauche en montant, au plus près du canyon en rive gauche, environ 300m de distance et 50 m de dénivelé plus bas que Acqua Fredda).",
+      "accesAval": null,
       "accesAmont": null,
-      "approche": "Du sanctuaire, remonter le chemin pavé qui part plein ouest et monte en direction du monastère San Bendetto.\n\nAu bout de 20min, il n'y a plus de peinture au sol ; prendre à gauche un sentier qui descend : c'est une piste herbeuse qui se transforme rapidement en sentier horizontal dans la forêt. Le départ du sentier est repéré par une construction qui surplombe la piste à droite face au départ. Si vous apercevez une petite maison en contrebas à votre gauche c'est que vous êtes allés trop loin.\n\nLe sentier est bien marqué de peinture jaune (attention sur les autres topos on indique de la peinture bleue ; celle-ci a été recouverte de jaune, facile !). Il remonte le long du canyon à l'horizontal pendant une vingtaine de minutes et fini par descendre dans le canyon par un accès délicat mais équipé de main-courantes en chaîne.",
-      "descente": "Parcours varié et amusant, avec des 16 rappels de 21m maxi ; des toboggans; des sauts... et une magnifique grotte qui vaut le détour...\n\nMalheur à ceux qui n'ont pas pris la frontale... Vraiment très joli...\n\nLes obstacles sont espacés au début, dans un calcaire pourri pour finalement arriver à la partie finale avec sa superbe grotte.",
-      "retour": "Ne pas sortir à gauche avant le pont du village (propriété privée), mais à droite juste après le pont. Sauter le muret du canal pour sortir entre les maisons (discrétion de rigueur !).\n\nNB: Il reste quelques cascades en aval de cette sortie. Elles ne semblent pas équipées.",
-      "engagement": "Peu d'échappatoires au début. Quelques sorties possibles par la suite.\n\nIl n'y a que la partie de la grotte qui peut poser un vrai problème si on a pas de lampe... On y voit strictement rien... et l'eau s'engouffre dans un puits. Je vais laisser le suspens de la hauteur de ce puits... La lampe est indispensable si on fait le canyon de nuit !",
-      "periode": "De mai à septembre",
+      "approche": null,
+      "descente": null,
+      "retour": null,
+      "engagement": null,
+      "periode": null,
       "geologie": null,
       "historique": "1ère descente par D Basola, Donini, Filipazzi et M Miragoli en 1995",
-      "remarques": "Prendre au moins une lampe pour le groupe (la grotte est courte).\n\nTrès beau canyon avec une grande ambiance vers la fin... La partie terminale est véritablement la plus intéressante."
+      "remarques": null
     },
     "representativePoint": {
-      "type": "PARKING_AVAL",
-      "latitude": 45.974239,
-      "longitude": 9.183326,
+      "type": "ENTREE",
+      "latitude": 45.981472,
+      "longitude": 9.171095,
       "label": null
     },
-    "hasSpecificRegulation": false,
-    "isForbidden": false
+    "hasSpecificRegulation": true,
+    "isForbidden": true
   },
   {
     "id": 21000,
@@ -10407,7 +10407,7 @@
     "rating": {
       "cotation": "v3a3IV",
       "interet": 2.8,
-      "nbVotes": 19
+      "nbVotes": 20
     },
     "metrics": {
       "altitudeDepartM": 390,
@@ -10548,7 +10548,7 @@
       "periode": "Court mais trés aquatique.",
       "geologie": null,
       "historique": "Première le 07/1982.",
-      "remarques": "Barrage du Tech en amont : se renseigner impérativement sur https://www.niv-eau.fr/#/entite/46/carte/activite/8"
+      "remarques": "Barrage du Tech en amont : se renseigner impérativement sur https://mariviereetmoi.edf.fr/#/map"
     },
     "representativePoint": {
       "type": "ENTREE",
@@ -10697,8 +10697,8 @@
     },
     "rating": {
       "cotation": "v3a3IV",
-      "interet": 2.7,
-      "nbVotes": 32
+      "interet": 2.8,
+      "nbVotes": 33
     },
     "metrics": {
       "altitudeDepartM": 1230,
@@ -10812,7 +10812,7 @@
     "rating": {
       "cotation": "v4a3IV",
       "interet": 3.0,
-      "nbVotes": 22
+      "nbVotes": 23
     },
     "metrics": {
       "altitudeDepartM": 1300,
@@ -10933,7 +10933,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 3.1,
-      "nbVotes": 35
+      "nbVotes": 36
     },
     "metrics": {
       "altitudeDepartM": 720,
@@ -11050,7 +11050,7 @@
     },
     "rating": {
       "cotation": "v3a3II",
-      "interet": 2.8,
+      "interet": 2.7,
       "nbVotes": 19
     },
     "metrics": {
@@ -11110,7 +11110,7 @@
     "rating": {
       "cotation": "v4a3II",
       "interet": 2.8,
-      "nbVotes": 14
+      "nbVotes": 15
     },
     "metrics": {
       "altitudeDepartM": 990,
@@ -11346,7 +11346,7 @@
     "rating": {
       "cotation": "v4a3II",
       "interet": 3.0,
-      "nbVotes": 54
+      "nbVotes": 56
     },
     "metrics": {
       "altitudeDepartM": 680,
@@ -11464,7 +11464,7 @@
     "rating": {
       "cotation": "v2a3II",
       "interet": 2.5,
-      "nbVotes": 36
+      "nbVotes": 37
     },
     "metrics": {
       "altitudeDepartM": 595,
@@ -11522,8 +11522,8 @@
     },
     "rating": {
       "cotation": "v4a4II",
-      "interet": 3.3,
-      "nbVotes": 41
+      "interet": 3.4,
+      "nbVotes": 44
     },
     "metrics": {
       "altitudeDepartM": 1280,
@@ -11641,7 +11641,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 2.2,
-      "nbVotes": 34
+      "nbVotes": 35
     },
     "metrics": {
       "altitudeDepartM": 1660,
@@ -11674,7 +11674,7 @@
       "longitude": -0.40438,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -11698,7 +11698,7 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "v2a2II",
+      "cotation": "v3a3III",
       "interet": 2.7,
       "nbVotes": 3
     },
@@ -11706,26 +11706,26 @@
       "altitudeDepartM": 1490,
       "deniveleM": 90,
       "longueurM": 200,
-      "cascadeMaxM": 11,
+      "cascadeMaxM": 14,
       "cordeMiniM": 15,
       "navette": "néant"
     },
     "timings": {
       "approche": "45min",
-      "descente": "1h20",
+      "descente": "1h45",
       "retour": "25min"
     },
     "topo": {
       "accesAval": "A Loudenvieille prendre la D725 jusqu'au Pont du Prat (centrale de Tramezaygues).",
       "accesAmont": null,
       "approche": "Depuis le parking, prendre la direction du vallon de la Pez (itinéraire fléché 19). Après le pont sur la Pez (sortie du canyon), remonter les lacets et continuer sur environ 100 m sur le sentier. Puis repérer un petit kairn sur un bloc au pied de 5 arbres d'où part une sente à gauche (peu marquée) parallèle à la gorge et qui vous mène à la retenue d'eau (depart du canyon juste en dessous).",
-      "descente": "Descente avec 7 rappels parfois arrosés\n\nAttention : en raison des installations hydro-électriques, il est déconseillé de le descendre surtout dans le cas d'augmentation du débit en amont de l'ouvrage (précipitations, fonte des neiges, etc...).",
+      "descente": "Descente avec 9 rappels parfois arrosés\n\nAttention : en raison des installations hydro-électriques, il est déconseillé de le descendre surtout dans le cas d'augmentation du débit en amont de l'ouvrage (précipitations, fonte des neiges, etc...).",
       "retour": "Par le même itinéraire qu'à la montée.",
-      "engagement": "Une échappatoire RD avant les deux dernières cascades.",
+      "engagement": "Une échappatoire RG avant les deux dernières cascades.",
       "periode": "Août et mois suivants",
       "geologie": null,
       "historique": "Mickael Ménager 09/2003",
-      "remarques": "Canyon sous un ouvrage hydro electrique avec risque de lâcher aléatoire.\n\nLe CDS 65 mène des négociations avec le SHEM local.\n\nDescente FORTEMENT DECONSEILLEE tant qu'un accord de pratique n'a pas été trouvé."
+      "remarques": "Canyon sous un ouvrage hydroélectrique avec risque de lâcher aléatoire.\n\nLe CDS 65 mène des négociations avec la SHEM locale.\n\nDescente FORTEMENT DECONSEILLEE tant qu'un accord de pratique n'a pas été trouvé."
     },
     "representativePoint": {
       "type": "PARKING_AVAL",
@@ -11843,7 +11843,7 @@
       "periode": "A faire à l'étiage, mais le débit peut être réduit en période très sèche. Supporte plus d'eau que le Miraval plus en aval, mais bien apprécier le débit ainsi que les risques de crues : le bassin versant du Yaga est énorme !",
       "geologie": null,
       "historique": null,
-      "remarques": "Une autre approche consiste à faire le barranco Lugar au préalable."
+      "remarques": "Le barranc Lugar est interdit"
     },
     "representativePoint": {
       "type": "PARKING_AVAL",
@@ -11936,7 +11936,7 @@
     "rating": {
       "cotation": "v2a2II",
       "interet": 1.6,
-      "nbVotes": 6
+      "nbVotes": 7
     },
     "metrics": {
       "altitudeDepartM": 1000,
@@ -11993,7 +11993,7 @@
     "rating": {
       "cotation": "v6a3VI",
       "interet": 3.2,
-      "nbVotes": 46
+      "nbVotes": 47
     },
     "metrics": {
       "altitudeDepartM": 1110,
@@ -12052,7 +12052,7 @@
     "rating": {
       "cotation": "v5a4V",
       "interet": 3.5,
-      "nbVotes": 57
+      "nbVotes": 58
     },
     "metrics": {
       "altitudeDepartM": 1300,
@@ -12348,7 +12348,7 @@
     "rating": {
       "cotation": "v5a2III",
       "interet": 2.6,
-      "nbVotes": 16
+      "nbVotes": 17
     },
     "metrics": {
       "altitudeDepartM": 1400,
@@ -12359,8 +12359,8 @@
       "navette": "néant"
     },
     "timings": {
-      "approche": "1h",
-      "descente": "2h",
+      "approche": "1-1h30",
+      "descente": "2-3h30",
       "retour": "2min"
     },
     "topo": {
@@ -12373,7 +12373,7 @@
       "periode": "Avant, ces cascades étaient quasiment infaisables du fait de la présence en amont du glacier de Chalance et de la Rouye. Du fait du réchauffement climatique cette descente est à présent envisageable plutôt. Mais assurez vous du débit en bas. Vous devez voir au travers du jet sans aucune difficulté. Les passages dans l'actif sont obligatoires avec des vasques intermédiaires traîtres. Ne vous engagez donc pas si vous doutez de vos capacités.",
       "geologie": "Gneiss",
       "historique": null,
-      "remarques": "Une belle descente à ne pas prendre à la légère."
+      "remarques": "Une belle descente à ne pas prendre à la légère.\n\nLes temps de marche d'approche indiqués sont de 1h pour l'accès au départ de la partie aval (montée RG) et 1h30 minimum pour la partie amont ou l'intégrale directement du hameau (montée RD).\n\nPareil pour les temps de descente (2h pour l'aval et 3h30 pour l'intégralité)"
     },
     "representativePoint": {
       "type": "PARKING_AVAL",
@@ -12877,7 +12877,7 @@
     "rating": {
       "cotation": "v3a2IV",
       "interet": 2.4,
-      "nbVotes": 15
+      "nbVotes": 16
     },
     "metrics": {
       "altitudeDepartM": null,
@@ -12993,43 +12993,43 @@
       "coursEau": null
     },
     "rating": {
-      "cotation": "v3a1III",
-      "interet": 2.0,
-      "nbVotes": 39
+      "cotation": "",
+      "interet": null,
+      "nbVotes": 0
     },
     "metrics": {
       "altitudeDepartM": 1180,
       "deniveleM": 160,
       "longueurM": 250,
-      "cascadeMaxM": 30,
-      "cordeMiniM": 35,
-      "navette": "néant"
+      "cascadeMaxM": null,
+      "cordeMiniM": null,
+      "navette": null
     },
     "timings": {
-      "approche": "5min",
-      "descente": "1h/ 1h30",
-      "retour": "1h"
+      "approche": null,
+      "descente": null,
+      "retour": null
     },
     "topo": {
-      "accesAval": "Se garer juste avant le village d'Escuain sur un grand parking à gauche.",
+      "accesAval": null,
       "accesAmont": null,
-      "approche": "Du parking, prendre a l'opposé du village (direction W), passer devant l'église du village (ruine), prendre le chemin de la Fuente (\"source\") à droite de la route. On arrive très vite à l'amont du barranco.",
-      "descente": "1R : RG, 2R : RG; 3R : RG et RD, 4R : RD, 5R : RG, 6R : RG. Les deux premiers rappels peuvent être évités par un sentier RD. Premier grand rappel, un relais RD et aussi un relais RG sur arbre suspendu.\n\n6 rappels max 30m. Fréquenté en été par les pros du coin : la progression peut être notablement ralentie!\n\nLongue désescalade dans les blocs après le dernier grand rappel.",
-      "retour": "Enchaîner avec la garganta d'Escuain ou bien remonter au village. Pour cela, remonter l'Escuain vers l'amont jusqu'à la Fuente. Un sentier ramène alors directement au village.",
-      "engagement": "Pas d'échappatoire. Équipement très bon.",
-      "periode": "Sec. Attention cependant au débit de la Garganta d'Escuain.",
+      "approche": null,
+      "descente": null,
+      "retour": null,
+      "engagement": null,
+      "periode": null,
       "geologie": null,
       "historique": null,
-      "remarques": "Attention ce canyon est à la limite du parc national (c'est même la frontière). La descente du canyon n'est autorisé que si celui ci est completement sec!!"
+      "remarques": null
     },
     "representativePoint": {
-      "type": "PARKING_AVAL",
-      "latitude": 42.595676,
-      "longitude": 0.128314,
+      "type": "ENTREE",
+      "latitude": 42.596813,
+      "longitude": 0.128322,
       "label": null
     },
-    "hasSpecificRegulation": false,
-    "isForbidden": false
+    "hasSpecificRegulation": true,
+    "isForbidden": true
   },
   {
     "id": 21045,
@@ -13172,7 +13172,7 @@
     "rating": {
       "cotation": "v2a4III",
       "interet": 2.4,
-      "nbVotes": 32
+      "nbVotes": 33
     },
     "metrics": {
       "altitudeDepartM": 1025,
@@ -13410,7 +13410,7 @@
     "rating": {
       "cotation": "v3a2II",
       "interet": 2.6,
-      "nbVotes": 38
+      "nbVotes": 40
     },
     "metrics": {
       "altitudeDepartM": 1100,
@@ -13740,7 +13740,7 @@
     "id": 21057,
     "identity": {
       "nom": "Cagateille",
-      "nomComplet": "Canyon de Cagateille, Ruisseau des cors",
+      "nomComplet": "Canyon de Cagateille, Ruisseau des Cors",
       "prefixeNom": "Canyon de",
       "url": "https://www.descente-canyon.com/canyoning/canyon/21057/Cagateille.html"
     },
@@ -13754,15 +13754,15 @@
       ],
       "massif": null,
       "bassin": null,
-      "coursEau": "Ruisseau des cors"
+      "coursEau": "Ruisseau des Cors"
     },
     "rating": {
       "cotation": "v3a3III",
       "interet": 2.5,
-      "nbVotes": 22
+      "nbVotes": 23
     },
     "metrics": {
-      "altitudeDepartM": null,
+      "altitudeDepartM": 1120,
       "deniveleM": 130,
       "longueurM": 500,
       "cascadeMaxM": 20,
@@ -13775,16 +13775,16 @@
       "retour": "10min"
     },
     "topo": {
-      "accesAval": "A st lizier continuer la D38, traverser Portet, Ariail, à Stillon passer le pont, traverser le village, traverser Bourdex, Cabousset et continuer jusqu'au bout de la route. Parking",
+      "accesAval": "A Saint-Lizier continuer la D38, traverser Portet, Ariail, à Stillon passer le pont, traverser le village, traverser Bourdex, Cabousset et continuer jusqu'au bout de la route. Parking.",
       "accesAmont": null,
       "approche": "Prendre le sentier du cirque de Cagateille. Environ 20 a 30 min de marche vous amène a la sortie du bois dans une grande jasse ou coule le ruisseau des cors. Des la sortie du bois descendre en direction du cours d'eau. De la, progresser en RD sur une cinquantaine de mètres pour atteindre le départ.",
-      "descente": null,
-      "retour": "Sortir du bois puis remonter en 5 mn en RD pour rejoindre le parking",
-      "engagement": "première partie assez ouverte\n\nensuite encaissée",
+      "descente": "Petite marche, avant un premier ressaut (vasque peu profonde), une deuxième après deux gros bloc (saut possible), une marche de 5-10 min sur un replat, assez glissant, et la partie la plus intéressante du canyon démarre :\n\nUn premier rappel de 13 mètres, soit à rive droite au sec, soit rive gauche avec un relais dans l actif, soit une main courante qui mène a un rappel vertical.\n\nPuis un très beau rétrécissement, la rampe avec la fissure dangereuse à gauche ou l'eau s'engouffre ce désescalade par la droite, une belle vasque et un deuxième rappel qui peut se faire dans l'actif, ou en tyrolienne laissée par les pros locaux (merci de ré-enrouler les deux cordes pour éviter les tonches).\n\nUn nouveau rétrécissement ponctué de quelques petites désescalades dans une partie bien encaissé, (points et lunules pour équiper des cordes si gros débits), derniers saut de 5 mètres après une main courante sur la gauche (viser loin à gauche).\n\nMarcher 200m et l'arrivée se fait au niveau d'une grande vasque, peu profonde.\n\nRemonté sur un replat dans la hétraie sur la droite et longé le ruisseau en le surplombant sur un chemin marqué.\n\nPossibilité de poursuivre, mais beaucoup moins intéressant.",
+      "retour": "Marcher 5min en RD dans le bois au dessus du cours d'eau pour rejoindre le parking",
+      "engagement": "Première partie assez ouverte, ensuite encaissée à partir du rappel, derniers échappatoires en haut de la deuxième cascades avec le rappel guidé,\n\nCe méfier de l'étroiture finale par gros débits.",
       "periode": "à l'étiage, juin / juillet / août / septembre",
       "geologie": null,
       "historique": null,
-      "remarques": "petit canyon sympa\n\nAttention : un rappel mène dans la veine d'eau dans une faille. Possibilité de l'éviter en empruntant une main courante pour s'échapper rive droite."
+      "remarques": null
     },
     "representativePoint": {
       "type": "PARKING_AVAL",
@@ -14050,7 +14050,7 @@
     "rating": {
       "cotation": "v3a3II",
       "interet": 2.8,
-      "nbVotes": 36
+      "nbVotes": 38
     },
     "metrics": {
       "altitudeDepartM": 1540,
@@ -14083,7 +14083,7 @@
       "longitude": -0.469667,
       "label": null
     },
-    "hasSpecificRegulation": false,
+    "hasSpecificRegulation": true,
     "isForbidden": false
   },
   {
@@ -14223,7 +14223,7 @@
       "coursEau": "Giffre des Fonts"
     },
     "rating": {
-      "cotation": "v6a6VI",
+      "cotation": "v6a6IV",
       "interet": 3.1,
       "nbVotes": 36
     },
@@ -14231,26 +14231,26 @@
       "altitudeDepartM": 1270,
       "deniveleM": 250,
       "longueurM": 2000,
-      "cascadeMaxM": 15,
-      "cordeMiniM": 20,
+      "cascadeMaxM": 20,
+      "cordeMiniM": 25,
       "navette": "néant"
     },
     "timings": {
       "approche": "1h",
-      "descente": "6h",
+      "descente": "4 à 5h",
       "retour": "10min"
     },
     "topo": {
       "accesAval": "A noter tout de même que la route vers le Lignon (parking) est interdite à la circulation dès les premières neiges (route non déneigée) au niveau du tremplin de saut à ski.\n\nPrendre direction la cascade de rouget, 500m après il y a un sentier qui part sur la gauche (fléché Refuge des fonds 1h15). Se garer à gauche le long de la route!",
       "accesAmont": null,
       "approche": "Route du Ligon ouverte :\n\nDu parking, descendre 10min par le sentier qui mène au refuge de Tine des Fonds. On passe par une passerelle qui marque la fin de canyon.\n\n5min après on rejoint la piste carrossable qui rejoint en 45min le refuge.\n\nJuste avant le refuge, au niveau de la passerelle, descendre dans la rivière.\n\nRoute du Lignon fermée :\n\nLa fermeture de la route rallonge très nettement la marche d'approche en empruntant la piste raquettes. (RD du canyon)",
-      "descente": "L’ensemble commence par une marche de 500m (20mn).\n\nLe premier encaissement est constitué de 5 obstacles qui ne dépassent pas les 4m. Si dans cette partie vous vous faites brasser, vous pouvez sortir à l’échappatoire RD qui se trouve juste à la fin.\n\nL’ensemble continue dans un goulet et se ré-encaisse fortement. A partir de là plus aucune échappatoire n’est possible.\n\nRapidement vous tombez sur une C8 suivie d’une C5, C3, puis d’une C4. L’obstacle suivant doit être pris avec délicatesse, parce que la C3 amène sur un siphon plus ou moins facile à négocier en fonction du débit.\n\nOn continue sur un bel enchaînement de petits rappels...\n\nAprès 5 à 10min de marche vous tombez sur un l’affluent RG (ruisseau d’Anterne) et juste après se trouve l’échappatoire évidente RD.\n\nEncore une C4 et C5 on arrive à la passerelle.",
+      "descente": "L’ensemble commence par une marche de 500m (20mn).\n\nSi vous vous faites brasser dans la 1ère partie, vous pouvez sortir à l’échappatoire RD qui se trouve juste à la fin.\n\nL’ensemble continue dans un goulet et se ré-encaisse fortement. A partir de là plus aucune échappatoire n’est possible.\n\nAprès 5 à 10min de marche vous tombez sur un l’affluent RG (ruisseau d’Anterne) et juste après se trouve l’échappatoire évidente RD.",
       "retour": "A la passerelle\n\nsi la route était ouverte, remonter par le même sentier en RG.\n\nsi la route était fermée et quel voiture est tout en bas, prenez en RD et en 5min vous êtes sur la piste du refuge.",
-      "engagement": "Engagement total, aucune échappatoire dans la partie technique (soit les 2/3 du canyon)\n\nQualité de l’équipement : en septembre 2018, tous les rappels sont équipés.\n\nLa plus part des points sont en monopoint inox + anneau soudé, la plus part ont été posé à \"l’abri des crues\".\n\nAu vue des crues titanesques, prendre de quoi ré-équiper !",
-      "periode": "Qualité de l’eau : excellente\n\nCaractère aquatique : gros débit perpétuel. A n’engager qu’après un étiage total.\n\nA savoir : après une période sans pluie, sans neige (risque d’avalanche) et quand il gèle dur. Température de l’eau : glaciale",
+      "engagement": "Engagement total, aucune échappatoire dans la partie technique (soit les 2/3 du canyon)\n\nQualité de l’équipement : en août 2026, tous les rappels sont équipés.\n\nLa plus part des points sont en mono point inox + anneau soudé, la plus part ont été posé à \"l’abri des crues\".\n\nAu vue des crues titanesques, prendre de quoi ré-équiper !",
+      "periode": "Qualité de l’eau : excellente\n\nCaractère aquatique : gros débit perpétuel. A n’engager qu’après un étiage total.",
       "geologie": "Schiste noir veiné de gypse.",
       "historique": "Spéléo club d'Annemasse et Groupe Spéléo Hauteville-Lompnès en 1988",
-      "remarques": "Vous vous demandez si la réputation de la Tines des Fonts aval n’est pas surfaite ? Vous vous dîtes qu’encore une fois les auteurs du topo ont exagéré ?\n\nEt bien rassurez vous, tout est vrai !\n\nVous pensez aussi que ce n’est pas si rare de trouver les bonnes conditions aquatiques à la différence de ce que vous avez lu ? Vous ajoutez que de toute façon vous vous débrouillerez bien ?\n\nEt bien, nous avons attendu 3 ans pour descendre ce canyon et nous avons eu bien raison !\n\nIl est toujours difficile lorsqu’on écrit un topo de trouver les mots justes pour informer le lecteur. Il est délicat de trouver les bonnes formules entre avertir honnêtement des dangers et ne pas trop en rajouter pour des questions de responsabilité. Pour ce cas, Bruno Hugon et sa bande n’ont pas exagéré. La tines des fonts c’est dur, c’est rarement en conditions, mais c’est magnifique.\n\nAfin de mieux vous conseiller, nous allons faire la listes des conditions que nous avons rempli pour faire la descente :\n\nLe débit : Il n’est pas possible de se faire une idée à la passerelle du bas. Mais Au mieux si à ce niveau les micros vasques sont déjà bouillonnantes il est inutile de vous dire ce qu’il faut faire. Lorsque vous aurez engagé la descente si dans le premier encaissement vous vous faîtes méchant brassé aux 4 micros obstacles prenez de suite à sa sortie l’échappatoire RD.\n\nLes conditions météos : Pour trouver les bonnes conditions (et encore), il ne faut pas qu’il y ait eu des pluies violentes durant les 10J qui précèdent votre descente. Le niveau d’enneigement doit être quasi-nul (risques d’avalanches). Il doit geler dur le matin. Mais attention si vous attendez trop, les coussinets de glaces gêneront la descente. Si vous avez un doute, faîtes la veille Tré la Tête et voyez vos réactions. Le lendemain ce sera pire.\n\nLe matériel : 1 combi 5mm sans trou+1 shorti (ou combi 2-3 mm) ou combi 7mm titanium.\n\nChaussettes 5mm+chaussette en laine.\n\nGants 5mm\n\nCrampons voire piolets\n\nBidon : Point chaud+couvertures de survie+coupe vent+vêtements secs (Vous devez avoir de quoi survivre une nuit)\n\nPharmacie\n\nBougies\n\nBriquet et tout le matériel habituel nécessaire\n\nPerforateur avec 20pts pour changer la moitié des amarrages défoncés et pour équiper en artif une sortie en catastrophe.\n\nTempérature : Entre 0 et -7°. Attention par de tels froid on n'arrive plus à faire tourner les viroles. Tout gèle instantanément sur place. Le seul moyen pour faire fondre la glace et de se remettre dans l’eau (et oui :-( )\n\nEnfin, je ne parlerais pas de l’équipement qui est systématiquement broyé mais j’insisterais plutôt sur le lit du cours d’eau qui change chaque année. Les cascades se déplacent, se creusent ou se comblent. Je vous avouerais que le relevé que j’ai fait n’a plus rien à voir avec celui réalisé par Bruno Hugon et ses compères. Même si on considère la marge de 20% d’erreurs. Par extension cela signifie que la profondeur des vasques est aléatoire. L’absence de point ne signifie pas la possibilité d’un saut."
+      "remarques": "Remarque précédente laissée pour l'historique, mais au vu du réchauffement climatique, le canyon passe à partir de fin juillet (en fonction des pluies et fonte sur les hauteurs).\n\n(Vous vous demandez si la réputation de la Tines des Fonts aval n’est pas surfaite ? Vous vous dîtes qu’encore une fois les auteurs du topo ont exagéré ?\n\nEt bien rassurez vous, tout est vrai !\n\nVous pensez aussi que ce n’est pas si rare de trouver les bonnes conditions aquatiques à la différence de ce que vous avez lu ? Vous ajoutez que de toute façon vous vous débrouillez bien ?\n\nEt bien, nous avons attendu 3 ans pour descendre ce canyon et nous avons eu bien raison !\n\nIl est toujours difficile lorsqu’on écrit un topo de trouver les mots justes pour informer le lecteur. Il est délicat de trouver les bonnes formules entre avertir honnêtement des dangers et ne pas trop en rajouter pour des questions de responsabilité. Pour ce cas, Bruno Hugon et sa bande n’ont pas exagéré. La tines des fonts c’est dur, c’est rarement en conditions, mais c’est magnifique.\n\nAfin de mieux vous conseiller, nous allons faire la listes des conditions que nous avons rempli pour faire la descente :\n\nLe débit : Il n’est pas possible de se faire une idée à la passerelle du bas. Mais Au mieux si à ce niveau les micros vasques sont déjà bouillonnantes il est inutile de vous dire ce qu’il faut faire. Lorsque vous aurez engagé la descente si dans le premier encaissement vous vous faîtes méchant brassé aux 4 micros obstacles prenez de suite à sa sortie l’échappatoire RD.\n\nLes conditions météos : Pour trouver les bonnes conditions (et encore), il ne faut pas qu’il y ait eu des pluies violentes durant les 10J qui précèdent votre descente. Le niveau d’enneigement doit être quasi-nul (risques d’avalanches). Il doit geler dur le matin. Mais attention si vous attendez trop, les coussinets de glaces gêneront la descente. Si vous avez un doute, faîtes la veille Tré la Tête et voyez vos réactions. Le lendemain ce sera pire.\n\nLe matériel : 1 combi 5mm sans trou+1 shorti (ou combi 2-3 mm) ou combi 7mm titanium.\n\nChaussettes 5mm+chaussette en laine.\n\nGants 5mm\n\nCrampons voire piolets\n\nBidon : Point chaud+couvertures de survie+coupe vent+vêtements secs (Vous devez avoir de quoi survivre une nuit)\n\nPharmacie\n\nBougies\n\nBriquet et tout le matériel habituel nécessaire\n\nPerforateur avec 20pts pour changer la moitié des amarrages défoncés et pour équiper en artif une sortie en catastrophe.\n\nTempérature : Entre 0 et -7°. Attention par de tels froid on n'arrive plus à faire tourner les viroles. Tout gèle instantanément sur place. Le seul moyen pour faire fondre la glace et de se remettre dans l’eau (et oui :-( )\n\nEnfin, je ne parlerais pas de l’équipement qui est systématiquement broyé mais j’insisterais plutôt sur le lit du cours d’eau qui change chaque année. Les cascades se déplacent, se creusent ou se comblent. Je vous avouerais que le relevé que j’ai fait n’a plus rien à voir avec celui réalisé par Bruno Hugon et ses compères. Même si on considère la marge de 20% d’erreurs. Par extension cela signifie que la profondeur des vasques est aléatoire. L’absence de point ne signifie pas la possibilité d’un saut.)"
     },
     "representativePoint": {
       "type": "PARKING_AVAL",

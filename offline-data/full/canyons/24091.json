@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:08:10.487727+00:00",
+  "scrapedAt": "2026-10-27T17:24:06.886948+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 24091,
@@ -38,29 +38,29 @@
       "nbVotes": 4
     },
     "metrics": {
-      "altitudeDepartM": 990,
+      "altitudeDepartM": 700,
       "deniveleM": 500,
       "longueurM": 3300,
-      "cascadeMaxM": 32,
-      "cordeMiniM": 35,
+      "cascadeMaxM": 22,
+      "cordeMiniM": 25,
       "navette": "néant"
     },
     "timings": {
-      "approche": "2h30min",
-      "descente": "4h30min",
+      "approche": "2h",
+      "descente": "3h",
       "retour": "45min"
     },
     "topo": {
-      "accesAval": "comme Richiusa",
+      "accesAval": "Se rendre à bocognano et suivre les panneaux Richiusa.\n\nSe garer sur le même parking que la richiusa, au niveau de la petite centrale electrique",
       "accesAmont": null,
-      "approche": null,
-      "descente": "E1: 990m\n\nE2: 700m (cascade max. 20m; approche: 1h30min; descente 2h45min)",
-      "retour": null,
-      "engagement": null,
-      "periode": null,
+      "approche": "Traverser la passerelle de la gravone , suivre le sentier sur 30 mètres à la bifurcation prendre à gauche. Après quelques minutes le chemin s’ouvre en deux , prendre celui de droite qui monte pendant une 30eine des minutes, sur un rocher il y a une croix jaune à cette endroit il faut encore monter à droite .\n\nÀ partir de là le chemin est moins pratiqué , prévoir sécateur , suivre le chemin jusqu’à à le ruisseau de priniccia.\n\n(Attention à un moment il y a une flèche orange vers la gauche, n’est pas la suivre)",
+      "descente": "Partie inférieur: départ au point 700m IGN.\n\ncascade max. 22m;.\n\nPartie supérieure : départ point 990m , du départ inférieur remonter au mieux.\n\nCascade max 33.",
+      "retour": "Juste avant la gravone un sentier part en rive gauche et la longe jusqu’à récupérer le sentier d’approche.",
+      "engagement": "Attention aux crues soudaines.",
+      "periode": "À faire au printemps, l’été coule très peu.\n\nAttention, la partie supérieure il ne faut pas la faire en cas de gros débit.",
       "geologie": null,
       "historique": null,
-      "remarques": null
+      "remarques": "Pour la partie supérieure pensez à prendre du rééquipement, l’hiver peut faire des ravages"
     },
     "geoPoints": [
       {

@@ -220,6 +220,10 @@
     "regulationId": 611
   },
   {
+    "canyonId": 223,
+    "regulationId": 623
+  },
+  {
     "canyonId": 224,
     "regulationId": 7
   },
@@ -1824,6 +1828,14 @@
     "regulationId": 600
   },
   {
+    "canyonId": 2132,
+    "regulationId": 612
+  },
+  {
+    "canyonId": 2132,
+    "regulationId": 626
+  },
+  {
     "canyonId": 2136,
     "regulationId": 369
   },
@@ -2316,6 +2328,10 @@
     "regulationId": 610
   },
   {
+    "canyonId": 2191,
+    "regulationId": 613
+  },
+  {
     "canyonId": 2192,
     "regulationId": 380
   },
@@ -2326,6 +2342,10 @@
   {
     "canyonId": 2192,
     "regulationId": 610
+  },
+  {
+    "canyonId": 2192,
+    "regulationId": 613
   },
   {
     "canyonId": 2193,
@@ -2348,12 +2368,20 @@
     "regulationId": 610
   },
   {
+    "canyonId": 2194,
+    "regulationId": 613
+  },
+  {
     "canyonId": 2195,
     "regulationId": 491
   },
   {
     "canyonId": 2195,
     "regulationId": 610
+  },
+  {
+    "canyonId": 2195,
+    "regulationId": 613
   },
   {
     "canyonId": 2196,
@@ -2364,12 +2392,20 @@
     "regulationId": 610
   },
   {
+    "canyonId": 2196,
+    "regulationId": 613
+  },
+  {
     "canyonId": 2197,
     "regulationId": 491
   },
   {
     "canyonId": 2197,
     "regulationId": 610
+  },
+  {
+    "canyonId": 2197,
+    "regulationId": 613
   },
   {
     "canyonId": 2198,
@@ -2380,6 +2416,10 @@
     "regulationId": 610
   },
   {
+    "canyonId": 2198,
+    "regulationId": 613
+  },
+  {
     "canyonId": 2199,
     "regulationId": 491
   },
@@ -2388,12 +2428,20 @@
     "regulationId": 610
   },
   {
+    "canyonId": 2199,
+    "regulationId": 613
+  },
+  {
     "canyonId": 2200,
     "regulationId": 491
   },
   {
     "canyonId": 2200,
     "regulationId": 610
+  },
+  {
+    "canyonId": 2200,
+    "regulationId": 613
   },
   {
     "canyonId": 2201,
@@ -2408,8 +2456,16 @@
     "regulationId": 491
   },
   {
+    "canyonId": 2201,
+    "regulationId": 613
+  },
+  {
     "canyonId": 2202,
     "regulationId": 491
+  },
+  {
+    "canyonId": 2202,
+    "regulationId": 613
   },
   {
     "canyonId": 2203,
@@ -2420,20 +2476,40 @@
     "regulationId": 536
   },
   {
+    "canyonId": 2203,
+    "regulationId": 613
+  },
+  {
     "canyonId": 2204,
     "regulationId": 491
+  },
+  {
+    "canyonId": 2204,
+    "regulationId": 613
   },
   {
     "canyonId": 2205,
     "regulationId": 491
   },
   {
+    "canyonId": 2205,
+    "regulationId": 613
+  },
+  {
     "canyonId": 2206,
     "regulationId": 491
   },
   {
+    "canyonId": 2206,
+    "regulationId": 613
+  },
+  {
     "canyonId": 2208,
     "regulationId": 491
+  },
+  {
+    "canyonId": 2208,
+    "regulationId": 613
   },
   {
     "canyonId": 2209,
@@ -2442,6 +2518,10 @@
   {
     "canyonId": 2209,
     "regulationId": 610
+  },
+  {
+    "canyonId": 2209,
+    "regulationId": 613
   },
   {
     "canyonId": 2210,
@@ -2458,6 +2538,10 @@
   {
     "canyonId": 2210,
     "regulationId": 610
+  },
+  {
+    "canyonId": 2210,
+    "regulationId": 613
   },
   {
     "canyonId": 2211,
@@ -2556,6 +2640,10 @@
     "regulationId": 584
   },
   {
+    "canyonId": 2212,
+    "regulationId": 619
+  },
+  {
     "canyonId": 2213,
     "regulationId": 328
   },
@@ -2594,6 +2682,10 @@
   {
     "canyonId": 2217,
     "regulationId": 504
+  },
+  {
+    "canyonId": 2217,
+    "regulationId": 617
   },
   {
     "canyonId": 2218,
@@ -3034,6 +3126,10 @@
   {
     "canyonId": 2311,
     "regulationId": 541
+  },
+  {
+    "canyonId": 2311,
+    "regulationId": 620
   },
   {
     "canyonId": 2312,
@@ -4500,6 +4596,10 @@
     "regulationId": 386
   },
   {
+    "canyonId": 2720,
+    "regulationId": 625
+  },
+  {
     "canyonId": 2724,
     "regulationId": 95
   },
@@ -4550,6 +4650,14 @@
   {
     "canyonId": 2730,
     "regulationId": 152
+  },
+  {
+    "canyonId": 2733,
+    "regulationId": 625
+  },
+  {
+    "canyonId": 2734,
+    "regulationId": 625
   },
   {
     "canyonId": 2737,
@@ -4694,6 +4802,10 @@
   {
     "canyonId": 2761,
     "regulationId": 166
+  },
+  {
+    "canyonId": 2762,
+    "regulationId": 615
   },
   {
     "canyonId": 2765,
@@ -5328,6 +5440,10 @@
     "regulationId": 349
   },
   {
+    "canyonId": 2870,
+    "regulationId": 625
+  },
+  {
     "canyonId": 2871,
     "regulationId": 89
   },
@@ -5344,12 +5460,28 @@
     "regulationId": 349
   },
   {
+    "canyonId": 2877,
+    "regulationId": 625
+  },
+  {
+    "canyonId": 2878,
+    "regulationId": 625
+  },
+  {
+    "canyonId": 2880,
+    "regulationId": 625
+  },
+  {
     "canyonId": 2882,
     "regulationId": 491
   },
   {
     "canyonId": 2882,
     "regulationId": 610
+  },
+  {
+    "canyonId": 2882,
+    "regulationId": 613
   },
   {
     "canyonId": 2883,
@@ -6028,6 +6160,10 @@
     "regulationId": 374
   },
   {
+    "canyonId": 2999,
+    "regulationId": 624
+  },
+  {
     "canyonId": 21004,
     "regulationId": 520
   },
@@ -6080,6 +6216,10 @@
     "regulationId": 349
   },
   {
+    "canyonId": 21021,
+    "regulationId": 625
+  },
+  {
     "canyonId": 21025,
     "regulationId": 26
   },
@@ -6128,6 +6268,10 @@
     "regulationId": 350
   },
   {
+    "canyonId": 21044,
+    "regulationId": 614
+  },
+  {
     "canyonId": 21050,
     "regulationId": 509
   },
@@ -6154,6 +6298,10 @@
   {
     "canyonId": 21060,
     "regulationId": 443
+  },
+  {
+    "canyonId": 21062,
+    "regulationId": 625
   },
   {
     "canyonId": 21063,
@@ -6572,6 +6720,22 @@
     "regulationId": 349
   },
   {
+    "canyonId": 21192,
+    "regulationId": 625
+  },
+  {
+    "canyonId": 21193,
+    "regulationId": 625
+  },
+  {
+    "canyonId": 21195,
+    "regulationId": 625
+  },
+  {
+    "canyonId": 21199,
+    "regulationId": 625
+  },
+  {
     "canyonId": 21205,
     "regulationId": 520
   },
@@ -6920,6 +7084,10 @@
     "regulationId": 487
   },
   {
+    "canyonId": 21282,
+    "regulationId": 615
+  },
+  {
     "canyonId": 21286,
     "regulationId": 26
   },
@@ -6998,6 +7166,10 @@
   {
     "canyonId": 21297,
     "regulationId": 491
+  },
+  {
+    "canyonId": 21297,
+    "regulationId": 613
   },
   {
     "canyonId": 21298,
@@ -7260,6 +7432,10 @@
     "regulationId": 325
   },
   {
+    "canyonId": 21328,
+    "regulationId": 615
+  },
+  {
     "canyonId": 21329,
     "regulationId": 26
   },
@@ -7302,6 +7478,10 @@
   {
     "canyonId": 21346,
     "regulationId": 491
+  },
+  {
+    "canyonId": 21346,
+    "regulationId": 613
   },
   {
     "canyonId": 21347,
@@ -7440,6 +7620,10 @@
     "regulationId": 610
   },
   {
+    "canyonId": 21395,
+    "regulationId": 613
+  },
+  {
     "canyonId": 21413,
     "regulationId": 508
   },
@@ -7498,6 +7682,10 @@
   {
     "canyonId": 21435,
     "regulationId": 349
+  },
+  {
+    "canyonId": 21439,
+    "regulationId": 625
   },
   {
     "canyonId": 21440,
@@ -8024,6 +8212,10 @@
     "regulationId": 292
   },
   {
+    "canyonId": 21662,
+    "regulationId": 625
+  },
+  {
     "canyonId": 21689,
     "regulationId": 42
   },
@@ -8436,6 +8628,10 @@
     "regulationId": 611
   },
   {
+    "canyonId": 21926,
+    "regulationId": 622
+  },
+  {
     "canyonId": 21930,
     "regulationId": 597
   },
@@ -8596,6 +8792,10 @@
     "regulationId": 349
   },
   {
+    "canyonId": 22014,
+    "regulationId": 625
+  },
+  {
     "canyonId": 22016,
     "regulationId": 26
   },
@@ -8626,6 +8826,10 @@
   {
     "canyonId": 22092,
     "regulationId": 565
+  },
+  {
+    "canyonId": 22112,
+    "regulationId": 621
   },
   {
     "canyonId": 22137,
@@ -8688,6 +8892,10 @@
     "regulationId": 42
   },
   {
+    "canyonId": 22222,
+    "regulationId": 615
+  },
+  {
     "canyonId": 22226,
     "regulationId": 460
   },
@@ -8734,6 +8942,10 @@
   {
     "canyonId": 22244,
     "regulationId": 564
+  },
+  {
+    "canyonId": 22254,
+    "regulationId": 616
   },
   {
     "canyonId": 22256,
@@ -8877,7 +9089,7 @@
   },
   {
     "canyonId": 22410,
-    "regulationId": 108
+    "regulationId": 614
   },
   {
     "canyonId": 22411,
@@ -9740,6 +9952,10 @@
     "regulationId": 490
   },
   {
+    "canyonId": 23037,
+    "regulationId": 618
+  },
+  {
     "canyonId": 23046,
     "regulationId": 26
   },
@@ -9978,6 +10194,10 @@
   {
     "canyonId": 23206,
     "regulationId": 610
+  },
+  {
+    "canyonId": 23206,
+    "regulationId": 613
   },
   {
     "canyonId": 23208,

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:05:45.482501+00:00",
+  "scrapedAt": "2026-10-27T17:16:14.917295+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 23289,
@@ -15,8 +15,8 @@
   "canyon": {
     "id": 23289,
     "identity": {
-      "nom": "Roumi aval",
-      "nomComplet": "Vallon de Roumi aval",
+      "nom": "Roumi (aval)",
+      "nomComplet": "Vallon de Roumi (aval)",
       "prefixeNom": "Vallon de",
       "url": "https://www.descente-canyon.com/canyoning/canyon/23289/Roumi-aval.html"
     },
@@ -34,8 +34,8 @@
     },
     "rating": {
       "cotation": "v4a4IV",
-      "interet": 2.2,
-      "nbVotes": 6
+      "interet": 2.3,
+      "nbVotes": 7
     },
     "metrics": {
       "altitudeDepartM": 700,
@@ -54,7 +54,7 @@
       "accesAval": "Du centre de La Palud sur Verdon, prendre la RD23 de la route des Crêtes en direction du chalet de la Maline et se garer sur un parking à droite après 3,5 km environ (même parking amont que Mainmorte).",
       "accesAmont": null,
       "approche": "Du parking, continuer la route sur une centaine de mètres et prendre à droite le sentier du Bastidon qui descend d'abord au ravin de Mainmorte, remonte au col de Grateloup; continuer 3 minutes sur le sentier jusqu'à ce qu'il croise le vallon de Roumi reconnaissable à ses pierres polies avec une marque bleue presque effacée et une marque jaune sur le rocher.",
-      "descente": "Du sentier (700m), marche 30m.\n\nC8 sur arbre sans équipement : ne pas équiper l’arbre.\n\nC15 sur arbre RD c+m; échappatoire RG possible.\n\nD15, échappatoire RG possible.\n\nC18 (2 plaquettes RD + 1 seul MR) avec vasque au pied.\n\nD3 avec vasque suspendue au pied.\n\nC4 (arbre RG, c+m).\n\nC30 (2 plaquettes+c+m) + D8 ou C40, début de l’encaissement continu jusqu’au Verdon.\n\nD4 ou C4 sur arbre sans équipement.\n\nPar une vire RD, atteindre un gros arbre pour C20 traversant 2 surplombs, sur arbre sans équipement.\n\nDésescalade dans couloir avec petit éboulement.\n\nC10 sur arbres RD, corde + maillon.\n\nC8 sur arbre RD avec corde + maillon reliés à un point en arrière.\n\nC10 (plaquette+c+m RD).\n\nAu pied, cône terreux et branchages à la confluence avec un affluent RG.\n\nQuelques désescalades.\n\nOn arrive dans le fort encaissement final avec vue sur le Verdon.\n\nC20 sur arbre RD et corde + maillon reliés à un point en arrière.\n\n2 * D3.\n\nC12 sur arbre RD et corde + maillon reliés à un point en arrière.\n\nC15 (plaquette+c+m RD).\n\nArrivée au sec sur les rochers au ras de l’eau du Verdon, puis aller dans l’eau !",
+      "descente": "Du sentier (700m), marche 30m.\n\nC8 sur arbre sans équipement : ne pas équiper l’arbre.\n\nC15 sur arbre RD c+m; échappatoire RG possible.\n\nD15, échappatoire RG possible.\n\nC18 (2 plaquettes RD + 1 seul MR) avec vasque au pied.\n\nD3 avec vasque suspendue au pied.\n\nC4 (arbre RG, c+m).\n\nC30 (2 plaquettes+c+m) + D8 ou C40 depuis l'arbre en ancrage, début de l’encaissement continu jusqu’au Verdon.\n\nD4 ou C4 sur arbre sans équipement.\n\nPar une vire RD, atteindre un gros arbre pour C20 traversant 2 surplombs, sur arbre sans équipement.\n\nDésescalade dans couloir avec petit éboulement.\n\nC10 sur arbres RD, corde + maillon.\n\nC8 sur arbre RD avec corde + maillon reliés à un point en arrière.\n\nC10 (plaquette+c+m RD).\n\nAu pied, cône terreux et branchages à la confluence avec un affluent RG.\n\nQuelques désescalades.\n\nOn arrive dans le fort encaissement final avec vue sur le Verdon.\n\nC20 sur arbre RD et corde + maillon reliés à un point en arrière.\n\n2 * D3.\n\nC12 sur arbre RD et corde + maillon reliés à un point en arrière.\n\nC15 (plaquette+c+m RD). (Sangle + mousqueton 23/08/2026)\n\nArrivée au sec sur les rochers au ras de l’eau du Verdon, puis aller dans l’eau !",
       "retour": "Par 5 m3 de débit, longer la falaise vers l'aval (certains ont pieds!) pour arriver sur la grève de la rive droite; juste en aval de celle-ci, traverser la rivière et cheminer en rive gauche du Verdon jusqu’à repérer la sortie du ravin de Font de Barbin qui sort en rive droite du Verdon qu'il faut atteindre après la traversée du Verdon avec assurage si nécessaire (30 min).\n\nRemontée par le sentier en rive gauche du ravin de Font de Barbin en ¾ heure jusqu’au Bastidon; puis, le suivre vers la droite jusqu'au parking.",
       "engagement": "Pas d'échappatoire.\n\nEquipement monopoint ou doublé sur arbre ou plaquette plus corde & maillon.",
       "periode": "Sec",

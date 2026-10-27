@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T16:55:44.254450+00:00",
+  "scrapedAt": "2026-10-27T16:44:39.047625+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 2266,
@@ -35,11 +35,11 @@
     "rating": {
       "cotation": "v5a6IV",
       "interet": 3.6,
-      "nbVotes": 154
+      "nbVotes": 157
     },
     "metrics": {
-      "altitudeDepartM": 1740,
-      "deniveleM": 300,
+      "altitudeDepartM": 1770,
+      "deniveleM": 270,
       "longueurM": 850,
       "cascadeMaxM": 33,
       "cordeMiniM": 50,
@@ -48,7 +48,7 @@
     "timings": {
       "approche": "45min",
       "descente": "5h",
-      "retour": "5min"
+      "retour": "10min"
     },
     "topo": {
       "accesAval": "RN 94, entre EMBRUN et BRIANCON, peu après LA ROCHE DE RAME, prendre à gauche sous la ligne de chemin de fer et remonter la D38 jusqu'a PALLON (gouffre de GOURFOURAN). remonter la vallée de FREISSINIERES par la D238 jusqu'au bout. Parking de fin de route (alti 1441 m) au pied des cascades de DORMILLOUSE et des OULES DE FREISSINIERES.",

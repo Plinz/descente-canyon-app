@@ -1,21 +1,5 @@
 [
   {
-    "canyonId": 2107,
-    "type": "SORTIE",
-    "rawType": "arrivee",
-    "latitude": 43.941917,
-    "longitude": 6.688828,
-    "label": null
-  },
-  {
-    "canyonId": 2107,
-    "type": "PARKING_AVAL",
-    "rawType": "parking",
-    "latitude": 43.942036,
-    "longitude": 6.690062,
-    "label": null
-  },
-  {
     "canyonId": 2109,
     "type": "ENTREE",
     "rawType": "depart",
@@ -1998,5 +1982,21 @@
     "latitude": 46.64053,
     "longitude": 6.029628,
     "label": null
+  },
+  {
+    "canyonId": 2203,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 46.64053,
+    "longitude": 6.029628,
+    "label": null
+  },
+  {
+    "canyonId": 2204,
+    "type": "PARKING_AVAL",
+    "rawType": "parking",
+    "latitude": 46.614586,
+    "longitude": 5.84757,
+    "label": "Parking touristique des cascades du Herisson"
   }
 ]

@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "scrapedAt": "2026-07-16T17:02:59.935022+00:00",
+  "scrapedAt": "2026-10-27T17:07:32.685089+00:00",
   "source": {
     "site": "descente-canyon.com",
     "canyonId": 22410,
@@ -131,16 +131,21 @@
       "isForbidden": true,
       "rules": [
         {
-          "id": 108,
+          "id": 614,
           "status": "Actif",
           "action": "Interdit",
-          "title": "Arrêté (Parc du Mont Perdu) - 17 mars 1995",
-          "summary": "La pratique de la descente de canyon n'est pas autorisé dans le parc national du Mont Perdu.",
-          "remark": null,
-          "details": "Consultez le\n\ntexte (ou extrait)\n\nARRÊTÉ ROYAL 409/1995 du 17 mars 1995, qui approuve le plan directeur d’utilisation et de gestion du Parc National Ordesa et du Mont Perdu.\n\nJournal officiel n°112 du 11 mai 1995\n\n(…)\n\n3. Gestion\n\nb) Activités sportives. Le parc national fait l’objet de nombreuses activités sportives de montagne. L'aménagement et le règlement le cas échéant de ces pratiques sera effectué selon les principes suivants :\n\n1. Les pratiques sportives seront toujours soumises aux intérêts de conservation, de recherche et d'intérêt.\n\n2. Les activités sportives autorisées seront la randonnée, l'escalade, le ski de randonnée et la spéléologie. Pour des raisons de conservation, de sécurité ou de pratique excessive à certaines époques, la la nécessité d’obtenir une autorisation de la part de l’administration du parc pourra être nécessaire.\n\n3. La compétition sportive est interdite\n\nDISPOSITIONS GENERALES\n\nSont interdits :\n\nle creusement du sol et de la roche mère,\n\nla récolte de terres, stériles, pierres, roches, minéraux, fossiles ou tout autre matériau géologique,\n\nla recherche, l’exploration ou l’exploitation de minéraux,\n\nla déviation, la rétention le captage des eaux superficielles et souterraines,\n\nle déversement dans les eaux de détergents, savons, eau de javel ou autre type de produits,\n\nla baignade ou toute autre activité dans les cours d’eau ou lacs,\n\nla cueillette de végétaux,\n\nle piégeage, la persécution, la gêne, les dommages, la capture ou la chasse d'animaux et le ramassage de ses restes ou résidus d’activité,\n\nl’implantation d'espèces animales ou végétales domestiques ou sauvage,\n\nl'utilisation de feu, à l'exception de l'utilisation d'appareils de camping-gaz pour cuisiner ou produire de la lumière au bivouac,\n\nle déversement, l’abandon de déchets divers (plastiques, détritus, papiers, verre…)\n\nl’utilisation de terrains du Parc National d’Ordesa et du Mont Perdu pour se garer en dehors des zones prévue à cet effet, ainsi que l’utilisation dans tout le parc de mobilier (hamac, tables, chaises ou autre matériel de ce type)\n\nla pratique d'activités sportives non permises dans le plan directeur d’utilisation et de gestion ou de celles permises sans autorisation en période de réglementation et dans tous les cas la pratique de compétitions sportives.\n\nl’installation d’antennes, d’écrans ou tout autre matériel pouvant dégrader le paysage,\n\nla projection de pierres ou autre, ainsi que l’utilisation d’engins volants (montgolfières, ailes delta, parapentes…)\n\nle survol avec quelconque objet volant à moins de 1000m d’altitude par rapport au sol,\n\nla détérioration ou la destruction des objets appartenant au parc,\n\nla réalisation d’inscriptions, marques, balises sur les rochers, arbres ou sur les biens meubles et immeubles appartenant au parc,\n\nl’utilisation de mégaphones, radios ou hauts parleur avec un volume pouvant être gênant.\n\nl’installation ou l’utilisation de panneaux publicitaires,\n\nl’utilisation des ressources naturelles du Parc, en particulier la pêche et la chasse,\n\ntransporter à l’extérieur des véhicules armes ou morceaux d’armes ou tout autre matériel pouvant servir à persécuter, blesser, attraper ou tuer les animaux,\n\nemmener les chiens dans le parc\n\nTexte original : REAL DECRETO 409/1995 de 17 de marzo de 1995, por el que se aprueba el Plan Rector de Uso y Gestión del Parque Nacional de Ordesa y Monte Perdido.",
-          "effectiveDate": "17 mars 1995",
-          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/108/legislation.html",
-          "attachments": []
+          "title": "Arrêté - 08 avr 2015",
+          "summary": "La pratique du canyoning est interdite dans le parc national d'Ordesa y Monte Perdido (articles 9.1.3 alinéa d et 9.2.1.2.6 du PRUG)",
+          "remark": "Le barranco Lugar, situé pile en limite de parc, est considéré depuis plusieurs années comme interdit par les gardes du parc national.",
+          "details": "Consultez la fiche détaillée de cette réglementation qui impacte d'autres canyons.\n\nPlan Rector de Uso y Gestión del Parque Nacional de Ordesa y Monte Perdido (Gobierno de Aragón) du 8 avril 2015 (extrait du décret)",
+          "effectiveDate": "08 avr 2015",
+          "textUrl": "https://www.descente-canyon.com/canyoning/reglementation/reglemtexte/614/legislation.html",
+          "attachments": [
+            {
+              "label": "Plan Rector de Uso y Gestión del Parque Nacional de Ordesa y Monte Perdido (Gobierno de Aragón) du 8 avril 2015 (extrait du décret)",
+              "url": "https://static.descente-canyon.com/canyoning/reglem/reglem614_pj1.pdf"
+            }
+          ]
         }
       ]
     }
