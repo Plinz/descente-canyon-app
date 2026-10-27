@@ -2,6 +2,7 @@ package fr.descentecanyon.app.data.repository
 
 import androidx.room.withTransaction
 import fr.descentecanyon.app.data.local.catalog.CatalogDatabase
+import fr.descentecanyon.app.data.local.catalog.dao.CanyonChainDao
 import fr.descentecanyon.app.data.local.catalog.dao.CanyonDao
 import fr.descentecanyon.app.data.local.catalog.dao.SearchIndexDao
 import fr.descentecanyon.app.data.local.catalog.dao.WatershedDao
@@ -17,6 +18,7 @@ import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.appError
 import fr.descentecanyon.app.domain.error.failure
 import fr.descentecanyon.app.domain.error.suspendRunCatching
+import fr.descentecanyon.app.domain.model.CanyonChain
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonSummary
@@ -42,6 +44,7 @@ class CanyonRepositoryImpl @Inject constructor(
     private val canyonDao: CanyonDao,
     private val searchIndexDao: SearchIndexDao,
     private val watershedDao: WatershedDao,
+    private val canyonChainDao: CanyonChainDao,
     private val localStore: CanyonLocalStore,
     private val scraper: CanyonScraper,
     private val favoritesRepository: FavoritesRepository,
@@ -99,6 +102,8 @@ class CanyonRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getWatershedGeometry(canyonId: Int): String? = watershedDao.getGeometryByCanyonId(canyonId)
+
+    override suspend fun getChainsFrom(canyonId: Int): List<CanyonChain> = canyonChainDao.getFrom(canyonId).mapNotNull { it.toDomain() }
 
     private suspend fun fetchAndCacheRemoteDetail(canyonId: Int): Result<CanyonDetail> = suspendRunCatching {
         val detail = scraper.scrapeFullCanyonDetail(canyonId).getOrThrow()

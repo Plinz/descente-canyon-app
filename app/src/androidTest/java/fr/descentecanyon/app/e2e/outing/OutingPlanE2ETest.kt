@@ -114,6 +114,8 @@ class OutingPlanE2ETest : BaseE2eTest() {
         waitForTag(TestTags.outingCanyonCandidate(102))
         composeRule.onNodeWithTag(TestTags.outingCanyonCandidate(102)).performSemanticsAction(SemanticsActions.OnClick)
         waitForTag(TestTags.outingNextCanyon(0))
+        // Straight on, on foot or by car, with what is counted between the two.
+        waitForTag(TestTags.outingCanyonLink(0))
 
         // Kept at once as one outing of two canyons, reached by car.
         composeRule.waitUntil(10_000) {

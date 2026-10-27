@@ -53,11 +53,30 @@ data class OutingChoices(
 
 /** How the group goes from a canyon to the next one of the day. */
 enum class CanyonLink {
-    /** Out of the canyon and on to the next one on foot: parts of one stream, canyons side by side. */
+    /** Straight on from the end of one canyon into the next one, such as an upper then a lower part: no way out, no way in. */
+    CONTINUOUS,
+
+    /** Out of the canyon and on to the next one on foot: canyons side by side. */
     ON_FOOT,
 
     /** Back to the car, a drive to the next parking, and getting ready again. */
     BY_CAR,
+    ;
+
+    companion object {
+        /** Beyond this distance in a straight line between two canyons, the group drives. */
+        const val ON_FOOT_MAX_KM = 2.0
+
+        /**
+         * The link offered when a canyon is added after another one, [distanceKm] apart in a straight
+         * line: what the topos say of going from one to the other ([chain], reviewed over the whole
+         * catalog), else on foot nearby and by car beyond.
+         */
+        fun suggested(chain: CanyonChain?, distanceKm: Double?): CanyonLink = chain?.link ?: when {
+            (distanceKm ?: 0.0) > ON_FOOT_MAX_KM -> BY_CAR
+            else -> ON_FOOT
+        }
+    }
 }
 
 /** A canyon done after the first one of the outing, such as the lower part after the upper part. */

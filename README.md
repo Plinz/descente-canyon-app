@@ -118,6 +118,7 @@ git config core.hooksPath .githooks
 | --- | --- |
 | `offline-data/full/room-import/` | Export JSON du catalogue, source du `catalog.db` embarqué |
 | `data-overlay/`, `tools/overlay-merge/` | Canyons et enrichissements propres à l'application ([docs/overlay-architecture.md](docs/overlay-architecture.md)) |
+| `data-overlay/canyon-chains.json` | Enchaînements d'un canyon au suivant (à la suite, à pied avec le temps du topo, interdit dans le lit), relus à la main sur tout le catalogue ; après un nouveau scrap, `scripts/app/canyon_chain_candidates.py` liste les paires restant à relire |
 | `modele_statistique/` | Modèle de débit exporté (ONNX, seuils, tables de features) |
 | `scripts/debit_model/` | Pipeline d'entraînement du modèle de débit ([README](scripts/debit_model/README.md)) |
 | `scripts/watersheds/`, `watershed-results/` | Calcul des bassins versants ([README](scripts/watersheds/README.md)) |

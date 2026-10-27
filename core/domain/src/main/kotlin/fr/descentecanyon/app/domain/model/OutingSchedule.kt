@@ -119,18 +119,30 @@ data class NextCanyonInput(
     val back: CanyonDuration,
     /** By car, from the parking of the canyon before; null when unknown. */
     val driveMinutes: Int? = null,
-    /** Minutes added to (or taken from) its [OutingPhase.APPROACH], [OutingPhase.DESCENT] and [OutingPhase.RETURN]. */
+    /**
+     * From the end of the descent before to the start of this one, as the topos give it: then
+     * neither the way out of the canyon before nor the approach of this one is counted. Straight on,
+     * none given means no time at all.
+     */
+    val betweenMinutes: Int? = null,
+    /**
+     * Minutes added to (or taken from) its [OutingPhase.APPROACH], [OutingPhase.DESCENT] and
+     * [OutingPhase.RETURN]; straight on or with [betweenMinutes], its approach is the time from one
+     * canyon to the other.
+     */
     val adjustments: Map<OutingPhase, Int> = emptyMap(),
 )
 
 /** A canyon after the first one in the day; a moment is null when a part before it is unknown on a sheet. */
 data class NextCanyonSchedule(
     val link: CanyonLink,
+    /** From the end of the canyon before straight to this one (straight on, or a walk the topos give): no way out of it counted. */
+    val direct: Boolean = false,
     /** By car: back at the car after the canyon before. */
     val backAtCarBefore: TimeWindow?,
     /** By car: packing up, the drive and getting ready again at the next parking. */
     val transfer: TimeSpan?,
-    /** Leaving on foot for this canyon: out of the canyon before, or from the car. */
+    /** On the way to this canyon: the end of the canyon before (straight on), out of it, or leaving the car. */
     val walkStart: TimeWindow?,
     val descentStart: TimeWindow?,
     val descentEnd: TimeWindow?,
@@ -213,12 +225,19 @@ data class OutingSchedule(
             val walkStart = arriveStartParking.plusMinutes(prep.likely)
             val descentStart = approach?.let { TimeWindow.at(walkStart) + it }
             val descentEnd = descentStart?.let { window -> descent?.let { window + it } }
-            // Each next canyon starts from the end of the one before: its return, then the way in to
-            // the next one, on foot or after a drive.
+            // Each next canyon starts from the end of the one before: straight on, or its return then
+            // the way in to the next one, on foot or after a drive.
             var end = descentEnd
             var lastBack = back
             val nextCanyons = input.nextCanyons.map { next ->
-                val nextApproach = sheetSpan(next.approach, pace.walkFactor, OutingPhase.APPROACH, next.adjustments)
+                val between = next.betweenMinutes?.takeIf { next.link != CanyonLink.BY_CAR }
+                    ?: 0.takeIf { next.link == CanyonLink.CONTINUOUS }
+                val direct = between != null
+                val nextApproach = if (between != null) {
+                    TimeSpan.exactly(between.toLong()).adjustedBy(next.adjustments[OutingPhase.APPROACH] ?: 0)
+                } else {
+                    sheetSpan(next.approach, pace.walkFactor, OutingPhase.APPROACH, next.adjustments)
+                }
                 val nextDescent = (next.descent as? CanyonDuration.Known)
                     ?.let { sheetSpan(it, pace.descentFactor, OutingPhase.DESCENT, next.adjustments) }
                 val nextBack = sheetSpan(next.back, pace.walkFactor, OutingPhase.RETURN, next.adjustments)
@@ -226,9 +245,10 @@ data class OutingSchedule(
                 val transfer = next.driveMinutes?.takeIf { next.link == CanyonLink.BY_CAR }?.let { drive ->
                     parkingSpan(settings.packUpMinutes) + TimeSpan.exactly(drive.toLong()) + parkingSpan(settings.prepMinutes)
                 }
-                val walkStart = when (next.link) {
-                    CanyonLink.ON_FOOT -> outOfPrevious
-                    CanyonLink.BY_CAR -> outOfPrevious?.let { window -> transfer?.let { window + it } }
+                val walkStart = when {
+                    direct -> end
+                    next.link == CanyonLink.ON_FOOT -> outOfPrevious
+                    else -> outOfPrevious?.let { window -> transfer?.let { window + it } }
                 }
                 val nextStart = walkStart?.let { window -> nextApproach?.let { window + it } }
                 val nextEnd = nextStart?.let { window -> nextDescent?.let { window + it } }
@@ -236,6 +256,7 @@ data class OutingSchedule(
                 lastBack = nextBack
                 NextCanyonSchedule(
                     link = next.link,
+                    direct = direct,
                     backAtCarBefore = outOfPrevious.takeIf { next.link == CanyonLink.BY_CAR },
                     transfer = transfer,
                     walkStart = walkStart,

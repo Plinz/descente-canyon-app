@@ -57,6 +57,7 @@ class CanyonRepositoryDetailTest {
             canyonDao = catalog.canyonDao(),
             searchIndexDao = catalog.searchIndexDao(),
             watershedDao = catalog.watershedDao(),
+            canyonChainDao = catalog.canyonChainDao(),
             localStore = localStore,
             scraper = CanyonScraper(siteClient),
             favoritesRepository = FavoritesRepositoryImpl(user.favoriteDao(), catalog.canyonDao()),

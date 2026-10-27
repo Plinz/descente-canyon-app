@@ -8,7 +8,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
-/** Several canyons in one outing: an "intégrale" on foot, or a drive between two canyons. */
+/** Several canyons in one outing: an "intégrale" straight on or on foot, or a drive between two canyons. */
 class OutingChainTest {
 
     private val day = LocalDate.of(2026, 7, 14)
@@ -71,6 +71,46 @@ class OutingChainTest {
         assertEquals(TimeSpan.exactly(55), lower.transfer)
         assertEquals(TimeWindow(at(12, 1), at(12, 25), at(13, 12)), lower.walkStart)
         assertEquals(at(12, 30), lower.descentStart?.estimate)
+    }
+
+    @Test
+    fun `straight on, the lower part starts at the end of the upper one, with no way out nor way in`() {
+        val schedule = upperPartThen(lowerPart(CanyonLink.CONTINUOUS))
+
+        val lower = schedule.nextCanyons.single()
+        assertEquals(schedule.descentEnd, lower.walkStart)
+        assertEquals(schedule.descentEnd, lower.descentStart)
+        assertEquals(TimeSpan.ZERO, lower.spans[OutingPhase.APPROACH])
+        // Ten minutes earlier than on foot: neither the 5 min out of the upper part nor the 5 min down to the lower one.
+        assertEquals(TimeWindow(at(12, 11), at(12, 42), at(13, 48)), schedule.backAtCar)
+    }
+
+    @Test
+    fun `straight on, the time from one canyon to the other is adjusted, and an approach unknown on the sheet does not matter`() {
+        val lower = upperPartThen(
+            lowerPart(CanyonLink.CONTINUOUS, adjustments = mapOf(OutingPhase.APPROACH to 10)).copy(approach = CanyonDuration.Unknown),
+        ).nextCanyons.single()
+
+        assertEquals(TimeSpan.exactly(10), lower.spans[OutingPhase.APPROACH])
+        assertEquals(at(11, 35), lower.descentStart?.estimate)
+    }
+
+    @Test
+    fun `a walk the topos give replaces the way out of one canyon and the way in to the next`() {
+        val lower = upperPartThen(lowerPart(CanyonLink.ON_FOOT).copy(betweenMinutes = 45)).nextCanyons.single()
+
+        assertEquals(true, lower.direct)
+        assertEquals(TimeSpan.exactly(45), lower.spans[OutingPhase.APPROACH])
+        // From the end of the upper part (11:25), 45 min on foot: neither its return nor the sheet's approach.
+        assertEquals(at(12, 10), lower.descentStart?.estimate)
+        // Straight on with a time between the two parts, such as a long walk in the stream bed.
+        val straightOn = upperPartThen(lowerPart(CanyonLink.CONTINUOUS).copy(betweenMinutes = 180)).nextCanyons.single()
+        assertEquals(at(14, 25), straightOn.descentStart?.estimate)
+        // By car, the topos' walk does not count.
+        assertEquals(
+            false,
+            upperPartThen(lowerPart(CanyonLink.BY_CAR, driveMinutes = 15).copy(betweenMinutes = 45)).nextCanyons.single().direct,
+        )
     }
 
     @Test

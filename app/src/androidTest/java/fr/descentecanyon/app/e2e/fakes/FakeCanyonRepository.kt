@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.e2e.fakes
 
+import fr.descentecanyon.app.domain.model.CanyonChain
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonSummary
@@ -30,4 +31,6 @@ class FakeCanyonRepository @Inject constructor() : CanyonRepository {
     override fun observeWatershed(canyonId: Int): Flow<CanyonWatershed?> = flowOf(null)
 
     override suspend fun getWatershedGeometry(canyonId: Int): String? = null
+
+    override suspend fun getChainsFrom(canyonId: Int): List<CanyonChain> = emptyList()
 }

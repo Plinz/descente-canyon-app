@@ -52,6 +52,8 @@ class CatalogAssetTest {
         assertEquals(canyonCount, catalog.searchIndexDao().count())
         assertEquals(canyonCount, catalog.searchIndexDao().observeAll().first().size)
         assertNotNull(catalog.canyonDao().getById(2186))
+        // The reviewed chains: the upper Cagne goes straight on into the lower one.
+        assertEquals("STRAIGHT_ON", catalog.canyonChainDao().getFrom(252).single { it.toCanyonId == 21308 }.way)
     }
 
     private companion object {

@@ -171,8 +171,8 @@ internal fun canyonNames(state: OutingPlanUiState): List<String> =
 
 /**
  * The moments of the day and the steps between them, from the starting place back to it. With
- * several canyons, each one follows the end of the descent before: out of it and on foot to the
- * next one, or back to the car and a drive.
+ * several canyons, each one follows the end of the descent before: straight on, out of it and on
+ * foot to the next one, or back to the car and a drive.
  */
 @Composable
 private fun dayLines(state: OutingPlanUiState): List<DayLine> {
@@ -223,8 +223,28 @@ private fun dayLines(state: OutingPlanUiState): List<DayLine> {
             val canyon = index + 1
             val name = names[canyon]
             when (next.link) {
+                // No way out of the one before nor way in: only the time from one to the other (none, or the topos' one).
+                CanyonLink.CONTINUOUS -> add(
+                    DayLine.Step(
+                        stringResource(R.string.outing_step_straight_into, name),
+                        next.spans[OutingPhase.APPROACH],
+                        OutingPhase.APPROACH,
+                        canyon,
+                    ),
+                )
+
                 CanyonLink.ON_FOOT -> {
-                    add(DayLine.Step(stringResource(R.string.outing_step_out_of, names[index]), previousReturn, OutingPhase.RETURN, index))
+                    // A walk the topos give replaces the way out of the canyon before.
+                    if (!next.direct) {
+                        add(
+                            DayLine.Step(
+                                stringResource(R.string.outing_step_out_of, names[index]),
+                                previousReturn,
+                                OutingPhase.RETURN,
+                                index,
+                            ),
+                        )
+                    }
                     add(
                         DayLine.Step(
                             stringResource(R.string.outing_step_walk_to, name),

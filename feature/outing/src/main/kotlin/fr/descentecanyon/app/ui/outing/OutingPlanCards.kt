@@ -37,7 +37,6 @@ import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Landscape
-import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material.icons.filled.WaterDrop
@@ -905,7 +904,7 @@ internal fun PlanBottomBar(
                         enabled = state.schedule != null,
                         modifier = Modifier.weight(1f).testTag(TestTags.OUTING_ACTIVATE_BUTTON),
                     ) {
-                        Icon(Icons.Default.NotificationsActive, contentDescription = null)
+                        Icon(Icons.Default.CheckCircle, contentDescription = null)
                         Text(stringResource(R.string.outing_activate_action), modifier = Modifier.padding(start = 8.dp))
                     }
 

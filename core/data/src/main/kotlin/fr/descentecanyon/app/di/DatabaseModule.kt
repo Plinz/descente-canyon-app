@@ -12,6 +12,7 @@ import dagger.hilt.components.SingletonComponent
 import fr.descentecanyon.app.data.local.catalog.CatalogDatabase
 import fr.descentecanyon.app.data.local.catalog.CatalogInstaller
 import fr.descentecanyon.app.data.local.catalog.dao.BibliographyDao
+import fr.descentecanyon.app.data.local.catalog.dao.CanyonChainDao
 import fr.descentecanyon.app.data.local.catalog.dao.CanyonDao
 import fr.descentecanyon.app.data.local.catalog.dao.CanyonTrackDao
 import fr.descentecanyon.app.data.local.catalog.dao.ForumUserDao
@@ -75,6 +76,8 @@ object DatabaseModule {
     @Provides fun provideCanyonTrackDao(database: CatalogDatabase): CanyonTrackDao = database.canyonTrackDao()
 
     @Provides fun provideWatershedDao(database: CatalogDatabase): WatershedDao = database.watershedDao()
+
+    @Provides fun provideCanyonChainDao(database: CatalogDatabase): CanyonChainDao = database.canyonChainDao()
 
     @Provides fun provideSearchIndexDao(database: CatalogDatabase): SearchIndexDao = database.searchIndexDao()
 

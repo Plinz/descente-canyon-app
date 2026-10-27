@@ -128,6 +128,8 @@ object TestTags {
 
     fun outingNextCanyon(index: Int): String = "outing_next_canyon_$index"
 
+    fun outingCanyonLink(index: Int): String = "outing_canyon_link_$index"
+
     fun stayRow(id: Long): String = "stay_row_$id"
 
     fun stayPlaceOption(id: Long): String = "stay_place_option_$id"

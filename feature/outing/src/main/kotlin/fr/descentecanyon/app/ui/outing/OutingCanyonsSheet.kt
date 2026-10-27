@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -16,6 +18,8 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.WarningAmber
+import androidx.compose.material.icons.filled.Water
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
@@ -39,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.CanyonChain
 import fr.descentecanyon.app.domain.model.CanyonLink
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.ui.design.LocalDcColors
@@ -92,7 +97,9 @@ internal fun CanyonsSheet(
         state.nextCanyons.forEachIndexed { index, next ->
             LinkChoice(
                 next = next,
+                previousName = names[index],
                 onLinkSelected = { onLinkSelected(index, it) },
+                modifier = Modifier.testTag(TestTags.outingCanyonLink(index)),
             )
             CanyonLine(
                 position = index + 2,
@@ -145,29 +152,70 @@ private fun CanyonLine(position: Int, name: String, cotation: String?, modifier:
     }
 }
 
-/** On foot from the canyon before (parts of one stream), or back to the car and a drive. */
+/**
+ * Straight on from the canyon before (parts of one stream), on foot from one to the other, or back to
+ * the car and a drive; what is counted between the two is said under the choice.
+ */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun LinkChoice(next: NextCanyonState, onLinkSelected: (CanyonLink) -> Unit) {
-    Row(
-        modifier = Modifier.padding(start = 24.dp),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-    ) {
-        FilterChip(
-            selected = next.canyon.link == CanyonLink.ON_FOOT,
-            onClick = { onLinkSelected(CanyonLink.ON_FOOT) },
-            label = { Text(stringResource(R.string.outing_link_on_foot)) },
-            leadingIcon = { Icon(Icons.AutoMirrored.Filled.DirectionsWalk, contentDescription = null, modifier = Modifier.size(18.dp)) },
-        )
-        FilterChip(
-            selected = next.canyon.link == CanyonLink.BY_CAR,
-            onClick = { onLinkSelected(CanyonLink.BY_CAR) },
-            label = {
-                val drive = next.drive?.minutes?.let { formatMinutes(it.toLong()) }
-                Text(drive?.let { stringResource(R.string.outing_link_by_car_drive, it) } ?: stringResource(R.string.outing_link_by_car))
+private fun LinkChoice(next: NextCanyonState, previousName: String, onLinkSelected: (CanyonLink) -> Unit, modifier: Modifier = Modifier) {
+    val colors = LocalDcColors.current
+    val link = next.canyon.link
+    Column(modifier = modifier.padding(start = 24.dp), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            FilterChip(
+                selected = link == CanyonLink.CONTINUOUS,
+                onClick = { onLinkSelected(CanyonLink.CONTINUOUS) },
+                label = { Text(stringResource(R.string.outing_link_continuous)) },
+                leadingIcon = { Icon(Icons.Default.Water, contentDescription = null, modifier = Modifier.size(18.dp)) },
+            )
+            FilterChip(
+                selected = link == CanyonLink.ON_FOOT,
+                onClick = { onLinkSelected(CanyonLink.ON_FOOT) },
+                label = { Text(stringResource(R.string.outing_link_on_foot)) },
+                leadingIcon = {
+                    Icon(Icons.AutoMirrored.Filled.DirectionsWalk, contentDescription = null, modifier = Modifier.size(18.dp))
+                },
+            )
+            FilterChip(
+                selected = link == CanyonLink.BY_CAR,
+                onClick = { onLinkSelected(CanyonLink.BY_CAR) },
+                label = {
+                    val drive = next.drive?.minutes?.let { formatMinutes(it.toLong()) }
+                    Text(
+                        drive?.let {
+                            stringResource(R.string.outing_link_by_car_drive, it)
+                        } ?: stringResource(R.string.outing_link_by_car),
+                    )
+                },
+                leadingIcon = { Icon(Icons.Default.DirectionsCar, contentDescription = null, modifier = Modifier.size(18.dp)) },
+            )
+        }
+        val known = next.chain?.minutesFor(link)?.takeIf { it > 0 }
+        Text(
+            when {
+                known != null -> stringResource(
+                    R.string.outing_link_known_hint,
+                    previousName,
+                    next.canyon.name,
+                    formatMinutes(known.toLong()),
+                )
+
+                link == CanyonLink.CONTINUOUS -> stringResource(R.string.outing_link_continuous_hint, previousName, next.canyon.name)
+
+                link == CanyonLink.ON_FOOT -> stringResource(R.string.outing_link_on_foot_hint, previousName, next.canyon.name)
+
+                else -> stringResource(R.string.outing_link_by_car_hint, previousName, next.canyon.name)
             },
-            leadingIcon = { Icon(Icons.Default.DirectionsCar, contentDescription = null, modifier = Modifier.size(18.dp)) },
+            style = MaterialTheme.typography.bodySmall,
+            color = colors.textSecondary,
         )
+        if (link == CanyonLink.CONTINUOUS && next.chain?.way == CanyonChain.Way.NOT_IN_STREAM) {
+            Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Icon(Icons.Default.WarningAmber, contentDescription = null, tint = colors.warning, modifier = Modifier.size(16.dp))
+                Text(stringResource(R.string.outing_link_not_in_stream), style = MaterialTheme.typography.bodySmall, color = colors.warning)
+            }
+        }
     }
 }
 
@@ -227,6 +275,7 @@ private fun ColumnScope.CanyonPicker(
                         val detail = listOfNotNull(
                             candidate.cotation.takeIf { it.isNotBlank() },
                             candidate.distanceKm?.let { distanceText(it, locale) },
+                            candidate.chain?.let { chainLabel(it) },
                         ).joinToString(" · ")
                         if (detail.isNotEmpty()) Text(detail, style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
                     }
@@ -241,4 +290,18 @@ private fun distanceText(km: Double, locale: Locale): String = when {
     km < 1 -> "${((km * 1000).toInt() / 50 * 50).coerceAtLeast(50)} m"
     km < 10 -> String.format(locale, "%.1f km", km)
     else -> String.format(locale, "%d km", km.toInt())
+}
+
+/** "À la suite", or "À pied · 45 min": how the topos say the group goes on to a canyon. */
+@Composable
+private fun chainLabel(chain: CanyonChain): String? {
+    val minutes = chain.minutes?.takeIf { it > 0 }?.let { formatMinutes(it.toLong()) }
+    return when (chain.link) {
+        CanyonLink.CONTINUOUS -> stringResource(R.string.outing_link_continuous)
+
+        CanyonLink.ON_FOOT -> minutes?.let { stringResource(R.string.outing_link_on_foot_minutes, it) }
+            ?: stringResource(R.string.outing_link_on_foot)
+
+        else -> null
+    }
 }

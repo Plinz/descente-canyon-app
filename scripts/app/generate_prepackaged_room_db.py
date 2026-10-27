@@ -59,6 +59,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--room-import-dir", required=True, type=Path)
     parser.add_argument("--schema", required=True, type=Path)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument(
+        "--canyon-chains",
+        type=Path,
+        help="Reviewed passages from a canyon to another one (data-overlay/canyon-chains.json).",
+    )
     return parser.parse_args()
 
 
@@ -308,7 +313,28 @@ def create_schema(connection: sqlite3.Connection, schema: dict):
     connection.execute(f"PRAGMA user_version = {database['version']}")
 
 
-def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest: dict):
+CHAIN_WAYS = {"STRAIGHT_ON", "ON_FOOT", "NOT_IN_STREAM"}
+
+
+def load_canyon_chains(path: Path | None, canyon_ids: set[int]) -> list[tuple]:
+    """The reviewed chains, checked against the catalog: a canyon gone from it must be reviewed again."""
+    if path is None:
+        return []
+    rows = []
+    for pair in load_json(path)["pairs"]:
+        source, target, way, minutes = pair["from"], pair["to"], pair["way"], pair.get("minutes")
+        if way not in CHAIN_WAYS:
+            raise RuntimeError(f"Unknown chain way {way!r} for {source} -> {target}")
+        missing = [canyon_id for canyon_id in (source, target) if canyon_id not in canyon_ids]
+        if missing:
+            raise RuntimeError(f"Chain {source} -> {target} names canyons missing from the catalog: {missing}")
+        if minutes is not None and (not isinstance(minutes, int) or minutes < 0):
+            raise RuntimeError(f"Invalid minutes {minutes!r} for {source} -> {target}")
+        rows.append((source, target, way, minutes))
+    return rows
+
+
+def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest: dict, canyon_chains_path: Path | None = None):
     canyons = load_json(room_import_dir / "canyons.json")
     geo_points = load_json(room_import_dir / "geo_points.json")
     bibliography_entries = load_json(room_import_dir / "bibliography_entries.json")
@@ -535,6 +561,12 @@ def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest:
             ],
         )
 
+    canyon_chains = load_canyon_chains(canyon_chains_path, {row["id"] for row in canyons})
+    connection.executemany(
+        "INSERT INTO canyon_chains (fromCanyonId, toCanyonId, way, minutes) VALUES (?, ?, ?, ?)",
+        canyon_chains,
+    )
+
     connection.executemany(
         "INSERT INTO search_index (id, nom, nomComplet, pays, countryTokensJson, region, departement, departmentTokensJson, subdivisionsByCountryJson, commune, massif, bassin, coursEau, cotation, cotationVertical, cotationAquatic, cotationEngagement, interet, nbVotes, altitudeDepart, denivele, longueur, cascadeMax, cordeMin, hasSpecificRegulation, isForbidden, hasNavette, representativeLat, representativeLng, url, searchableText, normalizedNom, normalizedNomComplet) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
         search_index_rows,
@@ -552,6 +584,7 @@ def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest:
         "tracks": len(canyon_tracks),
         "forum_users": len(forum_users),
         "search_index": len(search_index_rows),
+        "canyon_chains": len(canyon_chains),
     }
 
     for table_name in ("canyons", "geo_points", "bibliography_entries", "canyon_bibliography", "regulation_texts", "canyon_regulations", "watersheds", "tracks", "forum_users"):
@@ -588,7 +621,7 @@ def main() -> int:
         connection.execute("PRAGMA temp_store = MEMORY")
 
         create_schema(connection, schema)
-        actual_counts = insert_rows(connection, room_import_dir, manifest)
+        actual_counts = insert_rows(connection, room_import_dir, manifest, args.canyon_chains)
         connection.commit()
         connection.execute("PRAGMA optimize")
         connection.execute("VACUUM")

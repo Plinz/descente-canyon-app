@@ -3,6 +3,7 @@ package fr.descentecanyon.app.data.local.catalog
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import fr.descentecanyon.app.data.local.catalog.dao.BibliographyDao
+import fr.descentecanyon.app.data.local.catalog.dao.CanyonChainDao
 import fr.descentecanyon.app.data.local.catalog.dao.CanyonDao
 import fr.descentecanyon.app.data.local.catalog.dao.CanyonTrackDao
 import fr.descentecanyon.app.data.local.catalog.dao.ForumUserDao
@@ -12,6 +13,7 @@ import fr.descentecanyon.app.data.local.catalog.dao.SearchIndexDao
 import fr.descentecanyon.app.data.local.catalog.dao.WatershedDao
 import fr.descentecanyon.app.data.local.catalog.entity.BibliographyEntryEntity
 import fr.descentecanyon.app.data.local.catalog.entity.CanyonBibliographyEntity
+import fr.descentecanyon.app.data.local.catalog.entity.CanyonChainEntity
 import fr.descentecanyon.app.data.local.catalog.entity.CanyonEntity
 import fr.descentecanyon.app.data.local.catalog.entity.CanyonRegulationEntity
 import fr.descentecanyon.app.data.local.catalog.entity.CanyonTrackEntity
@@ -40,6 +42,7 @@ import fr.descentecanyon.app.data.local.catalog.entity.WatershedEntity
         WatershedEntity::class,
         SearchIndexEntity::class,
         ForumUserEntity::class,
+        CanyonChainEntity::class,
     ],
     version = CatalogDatabase.SCHEMA_VERSION,
     exportSchema = true,
@@ -53,9 +56,10 @@ abstract class CatalogDatabase : RoomDatabase() {
     abstract fun watershedDao(): WatershedDao
     abstract fun searchIndexDao(): SearchIndexDao
     abstract fun forumUserDao(): ForumUserDao
+    abstract fun canyonChainDao(): CanyonChainDao
 
     companion object {
-        const val SCHEMA_VERSION = 2
+        const val SCHEMA_VERSION = 3
         const val DATABASE_NAME = "catalog.db"
         const val ASSET_PATH = "databases/catalog.db"
     }

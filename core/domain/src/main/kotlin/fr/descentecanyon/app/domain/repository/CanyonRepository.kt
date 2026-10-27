@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.domain.repository
 
+import fr.descentecanyon.app.domain.model.CanyonChain
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonSummary
@@ -33,4 +34,7 @@ interface CanyonRepository {
 
     /** Watershed polygon, loaded only when a map screen needs it. */
     suspend fun getWatershedGeometry(canyonId: Int): String?
+
+    /** What the topos say of going on from this canyon to the ones after it (reviewed with the catalog). */
+    suspend fun getChainsFrom(canyonId: Int): List<CanyonChain>
 }

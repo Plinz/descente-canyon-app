@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
+import fr.descentecanyon.app.domain.model.CanyonChain
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonDuration
@@ -101,10 +102,15 @@ data class NextCanyonState(
     val detail: CanyonDetail? = null,
     /** By car: the drive from the parking of the canyon before, estimated. */
     val drive: DriveTime? = null,
+    /** What the topos say of going from the canyon before to this one, when reviewed. */
+    val chain: CanyonChain? = null,
 )
 
-/** A canyon that can follow the last one of the outing; [distanceKm] in a straight line from it. */
-data class CanyonCandidate(val id: Int, val name: String, val cotation: String, val distanceKm: Double?)
+/**
+ * A canyon that can follow the last one of the outing; [distanceKm] in a straight line from it, [chain]
+ * what the topos say of going from the last one to it.
+ */
+data class CanyonCandidate(val id: Int, val name: String, val cotation: String, val distanceKm: Double?, val chain: CanyonChain? = null)
 
 /** The canyons offered to follow the last one: those around it, or those matching the name typed. */
 data class CanyonPickerState(val query: String = "", val candidates: List<CanyonCandidate> = emptyList(), val isLoading: Boolean = true)
@@ -238,8 +244,8 @@ class OutingPlanViewModel @Inject constructor(
             if (query == null) {
                 flowOf(CanyonPickerState(isLoading = false))
             } else {
-                canyonRepository.observeSearchCatalog().map { catalog ->
-                    CanyonPickerState(query, candidates(catalog, query), isLoading = false)
+                combine(canyonRepository.observeSearchCatalog(), sources.map { it.chains }.distinctUntilChanged()) { catalog, chains ->
+                    CanyonPickerState(query, candidates(catalog, query, chains), isLoading = false)
                 }
             }
         }
@@ -316,13 +322,13 @@ class OutingPlanViewModel @Inject constructor(
         pickerQuery.value = null
     }
 
-    /** The canyon comes after the last one, on foot when it is close, else by car. */
+    /** The canyon comes after the last one as the topos say, else on foot when it is close, else by car. */
     fun addCanyon(candidate: CanyonCandidate) {
         pickerQuery.value = null
         updateChoices { choices ->
             val ids = listOf(canyonId) + choices.nextCanyons.map { it.canyonId }
             if (candidate.id in ids || ids.size >= OutingChoices.MAX_CANYONS) return@updateChoices choices
-            val link = if ((candidate.distanceKm ?: 0.0) > ON_FOOT_MAX_KM) CanyonLink.BY_CAR else CanyonLink.ON_FOOT
+            val link = CanyonLink.suggested(candidate.chain, candidate.distanceKm)
             choices.copy(nextCanyons = choices.nextCanyons + NextCanyon(candidate.id, candidate.name, link))
         }
     }
@@ -337,17 +343,21 @@ class OutingPlanViewModel @Inject constructor(
     private fun OutingChoices.withNextCanyon(index: Int, change: (NextCanyon) -> NextCanyon) =
         copy(nextCanyons = nextCanyons.mapIndexed { i, canyon -> if (i == index) change(canyon) else canyon })
 
-    /** Around the last canyon of the outing, nearest first, or matching [query]; the canyons of the outing left out. */
-    private fun candidates(catalog: List<CanyonSearchItem>, query: String): List<CanyonCandidate> {
+    /**
+     * Around the last canyon of the outing, or matching [query]: first those the topos say follow it
+     * ([chains], by the canyon they start from), then the nearest; the canyons of the outing left out.
+     */
+    private fun candidates(catalog: List<CanyonSearchItem>, query: String, chains: Map<Int, List<CanyonChain>>): List<CanyonCandidate> {
         val ids = listOf(canyonId) + choices.value?.nextCanyons.orEmpty().map { it.canyonId }
         val origin = catalog.firstOrNull { it.id == ids.last() }
+        val following = chains[ids.last()].orEmpty().filter { it.link != null }.associateBy { it.toCanyonId }
         val text = query.normalizeForSearch()
         return catalog.asSequence()
             .filter { it.id !in ids }
             .filter { text.isEmpty() || it.normalizedNom.contains(text) || it.normalizedNomComplet.contains(text) }
-            .map { item -> CanyonCandidate(item.id, item.nom, item.cotation, origin?.distanceKmTo(item)) }
-            .filter { text.isNotEmpty() || (it.distanceKm != null && it.distanceKm <= NEARBY_KM) }
-            .sortedWith(compareBy(nullsLast()) { it.distanceKm })
+            .map { item -> CanyonCandidate(item.id, item.nom, item.cotation, origin?.distanceKmTo(item), following[item.id]) }
+            .filter { text.isNotEmpty() || it.chain != null || (it.distanceKm != null && it.distanceKm <= NEARBY_KM) }
+            .sortedWith(compareBy<CanyonCandidate> { it.chain == null }.thenBy(nullsLast()) { it.distanceKm })
             .take(MAX_CANDIDATES)
             .toList()
     }
@@ -606,12 +616,16 @@ class OutingPlanViewModel @Inject constructor(
         }
     }
 
-    /** The sheets of the canyons added after the first one, each read once. */
+    /** The sheets of the canyons added after the first one, and what the topos say of going on from each canyon, each read once. */
     private suspend fun loadNextCanyons() {
         choices.map { it?.nextCanyons.orEmpty().map(NextCanyon::canyonId) }.distinctUntilChanged().collect { ids ->
             ids.filterNot { it in sources.value.nextDetails }.forEach { id ->
                 val detail = getCanyonPreviewUseCase(id).getOrNull()
                 sources.update { it.copy(nextDetails = it.nextDetails + (id to detail)) }
+            }
+            (listOf(canyonId) + ids).filterNot { it in sources.value.chains }.forEach { id ->
+                val chains = canyonRepository.getChainsFrom(id)
+                sources.update { it.copy(chains = it.chains + (id to chains)) }
             }
         }
     }
@@ -626,7 +640,7 @@ class OutingPlanViewModel @Inject constructor(
         val approach = CanyonDuration.parse(canyon?.tempsApproche)
         val descent = CanyonDuration.parse(canyon?.tempsDescente)
         val back = CanyonDuration.parse(canyon?.tempsRetour)
-        val nextCanyons = nextCanyonStates(detail, current.nextCanyons, sources.nextDetails)
+        val nextCanyons = nextCanyonStates(detail, current.nextCanyons, sources.nextDetails, sources.chains)
         val nextLoaded = current.nextCanyons.all { it.canyonId in sources.nextDetails }
         val lastDetail = nextCanyons.lastOrNull()?.detail ?: detail
         // The shuttle of the day joins the end of the last canyon to the start of the first one.
@@ -662,6 +676,7 @@ class OutingPlanViewModel @Inject constructor(
                             descent = CanyonDuration.parse(sheet?.tempsDescente),
                             back = CanyonDuration.parse(sheet?.tempsRetour),
                             driveMinutes = next.drive?.minutes,
+                            betweenMinutes = next.chain?.minutesFor(next.canyon.link),
                             adjustments = next.canyon.adjustments,
                         )
                     },
@@ -733,8 +748,14 @@ class OutingPlanViewModel @Inject constructor(
     }
 
     /** The canyons after the first one, with the drive from the end of the one before when they are reached by car. */
-    private fun nextCanyonStates(first: CanyonDetail?, next: List<NextCanyon>, details: Map<Int, CanyonDetail?>): List<NextCanyonState> {
+    private fun nextCanyonStates(
+        first: CanyonDetail?,
+        next: List<NextCanyon>,
+        details: Map<Int, CanyonDetail?>,
+        chains: Map<Int, List<CanyonChain>>,
+    ): List<NextCanyonState> {
         var previous = first
+        var previousId = canyonId
         return next.map { canyon ->
             val detail = details[canyon.canyonId]
             val from = previous?.let {
@@ -749,8 +770,10 @@ class OutingPlanViewModel @Inject constructor(
             } else {
                 null
             }
+            val chain = chains[previousId]?.firstOrNull { it.toCanyonId == canyon.canyonId }
             previous = detail
-            NextCanyonState(canyon, detail, drive)
+            previousId = canyon.canyonId
+            NextCanyonState(canyon, detail, drive, chain)
         }
     }
 
@@ -805,6 +828,8 @@ class OutingPlanViewModel @Inject constructor(
         val drive: DriveState? = null,
         /** The sheets of the canyons after the first one, by id; null when one could not be read. */
         val nextDetails: Map<Int, CanyonDetail?> = emptyMap(),
+        /** What the topos say of going on from each canyon of the outing, by the canyon it starts from. */
+        val chains: Map<Int, List<CanyonChain>> = emptyMap(),
         val gearList: GearListSettings = GearListSettings(),
         val messageSections: Map<MessageAudience, Set<MessageSection>> = MessageAudience.entries.associateWith { it.defaultSections },
         val startedNow: Boolean = false,
@@ -815,9 +840,6 @@ class OutingPlanViewModel @Inject constructor(
         val UNKNOWN_DURATION_ASSUMPTION: Duration = Duration.ofHours(8)
 
         const val MAX_NOTE_LENGTH = 500
-
-        /** Farther than this in a straight line, the next canyon is reached by car. */
-        const val ON_FOOT_MAX_KM = 2.0
 
         private const val NEARBY_KM = 30.0
         private const val MAX_CANDIDATES = 20

@@ -3,6 +3,7 @@ package fr.descentecanyon.app.ui.outing
 import androidx.lifecycle.SavedStateHandle
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.domain.model.Canyon
+import fr.descentecanyon.app.domain.model.CanyonChain
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonLink
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
@@ -347,6 +348,14 @@ class OutingPlanTest {
         val byCar = viewModel.uiState.value.schedule?.nextCanyons?.single()
         assertEquals(at(12, 25).plusMinutes(40L + drive.minutes + 10), byCar?.descentStart?.estimate)
 
+        // Straight on: the lower part starts at the end of the Riolan, neither its return nor the approach counted.
+        viewModel.selectLink(0, CanyonLink.CONTINUOUS)
+        advanceUntilIdle()
+        assertEquals(at(11, 25), viewModel.uiState.value.schedule?.nextCanyons?.single()?.descentStart?.estimate)
+        assertEquals(at(12, 45), viewModel.uiState.value.expectedBack)
+        assertEquals(CanyonLink.CONTINUOUS, outingRepository.outings.value.single().choices?.nextCanyons?.single()?.link)
+        assertNull(viewModel.uiState.value.nextCanyons.single().chain)
+
         viewModel.adjustPhase(1, OutingPhase.DESCENT, 15)
         advanceUntilIdle()
         assertEquals(mapOf(OutingPhase.DESCENT to 15), outingRepository.outings.value.single().choices?.nextCanyons?.single()?.adjustments)
@@ -361,6 +370,46 @@ class OutingPlanTest {
         advanceUntilIdle()
         assertEquals("Riolan", viewModel.uiState.value.title)
         assertEquals(at(12, 5), viewModel.uiState.value.expectedBack)
+    }
+
+    @Test
+    fun `the canyons the topos say follow come first, and their way between is counted`() = runTest {
+        // The topos say the far canyon follows the Riolan straight on, the next part 25 min on foot.
+        val chains = listOf(
+            CanyonChain(42, 44, CanyonChain.Way.STRAIGHT_ON),
+            CanyonChain(42, 43, CanyonChain.Way.ON_FOOT, minutes = 25),
+        )
+        val viewModel = viewModel(chains = chains)
+        backgroundScope.launch { viewModel.canyonPicker.collect {} }
+        advanceUntilIdle()
+
+        viewModel.searchCanyons("")
+        advanceUntilIdle()
+        // Both follow the Riolan, nearest first: the far one is listed too, though 50 km away.
+        assertEquals(listOf(43, 44), viewModel.canyonPicker.value.candidates.map { it.id })
+        val onFoot = viewModel.canyonPicker.value.candidates.first()
+        assertEquals(CanyonChain.Way.ON_FOOT, onFoot.chain?.way)
+
+        viewModel.addCanyon(onFoot)
+        advanceUntilIdle()
+        val state = viewModel.uiState.value
+        assertEquals(CanyonLink.ON_FOOT, state.nextCanyons.single().canyon.link)
+        assertEquals(25, state.nextCanyons.single().chain?.minutes)
+        // 25 min from the end of the Riolan (11:25): neither its 1 h return nor the 10 min approach.
+        assertEquals(at(11, 50), state.schedule?.nextCanyons?.single()?.descentStart?.estimate)
+
+        // By car, the drive counts again.
+        viewModel.selectLink(0, CanyonLink.BY_CAR)
+        advanceUntilIdle()
+        assertEquals(false, viewModel.uiState.value.schedule?.nextCanyons?.single()?.direct)
+
+        // The far one, straight on.
+        viewModel.removeCanyon(0)
+        viewModel.searchCanyons("")
+        advanceUntilIdle()
+        viewModel.addCanyon(viewModel.canyonPicker.value.candidates.first { it.id == 44 })
+        advanceUntilIdle()
+        assertEquals(CanyonLink.CONTINUOUS, viewModel.uiState.value.nextCanyons.single().canyon.link)
     }
 
     @Test
@@ -523,8 +572,16 @@ class OutingPlanTest {
         override fun delay(name: String, alertTime: String, number: String) = "DELAY $name $alertTime $number"
     }
 
-    private fun viewModel(outingId: Long = 0, date: LocalDate? = null, stayId: Long = 0, startNow: Boolean = false): OutingPlanViewModel {
+    private fun viewModel(
+        outingId: Long = 0,
+        date: LocalDate? = null,
+        stayId: Long = 0,
+        startNow: Boolean = false,
+        chains: List<CanyonChain> = emptyList(),
+    ): OutingPlanViewModel {
         val canyonRepository = mockk<CanyonRepository> {
+            coEvery { getChainsFrom(any()) } answers { chains.filter { it.fromCanyonId == firstArg<Int>() } }
+            coEvery { getCanyonPreview(44) } returns Result.failure(IllegalStateException("Not in the catalog"))
             coEvery { getCanyonPreview(42) } returns Result.success(
                 CanyonDetail(
                     canyon = Canyon(
