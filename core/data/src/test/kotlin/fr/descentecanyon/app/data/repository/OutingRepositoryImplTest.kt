@@ -61,13 +61,20 @@ class OutingRepositoryImplTest {
             meetAtPlace = true,
             note = "Covoiturage depuis le camping",
         )
-        val later = repository.save(outing(42, startInHours = 26).copy(choices = choices, groupSize = 7, relativeInformed = true))
+        val later = repository.save(
+            outing(42, startInHours = 26).let {
+                it.copy(choices = choices, groupSize = 7, informedAlertAt = it.alertAt, tracked = false, stayId = 3)
+            },
+        )
         val sooner = repository.save(outing(7, startInHours = 2).copy(departure = now.plus(Duration.ofHours(1))))
 
         val outings = repository.observeAll().first()
         assertEquals(listOf(sooner, later), outings.map { it.id })
         assertEquals(choices, outings.last().choices)
         assertEquals(true, outings.last().relativeInformed)
+        assertEquals(false, outings.last().tracked)
+        assertEquals(3L, outings.last().stayId)
+        assertEquals(true, outings.first().tracked)
         assertEquals(now.plus(Duration.ofHours(1)), outings.first().departure)
         assertEquals(now.plus(Duration.ofHours(7)), repository.get(sooner)?.latestBack)
 

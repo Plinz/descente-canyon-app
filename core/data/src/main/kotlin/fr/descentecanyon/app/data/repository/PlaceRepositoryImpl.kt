@@ -2,11 +2,12 @@ package fr.descentecanyon.app.data.repository
 
 import fr.descentecanyon.app.data.local.user.dao.DriveTimeDao
 import fr.descentecanyon.app.data.local.user.dao.PlaceDao
+import fr.descentecanyon.app.data.local.user.dao.StayDao
 import fr.descentecanyon.app.data.local.user.entity.PlaceEntity
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.repository.PlaceRepository
+import fr.descentecanyon.app.domain.repository.StayRepository
 import java.time.Clock
-import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +17,8 @@ import kotlinx.coroutines.flow.map
 class PlaceRepositoryImpl @Inject constructor(
     private val placeDao: PlaceDao,
     private val driveTimeDao: DriveTimeDao,
+    private val stayRepository: StayRepository,
+    private val stayDao: StayDao,
     private val clock: Clock,
 ) : PlaceRepository {
 
@@ -35,8 +38,6 @@ class PlaceRepositoryImpl @Inject constructor(
                 name = place.name.trim(),
                 latitude = place.latitude,
                 longitude = place.longitude,
-                stayStart = place.stayStart?.toString(),
-                stayEnd = place.stayEnd?.toString(),
                 lastUsedAt = place.lastUsedAt,
                 createdAt = previous?.createdAt ?: clock.millis(),
             ),
@@ -44,6 +45,7 @@ class PlaceRepositoryImpl @Inject constructor(
     }
 
     override suspend fun delete(id: Long) {
+        stayDao.idsAt(id).forEach { stayRepository.delete(it) }
         driveTimeDao.deleteFrom(id)
         placeDao.delete(id)
     }
@@ -55,8 +57,6 @@ class PlaceRepositoryImpl @Inject constructor(
         name = name,
         latitude = latitude,
         longitude = longitude,
-        stayStart = stayStart?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
-        stayEnd = stayEnd?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
         lastUsedAt = lastUsedAt,
     )
 }

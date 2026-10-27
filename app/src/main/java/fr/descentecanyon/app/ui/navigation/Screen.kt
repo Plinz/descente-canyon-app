@@ -54,11 +54,21 @@ sealed interface Screen {
     @Serializable
     data object Settings : Screen
 
-    /** The plan of an outing: saved ([outingId]), else new, on [date] (ISO) from the place [placeId] when given. */
+    /**
+     * The plan of an outing: kept ([outingId]), else new, on [date] (ISO) from the place [placeId] when
+     * given, for a day of the stay [stayId]; [startNow] turns its follow-up on at once ("I'm leaving now").
+     */
     @Serializable
-    data class OutingPlan(val canyonId: Int, val outingId: Long = 0, val date: String? = null, val placeId: Long = 0) : Screen
+    data class OutingPlan(
+        val canyonId: Int,
+        val outingId: Long = 0,
+        val date: String? = null,
+        val placeId: Long = 0,
+        val stayId: Long = 0,
+        val startNow: Boolean = false,
+    ) : Screen
 
-    /** The outings planned and the places they start from. */
+    /** The outings planned, the stays and the drafts. */
     @Serializable
     data object Outings : Screen
 
@@ -69,9 +79,17 @@ sealed interface Screen {
     @Serializable
     data object OutingSettings : Screen
 
-    /** Several outings from the place [placeId]: canyons around and the weather of each day. */
+    /** A stay day by day: the weather at its place and the outing of each day. */
     @Serializable
-    data class StayPlanner(val placeId: Long) : Screen
+    data class Stay(val stayId: Long) : Screen
+
+    /** A new stay ([stayId] 0) or a stay changed: its place and its days. */
+    @Serializable
+    data class StayEdit(val stayId: Long = 0) : Screen
+
+    /** The canyons around the place of the stay [stayId], for its day [date] (ISO). */
+    @Serializable
+    data class StayCanyonPicker(val stayId: Long, val date: String) : Screen
 
     /** The logbook, opened on [tab] (LogbookTab ordinal: outings, canyons, figures). */
     @Serializable

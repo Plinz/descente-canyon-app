@@ -13,7 +13,9 @@ import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class OutingPlanTest {
@@ -206,6 +208,27 @@ class OutingPlanTest {
         assertEquals(afternoon, outings.underwayAt(now))
         assertEquals(listOf(tomorrow), outings.upcomingAt(now))
         assertEquals(listOf(afternoon, tomorrow), outings.upcomingAt(now.minus(Duration.ofHours(3))))
+
+        // A draft is never under way nor followed: it waits apart until its day is long past.
+        val draft = afternoon.copy(tracked = false, id = 4)
+        val withDraft = listOf(tomorrow, morning, draft)
+        assertEquals(morning, withDraft.underwayAt(now))
+        assertEquals(listOf(tomorrow), withDraft.upcomingAt(now))
+        assertEquals(listOf(draft), withDraft.draftsAt(now))
+        assertEquals(emptyList<PlannedOuting>(), withDraft.draftsAt(now.plus(Duration.ofDays(1))))
+    }
+
+    @Test
+    fun `the relative is told again when the alert moves`() {
+        val now = Instant.parse("2026-07-14T08:00:00Z")
+        val outing = PlannedOuting(1, "Riolan", now, now.plus(Duration.ofHours(4)), now.plus(Duration.ofHours(6)))
+        assertFalse(outing.relativeInformed)
+        assertFalse(outing.alertChangedSinceInformed)
+
+        val informed = outing.copy(informedAlertAt = outing.alertAt)
+        assertTrue(informed.relativeInformed)
+        assertFalse(informed.alertChangedSinceInformed)
+        assertTrue(informed.copy(alertAt = outing.alertAt.plus(Duration.ofMinutes(30))).alertChangedSinceInformed)
     }
 
     @Test

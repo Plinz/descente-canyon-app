@@ -5,14 +5,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Flag
-import androidx.compose.material.icons.filled.WarningAmber
-import androidx.compose.material.icons.filled.WbTwilight
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,9 +32,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
-import fr.descentecanyon.app.domain.model.DaylightCheck
 import fr.descentecanyon.app.domain.model.GroupLevel
-import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingPhase
 import fr.descentecanyon.app.domain.model.TimeSpan
@@ -51,12 +48,17 @@ private sealed interface DayLine {
     data class Step(val label: String, val span: TimeSpan?, val phase: OutingPhase? = null) : DayLine
 }
 
+/**
+ * The whole day step by step, folded under the summary: each step can be lengthened or shortened
+ * for this outing, and the figures say where the times come from.
+ */
 @Composable
-internal fun TimelineCard(
+internal fun DayDetailCard(
     state: OutingPlanUiState,
     timeFormatter: DateTimeFormatter,
+    expanded: Boolean,
+    onToggle: () -> Unit,
     onAdjust: (OutingPhase, Int) -> Unit,
-    onOpenSettings: () -> Unit,
 ) {
     val schedule = state.schedule ?: return
     val colors = LocalDcColors.current
@@ -70,10 +72,75 @@ internal fun TimelineCard(
             onDismiss = { adjusting = null },
         )
     }
+    DcCard(modifier = Modifier.fillMaxWidth().testTag(TestTags.OUTING_DETAIL), contentPadding = 4.dp) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 56.dp)
+                .clickable(onClick = onToggle)
+                .padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Icon(Icons.Default.Schedule, contentDescription = null, tint = colors.textSecondary)
+            Text(
+                stringResource(R.string.outing_detail_title),
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.weight(1f),
+            )
+            Icon(
+                if (expanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                contentDescription = stringResource(if (expanded) R.string.outing_detail_hide else R.string.outing_detail_show),
+                tint = colors.textMuted,
+            )
+        }
+        if (!expanded) return@DcCard
+        Column(
+            modifier = Modifier.padding(start = 12.dp, end = 12.dp, bottom = 12.dp).testTag(TestTags.OUTING_TIMELINE),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(stringResource(R.string.outing_detail_hint), style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
+            dayLines(state).forEach { line ->
+                when (line) {
+                    is DayLine.Moment -> MomentRow(line, timeFormatter)
+
+                    is DayLine.Step -> StepRow(
+                        line = line,
+                        adjustment = line.phase?.let { state.choices.adjustments[it] } ?: 0,
+                        onClick = line.phase?.takeIf { line.span != null }?.let { phase -> { adjusting = phase } },
+                    )
+                }
+            }
+            Text(
+                stringResource(R.string.outing_detail_how),
+                style = MaterialTheme.typography.labelLarge,
+                modifier = Modifier.padding(top = 8.dp),
+            )
+            Text(
+                text = stringResource(
+                    R.string.outing_durations_source,
+                    durationLabel(state.approach),
+                    durationLabel(state.descent),
+                    durationLabel(state.back),
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = colors.textMuted,
+            )
+            PaceBreakdown(state)
+            if (state.place != null) DriveLine(state = state, onSetManualDrive = null)
+        }
+    }
+}
+
+/** The moments of the day and the steps between them, from the starting place back to it. */
+@Composable
+private fun dayLines(state: OutingPlanUiState): List<DayLine> {
+    val schedule = state.schedule ?: return emptyList()
     val place = state.place?.takeIf { schedule.leavePlace != null }
     val drive = schedule.driveMinutes?.toLong()?.let(TimeSpan::exactly)
     val shuttleKm = state.sheetShuttle?.takeIf { state.withShuttle }?.distanceKm?.toInt()?.coerceAtLeast(1)
-    val lines = buildList {
+    return buildList {
         if (place != null) {
             add(DayLine.Moment(stringResource(R.string.outing_step_leave_place, place.name), TimeWindow.at(schedule.leavePlace!!)))
             add(DayLine.Step(stringResource(R.string.outing_step_drive), drive))
@@ -110,42 +177,6 @@ internal fun TimelineCard(
         if (place != null) {
             add(DayLine.Step(stringResource(R.string.outing_step_drive), drive))
             add(DayLine.Moment(stringResource(R.string.outing_step_back_place, place.name), schedule.backAtPlace))
-        }
-    }
-    DcCard(modifier = Modifier.fillMaxWidth().testTag(TestTags.OUTING_TIMELINE)) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(
-                stringResource(R.string.outing_timeline_title),
-                style = MaterialTheme.typography.titleSmall,
-                fontWeight = FontWeight.SemiBold,
-            )
-            lines.forEach { line ->
-                when (line) {
-                    is DayLine.Moment -> MomentRow(line, timeFormatter)
-
-                    is DayLine.Step -> StepRow(
-                        line = line,
-                        adjustment = line.phase?.let { state.choices.adjustments[it] } ?: 0,
-                        onClick = line.phase?.takeIf { line.span != null }?.let { phase -> { adjusting = phase } },
-                    )
-                }
-            }
-            Text(
-                text = stringResource(
-                    R.string.outing_durations_source,
-                    durationLabel(state.approach),
-                    durationLabel(state.descent),
-                    durationLabel(state.back),
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = colors.textMuted,
-                modifier = Modifier.padding(top = 4.dp),
-            )
-            PaceBreakdown(state)
-            TextButton(onClick = onOpenSettings) {
-                Text(stringResource(R.string.outing_adjust_coefficients))
-            }
-            DaylightLine(state, timeFormatter)
         }
     }
 }
@@ -194,6 +225,7 @@ private fun StepRow(line: DayLine.Step, adjustment: Int, onClick: (() -> Unit)?)
         modifier = Modifier
             .fillMaxWidth()
             .then(if (onClick != null) Modifier.clickable(onClick = onClick) else Modifier)
+            .heightIn(min = 32.dp)
             .padding(start = 64.dp, top = 2.dp, bottom = 2.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(6.dp),
@@ -204,15 +236,12 @@ private fun StepRow(line: DayLine.Step, adjustment: Int, onClick: (() -> Unit)?)
         } else {
             stringResource(R.string.outing_step_duration, line.label, duration)
         }
-        Text(text, style = MaterialTheme.typography.bodySmall, color = colors.textSecondary, modifier = Modifier.weight(1f))
-        if (onClick != null) {
-            Icon(
-                Icons.Default.Edit,
-                contentDescription = stringResource(R.string.outing_adjust_step),
-                tint = colors.textMuted,
-                modifier = Modifier.size(16.dp),
-            )
-        }
+        Text(
+            text,
+            style = MaterialTheme.typography.bodySmall,
+            color = if (adjustment != 0) MaterialTheme.colorScheme.primary else colors.textSecondary,
+            modifier = Modifier.weight(1f),
+        )
     }
 }
 
@@ -255,66 +284,6 @@ private fun PaceBreakdown(state: OutingPlanUiState) {
             style = MaterialTheme.typography.bodySmall,
             color = colors.textMuted,
         )
-    }
-}
-
-@Composable
-private fun DaylightLine(state: OutingPlanUiState, timeFormatter: DateTimeFormatter) {
-    val colors = LocalDcColors.current
-    val daylight = state.daylight
-    val anchorIsPlace = state.schedule?.anchor == OutingAnchor.LEAVE_PLACE
-    val lines: List<Pair<String, androidx.compose.ui.graphics.Color>> = when (daylight) {
-        is DaylightCheck.Ok -> listOfNotNull(
-            stringResource(R.string.outing_daylight_ok, formatDuration(daylight.margin), daylight.sunset.format(timeFormatter)) to
-                colors.textSecondary,
-            daylight.latestDescentStart?.let {
-                stringResource(R.string.outing_daylight_turn_around, it.format(timeFormatter)) to colors.textSecondary
-            },
-        )
-
-        is DaylightCheck.Late -> {
-            val latest = daylight.latestAnchor
-            listOf(
-                when {
-                    latest == null -> stringResource(R.string.outing_daylight_too_long, daylight.sunset.format(timeFormatter))
-
-                    anchorIsPlace -> stringResource(
-                        R.string.outing_daylight_late_place,
-                        daylight.sunset.format(timeFormatter),
-                        state.place?.name.orEmpty(),
-                        latest.format(timeFormatter),
-                    )
-
-                    else -> stringResource(
-                        R.string.outing_daylight_late,
-                        daylight.sunset.format(timeFormatter),
-                        latest.format(timeFormatter),
-                    )
-                } to MaterialTheme.colorScheme.error,
-            )
-        }
-
-        DaylightCheck.Unknown -> listOf(stringResource(R.string.outing_daylight_unknown) to colors.textMuted)
-    }
-    lines.forEachIndexed { index, (text, color) ->
-        Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = when {
-                    daylight is DaylightCheck.Late -> Icons.Default.WarningAmber
-                    index > 0 -> Icons.Default.Flag
-                    else -> Icons.Default.WbTwilight
-                },
-                contentDescription = null,
-                modifier = Modifier.size(18.dp),
-                tint = color,
-            )
-            Text(
-                text,
-                style = MaterialTheme.typography.bodySmall,
-                color = color,
-                modifier = if (index == 0) Modifier.testTag(TestTags.OUTING_DAYLIGHT) else Modifier,
-            )
-        }
     }
 }
 

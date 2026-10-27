@@ -1,8 +1,12 @@
 package fr.descentecanyon.app.domain.model
 
+import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class OutingSettingsTest {
@@ -62,16 +66,40 @@ class OutingSettingsTest {
     }
 
     @Test
-    fun `the place by default is the stay of the day, else the one used last`() {
+    fun `the place by default is the one of the stay of the day, else the one used last`() {
         val home = Place("Maison", 45.0, 5.0, lastUsedAt = 10, id = 1)
-        val campsite = Place("Camping", 44.0, 6.0, LocalDate.of(2026, 7, 12), LocalDate.of(2026, 7, 18), lastUsedAt = 5, id = 2)
+        val campsite = Place("Camping", 44.0, 6.0, lastUsedAt = 5, id = 2)
         val places = listOf(home, campsite)
+        val stays = listOf(Stay(placeId = 2, start = LocalDate.of(2026, 7, 12), end = LocalDate.of(2026, 7, 18), id = 1))
 
-        assertEquals(campsite, places.defaultFor(LocalDate.of(2026, 7, 14)))
-        assertEquals(home, places.defaultFor(LocalDate.of(2026, 7, 20)))
+        assertEquals(campsite, places.defaultFor(LocalDate.of(2026, 7, 14), stays))
+        assertEquals(home, places.defaultFor(LocalDate.of(2026, 7, 20), stays))
         // The campsite used last, but its stay is over: home stays the default.
-        assertEquals(home, listOf(home, campsite.copy(lastUsedAt = 20)).defaultFor(LocalDate.of(2026, 7, 20)))
-        assertNull(listOf(home.copy(lastUsedAt = 0)).defaultFor(LocalDate.of(2026, 7, 20)))
+        assertEquals(home, listOf(home, campsite.copy(lastUsedAt = 20)).defaultFor(LocalDate.of(2026, 7, 20), stays))
+        assertNull(listOf(home.copy(lastUsedAt = 0)).defaultFor(LocalDate.of(2026, 7, 20), emptyList()))
+    }
+
+    @Test
+    fun `a stay gives its days still to come and its outings`() {
+        val stay = Stay(placeId = 2, start = LocalDate.of(2026, 7, 12), end = LocalDate.of(2026, 7, 16), id = 3)
+        val start = Instant.parse("2026-07-15T07:00:00Z")
+        fun outing(date: LocalDate, placeId: Long?, stayId: Long? = null) = PlannedOuting(
+            canyonId = 1,
+            canyonName = "Riolan",
+            start = start,
+            expectedBack = start,
+            alertAt = start,
+            choices = OutingChoices(date, LocalTime.of(9, 0)).withPlace(placeId),
+            stayId = stayId,
+        )
+
+        assertEquals((14..16).map { LocalDate.of(2026, 7, it) }, stay.daysFrom(LocalDate.of(2026, 7, 14)))
+        assertEquals(5, stay.daysFrom(LocalDate.of(2026, 7, 1)).size)
+        assertTrue(stay.daysFrom(LocalDate.of(2026, 7, 17)).isEmpty())
+        assertTrue(stay.includes(outing(LocalDate.of(2026, 7, 20), placeId = 9, stayId = 3)))
+        assertTrue(stay.includes(outing(LocalDate.of(2026, 7, 15), placeId = 2)))
+        assertFalse(stay.includes(outing(LocalDate.of(2026, 7, 15), placeId = 1)))
+        assertFalse(stay.includes(outing(LocalDate.of(2026, 7, 15), placeId = 2, stayId = 4)))
     }
 
     @Test

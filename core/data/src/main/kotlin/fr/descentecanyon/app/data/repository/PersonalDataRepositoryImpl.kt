@@ -4,9 +4,11 @@ import fr.descentecanyon.app.data.local.user.dao.CanyonNoteDao
 import fr.descentecanyon.app.data.local.user.dao.FavoriteDao
 import fr.descentecanyon.app.data.local.user.dao.LogbookDao
 import fr.descentecanyon.app.data.local.user.dao.PlaceDao
+import fr.descentecanyon.app.data.local.user.dao.StayDao
 import fr.descentecanyon.app.data.local.user.entity.CanyonNoteEntity
 import fr.descentecanyon.app.data.local.user.entity.FavoriteEntity
 import fr.descentecanyon.app.data.local.user.entity.PlaceEntity
+import fr.descentecanyon.app.data.local.user.entity.StayEntity
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.appError
 import fr.descentecanyon.app.domain.error.suspendRunCatching
@@ -32,6 +34,7 @@ class PersonalDataRepositoryImpl @Inject constructor(
     private val canyonNoteDao: CanyonNoteDao,
     private val favoriteDao: FavoriteDao,
     private val placeDao: PlaceDao,
+    private val stayDao: StayDao,
     private val logbookRepository: LogbookRepository,
     private val clock: Clock,
 ) : PersonalDataRepository {
@@ -43,7 +46,12 @@ class PersonalDataRepositoryImpl @Inject constructor(
             logbook = logbookDao.getAll().mapNotNull { it.toDomain() }.map { it.toItem() },
             memos = canyonNoteDao.getAll().map { MemoItem(it.canyonId, it.text, it.updatedAt) },
             favorites = favoriteDao.observeIds().first(),
-            places = placeDao.getAll().map { PlaceItem(it.name, it.latitude, it.longitude, it.stayStart, it.stayEnd) },
+            places = placeDao.getAll().map { PlaceItem(it.name, it.latitude, it.longitude) },
+            stays = placeDao.getAll().associateBy { it.id }.let { places ->
+                stayDao.getAll().mapNotNull { stay ->
+                    places[stay.placeId]?.let { place -> StayItem(place.name, place.latitude, place.longitude, stay.start, stay.end) }
+                }
+            },
         ),
     )
 
@@ -76,18 +84,29 @@ class PersonalDataRepositoryImpl @Inject constructor(
         val knownFavorites = favoriteDao.observeIds().first().toSet()
         val newFavorites = file.favorites.distinct().filterNot { it in knownFavorites }
         favoriteDao.insertAll(newFavorites.map { FavoriteEntity(canyonId = it, addedAt = clock.millis()) })
-        val knownPlaces = placeDao.getAll().map { Triple(it.name, it.latitude, it.longitude) }.toSet()
-        file.places.filter { it.name.isNotBlank() && Triple(it.name, it.latitude, it.longitude) !in knownPlaces }.forEach { place ->
-            placeDao.upsert(
-                PlaceEntity(
-                    name = place.name,
-                    latitude = place.latitude,
-                    longitude = place.longitude,
-                    stayStart = place.stayStart,
-                    stayEnd = place.stayEnd,
-                    createdAt = clock.millis(),
-                ),
-            )
+        val placeIds = placeDao.getAll().associate { Triple(it.name, it.latitude, it.longitude) to it.id }.toMutableMap()
+        file.places.filter { it.name.isNotBlank() }.forEach { place ->
+            val key = Triple(place.name, place.latitude, place.longitude)
+            if (key !in placeIds) {
+                placeIds[key] = placeDao.upsert(
+                    PlaceEntity(name = place.name, latitude = place.latitude, longitude = place.longitude, createdAt = clock.millis()),
+                )
+            }
+        }
+        // Files of version 2.7 kept the stay dates with the place.
+        val legacyStays = file.places.mapNotNull { place ->
+            place.stayStart?.let { start ->
+                place.stayEnd?.let { end -> StayItem(place.name, place.latitude, place.longitude, start, end) }
+            }
+        }
+        val knownStays = stayDao.getAll().map { Triple(it.placeId, it.start, it.end) }.toMutableSet()
+        (file.stays + legacyStays).forEach { stay ->
+            val placeId = placeIds[Triple(stay.placeName, stay.latitude, stay.longitude)] ?: return@forEach
+            val start = runCatching { LocalDate.parse(stay.start) }.getOrNull() ?: return@forEach
+            val end = runCatching { LocalDate.parse(stay.end) }.getOrNull()?.takeIf { !it.isBefore(start) } ?: return@forEach
+            if (knownStays.add(Triple(placeId, start.toString(), end.toString()))) {
+                stayDao.upsert(StayEntity(placeId = placeId, start = start.toString(), end = end.toString(), createdAt = clock.millis()))
+            }
         }
         PersonalDataImport(outings = outings, memos = memos, favorites = newFavorites.size)
     }
@@ -151,6 +170,8 @@ internal data class PersonalDataFile(
     val favorites: List<Int> = emptyList(),
     /** Starting places of outings; absent from the files of older versions. */
     val places: List<PlaceItem> = emptyList(),
+    /** Stays at the places, from version 2.8. */
+    val stays: List<StayItem> = emptyList(),
 )
 
 @Serializable
@@ -174,6 +195,11 @@ internal data class PlaceItem(
     val name: String,
     val latitude: Double,
     val longitude: Double,
+    /** Version 2.7 only: the stay at the place. */
     val stayStart: String? = null,
     val stayEnd: String? = null,
 )
+
+/** A stay at the place of that name and position; ISO dates. */
+@Serializable
+internal data class StayItem(val placeName: String, val latitude: Double, val longitude: Double, val start: String, val end: String)

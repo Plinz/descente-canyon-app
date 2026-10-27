@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.DirectionsRun
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material3.Card
@@ -32,6 +33,7 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -89,6 +91,7 @@ internal fun CanyonDetailContent(
     nearbyCanyons: List<NearbyCanyon> = emptyList(),
     onNearbyCanyonClick: (Int) -> Unit = {},
     onPlanOuting: () -> Unit = {},
+    onStartOutingNow: () -> Unit = {},
     logbook: List<LogbookEntry> = emptyList(),
     knownCompanions: List<String> = emptyList(),
     onSaveLogbookEntry: (LogbookEntry) -> Unit = {},
@@ -150,6 +153,16 @@ internal fun CanyonDetailContent(
                     .padding(horizontal = 16.dp, vertical = 4.dp)
                     .testTag(TestTags.DETAIL_PLAN_OUTING),
             )
+        }
+        item {
+            // Already at the parking or about to leave: the follow-up starts at once, the plan can wait.
+            TextButton(
+                onClick = onStartOutingNow,
+                modifier = Modifier.padding(horizontal = 16.dp).testTag(TestTags.DETAIL_START_NOW),
+            ) {
+                Icon(Icons.AutoMirrored.Filled.DirectionsRun, contentDescription = null)
+                Text(stringResource(R.string.outing_start_now), modifier = Modifier.padding(start = 8.dp))
+            }
         }
         item {
             val canyon = detail.canyon

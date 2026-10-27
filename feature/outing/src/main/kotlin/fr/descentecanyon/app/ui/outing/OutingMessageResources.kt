@@ -18,7 +18,7 @@ import java.time.format.FormatStyle
 import java.util.Locale
 import kotlin.math.roundToInt
 
-/** [OutingMessageStrings] from the app resources, in the language of [resources]. */
+/** [OutingMessageStrings] from the app resources. */
 internal class ResourceOutingMessageStrings(private val resources: Resources) : OutingMessageStrings {
     private fun text(id: Int, vararg args: Any) = resources.getString(id, *args)
 
@@ -66,7 +66,7 @@ internal class ResourceOutingMessageStrings(private val resources: Resources) : 
     override fun delay(name: String, alertTime: String, number: String) = text(R.string.outing_message_delay, name, alertTime, number)
 }
 
-/** What the messages say about the outing on screen, written with [resources] and [locale] (the language chosen). */
+/** What the messages say about the outing on screen, in the language of the app. */
 internal fun outingMessageData(state: OutingPlanUiState, resources: Resources, locale: Locale): OutingMessageData? {
     val canyon = state.canyon?.canyon ?: return null
     val schedule = state.schedule ?: return null

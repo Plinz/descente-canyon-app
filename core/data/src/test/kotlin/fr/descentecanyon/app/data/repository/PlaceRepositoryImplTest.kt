@@ -10,9 +10,12 @@ import fr.descentecanyon.app.domain.model.DriveTimeSource
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.Place
+import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.testutil.TestDatabases
 import io.mockk.mockk
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -32,7 +35,9 @@ class PlaceRepositoryImplTest {
 
     private val clock = Clock.fixed(Instant.parse("2026-07-14T06:00:00Z"), ZoneOffset.UTC)
     private val database: UserDatabase = TestDatabases.user()
-    private val places = PlaceRepositoryImpl(database.placeDao(), database.driveTimeDao(), clock)
+    private val outings = OutingRepositoryImpl(database.plannedOutingDao(), clock)
+    private val stays = StayRepositoryImpl(database.stayDao(), database.plannedOutingDao(), clock)
+    private val places = PlaceRepositoryImpl(database.placeDao(), database.driveTimeDao(), stays, database.stayDao(), clock)
     private var routeCalls = 0
     private val routing = object : RoutingRemoteSource(mockk<ApiHttpClient>()) {
         override suspend fun drive(fromLatitude: Double, fromLongitude: Double, toLatitude: Double, toLongitude: Double): OsrmRouteDto {
@@ -47,14 +52,24 @@ class PlaceRepositoryImplTest {
     fun tearDown() = database.close()
 
     @Test
-    fun `places used last come first and keep their stay`() = runTest {
+    fun `places used last come first, and a deleted place takes its stays and their drafts away`() = runTest {
         val home = places.save(Place("Maison", 45.0, 5.0))
-        val campsite = places.save(Place("Camping", 45.1, 6.08, LocalDate.of(2026, 7, 12), LocalDate.of(2026, 7, 18)))
+        val campsite = places.save(Place("Camping", 45.1, 6.08))
         places.markUsed(home)
+        assertEquals(listOf("Maison", "Camping"), places.observeAll().first().map { it.name })
 
-        val all = places.observeAll().first()
-        assertEquals(listOf("Maison", "Camping"), all.map { it.name })
-        assertEquals(LocalDate.of(2026, 7, 18), places.get(campsite)?.stayEnd)
+        val stay = stays.save(Stay(campsite, LocalDate.of(2026, 7, 12), LocalDate.of(2026, 7, 18)))
+        assertEquals(listOf(Stay(campsite, LocalDate.of(2026, 7, 12), LocalDate.of(2026, 7, 18), stay)), stays.observeAll().first())
+        val start = clock.instant().plus(Duration.ofDays(1))
+        val planned = PlannedOuting(42, "Riolan", start, start, start.plus(Duration.ofHours(6)), stayId = stay)
+        val draft = outings.save(planned.copy(tracked = false))
+        val followed = outings.save(planned)
+
+        places.delete(campsite)
+        assertEquals(emptyList<Stay>(), stays.observeAll().first())
+        assertNull(outings.get(draft))
+        assertEquals(null, outings.get(followed)?.stayId)
+        assertEquals(listOf("Maison"), places.observeAll().first().map { it.name })
     }
 
     @Test

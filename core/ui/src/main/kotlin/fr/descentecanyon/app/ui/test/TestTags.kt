@@ -29,9 +29,7 @@ object TestTags {
     const val OUTING_TIMELINE = "outing_timeline"
     const val OUTING_DAYLIGHT = "outing_daylight"
     const val OUTING_SHARE_BUTTON = "outing_share_button"
-    const val OUTING_SAVE_BUTTON = "outing_save_button"
     const val OUTING_END_BUTTON = "outing_end_button"
-    const val OUTING_EMERGENCY_BUTTON = "outing_emergency_button"
     const val HOME_ACTIVE_OUTING = "home_active_outing"
     const val EMERGENCY_LIST = "emergency_list"
     const val EMERGENCY_POSITION = "emergency_position"
@@ -57,12 +55,9 @@ object TestTags {
     const val MY_ACCOUNT_LOGBOOK = "my_account_logbook"
     const val MY_ACCOUNT_IMPORT_SITE = "my_account_import_site"
     const val MY_ACCOUNT_OUTINGS = "my_account_outings"
-    const val OUTING_TOP_SAVE = "outing_top_save"
     const val OUTING_STATUS = "outing_status"
-    const val OUTING_PLACE_FIELD = "outing_place_field"
     const val OUTING_DRIVE = "outing_drive"
     const val OUTING_GROUP_SIZE = "outing_group_size"
-    const val OUTING_UPDATE_BUTTON = "outing_update_button"
     const val OUTING_DELAY_BUTTON = "outing_delay_button"
     const val OUTING_GEAR = "outing_gear"
     const val OUTING_MESSAGES = "outing_messages"
@@ -75,6 +70,21 @@ object TestTags {
     const val PLACE_NAME = "place_name"
     const val OUTING_SETTINGS_LIST = "outing_settings_list"
     const val STAY_LIST = "stay_list"
+    const val OUTING_DAY_ROW = "outing_day_row"
+    const val OUTING_DEPARTURE_ROW = "outing_departure_row"
+    const val OUTING_GROUP_ROW = "outing_group_row"
+    const val OUTING_SUMMARY = "outing_summary"
+    const val OUTING_ALERT_ROW = "outing_alert_row"
+    const val OUTING_ACTIVATE_BUTTON = "outing_activate_button"
+    const val OUTING_NOTIFY_BUTTON = "outing_notify_button"
+    const val OUTING_MENU = "outing_menu"
+    const val OUTING_DETAIL = "outing_detail"
+    const val OUTING_BAG = "outing_bag"
+    const val OUTINGS_NEW_STAY = "outings_new_stay"
+    const val STAY_EDIT_SAVE = "stay_edit_save"
+    const val STAY_ADD_PLACE = "stay_add_place"
+    const val STAY_PICKER_LIST = "stay_picker_list"
+    const val DETAIL_START_NOW = "detail_start_now"
 
     fun canyonCard(id: Int): String = "canyon_card_$id"
 
@@ -92,9 +102,13 @@ object TestTags {
 
     fun outingRow(id: Long): String = "outing_row_$id"
 
-    fun placePlan(id: Long): String = "place_plan_$id"
-
     fun stayCandidate(id: Int): String = "stay_candidate_$id"
 
-    fun stayDay(canyonId: Int, date: String): String = "stay_day_${canyonId}_$date"
+    fun stayDay(date: String): String = "stay_day_$date"
+
+    fun stayChoose(date: String): String = "stay_choose_$date"
+
+    fun stayRow(id: Long): String = "stay_row_$id"
+
+    fun stayPlaceOption(id: Long): String = "stay_place_option_$id"
 }

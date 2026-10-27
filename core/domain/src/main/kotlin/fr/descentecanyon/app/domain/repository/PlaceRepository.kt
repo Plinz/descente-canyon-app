@@ -13,7 +13,7 @@ interface PlaceRepository {
     /** Adds a place ([Place.id] 0) or replaces it; returns its id. */
     suspend fun save(place: Place): Long
 
-    /** Forgets the place and its drive times. */
+    /** Forgets the place, its drive times and its stays (with the drafts of their outings). */
     suspend fun delete(id: Long)
 
     /** An outing was planned from it: it comes first in the lists. */

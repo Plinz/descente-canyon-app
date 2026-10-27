@@ -1,10 +1,17 @@
 package fr.descentecanyon.app.ui.outing
 
-import android.content.Context
-import android.content.res.Configuration
 import android.content.res.Resources
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.HelpOutline
+import androidx.compose.material.icons.filled.AcUnit
+import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.Thunderstorm
+import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material.icons.filled.WbCloudy
+import androidx.compose.material.icons.filled.WbSunny
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.res.stringResource
@@ -14,6 +21,7 @@ import fr.descentecanyon.app.domain.model.GearHint
 import fr.descentecanyon.app.domain.model.GearItem
 import fr.descentecanyon.app.domain.model.GearKey
 import fr.descentecanyon.app.domain.model.TimeSpan
+import fr.descentecanyon.app.domain.model.WeatherCondition
 import java.time.Duration
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -123,17 +131,13 @@ internal fun gearKeyLabel(key: GearKey): Int = when (key) {
     GearKey.GUEST_HARNESS -> R.string.gear_guest_harness
 }
 
-/** Resources in [locale], for a message written in another language than the app's. */
-internal fun Context.resourcesIn(locale: Locale): Resources {
-    val configuration = Configuration(resources.configuration).apply { setLocale(locale) }
-    return createConfigurationContext(configuration).resources
+/** The icon of a weather condition, as on the canyon page. */
+internal fun weatherIcon(condition: WeatherCondition): ImageVector = when (condition) {
+    WeatherCondition.CLEAR -> Icons.Default.WbSunny
+    WeatherCondition.PARTLY_CLOUDY -> Icons.Default.WbCloudy
+    WeatherCondition.CLOUDY, WeatherCondition.FOG -> Icons.Default.Cloud
+    WeatherCondition.DRIZZLE, WeatherCondition.RAIN -> Icons.Default.WaterDrop
+    WeatherCondition.SNOW -> Icons.Default.AcUnit
+    WeatherCondition.THUNDERSTORM -> Icons.Default.Thunderstorm
+    WeatherCondition.UNKNOWN -> Icons.AutoMirrored.Filled.HelpOutline
 }
-
-/** Languages the messages can be written in: those of the app. */
-internal val MESSAGE_LANGUAGES: List<Locale> = listOf(
-    Locale.FRENCH,
-    Locale.ENGLISH,
-    Locale.GERMAN,
-    Locale.forLanguageTag("es"),
-    Locale.ITALIAN,
-)

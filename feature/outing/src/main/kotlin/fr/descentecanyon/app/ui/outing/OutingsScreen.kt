@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.EventAvailable
 import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material.icons.filled.Place
@@ -24,7 +25,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -43,17 +43,21 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.agenda
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PlaceRepository
+import fr.descentecanyon.app.domain.repository.StayRepository
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
 import fr.descentecanyon.app.ui.design.DcEmptyState
+import fr.descentecanyon.app.ui.design.DcOutdoorActionCard
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.Clock
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -63,27 +67,58 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
-/** Opens the plan of an outing: a saved one ([outingId]), or a new one of [date] from [placeId] (0: none). */
-data class OutingPlanRequest(val canyonId: Int, val outingId: Long = 0, val date: java.time.LocalDate? = null, val placeId: Long = 0)
+/**
+ * Opens the plan of an outing: a kept one ([outingId]), or a new one of [date] from [placeId] (0: none),
+ * for a day of the stay [stayId] (0: none); [startNow] turns its follow-up on at once.
+ */
+data class OutingPlanRequest(
+    val canyonId: Int,
+    val outingId: Long = 0,
+    val date: java.time.LocalDate? = null,
+    val placeId: Long = 0,
+    val stayId: Long = 0,
+    val startNow: Boolean = false,
+)
+
+/** A stay still to come or under way, with its place and how many of its days have an outing. */
+data class StaySummary(val stay: Stay, val place: Place?, val outings: Int)
 
 data class OutingsUiState(
     val isLoading: Boolean = true,
     val underway: PlannedOuting? = null,
     val upcoming: List<PlannedOuting> = emptyList(),
-    val places: List<Place> = emptyList(),
-)
+    /** Drafts outside the stays shown: those are in their stay. */
+    val drafts: List<PlannedOuting> = emptyList(),
+    val stays: List<StaySummary> = emptyList(),
+) {
+    val isEmpty: Boolean get() = underway == null && upcoming.isEmpty() && drafts.isEmpty() && stays.isEmpty()
+}
 
-/** The outings planned, the one under way first, and the places they start from. */
+/** The outings planned (the one under way first), the stays, then the drafts. */
 @HiltViewModel
-class OutingsViewModel @Inject constructor(outingRepository: OutingRepository, placeRepository: PlaceRepository, clock: Clock) :
-    ViewModel() {
+class OutingsViewModel @Inject constructor(
+    outingRepository: OutingRepository,
+    stayRepository: StayRepository,
+    placeRepository: PlaceRepository,
+    clock: Clock,
+) : ViewModel() {
 
     /** Outings move from planned to under way with the time. */
-    val uiState: StateFlow<OutingsUiState> = combine(outingRepository.observeAll().agenda(clock), placeRepository.observeAll()) {
-            agenda,
-            places,
-        ->
-        OutingsUiState(isLoading = false, underway = agenda.underway, upcoming = agenda.upcoming, places = places)
+    val uiState: StateFlow<OutingsUiState> = combine(
+        outingRepository.observeAll().agenda(clock),
+        stayRepository.observeAll(),
+        placeRepository.observeAll(),
+    ) { agenda, stays, places ->
+        val today = LocalDate.now(clock)
+        val shown = stays.filterNot { it.isOver(today) }
+        val all = listOfNotNull(agenda.underway) + agenda.upcoming + agenda.drafts
+        OutingsUiState(
+            isLoading = false,
+            underway = agenda.underway,
+            upcoming = agenda.upcoming,
+            drafts = agenda.drafts.filterNot { draft -> shown.any { it.includes(draft) } },
+            stays = shown.map { stay -> StaySummary(stay, places.firstOrNull { it.id == stay.placeId }, all.count(stay::includes)) },
+        )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), OutingsUiState())
 
     private companion object {
@@ -95,7 +130,8 @@ class OutingsViewModel @Inject constructor(outingRepository: OutingRepository, p
 fun OutingsScreen(
     onBackClick: () -> Unit,
     onOpenOuting: (OutingPlanRequest) -> Unit,
-    onPlanStay: (placeId: Long) -> Unit,
+    onOpenStay: (stayId: Long) -> Unit,
+    onNewStay: () -> Unit,
     onManagePlaces: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: OutingsViewModel = hiltViewModel(),
@@ -130,6 +166,21 @@ fun OutingsScreen(
                         })
                     }
                 }
+                item(key = "new-stay") {
+                    DcOutdoorActionCard(
+                        title = stringResource(R.string.outings_stay_action),
+                        hint = stringResource(R.string.outings_stay_action_hint),
+                        icon = Icons.Default.CalendarMonth,
+                        onClick = onNewStay,
+                        modifier = Modifier.fillMaxWidth().testTag(TestTags.OUTINGS_NEW_STAY),
+                    )
+                }
+                if (state.stays.isNotEmpty()) {
+                    item(key = "stays") { SectionTitle(stringResource(R.string.outings_stays)) }
+                    items(state.stays, key = { "stay-${it.stay.id}" }) { summary ->
+                        StayRow(summary = summary, onClick = { onOpenStay(summary.stay.id) })
+                    }
+                }
                 if (state.upcoming.isNotEmpty()) {
                     item(key = "upcoming") { SectionTitle(stringResource(R.string.outings_upcoming)) }
                     items(state.upcoming, key = { "outing-${it.id}" }) { outing ->
@@ -138,7 +189,15 @@ fun OutingsScreen(
                         })
                     }
                 }
-                if (!state.isLoading && state.underway == null && state.upcoming.isEmpty()) {
+                if (state.drafts.isNotEmpty()) {
+                    item(key = "drafts") { SectionTitle(stringResource(R.string.outings_drafts)) }
+                    items(state.drafts, key = { "draft-${it.id}" }) { outing ->
+                        OutingRow(outing = outing, underway = false, onClick = {
+                            onOpenOuting(OutingPlanRequest(outing.canyonId, outing.id))
+                        })
+                    }
+                }
+                if (!state.isLoading && state.isEmpty) {
                     item(key = "empty") {
                         DcEmptyState(
                             title = stringResource(R.string.outings_empty_title),
@@ -148,26 +207,36 @@ fun OutingsScreen(
                     }
                 }
                 item(key = "places") {
-                    SectionTitle(stringResource(R.string.outings_places_title))
-                    Text(
-                        stringResource(R.string.outings_places_hint),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = LocalDcColors.current.textSecondary,
-                    )
-                }
-                items(state.places, key = { "place-${it.id}" }) { place ->
-                    PlaceStayRow(place = place, onPlanStay = { onPlanStay(place.id) })
-                }
-                item(key = "manage") {
                     OutlinedButton(onClick = onManagePlaces, modifier = Modifier.fillMaxWidth()) {
                         Icon(Icons.Default.Place, contentDescription = null)
-                        Text(
-                            stringResource(if (state.places.isEmpty()) R.string.places_add else R.string.places_manage),
-                            modifier = Modifier.padding(start = 8.dp),
-                        )
+                        Text(stringResource(R.string.places_title), modifier = Modifier.padding(start = 8.dp))
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun StayRow(summary: StaySummary, onClick: () -> Unit) {
+    val colors = LocalDcColors.current
+    DcCard(modifier = Modifier.fillMaxWidth().testTag(TestTags.stayRow(summary.stay.id)), onClick = onClick, contentPadding = 12.dp) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Icon(Icons.Default.Place, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            Column(modifier = Modifier.weight(1f)) {
+                Text(
+                    summary.place?.name ?: stringResource(R.string.stay_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                Text(stayRangeLabel(summary.stay), style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
+                Text(
+                    pluralStringResource(R.plurals.stay_outings_count, summary.outings, summary.outings),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colors.textSecondary,
+                )
+            }
+            Icon(Icons.Default.ChevronRight, contentDescription = null, tint = colors.textMuted)
         }
     }
 }
@@ -222,29 +291,21 @@ internal fun OutingRow(outing: PlannedOuting, underway: Boolean, onClick: () -> 
                 )
                 Text(
                     buildString {
-                        append(stringResource(R.string.outings_row_alert, alert))
+                        append(
+                            if (outing.tracked) {
+                                stringResource(
+                                    R.string.outings_row_alert,
+                                    alert,
+                                )
+                            } else {
+                                stringResource(R.string.outings_row_draft)
+                            },
+                        )
                         outing.groupSize?.let { append(" · ").append(pluralStringResource(R.plurals.outing_group_size, it, it)) }
                     },
                     style = MaterialTheme.typography.bodySmall,
                     color = LocalDcColors.current.textSecondary,
                 )
-            }
-        }
-    }
-}
-
-@Composable
-private fun PlaceStayRow(place: Place, onPlanStay: () -> Unit) {
-    DcCard(modifier = Modifier.fillMaxWidth(), contentPadding = 12.dp) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            Icon(Icons.Default.Place, contentDescription = null, tint = LocalDcColors.current.textSecondary)
-            Column(modifier = Modifier.weight(1f)) {
-                Text(place.name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
-                stayLabel(place)?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = LocalDcColors.current.textSecondary) }
-            }
-            TextButton(onClick = onPlanStay, modifier = Modifier.testTag(TestTags.placePlan(place.id))) {
-                Icon(Icons.Default.CalendarMonth, contentDescription = null)
-                Text(stringResource(R.string.stay_plan_action), modifier = Modifier.padding(start = 6.dp))
             }
         }
     }

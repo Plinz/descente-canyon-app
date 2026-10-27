@@ -98,6 +98,7 @@ fun CanyonDetailScreen(
     onUserClick: (String) -> Unit = {},
     onOpenCanyon: (Int) -> Unit = {},
     onPlanOuting: () -> Unit = {},
+    onStartOutingNow: () -> Unit = {},
     onOpenEmergency: () -> Unit = {},
     /** A flow report prefilled from an outing just logged (date, descended, flow seen). */
     onReportOuting: (LogbookEntry) -> Unit = {},
@@ -286,6 +287,7 @@ fun CanyonDetailScreen(
                             onSavePersonalNote = viewModel::savePersonalNote,
                             nearbyCanyons = uiState.nearbyCanyons,
                             onPlanOuting = onPlanOuting,
+                            onStartOutingNow = onStartOutingNow,
                             logbook = uiState.logbook,
                             knownCompanions = uiState.knownCompanions,
                             onSaveLogbookEntry = viewModel::saveLogbookEntry,

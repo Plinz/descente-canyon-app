@@ -27,6 +27,7 @@ import fr.descentecanyon.app.data.repository.PlaceRepositoryImpl
 import fr.descentecanyon.app.data.repository.PreferencesRepositoryImpl
 import fr.descentecanyon.app.data.repository.RecentCanyonsRepositoryImpl
 import fr.descentecanyon.app.data.repository.SiteAccountRepositoryImpl
+import fr.descentecanyon.app.data.repository.StayRepositoryImpl
 import fr.descentecanyon.app.data.repository.WeatherRepositoryImpl
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
@@ -51,6 +52,7 @@ import fr.descentecanyon.app.domain.repository.PlaceRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.repository.SiteAccountRepository
+import fr.descentecanyon.app.domain.repository.StayRepository
 import fr.descentecanyon.app.domain.repository.WeatherRepository
 import javax.inject.Singleton
 
@@ -133,6 +135,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindPlaceRepository(impl: PlaceRepositoryImpl): PlaceRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindStayRepository(impl: StayRepositoryImpl): StayRepository
 
     @Binds
     @Singleton

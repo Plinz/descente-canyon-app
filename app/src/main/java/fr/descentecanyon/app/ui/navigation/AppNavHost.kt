@@ -46,12 +46,15 @@ import fr.descentecanyon.app.ui.outing.OutingPlanScreen
 import fr.descentecanyon.app.ui.outing.OutingSettingsScreen
 import fr.descentecanyon.app.ui.outing.OutingsScreen
 import fr.descentecanyon.app.ui.outing.PlacesScreen
-import fr.descentecanyon.app.ui.outing.StayPlannerScreen
+import fr.descentecanyon.app.ui.outing.StayCanyonPickerScreen
+import fr.descentecanyon.app.ui.outing.StayEditScreen
+import fr.descentecanyon.app.ui.outing.StayScreen
 import fr.descentecanyon.app.ui.pending.PendingDebitsScreen
 import fr.descentecanyon.app.ui.search.SearchScreen
 import fr.descentecanyon.app.ui.settings.SettingsScreen
 import fr.descentecanyon.app.ui.users.UserProfileScreen
 import fr.descentecanyon.app.ui.users.UserSearchScreen
+import java.time.LocalDate
 
 /**
  * Every navigation started from a click goes through [dropUnlessResumed]: while a screen enters or
@@ -185,6 +188,9 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 // Not single top: another canyon is pushed so "back" returns to this one.
                 onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigate(Screen.CanyonDetail(canyonId)) },
                 onPlanOuting = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingPlan(detail.canyonId)) },
+                onStartOutingNow = dropUnlessResumed {
+                    navController.navigateSingleTop(Screen.OutingPlan(detail.canyonId, startNow = true))
+                },
                 onOpenEmergency = dropUnlessResumed { navController.navigateSingleTop(Screen.Emergency(detail.canyonId)) },
                 onReportOuting = dropUnlessResumedWith { entry: LogbookEntry ->
                     navController.navigateSingleTop(
@@ -297,27 +303,50 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
             OutingsScreen(
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
                 onOpenOuting = dropUnlessResumedWith { request: OutingPlanRequest -> navController.openOutingPlan(request) },
-                onPlanStay = dropUnlessResumedWith { placeId: Long -> navController.navigateSingleTop(Screen.StayPlanner(placeId)) },
+                onOpenStay = dropUnlessResumedWith { stayId: Long -> navController.navigateSingleTop(Screen.Stay(stayId)) },
+                onNewStay = dropUnlessResumed { navController.navigateSingleTop(Screen.StayEdit()) },
                 onManagePlaces = dropUnlessResumed { navController.navigateSingleTop(Screen.Places) },
             )
         }
 
         composable<Screen.Places> {
-            PlacesScreen(
-                onBackClick = dropUnlessResumed { navController.popBackStack() },
-                onPlanStay = dropUnlessResumedWith { placeId: Long -> navController.navigateSingleTop(Screen.StayPlanner(placeId)) },
-            )
+            PlacesScreen(onBackClick = dropUnlessResumed { navController.popBackStack() })
         }
 
         composable<Screen.OutingSettings> {
             OutingSettingsScreen(onBackClick = dropUnlessResumed { navController.popBackStack() })
         }
 
-        composable<Screen.StayPlanner> {
-            StayPlannerScreen(
+        composable<Screen.Stay> {
+            StayScreen(
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
-                onPlanDay = dropUnlessResumedWith { request: OutingPlanRequest -> navController.openOutingPlan(request) },
-                onEditPlace = dropUnlessResumed { navController.navigateSingleTop(Screen.Places) },
+                onEdit = dropUnlessResumedWith { stayId: Long -> navController.navigateSingleTop(Screen.StayEdit(stayId)) },
+                onChooseCanyon = dropUnlessResumedWith { stayId: Long, date: LocalDate ->
+                    navController.navigateSingleTop(Screen.StayCanyonPicker(stayId, date.toString()))
+                },
+                onOpenOuting = dropUnlessResumedWith { request: OutingPlanRequest -> navController.openOutingPlan(request) },
+            )
+        }
+
+        composable<Screen.StayEdit> {
+            StayEditScreen(
+                onClose = dropUnlessResumed { navController.popBackStack() },
+                // A new stay opens in place of its form; a stay changed goes back to it.
+                onSaved = { stayId, isNew ->
+                    navController.closeIfCurrent<Screen.StayEdit>()
+                    if (isNew) navController.navigateSingleTop(Screen.Stay(stayId))
+                },
+            )
+        }
+
+        composable<Screen.StayCanyonPicker> {
+            StayCanyonPickerScreen(
+                onBackClick = dropUnlessResumed { navController.popBackStack() },
+                // The plan takes the place of the list: back from it is the stay, which shows the day filled.
+                onPick = dropUnlessResumedWith { request: OutingPlanRequest ->
+                    navController.closeIfCurrent<Screen.StayCanyonPicker>()
+                    navController.openOutingPlan(request)
+                },
             )
         }
 
@@ -403,7 +432,7 @@ private fun <A, B> dropUnlessResumedWith(block: (A, B) -> Unit): (A, B) -> Unit 
 }
 
 private fun NavHostController.openOutingPlan(request: OutingPlanRequest) = navigateSingleTop(
-    Screen.OutingPlan(request.canyonId, request.outingId, request.date?.toString(), request.placeId),
+    Screen.OutingPlan(request.canyonId, request.outingId, request.date?.toString(), request.placeId, request.stayId, request.startNow),
 )
 
 private const val DEBIT_SUBMISSION_REFRESH_KEY = "debit_submission_refresh"

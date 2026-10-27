@@ -50,8 +50,10 @@ class OutingRepositoryImpl @Inject constructor(private val dao: PlannedOutingDao
         alertAt = alertAt.toEpochMilli(),
         departure = departure?.toEpochMilli(),
         groupSize = groupSize,
-        relativeInformed = relativeInformed,
+        informedAlertAt = informedAlertAt?.toEpochMilli(),
         choicesJson = choices?.let { json.encodeToString(StoredChoices.serializer(), StoredChoices.of(it)) },
+        tracked = tracked,
+        stayId = stayId,
         updatedAt = clock.millis(),
     )
 
@@ -65,10 +67,12 @@ class OutingRepositoryImpl @Inject constructor(private val dao: PlannedOutingDao
         alertAt = Instant.ofEpochMilli(alertAt),
         departure = departure?.let(Instant::ofEpochMilli),
         groupSize = groupSize,
-        relativeInformed = relativeInformed,
+        informedAlertAt = informedAlertAt?.let(Instant::ofEpochMilli),
         choices = choicesJson?.let { payload ->
             runCatching { json.decodeFromString(StoredChoices.serializer(), payload) }.getOrNull()?.toDomain()
         },
+        tracked = tracked,
+        stayId = stayId,
     )
 
     /** [OutingChoices] as text: enum names and ISO dates, readable by later versions. */

@@ -18,6 +18,7 @@ import fr.descentecanyon.app.data.local.user.dao.PhotoDao
 import fr.descentecanyon.app.data.local.user.dao.PlaceDao
 import fr.descentecanyon.app.data.local.user.dao.PlannedOutingDao
 import fr.descentecanyon.app.data.local.user.dao.RecentCanyonDao
+import fr.descentecanyon.app.data.local.user.dao.StayDao
 import fr.descentecanyon.app.data.local.user.entity.CanyonNoteEntity
 import fr.descentecanyon.app.data.local.user.entity.DailyWeatherEntity
 import fr.descentecanyon.app.data.local.user.entity.DebitEntity
@@ -30,11 +31,12 @@ import fr.descentecanyon.app.data.local.user.entity.PhotoEntity
 import fr.descentecanyon.app.data.local.user.entity.PlaceEntity
 import fr.descentecanyon.app.data.local.user.entity.PlannedOutingEntity
 import fr.descentecanyon.app.data.local.user.entity.RecentCanyonEntity
+import fr.descentecanyon.app.data.local.user.entity.StayEntity
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 /**
- * Data that must survive app updates: favorites, logbook, memos, planned outings, starting places,
+ * Data that must survive app updates: favorites, logbook, memos, planned outings, starting places, stays,
  * debit reports waiting to be sent and the caches filled at runtime. Every schema change needs a
  * migration covered by `UserDatabaseMigrationTest`.
  */
@@ -52,8 +54,9 @@ import kotlinx.serialization.json.Json
         PlannedOutingEntity::class,
         PlaceEntity::class,
         DriveTimeEntity::class,
+        StayEntity::class,
     ],
-    version = 6,
+    version = 7,
     exportSchema = true,
 )
 abstract class UserDatabase : RoomDatabase() {
@@ -69,6 +72,7 @@ abstract class UserDatabase : RoomDatabase() {
     abstract fun plannedOutingDao(): PlannedOutingDao
     abstract fun placeDao(): PlaceDao
     abstract fun driveTimeDao(): DriveTimeDao
+    abstract fun stayDao(): StayDao
 
     companion object {
         const val DATABASE_NAME = "user.db"
@@ -169,8 +173,53 @@ abstract class UserDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Version 7: stays get their own table (the stay dates of a place become a stay), planned
+         * outings can be drafts, remember the alert time sent to a relative and the stay they belong to.
+         * The outings saved before were followed.
+         */
+        val MIGRATION_6_7 = object : Migration(6, 7) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `stays` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `placeId` INTEGER NOT NULL, " +
+                        "`start` TEXT NOT NULL, `end` TEXT NOT NULL, `createdAt` INTEGER NOT NULL)",
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_stays_placeId` ON `stays` (`placeId`)")
+                db.execSQL(
+                    "INSERT INTO stays (placeId, start, `end`, createdAt) SELECT id, stayStart, stayEnd, createdAt FROM places " +
+                        "WHERE stayStart IS NOT NULL AND stayEnd IS NOT NULL AND stayEnd >= stayStart",
+                )
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `places_new` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT NOT NULL, " +
+                        "`latitude` REAL NOT NULL, `longitude` REAL NOT NULL, `lastUsedAt` INTEGER NOT NULL, `createdAt` INTEGER NOT NULL)",
+                )
+                db.execSQL(
+                    "INSERT INTO places_new (id, name, latitude, longitude, lastUsedAt, createdAt) " +
+                        "SELECT id, name, latitude, longitude, lastUsedAt, createdAt FROM places",
+                )
+                db.execSQL("DROP TABLE places")
+                db.execSQL("ALTER TABLE places_new RENAME TO places")
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `planned_outings_new` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`canyonId` INTEGER NOT NULL, `canyonName` TEXT NOT NULL, `start` INTEGER NOT NULL, " +
+                        "`expectedBack` INTEGER NOT NULL, `latestBack` INTEGER NOT NULL, `alertAt` INTEGER NOT NULL, " +
+                        "`departure` INTEGER, `groupSize` INTEGER, `informedAlertAt` INTEGER, `choicesJson` TEXT, " +
+                        "`tracked` INTEGER NOT NULL, `stayId` INTEGER, `updatedAt` INTEGER NOT NULL)",
+                )
+                db.execSQL(
+                    "INSERT INTO planned_outings_new (id, canyonId, canyonName, start, expectedBack, latestBack, alertAt, departure, " +
+                        "groupSize, informedAlertAt, choicesJson, tracked, stayId, updatedAt) " +
+                        "SELECT id, canyonId, canyonName, start, expectedBack, latestBack, alertAt, departure, groupSize, " +
+                        "CASE WHEN relativeInformed THEN alertAt ELSE NULL END, choicesJson, 1, NULL, updatedAt FROM planned_outings",
+                )
+                db.execSQL("DROP TABLE planned_outings")
+                db.execSQL("ALTER TABLE planned_outings_new RENAME TO planned_outings")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_planned_outings_start` ON `planned_outings` (`start`)")
+            }
+        }
+
         /** Migrations of the user database, oldest first. */
-        val MIGRATIONS = arrayOf<Migration>(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6)
+        val MIGRATIONS = arrayOf<Migration>(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
 
         /** Key of the single outing of version 5. */
         private const val LEGACY_OUTING_KEY = "outing.current"

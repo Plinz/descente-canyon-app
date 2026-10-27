@@ -5,6 +5,7 @@ import fr.descentecanyon.app.data.local.user.UserDatabase
 import fr.descentecanyon.app.data.local.user.entity.CanyonNoteEntity
 import fr.descentecanyon.app.data.local.user.entity.FavoriteEntity
 import fr.descentecanyon.app.data.local.user.entity.PlaceEntity
+import fr.descentecanyon.app.data.local.user.entity.StayEntity
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.LogbookSource
 import fr.descentecanyon.app.domain.model.NiveauDebit
@@ -45,6 +46,7 @@ class PersonalDataRepositoryImplTest {
             database.canyonNoteDao(),
             database.favoriteDao(),
             database.placeDao(),
+            database.stayDao(),
             logbook,
             clock,
         )
@@ -66,7 +68,8 @@ class PersonalDataRepositoryImplTest {
         logbook.save(LogbookEntry(canyonId = 2283, canyonName = "Ga", date = LocalDate.of(2025, 8, 2)))
         source.canyonNoteDao().upsert(CanyonNoteEntity(canyonId = 26, text = "Parking après le pont", updatedAt = 1_000L))
         source.favoriteDao().insert(FavoriteEntity(canyonId = 26, addedAt = 2_000L))
-        source.placeDao().upsert(PlaceEntity(name = "Camping", latitude = 44.1, longitude = 6.2, stayEnd = "2026-08-02", createdAt = 1L))
+        val campsite = source.placeDao().upsert(PlaceEntity(name = "Camping", latitude = 44.1, longitude = 6.2, createdAt = 1L))
+        source.stayDao().upsert(StayEntity(placeId = campsite, start = "2026-07-28", end = "2026-08-02", createdAt = 1L))
     }
 
     @Test
@@ -84,7 +87,9 @@ class PersonalDataRepositoryImplTest {
         assertEquals(LogbookSource.FILE, outings.first().source)
         assertEquals("Parking après le pont", target.canyonNoteDao().observe(26).first())
         assertEquals(listOf(26), target.favoriteDao().observeIds().first())
-        assertEquals(listOf("Camping" to "2026-08-02"), target.placeDao().getAll().map { it.name to it.stayEnd })
+        val campsite = target.placeDao().getAll().single()
+        assertEquals("Camping", campsite.name)
+        assertEquals(listOf(campsite.id to "2026-08-02"), target.stayDao().getAll().map { it.placeId to it.end })
     }
 
     @Test
@@ -99,6 +104,23 @@ class PersonalDataRepositoryImplTest {
         assertEquals(PersonalDataImport(outings = 0, memos = 0, favorites = 0), second)
         assertEquals("Mon mémo à moi", target.canyonNoteDao().observe(26).first())
         assertEquals(1, target.placeDao().getAll().size)
+        assertEquals(1, target.stayDao().getAll().size)
+    }
+
+    @Test
+    fun `the stay dates of a place in a 2_7 file become a stay`() = runTest {
+        val json = """{"format": "descente-canyon-personal-data", "exportedAt": "2026-07-14T06:00:00Z",
+            "places": [{"name": "Gîte", "latitude": 44.5, "longitude": 6.5, "stayStart": "2026-08-01", "stayEnd": "2026-08-07"}]}"""
+
+        repositoryOf(target).importJson(json).getOrThrow()
+
+        val place = target.placeDao().getAll().single()
+        assertEquals(
+            listOf(Triple(place.id, "2026-08-01", "2026-08-07")),
+            target.stayDao().getAll().map {
+                Triple(it.placeId, it.start, it.end)
+            },
+        )
     }
 
     @Test

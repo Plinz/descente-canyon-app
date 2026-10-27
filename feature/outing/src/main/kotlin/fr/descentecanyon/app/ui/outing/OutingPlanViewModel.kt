@@ -26,7 +26,6 @@ import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.GroupLevel
 import fr.descentecanyon.app.domain.model.MessageAudience
 import fr.descentecanyon.app.domain.model.MessageSection
-import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingPace
 import fr.descentecanyon.app.domain.model.OutingPhase
@@ -37,7 +36,9 @@ import fr.descentecanyon.app.domain.model.PersonalPace
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.Shuttle
+import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.SunCalculator
+import fr.descentecanyon.app.domain.model.agenda
 import fr.descentecanyon.app.domain.model.defaultFor
 import fr.descentecanyon.app.domain.model.gearChecklist
 import fr.descentecanyon.app.domain.model.meetingParking
@@ -47,6 +48,7 @@ import fr.descentecanyon.app.domain.repository.DriveTimeRepository
 import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PlaceRepository
+import fr.descentecanyon.app.domain.repository.StayRepository
 import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonDebitPredictionsUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonPreviewUseCase
@@ -60,6 +62,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
+import java.time.temporal.ChronoUnit
 import java.util.UUID
 import javax.inject.Inject
 import kotlin.math.roundToInt
@@ -75,16 +78,32 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 /** The drive time known for a place and a parking. */
 data class DriveState(val placeId: Long, val destination: GeoPoint, val time: DriveTime)
+
+/** Where the outing on screen stands, which decides the main action of the screen. */
+enum class OutingStage {
+    /** Not kept yet: the first change keeps it as a draft. */
+    NEW,
+
+    /** Kept, follow-up off. */
+    DRAFT,
+
+    /** Followed: notifications from the departure, reminder at the return. */
+    TRACKED,
+
+    /** Followed and under way. */
+    UNDERWAY,
+}
 
 data class OutingPlanUiState(
     val canyon: CanyonDetail? = null,
     val isLoading: Boolean = true,
     val choices: OutingChoices,
     val today: LocalDate,
-    val now: Instant,
     val settings: OutingSettings = OutingSettings.DEFAULT,
     val pace: OutingPace,
     val personalPace: PersonalPace? = null,
@@ -110,10 +129,11 @@ data class OutingPlanUiState(
     val emergencyNumbers: List<EmergencyNumber> = listOf(EmergencyNumbers.EUROPEAN),
     val downstreamParking: GeoPoint? = null,
     val upstreamParking: GeoPoint? = null,
-    /** The outing as saved, if it is. */
+    /** The outing as kept, draft or followed. */
     val savedOuting: PlannedOuting? = null,
-    /** The saved outing differs from the plan on screen. */
-    val hasUnsavedChanges: Boolean = false,
+    val stage: OutingStage = OutingStage.NEW,
+    /** The stay the outing is planned for. */
+    val stay: Stay? = null,
     /** Most likely return to the car. */
     val expectedBack: LocalDateTime? = null,
     /** Return to the car if every step takes long. */
@@ -126,6 +146,8 @@ data class OutingPlanUiState(
     val messageSections: Map<MessageAudience, Set<MessageSection>> = MessageAudience.entries.associateWith { it.defaultSections },
     /** The relative was sent another alert time than the one planned now. */
     val alertChangedSinceInformed: Boolean = false,
+    /** "I'm leaving now" just turned the follow-up on: the screen asks for notifications and offers to tell a relative. */
+    val startedNow: Boolean = false,
 ) {
     val withBeginners: Boolean get() = choices.groupLevel != GroupLevel.AUTONOMOUS
 }
@@ -133,8 +155,9 @@ data class OutingPlanUiState(
 /**
  * Plans an outing from the durations of the sheet stretched for the group: the whole day from the
  * starting place, daylight left, conditions of the day, gear, messages for a relative, the team or
- * beginners, and the follow-up of the outing once saved. Works offline from the catalog, the last
- * forecast downloaded, a sunset computed on the device and an estimated drive.
+ * beginners, and the follow-up of the outing. Every change is kept at once, as a draft until the
+ * user turns the follow-up on. Works offline from the catalog, the last forecast downloaded, a
+ * sunset computed on the device and an estimated drive.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -148,6 +171,7 @@ class OutingPlanViewModel @Inject constructor(
     private val canyonNotesRepository: CanyonNotesRepository,
     private val endOutingUseCase: EndOutingUseCase,
     private val placeRepository: PlaceRepository,
+    private val stayRepository: StayRepository,
     private val outingPreferencesRepository: OutingPreferencesRepository,
     private val getPersonalPaceUseCase: GetPersonalPaceUseCase,
     private val getDriveTimeUseCase: GetDriveTimeUseCase,
@@ -160,17 +184,30 @@ class OutingPlanViewModel @Inject constructor(
     private val requestedOutingId: Long = savedStateHandle["outingId"] ?: 0L
     private val requestedDate: LocalDate? = savedStateHandle.get<String>("date")?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
     private val requestedPlaceId: Long = savedStateHandle["placeId"] ?: 0L
+    private val requestedStayId: Long = savedStateHandle["stayId"] ?: 0L
+    private val startNow: Boolean = savedStateHandle["startNow"] ?: false
 
     private val choices = MutableStateFlow<OutingChoices?>(null)
     private val sources = MutableStateFlow(Sources())
     private val driveRefresh = MutableStateFlow(0)
+
+    /** One write at a time: a change made during a write sees the id of the outing it created. */
+    private val saving = Mutex()
 
     val uiState: StateFlow<OutingPlanUiState> = combine(choices, sources, ::buildState)
         .stateIn(viewModelScope, SharingStarted.Eagerly, buildState(choices.value, sources.value))
 
     init {
         load()
-        viewModelScope.launch { outingRepository.observeAll().collect { outings -> sources.update { it.copy(outings = outings) } } }
+        viewModelScope.launch {
+            outingRepository.observeAll().collect { outings ->
+                sources.update { it.copy(outings = outings) }
+                forgetIfRemoved(outings)
+            }
+        }
+        viewModelScope.launch {
+            outingRepository.observeAll().agenda(clock).collect { agenda -> sources.update { it.copy(underwayId = agenda.underway?.id) } }
+        }
         viewModelScope.launch { canyonNotesRepository.observeNote(canyonId).collect { memo -> sources.update { it.copy(memo = memo) } } }
         viewModelScope.launch {
             debitRepository.observeLatestKnownDebits(setOf(canyonId)).collect { debits ->
@@ -178,6 +215,7 @@ class OutingPlanViewModel @Inject constructor(
             }
         }
         viewModelScope.launch { placeRepository.observeAll().collect { places -> sources.update { it.copy(places = places) } } }
+        viewModelScope.launch { stayRepository.observeAll().collect { stays -> sources.update { it.copy(stays = stays) } } }
         viewModelScope.launch { outingPreferencesRepository.observeSettings().collect { s -> sources.update { it.copy(settings = s) } } }
         viewModelScope.launch { outingPreferencesRepository.observeGearList().collect { g -> sources.update { it.copy(gearList = g) } } }
         viewModelScope.launch {
@@ -186,18 +224,16 @@ class OutingPlanViewModel @Inject constructor(
         viewModelScope.launch { getPersonalPaceUseCase().let { pace -> sources.update { it.copy(personalPace = pace) } } }
         viewModelScope.launch { initChoices() }
         viewModelScope.launch { followDrive() }
+        viewModelScope.launch { followComputedTimes() }
     }
 
     fun selectDate(date: LocalDate) = updateChoices { it.copy(date = date) }
 
-    fun selectAnchorTime(time: LocalTime) = updateChoices { it.copy(anchorTime = time) }
+    /** The time set is leaving the place when there is one, else arriving at the parking (an outing of 2.7 may differ). */
+    fun selectAnchorTime(time: LocalTime) = updateChoices { it.copy(anchorTime = time).withPlace(it.placeId) }
 
-    fun selectAnchor(anchor: OutingAnchor) = updateChoices { it.copy(anchor = anchor) }
-
-    /** Null: no starting place, the day starts at the parking. */
-    fun selectPlace(placeId: Long?) = updateChoices { choices ->
-        choices.copy(placeId = placeId, anchor = if (placeId == null) OutingAnchor.ARRIVE_PARKING else choices.anchor)
-    }
+    /** Null: no starting place, the time set is the arrival at the parking. */
+    fun selectPlace(placeId: Long?) = updateChoices { it.withPlace(placeId) }
 
     fun selectGroupSize(size: Int) = updateChoices { it.copy(groupSize = size.coerceIn(OutingSettings.GROUP_SIZE_RANGE)) }
 
@@ -227,23 +263,14 @@ class OutingPlanViewModel @Inject constructor(
         }
     }
 
-    /** Checked items stay with the saved outing at once: packing happens in several goes. */
-    fun toggleGear(id: String) {
-        updateChoices { choices ->
-            choices.copy(checkedGear = if (id in choices.checkedGear) choices.checkedGear - id else choices.checkedGear + id)
-        }
-        persistMessageFields()
+    /** Checked items stay with the outing at once: packing happens in several goes. */
+    fun toggleGear(id: String) = updateChoices { choices ->
+        choices.copy(checkedGear = if (id in choices.checkedGear) choices.checkedGear - id else choices.checkedGear + id)
     }
 
-    fun setNote(note: String) {
-        updateChoices { it.copy(note = note.take(MAX_NOTE_LENGTH)) }
-        persistMessageFields()
-    }
+    fun setNote(note: String) = updateChoices { it.copy(note = note.take(MAX_NOTE_LENGTH)) }
 
-    fun setMeetAtPlace(meetAtPlace: Boolean) {
-        updateChoices { it.copy(meetAtPlace = meetAtPlace) }
-        persistMessageFields()
-    }
+    fun setMeetAtPlace(meetAtPlace: Boolean) = updateChoices { it.copy(meetAtPlace = meetAtPlace) }
 
     fun hideGear(key: GearKey) = updateGearList { it.copy(hidden = it.hidden + key) }
 
@@ -260,67 +287,87 @@ class OutingPlanViewModel @Inject constructor(
         viewModelScope.launch { outingPreferencesRepository.setMessageSections(audience, sections) }
     }
 
-    /** Remembers the outing (or its changes): notifications during it, reminder at the return, alert for the relative. */
-    fun saveOuting() = save(relativeInformed = null)
+    /** Turns the follow-up on: notifications during the outing, reminder at the return. */
+    fun activateTracking() = persist { it.copy(tracked = true) }
 
-    /** The plan went to a relative: the outing is saved, so the app follows it as the relative does. */
-    fun markRelativeInformed() = save(relativeInformed = true)
+    /** The plan went to a relative who counts on its alert time: the outing is followed as the relative does. */
+    fun markRelativeInformed() = persist { it.copy(tracked = true, informedAlertAt = it.alertAt) }
 
-    /** The alert comes [minutes] later: the outing takes longer than planned. */
+    /** The alert comes [minutes] later: the outing takes longer than planned; a relative informed is sent the new time. */
     fun delayAlert(minutes: Int) {
-        updateChoices { it.copy(alertDelayMinutes = it.alertDelayMinutes + minutes) }
-        if (sources.value.outingId > 0) save(relativeInformed = null)
+        val informed = sources.value.saved?.relativeInformed == true
+        choices.update { it?.copy(alertDelayMinutes = it.alertDelayMinutes + minutes) }
+        persist { if (informed) it.copy(informedAlertAt = it.alertAt) else it }
     }
 
-    /** Back from the outing: it goes to the logbook and its notifications are cancelled. */
-    fun markBack() {
-        val id = sources.value.outingId.takeIf { it > 0 } ?: return
-        viewModelScope.launch {
-            endOutingUseCase(id)
-            sources.update { it.copy(outingId = 0) }
-            updateChoices { it.copy(alertDelayMinutes = 0) }
-        }
-    }
+    /** "I'm leaving now" was shown its follow-up: the screen asked for notifications. */
+    fun startedNowShown() = sources.update { it.copy(startedNow = false) }
+
+    /** Back from the outing: it goes to the logbook and its notifications are cancelled; the plan stays on screen. */
+    fun markBack() = forget { id -> endOutingUseCase(id) }
 
     /** The outing will not happen: it is forgotten, the plan stays on screen. */
-    fun cancelOuting() {
-        val id = sources.value.outingId.takeIf { it > 0 } ?: return
+    fun deleteOuting() = forget { id -> outingRepository.delete(id) }
+
+    private fun forget(remove: suspend (Long) -> Unit) {
         viewModelScope.launch {
-            outingRepository.delete(id)
-            sources.update { it.copy(outingId = 0) }
+            saving.withLock {
+                val id = sources.value.saved?.id ?: return@withLock
+                remove(id)
+                sources.update { it.copy(saved = null) }
+                choices.update { it?.copy(alertDelayMinutes = 0, checkedGear = emptySet()) }
+            }
         }
     }
 
-    private fun save(relativeInformed: Boolean?) {
-        // From the sources: the derived state may not reflect a choice made just before.
-        val state = buildState(choices.value, sources.value)
-        val outing = state.toPlannedOuting() ?: return
-        val saved = state.savedOuting
+    /**
+     * Keeps the outing on screen, as a draft the first time, with [change] applied to what was kept
+     * (follow-up, relative informed). A change of the plan moves the times of a followed outing, so
+     * its notifications follow.
+     */
+    private fun persist(change: (PlannedOuting) -> PlannedOuting = { it }) {
         viewModelScope.launch {
-            val id = outingRepository.save(
-                outing.copy(
-                    id = saved?.id ?: 0,
-                    relativeInformed = relativeInformed ?: saved?.relativeInformed ?: false,
-                ),
-            )
-            sources.update { it.copy(outingId = id) }
-            state.place?.let { placeRepository.markUsed(it.id) }
+            saving.withLock {
+                val current = sources.value
+                // From the sources: the derived state may not reflect a choice made just before.
+                val state = buildState(choices.value, current)
+                val planned = state.toPlannedOuting() ?: return@withLock
+                val saved = current.saved
+                val stayId = (saved?.stayId ?: requestedStayId.takeIf { it > 0 })
+                    ?.takeIf { id -> current.stays.firstOrNull { it.id == id }?.covers(state.choices.date) != false }
+                val outing = change(
+                    planned.copy(
+                        id = saved?.id ?: 0,
+                        informedAlertAt = saved?.informedAlertAt,
+                        tracked = saved?.tracked ?: false,
+                        stayId = stayId,
+                    ),
+                )
+                if (outing == saved) return@withLock
+                val id = outingRepository.save(outing)
+                sources.update { it.copy(saved = outing.copy(id = id)) }
+                if (outing.tracked && saved?.tracked != true) state.place?.let { placeRepository.markUsed(it.id) }
+            }
         }
     }
 
-    /** Gear checks, note and meeting point only change the messages: they are kept without touching the times saved. */
-    private fun persistMessageFields() {
-        val saved = sources.value.outings.firstOrNull { it.id == sources.value.outingId } ?: return
-        val current = choices.value ?: return
-        val savedChoices = saved.choices ?: return
-        viewModelScope.launch {
-            outingRepository.save(
-                saved.copy(
-                    choices = savedChoices.copy(checkedGear = current.checkedGear, note = current.note, meetAtPlace = current.meetAtPlace),
-                ),
-            )
+    /** An outing ended or deleted elsewhere (notification, home screen) leaves the plan on screen, no longer kept. */
+    private suspend fun forgetIfRemoved(outings: List<PlannedOuting>) {
+        val saved = sources.value.saved ?: return
+        if (outings.any { it.id == saved.id }) return
+        // A list read before the last write may lack the outing: it is gone only if the database says so.
+        if (outingRepository.get(saved.id) == null) sources.update { if (it.saved?.id == saved.id) it.copy(saved = null) else it }
+    }
+
+    /** Times that change without the user (a route found, new settings): a kept outing follows them. */
+    private suspend fun followComputedTimes() {
+        uiState.map { it.toPlannedOuting()?.times() }.distinctUntilChanged().collect { times ->
+            val saved = sources.value.saved ?: return@collect
+            if (times != null && times != saved.times()) persist()
         }
     }
+
+    private fun PlannedOuting.times() = listOf(start, expectedBack, latestBack, alertAt, departure, groupSize)
 
     private fun updateGearList(change: (GearListSettings) -> GearListSettings) {
         val updated = change(sources.value.gearList)
@@ -328,35 +375,69 @@ class OutingPlanViewModel @Inject constructor(
         viewModelScope.launch { outingPreferencesRepository.setGearList(updated) }
     }
 
-    private fun updateChoices(change: (OutingChoices) -> OutingChoices) = choices.update { current -> current?.let(change) }
+    /** A change of the user is kept at once. */
+    private fun updateChoices(change: (OutingChoices) -> OutingChoices) {
+        val before = choices.value ?: return
+        choices.update { current -> current?.let(change) }
+        if (choices.value != before) persist()
+    }
 
     private suspend fun initChoices() {
         val settings = outingPreferencesRepository.observeSettings().first()
         val places = placeRepository.observeAll().first()
+        val stays = stayRepository.observeAll().first()
         val outings = outingRepository.observeAll().first()
+        val today = LocalDate.now(clock)
         val existing = when {
             requestedOutingId > 0 -> outings.firstOrNull { it.id == requestedOutingId } ?: outingRepository.get(requestedOutingId)
+            startNow -> outings.firstOrNull { it.canyonId == canyonId && it.choices?.date == today }
             requestedDate == null -> outings.firstOrNull { it.canyonId == canyonId }
             else -> outings.firstOrNull { it.canyonId == canyonId && it.choices?.date == requestedDate }
         }
-        sources.update { it.copy(outingId = existing?.id ?: 0) }
-        choices.value = existing?.let { it.choices ?: legacyChoices(it) } ?: newChoices(settings, places)
+        sources.update { it.copy(saved = existing) }
+        val kept = existing?.let { it.choices ?: legacyChoices(it) }
+        when {
+            startNow && existing?.isUnderway(clock.instant()) != true -> {
+                // Leaving now: the time set is now, from the place of the day if any.
+                val now = LocalDateTime.now(clock).truncatedTo(ChronoUnit.MINUTES)
+                val base = kept ?: newChoices(settings, places, stays)
+                choices.value = base.copy(date = today, anchorTime = now.toLocalTime(), alertDelayMinutes = 0)
+                awaitPlan()
+                persist { it.copy(tracked = true) }
+                sources.update { it.copy(startedNow = true) }
+            }
+
+            kept != null -> choices.value = kept
+
+            else -> {
+                choices.value = newChoices(settings, places, stays)
+                // A day of a stay was given a canyon: the stay shows it at once.
+                if (requestedStayId > 0) {
+                    awaitPlan()
+                    persist()
+                }
+            }
+        }
     }
 
-    private fun newChoices(settings: OutingSettings, places: List<Place>): OutingChoices {
+    /** Until the times can be computed: the canyon loaded and, from a place, a first drive time. */
+    private suspend fun awaitPlan() {
+        uiState.first { it.schedule != null && (it.place == null || it.meetingParking == null || it.drive != null) }
+    }
+
+    private fun newChoices(settings: OutingSettings, places: List<Place>, stays: List<Stay>): OutingChoices {
         val now = LocalDateTime.now(clock)
         val default = defaultChoices(now)
         val date = requestedDate ?: default.date
         val time = if (date == default.date) default.anchorTime else LocalTime.of(DEFAULT_HOUR, 0)
-        val place = places.firstOrNull { it.id == requestedPlaceId } ?: places.defaultFor(date)
+        val stay = stays.firstOrNull { it.id == requestedStayId }
+        val place = places.firstOrNull { it.id == (stay?.placeId ?: requestedPlaceId) } ?: places.defaultFor(date, stays)
         return OutingChoices(
             date = date,
             anchorTime = time,
-            anchor = if (place != null) OutingAnchor.LEAVE_PLACE else OutingAnchor.ARRIVE_PARKING,
-            placeId = place?.id,
             groupSize = settings.defaultGroupSize,
             groupLevel = settings.defaultGroupLevel,
-        )
+        ).withPlace(place?.id)
     }
 
     /** An outing saved before choices were kept: its day and walk start. */
@@ -399,7 +480,6 @@ class OutingPlanViewModel @Inject constructor(
     }
 
     private fun buildState(choices: OutingChoices?, sources: Sources): OutingPlanUiState {
-        val now = clock.instant()
         val today = LocalDate.now(clock)
         val settings = sources.settings
         val current = choices ?: defaultChoices(LocalDateTime.now(clock))
@@ -436,13 +516,13 @@ class OutingPlanViewModel @Inject constructor(
         val expectedBack = schedule?.let { it.backAtCar?.estimate ?: it.walkStart.plus(UNKNOWN_DURATION_ASSUMPTION) }
         val latestBack = schedule?.let { it.backAtCar?.latest ?: it.walkStart.plus(UNKNOWN_DURATION_ASSUMPTION) }
         val alertAt = latestBack?.plusHours(current.alertMarginHours.toLong())?.plusMinutes(current.alertDelayMinutes.toLong())
-        val savedOuting = sources.outings.firstOrNull { it.id == sources.outingId }
-        val state = OutingPlanUiState(
+        val saved = sources.saved
+        val informedAlertAt = saved?.informedAlertAt
+        return OutingPlanUiState(
             canyon = detail,
             isLoading = sources.isLoading || choices == null,
             choices = current,
             today = today,
-            now = now,
             settings = settings,
             pace = pace,
             personalPace = sources.personalPace,
@@ -464,7 +544,14 @@ class OutingPlanViewModel @Inject constructor(
             emergencyNumbers = canyon?.pays?.let(EmergencyNumbers::forCountries) ?: listOf(EmergencyNumbers.EUROPEAN),
             downstreamParking = detail?.geoPoints?.firstOrNull { it.type == GeoPointType.PARKING_AVAL },
             upstreamParking = detail?.geoPoints?.firstOrNull { it.type == GeoPointType.PARKING_AMONT },
-            savedOuting = savedOuting,
+            savedOuting = saved,
+            stage = when {
+                saved == null -> OutingStage.NEW
+                !saved.tracked -> OutingStage.DRAFT
+                sources.underwayId == saved.id -> OutingStage.UNDERWAY
+                else -> OutingStage.TRACKED
+            },
+            stay = sources.stays.firstOrNull { it.id == (saved?.stayId ?: requestedStayId) },
             expectedBack = expectedBack,
             latestBack = latestBack,
             alertAt = alertAt,
@@ -479,11 +566,8 @@ class OutingPlanViewModel @Inject constructor(
                 ),
             ),
             messageSections = sources.messageSections,
-        )
-        return state.copy(
-            hasUnsavedChanges = savedOuting != null && state.toPlannedOuting()?.differsFrom(savedOuting) == true,
-            alertChangedSinceInformed =
-                savedOuting?.relativeInformed == true && alertAt != null && savedOuting.alertAt != alertAt.toInstant(),
+            alertChangedSinceInformed = informedAlertAt != null && alertAt != null && informedAlertAt != alertAt.toInstant(),
+            startedNow = sources.startedNow,
         )
     }
 
@@ -501,14 +585,6 @@ class OutingPlanViewModel @Inject constructor(
             groupSize = choices.groupSize,
             choices = choices,
         )
-    }
-
-    /** What the saved outing would change: times, group and choices; gear checks, note and meeting point are kept as they go. */
-    private fun PlannedOuting.differsFrom(saved: PlannedOuting): Boolean {
-        fun OutingChoices?.comparable() = this?.copy(checkedGear = emptySet(), note = "", meetAtPlace = false)
-        return start != saved.start || expectedBack != saved.expectedBack || alertAt != saved.alertAt ||
-            latestBack != saved.latestBack || departure != saved.departure || groupSize != saved.groupSize ||
-            choices.comparable() != saved.choices.comparable()
     }
 
     /** Offline sunset at the start of the canyon (parking, else entry, else any point). */
@@ -530,15 +606,18 @@ class OutingPlanViewModel @Inject constructor(
         val predictions: CanyonDebitPredictions? = null,
         val lastReport: Debit? = null,
         val outings: List<PlannedOuting> = emptyList(),
-        /** The outing shown, 0 until it is saved. */
-        val outingId: Long = 0,
+        /** The outing as this screen last kept it: the base of the next write, whatever the database read says. */
+        val saved: PlannedOuting? = null,
+        val underwayId: Long? = null,
         val memo: String? = null,
         val settings: OutingSettings = OutingSettings.DEFAULT,
         val personalPace: PersonalPace? = null,
         val places: List<Place> = emptyList(),
+        val stays: List<Stay> = emptyList(),
         val drive: DriveState? = null,
         val gearList: GearListSettings = GearListSettings(),
         val messageSections: Map<MessageAudience, Set<MessageSection>> = MessageAudience.entries.associateWith { it.defaultSections },
+        val startedNow: Boolean = false,
     )
 
     companion object {

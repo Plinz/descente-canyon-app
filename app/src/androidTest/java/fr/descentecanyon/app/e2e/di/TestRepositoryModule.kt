@@ -15,6 +15,7 @@ import fr.descentecanyon.app.data.repository.PersonalDataRepositoryImpl
 import fr.descentecanyon.app.data.repository.PlaceRepositoryImpl
 import fr.descentecanyon.app.data.repository.PreferencesRepositoryImpl
 import fr.descentecanyon.app.data.repository.RecentCanyonsRepositoryImpl
+import fr.descentecanyon.app.data.repository.StayRepositoryImpl
 import fr.descentecanyon.app.di.RepositoryModule
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
@@ -39,6 +40,7 @@ import fr.descentecanyon.app.domain.repository.PlaceRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.repository.SiteAccountRepository
+import fr.descentecanyon.app.domain.repository.StayRepository
 import fr.descentecanyon.app.domain.repository.WeatherRepository
 import fr.descentecanyon.app.e2e.fakes.FakeAuthRepository
 import fr.descentecanyon.app.e2e.fakes.FakeCanyonRepository
@@ -118,6 +120,9 @@ object TestRepositoryModule {
 
     @Provides @Singleton
     fun providePlaceRepository(impl: PlaceRepositoryImpl): PlaceRepository = impl
+
+    @Provides @Singleton
+    fun provideStayRepository(impl: StayRepositoryImpl): StayRepository = impl
 
     @Provides @Singleton
     fun provideOutingPreferencesRepository(impl: OutingPreferencesRepositoryImpl): OutingPreferencesRepository = impl

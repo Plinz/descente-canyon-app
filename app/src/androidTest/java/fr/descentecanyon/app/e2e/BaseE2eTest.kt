@@ -14,6 +14,7 @@ import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PlaceRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
+import fr.descentecanyon.app.domain.repository.StayRepository
 import fr.descentecanyon.app.e2e.fakes.E2eFixtureState
 import fr.descentecanyon.app.e2e.fakes.FakeConnectivityObserver
 import fr.descentecanyon.app.ui.MainActivity
@@ -45,6 +46,9 @@ abstract class BaseE2eTest {
     lateinit var placeRepository: PlaceRepository
 
     @Inject
+    lateinit var stayRepository: StayRepository
+
+    @Inject
     lateinit var outingPreferencesRepository: OutingPreferencesRepository
 
     private var scenario: ActivityScenario<MainActivity>? = null
@@ -58,6 +62,7 @@ abstract class BaseE2eTest {
             preferencesRepository.setLatestReportsZone(null)
             outingRepository.clear()
             placeRepository.observeAll().first().forEach { placeRepository.delete(it.id) }
+            stayRepository.observeAll().first().forEach { stayRepository.delete(it.id) }
             outingPreferencesRepository.setSettings(OutingSettings())
             outingPreferencesRepository.setGearList(GearListSettings())
         }

@@ -87,7 +87,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-/** The places outings start from, and where the place editor opens its map. */
+/** The places outings start from (home, campsites), and where the place editor opens its map. */
 @HiltViewModel
 class PlacesViewModel @Inject constructor(private val placeRepository: PlaceRepository, preferencesRepository: PreferencesRepository) :
     ViewModel() {
@@ -97,9 +97,7 @@ class PlacesViewModel @Inject constructor(private val placeRepository: PlaceRepo
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), null)
 
     /** The last area seen on the map, for a new place. */
-    val initialCamera: MapCameraState = preferencesRepository.getLastMapPosition()
-        ?.let { MapCameraState(it.latitude, it.longitude, it.zoom.coerceAtLeast(PLACE_ZOOM - 2)) }
-        ?: MapCameraState(FRANCE_LATITUDE, FRANCE_LONGITUDE, COUNTRY_ZOOM)
+    val initialCamera: MapCameraState = newPlaceCamera(preferencesRepository)
 
     fun save(place: Place) {
         viewModelScope.launch { placeRepository.save(place) }
@@ -115,16 +113,17 @@ class PlacesViewModel @Inject constructor(private val placeRepository: PlaceRepo
         private const val FRANCE_LATITUDE = 46.5
         private const val FRANCE_LONGITUDE = 2.5
         private const val STOP_TIMEOUT_MS = 5_000L
+
+        /** Where the editor of a new place opens: the last area seen on the map, else France. */
+        internal fun newPlaceCamera(preferencesRepository: PreferencesRepository): MapCameraState =
+            preferencesRepository.getLastMapPosition()
+                ?.let { MapCameraState(it.latitude, it.longitude, it.zoom.coerceAtLeast(PLACE_ZOOM - 2)) }
+                ?: MapCameraState(FRANCE_LATITUDE, FRANCE_LONGITUDE, COUNTRY_ZOOM)
     }
 }
 
 @Composable
-fun PlacesScreen(
-    onBackClick: () -> Unit,
-    onPlanStay: (Long) -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: PlacesViewModel = hiltViewModel(),
-) {
+fun PlacesScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier, viewModel: PlacesViewModel = hiltViewModel()) {
     val places by viewModel.places.collectAsStateWithLifecycle()
     val contentWidth = rememberDcContentWidth(maxWidth = 720.dp)
     var editing by remember { mutableStateOf<Place?>(null) }
@@ -194,7 +193,6 @@ fun PlacesScreen(
                         place = place,
                         onEdit = { editing = place },
                         onDelete = { deleting = place },
-                        onPlanStay = { onPlanStay(place.id) },
                     )
                 }
                 item {
@@ -209,44 +207,32 @@ fun PlacesScreen(
 }
 
 @Composable
-private fun PlaceRow(place: Place, onEdit: () -> Unit, onDelete: () -> Unit, onPlanStay: () -> Unit) {
+private fun PlaceRow(place: Place, onEdit: () -> Unit, onDelete: () -> Unit) {
     DcCard(modifier = Modifier.fillMaxWidth(), onClick = onEdit) {
-        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(Icons.Default.Place, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
-                Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
-                    Text(place.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                    Text(
-                        stayLabel(place) ?: coordinatesText(place.latitude, place.longitude),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = LocalDcColors.current.textSecondary,
-                    )
-                }
-                IconButton(onClick = onEdit) { Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.places_edit)) }
-                IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.places_delete)) }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Default.Place, contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+            Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
+                Text(place.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                Text(
+                    coordinatesText(place.latitude, place.longitude),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = LocalDcColors.current.textSecondary,
+                )
             }
-            TextButton(onClick = onPlanStay) {
-                Icon(Icons.Default.CalendarMonth, contentDescription = null)
-                Text(stringResource(R.string.stay_plan_action), modifier = Modifier.padding(start = 6.dp))
-            }
+            IconButton(onClick = onEdit) { Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.places_edit)) }
+            IconButton(onClick = onDelete) { Icon(Icons.Default.Delete, contentDescription = stringResource(R.string.places_delete)) }
         }
     }
 }
 
-/**
- * A place: its name, its position under the pin at the middle of the map (moved by hand or to the
- * phone's position) and the days of a stay there.
- */
+/** A place: its name and its position under the pin at the middle of the map (moved by hand or to the phone's position). */
 @Composable
-private fun PlaceEditor(initial: Place?, initialCamera: MapCameraState, onSave: (Place) -> Unit, onDismiss: () -> Unit) {
+internal fun PlaceEditor(initial: Place?, initialCamera: MapCameraState, onSave: (Place) -> Unit, onDismiss: () -> Unit) {
     val context = LocalContext.current
     var name by rememberSaveable { mutableStateOf(initial?.name.orEmpty()) }
     var center by remember { mutableStateOf(initialCamera) }
-    var stayStart by rememberSaveable { mutableStateOf(initial?.stayStart?.toString()) }
-    var stayEnd by rememberSaveable { mutableStateOf(initial?.stayEnd?.toString()) }
     var position by remember { mutableStateOf<Pair<Double, Double>?>(null) }
     var focusRequest by remember { mutableIntStateOf(0) }
-    var picking by remember { mutableStateOf<StayBound?>(null) }
     var locationUnavailable by remember { mutableStateOf(false) }
     fun locate() {
         loadCurrentDeviceLocation(
@@ -260,22 +246,6 @@ private fun PlaceEditor(initial: Place?, initialCamera: MapCameraState, onSave: 
     }
     val permissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { results ->
         if (results.values.any { it }) locate() else locationUnavailable = true
-    }
-    picking?.let { bound ->
-        val current = (if (bound == StayBound.START) stayStart else stayEnd)?.let(LocalDate::parse) ?: LocalDate.now()
-        DcDatePickerDialog(
-            initialDate = current,
-            onDateSelected = { date ->
-                if (bound == StayBound.START) {
-                    stayStart = date.toString()
-                    if (stayEnd == null || LocalDate.parse(stayEnd) < date) stayEnd = date.plusDays(DEFAULT_STAY_DAYS).toString()
-                } else {
-                    stayEnd = date.toString()
-                    if (stayStart == null || LocalDate.parse(stayStart) > date) stayStart = date.toString()
-                }
-            },
-            onDismiss = { picking = null },
-        )
     }
     Dialog(onDismissRequest = onDismiss, properties = DialogProperties(usePlatformDefaultWidth = false)) {
         Scaffold(
@@ -295,8 +265,6 @@ private fun PlaceEditor(initial: Place?, initialCamera: MapCameraState, onSave: 
                                         name = name.trim(),
                                         latitude = center.latitude,
                                         longitude = center.longitude,
-                                        stayStart = stayStart?.let(LocalDate::parse),
-                                        stayEnd = stayEnd?.let(LocalDate::parse),
                                         lastUsedAt = initial?.lastUsedAt ?: 0,
                                     ),
                                 )
@@ -372,42 +340,13 @@ private fun PlaceEditor(initial: Place?, initialCamera: MapCameraState, onSave: 
                         color = MaterialTheme.colorScheme.error,
                     )
                 }
-                Text(
-                    stringResource(R.string.places_stay_title),
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.SemiBold,
-                )
-                Text(
-                    stringResource(R.string.places_stay_hint),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = LocalDcColors.current.textSecondary,
-                )
-                val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(LocalLocale.current.platformLocale)
-                Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                    OutlinedButton(onClick = { picking = StayBound.START }) {
-                        Text(stayStart?.let { LocalDate.parse(it).format(formatter) } ?: stringResource(R.string.places_stay_from))
-                    }
-                    Text("→")
-                    OutlinedButton(onClick = { picking = StayBound.END }) {
-                        Text(stayEnd?.let { LocalDate.parse(it).format(formatter) } ?: stringResource(R.string.places_stay_to))
-                    }
-                    if (stayStart != null) {
-                        IconButton(onClick = {
-                            stayStart = null
-                            stayEnd = null
-                        }) { Icon(Icons.Default.Close, contentDescription = stringResource(R.string.places_stay_clear)) }
-                    }
-                }
             }
         }
     }
 }
-
-private enum class StayBound { START, END }
 
 internal fun coordinatesText(latitude: Double, longitude: Double): String = String.format(Locale.ROOT, "%.5f, %.5f", latitude, longitude)
 
 private val MAP_HEIGHT = 320.dp
 private val PIN_SIZE = 40.dp
 private const val MAX_NAME_LENGTH = 60
-private const val DEFAULT_STAY_DAYS = 6L

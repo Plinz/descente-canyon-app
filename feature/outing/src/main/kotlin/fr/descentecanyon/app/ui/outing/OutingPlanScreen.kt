@@ -11,27 +11,29 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Emergency
-import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Tune
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -54,6 +56,9 @@ import fr.descentecanyon.app.domain.model.MessageAudience
 import fr.descentecanyon.app.ui.common.needsNotificationPermission
 import fr.descentecanyon.app.ui.common.startActivitySafely
 import fr.descentecanyon.app.ui.components.CompactAppBar
+import fr.descentecanyon.app.ui.design.DcDatePickerDialog
+import fr.descentecanyon.app.ui.design.DcDropdownMenu
+import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.LocalDateTime
@@ -61,6 +66,14 @@ import java.time.ZoneId
 import java.util.Locale
 import kotlinx.coroutines.launch
 
+/** What opens over the plan: one sheet or dialog at a time. */
+private enum class PlanOverlay { DAY, DEPARTURE, GROUP, ALERT_MARGIN, NOTIFY, BAG, DELETE }
+
+/**
+ * The plan of an outing, answer first: the day, the departure and the group in three lines, the key
+ * times and what may call the outing off, the details folded below; one action at the bottom
+ * follows the outing from the draft to the return.
+ */
 @Composable
 fun OutingPlanScreen(
     onBackClick: () -> Unit,
@@ -76,16 +89,21 @@ fun OutingPlanScreen(
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val resources = LocalResources.current
+    val locale = LocalLocale.current.platformLocale
     val timeFormatter = rememberTimeFormatter()
     val contentWidth = rememberDcContentWidth(maxWidth = 720.dp)
-    val appLocale = LocalLocale.current.platformLocale
-    var messageLanguage by rememberSaveable {
-        mutableStateOf(MESSAGE_LANGUAGES.firstOrNull { it.language == appLocale.language }?.language)
+    var overlay by rememberSaveable { mutableStateOf<PlanOverlay?>(null) }
+    var notifyAudience by rememberSaveable { mutableStateOf(MessageAudience.RELATIVE) }
+    var detailExpanded by rememberSaveable { mutableStateOf(false) }
+    var menu by remember { mutableStateOf(false) }
+
+    fun openNotify(audience: MessageAudience) {
+        notifyAudience = audience
+        overlay = PlanOverlay.NOTIFY
     }
-    val messageLocale = MESSAGE_LANGUAGES.firstOrNull { it.language == messageLanguage } ?: appLocale
 
     // The outing notifications (emergency access, end reminder) need the permission on Android 13+.
-    fun confirmSaved() {
+    fun confirmTracking() {
         val message = if (NotificationManagerCompat.from(context).areNotificationsEnabled()) {
             resources.getString(R.string.outing_saved, state.latestBack?.toLocalTime()?.format(timeFormatter).orEmpty())
         } else {
@@ -93,7 +111,18 @@ fun OutingPlanScreen(
         }
         scope.launch { snackbarHostState.showSnackbar(message) }
     }
-    val notificationPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { confirmSaved() }
+    val activationPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
+        confirmTracking()
+    }
+
+    fun activate() {
+        viewModel.activateTracking()
+        if (context.needsNotificationPermission()) {
+            activationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            confirmTracking()
+        }
+    }
 
     val shareTitle = stringResource(R.string.outing_message_share_title)
     var pendingShare by rememberSaveable { mutableStateOf<String?>(null) }
@@ -106,25 +135,17 @@ fun OutingPlanScreen(
         pendingShare = null
     }
 
-    fun save() {
-        val isNew = state.savedOuting == null
-        val alertChanged = state.alertChangedSinceInformed
-        viewModel.saveOuting()
-        when {
-            isNew && context.needsNotificationPermission() -> notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-
-            alertChanged -> scope.launch {
-                val result = snackbarHostState.showSnackbar(
-                    message = resources.getString(R.string.outing_alert_changed),
-                    actionLabel = resources.getString(R.string.outing_alert_changed_action),
-                )
-                if (result == SnackbarResult.ActionPerformed) {
-                    state.alertAt?.let { share(delayMessage(context, state, it, messageLocale)) }
-                }
-            }
-
-            else -> confirmSaved()
-        }
+    // "I'm leaving now" turned the follow-up on: notifications are asked for, then a relative can be told.
+    val startedPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
+    LaunchedEffect(state.startedNow) {
+        if (!state.startedNow) return@LaunchedEffect
+        viewModel.startedNowShown()
+        if (context.needsNotificationPermission()) startedPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        val result = snackbarHostState.showSnackbar(
+            message = resources.getString(R.string.outing_started_now),
+            actionLabel = resources.getString(R.string.outing_alert_changed_action),
+        )
+        if (result == SnackbarResult.ActionPerformed) openNotify(MessageAudience.RELATIVE)
     }
 
     Scaffold(
@@ -138,21 +159,88 @@ fun OutingPlanScreen(
                     }
                 },
                 actions = {
-                    if (!state.isLoading && (state.savedOuting == null || state.hasUnsavedChanges)) {
-                        IconButton(onClick = ::save, modifier = Modifier.testTag(TestTags.OUTING_TOP_SAVE)) {
-                            Icon(
-                                Icons.Default.Save,
-                                contentDescription = stringResource(
-                                    if (state.savedOuting == null) R.string.outing_save_action else R.string.outing_update_action,
-                                ),
-                            )
+                    Box {
+                        IconButton(onClick = { menu = true }, modifier = Modifier.testTag(TestTags.OUTING_MENU)) {
+                            Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.more_actions))
                         }
-                    }
-                    IconButton(onClick = onOpenOutingSettings) {
-                        Icon(Icons.Default.Tune, contentDescription = stringResource(R.string.outing_settings_title))
+                        DcDropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                            DcDropdownMenuItem(
+                                text = stringResource(R.string.outing_notify_other),
+                                icon = Icons.AutoMirrored.Filled.Send,
+                                onClick = {
+                                    menu = false
+                                    openNotify(
+                                        if (state.savedOuting?.relativeInformed ==
+                                            true
+                                        ) {
+                                            MessageAudience.TEAM
+                                        } else {
+                                            MessageAudience.RELATIVE
+                                        },
+                                    )
+                                },
+                            )
+                            DcDropdownMenuItem(
+                                text = stringResource(R.string.outing_calendar_action),
+                                icon = Icons.Default.CalendarMonth,
+                                onClick = {
+                                    menu = false
+                                    addToCalendar(context, state, locale)
+                                },
+                            )
+                            DcDropdownMenuItem(
+                                text = stringResource(R.string.outing_settings_title),
+                                icon = Icons.Default.Tune,
+                                onClick = {
+                                    menu = false
+                                    onOpenOutingSettings()
+                                },
+                            )
+                            if (state.savedOuting != null) {
+                                DcDropdownMenuItem(
+                                    text = stringResource(R.string.outing_delete_action),
+                                    icon = Icons.Default.Delete,
+                                    onClick = {
+                                        menu = false
+                                        overlay = PlanOverlay.DELETE
+                                    },
+                                )
+                            }
+                        }
                     }
                 },
             )
+        },
+        bottomBar = {
+            if (!state.isLoading) {
+                PlanBottomBar(
+                    state = state,
+                    onActivate = ::activate,
+                    onNotify = {
+                        val relative = state.savedOuting?.relativeInformed != true || state.alertChangedSinceInformed
+                        openNotify(if (relative) MessageAudience.RELATIVE else MessageAudience.TEAM)
+                    },
+                    onEnd = {
+                        val ended = state.savedOuting
+                        viewModel.markBack()
+                        if (ended?.relativeInformed == true) share(backMessage(context, state, locale))
+                        scope.launch {
+                            val result = snackbarHostState.showSnackbar(
+                                message = resources.getString(R.string.outing_back_report_prompt),
+                                actionLabel = resources.getString(R.string.outing_report_action),
+                            )
+                            if (result == SnackbarResult.ActionPerformed) state.canyon?.canyon?.id?.let(onReportFlow)
+                        }
+                    },
+                    onDelay = { minutes ->
+                        val informed = state.savedOuting?.relativeInformed == true
+                        val newAlert = state.alertAt?.plusMinutes(minutes.toLong())
+                        viewModel.delayAlert(minutes)
+                        if (informed && newAlert != null) share(delayMessage(context, state, newAlert, locale))
+                    },
+                    onEmergency = { state.canyon?.canyon?.id?.let(onOpenEmergency) },
+                )
+            }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background,
@@ -167,125 +255,129 @@ fun OutingPlanScreen(
                 contentPadding = PaddingValues(16.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
-                // Keyed: the banner of a saved outing comes and goes without moving the state of the cards below.
-                state.memo?.let { memo -> item(key = "memo") { MemoCard(memo = memo) } }
-                state.savedOuting?.let { item(key = "status") { OutingStatusBanner(state = state) } }
-                item(key = "when") {
-                    WhenCard(
-                        state = state,
-                        onDateSelected = viewModel::selectDate,
-                        onTimeSelected = viewModel::selectAnchorTime,
-                        onAnchorSelected = viewModel::selectAnchor,
-                        onPlaceSelected = viewModel::selectPlace,
-                        onManagePlaces = onManagePlaces,
-                        onSetManualDrive = viewModel::setManualDrive,
-                    )
-                }
-                item(key = "group") {
-                    GroupCard(
-                        state = state,
-                        onSizeSelected = viewModel::selectGroupSize,
-                        onLevelSelected = viewModel::selectGroupLevel,
-                        onShuttleSelected = viewModel::selectShuttle,
-                    )
-                }
-                item(key = "timeline") {
-                    TimelineCard(
-                        state = state,
-                        timeFormatter = timeFormatter,
-                        onAdjust = viewModel::adjustPhase,
-                        onOpenSettings = onOpenOutingSettings,
-                    )
-                }
-                item(key = "conditions") { ConditionsCard(state = state) }
-                item(key = "gear") {
-                    GearCard(
-                        state = state,
-                        onToggle = viewModel::toggleGear,
-                        onHide = viewModel::hideGear,
-                        onRemoveCustom = viewModel::removeCustomGear,
-                        onAdd = viewModel::addCustomGear,
-                        onRestore = viewModel::restoreSuggestedGear,
-                    )
-                }
-                item(key = "messages") {
-                    MessagesCard(
-                        state = state,
-                        messageLocale = messageLocale,
-                        onLanguageSelected = { messageLanguage = it.language },
-                        onMarginSelected = viewModel::selectAlertMargin,
-                        onNoteChanged = viewModel::setNote,
-                        onMeetAtPlaceChanged = viewModel::setMeetAtPlace,
-                        onSaveSections = viewModel::saveMessageSections,
-                        onSend = { audience, message ->
-                            if (audience == MessageAudience.RELATIVE) {
-                                // The relative counts on its alert time: sending the plan saves the outing, so the app
-                                // reminds the user at the return and keeps the emergency screen at hand.
-                                val isNew = state.savedOuting == null
-                                viewModel.markRelativeInformed()
-                                if (isNew && context.needsNotificationPermission()) {
-                                    pendingShare = message
-                                    sharePermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                    return@MessagesCard
-                                }
-                            }
-                            share(message)
-                        },
-                    )
-                }
-                item(key = "follow") {
-                    OutingStatusCard(
-                        state = state,
-                        onSave = ::save,
-                        onEnd = {
-                            val ended = state.savedOuting
-                            viewModel.markBack()
-                            if (ended?.relativeInformed == true) {
-                                share(backMessage(context, state, messageLocale))
-                            }
-                            scope.launch {
-                                val result = snackbarHostState.showSnackbar(
-                                    message = resources.getString(R.string.outing_back_report_prompt),
-                                    actionLabel = resources.getString(R.string.outing_report_action),
-                                )
-                                if (result == SnackbarResult.ActionPerformed) state.canyon?.canyon?.id?.let(onReportFlow)
-                            }
-                        },
-                        onDelay = { minutes ->
-                            val informed = state.savedOuting?.relativeInformed == true
-                            val newAlert = state.alertAt?.plusMinutes(minutes.toLong())
-                            viewModel.delayAlert(minutes)
-                            if (informed && newAlert != null) share(delayMessage(context, state, newAlert, messageLocale))
-                        },
-                        onAddToCalendar = { addToCalendar(context, state, messageLocale) },
-                        onCancel = viewModel::cancelOuting,
-                    )
-                }
-                item(key = "emergency") {
-                    OutlinedButton(
-                        onClick = { state.canyon?.canyon?.id?.let(onOpenEmergency) },
-                        modifier = Modifier.fillMaxWidth().testTag(TestTags.OUTING_EMERGENCY_BUTTON),
-                        colors = ButtonDefaults.outlinedButtonColors(contentColor = MaterialTheme.colorScheme.error),
-                    ) {
-                        Icon(Icons.Default.Emergency, contentDescription = null)
-                        Text(stringResource(R.string.outing_emergency_action), modifier = Modifier.padding(start = 8.dp))
+                // Keyed: the status of a kept outing comes and goes without moving the state of the cards below.
+                if (state.savedOuting != null) {
+                    item(key = "status") {
+                        FollowStatusCard(state = state, timeFormatter = timeFormatter, onNotify = { openNotify(MessageAudience.RELATIVE) })
                     }
                 }
+                item(key = "settings") {
+                    PlanSettingsCard(
+                        state = state,
+                        onDayClick = { overlay = PlanOverlay.DAY },
+                        onDepartureClick = { overlay = PlanOverlay.DEPARTURE },
+                        onGroupClick = { overlay = PlanOverlay.GROUP },
+                    )
+                }
+                item(key = "summary") {
+                    SummaryCard(state = state, timeFormatter = timeFormatter, onAlertClick = { overlay = PlanOverlay.ALERT_MARGIN })
+                }
+                state.memo?.let { memo -> item(key = "memo") { MemoCard(memo = memo) } }
+                item(key = "detail") {
+                    DayDetailCard(
+                        state = state,
+                        timeFormatter = timeFormatter,
+                        expanded = detailExpanded,
+                        onToggle = { detailExpanded = !detailExpanded },
+                        onAdjust = viewModel::adjustPhase,
+                    )
+                }
+                item(key = "bag") { BagCard(state = state, onClick = { overlay = PlanOverlay.BAG }) }
             }
         }
+    }
+
+    val dismiss = { overlay = null }
+    when (overlay) {
+        PlanOverlay.DAY -> DcDatePickerDialog(
+            initialDate = state.choices.date,
+            onDateSelected = viewModel::selectDate,
+            onDismiss = dismiss,
+            minDate = state.today,
+        )
+
+        PlanOverlay.DEPARTURE -> DepartureSheet(
+            state = state,
+            onDismiss = dismiss,
+            onPlaceSelected = viewModel::selectPlace,
+            onTimeSelected = viewModel::selectAnchorTime,
+            onManagePlaces = {
+                overlay = null
+                onManagePlaces()
+            },
+            onSetManualDrive = viewModel::setManualDrive,
+        )
+
+        PlanOverlay.GROUP -> GroupSheet(
+            state = state,
+            onDismiss = dismiss,
+            onSizeSelected = viewModel::selectGroupSize,
+            onLevelSelected = viewModel::selectGroupLevel,
+            onShuttleSelected = viewModel::selectShuttle,
+        )
+
+        PlanOverlay.ALERT_MARGIN -> AlertMarginDialog(state = state, onMarginSelected = viewModel::selectAlertMargin, onDismiss = dismiss)
+
+        PlanOverlay.NOTIFY -> NotifySheet(
+            state = state,
+            initialAudience = notifyAudience,
+            onDismiss = dismiss,
+            onNoteChanged = viewModel::setNote,
+            onMeetAtPlaceChanged = viewModel::setMeetAtPlace,
+            onSaveSections = viewModel::saveMessageSections,
+            onSend = { audience, message ->
+                overlay = null
+                if (audience == MessageAudience.RELATIVE) {
+                    // The relative counts on its alert time: sending the plan turns the follow-up on, so the app
+                    // reminds the user at the return and keeps the emergency screen at hand.
+                    val wasTracked = state.savedOuting?.tracked == true
+                    viewModel.markRelativeInformed()
+                    if (!wasTracked && context.needsNotificationPermission()) {
+                        pendingShare = message
+                        sharePermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                        return@NotifySheet
+                    }
+                }
+                share(message)
+            },
+        )
+
+        PlanOverlay.BAG -> BagDialog(
+            state = state,
+            onDismiss = dismiss,
+            onToggle = viewModel::toggleGear,
+            onHide = viewModel::hideGear,
+            onRemoveCustom = viewModel::removeCustomGear,
+            onAdd = viewModel::addCustomGear,
+            onRestore = viewModel::restoreSuggestedGear,
+        )
+
+        PlanOverlay.DELETE -> AlertDialog(
+            onDismissRequest = dismiss,
+            text = { Text(stringResource(R.string.outing_cancel_confirm)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    overlay = null
+                    viewModel.deleteOuting()
+                }) { Text(stringResource(R.string.outing_delete_action)) }
+            },
+            dismissButton = { TextButton(onClick = dismiss) { Text(stringResource(R.string.cancel)) } },
+        )
+
+        null -> Unit
     }
 }
 
 /** "Back from the canyon at 17:10, all is well", for the relative who waits for news. */
 private fun backMessage(context: Context, state: OutingPlanUiState, locale: Locale): String {
-    val strings = ResourceOutingMessageStrings(context.resourcesIn(locale))
+    val strings = ResourceOutingMessageStrings(context.resources)
     val now = LocalDateTime.now(ZoneId.systemDefault())
     return strings.back(state.canyon?.canyon?.nom.orEmpty(), timeOfOuting(now, now.toLocalDate(), locale))
 }
 
 /** The new alert time, for the relative who waits for news. */
 private fun delayMessage(context: Context, state: OutingPlanUiState, alertAt: LocalDateTime, locale: Locale): String {
-    val strings = ResourceOutingMessageStrings(context.resourcesIn(locale))
+    val strings = ResourceOutingMessageStrings(context.resources)
     return strings.delay(
         state.canyon?.canyon?.nom.orEmpty(),
         timeOfOuting(alertAt, state.choices.date, locale),
@@ -300,7 +392,7 @@ private fun addToCalendar(context: Context, state: OutingPlanUiState, locale: Lo
     val begin = schedule.leavePlace ?: schedule.arriveParking
     val end = schedule.backAtPlace?.estimate ?: schedule.readyToLeave?.estimate ?: state.expectedBack ?: return
     val zone = ZoneId.systemDefault()
-    val resources = context.resourcesIn(locale)
+    val resources = context.resources
     val description = outingMessageData(state, resources, locale)?.let { data ->
         buildOutingMessage(
             ResourceOutingMessageStrings(resources),

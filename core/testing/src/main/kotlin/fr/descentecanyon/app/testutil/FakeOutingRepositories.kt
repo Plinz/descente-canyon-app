@@ -9,10 +9,12 @@ import fr.descentecanyon.app.domain.model.MessageSection
 import fr.descentecanyon.app.domain.model.OutingSettings
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.repository.DriveTimeRepository
 import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PlaceRepository
+import fr.descentecanyon.app.domain.repository.StayRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -63,6 +65,29 @@ class FakePlaceRepository(places: List<Place> = emptyList()) : PlaceRepository {
             } else {
                 it
             }
+        }
+    }
+}
+
+/** In-memory [StayRepository]; deleting a stay drops the drafts of its outings in [outings] and detaches the others. */
+class FakeStayRepository(stays: List<Stay> = emptyList(), private val outings: FakeOutingRepository? = null) : StayRepository {
+    val stays = MutableStateFlow(stays)
+    private var nextId = (stays.maxOfOrNull { it.id } ?: 0L) + 1
+
+    override fun observeAll(): Flow<List<Stay>> = stays
+
+    override suspend fun get(id: Long): Stay? = stays.value.firstOrNull { it.id == id }
+
+    override suspend fun save(stay: Stay): Long {
+        val id = stay.id.takeIf { it > 0 } ?: nextId++
+        stays.update { list -> (list.filterNot { it.id == id } + stay.copy(id = id)).sortedBy { it.start } }
+        return id
+    }
+
+    override suspend fun delete(id: Long) {
+        stays.update { list -> list.filterNot { it.id == id } }
+        outings?.outings?.update { list ->
+            list.filterNot { it.stayId == id && !it.tracked }.map { if (it.stayId == id) it.copy(stayId = null) else it }
         }
     }
 }

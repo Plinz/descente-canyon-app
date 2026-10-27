@@ -2,29 +2,25 @@ package fr.descentecanyon.app.domain.model
 
 import java.time.LocalDate
 
-/**
- * A place outings start from: home, a campsite, a gîte. [stayStart]..[stayEnd] are the days of a
- * stay there, when the user prepares several outings from it.
- */
+/** A place outings start from: home, a campsite, a gîte. A [Stay] gives the days spent at one. */
 data class Place(
     val name: String,
     val latitude: Double,
     val longitude: Double,
-    val stayStart: LocalDate? = null,
-    val stayEnd: LocalDate? = null,
     /** When an outing last started from it (epoch ms), 0 if never. */
     val lastUsedAt: Long = 0,
     val id: Long = 0,
-) {
-    fun hostsStayOn(date: LocalDate): Boolean = stayStart != null && stayEnd != null && date in stayStart..stayEnd
-}
+)
 
 /**
- * The place an outing of [date] starts from by default: the stay of that day, else the place used
- * last among those without stay dates (home); a campsite of another week is not a default.
+ * The place an outing of [date] starts from by default: the place of the stay of that day, else the
+ * place used last among those of no stay (home); a campsite of another week is not a default.
  */
-fun List<Place>.defaultFor(date: LocalDate): Place? =
-    firstOrNull { it.hostsStayOn(date) } ?: filter { it.lastUsedAt > 0 && it.stayStart == null }.maxByOrNull { it.lastUsedAt }
+fun List<Place>.defaultFor(date: LocalDate, stays: List<Stay>): Place? {
+    stays.firstOrNull { it.covers(date) }?.let { stay -> firstOrNull { it.id == stay.placeId }?.let { return it } }
+    val stayPlaces = stays.mapTo(mutableSetOf()) { it.placeId }
+    return filter { it.lastUsedAt > 0 && it.id !in stayPlaces }.maxByOrNull { it.lastUsedAt }
+}
 
 enum class DriveTimeSource {
     /** Computed by a routing service on the road network. */

@@ -15,6 +15,7 @@ import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonWeather
 import fr.descentecanyon.app.domain.model.DailyWeather
 import fr.descentecanyon.app.domain.model.HourlyPrecipitation
+import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.WeatherLocationSource
 import fr.descentecanyon.app.domain.model.WeatherTarget
 import fr.descentecanyon.app.domain.repository.WeatherRepository
@@ -51,7 +52,7 @@ class WeatherRepositoryImpl @Inject constructor(
             val weather = response.toCanyonWeather(target, fetchedAt, isFromCache = false)
                 ?: appError(AppError.DataUnavailable)
             saveForOffline(
-                detail.canyon.id,
+                cacheKey(detail.canyon.id),
                 CachedForecast(fetchedAt.toEpochMilli(), target.latitude, target.longitude, target.source.name, response),
             )
             weather
@@ -59,20 +60,46 @@ class WeatherRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCachedCanyonWeather(canyonId: Int): CanyonWeather? = withContext(ioDispatcher) {
-        val cached = keyValueDao.get(cacheKey(canyonId))
-            ?.let { payload -> runCatching { json.decodeFromString(CachedForecast.serializer(), payload) }.getOrNull() }
-            ?: return@withContext null
-        val fetchedAt = Instant.ofEpochMilli(cached.fetchedAtEpochMs)
-        if (Duration.between(fetchedAt, clock.instant()) > MAX_CACHE_AGE) return@withContext null
-        val source = WeatherLocationSource.entries.firstOrNull { it.name == cached.targetSource } ?: WeatherLocationSource.UNKNOWN
-        cached.forecast.toCanyonWeather(WeatherTarget(cached.targetLatitude, cached.targetLongitude, source), fetchedAt, isFromCache = true)
+        cachedWeather(cacheKey(canyonId))
     }
 
-    private suspend fun saveForOffline(canyonId: Int, forecast: CachedForecast) {
+    override suspend fun getPlaceWeather(place: Place): Result<CanyonWeather> = withContext(ioDispatcher) {
+        suspendRunCatching {
+            val target = WeatherTarget(place.latitude, place.longitude, WeatherLocationSource.UNKNOWN)
+            val response = retryOnConnectivityFailure { remoteSource.fetchForecast(target.latitude, target.longitude) }
+            val fetchedAt = clock.instant()
+            val weather = response.toCanyonWeather(target, fetchedAt, isFromCache = false) ?: appError(AppError.DataUnavailable)
+            saveForOffline(
+                placeCacheKey(place.id),
+                CachedForecast(fetchedAt.toEpochMilli(), target.latitude, target.longitude, target.source.name, response),
+            )
+            weather
+        }
+    }
+
+    override suspend fun getCachedPlaceWeather(place: Place): CanyonWeather? = withContext(ioDispatcher) {
+        cachedWeather(placeCacheKey(place.id))?.takeIf { it.target.latitude == place.latitude && it.target.longitude == place.longitude }
+    }
+
+    private suspend fun cachedWeather(key: String): CanyonWeather? {
+        val cached = keyValueDao.get(key)
+            ?.let { payload -> runCatching { json.decodeFromString(CachedForecast.serializer(), payload) }.getOrNull() }
+            ?: return null
+        val fetchedAt = Instant.ofEpochMilli(cached.fetchedAtEpochMs)
+        if (Duration.between(fetchedAt, clock.instant()) > MAX_CACHE_AGE) return null
+        val source = WeatherLocationSource.entries.firstOrNull { it.name == cached.targetSource } ?: WeatherLocationSource.UNKNOWN
+        return cached.forecast.toCanyonWeather(
+            WeatherTarget(cached.targetLatitude, cached.targetLongitude, source),
+            fetchedAt,
+            isFromCache = true,
+        )
+    }
+
+    private suspend fun saveForOffline(key: String, forecast: CachedForecast) {
         // A failed write only costs the offline copy.
         runCatching {
             keyValueDao.put(
-                KeyValueEntity(cacheKey(canyonId), json.encodeToString(CachedForecast.serializer(), forecast), updatedAt = clock.millis()),
+                KeyValueEntity(key, json.encodeToString(CachedForecast.serializer(), forecast), updatedAt = clock.millis()),
             )
             keyValueDao.deleteByPrefixOlderThan(CACHE_KEY_PREFIX, clock.millis() - MAX_CACHE_AGE.toMillis())
         }
@@ -150,5 +177,7 @@ class WeatherRepositoryImpl @Inject constructor(
         val json = Json { ignoreUnknownKeys = true }
 
         fun cacheKey(canyonId: Int): String = "$CACHE_KEY_PREFIX$canyonId"
+
+        fun placeCacheKey(placeId: Long): String = "${CACHE_KEY_PREFIX}place.$placeId"
     }
 }

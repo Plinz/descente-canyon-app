@@ -2,6 +2,7 @@ package fr.descentecanyon.app.e2e.fakes
 
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonWeather
+import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.WeatherLocationSource
 import fr.descentecanyon.app.domain.model.WeatherTarget
 import fr.descentecanyon.app.domain.repository.WeatherRepository
@@ -13,8 +14,14 @@ import javax.inject.Singleton
 class FakeWeatherRepository @Inject constructor() : WeatherRepository {
     override suspend fun getCachedCanyonWeather(canyonId: Int): CanyonWeather? = null
 
-    override suspend fun getCanyonWeather(detail: CanyonDetail): Result<CanyonWeather> = Result.success(
-        CanyonWeather(
+    override suspend fun getCanyonWeather(detail: CanyonDetail): Result<CanyonWeather> = Result.success(EMPTY)
+
+    override suspend fun getPlaceWeather(place: Place): Result<CanyonWeather> = Result.success(EMPTY)
+
+    override suspend fun getCachedPlaceWeather(place: Place): CanyonWeather? = null
+
+    private companion object {
+        val EMPTY = CanyonWeather(
             target = WeatherTarget(
                 latitude = 0.0,
                 longitude = 0.0,
@@ -22,6 +29,6 @@ class FakeWeatherRepository @Inject constructor() : WeatherRepository {
             ),
             timezone = "UTC",
             fetchedAt = Instant.EPOCH,
-        ),
-    )
+        )
+    }
 }

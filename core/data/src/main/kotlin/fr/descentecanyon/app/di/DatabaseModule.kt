@@ -32,6 +32,7 @@ import fr.descentecanyon.app.data.local.user.dao.PhotoDao
 import fr.descentecanyon.app.data.local.user.dao.PlaceDao
 import fr.descentecanyon.app.data.local.user.dao.PlannedOutingDao
 import fr.descentecanyon.app.data.local.user.dao.RecentCanyonDao
+import fr.descentecanyon.app.data.local.user.dao.StayDao
 import javax.inject.Singleton
 
 @Module
@@ -103,4 +104,6 @@ object DatabaseModule {
     @Provides fun providePlaceDao(database: UserDatabase): PlaceDao = database.placeDao()
 
     @Provides fun provideDriveTimeDao(database: UserDatabase): DriveTimeDao = database.driveTimeDao()
+
+    @Provides fun provideStayDao(database: UserDatabase): StayDao = database.stayDao()
 }

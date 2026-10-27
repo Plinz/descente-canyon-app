@@ -19,7 +19,9 @@ class OutingReminderWorker(appContext: Context, params: WorkerParameters) : Coro
 
     override suspend fun doWork(): Result {
         val entryPoint = EntryPointAccessors.fromApplication(applicationContext, OutingWorkerEntryPoint::class.java)
-        val outing = entryPoint.outingRepository().get(inputData.getLong(KEY_OUTING_ID, 0L)) ?: return Result.success()
+        // A draft since (follow-up turned off): nothing to show.
+        val outing =
+            entryPoint.outingRepository().get(inputData.getLong(KEY_OUTING_ID, 0L))?.takeIf { it.tracked } ?: return Result.success()
         val kind = inputData.getString(KEY_KIND) ?: return Result.success()
         // Planned for other times: the outing changed since, its new notifications are scheduled.
         if (referenceTime(kind, outing) != inputData.getLong(KEY_REFERENCE, 0L)) return Result.success()

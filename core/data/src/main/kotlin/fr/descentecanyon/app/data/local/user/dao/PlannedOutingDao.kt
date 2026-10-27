@@ -27,4 +27,12 @@ interface PlannedOutingDao {
 
     @Query("DELETE FROM planned_outings")
     suspend fun deleteAll()
+
+    /** Forgets the drafts planned for the stay [stayId]. */
+    @Query("DELETE FROM planned_outings WHERE stayId = :stayId AND tracked = 0")
+    suspend fun deleteDraftsOfStay(stayId: Long)
+
+    /** The followed outings of the stay [stayId] stay planned without it. */
+    @Query("UPDATE planned_outings SET stayId = NULL WHERE stayId = :stayId")
+    suspend fun detachFromStay(stayId: Long)
 }

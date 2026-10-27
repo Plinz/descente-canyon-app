@@ -129,21 +129,34 @@ data class PlannedOutingEntity(
     /** Leaving the starting place, epoch ms. */
     val departure: Long? = null,
     val groupSize: Int? = null,
-    val relativeInformed: Boolean = false,
+    /** The alert time last sent to a relative, epoch ms; null if the plan went to no one. */
+    val informedAlertAt: Long? = null,
     val choicesJson: String? = null,
+    /** The follow-up is on (notifications); a draft is only kept. */
+    val tracked: Boolean,
+    /** The stay the outing was planned for. */
+    val stayId: Long? = null,
     val updatedAt: Long,
 )
 
-/** A place outings start from; [stayStart] and [stayEnd] are ISO dates. */
+/** A place outings start from. */
 @Entity(tableName = "places")
 data class PlaceEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val name: String,
     val latitude: Double,
     val longitude: Double,
-    val stayStart: String? = null,
-    val stayEnd: String? = null,
     val lastUsedAt: Long = 0,
+    val createdAt: Long,
+)
+
+/** Days spent at a place; [start] and [end] are ISO dates. */
+@Entity(tableName = "stays", indices = [Index("placeId")])
+data class StayEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val placeId: Long,
+    val start: String,
+    val end: String,
     val createdAt: Long,
 )
 

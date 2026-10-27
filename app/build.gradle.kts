@@ -223,14 +223,6 @@ android {
         generateLocaleConfig = true
     }
 
-    // Outing messages can be written in another language than the app's: every language ships in
-    // the base module instead of per-device splits.
-    bundle {
-        language {
-            enableSplit = false
-        }
-    }
-
     signingConfigs {
         if (hasReleaseSigning) {
             create("release") {

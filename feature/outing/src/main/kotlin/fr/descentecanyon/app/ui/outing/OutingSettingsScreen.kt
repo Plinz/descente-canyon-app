@@ -206,28 +206,6 @@ fun OutingSettingsScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier,
                             onMinus = { viewModel.update { it.copy(discoveryFactor = it.discoveryFactor - FACTOR_STEP) } },
                             onPlus = { viewModel.update { it.copy(discoveryFactor = it.discoveryFactor + FACTOR_STEP) } },
                         )
-                        Stepper(
-                            title = stringResource(R.string.outing_settings_beginners_prep),
-                            label = factor(settings.beginnersPrepFactor),
-                            onMinus = { viewModel.update { it.copy(beginnersPrepFactor = it.beginnersPrepFactor - FACTOR_STEP) } },
-                            onPlus = { viewModel.update { it.copy(beginnersPrepFactor = it.beginnersPrepFactor + FACTOR_STEP) } },
-                        )
-                    }
-                }
-                item {
-                    Section(stringResource(R.string.outing_settings_range), stringResource(R.string.outing_settings_range_hint)) {
-                        Stepper(
-                            title = stringResource(R.string.outing_settings_earlier),
-                            label = "−${settings.earlierPercent} %",
-                            onMinus = { viewModel.update { it.copy(earlierPercent = it.earlierPercent - PERCENT_STEP) } },
-                            onPlus = { viewModel.update { it.copy(earlierPercent = it.earlierPercent + PERCENT_STEP) } },
-                        )
-                        Stepper(
-                            title = stringResource(R.string.outing_settings_later),
-                            label = "+${settings.laterPercent} %",
-                            onMinus = { viewModel.update { it.copy(laterPercent = it.laterPercent - PERCENT_STEP) } },
-                            onPlus = { viewModel.update { it.copy(laterPercent = it.laterPercent + PERCENT_STEP) } },
-                        )
                     }
                 }
                 item {
@@ -304,5 +282,4 @@ private fun Stepper(label: String, onMinus: () -> Unit, onPlus: () -> Unit, titl
 }
 
 private const val MINUTES_STEP = 5
-private const val PERCENT_STEP = 5
 private const val FACTOR_STEP = OutingSettings.FACTOR_STEP

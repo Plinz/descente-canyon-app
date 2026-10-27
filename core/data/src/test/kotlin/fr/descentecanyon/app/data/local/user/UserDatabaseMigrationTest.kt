@@ -221,6 +221,59 @@ class UserDatabaseMigrationTest {
     }
 
     @Test
+    fun `version 6 turns the stay dates of places into stays, and its outings are followed`() = runTest {
+        createDatabase(schemaVersion = 6) { db ->
+            db.insert(
+                "places",
+                null,
+                values(
+                    "id" to 3L,
+                    "name" to "Camping",
+                    "latitude" to 44.0,
+                    "longitude" to 6.0,
+                    "stayStart" to "2026-07-12",
+                    "stayEnd" to "2026-07-18",
+                    "lastUsedAt" to 7L,
+                    "createdAt" to 2L,
+                ),
+            )
+            db.insert(
+                "places",
+                null,
+                values("id" to 4L, "name" to "Maison", "latitude" to 45.0, "longitude" to 5.0, "lastUsedAt" to 9L, "createdAt" to 1L),
+            )
+            listOf(true, false).forEachIndexed { index, informed ->
+                db.insert(
+                    "planned_outings",
+                    null,
+                    values(
+                        "canyonId" to 101 + index, "canyonName" to "Riolan", "start" to 1000L, "expectedBack" to 5000L,
+                        "latestBack" to 6000L, "alertAt" to 9000L, "relativeInformed" to if (informed) 1 else 0,
+                        "choicesJson" to "{}", "updatedAt" to 500L,
+                    ),
+                )
+            }
+        }
+
+        val database = Room.databaseBuilder(context, UserDatabase::class.java, TEST_DATABASE)
+            .addMigrations(*UserDatabase.MIGRATIONS)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val stay = database.stayDao().getAll().single()
+            assertEquals(Triple(3L, "2026-07-12", "2026-07-18"), Triple(stay.placeId, stay.start, stay.end))
+            assertEquals(listOf("Maison" to 9L, "Camping" to 7L), database.placeDao().getAll().map { it.name to it.lastUsedAt })
+            val outings = database.plannedOutingDao().observeAll().first().sortedBy { it.canyonId }
+            assertEquals(listOf(true, true), outings.map { it.tracked })
+            assertEquals(listOf(9000L, null), outings.map { it.informedAlertAt })
+            assertEquals(listOf(null, null), outings.map { it.stayId })
+            assertEquals("{}", outings.first().choicesJson)
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
     fun `recently viewed canyons are trimmed to the most recent ones`() = runTest {
         val database = TestDatabases.user()
         try {
@@ -262,6 +315,7 @@ class UserDatabaseMigrationTest {
                 null -> putNull(key)
                 is Int -> put(key, value)
                 is Long -> put(key, value)
+                is Double -> put(key, value)
                 is String -> put(key, value)
                 else -> error("Unsupported value $value")
             }
