@@ -106,6 +106,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                     navController.navigateSingleTop(Screen.OutingPlan(canyonId, outingId))
                 },
                 onOutingsClick = dropUnlessResumed { navController.navigateSingleTop(Screen.Outings) },
+                onStayClick = dropUnlessResumedWith { stayId: Long -> navController.navigateSingleTop(Screen.Stay(stayId)) },
                 // Back from the outing: the flow seen is the most useful report.
                 onOutingEnded = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.DebitForm(canyonId)) },
                 onEmergencyClick = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.Emergency(canyonId)) },
@@ -342,6 +343,8 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
         composable<Screen.StayCanyonPicker> {
             StayCanyonPickerScreen(
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
+                // The sheet read, back is the list again.
+                onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
                 // The plan takes the place of the list: back from it is the stay, which shows the day filled.
                 onPick = dropUnlessResumedWith { request: OutingPlanRequest ->
                     navController.closeIfCurrent<Screen.StayCanyonPicker>()

@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.EventAvailable
@@ -350,7 +352,7 @@ internal fun ActiveOutingCard(
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                 Icon(Icons.Default.Hiking, contentDescription = null)
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(outing.canyonName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(outing.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
                     Text(stringResource(R.string.outing_active_summary, start, back), style = MaterialTheme.typography.bodySmall)
                 }
             }
@@ -360,6 +362,50 @@ internal fun ActiveOutingCard(
                     Text(stringResource(R.string.outing_emergency_action), color = MaterialTheme.colorScheme.error)
                 }
             }
+        }
+    }
+}
+
+/** The stay under way (its day, what is planned today and tomorrow) or starting soon; opens its program. */
+@Composable
+internal fun HomeStayCard(stay: HomeStay, onOpen: () -> Unit, modifier: Modifier = Modifier) {
+    val colors = LocalDcColors.current
+    val today = stay.today
+    val days = (stay.stay.end.toEpochDay() - stay.stay.start.toEpochDay() + 1).toInt()
+    DcCard(onClick = onOpen, modifier = modifier.fillMaxWidth().testTag(TestTags.HOME_STAY)) {
+        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+            Icon(Icons.Default.CalendarMonth, contentDescription = null, tint = colors.primaryAction)
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    stay.placeName?.let { stringResource(R.string.home_stay_title, it) } ?: stringResource(R.string.stay_title),
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.SemiBold,
+                )
+                if (stay.stay.covers(today)) {
+                    val day = (today.toEpochDay() - stay.stay.start.toEpochDay() + 1).toInt()
+                    Text(stringResource(R.string.home_stay_day, day, days), style = MaterialTheme.typography.bodySmall)
+                    stay.days.forEach { planned ->
+                        val outings = planned.outings.joinToString(", ").ifEmpty { stringResource(R.string.home_stay_nothing) }
+                        Text(
+                            stringResource(if (planned.date == today) R.string.home_stay_today else R.string.home_stay_tomorrow, outings),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = colors.textSecondary,
+                        )
+                    }
+                } else {
+                    val until = (stay.stay.start.toEpochDay() - today.toEpochDay()).toInt()
+                    Text(
+                        listOf(
+                            pluralStringResource(R.plurals.home_stay_soon, until, until),
+                            pluralStringResource(R.plurals.stay_days_count, days, days),
+                            pluralStringResource(R.plurals.stay_outings_count, stay.outings, stay.outings),
+                        ).joinToString(" · "),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = colors.textSecondary,
+                    )
+                }
+            }
+            Icon(Icons.Default.ChevronRight, contentDescription = null, tint = colors.textMuted)
         }
     }
 }
@@ -392,7 +438,7 @@ internal fun UpcomingOutingsCard(
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Text(
-                        outing.canyonName,
+                        outing.title,
                         style = MaterialTheme.typography.bodyMedium,
                         fontWeight = FontWeight.SemiBold,
                         modifier = Modifier.weight(1f),

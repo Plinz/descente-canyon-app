@@ -23,6 +23,7 @@ import fr.descentecanyon.app.domain.model.MessageSection
 import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingPhase
+import fr.descentecanyon.app.domain.model.OutingSettings
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.normalizeForSearch
@@ -252,12 +253,61 @@ class OutingPlanTest {
         assertEquals(7L, draft.choices?.placeId)
         // Leaving the campsite at nine, 40 min of road (the route found after the estimate) and 20 min to gear up.
         assertEquals(LocalDateTime.of(2026, 7, 15, 10, 0).atZone(zone).toInstant(), draft.start)
-        assertEquals(stayRepository.stays.value.single(), viewModel.uiState.value.stay)
 
         // Moved out of the stay, it no longer belongs to it.
         viewModel.selectDate(LocalDate.of(2026, 7, 20))
         advanceUntilIdle()
         assertNull(outingRepository.outings.value.single().stayId)
+    }
+
+    @Test
+    fun `the starting place follows the day while it is the default one`() = runTest {
+        placeRepository.places.value = listOf(Place("Maison", 45.2, 5.7, lastUsedAt = 10, id = 1), Place("Camping", 44.0, 6.8, id = 7))
+        stayRepository.stays.value = listOf(Stay(7, LocalDate.of(2026, 7, 16), LocalDate.of(2026, 7, 18), id = 3))
+        val viewModel = viewModel()
+        advanceUntilIdle()
+        assertEquals(1L, viewModel.uiState.value.choices.placeId)
+
+        // A day of the stay: from the campsite, and the stay counts it.
+        viewModel.selectDate(LocalDate.of(2026, 7, 17))
+        advanceUntilIdle()
+        assertEquals(7L, viewModel.uiState.value.choices.placeId)
+        val outing = outingRepository.outings.value.single()
+        assertTrue(stayRepository.stays.value.single().includes(outing))
+
+        // After the stay, from home again.
+        viewModel.selectDate(LocalDate.of(2026, 7, 20))
+        advanceUntilIdle()
+        assertEquals(1L, viewModel.uiState.value.choices.placeId)
+
+        // A place picked by the user stays whatever the day.
+        viewModel.selectPlace(null)
+        viewModel.selectDate(LocalDate.of(2026, 7, 17))
+        advanceUntilIdle()
+        assertNull(viewModel.uiState.value.choices.placeId)
+    }
+
+    @Test
+    fun `a day ahead that would end at night starts earlier, at a quarter hour`() = runTest {
+        // Nine people discovering canyoning, in December: from nine, back after the sunset.
+        preferences.settings.value = OutingSettings(defaultGroupSize = 9, defaultGroupLevel = GroupLevel.DISCOVERY)
+        val late = viewModel(date = LocalDate.of(2026, 12, 15))
+        advanceUntilIdle()
+
+        val state = late.uiState.value
+        val start = state.choices.anchorTime
+        assertTrue("$start", start.isBefore(LocalTime.of(9, 0)) && !start.isBefore(LocalTime.of(6, 0)))
+        assertEquals(0, start.minute % 15)
+        assertFalse(state.daylight is DaylightCheck.Late)
+        // Only a default: nothing is kept before a change.
+        assertTrue(outingRepository.outings.value.isEmpty())
+    }
+
+    @Test
+    fun `a day ahead within daylight keeps nine o'clock`() = runTest {
+        val viewModel = viewModel(date = LocalDate.of(2026, 7, 20))
+        advanceUntilIdle()
+        assertEquals(LocalTime.of(9, 0), viewModel.uiState.value.choices.anchorTime)
     }
 
     @Test

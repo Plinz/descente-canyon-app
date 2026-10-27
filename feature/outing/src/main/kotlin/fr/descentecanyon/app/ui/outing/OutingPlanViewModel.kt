@@ -48,6 +48,7 @@ import fr.descentecanyon.app.domain.model.gearChecklist
 import fr.descentecanyon.app.domain.model.haversineKm
 import fr.descentecanyon.app.domain.model.meetingParking
 import fr.descentecanyon.app.domain.model.normalizeForSearch
+import fr.descentecanyon.app.domain.model.placeOnNewDate
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
@@ -156,8 +157,6 @@ data class OutingPlanUiState(
     /** The outing as kept, draft or followed. */
     val savedOuting: PlannedOuting? = null,
     val stage: OutingStage = OutingStage.NEW,
-    /** The stay the outing is planned for. */
-    val stay: Stay? = null,
     /** Most likely return to the car. */
     val expectedBack: LocalDateTime? = null,
     /** Return to the car if every step takes long. */
@@ -277,7 +276,12 @@ class OutingPlanViewModel @Inject constructor(
         viewModelScope.launch { followComputedTimes() }
     }
 
-    fun selectDate(date: LocalDate) = updateChoices { it.copy(date = date) }
+    /** The starting place follows the day while it is the default one: the campsite on the days of a stay, home after. */
+    fun selectDate(date: LocalDate) = updateChoices { choices ->
+        val current = sources.value
+        val placeId = current.places.placeOnNewDate(choices.placeId, choices.date, date, current.stays)
+        if (placeId == choices.placeId) choices.copy(date = date) else choices.copy(date = date).withPlace(placeId)
+    }
 
     /** The time set is leaving the place when there is one, else arriving at the parking (an outing of 2.7 may differ). */
     fun selectAnchorTime(time: LocalTime) = updateChoices { it.copy(anchorTime = time).withPlace(it.placeId) }
@@ -519,14 +523,28 @@ class OutingPlanViewModel @Inject constructor(
             kept != null -> choices.value = kept
 
             else -> {
-                choices.value = newChoices(settings, places, stays)
-                // A day of a stay was given a canyon: the stay shows it at once.
-                if (requestedStayId > 0) {
+                val initial = newChoices(settings, places, stays)
+                choices.value = initial
+                if (initial.date.isAfter(today) || requestedStayId > 0) {
                     awaitPlan()
-                    persist()
+                    if (initial.date.isAfter(today)) startEarlierIfLate(initial)
                 }
+                // A day of a stay was given a canyon: the stay shows it at once.
+                if (requestedStayId > 0) persist()
             }
         }
+    }
+
+    /**
+     * A day ahead starts at nine by default; when the group would then be back after the sunset, it
+     * starts at the latest time that keeps it in daylight, not before [EARLIEST_DEFAULT_START]. A
+     * time the user already changed stays.
+     */
+    private fun startEarlierIfLate(initial: OutingChoices) {
+        val latest = (uiState.value.daylight as? DaylightCheck.Late)?.latestAnchor ?: return
+        val earlier = latest.withMinute(latest.minute - latest.minute % QUARTER_MINUTES).withSecond(0).withNano(0)
+        if (earlier >= initial.anchorTime || earlier < EARLIEST_DEFAULT_START) return
+        choices.update { if (it == initial) it.copy(anchorTime = earlier) else it }
     }
 
     /** Until the times can be computed: the canyon loaded and, from a place, a first drive time. */
@@ -690,7 +708,6 @@ class OutingPlanViewModel @Inject constructor(
                 sources.underwayId == saved.id -> OutingStage.UNDERWAY
                 else -> OutingStage.TRACKED
             },
-            stay = sources.stays.firstOrNull { it.id == (saved?.stayId ?: requestedStayId) },
             expectedBack = expectedBack,
             latestBack = latestBack,
             alertAt = alertAt,
@@ -817,5 +834,9 @@ class OutingPlanViewModel @Inject constructor(
 
         private const val LATEST_SAME_DAY_START_HOUR = 13
         private const val DEFAULT_HOUR = 9
+        private const val QUARTER_MINUTES = 15
+
+        /** A default start is not earlier: the group could not leave sooner. */
+        private val EARLIEST_DEFAULT_START: LocalTime = LocalTime.of(6, 0)
     }
 }

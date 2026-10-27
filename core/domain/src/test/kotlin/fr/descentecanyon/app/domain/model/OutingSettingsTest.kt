@@ -80,6 +80,33 @@ class OutingSettingsTest {
     }
 
     @Test
+    fun `the place by default follows a new day, a place picked by the user stays`() {
+        val home = Place("Maison", 45.0, 5.0, lastUsedAt = 10, id = 1)
+        val campsite = Place("Camping", 44.0, 6.0, id = 2)
+        val other = Place("Gîte", 44.5, 6.5, id = 3)
+        val places = listOf(home, campsite, other)
+        val stays = listOf(Stay(placeId = 2, start = LocalDate.of(2026, 7, 12), end = LocalDate.of(2026, 7, 18), id = 1))
+        val before = LocalDate.of(2026, 7, 10)
+        val during = LocalDate.of(2026, 7, 14)
+        val after = LocalDate.of(2026, 7, 20)
+
+        assertEquals(2L, places.placeOnNewDate(1, before, during, stays))
+        assertEquals(1L, places.placeOnNewDate(2, during, after, stays))
+        assertEquals(3L, places.placeOnNewDate(3, before, during, stays))
+        assertNull(places.placeOnNewDate(null, before, during, stays))
+    }
+
+    @Test
+    fun `an outing ends too late when the latest return leaves less than half an hour of daylight`() {
+        val day = LocalDate.of(2026, 10, 28)
+        val sunset = LocalTime.of(17, 26)
+        assertFalse(DaylightCheck.endsTooLate(day, day.atTime(16, 56), sunset))
+        assertTrue(DaylightCheck.endsTooLate(day, day.atTime(16, 57), sunset))
+        // Back after midnight is after the sunset of the day of the outing.
+        assertTrue(DaylightCheck.endsTooLate(day, day.plusDays(1).atTime(0, 30), sunset))
+    }
+
+    @Test
     fun `a stay gives its days still to come and its outings`() {
         val stay = Stay(placeId = 2, start = LocalDate.of(2026, 7, 12), end = LocalDate.of(2026, 7, 16), id = 3)
         val start = Instant.parse("2026-07-15T07:00:00Z")

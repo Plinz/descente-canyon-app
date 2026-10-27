@@ -68,6 +68,7 @@ fun HomeScreen(
     onAccountClick: () -> Unit = {},
     onOutingClick: (canyonId: Int, outingId: Long) -> Unit = { _, _ -> },
     onOutingsClick: () -> Unit = {},
+    onStayClick: (stayId: Long) -> Unit = {},
     onOutingEnded: (Int) -> Unit = {},
     onEmergencyClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
@@ -187,6 +188,11 @@ fun HomeScreen(
                             },
                             onEmergency = { onEmergencyClick(outing.canyonId) },
                         )
+                    }
+                }
+                homeState.stay?.let { stay ->
+                    item {
+                        HomeStayCard(stay = stay, onOpen = { onStayClick(stay.stay.id) })
                     }
                 }
                 if (homeState.upcomingOutings.isNotEmpty()) {

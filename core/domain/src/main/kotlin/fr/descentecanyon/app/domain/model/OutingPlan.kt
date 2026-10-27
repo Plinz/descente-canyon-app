@@ -5,6 +5,7 @@ import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.ZoneId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -109,6 +110,9 @@ data class PlannedOuting(
 
     /** "Pissarde (partie amont) + Pissarde (partie aval)". */
     val title: String get() = (listOf(canyonName) + choices?.nextCanyons.orEmpty().map { it.name }).joinToString(" + ")
+
+    /** The day of the outing: the one chosen, else the day of its walk in [zone]. */
+    fun dayIn(zone: ZoneId): LocalDate = choices?.date ?: start.atZone(zone).toLocalDate()
 
     /** The canyon the group should be in or on its way to at [now], by the times last computed. */
     fun canyonIdAt(now: Instant): Int =

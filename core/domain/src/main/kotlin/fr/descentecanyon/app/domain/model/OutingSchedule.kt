@@ -296,6 +296,10 @@ sealed interface DaylightCheck {
         /** Keep half an hour of daylight for the unexpected (a jammed rope, a slow member). */
         val SAFETY_MARGIN: Duration = Duration.ofMinutes(30)
 
+        /** Back at the car at [latestBack] at worst, on an outing of [day]: too close to the [sunset] or after it. */
+        fun endsTooLate(day: LocalDate, latestBack: LocalDateTime, sunset: LocalTime): Boolean =
+            Duration.between(latestBack, day.atTime(sunset)) < SAFETY_MARGIN
+
         fun of(schedule: OutingSchedule, sunset: LocalTime?): DaylightCheck {
             val back = schedule.backAtCar ?: return Unknown
             sunset ?: return Unknown

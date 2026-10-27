@@ -11,6 +11,7 @@ import fr.descentecanyon.app.domain.model.ForumCategory
 import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.ReportZone
+import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.ZoneCountry
 import fr.descentecanyon.app.domain.model.agenda
 import fr.descentecanyon.app.domain.model.buildZoneTree
@@ -22,18 +23,23 @@ import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import fr.descentecanyon.app.domain.repository.ForumRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
+import fr.descentecanyon.app.domain.repository.PlaceRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
+import fr.descentecanyon.app.domain.repository.StayRepository
 import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
 import java.net.ConnectException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
 import java.nio.channels.UnresolvedAddressException
 import java.time.Clock
+import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -98,7 +104,24 @@ data class HomeUiState(
     val activeOuting: PlannedOuting? = null,
     /** The next outings planned. */
     val upcomingOutings: List<PlannedOuting> = emptyList(),
+    /** The stay under way, else the next one within a week. */
+    val stay: HomeStay? = null,
 )
+
+/** A stay on the home screen: where, and what is planned today and tomorrow while it lasts. */
+data class HomeStay(
+    val stay: Stay,
+    val placeName: String?,
+    /** The day it was read on. */
+    val today: LocalDate,
+    /** Today and tomorrow, those the stay covers. */
+    val days: List<HomeStayDay> = emptyList(),
+    /** Its outings planned, drafts included. */
+    val outings: Int = 0,
+)
+
+/** The titles of the outings planned on [date], drafts included. */
+data class HomeStayDay(val date: LocalDate, val outings: List<String>)
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
@@ -110,6 +133,8 @@ class HomeViewModel @Inject constructor(
     private val notificationCenterRepository: NotificationCenterRepository,
     private val debitSubmissionRepository: DebitSubmissionRepository,
     private val outingRepository: OutingRepository,
+    private val stayRepository: StayRepository,
+    private val placeRepository: PlaceRepository,
     private val endOutingUseCase: EndOutingUseCase,
     private val clock: Clock,
 ) : ViewModel() {
@@ -133,6 +158,7 @@ class HomeViewModel @Inject constructor(
         observeTrackedForumCategories()
         observePendingDebits()
         observeActiveOuting()
+        observeStay()
         restoreHomeState()
     }
 
@@ -141,6 +167,28 @@ class HomeViewModel @Inject constructor(
             outingRepository.observeAll().agenda(clock).collect { agenda ->
                 _uiState.update { it.copy(activeOuting = agenda.underway, upcomingOutings = agenda.upcoming.take(UPCOMING_OUTINGS_SHOWN)) }
             }
+        }
+    }
+
+    /** On the campsite, the day's plan is one tap away; a stay starting soon is a reminder to prepare it. */
+    private fun observeStay() {
+        viewModelScope.launch {
+            combine(stayRepository.observeAll(), placeRepository.observeAll(), outingRepository.observeAll()) { stays, places, outings ->
+                val today = LocalDate.now(clock)
+                val stay = stays.firstOrNull { it.covers(today) }
+                    ?: stays.firstOrNull { it.start.isAfter(today) && !it.start.isAfter(today.plusDays(STAY_SOON_DAYS)) }
+                    ?: return@combine null
+                val ofStay = outings.filter(stay::includes)
+                HomeStay(
+                    stay = stay,
+                    placeName = places.firstOrNull { it.id == stay.placeId }?.name,
+                    today = today,
+                    days = listOf(today, today.plusDays(1)).filter(stay::covers).map { day ->
+                        HomeStayDay(day, ofStay.filter { it.dayIn(clock.zone) == day }.map { it.title })
+                    },
+                    outings = ofStay.size,
+                )
+            }.distinctUntilChanged().collect { stay -> _uiState.update { it.copy(stay = stay) } }
         }
     }
 
@@ -617,6 +665,9 @@ class HomeViewModel @Inject constructor(
         const val LATEST_DEBITS_CACHE_LIMIT = Int.MAX_VALUE
         const val ACTIVE_TOPICS_LIMIT = 12
         const val UPCOMING_OUTINGS_SHOWN = 3
+
+        /** A stay starting within this many days shows on the home screen. */
+        const val STAY_SOON_DAYS = 7L
         val OFFLINE_NOTICES = setOf(HomeFeedNotice.OFFLINE_BANNER, HomeFeedNotice.OFFLINE_EMPTY)
     }
 }

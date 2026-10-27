@@ -92,6 +92,12 @@ object TestTags {
     const val STAY_DATES = "stay_dates"
     const val STAY_ADD_PLACE = "stay_add_place"
     const val STAY_PICKER_LIST = "stay_picker_list"
+    const val STAY_PICKER_SEARCH = "stay_picker_search"
+    const val STAY_EDIT_LEFT_OUT = "stay_edit_left_out"
+    const val STAY_WEATHER_PROBLEM = "stay_weather_problem"
+    const val STAY_DONE = "stay_done"
+    const val OUTINGS_PAST_STAYS = "outings_past_stays"
+    const val HOME_STAY = "home_stay"
     const val DETAIL_START_NOW = "detail_start_now"
 
     fun canyonCard(id: Int): String = "canyon_card_$id"
@@ -110,11 +116,13 @@ object TestTags {
 
     fun outingRow(id: Long): String = "outing_row_$id"
 
-    fun stayCandidate(id: Int): String = "stay_candidate_$id"
+    fun stayCandidateSheet(id: Int): String = "stay_candidate_sheet_$id"
 
     fun stayDay(date: String): String = "stay_day_$date"
 
     fun stayChoose(date: String): String = "stay_choose_$date"
+
+    fun stayOutingMenu(id: Long): String = "stay_outing_menu_$id"
 
     fun outingCanyonCandidate(canyonId: Int): String = "outing_canyon_candidate_$canyonId"
 

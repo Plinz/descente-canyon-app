@@ -18,9 +18,6 @@ open class OpenMeteoRemoteSource @Inject constructor(private val httpClient: Api
         private const val DEBIT_FORECAST_MODEL = "ecmwf_ifs025"
         private const val FORECAST_DAILY_VARIABLES =
             "weather_code,precipitation_sum,precipitation_probability_max,temperature_2m_max,temperature_2m_min,sunrise,sunset"
-
-        /** Today and the next five days. */
-        private const val FORECAST_DAYS = 6
     }
 
     open suspend fun fetchForecast(latitude: Double, longitude: Double): OpenMeteoForecastDto {
@@ -32,7 +29,7 @@ open class OpenMeteoRemoteSource @Inject constructor(private val httpClient: Api
             // The current hour comes first and is already past: its value is the rain of the hour before.
             "forecast_hours" to CanyonWeather.FORECAST_HOURS + 1,
             "daily" to FORECAST_DAILY_VARIABLES,
-            "forecast_days" to FORECAST_DAYS,
+            "forecast_days" to CanyonWeather.FORECAST_DAYS,
             "timezone" to "auto",
         )
         return httpClient.getJson(url, OpenMeteoForecastDto.serializer())

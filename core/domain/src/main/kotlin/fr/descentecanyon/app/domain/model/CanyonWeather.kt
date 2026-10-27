@@ -66,6 +66,9 @@ data class CanyonWeather(
         const val PAST_HOURS = 72
         const val FORECAST_HOURS = 48
 
+        /** Days of the daily forecast, today included: a later day gets its forecast this many days before. */
+        const val FORECAST_DAYS = 6
+
         /** Daily rain from which the forecast is called heavy. */
         const val HEAVY_RAIN_DAY_MM = 20.0
     }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -63,6 +64,8 @@ fun CanyonSummaryCard(
     onFavoriteClick: (() -> Unit)? = null,
     /** Already in the user's logbook. */
     isDescended: Boolean = false,
+    /** Lines of the screen showing the card, under the sheet's own (not on the map sheet). */
+    footer: (@Composable ColumnScope.() -> Unit)? = null,
 ) {
     val colors = LocalDcColors.current
     val spacing = LocalDcSpacing.current
@@ -186,6 +189,12 @@ fun CanyonSummaryCard(
                             DebitBadge(niveau = niveau)
                         }
                     }
+                }
+                footer?.let { content ->
+                    Column(
+                        modifier = Modifier.fillMaxWidth().padding(start = spacing.lg, end = spacing.lg, bottom = spacing.md),
+                        content = content,
+                    )
                 }
             }
         }

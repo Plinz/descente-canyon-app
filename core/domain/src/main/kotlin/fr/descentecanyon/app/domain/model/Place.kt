@@ -22,6 +22,15 @@ fun List<Place>.defaultFor(date: LocalDate, stays: List<Stay>): Place? {
     return filter { it.lastUsedAt > 0 && it.id !in stayPlaces }.maxByOrNull { it.lastUsedAt }
 }
 
+/**
+ * The starting place once the outing moves from [from] to [to]: the place by default follows the
+ * day (the campsite of the stay, home after it); a place the user picked stays.
+ */
+fun List<Place>.placeOnNewDate(placeId: Long?, from: LocalDate, to: LocalDate, stays: List<Stay>): Long? {
+    if (placeId != defaultFor(from, stays)?.id) return placeId
+    return defaultFor(to, stays)?.id
+}
+
 enum class DriveTimeSource {
     /** Computed by a routing service on the road network. */
     ROUTE,

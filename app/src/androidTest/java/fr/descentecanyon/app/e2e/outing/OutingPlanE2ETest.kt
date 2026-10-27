@@ -126,11 +126,13 @@ class OutingPlanE2ETest : BaseE2eTest() {
 
     @Test
     fun aStayIsMadeAtACampsiteFoundByItsName() {
+        waitForTag(TestTags.HOME_ACCOUNT_BUTTON)
         composeRule.onNodeWithTag(TestTags.HOME_ACCOUNT_BUTTON, useUnmergedTree = true).performClick()
         waitForTag(TestTags.MY_ACCOUNT_LIST)
         composeRule.onNodeWithTag(TestTags.MY_ACCOUNT_LIST).performScrollToNode(hasText(string(R.string.account_outings_all)))
         composeRule.onNodeWithText(string(R.string.account_outings_all)).performClick()
-        waitForTag(TestTags.OUTINGS_NEW_STAY)
+        waitForTag(TestTags.OUTINGS_LIST)
+        composeRule.onNodeWithTag(TestTags.OUTINGS_LIST).performScrollToNode(hasTestTag(TestTags.OUTINGS_NEW_STAY))
         composeRule.onNodeWithTag(TestTags.OUTINGS_NEW_STAY).performClick()
         waitForTag(TestTags.STAY_ADD_PLACE)
         composeRule.onNodeWithTag(TestTags.STAY_ADD_PLACE).performClick()
@@ -209,6 +211,7 @@ class OutingPlanE2ETest : BaseE2eTest() {
         }
         val day = today.plusDays(1)
 
+        waitForTag(TestTags.HOME_ACCOUNT_BUTTON)
         composeRule.onNodeWithTag(TestTags.HOME_ACCOUNT_BUTTON, useUnmergedTree = true).performClick()
         waitForTag(TestTags.MY_ACCOUNT_LIST)
         composeRule.onNodeWithTag(TestTags.MY_ACCOUNT_LIST).performScrollToNode(hasText(string(R.string.account_outings_all)))
@@ -220,8 +223,14 @@ class OutingPlanE2ETest : BaseE2eTest() {
         composeRule.onNodeWithTag(TestTags.STAY_LIST).performScrollToNode(hasTestTag(TestTags.stayChoose(day.toString())))
         composeRule.onNodeWithTag(TestTags.stayChoose(day.toString()), useUnmergedTree = true).performClick()
 
-        waitForTag(TestTags.stayCandidate(101))
-        composeRule.onNodeWithTag(TestTags.stayCandidate(101), useUnmergedTree = true).performClick()
+        // The sheet is read before choosing, and back is the list again.
+        waitForTag(TestTags.stayCandidateSheet(101))
+        composeRule.onNodeWithTag(TestTags.stayCandidateSheet(101)).performClick()
+        waitForTag(TestTags.DETAIL_LIST)
+        assertTrue(runBlocking { outingRepository.observeAll().first().isEmpty() })
+        Espresso.pressBack()
+        waitForTag(TestTags.canyonCard(101))
+        composeRule.onNodeWithTag(TestTags.canyonCard(101)).performSemanticsAction(SemanticsActions.OnClick)
 
         // The canyon is kept at once for that day of the stay, as a draft.
         waitForTag(TestTags.OUTING_SUMMARY)
@@ -236,6 +245,22 @@ class OutingPlanE2ETest : BaseE2eTest() {
         waitForTag(TestTags.STAY_LIST)
         composeRule.onNodeWithTag(TestTags.STAY_LIST).performScrollToNode(hasTestTag(TestTags.outingRow(draft.id)))
         assertTrue(composeRule.onAllNodes(hasTestTag(TestTags.outingRow(draft.id))).fetchSemanticsNodes().isNotEmpty())
+    }
+
+    @Test
+    fun theStayUnderWayIsOneTapFromTheHomeScreen() {
+        val today = LocalDate.now()
+        val stayId = runBlocking {
+            val place = placeRepository.save(Place("Camping du Riolan", 43.86, 6.78))
+            stayRepository.save(Stay(place, today.minusDays(1), today.plusDays(2)))
+        }
+
+        waitForTag(TestTags.HOME_STAY)
+        composeRule.onNodeWithTag(TestTags.HOME_STAY, useUnmergedTree = true).performSemanticsAction(SemanticsActions.OnClick)
+        waitForTag(TestTags.STAY_LIST)
+        // Today's card: its canyon to choose, or the one done if the logbook has one today.
+        composeRule.onNodeWithTag(TestTags.STAY_LIST).performScrollToNode(hasTestTag(TestTags.stayDay(today.toString())))
+        assertTrue(runBlocking { stayRepository.get(stayId) } != null)
     }
 
     private fun openRiolan() {

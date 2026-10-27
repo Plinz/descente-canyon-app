@@ -1148,7 +1148,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="settings_outings_hint">Grupo habitual, tiempo en el aparcamiento, coeficientes</string>
     <string name="settings_places_hint">Camping, alojamiento, casa: se cuenta el trayecto</string>
     <string name="stay_title">Estancia</string>
-    <string name="stay_intro">Un barranco por día entre los de alrededor del lugar; el tiempo es el del lugar.</string>
+    <string name="stay_intro">El tiempo mostrado es el del lugar de la estancia; el de cada barranco está en su salida.</string>
     <string name="stay_radius">%1$d km</string>
     <string name="stay_filter_favorites">Favoritos</string>
     <string name="stay_filter_not_descended">Nunca descendidos</string>
@@ -1156,7 +1156,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="stay_empty_hint">Amplíe el radio o cambie el filtro.</string>
     <string name="stay_drive">%1$s de trayecto</string>
     <string name="stay_drive_estimate">≈ %1$s de trayecto</string>
-    <string name="stay_descended">ya descendido</string>
     <plurals name="emergency_group">
         <item quantity="one">Grupo de %1$d persona: dígalo a emergencias.</item>
         <item quantity="many">Grupo de %1$d personas: dígalo a emergencias.</item>
@@ -1284,4 +1283,38 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="outing_step_start_to">Salida a pie hacia %1$s</string>
     <string name="outing_step_back_at_car">De vuelta al coche</string>
     <string name="outing_durations_source_of">%1$s, según la ficha: aproximación %2$s, descenso %3$s, retorno %4$s.</string>
+    <string name="stay_weather_later">Previsión del tiempo a partir del %1$s</string>
+    <string name="stay_weather_offline">Sin conexión: aún no hay previsión para este lugar.</string>
+    <string name="stay_weather_failed">Previsión no disponible por ahora.</string>
+    <string name="stay_outing_night">Riesgo de terminar de noche: salga antes</string>
+    <string name="stay_outing_change">Cambiar de barranco</string>
+    <string name="stay_outing_remove">Quitar este barranco</string>
+    <string name="stay_done_title">Ya descendidos durante la estancia</string>
+    <string name="stay_day_done">%1$s: descendido</string>
+    <string name="stay_picker_search_hint">Buscar un barranco por su nombre</string>
+    <string name="stay_picker_open_sheet">Ver la ficha</string>
+    <string name="stay_picker_planned">Ya previsto el %1$s</string>
+    <string name="stay_search_empty">Ningún barranco con ese nombre</string>
+    <string name="stay_search_empty_hint">Compruebe la ortografía o quite un filtro.</string>
+    <string name="outings_past_stays">Estancias pasadas (%1$d)</string>
+    <string name="home_stay_title">Estancia en %1$s</string>
+    <string name="home_stay_day">Día %1$d de %2$d</string>
+    <string name="home_stay_today">Hoy: %1$s</string>
+    <string name="home_stay_tomorrow">Mañana: %1$s</string>
+    <string name="home_stay_nothing">nada previsto</string>
+    <plurals name="stay_done_count">
+        <item quantity="one">%1$d barranco descendido</item>
+        <item quantity="many">%1$d barrancos descendidos</item>
+        <item quantity="other">%1$d barrancos descendidos</item>
+    </plurals>
+    <plurals name="stay_edit_left_out">
+        <item quantity="one">%1$d salida prevista fuera de estas fechas saldrá de la estancia; sigue en Salidas previstas.</item>
+        <item quantity="many">%1$d salidas previstas fuera de estas fechas saldrán de la estancia; siguen en Salidas previstas.</item>
+        <item quantity="other">%1$d salidas previstas fuera de estas fechas saldrán de la estancia; siguen en Salidas previstas.</item>
+    </plurals>
+    <plurals name="home_stay_soon">
+        <item quantity="one">Dentro de %1$d día</item>
+        <item quantity="many">Dentro de %1$d días</item>
+        <item quantity="other">Dentro de %1$d días</item>
+    </plurals>
 </resources>

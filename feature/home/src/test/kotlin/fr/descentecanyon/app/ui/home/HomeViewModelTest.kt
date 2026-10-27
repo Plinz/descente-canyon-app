@@ -10,7 +10,10 @@ import fr.descentecanyon.app.domain.model.ForumCategory
 import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.NotificationCenterState
+import fr.descentecanyon.app.domain.model.Place
+import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.ReportZone
+import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.ZoneCountry
 import fr.descentecanyon.app.domain.model.ZoneSubdivision
 import fr.descentecanyon.app.domain.model.normalizeForSearch
@@ -21,7 +24,9 @@ import fr.descentecanyon.app.domain.repository.ForumRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
+import fr.descentecanyon.app.testutil.FakePlaceRepository
 import fr.descentecanyon.app.testutil.FakePreferencesRepository
+import fr.descentecanyon.app.testutil.FakeStayRepository
 import fr.descentecanyon.app.testutil.MainDispatcherRule
 import io.mockk.coEvery
 import io.mockk.coVerify
@@ -29,7 +34,9 @@ import io.mockk.every
 import io.mockk.mockk
 import java.net.UnknownHostException
 import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +44,7 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -61,6 +69,8 @@ class HomeViewModelTest {
         every { observePendingCount() } returns pendingDebitCount
     }
     private val searchCatalog = MutableStateFlow<List<CanyonSearchItem>>(emptyList())
+    private val stayRepository = FakeStayRepository()
+    private val placeRepository = FakePlaceRepository()
 
     @Test
     fun `debit reports waiting to be sent are counted for the home banner`() = runTest {
@@ -75,6 +85,42 @@ class HomeViewModelTest {
         advanceUntilIdle()
 
         assertEquals(2, viewModel.uiState.value.pendingDebitCount)
+    }
+
+    @Test
+    fun `a stay under way shows its day and what is planned today and tomorrow, one soon only when it starts`() = runTest {
+        every { connectivityObserver.observe() } returns MutableStateFlow(false)
+        every { connectivityObserver.isCurrentlyOnline() } returns false
+        coEvery { debitRepository.getCachedLatestDebits(any()) } returns CachedItems(emptyList(), null)
+        coEvery { forumRepository.getCachedActiveTopics(any()) } returns CachedItems(emptyList(), null)
+        coEvery { forumRepository.getCachedCategories() } returns CachedItems(emptyList(), null)
+        val today = LocalDate.now()
+        val start = today.atTime(9, 0).atZone(ZoneId.systemDefault()).toInstant()
+        every { outingRepository.observeAll() } returns flowOf(
+            listOf(
+                PlannedOuting(42, "Riolan", start, start.plusSeconds(4 * 3600), start.plusSeconds(6 * 3600), tracked = false, stayId = 3),
+            ),
+        )
+        placeRepository.places.value = listOf(Place("Camping", 44.0, 6.8, id = 7))
+        stayRepository.stays.value = listOf(
+            Stay(7, today.minusDays(2), today.plusDays(4), id = 3),
+            Stay(7, today.plusDays(10), today.plusDays(12), id = 4),
+        )
+        // A clock that does not move: the agenda of the outings stops waiting for the next change.
+        val viewModel = createViewModel(Clock.fixed(Instant.now(), ZoneId.systemDefault()))
+        advanceUntilIdle()
+
+        val stay = viewModel.uiState.value.stay!!
+        assertEquals(3L to "Camping", stay.stay.id to stay.placeName)
+        assertEquals(listOf(today to listOf("Riolan"), today.plusDays(1) to emptyList()), stay.days.map { it.date to it.outings })
+
+        // Over: the next stay is ten days away, too far to show.
+        stayRepository.stays.value = stayRepository.stays.value.drop(1)
+        advanceUntilIdle()
+        assertNull(viewModel.uiState.value.stay)
+        stayRepository.stays.value = listOf(Stay(7, today.plusDays(3), today.plusDays(5), id = 5))
+        advanceUntilIdle()
+        assertEquals(5L, viewModel.uiState.value.stay?.stay?.id)
     }
 
     @Test
@@ -493,7 +539,7 @@ class HomeViewModelTest {
         assertEquals(1234L, viewModel.uiState.value.debitFeed.lastSyncedAtEpochMs)
     }
 
-    private fun createViewModel(): HomeViewModel {
+    private fun createViewModel(clock: Clock = Clock.systemDefaultZone()): HomeViewModel {
         every { canyonRepository.observeSearchCatalog() } returns searchCatalog
         every { notificationCenterRepository.observeState() } returns MutableStateFlow(NotificationCenterState())
         coEvery { notificationCenterRepository.toggleForumCategoryFollow(any(), any(), any()) } returns Unit
@@ -508,8 +554,10 @@ class HomeViewModelTest {
             notificationCenterRepository = notificationCenterRepository,
             debitSubmissionRepository = debitSubmissionRepository,
             outingRepository = outingRepository,
-            endOutingUseCase = EndOutingUseCase(outingRepository, mockk(relaxed = true), Clock.systemDefaultZone()),
-            clock = Clock.systemDefaultZone(),
+            stayRepository = stayRepository,
+            placeRepository = placeRepository,
+            endOutingUseCase = EndOutingUseCase(outingRepository, mockk(relaxed = true), clock),
+            clock = clock,
         )
     }
 
