@@ -286,7 +286,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="communes">Communes</string>
     <string name="massif">Massif</string>
     <string name="basin">Bassin</string>
-    <string name="watershed_area">Surface bassin versant</string>
+    <string name="watershed_area">Bassin versant</string>
     <string name="map_watershed">Bassin versant</string>
     <string name="map_hide_watershed">Masquer le bassin</string>
     <string name="watercourse">Cours d\'eau</string>
@@ -774,11 +774,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
         <item quantity="one">%1$d canyon</item>
         <item quantity="many">%1$d canyons</item>
         <item quantity="other">%1$d canyons</item>
-    </plurals>
-    <plurals name="logbook_stats_year">
-        <item quantity="one">%1$d cette année</item>
-        <item quantity="many">%1$d cette année</item>
-        <item quantity="other">%1$d cette année</item>
     </plurals>
     <string name="favorites_sort_added">Récents</string>
     <string name="favorites_sort_name">Nom</string>

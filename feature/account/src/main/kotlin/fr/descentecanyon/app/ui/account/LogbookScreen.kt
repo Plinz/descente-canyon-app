@@ -173,7 +173,6 @@ private fun LazyListScope.outingItems(state: LogbookUiState, query: String, onCa
             listOf(
                 pluralStringResource(R.plurals.logbook_stats, state.stats.outings, state.stats.outings),
                 pluralStringResource(R.plurals.logbook_stats_canyons, state.stats.canyons, state.stats.canyons),
-                pluralStringResource(R.plurals.logbook_stats_year, state.stats.outingsThisYear, state.stats.outingsThisYear),
             ).joinToString(" · "),
             style = MaterialTheme.typography.titleSmall,
             color = LocalDcColors.current.textSecondary,

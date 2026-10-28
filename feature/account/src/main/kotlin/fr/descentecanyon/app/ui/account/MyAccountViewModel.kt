@@ -218,7 +218,11 @@ class MyAccountViewModel @Inject constructor(
         viewModelScope.launch {
             logbookRepository.observeAll().collect { entries ->
                 _uiState.update {
-                    it.copy(stats = LogbookStats.of(entries, LocalDate.now(clock)), recentEntries = entries.take(RECENT_ENTRIES))
+                    // The canyons descended last, each once with its last descent.
+                    it.copy(
+                        stats = LogbookStats.of(entries, LocalDate.now(clock)),
+                        recentEntries = entries.distinctBy { entry -> entry.canyonId }.take(RECENT_ENTRIES),
+                    )
                 }
             }
         }

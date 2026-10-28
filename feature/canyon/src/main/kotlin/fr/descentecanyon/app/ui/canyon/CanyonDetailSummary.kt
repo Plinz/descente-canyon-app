@@ -4,8 +4,10 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -32,6 +34,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
@@ -203,13 +206,21 @@ private fun RegulationsInForce(regulations: List<Regulation>, modifier: Modifier
 private fun SummaryStatsGrid(detail: CanyonDetail, modifier: Modifier = Modifier) {
     val canyon = detail.canyon
 
-    val parcoursStats = listOf(
-        SummaryStat(stringResource(R.string.altitude), canyon.altitudeDepart?.let { "${it}m" }),
-        SummaryStat(stringResource(R.string.elevation), canyon.denivele?.let { "${it}m" }),
-        SummaryStat(stringResource(R.string.length), canyon.longueur?.let { "${it}m" }),
-        SummaryStat(stringResource(R.string.max_waterfall), canyon.cascadeMax?.let { "${it}m" }),
-        SummaryStat(stringResource(R.string.rope), canyon.cordeMin?.let { "${it}m" }),
-    ).filter { !it.value.isNullOrBlank() }
+    // In pairs, each in the same place from one canyon to the next: a row when one of its two is known.
+    val parcoursRows = listOf(
+        listOf(
+            SummaryStat(stringResource(R.string.altitude), canyon.altitudeDepart?.let { "${it}m" }),
+            SummaryStat(stringResource(R.string.elevation), canyon.denivele?.let { "${it}m" }),
+        ),
+        listOf(
+            SummaryStat(stringResource(R.string.length), canyon.longueur?.let { "${it}m" }),
+            SummaryStat(stringResource(R.string.max_waterfall), canyon.cascadeMax?.let { "${it}m" }),
+        ),
+        listOf(
+            SummaryStat(stringResource(R.string.rope), canyon.cordeMin?.let { "${it}m" }),
+            SummaryStat(stringResource(R.string.watershed_area), detail.watershed?.areaKm2?.let(::formatAreaKm2)),
+        ),
+    ).filter { row -> row.any { !it.value.isNullOrBlank() } }
 
     val timeStats = listOf(
         SummaryStat(stringResource(R.string.approach), canyonDurationText(canyon.tempsApproche)),
@@ -221,10 +232,10 @@ private fun SummaryStatsGrid(detail: CanyonDetail, modifier: Modifier = Modifier
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        if (parcoursStats.isNotEmpty()) {
+        if (parcoursRows.isNotEmpty()) {
             SummaryMetricSection(
                 title = stringResource(R.string.canyon_summary_parcours),
-                stats = parcoursStats,
+                rows = parcoursRows,
             )
         }
         if (timeStats.isNotEmpty()) {
@@ -249,10 +260,6 @@ internal fun LocationCard(detail: CanyonDetail, modifier: Modifier = Modifier) {
         SummaryStat(stringResource(R.string.department), canyon.departement),
         SummaryStat(stringResource(R.string.massif), canyon.massif),
         SummaryStat(stringResource(R.string.basin), canyon.bassin),
-        SummaryStat(
-            stringResource(R.string.watershed_area),
-            detail.watershed?.areaKm2?.let(::formatAreaKm2),
-        ),
         SummaryStat(stringResource(R.string.watercourse), canyon.coursEau),
     ).filter { !it.value.isNullOrBlank() }
     if (locationStats.isEmpty()) return
@@ -278,7 +285,7 @@ private fun formatAreaKm2(areaKm2: Double): String {
     } else {
         "%.2f"
     }
-    return String.format(Locale.getDefault(), "$precision km2", areaKm2)
+    return String.format(Locale.getDefault(), "$precision km²", areaKm2)
 }
 
 @Composable
@@ -328,21 +335,21 @@ private fun SummarySection(title: String, stats: List<SummaryStat>, modifier: Mo
 }
 
 @Composable
-private fun SummaryMetricSection(title: String, stats: List<SummaryStat>, modifier: Modifier = Modifier) {
+private fun SummaryMetricSection(title: String, rows: List<List<SummaryStat>>, modifier: Modifier = Modifier) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         MetricSectionTitle(title)
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-            stats.chunked(2).forEach { rowStats ->
+            rows.forEach { rowStats ->
+                // The tiles of a row as tall as each other, a label on two lines or not.
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Min),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    // A tile alone on its row takes all of it: no hole beside it.
                     rowStats.forEach { stat ->
                         DcMetricTile(
                             label = stat.label,
-                            value = stat.value ?: "-",
-                            modifier = Modifier.weight(1f),
+                            value = stat.value?.takeIf { it.isNotBlank() } ?: "–",
+                            modifier = Modifier.weight(1f).fillMaxHeight(),
                         )
                     }
                 }
@@ -373,9 +380,9 @@ private fun MetricSectionTitle(title: String) {
 }
 
 /**
- * The [steps] side by side, a chevron between two. Each takes its width and the room left goes
- * between them; short of room, each keeps its longest word, its label shortened first, and the
- * rest goes to the longest values, which wrap.
+ * The [steps] side by side and centered, a chevron between two, sharing the width as evenly as their
+ * texts allow; short of room, the longest values wrap between their words. When even that does not
+ * fit (a narrow screen, long labels), one step a line: its label, and its value at the end.
  */
 @Composable
 private fun StepsRow(steps: List<SummaryStat>) {
@@ -384,14 +391,8 @@ private fun StepsRow(steps: List<SummaryStat>) {
     Layout(
         content = {
             steps.forEachIndexed { index, stat ->
-                Text(
-                    text = stat.label.uppercase(),
-                    style = typography.metricLabel,
-                    color = colors.textMuted,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Text(text = stat.value ?: "-", style = typography.metricValue, color = colors.textPrimary)
+                Text(text = stat.label.uppercase(), style = typography.metricLabel, color = colors.textMuted, maxLines = 1)
+                Text(text = stat.value ?: "-", style = typography.metricValue, color = colors.textPrimary, textAlign = TextAlign.Center)
                 if (index < steps.lastIndex) {
                     Icon(Icons.Default.ChevronRight, contentDescription = null, tint = colors.textMuted, modifier = Modifier.size(16.dp))
                 }
@@ -406,17 +407,30 @@ private fun StepsRow(steps: List<SummaryStat>) {
         val labelWidths = labels.map { it.maxIntrinsicWidth(Constraints.Infinity) }
         val valueWords = values.map { it.minIntrinsicWidth(Constraints.Infinity) }
         val preferred = values.mapIndexed { index, value -> maxOf(labelWidths[index], value.maxIntrinsicWidth(Constraints.Infinity)) }
-        val least = valueWords.zip(labelWidths, ::maxOf).takeIf { it.sum() <= room } ?: valueWords
-        val widths = when {
-            preferred.sum() <= room -> preferred
-
-            least.sum() >= room -> least.map { it * room / least.sum().coerceAtLeast(1) }
-
-            else -> {
-                val extra = room - least.sum()
-                val wanted = preferred.sum() - least.sum()
-                least.zip(preferred) { low, high -> low + (high - low) * extra / wanted }
+        val least = valueWords.zip(labelWidths, ::maxOf)
+        if (least.sum() > room) {
+            // One step a line.
+            val labelPlaceables = labels.map { it.measure(Constraints(maxWidth = constraints.maxWidth)) }
+            val valuePlaceables = values.mapIndexed { index, value ->
+                value.measure(Constraints(maxWidth = (constraints.maxWidth - labelPlaceables[index].width - 2 * gap).coerceAtLeast(0)))
             }
+            val heights = labelPlaceables.zip(valuePlaceables) { label, value -> maxOf(label.height, value.height) }
+            val lineGap = STEP_LINE_GAP.roundToPx()
+            return@Layout layout(constraints.maxWidth, heights.sum() + lineGap * (heights.size - 1)) {
+                var y = 0
+                heights.forEachIndexed { index, height ->
+                    labelPlaceables[index].placeRelative(0, y + (height - labelPlaceables[index].height) / 2)
+                    valuePlaceables[index].let { it.placeRelative(constraints.maxWidth - it.width, y + (height - it.height) / 2) }
+                    y += height + lineGap
+                }
+            }
+        }
+        val widths = if (preferred.sum() <= room) {
+            evened(preferred, room)
+        } else {
+            val extra = room - least.sum()
+            val wanted = preferred.sum() - least.sum()
+            least.zip(preferred) { low, high -> low + (high - low) * extra / wanted }
         }
         val labelPlaceables = labels.zip(widths) { label, width -> label.measure(Constraints(maxWidth = width)) }
         val valuePlaceables = values.zip(widths) { value, width -> value.measure(Constraints(maxWidth = width)) }
@@ -427,8 +441,8 @@ private fun StepsRow(steps: List<SummaryStat>) {
         layout(constraints.maxWidth, labelHeight + valuePlaceables.maxOf { it.height }) {
             var x = 0
             widths.forEachIndexed { index, width ->
-                labelPlaceables[index].placeRelative(x, 0)
-                valuePlaceables[index].placeRelative(x, labelHeight)
+                labelPlaceables[index].placeRelative(x + (width - labelPlaceables[index].width) / 2, 0)
+                valuePlaceables[index].placeRelative(x + (width - valuePlaceables[index].width) / 2, labelHeight)
                 x += width
                 chevrons.getOrNull(index)?.let { chevron ->
                     x += gap + spread
@@ -440,4 +454,17 @@ private fun StepsRow(steps: List<SummaryStat>) {
     }
 }
 
+/** [widths] grown to share [room] as evenly as they can: the narrow ones widened first, none narrowed. */
+private fun evened(widths: List<Int>, room: Int): List<Int> {
+    val widest = widths.sortedDescending()
+    var taken = 0
+    widest.forEachIndexed { index, width ->
+        val level = (room - taken) / (widest.size - index)
+        if (width <= level) return widths.map { maxOf(it, level) }
+        taken += width
+    }
+    return widths
+}
+
 private val STEP_GAP = 4.dp
+private val STEP_LINE_GAP = 4.dp

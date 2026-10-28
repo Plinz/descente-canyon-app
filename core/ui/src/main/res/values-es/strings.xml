@@ -286,7 +286,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="communes">Municipios</string>
     <string name="massif">Macizo</string>
     <string name="basin">Cuenca</string>
-    <string name="watershed_area">Superficie de la cuenca vertiente</string>
+    <string name="watershed_area">Cuenca vertiente</string>
     <string name="watercourse">Curso de agua</string>
     <string name="weather_title">Tiempo</string>
     <string name="weather_loading">Cargando el tiempo…</string>
@@ -774,11 +774,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
         <item quantity="one">%1$d barranco</item>
         <item quantity="many">%1$d barrancos</item>
         <item quantity="other">%1$d barrancos</item>
-    </plurals>
-    <plurals name="logbook_stats_year">
-        <item quantity="one">%1$d este año</item>
-        <item quantity="many">%1$d este año</item>
-        <item quantity="other">%1$d este año</item>
     </plurals>
     <string name="favorites_sort_added">Recientes</string>
     <string name="favorites_sort_name">Nombre</string>

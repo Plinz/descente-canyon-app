@@ -459,16 +459,16 @@ private fun LogbookSummary(
             return@AccountSection
         }
         Row(
-            modifier = Modifier.fillMaxWidth().clickable { onOpenLogbook(LogbookTab.OUTINGS) }.padding(vertical = 8.dp),
+            modifier = Modifier.fillMaxWidth().clickable { onOpenLogbook(LogbookTab.CANYONS) }.padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null, tint = colors.textSecondary)
             Text(
+                // On one line: the outings of the year are in the Bilan.
                 listOf(
                     pluralStringResource(R.plurals.logbook_stats, state.stats.outings, state.stats.outings),
                     pluralStringResource(R.plurals.logbook_stats_canyons, state.stats.canyons, state.stats.canyons),
-                    pluralStringResource(R.plurals.logbook_stats_year, state.stats.outingsThisYear, state.stats.outingsThisYear),
                 ).joinToString(" · "),
                 style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier.weight(1f),
@@ -477,7 +477,7 @@ private fun LogbookSummary(
         }
         state.recentEntries.forEach { entry ->
             Row(
-                modifier = Modifier.fillMaxWidth().clickable { onOpenLogbook(LogbookTab.OUTINGS) }.padding(vertical = 4.dp),
+                modifier = Modifier.fillMaxWidth().clickable { onOpenLogbook(LogbookTab.CANYONS) }.padding(vertical = 4.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically,
             ) {
@@ -496,7 +496,7 @@ private fun LogbookSummary(
                 Icon(Icons.Default.BarChart, contentDescription = null, modifier = Modifier.size(18.dp))
                 Text(stringResource(R.string.logbook_tab_bilan), modifier = Modifier.padding(start = 6.dp))
             }
-            TextButton(onClick = { onOpenLogbook(LogbookTab.OUTINGS) }) { Text(stringResource(R.string.account_see_all)) }
+            TextButton(onClick = { onOpenLogbook(LogbookTab.CANYONS) }) { Text(stringResource(R.string.account_see_all)) }
         }
         if (isConnected) {
             HorizontalDivider(color = colors.borderSubtle)

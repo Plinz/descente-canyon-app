@@ -286,7 +286,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="communes">Comuni</string>
     <string name="massif">Massiccio</string>
     <string name="basin">Bacino</string>
-    <string name="watershed_area">Superficie del bacino idrografico</string>
+    <string name="watershed_area">Bacino idrografico</string>
     <string name="watercourse">Corso d\'acqua</string>
     <string name="weather_title">Meteo</string>
     <string name="weather_loading">Caricamento del meteo…</string>
@@ -774,11 +774,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
         <item quantity="one">%1$d forra</item>
         <item quantity="many">%1$d forre</item>
         <item quantity="other">%1$d forre</item>
-    </plurals>
-    <plurals name="logbook_stats_year">
-        <item quantity="one">%1$d quest\'anno</item>
-        <item quantity="many">%1$d quest\'anno</item>
-        <item quantity="other">%1$d quest\'anno</item>
     </plurals>
     <string name="favorites_sort_added">Recenti</string>
     <string name="favorites_sort_name">Nome</string>

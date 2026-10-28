@@ -286,7 +286,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="communes">Gemeinden</string>
     <string name="massif">Massiv</string>
     <string name="basin">Einzugsgebiet</string>
-    <string name="watershed_area">Fläche des Einzugsgebiets</string>
+    <string name="watershed_area">Einzugsgebiet</string>
     <string name="watercourse">Gewässer</string>
     <string name="weather_title">Wetter</string>
     <string name="weather_loading">Wetter wird geladen…</string>
@@ -757,10 +757,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <plurals name="logbook_stats_canyons">
         <item quantity="one">%1$d Canyon</item>
         <item quantity="other">%1$d Canyons</item>
-    </plurals>
-    <plurals name="logbook_stats_year">
-        <item quantity="one">%1$d dieses Jahr</item>
-        <item quantity="other">%1$d dieses Jahr</item>
     </plurals>
     <string name="favorites_sort_added">Neueste</string>
     <string name="favorites_sort_name">Name</string>

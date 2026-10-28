@@ -57,6 +57,7 @@ class MyAccountViewModelTest {
         listOf(
             LogbookEntry(id = 2, canyonId = 26, canyonName = "Furon", date = LocalDate.of(2026, 7, 30)),
             LogbookEntry(id = 1, canyonId = 2283, canyonName = "Ga", date = LocalDate.of(2025, 7, 14)),
+            LogbookEntry(id = 3, canyonId = 26, canyonName = "Furon", date = LocalDate.of(2025, 6, 2)),
         ),
     )
     private val logbookRepository = mockk<LogbookRepository> { every { observeAll() } returns logbook }
@@ -99,9 +100,11 @@ class MyAccountViewModelTest {
 
         val state = viewModel.uiState.value
         assertEquals(30, state.member?.debitReportCount)
-        assertEquals(2, state.stats.outings)
+        assertEquals(3, state.stats.outings)
+        assertEquals(2, state.stats.canyons)
         assertEquals(1, state.stats.outingsThisYear)
-        assertEquals(listOf("Furon", "Ga"), state.recentEntries.map { it.canyonName })
+        // Each canyon once, with its last descent.
+        assertEquals(listOf(2L, 1L), state.recentEntries.map { it.id })
         assertEquals(listOf(MemoPreview(26, "Furon", "Parking après le pont")), state.recentMemos)
         assertEquals(1, state.pendingDebitCount)
         assertEquals(ContributorIdentity("Antoine", "a@example.com"), state.contributorIdentity)

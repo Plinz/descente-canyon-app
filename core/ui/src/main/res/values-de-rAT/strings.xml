@@ -239,7 +239,7 @@ Suche einen Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="communes">Gemeinden</string>
     <string name="massif">Gebirgsgruppe</string>
     <string name="basin">Einzugsgebiet</string>
-    <string name="watershed_area">Fläche des Einzugsgebiets</string>
+    <string name="watershed_area">Einzugsgebiet</string>
     <string name="watercourse">Gewässer</string>
     <string name="weather_unavailable">Wetter für diesen Canyon nicht verfügbar.</string>
     <string name="weather_source_watershed_center">Mitte des Einzugsgebiets</string>

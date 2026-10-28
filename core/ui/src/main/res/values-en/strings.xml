@@ -286,7 +286,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="communes">Municipalities</string>
     <string name="massif">Massif</string>
     <string name="basin">Basin</string>
-    <string name="watershed_area">Watershed area</string>
+    <string name="watershed_area">Watershed</string>
     <string name="watercourse">Watercourse</string>
     <string name="weather_title">Weather</string>
     <string name="weather_loading">Loading the weather…</string>
@@ -757,10 +757,6 @@ Search for a canyon and add it to your favorites.</string>
     <plurals name="logbook_stats_canyons">
         <item quantity="one">%1$d canyon</item>
         <item quantity="other">%1$d canyons</item>
-    </plurals>
-    <plurals name="logbook_stats_year">
-        <item quantity="one">%1$d this year</item>
-        <item quantity="other">%1$d this year</item>
     </plurals>
     <string name="favorites_sort_added">Recent</string>
     <string name="favorites_sort_name">Name</string>
