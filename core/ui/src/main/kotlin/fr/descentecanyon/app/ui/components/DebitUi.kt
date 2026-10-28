@@ -64,6 +64,18 @@ fun relativeDayLabel(resources: Resources, date: LocalDate, today: LocalDate, lo
     }
 }
 
+/** "auj.", "hier", "3 j", then the short date: [relativeDayLabel] where room is short, as in a badge. */
+@Composable
+fun shortRelativeDayLabel(date: LocalDate, today: LocalDate = LocalDate.now()): String {
+    val days = ChronoUnit.DAYS.between(date, today)
+    return when {
+        days <= 0L -> stringResource(R.string.relative_short_today)
+        days == 1L -> stringResource(R.string.relative_short_yesterday)
+        days < RELATIVE_DAYS_LIMIT -> stringResource(R.string.relative_short_days, days.toInt())
+        else -> date.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(LocalLocale.current.platformLocale))
+    }
+}
+
 private const val RELATIVE_DAYS_LIMIT = 30L
 
 /** "Correct à gros": two adjacent levels the flow estimate hesitates between. */
@@ -76,7 +88,7 @@ fun debitRangeLabel(range: DebitLevelRange): String =
 fun debitLevelShortLabel(level: NiveauDebit): String = capitalized(debitRangeWord(level))
 
 @Composable
-private fun capitalized(text: String): String {
+internal fun capitalized(text: String): String {
     val locale = LocalLocale.current.platformLocale
     return text.replaceFirstChar { if (it.isLowerCase()) it.titlecase(locale) else it.toString() }
 }

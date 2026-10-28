@@ -628,6 +628,9 @@ Busca un barranco y añádelo a tus favoritos.</string>
         <item quantity="many">Hace %1$d días</item>
         <item quantity="other">Hace %1$d días</item>
     </plurals>
+    <string name="relative_short_today">hoy</string>
+    <string name="relative_short_yesterday">ayer</string>
+    <string name="relative_short_days">%1$d d</string>
     <string name="shortcut_search_long">Buscar un barranco</string>
     <string name="shortcut_map_long">Mapa de barrancos</string>
     <string name="shortcut_favorites_long">Mis barrancos favoritos</string>
@@ -923,6 +926,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="search_filter_distance">Distancia máxima</string>
     <string name="search_distance_km">%1$d km</string>
     <string name="search_filter_distance_active">≤ %1$d km</string>
+    <string name="search_distance_away">A %1$s</string>
     <plurals name="my_canyon_all_outings">
         <item quantity="one">Ver %1$d salida</item>
         <item quantity="many">Ver las %1$d salidas</item>

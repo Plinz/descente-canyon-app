@@ -628,6 +628,9 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
         <item quantity="many">Il y a %1$d jours</item>
         <item quantity="other">Il y a %1$d jours</item>
     </plurals>
+    <string name="relative_short_today">auj.</string>
+    <string name="relative_short_yesterday">hier</string>
+    <string name="relative_short_days">%1$d j</string>
     <string name="shortcut_search_long">Rechercher un canyon</string>
     <string name="shortcut_map_long">Carte des canyons</string>
     <string name="shortcut_favorites_long">Mes canyons favoris</string>
@@ -923,6 +926,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="search_filter_distance">Distance max</string>
     <string name="search_distance_km">%1$d km</string>
     <string name="search_filter_distance_active">≤ %1$d km</string>
+    <string name="search_distance_away">À %1$s</string>
     <plurals name="my_canyon_all_outings">
         <item quantity="one">Voir %1$d sortie</item>
         <item quantity="many">Voir les %1$d sorties</item>

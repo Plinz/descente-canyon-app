@@ -223,6 +223,7 @@ fun DcFlowBadge(niveau: NiveauDebit, modifier: Modifier = Modifier, compact: Boo
             text = label,
             style = if (compact) MaterialTheme.typography.labelSmall else MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Bold,
+            maxLines = 1,
             modifier = Modifier.padding(horizontal = if (compact) 8.dp else 10.dp, vertical = if (compact) 4.dp else 6.dp),
         )
     }

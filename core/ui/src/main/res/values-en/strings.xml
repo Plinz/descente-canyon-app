@@ -617,6 +617,9 @@ Search for a canyon and add it to your favorites.</string>
         <item quantity="one">%1$d day ago</item>
         <item quantity="other">%1$d days ago</item>
     </plurals>
+    <string name="relative_short_today">today</string>
+    <string name="relative_short_yesterday">yesterday</string>
+    <string name="relative_short_days">%1$d d</string>
     <string name="shortcut_search_long">Search for a canyon</string>
     <string name="shortcut_map_long">Canyon map</string>
     <string name="shortcut_favorites_long">My favorite canyons</string>
@@ -905,6 +908,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="search_filter_distance">Maximum distance</string>
     <string name="search_distance_km">%1$d km</string>
     <string name="search_filter_distance_active">≤ %1$d km</string>
+    <string name="search_distance_away">%1$s away</string>
     <plurals name="my_canyon_all_outings">
         <item quantity="one">See %1$d outing</item>
         <item quantity="other">See all %1$d outings</item>

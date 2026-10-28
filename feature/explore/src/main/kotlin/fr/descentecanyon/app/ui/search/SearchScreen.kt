@@ -33,8 +33,8 @@ import androidx.compose.material.icons.filled.ArrowDownward
 import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DirectionsCar
-import androidx.compose.material.icons.filled.EventAvailable
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.NearMe
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.BottomSheetDefaults
@@ -64,6 +64,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
@@ -78,19 +79,21 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.DriveTimeSource
+import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
+import fr.descentecanyon.app.domain.model.haversineKm
 import fr.descentecanyon.app.domain.model.toSummary
 import fr.descentecanyon.app.map.MAP_SEARCH_STYLE_URI
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.components.AppFloatingActionButton
+import fr.descentecanyon.app.ui.components.CanyonCardInfo
 import fr.descentecanyon.app.ui.components.CanyonSummaryCard
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.SelectedCanyonSheetContent
 import fr.descentecanyon.app.ui.components.formatDurationMinutes
 import fr.descentecanyon.app.ui.components.longDayLabel
-import fr.descentecanyon.app.ui.components.shortDayLabel
 import fr.descentecanyon.app.ui.design.DcSectionHeader
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
@@ -103,6 +106,7 @@ import fr.descentecanyon.app.ui.location.loadCurrentDeviceLocation
 import fr.descentecanyon.app.ui.location.requestLocationSettings
 import fr.descentecanyon.app.ui.map.MapLibreView
 import fr.descentecanyon.app.ui.test.TestTags
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -411,7 +415,8 @@ fun SearchScreen(
                                 canyon = canyon.toSummary(),
                                 onClick = { onCanyonClick(canyon.id) },
                                 isDescended = canyon.isDescended,
-                                footer = stayPick?.let { pick -> { StayPickFooter(pick, canyon) } },
+                                info = stayPick?.let { pick -> driveInfo(pick, canyon) } ?: distanceInfo(uiState.criteria, canyon),
+                                plannedOn = stayPick?.plannedOn?.get(canyon.id),
                             )
                         }
                         item { Spacer(modifier = Modifier.height(96.dp)) }
@@ -671,31 +676,29 @@ private fun SearchIdleContent(
     }
 }
 
-/** Under a canyon listed for a day of a stay: the drive from its place, and the other day of the stay it is planned for. */
+/** "≈ 15 min" by road from the place of the stay, at the end of the place line of its card. */
 @Composable
-private fun StayPickFooter(pick: SearchStayPick, canyon: CanyonSearchItem) {
-    val colors = LocalDcColors.current
-    pick.driveTo(canyon)?.let { drive ->
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Icon(Icons.Default.DirectionsCar, contentDescription = null, tint = colors.textSecondary, modifier = Modifier.size(16.dp))
-            Text(
-                stringResource(
-                    if (drive.source == DriveTimeSource.ESTIMATE) R.string.stay_drive_estimate else R.string.stay_drive,
-                    formatDurationMinutes(drive.minutes),
-                ),
-                style = MaterialTheme.typography.bodySmall,
-                color = colors.textSecondary,
-            )
-        }
-    }
-    pick.plannedOn[canyon.id]?.let { day ->
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            Icon(Icons.Default.EventAvailable, contentDescription = null, tint = colors.warning, modifier = Modifier.size(16.dp))
-            Text(
-                stringResource(R.string.stay_picker_planned, shortDayLabel(day)),
-                style = MaterialTheme.typography.bodySmall,
-                color = colors.textSecondary,
-            )
-        }
-    }
+private fun driveInfo(pick: SearchStayPick, canyon: CanyonSearchItem): CanyonCardInfo? {
+    val drive = pick.driveTo(canyon) ?: return null
+    val minutes = formatDurationMinutes(drive.minutes)
+    val estimated = drive.source == DriveTimeSource.ESTIMATE
+    return CanyonCardInfo(
+        icon = Icons.Default.DirectionsCar,
+        text = if (estimated) "≈ $minutes" else minutes,
+        description = stringResource(if (estimated) R.string.stay_drive_estimate else R.string.stay_drive, minutes),
+    )
+}
+
+/** "12 km" in a straight line from the user, once their position is known. */
+@Composable
+private fun distanceInfo(criteria: SearchCriteria, canyon: CanyonSearchItem): CanyonCardInfo? {
+    val latitude = criteria.userLatitude ?: return null
+    val longitude = criteria.userLongitude ?: return null
+    val canyonLatitude = canyon.representativeLat ?: return null
+    val canyonLongitude = canyon.representativeLng ?: return null
+    val km = haversineKm(latitude, longitude, canyonLatitude, canyonLongitude)
+    val locale = LocalLocale.current.platformLocale
+    // A tenth below ten kilometres, whole kilometres above.
+    val text = if (km < 10) String.format(locale, "%.1f km", km) else "${km.roundToInt()} km"
+    return CanyonCardInfo(icon = Icons.Default.NearMe, text = text, description = stringResource(R.string.search_distance_away, text))
 }

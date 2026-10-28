@@ -106,7 +106,11 @@ fun LogbookEntryLines(entry: LogbookEntry, title: String, modifier: Modifier = M
 
 /** Small "done" mark of a canyon already in the logbook. */
 @Composable
-fun DescendedBadge(modifier: Modifier = Modifier) {
+fun DescendedBadge(
+    modifier: Modifier = Modifier,
+    /** Only the check, where room is short. */
+    compact: Boolean = false,
+) {
     val colors = LocalDcColors.current
     val description = stringResource(R.string.logbook_descended_badge_description)
     Surface(
@@ -122,11 +126,14 @@ fun DescendedBadge(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.spacedBy(3.dp),
         ) {
             Icon(Icons.Default.CheckCircle, contentDescription = description, modifier = Modifier.size(13.dp))
-            Text(
-                stringResource(R.string.logbook_descended_badge),
-                style = MaterialTheme.typography.labelSmall,
-                fontWeight = FontWeight.Bold,
-            )
+            if (!compact) {
+                Text(
+                    stringResource(R.string.logbook_descended_badge),
+                    style = MaterialTheme.typography.labelSmall,
+                    fontWeight = FontWeight.Bold,
+                    maxLines = 1,
+                )
+            }
         }
     }
 }
