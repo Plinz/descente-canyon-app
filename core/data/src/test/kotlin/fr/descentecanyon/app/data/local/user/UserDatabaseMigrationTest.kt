@@ -221,7 +221,7 @@ class UserDatabaseMigrationTest {
     }
 
     @Test
-    fun `version 6 turns the stay dates of places into stays, and its outings are followed`() = runTest {
+    fun `version 6 turns the stay dates of places into stays, and its outings stay planned`() = runTest {
         createDatabase(schemaVersion = 6) { db ->
             db.insert(
                 "places",
@@ -264,10 +264,43 @@ class UserDatabaseMigrationTest {
             assertEquals(Triple(3L, "2026-07-12", "2026-07-18"), Triple(stay.placeId, stay.start, stay.end))
             assertEquals(listOf("Maison" to 9L, "Camping" to 7L), database.placeDao().getAll().map { it.name to it.lastUsedAt })
             val outings = database.plannedOutingDao().observeAll().first().sortedBy { it.canyonId }
-            assertEquals(listOf(true, true), outings.map { it.tracked })
             assertEquals(listOf(9000L, null), outings.map { it.informedAlertAt })
             assertEquals(listOf(null, null), outings.map { it.stayId })
             assertEquals("{}", outings.first().choicesJson)
+        } finally {
+            database.close()
+        }
+    }
+
+    @Test
+    fun `version 7 keeps the canyons of the stays as planned outings and forgets the other drafts`() = runTest {
+        createDatabase(schemaVersion = 7) { db ->
+            db.insert("stays", null, values("id" to 2L, "placeId" to 3L, "start" to "2026-07-12", "end" to "2026-07-18", "createdAt" to 1L))
+            listOf(
+                Triple(101, 1, null),
+                Triple(102, 0, 2L),
+                Triple(103, 0, null),
+            ).forEach { (canyonId, tracked, stayId) ->
+                db.insert(
+                    "planned_outings",
+                    null,
+                    values(
+                        "canyonId" to canyonId, "canyonName" to "Riolan", "start" to 1000L, "expectedBack" to 5000L,
+                        "latestBack" to 6000L, "alertAt" to 9000L, "choicesJson" to "{}", "tracked" to tracked,
+                        "stayId" to stayId, "updatedAt" to 500L,
+                    ),
+                )
+            }
+        }
+
+        val database = Room.databaseBuilder(context, UserDatabase::class.java, TEST_DATABASE)
+            .addMigrations(*UserDatabase.MIGRATIONS)
+            .allowMainThreadQueries()
+            .build()
+        try {
+            val outings = database.plannedOutingDao().observeAll().first().sortedBy { it.canyonId }
+            assertEquals(listOf(101 to null, 102 to 2L), outings.map { it.canyonId to it.stayId })
+            assertEquals(1, database.stayDao().getAll().size)
         } finally {
             database.close()
         }

@@ -46,6 +46,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.Stay
+import fr.descentecanyon.app.domain.model.overlapping
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PlaceRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
@@ -66,7 +67,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -80,12 +80,17 @@ data class StayEditUiState(
     val end: LocalDate,
     /** The first day the calendar offers: today, or the first day of a stay already begun. */
     val minDate: LocalDate,
-    /** The outings of the stay its new dates leave out: they leave it when it is kept. */
+    /** The canyons planned for the days its new dates drop: they are taken away when it is kept. */
     val outingsLeftOut: Int = 0,
+    /** Another stay sharing a day with these dates, and its place: refused, one is at one place a day. */
+    val overlapping: Stay? = null,
+    val overlappingPlace: String? = null,
+    /** The dates picked were cut to [Stay.MAX_DAYS]. */
+    val wasCut: Boolean = false,
     /** Set once kept: the screen leaves for the stay. */
     val savedId: Long? = null,
 ) {
-    val canSave: Boolean get() = placeId != null && places.any { it.id == placeId } && !end.isBefore(start)
+    val canSave: Boolean get() = placeId != null && places.any { it.id == placeId } && !end.isBefore(start) && overlapping == null
 }
 
 /** A new stay, or one changed: its place (a campsite placed on the map) and its days. */
@@ -110,17 +115,18 @@ class StayEditViewModel @Inject constructor(
     val initialCamera: MapCameraState = PlacesViewModel.newPlaceCamera(preferencesRepository)
 
     val uiState: StateFlow<StayEditUiState> = combine(
-        placeRepository.observeAll(),
+        combine(placeRepository.observeAll(), stayRepository.observeAll(), ::Pair),
         form,
         kept,
         outingRepository.observeAll(),
         savedId,
-    ) { places, form, kept, outings, saved ->
+    ) { (places, stays), form, kept, outings, saved ->
         val leftOut = if (kept != null && form != null) {
-            saveStayUseCase.outingsLeftOut(kept.copy(start = form.start, end = form.end), outings).size
+            saveStayUseCase.outingsLeftOut(kept, kept.copy(start = form.start, end = form.end), outings).size
         } else {
             0
         }
+        val overlapping = form?.let { stays.overlapping(Stay(form.placeId ?: 0, form.start, form.end, id = stayId)) }
         StayEditUiState(
             isLoading = form == null,
             isNew = stayId == 0L,
@@ -130,6 +136,9 @@ class StayEditViewModel @Inject constructor(
             end = form?.end ?: today,
             minDate = kept?.start?.let { minOf(it, today) } ?: today,
             outingsLeftOut = leftOut,
+            overlapping = overlapping,
+            overlappingPlace = overlapping?.let { other -> places.firstOrNull { it.id == other.placeId }?.name },
+            wasCut = form?.wasCut == true,
             savedId = saved,
         )
     }.stateIn(
@@ -141,10 +150,10 @@ class StayEditViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val stay = stayId.takeIf { it > 0 }?.let { stayRepository.get(it) }
-            val places = placeRepository.observeAll().first()
             kept.value = stay
+            // A new stay has no place picked: the first one of the list is most often home.
             form.value = Form(
-                placeId = stay?.placeId ?: places.firstOrNull()?.id,
+                placeId = stay?.placeId,
                 start = stay?.start ?: today,
                 end = stay?.end ?: today.plusDays(Stay.DEFAULT_DAYS - 1),
             )
@@ -156,7 +165,8 @@ class StayEditViewModel @Inject constructor(
     /** The first and last days, the stay cut to [Stay.MAX_DAYS]. */
     fun selectDates(start: LocalDate, end: LocalDate) = form.update { form ->
         val first = minOf(start, end)
-        form?.copy(start = first, end = minOf(maxOf(start, end), lastDay(first)))
+        val last = maxOf(start, end)
+        form?.copy(start = first, end = minOf(last, lastDay(first)), wasCut = last.isAfter(lastDay(first)))
     }
 
     /** A new place, placed in the editor, becomes the place of the stay. */
@@ -171,11 +181,12 @@ class StayEditViewModel @Inject constructor(
         val form = form.value ?: return
         val placeId = form.placeId ?: return
         viewModelScope.launch {
-            savedId.value = saveStayUseCase(Stay(placeId, form.start, minOf(form.end, lastDay(form.start)), id = stayId))
+            // Null: another stay took these days meanwhile, the form says so.
+            saveStayUseCase(Stay(placeId, form.start, minOf(form.end, lastDay(form.start)), id = stayId))?.let { savedId.value = it }
         }
     }
 
-    private data class Form(val placeId: Long?, val start: LocalDate, val end: LocalDate)
+    private data class Form(val placeId: Long?, val start: LocalDate, val end: LocalDate, val wasCut: Boolean = false)
 
     companion object {
         private const val STOP_TIMEOUT_MS = 5_000L
@@ -270,11 +281,37 @@ fun StayEditScreen(onClose: () -> Unit, onSaved: (stayId: Long, isNew: Boolean) 
                     Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.stay_dates_change), tint = colors.textMuted)
                 }
             }
-            Text(
-                pluralStringResource(R.plurals.stay_dates_hint, Stay.MAX_DAYS, Stay.MAX_DAYS),
-                style = MaterialTheme.typography.bodySmall,
-                color = colors.textMuted,
-            )
+            if (state.wasCut) {
+                Text(
+                    pluralStringResource(R.plurals.stay_dates_cut, Stay.MAX_DAYS, Stay.MAX_DAYS),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = colors.textMuted,
+                )
+            }
+            state.overlapping?.let { other ->
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.Top,
+                    modifier = Modifier.testTag(TestTags.STAY_EDIT_OVERLAP),
+                ) {
+                    Icon(
+                        Icons.Default.Info,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.error,
+                        modifier = Modifier.size(18.dp),
+                    )
+                    Text(
+                        stringResource(
+                            R.string.stay_edit_overlap,
+                            state.overlappingPlace ?: stringResource(R.string.stay_title),
+                            other.start.format(formatter),
+                            other.end.format(formatter),
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            }
             if (state.outingsLeftOut > 0) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),

@@ -130,6 +130,22 @@ class OutingSettingsTest {
     }
 
     @Test
+    fun `stays sharing a day overlap, and a stay moved as a whole says by how many days`() {
+        val stay = Stay(placeId = 2, start = LocalDate.of(2026, 7, 12), end = LocalDate.of(2026, 7, 16), id = 3)
+        val next = Stay(placeId = 4, start = LocalDate.of(2026, 7, 16), end = LocalDate.of(2026, 7, 20), id = 5)
+
+        assertTrue(stay.overlaps(next))
+        assertFalse(stay.overlaps(next.copy(start = LocalDate.of(2026, 7, 17))))
+        assertEquals(next, listOf(stay, next).overlapping(stay.copy(end = LocalDate.of(2026, 7, 18))))
+        // Itself does not count.
+        assertNull(listOf(stay).overlapping(stay.copy(end = LocalDate.of(2026, 7, 18))))
+
+        assertEquals(7L, stay.shiftTo(stay.copy(start = LocalDate.of(2026, 7, 19), end = LocalDate.of(2026, 7, 23))))
+        assertNull(stay.shiftTo(stay.copy(end = LocalDate.of(2026, 7, 18))))
+        assertNull(stay.shiftTo(stay))
+    }
+
+    @Test
     fun `the cars go to the end parking with a shuttle, else to the start one`() {
         val upstream = GeoPoint(canyonId = 1, type = GeoPointType.PARKING_AMONT, latitude = 44.0, longitude = 6.0)
         val downstream = GeoPoint(canyonId = 1, type = GeoPointType.PARKING_AVAL, latitude = 43.9, longitude = 6.1)

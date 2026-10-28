@@ -19,6 +19,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
@@ -72,13 +73,14 @@ private enum class PlanOverlay { CANYONS, DAY, DEPARTURE, GROUP, ALERT_MARGIN, N
 /**
  * The plan of an outing, answer first: the day, the departure and the group in three lines, the key
  * times and what may call the outing off, the details folded below; one action at the bottom
- * follows the outing from the draft to the return.
+ * follows the outing from its confirmation to the return.
  */
 @Composable
 fun OutingPlanScreen(
     onBackClick: () -> Unit,
     onOpenEmergency: (Int) -> Unit,
     onReportFlow: (Int) -> Unit,
+    onOpenCanyon: (canyonId: Int) -> Unit,
     onManagePlaces: () -> Unit,
     onOpenOutingSettings: () -> Unit,
     modifier: Modifier = Modifier,
@@ -117,7 +119,7 @@ fun OutingPlanScreen(
     }
 
     fun activate() {
-        viewModel.activateTracking()
+        viewModel.confirm()
         if (context.needsNotificationPermission()) {
             activationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         } else {
@@ -148,6 +150,16 @@ fun OutingPlanScreen(
         )
         if (result == SnackbarResult.ActionPerformed) openNotify(MessageAudience.RELATIVE)
     }
+    // A canyon given to a day of a stay is planned: as a confirmed outing, notifications are asked for.
+    LaunchedEffect(state.addedToStay) {
+        if (!state.addedToStay) return@LaunchedEffect
+        viewModel.addedToStayShown()
+        if (context.needsNotificationPermission()) {
+            activationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        } else {
+            confirmTracking()
+        }
+    }
 
     Scaffold(
         modifier = modifier,
@@ -160,6 +172,15 @@ fun OutingPlanScreen(
                     }
                 },
                 actions = {
+                    // The topo of the canyon, read again while preparing; with several, the list of the day says which.
+                    state.canyon?.canyon?.id?.let { canyonId ->
+                        IconButton(
+                            onClick = { if (state.nextCanyons.isEmpty()) onOpenCanyon(canyonId) else overlay = PlanOverlay.CANYONS },
+                            modifier = Modifier.testTag(TestTags.OUTING_OPEN_SHEET),
+                        ) {
+                            Icon(Icons.Default.Description, contentDescription = stringResource(R.string.outing_open_sheet))
+                        }
+                    }
                     Box {
                         IconButton(onClick = { menu = true }, modifier = Modifier.testTag(TestTags.OUTING_MENU)) {
                             Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.more_actions))
@@ -300,6 +321,10 @@ fun OutingPlanScreen(
             onAdd = viewModel::addCanyon,
             onRemove = viewModel::removeCanyon,
             onLinkSelected = viewModel::selectLink,
+            onOpenCanyon = { canyonId ->
+                overlay = null
+                onOpenCanyon(canyonId)
+            },
         )
 
         PlanOverlay.DAY -> DcDatePickerDialog(
@@ -341,11 +366,11 @@ fun OutingPlanScreen(
             onSend = { audience, message ->
                 overlay = null
                 if (audience == MessageAudience.RELATIVE) {
-                    // The relative counts on its alert time: sending the plan turns the follow-up on, so the app
+                    // The relative counts on its alert time: sending the plan plans the outing, so the app
                     // reminds the user at the return and keeps the emergency screen at hand.
-                    val wasTracked = state.savedOuting?.tracked == true
+                    val wasPlanned = state.savedOuting != null
                     viewModel.markRelativeInformed()
-                    if (!wasTracked && context.needsNotificationPermission()) {
+                    if (!wasPlanned && context.needsNotificationPermission()) {
                         pendingShare = message
                         sharePermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
                         return@NotifySheet

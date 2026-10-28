@@ -67,11 +67,13 @@ class OutingScreensTest {
 
     @Test
     fun `a new stay takes a place added on the map and its dates, then opens`() = runTest {
-        val places = FakePlaceRepository()
+        // Home, used last: not picked for the stay, the campsite is still to be placed.
+        val places = FakePlaceRepository(listOf(Place("Maison", 45.0, 5.0, lastUsedAt = 9, id = 1)))
         val stays = FakeStayRepository()
         val viewModel = stayEditViewModel(SavedStateHandle(), stays, places)
         backgroundScope.launch { viewModel.uiState.collect {} }
         advanceUntilIdle()
+        assertNull(viewModel.uiState.value.placeId)
         assertEquals(false, viewModel.uiState.value.canSave)
         // A new stay starts today at the earliest.
         assertEquals(LocalDate.of(2026, 7, 14), viewModel.uiState.value.minDate)
@@ -82,26 +84,63 @@ class OutingScreensTest {
         assertEquals(LocalDate.of(2026, 7, 20), viewModel.uiState.value.end)
         assertTrue(viewModel.uiState.value.canSave)
 
-        // Six weeks are cut to the longest stay.
+        // Six weeks are cut to the longest stay, and the form says so.
         viewModel.selectDates(LocalDate.of(2026, 7, 20), LocalDate.of(2026, 8, 31))
         advanceUntilIdle()
         assertEquals(LocalDate.of(2026, 8, 19), viewModel.uiState.value.end)
+        assertTrue(viewModel.uiState.value.wasCut)
 
         viewModel.selectDates(LocalDate.of(2026, 7, 18), LocalDate.of(2026, 7, 18))
+        advanceUntilIdle()
+        assertEquals(false, viewModel.uiState.value.wasCut)
         viewModel.save()
         advanceUntilIdle()
         val stay = stays.stays.value.single()
-        assertEquals(Stay(places.places.value.single().id, LocalDate.of(2026, 7, 18), LocalDate.of(2026, 7, 18), stay.id), stay)
+        assertEquals(
+            Stay(
+                places.places.value.single {
+                    it.name == "Camping"
+                }.id,
+                LocalDate.of(2026, 7, 18),
+                LocalDate.of(2026, 7, 18),
+                stay.id,
+            ),
+            stay,
+        )
         assertEquals(stay.id, viewModel.uiState.value.savedId)
     }
 
     @Test
-    fun `new dates of a stay say which outings they leave out, and those go back among the drafts`() = runTest {
+    fun `dates sharing a day with another stay are refused`() = runTest {
+        val places = FakePlaceRepository(listOf(Place("Camping", 44.0, 6.8, id = 7)))
+        val stays = FakeStayRepository(listOf(Stay(7, LocalDate.of(2026, 7, 12), LocalDate.of(2026, 7, 20), id = 3)))
+        val viewModel = stayEditViewModel(SavedStateHandle(), stays, places)
+        backgroundScope.launch { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+        viewModel.addPlace(Place("Gîte", 44.5, 6.5))
+        advanceUntilIdle()
+
+        // Today to a week from now: the stay at the campsite already has these days.
+        assertEquals(3L, viewModel.uiState.value.overlapping?.id)
+        assertEquals("Camping", viewModel.uiState.value.overlappingPlace)
+        assertEquals(false, viewModel.uiState.value.canSave)
+        viewModel.save()
+        advanceUntilIdle()
+        assertEquals(1, stays.stays.value.size)
+
+        viewModel.selectDates(LocalDate.of(2026, 7, 21), LocalDate.of(2026, 7, 25))
+        advanceUntilIdle()
+        assertNull(viewModel.uiState.value.overlapping)
+        assertTrue(viewModel.uiState.value.canSave)
+    }
+
+    @Test
+    fun `new dates of a stay say which canyons they take away, and a stay moved takes its outings along`() = runTest {
         val places = FakePlaceRepository(listOf(Place("Camping", 44.0, 6.8, id = 7)))
         val outings = FakeOutingRepository()
         val stays = FakeStayRepository(listOf(Stay(7, LocalDate.of(2026, 7, 12), LocalDate.of(2026, 7, 20), id = 3)), outings)
-        outings.save(outingOn(LocalDate.of(2026, 7, 15), "Bollinette", stayId = 3).copy(tracked = false))
-        outings.save(outingOn(LocalDate.of(2026, 7, 19), "Riolan", stayId = 3).copy(tracked = false))
+        outings.save(outingOn(LocalDate.of(2026, 7, 15), "Bollinette", stayId = 3))
+        outings.save(outingOn(LocalDate.of(2026, 7, 19), "Riolan", stayId = 3))
         val viewModel = stayEditViewModel(SavedStateHandle(mapOf("stayId" to 3L)), stays, places, outings)
         backgroundScope.launch { viewModel.uiState.collect {} }
         advanceUntilIdle()
@@ -115,12 +154,18 @@ class OutingScreensTest {
 
         viewModel.save()
         advanceUntilIdle()
-        assertEquals(listOf("Bollinette" to 3L, "Riolan" to null), outings.outings.value.map { it.canyonName to it.stayId })
-        // Out of the stay, the draft is listed with the others again.
-        val list = outingsViewModel(outings, stays, places)
-        backgroundScope.launch { list.uiState.collect {} }
+        assertEquals(listOf("Bollinette" to 3L), outings.outings.value.map { it.canyonName to it.stayId })
+
+        // The whole stay a day later: its canyon follows, nothing is taken away.
+        val moved = stayEditViewModel(SavedStateHandle(mapOf("stayId" to 3L)), stays, places, outings)
+        backgroundScope.launch { moved.uiState.collect {} }
         advanceUntilIdle()
-        assertEquals(listOf("Riolan"), list.uiState.value.drafts.map { it.canyonName })
+        moved.selectDates(LocalDate.of(2026, 7, 13), LocalDate.of(2026, 7, 18))
+        advanceUntilIdle()
+        assertEquals(0, moved.uiState.value.outingsLeftOut)
+        moved.save()
+        advanceUntilIdle()
+        assertEquals(LocalDate.of(2026, 7, 16), outings.outings.value.single().choices?.date)
     }
 
     @Test
@@ -128,7 +173,7 @@ class OutingScreensTest {
         val place = Place("Camping", 44.0, 6.8, id = 7)
         val stay = Stay(7, LocalDate.of(2026, 7, 12), LocalDate.of(2026, 7, 16), id = 3)
         val outings = FakeOutingRepository()
-        outings.save(outingOn(LocalDate.of(2026, 7, 15), "Bollinette", stayId = 3).copy(tracked = false))
+        outings.save(outingOn(LocalDate.of(2026, 7, 15), "Bollinette", stayId = 3))
         // Planned from the campsite on a day of the stay, before the stay existed.
         outings.save(outingOn(LocalDate.of(2026, 7, 16), "Riolan", placeId = 7))
         outings.save(outingOn(LocalDate.of(2026, 7, 16), "Ailleurs", placeId = 9))
@@ -160,17 +205,25 @@ class OutingScreensTest {
         assertEquals(listOf("Ce matin"), days[0].done.map { it.canyonName })
         assertEquals(listOf("Hier"), state.done.map { it.canyonName })
 
+        // Deleted, the stay takes the canyons of its days away.
         viewModel.delete()
         advanceUntilIdle()
         assertTrue(viewModel.uiState.value.isGone)
-        assertEquals(listOf("Riolan", "Ailleurs"), outings.outings.value.map { it.canyonName })
+        assertEquals(listOf("Ailleurs"), outings.outings.value.map { it.canyonName })
     }
 
     @Test
-    fun `days beyond the forecast say when it comes, and a stay without forecast offline says why`() = runTest {
+    fun `days beyond the forecast say when it comes, and a stay without a fresh forecast offline says why`() = runTest {
         val place = Place("Camping", 44.0, 6.8, id = 7)
         val stay = Stay(7, LocalDate.of(2026, 7, 18), LocalDate.of(2026, 7, 22), id = 3)
-        val viewModel = stayViewModel(stay, place, FakeOutingRepository(), cached = null)
+        // Kept on the device for more than a day: no longer shown.
+        val old = CanyonWeather(
+            target = WeatherTarget(44.0, 6.8, WeatherLocationSource.UNKNOWN),
+            timezone = "Europe/Paris",
+            fetchedAt = now.minus(Duration.ofHours(25)),
+            daily = listOf(DailyWeather(LocalDate.of(2026, 7, 18), weatherCode = 95, precipitationSumMm = 26.0)),
+        )
+        val viewModel = stayViewModel(stay, place, FakeOutingRepository(), cached = old)
         backgroundScope.launch { viewModel.uiState.collect {} }
         advanceUntilIdle()
 
@@ -183,14 +236,16 @@ class OutingScreensTest {
             },
         )
         assertEquals(StayWeatherProblem.OFFLINE, state.weatherProblem)
+        assertNull(state.days.first().weather)
     }
 
     @Test
-    fun `an outing of the stay back after the sunset is flagged, and a draft can be taken off its day`() = runTest {
+    fun `an outing of the stay back after the sunset is flagged, and a canyon taken off its day can come back`() = runTest {
         val place = Place("Camping", 44.0, 6.8, id = 7)
         val stay = Stay(7, LocalDate.of(2026, 7, 14), LocalDate.of(2026, 7, 16), id = 3)
         val outings = FakeOutingRepository()
-        val late = outings.save(outingOn(LocalDate.of(2026, 7, 15), "Tardive", stayId = 3, hour = 17).copy(tracked = false))
+        val underway = outings.save(outingOn(LocalDate.of(2026, 7, 14), "En cours", stayId = 3))
+        val late = outings.save(outingOn(LocalDate.of(2026, 7, 15), "Tardive", stayId = 3, hour = 17))
         val early = outings.save(outingOn(LocalDate.of(2026, 7, 16), "Matinale", stayId = 3))
         val viewModel = stayViewModel(stay, place, outings, cached = null)
         backgroundScope.launch { viewModel.uiState.collect {} }
@@ -201,11 +256,16 @@ class OutingScreensTest {
         assertTrue(signals.getValue(late).endsAtNight)
         assertEquals(false, signals.getValue(early).endsAtNight)
 
-        // A followed outing is changed from its plan; a draft leaves its day.
-        viewModel.removeOuting(outings.get(early)!!)
-        viewModel.removeOuting(outings.get(late)!!)
+        // The group is out: that one is followed from its plan; another one leaves its day, and can come back.
+        assertEquals(underway, viewModel.uiState.value.underwayId)
+        val removed = outings.get(late)!!
+        viewModel.removeOuting(outings.get(underway)!!)
+        viewModel.removeOuting(removed)
         advanceUntilIdle()
-        assertEquals(listOf("Matinale"), outings.outings.value.map { it.canyonName })
+        assertEquals(listOf("En cours", "Matinale"), outings.outings.value.map { it.canyonName })
+        viewModel.restoreOuting(removed)
+        advanceUntilIdle()
+        assertEquals(removed, outings.get(late))
     }
 
     @Test
@@ -233,7 +293,7 @@ class OutingScreensTest {
     fun `a name finds a canyon beyond the radius, and a canyon planned another day of the stay says so`() = runTest {
         val place = Place("Camping", 44.0, 6.8, id = 7)
         val outings = FakeOutingRepository()
-        outings.save(outingOn(LocalDate.of(2026, 7, 16), "Riolan", stayId = 3).copy(canyonId = 1, tracked = false))
+        outings.save(outingOn(LocalDate.of(2026, 7, 16), "Riolan", stayId = 3).copy(canyonId = 1))
         val viewModel = pickerViewModel(place, FakeDriveTimeRepository(), outings)
         backgroundScope.launch { viewModel.uiState.collect {} }
         advanceUntilIdle()
@@ -286,14 +346,14 @@ class OutingScreensTest {
     }
 
     @Test
-    fun `the outings list puts the one under way first, then the stays, the outings to come and the drafts apart`() = runTest {
+    fun `the outings list puts the one under way first, the outings to come apart from the stays, which count theirs`() = runTest {
         val outings = FakeOutingRepository()
         outings.save(
             PlannedOuting(1, "Matin", now.minus(Duration.ofHours(1)), now.plus(Duration.ofHours(3)), now.plus(Duration.ofHours(5))),
         )
         outings.save(PlannedOuting(2, "Demain", now.plus(Duration.ofDays(1)), now.plus(Duration.ofDays(1)), now.plus(Duration.ofDays(1))))
-        outings.save(outingOn(LocalDate.of(2026, 7, 15), "Brouillon").copy(tracked = false))
-        outings.save(outingOn(LocalDate.of(2026, 7, 15), "Du séjour", stayId = 3).copy(tracked = false))
+        outings.save(outingOn(LocalDate.of(2026, 7, 15), "Hors séjour"))
+        outings.save(outingOn(LocalDate.of(2026, 7, 15), "Du séjour", stayId = 3))
         val stays = FakeStayRepository(
             listOf(
                 Stay(7, LocalDate.of(2026, 7, 14), LocalDate.of(2026, 7, 16), id = 3),
@@ -307,8 +367,7 @@ class OutingScreensTest {
 
         val state = viewModel.uiState.value
         assertEquals("Matin", state.underway?.canyonName)
-        assertEquals(listOf("Demain"), state.upcoming.map { it.canyonName })
-        assertEquals(listOf("Brouillon"), state.drafts.map { it.canyonName })
+        assertEquals(listOf("Hors séjour", "Demain"), state.upcoming.map { it.canyonName })
         assertEquals(listOf(Triple(3L, "Camping", 1)), state.stays.map { Triple(it.stay.id, it.place?.name, it.outings) })
         // The stay over is apart, with the canyons done during it.
         assertEquals(listOf(4L to 1), state.pastStays.map { it.stay.id to it.done })

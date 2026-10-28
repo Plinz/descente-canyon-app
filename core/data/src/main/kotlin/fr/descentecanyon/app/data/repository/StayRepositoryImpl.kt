@@ -4,6 +4,7 @@ import fr.descentecanyon.app.data.local.user.dao.PlannedOutingDao
 import fr.descentecanyon.app.data.local.user.dao.StayDao
 import fr.descentecanyon.app.data.local.user.entity.StayEntity
 import fr.descentecanyon.app.domain.model.Stay
+import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.StayRepository
 import java.time.Clock
 import java.time.LocalDate
@@ -11,12 +12,14 @@ import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 
 @Singleton
 class StayRepositoryImpl @Inject constructor(
     private val stayDao: StayDao,
     private val plannedOutingDao: PlannedOutingDao,
+    private val outingRepository: OutingRepository,
     private val clock: Clock,
 ) : StayRepository {
 
@@ -39,7 +42,12 @@ class StayRepositoryImpl @Inject constructor(
     }
 
     override suspend fun delete(id: Long) {
-        plannedOutingDao.deleteDraftsOfStay(id)
+        get(id)?.let { stay ->
+            val now = clock.instant()
+            outingRepository.observeAll().first()
+                .filter { stay.includes(it) && !it.isUnderway(now) }
+                .forEach { outingRepository.delete(it.id) }
+        }
         plannedOutingDao.detachFromStay(id)
         stayDao.delete(id)
     }

@@ -21,11 +21,13 @@ import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.LogbookSource
 import fr.descentecanyon.app.domain.model.MessageAudience
 import fr.descentecanyon.app.domain.model.MessageSection
+import fr.descentecanyon.app.domain.model.NextCanyon
 import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingPhase
 import fr.descentecanyon.app.domain.model.OutingSettings
 import fr.descentecanyon.app.domain.model.Place
+import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
@@ -107,7 +109,7 @@ class OutingPlanTest {
     }
 
     @Test
-    fun `the plan stretches the sheet with the time at the parking and an offline sunset, kept at the first change`() = runTest {
+    fun `the plan stretches the sheet with the time at the parking and an offline sunset, kept once confirmed`() = runTest {
         val viewModel = viewModel()
         advanceUntilIdle()
 
@@ -124,20 +126,18 @@ class OutingPlanTest {
         assertEquals(OutingStage.NEW, state.stage)
         assertEquals(emptyList<Any>(), outingRepository.outings.value)
 
+        // Changes are only shown until the outing is confirmed: there is no draft.
         viewModel.selectAlertMargin(3)
         viewModel.selectGroupSize(6)
         advanceUntilIdle()
-        val draft = outingRepository.outings.value.single()
-        assertFalse(draft.tracked)
-        assertEquals(6, draft.groupSize)
-        assertEquals(Duration.ofHours(3), Duration.between(draft.latestBack, draft.alertAt))
-        assertEquals(OutingStage.DRAFT, viewModel.uiState.value.stage)
+        assertEquals(emptyList<Any>(), outingRepository.outings.value)
+        assertEquals(OutingStage.NEW, viewModel.uiState.value.stage)
 
-        viewModel.activateTracking()
+        viewModel.confirm()
         advanceUntilIdle()
         val outing = outingRepository.outings.value.single()
-        assertTrue(outing.tracked)
-        assertEquals(draft.id, outing.id)
+        assertEquals(6, outing.groupSize)
+        assertEquals(Duration.ofHours(3), Duration.between(outing.latestBack, outing.alertAt))
         assertEquals(outing, viewModel.uiState.value.savedOuting)
         // Leaving within two hours: the outing is under way.
         assertEquals(OutingStage.UNDERWAY, viewModel.uiState.value.stage)
@@ -170,7 +170,7 @@ class OutingPlanTest {
         assertEquals(DriveTime(25, DriveTimeSource.MANUAL), viewModel.uiState.value.drive)
         assertEquals(at(8, 55), viewModel.uiState.value.schedule?.arriveParking)
 
-        viewModel.activateTracking()
+        viewModel.confirm()
         advanceUntilIdle()
         assertEquals(at(8, 30).atZone(zone).toInstant(), outingRepository.outings.value.single().departure)
         assertEquals(6L, placeRepository.places.value.single().lastUsedAt)
@@ -184,27 +184,27 @@ class OutingPlanTest {
     }
 
     @Test
-    fun `every change is kept at once, the follow-up stays on, and a kept outing reopens as it was`() = runTest {
+    fun `once confirmed every change is kept at once, and a planned outing reopens as it was`() = runTest {
         val first = viewModel()
         advanceUntilIdle()
         first.selectGroupLevel(GroupLevel.WITH_BEGINNERS)
+        first.confirm()
+        // Changes right after the confirmation are kept with it.
         first.adjustPhase(0, OutingPhase.DESCENT, 30)
         advanceUntilIdle()
         val id = outingRepository.outings.value.single().id
+        assertEquals(mapOf(OutingPhase.DESCENT to 30), outingRepository.outings.value.single().choices?.adjustments)
 
         val reopened = viewModel(outingId = id)
         advanceUntilIdle()
         assertEquals(first.uiState.value.choices, reopened.uiState.value.choices)
-        assertEquals(OutingStage.DRAFT, reopened.uiState.value.stage)
+        assertEquals(id, reopened.uiState.value.savedOuting?.id)
 
         reopened.toggleGear("gear:HELMET")
-        reopened.activateTracking()
-        // Changes right after turning the follow-up on keep it on.
         reopened.selectGroupSize(8)
         advanceUntilIdle()
         val updated = outingRepository.outings.value.single()
         assertEquals(id, updated.id)
-        assertTrue(updated.tracked)
         assertEquals(8, updated.groupSize)
         assertEquals(setOf("gear:HELMET"), updated.choices?.checkedGear)
 
@@ -215,14 +215,13 @@ class OutingPlanTest {
     }
 
     @Test
-    fun `sending the plan to a relative turns the follow-up on, and the relative is told again when the alert moves`() = runTest {
+    fun `sending the plan to a relative plans the outing, and the relative is told again when the alert moves`() = runTest {
         val viewModel = viewModel()
         advanceUntilIdle()
 
         viewModel.markRelativeInformed()
         advanceUntilIdle()
         val saved = outingRepository.outings.value.single()
-        assertTrue(saved.tracked)
         assertEquals(saved.alertAt, saved.informedAlertAt)
 
         // Pushed back during the outing: the relative is sent the new time.
@@ -241,24 +240,77 @@ class OutingPlanTest {
     }
 
     @Test
-    fun `a canyon chosen for a day of a stay is kept at once as a draft of the stay, with the routed drive`() = runTest {
+    fun `a canyon chosen for a day of a stay is planned at once for the stay, with the routed drive`() = runTest {
         placeRepository.places.value = listOf(Place("Camping", 44.0, 6.8, id = 7))
         stayRepository.stays.value = listOf(Stay(7, LocalDate.of(2026, 7, 14), LocalDate.of(2026, 7, 16), id = 3))
         val viewModel = viewModel(date = LocalDate.of(2026, 7, 15), stayId = 3)
         advanceUntilIdle()
 
-        val draft = outingRepository.outings.value.single()
-        assertFalse(draft.tracked)
-        assertEquals(3L, draft.stayId)
-        assertEquals(LocalDate.of(2026, 7, 15), draft.choices?.date)
-        assertEquals(7L, draft.choices?.placeId)
+        val outing = outingRepository.outings.value.single()
+        assertEquals(3L, outing.stayId)
+        assertEquals(LocalDate.of(2026, 7, 15), outing.choices?.date)
+        assertEquals(7L, outing.choices?.placeId)
         // Leaving the campsite at nine, 40 min of road (the route found after the estimate) and 20 min to gear up.
-        assertEquals(LocalDateTime.of(2026, 7, 15, 10, 0).atZone(zone).toInstant(), draft.start)
+        assertEquals(LocalDateTime.of(2026, 7, 15, 10, 0).atZone(zone).toInstant(), outing.start)
+        assertEquals(OutingStage.PLANNED, viewModel.uiState.value.stage)
+        assertTrue(viewModel.uiState.value.addedToStay)
 
         // Moved out of the stay, it no longer belongs to it.
         viewModel.selectDate(LocalDate.of(2026, 7, 20))
         advanceUntilIdle()
         assertNull(outingRepository.outings.value.single().stayId)
+    }
+
+    @Test
+    fun `a new day of a stay takes the group of its nearest outing`() = runTest {
+        placeRepository.places.value = listOf(Place("Camping", 44.0, 6.8, id = 7))
+        stayRepository.stays.value = listOf(Stay(7, LocalDate.of(2026, 7, 14), LocalDate.of(2026, 7, 20), id = 3))
+        val start = LocalDateTime.of(2026, 7, 15, 9, 0).atZone(zone).toInstant()
+        val group = OutingChoices(LocalDate.of(2026, 7, 15), LocalTime.of(9, 0), groupSize = 7, groupLevel = GroupLevel.WITH_BEGINNERS)
+        outingRepository.save(
+            PlannedOuting(43, "Riolan aval", start, start, start, choices = group.withPlace(7).copy(meetAtPlace = true), stayId = 3),
+        )
+
+        val viewModel = viewModel(date = LocalDate.of(2026, 7, 17), stayId = 3)
+        advanceUntilIdle()
+
+        val choices = viewModel.uiState.value.choices
+        assertEquals(7, choices.groupSize)
+        assertEquals(GroupLevel.WITH_BEGINNERS, choices.groupLevel)
+        assertTrue(choices.meetAtPlace)
+    }
+
+    @Test
+    fun `another canyon for a day of a stay keeps the outing, its day and its group`() = runTest {
+        placeRepository.places.value = listOf(Place("Camping", 44.0, 6.8, id = 7))
+        stayRepository.stays.value = listOf(Stay(7, LocalDate.of(2026, 7, 14), LocalDate.of(2026, 7, 20), id = 3))
+        val start = LocalDateTime.of(2026, 7, 16, 10, 0).atZone(zone).toInstant()
+        val choices = OutingChoices(
+            LocalDate.of(2026, 7, 16),
+            LocalTime.of(8, 30),
+            groupSize = 6,
+            adjustments = mapOf(OutingPhase.DESCENT to 30),
+            note = "Covoiturage",
+            nextCanyons = listOf(NextCanyon(44, "Loin")),
+        ).withPlace(7)
+        val id = outingRepository.save(PlannedOuting(43, "Riolan aval", start, start, start, choices = choices, stayId = 3))
+
+        // The Riolan picked for that day in place of the lower part.
+        val viewModel = viewModel(outingId = id)
+        advanceUntilIdle()
+
+        val changed = outingRepository.outings.value.single()
+        assertEquals(id, changed.id)
+        assertEquals("Riolan", changed.title)
+        assertEquals(3L, changed.stayId)
+        assertEquals(LocalDate.of(2026, 7, 16), changed.choices?.date)
+        assertEquals(LocalTime.of(8, 30), changed.choices?.anchorTime)
+        assertEquals(6, changed.groupSize)
+        assertEquals("Covoiturage", changed.choices?.note)
+        // What belonged to the lower part goes.
+        assertEquals(emptyMap<OutingPhase, Int>(), changed.choices?.adjustments)
+        assertEquals(emptyList<NextCanyon>(), changed.choices?.nextCanyons)
+        assertEquals(OutingStage.PLANNED, viewModel.uiState.value.stage)
     }
 
     @Test
@@ -269,8 +321,9 @@ class OutingPlanTest {
         advanceUntilIdle()
         assertEquals(1L, viewModel.uiState.value.choices.placeId)
 
-        // A day of the stay: from the campsite, and the stay counts it.
+        // A day of the stay: from the campsite, and the stay counts it once planned.
         viewModel.selectDate(LocalDate.of(2026, 7, 17))
+        viewModel.confirm()
         advanceUntilIdle()
         assertEquals(7L, viewModel.uiState.value.choices.placeId)
         val outing = outingRepository.outings.value.single()
@@ -300,7 +353,7 @@ class OutingPlanTest {
         assertTrue("$start", start.isBefore(LocalTime.of(9, 0)) && !start.isBefore(LocalTime.of(6, 0)))
         assertEquals(0, start.minute % 15)
         assertFalse(state.daylight is DaylightCheck.Late)
-        // Only a default: nothing is kept before a change.
+        // Only a default: nothing is kept before the outing is confirmed.
         assertTrue(outingRepository.outings.value.isEmpty())
     }
 
@@ -315,6 +368,8 @@ class OutingPlanTest {
     fun `a canyon chained on foot follows the end of the first one, with the shuttle of the day and one alert`() = runTest {
         val viewModel = viewModel()
         backgroundScope.launch { viewModel.canyonPicker.collect {} }
+        advanceUntilIdle()
+        viewModel.confirm()
         advanceUntilIdle()
 
         // Around the canyon: the next part of the stream, not the canyon 50 km away.
@@ -337,9 +392,9 @@ class OutingPlanTest {
         // 30 min + 2 h in the Riolan, 1 h out of it, 10 min to the lower part, 1 h in it and 20 min back.
         assertEquals(at(12, 35), state.schedule?.nextCanyons?.single()?.descentStart?.estimate)
         assertEquals(at(13, 55), state.expectedBack)
-        val draft = outingRepository.outings.value.single()
-        assertEquals(listOf(42, 43), draft.canyonIds)
-        assertEquals(at(11, 25).atZone(zone).toInstant(), draft.choices?.nextCanyons?.single()?.from)
+        val planned = outingRepository.outings.value.single()
+        assertEquals(listOf(42, 43), planned.canyonIds)
+        assertEquals(at(11, 25).atZone(zone).toInstant(), planned.choices?.nextCanyons?.single()?.from)
 
         // By car: packing up, the drive between the parkings and gearing up again.
         viewModel.selectLink(0, CanyonLink.BY_CAR)
@@ -361,7 +416,6 @@ class OutingPlanTest {
         assertEquals(mapOf(OutingPhase.DESCENT to 15), outingRepository.outings.value.single().choices?.nextCanyons?.single()?.adjustments)
 
         // Back from both: each canyon goes to the logbook.
-        viewModel.activateTracking()
         viewModel.markBack()
         advanceUntilIdle()
         assertEquals(listOf(42, 43), logged.map { it.canyonId })
@@ -413,12 +467,11 @@ class OutingPlanTest {
     }
 
     @Test
-    fun `I'm leaving now turns the follow-up on with the time of now`() = runTest {
+    fun `I'm leaving now plans the outing with the time of now`() = runTest {
         val viewModel = viewModel(startNow = true)
         advanceUntilIdle()
 
         val outing = outingRepository.outings.value.single()
-        assertTrue(outing.tracked)
         assertEquals(LocalDate.of(2026, 7, 14), outing.choices?.date)
         assertEquals(LocalTime.of(8, 5), outing.choices?.anchorTime)
         assertTrue(viewModel.uiState.value.startedNow)

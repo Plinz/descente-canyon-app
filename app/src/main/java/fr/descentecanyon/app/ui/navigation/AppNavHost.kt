@@ -47,6 +47,7 @@ import fr.descentecanyon.app.ui.outing.OutingSettingsScreen
 import fr.descentecanyon.app.ui.outing.OutingsScreen
 import fr.descentecanyon.app.ui.outing.PlacesScreen
 import fr.descentecanyon.app.ui.outing.StayCanyonPickerScreen
+import fr.descentecanyon.app.ui.outing.StayDayRequest
 import fr.descentecanyon.app.ui.outing.StayEditScreen
 import fr.descentecanyon.app.ui.outing.StayScreen
 import fr.descentecanyon.app.ui.pending.PendingDebitsScreen
@@ -54,7 +55,6 @@ import fr.descentecanyon.app.ui.search.SearchScreen
 import fr.descentecanyon.app.ui.settings.SettingsScreen
 import fr.descentecanyon.app.ui.users.UserProfileScreen
 import fr.descentecanyon.app.ui.users.UserSearchScreen
-import java.time.LocalDate
 
 /**
  * Every navigation started from a click goes through [dropUnlessResumed]: while a screen enters or
@@ -295,6 +295,8 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
                 onOpenEmergency = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.Emergency(canyonId)) },
                 onReportFlow = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.DebitForm(canyonId)) },
+                // Over the plan, even when it was opened from that page: back is the plan as it was left.
+                onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
                 onManagePlaces = dropUnlessResumed { navController.navigateSingleTop(Screen.Places) },
                 onOpenOutingSettings = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingSettings) },
             )
@@ -322,8 +324,8 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
             StayScreen(
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
                 onEdit = dropUnlessResumedWith { stayId: Long -> navController.navigateSingleTop(Screen.StayEdit(stayId)) },
-                onChooseCanyon = dropUnlessResumedWith { stayId: Long, date: LocalDate ->
-                    navController.navigateSingleTop(Screen.StayCanyonPicker(stayId, date.toString()))
+                onChooseCanyon = dropUnlessResumedWith { request: StayDayRequest ->
+                    navController.navigateSingleTop(Screen.StayCanyonPicker(request.stayId, request.date.toString(), request.outingId))
                 },
                 onOpenOuting = dropUnlessResumedWith { request: OutingPlanRequest -> navController.openOutingPlan(request) },
             )

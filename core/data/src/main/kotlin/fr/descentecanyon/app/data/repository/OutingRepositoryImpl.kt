@@ -54,7 +54,6 @@ class OutingRepositoryImpl @Inject constructor(private val dao: PlannedOutingDao
         groupSize = groupSize,
         informedAlertAt = informedAlertAt?.toEpochMilli(),
         choicesJson = choices?.let { json.encodeToString(StoredChoices.serializer(), StoredChoices.of(it)) },
-        tracked = tracked,
         stayId = stayId,
         updatedAt = clock.millis(),
     )
@@ -73,7 +72,6 @@ class OutingRepositoryImpl @Inject constructor(private val dao: PlannedOutingDao
         choices = choicesJson?.let { payload ->
             runCatching { json.decodeFromString(StoredChoices.serializer(), payload) }.getOrNull()?.toDomain()
         },
-        tracked = tracked,
         stayId = stayId,
     )
 

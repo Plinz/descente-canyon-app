@@ -17,6 +17,7 @@ import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PlaceRepository
 import fr.descentecanyon.app.domain.repository.PlaceSearchRepository
 import fr.descentecanyon.app.domain.repository.StayRepository
+import java.time.Clock
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
@@ -71,8 +72,12 @@ class FakePlaceRepository(places: List<Place> = emptyList()) : PlaceRepository {
     }
 }
 
-/** In-memory [StayRepository]; deleting a stay drops the drafts of its outings in [outings] and detaches the others. */
-class FakeStayRepository(stays: List<Stay> = emptyList(), private val outings: FakeOutingRepository? = null) : StayRepository {
+/** In-memory [StayRepository]; deleting a stay drops the outings of its days in [outings], but the one under way at [clock]. */
+class FakeStayRepository(
+    stays: List<Stay> = emptyList(),
+    private val outings: FakeOutingRepository? = null,
+    private val clock: Clock = Clock.systemUTC(),
+) : StayRepository {
     val stays = MutableStateFlow(stays)
     private var nextId = (stays.maxOfOrNull { it.id } ?: 0L) + 1
 
@@ -87,9 +92,18 @@ class FakeStayRepository(stays: List<Stay> = emptyList(), private val outings: F
     }
 
     override suspend fun delete(id: Long) {
+        val stay = get(id) ?: return
         stays.update { list -> list.filterNot { it.id == id } }
         outings?.outings?.update { list ->
-            list.filterNot { it.stayId == id && !it.tracked }.map { if (it.stayId == id) it.copy(stayId = null) else it }
+            list.filterNot { stay.includes(it) && !it.isUnderway(clock.instant()) }.map {
+                if (it.stayId ==
+                    id
+                ) {
+                    it.copy(stayId = null)
+                } else {
+                    it
+                }
+            }
         }
     }
 }

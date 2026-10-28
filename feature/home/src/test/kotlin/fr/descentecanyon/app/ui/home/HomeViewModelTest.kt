@@ -34,6 +34,7 @@ import io.mockk.every
 import io.mockk.mockk
 import java.net.UnknownHostException
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
@@ -88,7 +89,7 @@ class HomeViewModelTest {
     }
 
     @Test
-    fun `a stay under way shows its day and what is planned today and tomorrow, one soon only when it starts`() = runTest {
+    fun `a stay under way shows its day and what is planned today and tomorrow, its outings not listed again`() = runTest {
         every { connectivityObserver.observe() } returns MutableStateFlow(false)
         every { connectivityObserver.isCurrentlyOnline() } returns false
         coEvery { debitRepository.getCachedLatestDebits(any()) } returns CachedItems(emptyList(), null)
@@ -96,9 +97,12 @@ class HomeViewModelTest {
         coEvery { forumRepository.getCachedCategories() } returns CachedItems(emptyList(), null)
         val today = LocalDate.now()
         val start = today.atTime(9, 0).atZone(ZoneId.systemDefault()).toInstant()
+        val later = start.plus(Duration.ofDays(2))
         every { outingRepository.observeAll() } returns flowOf(
             listOf(
-                PlannedOuting(42, "Riolan", start, start.plusSeconds(4 * 3600), start.plusSeconds(6 * 3600), tracked = false, stayId = 3),
+                PlannedOuting(42, "Riolan", start, start.plusSeconds(4 * 3600), start.plusSeconds(6 * 3600), stayId = 3),
+                PlannedOuting(43, "Aiglun", later, later.plusSeconds(4 * 3600), later.plusSeconds(6 * 3600), stayId = 3),
+                PlannedOuting(44, "Hors séjour", later, later.plusSeconds(4 * 3600), later.plusSeconds(6 * 3600)),
             ),
         )
         placeRepository.places.value = listOf(Place("Camping", 44.0, 6.8, id = 7))
@@ -113,6 +117,8 @@ class HomeViewModelTest {
         val stay = viewModel.uiState.value.stay!!
         assertEquals(3L to "Camping", stay.stay.id to stay.placeName)
         assertEquals(listOf(today to listOf("Riolan"), today.plusDays(1) to emptyList()), stay.days.map { it.date to it.outings })
+        // The outings of the stay are in its card: the list of the next outings keeps the others.
+        assertEquals(listOf("Hors séjour"), viewModel.uiState.value.upcomingOutings.map { it.canyonName })
 
         // Over: the next stay is ten days away, too far to show.
         stayRepository.stays.value = stayRepository.stays.value.drop(1)

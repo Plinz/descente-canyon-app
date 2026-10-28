@@ -208,14 +208,26 @@ class OutingPlanTest {
         assertEquals(afternoon, outings.underwayAt(now))
         assertEquals(listOf(tomorrow), outings.upcomingAt(now))
         assertEquals(listOf(afternoon, tomorrow), outings.upcomingAt(now.minus(Duration.ofHours(3))))
+    }
 
-        // A draft is never under way nor followed: it waits apart until its day is long past.
-        val draft = afternoon.copy(tracked = false, id = 4)
-        val withDraft = listOf(tomorrow, morning, draft)
-        assertEquals(morning, withDraft.underwayAt(now))
-        assertEquals(listOf(tomorrow), withDraft.upcomingAt(now))
-        assertEquals(listOf(draft), withDraft.draftsAt(now))
-        assertEquals(emptyList<PlannedOuting>(), withDraft.draftsAt(now.plus(Duration.ofDays(1))))
+    @Test
+    fun `an outing moved by days keeps its times of day, across a clock change`() {
+        val zone = ZoneId.of("Europe/Paris")
+        val start = LocalDateTime.of(2026, 10, 23, 9, 0).atZone(zone).toInstant()
+        val outing = PlannedOuting(
+            1,
+            "Riolan",
+            start,
+            start.plus(Duration.ofHours(5)),
+            start.plus(Duration.ofHours(7)),
+            choices = OutingChoices(LocalDate.of(2026, 10, 23), LocalTime.of(9, 0)),
+        )
+
+        val moved = outing.movedBy(3, zone)
+
+        assertEquals(LocalDateTime.of(2026, 10, 26, 9, 0), moved.start.atZone(zone).toLocalDateTime())
+        assertEquals(LocalDateTime.of(2026, 10, 26, 16, 0), moved.alertAt.atZone(zone).toLocalDateTime())
+        assertEquals(LocalDate.of(2026, 10, 26), moved.choices?.date)
     }
 
     @Test

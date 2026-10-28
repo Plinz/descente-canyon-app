@@ -94,9 +94,8 @@ data class NextCanyon(
 )
 
 /**
- * An outing the user planned. A draft ([tracked] false) is only kept; once the user turns the
- * follow-up on, the app follows it with notifications, and the relatives who received the plan know
- * when to worry.
+ * An outing the user planned: the app follows it with notifications, and the relatives who received
+ * the plan know when to worry.
  */
 data class PlannedOuting(
     val canyonId: Int,
@@ -115,8 +114,6 @@ data class PlannedOuting(
     /** The alert time a relative was last sent, null if the plan went to no one: they wait for news at the return. */
     val informedAlertAt: Instant? = null,
     val choices: OutingChoices? = null,
-    /** The user turned the follow-up on (notifications, reminders); a draft is only kept. */
-    val tracked: Boolean = true,
     /** The stay the outing belongs to, if it was planned for one of its days. */
     val stayId: Long? = null,
     val id: Long = 0,
@@ -137,6 +134,21 @@ data class PlannedOuting(
     fun canyonIdAt(now: Instant): Int =
         choices?.nextCanyons.orEmpty().lastOrNull { it.from != null && !now.isBefore(it.from) }?.canyonId ?: canyonId
 
+    /** The same outing [days] later (earlier when negative), at the same times of day in [zone]. */
+    fun movedBy(days: Long, zone: ZoneId): PlannedOuting {
+        fun Instant.moved(): Instant = atZone(zone).plusDays(days).toInstant()
+        return copy(
+            start = start.moved(),
+            expectedBack = expectedBack.moved(),
+            alertAt = alertAt.moved(),
+            latestBack = latestBack.moved(),
+            departure = departure?.moved(),
+            choices = choices?.let { choices ->
+                choices.copy(date = choices.date.plusDays(days), nextCanyons = choices.nextCanyons.map { it.copy(from = it.from?.moved()) })
+            },
+        )
+    }
+
     /** The relative was told another alert time than the one planned now. */
     val alertChangedSinceInformed: Boolean get() = informedAlertAt != null && informedAlertAt != alertAt
 
@@ -146,8 +158,8 @@ data class PlannedOuting(
     /** From when the outing is followed: leaving the place, else a while before the walk (people leave earlier than planned). */
     val underwayFrom: Instant get() = listOfNotNull(departure, start.minus(EARLY_START)).min()
 
-    /** Under way at [now]: followed, started or about to, and not forgotten. A draft is never under way. */
-    fun isUnderway(now: Instant): Boolean = tracked && !now.isBefore(underwayFrom) && !isStale(now)
+    /** Under way at [now]: started or about to, and not forgotten. */
+    fun isUnderway(now: Instant): Boolean = !now.isBefore(underwayFrom) && !isStale(now)
 
     companion object {
         val STALE_AFTER: Duration = Duration.ofHours(12)
@@ -158,19 +170,11 @@ data class PlannedOuting(
 /** The outing under way at [now]: the one started last when several are (a first one not ended). */
 fun List<PlannedOuting>.underwayAt(now: Instant): PlannedOuting? = filter { it.isUnderway(now) }.maxByOrNull { it.start }
 
-/** The followed outings still to come at [now], soonest first. */
-fun List<PlannedOuting>.upcomingAt(now: Instant): List<PlannedOuting> =
-    filter { it.tracked && now.isBefore(it.underwayFrom) }.sortedBy { it.start }
+/** The outings still to come at [now], soonest first. */
+fun List<PlannedOuting>.upcomingAt(now: Instant): List<PlannedOuting> = filter { now.isBefore(it.underwayFrom) }.sortedBy { it.start }
 
-/** The drafts not forgotten at [now], soonest first. */
-fun List<PlannedOuting>.draftsAt(now: Instant): List<PlannedOuting> = filter { !it.tracked && !it.isStale(now) }.sortedBy { it.start }
-
-/** The outing under way, if any, the followed ones still to come and the drafts, soonest first. */
-data class OutingAgenda(
-    val underway: PlannedOuting? = null,
-    val upcoming: List<PlannedOuting> = emptyList(),
-    val drafts: List<PlannedOuting> = emptyList(),
-)
+/** The outing under way, if any, and the ones still to come, soonest first. */
+data class OutingAgenda(val underway: PlannedOuting? = null, val upcoming: List<PlannedOuting> = emptyList())
 
 /** The next moment after [now] when one of the outings gets under way or is forgotten. */
 fun List<PlannedOuting>.nextChangeAfter(now: Instant): Instant? =
@@ -184,7 +188,7 @@ fun List<PlannedOuting>.nextChangeAfter(now: Instant): Instant? =
 fun Flow<List<PlannedOuting>>.agenda(clock: Clock): Flow<OutingAgenda> = transformLatest { outings ->
     var now = clock.instant()
     while (true) {
-        emit(OutingAgenda(outings.underwayAt(now), outings.upcomingAt(now), outings.draftsAt(now)))
+        emit(OutingAgenda(outings.underwayAt(now), outings.upcomingAt(now)))
         val next = outings.nextChangeAfter(now) ?: break
         delay(Duration.between(now, next).toMillis().coerceAtLeast(1))
         val later = clock.instant()

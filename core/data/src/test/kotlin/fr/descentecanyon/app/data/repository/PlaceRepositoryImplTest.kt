@@ -36,7 +36,7 @@ class PlaceRepositoryImplTest {
     private val clock = Clock.fixed(Instant.parse("2026-07-14T06:00:00Z"), ZoneOffset.UTC)
     private val database: UserDatabase = TestDatabases.user()
     private val outings = OutingRepositoryImpl(database.plannedOutingDao(), clock)
-    private val stays = StayRepositoryImpl(database.stayDao(), database.plannedOutingDao(), clock)
+    private val stays = StayRepositoryImpl(database.stayDao(), database.plannedOutingDao(), outings, clock)
     private val places = PlaceRepositoryImpl(database.placeDao(), database.driveTimeDao(), stays, database.stayDao(), clock)
     private var routeCalls = 0
     private val routing = object : RoutingRemoteSource(mockk<ApiHttpClient>()) {
@@ -52,7 +52,7 @@ class PlaceRepositoryImplTest {
     fun tearDown() = database.close()
 
     @Test
-    fun `places used last come first, and a deleted place takes its stays and their drafts away`() = runTest {
+    fun `places used last come first, and a deleted place takes its stays and their canyons away`() = runTest {
         val home = places.save(Place("Maison", 45.0, 5.0))
         val campsite = places.save(Place("Camping", 45.1, 6.08))
         places.markUsed(home)
@@ -61,14 +61,18 @@ class PlaceRepositoryImplTest {
         val stay = stays.save(Stay(campsite, LocalDate.of(2026, 7, 12), LocalDate.of(2026, 7, 18)))
         assertEquals(listOf(Stay(campsite, LocalDate.of(2026, 7, 12), LocalDate.of(2026, 7, 18), stay)), stays.observeAll().first())
         val start = clock.instant().plus(Duration.ofDays(1))
-        val planned = PlannedOuting(42, "Riolan", start, start, start.plus(Duration.ofHours(6)), stayId = stay)
-        val draft = outings.save(planned.copy(tracked = false))
-        val followed = outings.save(planned)
+        val planned = outings.save(PlannedOuting(42, "Riolan", start, start, start.plus(Duration.ofHours(6)), stayId = stay))
+        // Under way when the stay goes: the group is out, the outing stays followed.
+        val now = clock.instant()
+        val underway = outings.save(
+            PlannedOuting(43, "Écouges", now, now.plus(Duration.ofHours(4)), now.plus(Duration.ofHours(6)), stayId = stay),
+        )
 
         places.delete(campsite)
         assertEquals(emptyList<Stay>(), stays.observeAll().first())
-        assertNull(outings.get(draft))
-        assertEquals(null, outings.get(followed)?.stayId)
+        assertNull(outings.get(planned))
+        assertEquals(null, outings.get(underway)?.stayId)
+        assertEquals(43, outings.get(underway)?.canyonId)
         assertEquals(listOf("Maison"), places.observeAll().first().map { it.name })
     }
 

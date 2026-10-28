@@ -74,6 +74,7 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.util.UUID
 import javax.inject.Inject
+import kotlin.math.abs
 import kotlin.math.roundToInt
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -117,16 +118,13 @@ data class CanyonPickerState(val query: String = "", val candidates: List<Canyon
 
 /** Where the outing on screen stands, which decides the main action of the screen. */
 enum class OutingStage {
-    /** Not kept yet: the first change keeps it as a draft. */
+    /** Not planned: the times are only computed, nothing is kept until the user confirms the outing. */
     NEW,
 
-    /** Kept, follow-up off. */
-    DRAFT,
+    /** Planned and followed: notifications from the departure, reminder at the return. */
+    PLANNED,
 
-    /** Followed: notifications from the departure, reminder at the return. */
-    TRACKED,
-
-    /** Followed and under way. */
+    /** Planned and under way. */
     UNDERWAY,
 }
 
@@ -160,7 +158,7 @@ data class OutingPlanUiState(
     val emergencyNumbers: List<EmergencyNumber> = listOf(EmergencyNumbers.EUROPEAN),
     val downstreamParking: GeoPoint? = null,
     val upstreamParking: GeoPoint? = null,
-    /** The outing as kept, draft or followed. */
+    /** The outing as planned, null while it is not. */
     val savedOuting: PlannedOuting? = null,
     val stage: OutingStage = OutingStage.NEW,
     /** Most likely return to the car. */
@@ -175,8 +173,10 @@ data class OutingPlanUiState(
     val messageSections: Map<MessageAudience, Set<MessageSection>> = MessageAudience.entries.associateWith { it.defaultSections },
     /** The relative was sent another alert time than the one planned now. */
     val alertChangedSinceInformed: Boolean = false,
-    /** "I'm leaving now" just turned the follow-up on: the screen asks for notifications and offers to tell a relative. */
+    /** "I'm leaving now" just planned the outing: the screen asks for notifications and offers to tell a relative. */
     val startedNow: Boolean = false,
+    /** A canyon given to a day of a stay just planned the outing: the screen asks for notifications and says so. */
+    val addedToStay: Boolean = false,
     /** The canyons after the first one, in their order. */
     val nextCanyons: List<NextCanyonState> = emptyList(),
 ) {
@@ -193,9 +193,9 @@ data class OutingPlanUiState(
 /**
  * Plans an outing from the durations of the sheet stretched for the group: the whole day from the
  * starting place, daylight left, conditions of the day, gear, messages for a relative, the team or
- * beginners, and the follow-up of the outing. Every change is kept at once, as a draft until the
- * user turns the follow-up on. Works offline from the catalog, the last forecast downloaded, a
- * sunset computed on the device and an estimated drive.
+ * beginners, and the follow-up of the outing. Nothing is kept until the user confirms the outing;
+ * once planned, every change is kept at once. Works offline from the catalog, the last forecast
+ * downloaded, a sunset computed on the device and an estimated drive.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
@@ -232,6 +232,9 @@ class OutingPlanViewModel @Inject constructor(
 
     /** One write at a time: a change made during a write sees the id of the outing it created. */
     private val saving = Mutex()
+
+    /** The outing is planned, or about to be: every change is kept at once. */
+    private var planned = false
 
     val uiState: StateFlow<OutingPlanUiState> = combine(choices, sources, ::buildState)
         .stateIn(viewModelScope, SharingStarted.Eagerly, buildState(choices.value, sources.value))
@@ -409,11 +412,11 @@ class OutingPlanViewModel @Inject constructor(
         viewModelScope.launch { outingPreferencesRepository.setMessageSections(audience, sections) }
     }
 
-    /** Turns the follow-up on: notifications during the outing, reminder at the return. */
-    fun activateTracking() = persist { it.copy(tracked = true) }
+    /** Plans the outing: notifications during the outing, reminder at the return. */
+    fun confirm() = plan()
 
-    /** The plan went to a relative who counts on its alert time: the outing is followed as the relative does. */
-    fun markRelativeInformed() = persist { it.copy(tracked = true, informedAlertAt = it.alertAt) }
+    /** The plan went to a relative who counts on its alert time: the outing is planned, if it was not. */
+    fun markRelativeInformed() = plan { it.copy(informedAlertAt = it.alertAt) }
 
     /** The alert comes [minutes] later: the outing takes longer than planned; a relative informed is sent the new time. */
     fun delayAlert(minutes: Int) {
@@ -425,6 +428,9 @@ class OutingPlanViewModel @Inject constructor(
     /** "I'm leaving now" was shown its follow-up: the screen asked for notifications. */
     fun startedNowShown() = sources.update { it.copy(startedNow = false) }
 
+    /** The canyon given to the day of the stay was said planned. */
+    fun addedToStayShown() = sources.update { it.copy(addedToStay = false) }
+
     /** Back from the outing: it goes to the logbook and its notifications are cancelled; the plan stays on screen. */
     fun markBack() = forget { id -> endOutingUseCase(id) }
 
@@ -432,6 +438,7 @@ class OutingPlanViewModel @Inject constructor(
     fun deleteOuting() = forget { id -> outingRepository.delete(id) }
 
     private fun forget(remove: suspend (Long) -> Unit) {
+        planned = false
         viewModelScope.launch {
             saving.withLock {
                 val id = sources.value.saved?.id ?: return@withLock
@@ -442,33 +449,34 @@ class OutingPlanViewModel @Inject constructor(
         }
     }
 
+    /** Plans the outing on screen, if it was not, with [change] applied (relative informed). */
+    private fun plan(change: (PlannedOuting) -> PlannedOuting = { it }) {
+        planned = true
+        persist(change)
+    }
+
     /**
-     * Keeps the outing on screen, as a draft the first time, with [change] applied to what was kept
-     * (follow-up, relative informed). A change of the plan moves the times of a followed outing, so
-     * its notifications follow.
+     * Keeps the planned outing as on screen, with [change] applied to what was kept (relative
+     * informed). A change of the plan moves its times, so its notifications follow.
      */
     private fun persist(change: (PlannedOuting) -> PlannedOuting = { it }) {
+        if (!planned) return
         viewModelScope.launch {
             saving.withLock {
                 val current = sources.value
                 // From the sources: the derived state may not reflect a choice made just before.
                 val state = buildState(choices.value, current)
-                val planned = state.toPlannedOuting() ?: return@withLock
+                val computed = state.toPlannedOuting() ?: return@withLock
                 val saved = current.saved
                 val stayId = (saved?.stayId ?: requestedStayId.takeIf { it > 0 })
                     ?.takeIf { id -> current.stays.firstOrNull { it.id == id }?.covers(state.choices.date) != false }
-                val outing = change(
-                    planned.copy(
-                        id = saved?.id ?: 0,
-                        informedAlertAt = saved?.informedAlertAt,
-                        tracked = saved?.tracked ?: false,
-                        stayId = stayId,
-                    ),
-                )
+                // Removed meanwhile ("I'm back", deleted): not planned again.
+                if (!planned) return@withLock
+                val outing = change(computed.copy(id = saved?.id ?: 0, informedAlertAt = saved?.informedAlertAt, stayId = stayId))
                 if (outing == saved) return@withLock
                 val id = outingRepository.save(outing)
                 sources.update { it.copy(saved = outing.copy(id = id)) }
-                if (outing.tracked && saved?.tracked != true) state.place?.let { placeRepository.markUsed(it.id) }
+                if (saved == null) state.place?.let { placeRepository.markUsed(it.id) }
             }
         }
     }
@@ -478,14 +486,16 @@ class OutingPlanViewModel @Inject constructor(
         val saved = sources.value.saved ?: return
         if (outings.any { it.id == saved.id }) return
         // A list read before the last write may lack the outing: it is gone only if the database says so.
-        if (outingRepository.get(saved.id) == null) sources.update { if (it.saved?.id == saved.id) it.copy(saved = null) else it }
+        if (outingRepository.get(saved.id) == null && sources.value.saved?.id == saved.id) {
+            planned = false
+            sources.update { it.copy(saved = null) }
+        }
     }
 
-    /** Times that change without the user (a route found, new settings): a kept outing follows them. */
+    /** Times that change without the user (a route found, new settings): a planned outing follows them. */
     private suspend fun followComputedTimes() {
         uiState.map { it.toPlannedOuting()?.times() }.distinctUntilChanged().collect { times ->
-            val saved = sources.value.saved ?: return@collect
-            if (times != null && times != saved.times()) persist()
+            if (times != null && planned && times != sources.value.saved?.times()) persist()
         }
     }
 
@@ -498,7 +508,7 @@ class OutingPlanViewModel @Inject constructor(
         viewModelScope.launch { outingPreferencesRepository.setGearList(updated) }
     }
 
-    /** A change of the user is kept at once. */
+    /** A change of the user, kept at once once the outing is planned. */
     private fun updateChoices(change: (OutingChoices) -> OutingChoices) {
         val before = choices.value ?: return
         choices.update { current -> current?.let(change) }
@@ -518,29 +528,41 @@ class OutingPlanViewModel @Inject constructor(
             else -> outings.firstOrNull { it.canyonId == canyonId && it.choices?.date == requestedDate }
         }
         sources.update { it.copy(saved = existing) }
+        planned = existing != null
         val kept = existing?.let { it.choices ?: legacyChoices(it) }
         when {
             startNow && existing?.isUnderway(clock.instant()) != true -> {
                 // Leaving now: the time set is now, from the place of the day if any.
                 val now = LocalDateTime.now(clock).truncatedTo(ChronoUnit.MINUTES)
-                val base = kept ?: newChoices(settings, places, stays)
+                val base = kept ?: newChoices(settings, places, stays, outings)
                 choices.value = base.copy(date = today, anchorTime = now.toLocalTime(), alertDelayMinutes = 0)
                 awaitPlan()
-                persist { it.copy(tracked = true) }
+                plan()
                 sources.update { it.copy(startedNow = true) }
+            }
+
+            // Another canyon for the day of a stay: the day, the group and the rest stay; what was the
+            // previous canyon's (the canyons after it, the steps lengthened, its shuttle) goes.
+            existing != null && kept != null && existing.canyonId != canyonId -> {
+                choices.value = kept.copy(nextCanyons = emptyList(), adjustments = emptyMap(), withShuttle = null)
+                awaitPlan()
+                persist()
             }
 
             kept != null -> choices.value = kept
 
             else -> {
-                val initial = newChoices(settings, places, stays)
+                val initial = newChoices(settings, places, stays, outings)
                 choices.value = initial
                 if (initial.date.isAfter(today) || requestedStayId > 0) {
                     awaitPlan()
                     if (initial.date.isAfter(today)) startEarlierIfLate(initial)
                 }
-                // A day of a stay was given a canyon: the stay shows it at once.
-                if (requestedStayId > 0) persist()
+                // A day of a stay was given a canyon: it is planned, and the stay shows it at once.
+                if (requestedStayId > 0) {
+                    plan()
+                    sources.update { it.copy(addedToStay = true) }
+                }
             }
         }
     }
@@ -562,18 +584,26 @@ class OutingPlanViewModel @Inject constructor(
         uiState.first { it.schedule != null && (it.place == null || it.meetingParking == null || it.drive != null) }
     }
 
-    private fun newChoices(settings: OutingSettings, places: List<Place>, stays: List<Stay>): OutingChoices {
+    /**
+     * A new outing: today or tomorrow, from the place of the day. During a stay the group is the one
+     * of its outing nearest in days, the same people most of the time; else the one of the settings.
+     */
+    private fun newChoices(settings: OutingSettings, places: List<Place>, stays: List<Stay>, outings: List<PlannedOuting>): OutingChoices {
         val now = LocalDateTime.now(clock)
         val default = defaultChoices(now)
         val date = requestedDate ?: default.date
         val time = if (date == default.date) default.anchorTime else LocalTime.of(DEFAULT_HOUR, 0)
         val stay = stays.firstOrNull { it.id == requestedStayId }
         val place = places.firstOrNull { it.id == (stay?.placeId ?: requestedPlaceId) } ?: places.defaultFor(date, stays)
+        val group = (stay ?: stays.firstOrNull { it.covers(date) && it.placeId == place?.id })
+            ?.let { ofDay -> outings.filter(ofDay::includes).minByOrNull { abs(it.dayIn(clock.zone).toEpochDay() - date.toEpochDay()) } }
+            ?.choices
         return OutingChoices(
             date = date,
             anchorTime = time,
-            groupSize = settings.defaultGroupSize,
-            groupLevel = settings.defaultGroupLevel,
+            groupSize = group?.groupSize ?: settings.defaultGroupSize,
+            groupLevel = group?.groupLevel ?: settings.defaultGroupLevel,
+            meetAtPlace = group?.meetAtPlace ?: false,
         ).withPlace(place?.id)
     }
 
@@ -683,7 +713,8 @@ class OutingPlanViewModel @Inject constructor(
                 ),
             )
         }
-        val dayWeather = sources.weather?.dayOf(current.date)
+        // An older forecast no longer tells the day: none rather than a stale storm or sun.
+        val dayWeather = sources.weather?.takeIf { it.isFresh(clock.instant()) }?.dayOf(current.date)
         val sunset = dayWeather?.sunset ?: detail?.let { computedSunset(it, current.date, sources.weather) }
         val expectedBack = schedule?.let { it.backAtCar?.estimate ?: it.walkStart.plus(UNKNOWN_DURATION_ASSUMPTION) }
         val latestBack = schedule?.let { it.backAtCar?.latest ?: it.walkStart.plus(UNKNOWN_DURATION_ASSUMPTION) }
@@ -719,9 +750,8 @@ class OutingPlanViewModel @Inject constructor(
             savedOuting = saved,
             stage = when {
                 saved == null -> OutingStage.NEW
-                !saved.tracked -> OutingStage.DRAFT
                 sources.underwayId == saved.id -> OutingStage.UNDERWAY
-                else -> OutingStage.TRACKED
+                else -> OutingStage.PLANNED
             },
             expectedBack = expectedBack,
             latestBack = latestBack,
@@ -743,6 +773,7 @@ class OutingPlanViewModel @Inject constructor(
             messageSections = sources.messageSections,
             alertChangedSinceInformed = informedAlertAt != null && alertAt != null && informedAlertAt != alertAt.toInstant(),
             startedNow = sources.startedNow,
+            addedToStay = sources.addedToStay,
             nextCanyons = nextCanyons,
         )
     }
@@ -833,6 +864,7 @@ class OutingPlanViewModel @Inject constructor(
         val gearList: GearListSettings = GearListSettings(),
         val messageSections: Map<MessageAudience, Set<MessageSection>> = MessageAudience.entries.associateWith { it.defaultSections },
         val startedNow: Boolean = false,
+        val addedToStay: Boolean = false,
     )
 
     companion object {

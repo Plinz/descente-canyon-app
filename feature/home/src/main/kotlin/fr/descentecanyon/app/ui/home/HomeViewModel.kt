@@ -35,6 +35,7 @@ import java.time.Clock
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -116,11 +117,11 @@ data class HomeStay(
     val today: LocalDate,
     /** Today and tomorrow, those the stay covers. */
     val days: List<HomeStayDay> = emptyList(),
-    /** Its outings planned, drafts included. */
+    /** Its outings planned. */
     val outings: Int = 0,
 )
 
-/** The titles of the outings planned on [date], drafts included. */
+/** The titles of the outings planned on [date]. */
 data class HomeStayDay(val date: LocalDate, val outings: List<String>)
 
 @HiltViewModel
@@ -157,40 +158,39 @@ class HomeViewModel @Inject constructor(
         observeSearchCatalog()
         observeTrackedForumCategories()
         observePendingDebits()
-        observeActiveOuting()
-        observeStay()
+        observeOutings()
         restoreHomeState()
     }
 
-    private fun observeActiveOuting() {
+    /** The outing under way, the stay and the next outings; those of the stay shown are in its card, not listed again. */
+    private fun observeOutings() {
         viewModelScope.launch {
-            outingRepository.observeAll().agenda(clock).collect { agenda ->
-                _uiState.update { it.copy(activeOuting = agenda.underway, upcomingOutings = agenda.upcoming.take(UPCOMING_OUTINGS_SHOWN)) }
+            combine(outingRepository.observeAll().agenda(clock), homeStay()) { agenda, stay ->
+                Triple(agenda.underway, agenda.upcoming.filterNot { stay?.stay?.includes(it) == true }, stay)
+            }.collect { (underway, upcoming, stay) ->
+                _uiState.update { it.copy(activeOuting = underway, upcomingOutings = upcoming.take(UPCOMING_OUTINGS_SHOWN), stay = stay) }
             }
         }
     }
 
     /** On the campsite, the day's plan is one tap away; a stay starting soon is a reminder to prepare it. */
-    private fun observeStay() {
-        viewModelScope.launch {
-            combine(stayRepository.observeAll(), placeRepository.observeAll(), outingRepository.observeAll()) { stays, places, outings ->
-                val today = LocalDate.now(clock)
-                val stay = stays.firstOrNull { it.covers(today) }
-                    ?: stays.firstOrNull { it.start.isAfter(today) && !it.start.isAfter(today.plusDays(STAY_SOON_DAYS)) }
-                    ?: return@combine null
-                val ofStay = outings.filter(stay::includes)
-                HomeStay(
-                    stay = stay,
-                    placeName = places.firstOrNull { it.id == stay.placeId }?.name,
-                    today = today,
-                    days = listOf(today, today.plusDays(1)).filter(stay::covers).map { day ->
-                        HomeStayDay(day, ofStay.filter { it.dayIn(clock.zone) == day }.map { it.title })
-                    },
-                    outings = ofStay.size,
-                )
-            }.distinctUntilChanged().collect { stay -> _uiState.update { it.copy(stay = stay) } }
-        }
-    }
+    private fun homeStay(): Flow<HomeStay?> =
+        combine(stayRepository.observeAll(), placeRepository.observeAll(), outingRepository.observeAll()) { stays, places, outings ->
+            val today = LocalDate.now(clock)
+            val stay = stays.firstOrNull { it.covers(today) }
+                ?: stays.firstOrNull { it.start.isAfter(today) && !it.start.isAfter(today.plusDays(STAY_SOON_DAYS)) }
+                ?: return@combine null
+            val ofStay = outings.filter(stay::includes)
+            HomeStay(
+                stay = stay,
+                placeName = places.firstOrNull { it.id == stay.placeId }?.name,
+                today = today,
+                days = listOf(today, today.plusDays(1)).filter(stay::covers).map { day ->
+                    HomeStayDay(day, ofStay.filter { it.dayIn(clock.zone) == day }.map { it.title })
+                },
+                outings = ofStay.size,
+            )
+        }.distinctUntilChanged()
 
     /** "I'm back": the outing goes to the logbook and its notifications are cancelled. */
     fun endOuting() {

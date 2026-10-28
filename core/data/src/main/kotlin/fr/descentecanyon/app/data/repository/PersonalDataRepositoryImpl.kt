@@ -16,6 +16,7 @@ import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.LogbookSource
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.PersonalDataImport
+import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.PersonalDataRepository
 import java.time.Clock
@@ -99,12 +100,17 @@ class PersonalDataRepositoryImpl @Inject constructor(
                 place.stayEnd?.let { end -> StayItem(place.name, place.latitude, place.longitude, start, end) }
             }
         }
-        val knownStays = stayDao.getAll().map { Triple(it.placeId, it.start, it.end) }.toMutableSet()
-        (file.stays + legacyStays).forEach { stay ->
-            val placeId = placeIds[Triple(stay.placeName, stay.latitude, stay.longitude)] ?: return@forEach
-            val start = runCatching { LocalDate.parse(stay.start) }.getOrNull() ?: return@forEach
-            val end = runCatching { LocalDate.parse(stay.end) }.getOrNull()?.takeIf { !it.isBefore(start) } ?: return@forEach
-            if (knownStays.add(Triple(placeId, start.toString(), end.toString()))) {
+        // One is at one place a day: a stay sharing a day with one already there is left out.
+        val knownStays = stayDao.getAll().mapNotNull { entity ->
+            runCatching { Stay(entity.placeId, LocalDate.parse(entity.start), LocalDate.parse(entity.end)) }.getOrNull()
+        }.toMutableList()
+        (file.stays + legacyStays).forEach { item ->
+            val placeId = placeIds[Triple(item.placeName, item.latitude, item.longitude)] ?: return@forEach
+            val start = runCatching { LocalDate.parse(item.start) }.getOrNull() ?: return@forEach
+            val end = runCatching { LocalDate.parse(item.end) }.getOrNull()?.takeIf { !it.isBefore(start) } ?: return@forEach
+            val stay = Stay(placeId, start, end)
+            if (knownStays.none { it.overlaps(stay) }) {
+                knownStays += stay
                 stayDao.upsert(StayEntity(placeId = placeId, start = start.toString(), end = end.toString(), createdAt = clock.millis()))
             }
         }

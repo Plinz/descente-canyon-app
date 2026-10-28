@@ -16,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.DirectionsWalk
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.WarningAmber
@@ -51,9 +52,9 @@ import fr.descentecanyon.app.ui.test.TestTags
 import java.util.Locale
 
 /**
- * The canyons of the outing in their order, and how the group gets from one to the next: an
- * "intégrale" (upper then lower part) or two canyons of a valley share one plan and one alert time.
- * "Add a canyon" offers the canyons around the last one, or finds one by its name.
+ * The canyons of the outing in their order, each with its sheet one tap away, and how the group gets
+ * from one to the next: an "intégrale" (upper then lower part) or two canyons of a valley share one
+ * plan and one alert time. "Add a canyon" offers the canyons around the last one, or finds one by its name.
  */
 @Composable
 internal fun CanyonsSheet(
@@ -65,6 +66,7 @@ internal fun CanyonsSheet(
     onAdd: (CanyonCandidate) -> Unit,
     onRemove: (Int) -> Unit,
     onLinkSelected: (Int, CanyonLink) -> Unit,
+    onOpenCanyon: (canyonId: Int) -> Unit,
 ) {
     var picking by rememberSaveable { mutableStateOf(false) }
     val names = canyonNames(state)
@@ -93,7 +95,12 @@ internal fun CanyonsSheet(
     OutingSheet(title = stringResource(R.string.outing_canyons_label), onDismiss = dismiss) {
         val colors = LocalDcColors.current
         Text(stringResource(R.string.outing_canyons_intro), style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
-        CanyonLine(position = 1, name = names.first(), cotation = state.canyon?.canyon?.cotation)
+        CanyonLine(
+            position = 1,
+            name = names.first(),
+            cotation = state.canyon?.canyon?.cotation,
+            onOpenSheet = state.canyon?.canyon?.id?.let { id -> { onOpenCanyon(id) } },
+        )
         state.nextCanyons.forEachIndexed { index, next ->
             LinkChoice(
                 next = next,
@@ -105,6 +112,7 @@ internal fun CanyonsSheet(
                 position = index + 2,
                 name = next.canyon.name,
                 cotation = next.detail?.canyon?.cotation,
+                onOpenSheet = { onOpenCanyon(next.canyon.canyonId) },
                 onRemove = { onRemove(index) },
                 modifier = Modifier.testTag(TestTags.outingNextCanyon(index)),
             )
@@ -131,7 +139,14 @@ internal fun CanyonsSheet(
 }
 
 @Composable
-private fun CanyonLine(position: Int, name: String, cotation: String?, modifier: Modifier = Modifier, onRemove: (() -> Unit)? = null) {
+private fun CanyonLine(
+    position: Int,
+    name: String,
+    cotation: String?,
+    onOpenSheet: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+    onRemove: (() -> Unit)? = null,
+) {
     Row(
         modifier = modifier.fillMaxWidth().heightIn(min = 48.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -142,6 +157,11 @@ private fun CanyonLine(position: Int, name: String, cotation: String?, modifier:
             Text(name, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
             cotation?.takeIf { it.isNotBlank() }?.let {
                 Text(it, style = MaterialTheme.typography.bodySmall, color = LocalDcColors.current.textSecondary)
+            }
+        }
+        onOpenSheet?.let {
+            IconButton(onClick = it) {
+                Icon(Icons.Default.Description, contentDescription = stringResource(R.string.outing_canyons_open_sheet, name))
             }
         }
         onRemove?.let {

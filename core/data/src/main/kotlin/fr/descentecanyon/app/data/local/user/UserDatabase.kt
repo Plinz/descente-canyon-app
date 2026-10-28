@@ -56,7 +56,7 @@ import kotlinx.serialization.json.Json
         DriveTimeEntity::class,
         StayEntity::class,
     ],
-    version = 7,
+    version = 8,
     exportSchema = true,
 )
 abstract class UserDatabase : RoomDatabase() {
@@ -218,8 +218,35 @@ abstract class UserDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Version 8: no more drafts, an outing is planned or it is not. The canyons given to the days of
+         * a stay become planned outings; other drafts, never confirmed, are forgotten.
+         */
+        val MIGRATION_7_8 = object : Migration(7, 8) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("DELETE FROM planned_outings WHERE tracked = 0 AND stayId IS NULL")
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `planned_outings_new` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`canyonId` INTEGER NOT NULL, `canyonName` TEXT NOT NULL, `start` INTEGER NOT NULL, " +
+                        "`expectedBack` INTEGER NOT NULL, `latestBack` INTEGER NOT NULL, `alertAt` INTEGER NOT NULL, " +
+                        "`departure` INTEGER, `groupSize` INTEGER, `informedAlertAt` INTEGER, `choicesJson` TEXT, " +
+                        "`stayId` INTEGER, `updatedAt` INTEGER NOT NULL)",
+                )
+                db.execSQL(
+                    "INSERT INTO planned_outings_new (id, canyonId, canyonName, start, expectedBack, latestBack, alertAt, departure, " +
+                        "groupSize, informedAlertAt, choicesJson, stayId, updatedAt) " +
+                        "SELECT id, canyonId, canyonName, start, expectedBack, latestBack, alertAt, departure, groupSize, " +
+                        "informedAlertAt, choicesJson, stayId, updatedAt FROM planned_outings",
+                )
+                db.execSQL("DROP TABLE planned_outings")
+                db.execSQL("ALTER TABLE planned_outings_new RENAME TO planned_outings")
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_planned_outings_start` ON `planned_outings` (`start`)")
+            }
+        }
+
         /** Migrations of the user database, oldest first. */
-        val MIGRATIONS = arrayOf<Migration>(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7)
+        val MIGRATIONS =
+            arrayOf<Migration>(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
 
         /** Key of the single outing of version 5. */
         private const val LEGACY_OUTING_KEY = "outing.current"

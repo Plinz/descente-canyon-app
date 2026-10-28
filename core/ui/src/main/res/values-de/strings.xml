@@ -1111,7 +1111,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="places_manage">Meine Orte verwalten</string>
     <string name="places_edit">Ort bearbeiten</string>
     <string name="places_delete">Löschen</string>
-    <string name="places_delete_confirm">„%1$s“ löschen? Auch seine Aufenthalte und deren Entwürfe; bestätigte Touren behalten ihre Zeiten.</string>
+    <string name="places_delete_confirm">„%1$s“ löschen? Auch seine Aufenthalte und deren geplante Canyons.</string>
     <string name="places_empty">Kein Startort</string>
     <string name="places_intro">Campingplatz, Unterkunft, Zuhause: die Fahrt zum Parkplatz kommt zu den Zeiten der Tour hinzu.</string>
     <string name="places_map_hint">Unter der Markierung: %1$s. Suchen Sie den Ort oder verschieben Sie die Karte.</string>
@@ -1180,7 +1180,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="outing_start_now">Ich breche jetzt auf</string>
     <string name="outing_started_now">Gute Tour! Die Tour ist bestätigt.</string>
     <string name="outing_status_alert_changed">Ihre Angehörigen erwarten Nachricht um %1$s; der Alarm ist jetzt um %2$s.</string>
-    <string name="outing_status_draft">Entwurf unter Geplante Touren gespeichert. Bestätigen Sie die Tour für den Notfallzugang und die Rückkehr-Erinnerung.</string>
     <string name="outing_status_relative_not_informed">Noch keine Angehörigen haben den Plan erhalten.</string>
     <string name="outing_status_tracked">Tour bestätigt · Alarm um %1$s</string>
     <string name="outing_status_underway">Tour läuft · geschätzte Rückkehr gegen %1$s</string>
@@ -1189,21 +1188,17 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="outing_summary_alert_full_day">Dauer unbekannt: 8-Stunden-Tag gerechnet, + %1$d h</string>
     <string name="outing_summary_alert_margin">späteste Rückkehr + %1$d h</string>
     <string name="outing_summary_title">Ihr Tag</string>
-    <string name="outings_drafts">Entwürfe</string>
-    <string name="outings_row_draft">Entwurf · noch nicht bestätigt</string>
     <string name="outings_stay_action">Aufenthalt planen</string>
     <string name="outings_stay_action_hint">Ein Ort und Daten: ein Canyon pro Tag, mit dem Wetter am Ort.</string>
     <string name="outings_stays">Aufenthalte</string>
     <string name="stay_choose_canyon">Canyon wählen</string>
     <string name="stay_dates_label">Zeitraum</string>
     <string name="stay_delete">Aufenthalt löschen</string>
-    <string name="stay_delete_confirm">Diesen Aufenthalt löschen? Die Entwürfe seiner Touren werden gelöscht; bestätigte Touren bleiben geplant.</string>
+    <string name="stay_delete_confirm">Diesen Aufenthalt und die für seine Tage geplanten Canyons löschen?</string>
     <string name="stay_edit">Aufenthalt bearbeiten</string>
     <string name="stay_edit_intro">Der Campingplatz oder die Unterkunft, von der die Touren starten, und die Tage vor Ort.</string>
     <string name="stay_new">Neuer Aufenthalt</string>
     <string name="stay_no_place">Legen Sie zuerst den Campingplatz oder die Unterkunft auf der Karte fest.</string>
-    <string name="stay_outing_draft">Entwurf</string>
-    <string name="stay_outing_tracked">Bestätigt</string>
     <string name="stay_over">Dieser Aufenthalt ist vorbei.</string>
     <string name="stay_picker_subtitle">%1$s · ab %2$s</string>
     <string name="stay_place_label">Ort des Aufenthalts</string>
@@ -1224,15 +1219,17 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="places_kind_lodging">Unterkunft</string>
     <string name="stay_dates_value">%1$s bis %2$s</string>
     <string name="stay_dates_change">Daten ändern</string>
-    <plurals name="stay_dates_hint">
-        <item quantity="one">Tippen Sie auf den ersten und dann auf den letzten Tag, höchstens %1$d Tag.</item>
-        <item quantity="other">Tippen Sie auf den ersten und dann auf den letzten Tag, höchstens %1$d Tage.</item>
+    <plurals name="stay_dates_cut">
+        <item quantity="one">Ein Aufenthalt dauert höchstens %1$d Tag.</item>
+        <item quantity="other">Ein Aufenthalt dauert höchstens %1$d Tage.</item>
     </plurals>
     <string name="outing_canyons_label">Canyons des Tages</string>
     <string name="outing_canyons_add_hint">Weiteren Canyon anschließen</string>
     <string name="outing_canyons_intro">Eine Integrale (oberer, dann unterer Teil) oder zwei nahe Canyons in einer Tour: die Zeiten folgen aufeinander, mit einer einzigen Alarmzeit für den Tag.</string>
     <string name="outing_canyons_add">Canyon hinzufügen</string>
     <string name="outing_canyons_remove">%1$s entfernen</string>
+    <string name="outing_open_sheet">Steckbrief des Canyons ansehen</string>
+    <string name="outing_canyons_open_sheet">Steckbrief von %1$s ansehen</string>
     <string name="outing_canyons_search_hint">Name des Canyons</string>
     <string name="outing_canyons_nearby">Rund um %1$s</string>
     <string name="outing_canyons_none">Kein Canyon gefunden.</string>
@@ -1260,11 +1257,13 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="outing_step_back_at_car">Zurück am Auto</string>
     <string name="outing_durations_source_of">%1$s laut Steckbrief: Zustieg %2$s, Begehung %3$s, Rückweg %4$s.</string>
     <string name="stay_weather_later">Wettervorhersage ab %1$s</string>
-    <string name="stay_weather_offline">Offline: noch keine Wettervorhersage für diesen Ort.</string>
+    <string name="stay_weather_offline">Offline: keine aktuelle Wettervorhersage für diesen Ort.</string>
     <string name="stay_weather_failed">Wettervorhersage derzeit nicht verfügbar.</string>
     <string name="stay_outing_night">Könnte im Dunkeln enden: früher losfahren</string>
     <string name="stay_outing_change">Canyon wechseln</string>
     <string name="stay_outing_remove">Diesen Canyon entfernen</string>
+    <string name="stay_outing_removed">%1$s entfernt</string>
+    <string name="stay_edit_overlap">Diese Daten überschneiden sich mit dem Aufenthalt in %1$s (%2$s – %3$s).</string>
     <string name="stay_done_title">Schon während des Aufenthalts begangen</string>
     <string name="stay_day_done">%1$s: begangen</string>
     <string name="stay_picker_search_hint">Canyon nach Namen suchen</string>
@@ -1283,8 +1282,8 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
         <item quantity="other">%1$d Canyons begangen</item>
     </plurals>
     <plurals name="stay_edit_left_out">
-        <item quantity="one">%1$d geplante Tour außerhalb dieser Daten verlässt den Aufenthalt; sie bleibt unter Geplante Touren.</item>
-        <item quantity="other">%1$d geplante Touren außerhalb dieser Daten verlassen den Aufenthalt; sie bleiben unter Geplante Touren.</item>
+        <item quantity="one">%1$d geplanter Canyon außerhalb dieser Daten wird entfernt.</item>
+        <item quantity="other">%1$d geplante Canyons außerhalb dieser Daten werden entfernt.</item>
     </plurals>
     <plurals name="home_stay_soon">
         <item quantity="one">In %1$d Tag</item>

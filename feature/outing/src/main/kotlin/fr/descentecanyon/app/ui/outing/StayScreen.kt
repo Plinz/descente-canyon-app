@@ -34,6 +34,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.SnackbarResult
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -41,6 +45,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -144,6 +149,8 @@ data class StayUiState(
     val done: List<LogbookEntry> = emptyList(),
     /** By outing id. */
     val signals: Map<Long, StayOutingSignals> = emptyMap(),
+    /** The outing of the stay under way: the group is out, it is not changed from here. */
+    val underwayId: Long? = null,
     val isLoadingWeather: Boolean = false,
     val weatherProblem: StayWeatherProblem? = null,
     /** The stay is gone (deleted here or with its place): the screen closes. */
@@ -179,7 +186,7 @@ class StayViewModel @Inject constructor(
     private val outings = combine(stay, outingRepository.observeAll()) { stay, outings ->
         stay?.let { outings.filter(it::includes) }.orEmpty()
     }.distinctUntilChanged()
-    private val canyonIds = outings.map { list -> list.map { it.canyonId }.toSet() }.distinctUntilChanged()
+    private val canyonIds = outings.map { list -> list.flatMap { it.canyonIds }.toSet() }.distinctUntilChanged()
 
     /** Where each canyon of the stay starts, for its sunset: the point the plan computes it at. */
     private val positions = canyonIds.mapLatest { ids ->
@@ -197,8 +204,11 @@ class StayViewModel @Inject constructor(
     }
     private val signals = combine(outings, positions, reports) { outings, positions, reports ->
         outings.associate { outing ->
-            outing.id to
-                StayOutingSignals(endsAtNight = endsAtNight(outing, positions[outing.canyonId]), lastReport = reports[outing.canyonId])
+            // The group ends in the last canyon of a chain: its sunset counts.
+            outing.id to StayOutingSignals(
+                endsAtNight = endsAtNight(outing, positions[outing.canyonIds.last()] ?: positions[outing.canyonId]),
+                lastReport = reports[outing.canyonId],
+            )
         }
     }
 
@@ -211,7 +221,9 @@ class StayViewModel @Inject constructor(
     ) { (stay, place), outings, logbook, signals, weather ->
         val today = LocalDate.now(clock)
         if (stay == null) return@combine StayUiState(isLoading = false, today = today, isGone = true)
-        val forecast = weather.forecast?.daily?.associateBy { it.date }.orEmpty()
+        // An older forecast no longer tells the day: none rather than a stale storm or sun.
+        val fresh = weather.forecast?.takeIf { it.isFresh(clock.instant()) }
+        val forecast = fresh?.daily?.associateBy { it.date }.orEmpty()
         val lastForecastDay = today.plusDays(CanyonWeather.FORECAST_DAYS - 1L)
         val ofStay = logbook.filter { stay.covers(it.date) }
         val days = stay.daysFrom(today).map { day ->
@@ -231,9 +243,10 @@ class StayViewModel @Inject constructor(
             days = days,
             done = ofStay.filter { it.date.isBefore(today) }.sortedBy { it.date },
             signals = signals,
+            underwayId = outings.firstOrNull { it.isUnderway(clock.instant()) }?.id,
             isLoadingWeather = weather.isLoading,
             // Only while some days could have their forecast.
-            weatherProblem = weather.problem?.takeIf { weather.forecast == null && days.any { it.forecastFrom == null } },
+            weatherProblem = weather.problem?.takeIf { fresh == null && days.any { it.forecastFrom == null } },
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), StayUiState(today = LocalDate.now(clock)))
 
@@ -252,15 +265,20 @@ class StayViewModel @Inject constructor(
         viewModelScope.launch { stayRepository.delete(stayId) }
     }
 
-    /** Takes a draft off its day, which offers a canyon again; a followed outing is changed from its plan. */
+    /** Takes the canyon off its day, which offers to choose one again; the outing under way stays. */
     fun removeOuting(outing: PlannedOuting) {
-        if (outing.tracked) return
+        if (outing.id == uiState.value.underwayId) return
         viewModelScope.launch { outingRepository.delete(outing.id) }
     }
 
-    /** The forecast kept on the device first, then downloaded. */
+    /** The canyon just taken off comes back, as it was. */
+    fun restoreOuting(outing: PlannedOuting) {
+        viewModelScope.launch { outingRepository.save(outing) }
+    }
+
+    /** The forecast kept on the device first, when still fresh, then downloaded. */
     private suspend fun loadWeather(place: Place) {
-        val cached = getPlaceWeatherUseCase.cached(place)
+        val cached = getPlaceWeatherUseCase.cached(place)?.takeIf { it.isFresh(clock.instant()) }
         if (!connectivityObserver.isCurrentlyOnline()) {
             weather.value = WeatherState(cached, problem = StayWeatherProblem.OFFLINE)
             return
@@ -293,13 +311,16 @@ class StayViewModel @Inject constructor(
 fun StayScreen(
     onBackClick: () -> Unit,
     onEdit: (stayId: Long) -> Unit,
-    onChooseCanyon: (stayId: Long, date: LocalDate) -> Unit,
+    onChooseCanyon: (StayDayRequest) -> Unit,
     onOpenOuting: (OutingPlanRequest) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: StayViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val contentWidth = rememberDcContentWidth(maxWidth = 720.dp)
+    val snackbarHostState = remember { SnackbarHostState() }
+    val scope = rememberCoroutineScope()
+    val resources = LocalResources.current
     var menu by remember { mutableStateOf(false) }
     var confirmDelete by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(state.isGone) { if (state.isGone) onBackClick() }
@@ -354,6 +375,7 @@ fun StayScreen(
                 },
             )
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = MaterialTheme.colorScheme.background,
     ) { innerPadding ->
         val stay = state.stay ?: return@Scaffold
@@ -381,13 +403,22 @@ fun StayScreen(
                         day = day,
                         today = state.today,
                         signals = state.signals,
-                        onChoose = { onChooseCanyon(stay.id, day.date) },
+                        underwayId = state.underwayId,
+                        onChoose = { onChooseCanyon(StayDayRequest(stay.id, day.date)) },
                         onOpen = { outing -> onOpenOuting(OutingPlanRequest(outing.canyonId, outing.id)) },
-                        onChange = { outing ->
+                        // The outing stays as it is until another canyon is picked.
+                        onChange = { outing -> onChooseCanyon(StayDayRequest(stay.id, day.date, outing.id)) },
+                        onRemove = { outing ->
                             viewModel.removeOuting(outing)
-                            onChooseCanyon(stay.id, day.date)
+                            scope.launch {
+                                val result = snackbarHostState.showSnackbar(
+                                    message = resources.getString(R.string.stay_outing_removed, outing.title),
+                                    actionLabel = resources.getString(R.string.undo),
+                                    duration = SnackbarDuration.Short,
+                                )
+                                if (result == SnackbarResult.ActionPerformed) viewModel.restoreOuting(outing)
+                            }
                         },
-                        onRemove = viewModel::removeOuting,
                     )
                 }
             }
@@ -467,6 +498,7 @@ private fun StayDayCard(
     day: StayDay,
     today: LocalDate,
     signals: Map<Long, StayOutingSignals>,
+    underwayId: Long?,
     onChoose: () -> Unit,
     onOpen: (PlannedOuting) -> Unit,
     onChange: (PlannedOuting) -> Unit,
@@ -531,6 +563,7 @@ private fun StayDayCard(
                 StayOutingRow(
                     outing = outing,
                     signals = signals[outing.id] ?: StayOutingSignals(),
+                    underway = outing.id == underwayId,
                     today = today,
                     onClick = { onOpen(outing) },
                     onChange = { onChange(outing) },
@@ -563,6 +596,7 @@ private fun SignalLine(icon: ImageVector, text: String) {
 private fun StayOutingRow(
     outing: PlannedOuting,
     signals: StayOutingSignals,
+    underway: Boolean,
     today: LocalDate,
     onClick: () -> Unit,
     onChange: () -> Unit,
@@ -597,14 +631,9 @@ private fun StayOutingRow(
                         )
                     }
                 }
-                Text(
-                    stringResource(if (outing.tracked) R.string.stay_outing_tracked else R.string.stay_outing_draft),
-                    style = MaterialTheme.typography.labelSmall,
-                    color = if (outing.tracked) MaterialTheme.colorScheme.primary else colors.textMuted,
-                )
             }
-            // A followed outing has notifications and maybe a relative waiting: it changes from its plan.
-            if (!outing.tracked) {
+            // The group is out: the outing is followed from its plan until the return.
+            if (!underway) {
                 Box {
                     IconButton(onClick = { menu = true }, modifier = Modifier.testTag(TestTags.stayOutingMenu(outing.id))) {
                         Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.more_actions))

@@ -132,8 +132,6 @@ data class PlannedOutingEntity(
     /** The alert time last sent to a relative, epoch ms; null if the plan went to no one. */
     val informedAlertAt: Long? = null,
     val choicesJson: String? = null,
-    /** The follow-up is on (notifications); a draft is only kept. */
-    val tracked: Boolean,
     /** The stay the outing was planned for. */
     val stayId: Long? = null,
     val updatedAt: Long,

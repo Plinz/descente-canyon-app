@@ -115,6 +115,8 @@ data class StayCanyonPickerUiState(
     val place: Place? = null,
     val date: LocalDate,
     val today: LocalDate,
+    /** The outing of the day whose canyon is changed, 0 when the day gets its first one. */
+    val outingId: Long = 0,
     val radiusKm: Int = DEFAULT_RADIUS_KM,
     val filter: StayFilter = StayFilter.ALL,
     /** A name typed: the whole catalog is searched, whatever the distance. */
@@ -153,6 +155,7 @@ class StayCanyonPickerViewModel @Inject constructor(
     private val stayId: Long = savedStateHandle["stayId"] ?: 0L
     private val date: LocalDate = savedStateHandle.get<String>("date")?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
         ?: LocalDate.now(clock)
+    private val outingId: Long = savedStateHandle["outingId"] ?: 0L
     private val radiusKm = MutableStateFlow(StayCanyonPickerUiState.DEFAULT_RADIUS_KM)
     private val filter = MutableStateFlow(StayFilter.ALL)
     private val query = MutableStateFlow("")
@@ -228,6 +231,7 @@ class StayCanyonPickerViewModel @Inject constructor(
             place = place,
             date = date,
             today = LocalDate.now(clock),
+            outingId = outingId,
             radiusKm = radius,
             filter = filter,
             query = query,
@@ -236,7 +240,7 @@ class StayCanyonPickerViewModel @Inject constructor(
     }.stateIn(
         viewModelScope,
         SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),
-        StayCanyonPickerUiState(date = date, today = LocalDate.now(clock)),
+        StayCanyonPickerUiState(date = date, today = LocalDate.now(clock), outingId = outingId),
     )
 
     init {
@@ -308,7 +312,7 @@ fun StayCanyonPickerScreen(
         modifier = modifier,
         topBar = {
             CompactAppBar(
-                title = stringResource(R.string.stay_choose_canyon),
+                title = stringResource(if (state.outingId > 0) R.string.stay_outing_change else R.string.stay_choose_canyon),
                 navigation = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
@@ -393,7 +397,14 @@ fun StayCanyonPickerScreen(
                         candidate = candidate,
                         onPick = {
                             val stay = state.stay ?: return@CandidateCard
-                            onPick(OutingPlanRequest(candidate.canyon.id, date = state.date, placeId = stay.placeId, stayId = stay.id))
+                            onPick(
+                                if (state.outingId > 0) {
+                                    // The outing of the day takes this canyon, its day and group kept.
+                                    OutingPlanRequest(candidate.canyon.id, state.outingId)
+                                } else {
+                                    OutingPlanRequest(candidate.canyon.id, date = state.date, placeId = stay.placeId, stayId = stay.id)
+                                },
+                            )
                         },
                         onOpenSheet = { onOpenCanyon(candidate.canyon.id) },
                     )

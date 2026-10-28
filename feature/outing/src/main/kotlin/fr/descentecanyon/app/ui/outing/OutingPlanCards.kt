@@ -766,23 +766,12 @@ internal fun AlertMarginDialog(state: OutingPlanUiState, onMarginSelected: (Int)
     )
 }
 
-/** A kept outing says first where it stands: draft, followed or under way, and what the relative was told. */
+/** A planned outing says first where it stands: planned or under way, and what the relative was told. */
 @Composable
 internal fun FollowStatusCard(state: OutingPlanUiState, timeFormatter: DateTimeFormatter, onNotify: () -> Unit) {
     val saved = state.savedOuting ?: return
     val colors = LocalDcColors.current
     val locale = LocalLocale.current.platformLocale
-    if (state.stage == OutingStage.DRAFT) {
-        Row(
-            modifier = Modifier.fillMaxWidth().testTag(TestTags.OUTING_STATUS),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(Icons.Default.Info, contentDescription = null, tint = colors.textMuted, modifier = Modifier.size(18.dp))
-            Text(stringResource(R.string.outing_status_draft), style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
-        }
-        return
-    }
     val alert = state.alertAt?.let { timeOfOuting(it, state.choices.date, locale) }.orEmpty()
     DcCard(
         modifier = Modifier.fillMaxWidth().testTag(TestTags.OUTING_STATUS),
@@ -868,7 +857,7 @@ internal fun MemoCard(memo: String) {
 }
 
 /**
- * The one action that matters now, always at hand: turn the follow-up on, tell a relative, then
+ * The one action that matters now, always at hand: confirm the outing, tell a relative, then
  * once under way say one is back or push the alert back; the emergency screen next to it.
  */
 @Composable
@@ -890,7 +879,7 @@ internal fun PlanBottomBar(
                 .padding(horizontal = 16.dp, vertical = 10.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            if (state.stage == OutingStage.NEW || state.stage == OutingStage.DRAFT) {
+            if (state.stage == OutingStage.NEW) {
                 Text(
                     stringResource(R.string.outing_activate_hint),
                     style = MaterialTheme.typography.bodySmall,
@@ -899,7 +888,7 @@ internal fun PlanBottomBar(
             }
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 when (state.stage) {
-                    OutingStage.NEW, OutingStage.DRAFT -> Button(
+                    OutingStage.NEW -> Button(
                         onClick = onActivate,
                         enabled = state.schedule != null,
                         modifier = Modifier.weight(1f).testTag(TestTags.OUTING_ACTIVATE_BUTTON),
@@ -908,7 +897,7 @@ internal fun PlanBottomBar(
                         Text(stringResource(R.string.outing_activate_action), modifier = Modifier.padding(start = 8.dp))
                     }
 
-                    OutingStage.TRACKED -> {
+                    OutingStage.PLANNED -> {
                         val relative = state.savedOuting?.relativeInformed != true || state.alertChangedSinceInformed
                         Button(onClick = onNotify, modifier = Modifier.weight(1f).testTag(TestTags.OUTING_NOTIFY_BUTTON)) {
                             Icon(Icons.AutoMirrored.Filled.Send, contentDescription = null)

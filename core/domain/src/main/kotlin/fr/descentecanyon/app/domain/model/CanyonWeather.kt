@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.domain.model
 
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -39,6 +40,9 @@ data class CanyonWeather(
     /** Forecast of [date], if it is still covered. */
     fun dayOf(date: LocalDate): DailyWeather? = daily.firstOrNull { it.date == date }
 
+    /** Downloaded less than [FRESH_FOR] before [now]: an older forecast is not shown to decide on an outing. */
+    fun isFresh(now: Instant): Boolean = !fetchedAt.isBefore(now.minus(FRESH_FOR))
+
     /**
      * Next thunderstorm after [now]: the hourly forecast (48 hours) gives its time, the daily one
      * the later days. A storm of today that is already over is not announced.
@@ -71,6 +75,9 @@ data class CanyonWeather(
 
         /** Daily rain from which the forecast is called heavy. */
         const val HEAVY_RAIN_DAY_MM = 20.0
+
+        /** Age past which a forecast kept on the device no longer tells the day ahead. */
+        val FRESH_FOR: Duration = Duration.ofHours(24)
     }
 }
 

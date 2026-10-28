@@ -1111,7 +1111,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="places_manage">Manage my places</string>
     <string name="places_edit">Edit the place</string>
     <string name="places_delete">Delete</string>
-    <string name="places_delete_confirm">Delete “%1$s”? Its stays and their drafts too; confirmed outings keep their times.</string>
+    <string name="places_delete_confirm">Delete “%1$s”? Its stays and their planned canyons too.</string>
     <string name="places_empty">No starting place</string>
     <string name="places_intro">Campsite, holiday home, home: the drive to the car park is added to the times of the outing.</string>
     <string name="places_map_hint">Under the pin: %1$s. Search for the place or move the map.</string>
@@ -1180,7 +1180,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="outing_start_now">I\'m leaving now</string>
     <string name="outing_started_now">Have a good outing! The outing is confirmed.</string>
     <string name="outing_status_alert_changed">Your relative expects news at %1$s; the alert is now at %2$s.</string>
-    <string name="outing_status_draft">Draft kept in Planned outings. Confirm the outing for emergency access and the return reminder.</string>
     <string name="outing_status_relative_not_informed">No relative has received the plan yet.</string>
     <string name="outing_status_tracked">Outing confirmed · alert at %1$s</string>
     <string name="outing_status_underway">Outing under way · estimated return around %1$s</string>
@@ -1189,21 +1188,17 @@ Search for a canyon and add it to your favorites.</string>
     <string name="outing_summary_alert_full_day">durations unknown: a full 8 h day counted, + %1$d h</string>
     <string name="outing_summary_alert_margin">latest return + %1$d h</string>
     <string name="outing_summary_title">Your day</string>
-    <string name="outings_drafts">Drafts</string>
-    <string name="outings_row_draft">Draft · not confirmed yet</string>
     <string name="outings_stay_action">Plan a stay</string>
     <string name="outings_stay_action_hint">A place and dates: one canyon a day, with the weather at the place.</string>
     <string name="outings_stays">Stays</string>
     <string name="stay_choose_canyon">Choose a canyon</string>
     <string name="stay_dates_label">Dates</string>
     <string name="stay_delete">Delete the stay</string>
-    <string name="stay_delete_confirm">Delete this stay? The drafts of its outings are deleted; confirmed outings stay planned.</string>
+    <string name="stay_delete_confirm">Delete this stay and the canyons planned for its days?</string>
     <string name="stay_edit">Edit the stay</string>
     <string name="stay_edit_intro">The campsite or holiday home the outings start from, and the days spent there.</string>
     <string name="stay_new">New stay</string>
     <string name="stay_no_place">First place the campsite or holiday home on the map.</string>
-    <string name="stay_outing_draft">Draft</string>
-    <string name="stay_outing_tracked">Confirmed</string>
     <string name="stay_over">This stay is over.</string>
     <string name="stay_picker_subtitle">%1$s · from %2$s</string>
     <string name="stay_place_label">Place of the stay</string>
@@ -1224,15 +1219,17 @@ Search for a canyon and add it to your favorites.</string>
     <string name="places_kind_lodging">Accommodation</string>
     <string name="stay_dates_value">%1$s to %2$s</string>
     <string name="stay_dates_change">Change the dates</string>
-    <plurals name="stay_dates_hint">
-        <item quantity="one">Tap the first day then the last one, %1$d day at most.</item>
-        <item quantity="other">Tap the first day then the last one, %1$d days at most.</item>
+    <plurals name="stay_dates_cut">
+        <item quantity="one">A stay lasts %1$d day at most.</item>
+        <item quantity="other">A stay lasts %1$d days at most.</item>
     </plurals>
     <string name="outing_canyons_label">Canyons of the day</string>
     <string name="outing_canyons_add_hint">Add another canyon</string>
     <string name="outing_canyons_intro">A full run (upper then lower part) or two nearby canyons in one outing: the times follow on, with a single alert time for the day.</string>
     <string name="outing_canyons_add">Add a canyon</string>
     <string name="outing_canyons_remove">Remove %1$s</string>
+    <string name="outing_open_sheet">View the canyon sheet</string>
+    <string name="outing_canyons_open_sheet">View the sheet of %1$s</string>
     <string name="outing_canyons_search_hint">Canyon name</string>
     <string name="outing_canyons_nearby">Around %1$s</string>
     <string name="outing_canyons_none">No canyon found.</string>
@@ -1260,11 +1257,13 @@ Search for a canyon and add it to your favorites.</string>
     <string name="outing_step_back_at_car">Back at the car</string>
     <string name="outing_durations_source_of">%1$s, from the sheet: approach %2$s, descent %3$s, return %4$s.</string>
     <string name="stay_weather_later">Forecast from %1$s</string>
-    <string name="stay_weather_offline">Offline: no forecast yet for this place.</string>
+    <string name="stay_weather_offline">Offline: no recent forecast for this place.</string>
     <string name="stay_weather_failed">Forecast unavailable for now.</string>
     <string name="stay_outing_night">Could end after dark: leave earlier</string>
     <string name="stay_outing_change">Change canyon</string>
     <string name="stay_outing_remove">Remove this canyon</string>
+    <string name="stay_outing_removed">%1$s removed</string>
+    <string name="stay_edit_overlap">These dates overlap the stay at %1$s (%2$s – %3$s).</string>
     <string name="stay_done_title">Already done during the stay</string>
     <string name="stay_day_done">%1$s: done</string>
     <string name="stay_picker_search_hint">Search a canyon by name</string>
@@ -1283,8 +1282,8 @@ Search for a canyon and add it to your favorites.</string>
         <item quantity="other">%1$d canyons done</item>
     </plurals>
     <plurals name="stay_edit_left_out">
-        <item quantity="one">%1$d outing planned outside these dates will leave the stay; it stays in Planned outings.</item>
-        <item quantity="other">%1$d outings planned outside these dates will leave the stay; they stay in Planned outings.</item>
+        <item quantity="one">%1$d canyon planned outside these dates will be removed.</item>
+        <item quantity="other">%1$d canyons planned outside these dates will be removed.</item>
     </plurals>
     <plurals name="home_stay_soon">
         <item quantity="one">In %1$d day</item>

@@ -1135,7 +1135,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="places_manage">Gestionar mis lugares</string>
     <string name="places_edit">Editar el lugar</string>
     <string name="places_delete">Eliminar</string>
-    <string name="places_delete_confirm">¿Eliminar «%1$s»? También sus estancias y sus borradores; las salidas confirmadas conservan sus horarios.</string>
+    <string name="places_delete_confirm">¿Eliminar «%1$s»? También sus estancias y sus barrancos previstos.</string>
     <string name="places_empty">Ningún lugar de salida</string>
     <string name="places_intro">Camping, alojamiento, casa: el trayecto hasta el aparcamiento se suma a los horarios de la salida.</string>
     <string name="places_map_hint">Bajo el marcador: %1$s. Busque el lugar o mueva el mapa.</string>
@@ -1210,7 +1210,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="outing_start_now">Salgo ahora</string>
     <string name="outing_started_now">¡Buena salida! La salida está confirmada.</string>
     <string name="outing_status_alert_changed">Su allegado espera noticias a las %1$s; la alerta es ahora a las %2$s.</string>
-    <string name="outing_status_draft">Borrador guardado en Salidas previstas. Confirme la salida para tener el acceso a emergencias y el aviso de vuelta.</string>
     <string name="outing_status_relative_not_informed">Ningún allegado ha recibido aún el plan.</string>
     <string name="outing_status_tracked">Salida confirmada · alerta a las %1$s</string>
     <string name="outing_status_underway">Salida en curso · vuelta estimada hacia las %1$s</string>
@@ -1219,21 +1218,17 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="outing_summary_alert_full_day">duraciones desconocidas: se cuenta un día de 8 h, + %1$d h</string>
     <string name="outing_summary_alert_margin">vuelta más tardía + %1$d h</string>
     <string name="outing_summary_title">Su día</string>
-    <string name="outings_drafts">Borradores</string>
-    <string name="outings_row_draft">Borrador · sin confirmar</string>
     <string name="outings_stay_action">Preparar una estancia</string>
     <string name="outings_stay_action_hint">Un lugar y fechas: un barranco por día, con el tiempo del lugar.</string>
     <string name="outings_stays">Estancias</string>
     <string name="stay_choose_canyon">Elegir un barranco</string>
     <string name="stay_dates_label">Fechas</string>
     <string name="stay_delete">Eliminar la estancia</string>
-    <string name="stay_delete_confirm">¿Eliminar esta estancia? Se eliminan los borradores de sus salidas; las salidas confirmadas siguen previstas.</string>
+    <string name="stay_delete_confirm">¿Eliminar esta estancia y los barrancos previstos para sus días?</string>
     <string name="stay_edit">Modificar la estancia</string>
     <string name="stay_edit_intro">El camping o el alojamiento desde el que se sale, y los días pasados allí.</string>
     <string name="stay_new">Nueva estancia</string>
     <string name="stay_no_place">Sitúe primero el camping o el alojamiento en el mapa.</string>
-    <string name="stay_outing_draft">Borrador</string>
-    <string name="stay_outing_tracked">Confirmada</string>
     <string name="stay_over">Esta estancia ha terminado.</string>
     <string name="stay_picker_subtitle">%1$s · desde %2$s</string>
     <string name="stay_place_label">Lugar de la estancia</string>
@@ -1256,15 +1251,18 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="places_kind_lodging">Alojamiento</string>
     <string name="stay_dates_value">Del %1$s al %2$s</string>
     <string name="stay_dates_change">Cambiar las fechas</string>
-    <plurals name="stay_dates_hint">
-        <item quantity="one">Toque el primer día y luego el último, %1$d día como máximo.</item>
-        <item quantity="other">Toque el primer día y luego el último, %1$d días como máximo.</item>
+    <plurals name="stay_dates_cut">
+        <item quantity="one">Una estancia dura %1$d día como máximo.</item>
+        <item quantity="many">Una estancia dura %1$d días como máximo.</item>
+        <item quantity="other">Una estancia dura %1$d días como máximo.</item>
     </plurals>
     <string name="outing_canyons_label">Barrancos del día</string>
     <string name="outing_canyons_add_hint">Encadenar otro barranco</string>
     <string name="outing_canyons_intro">Una integral (tramo superior y luego inferior) o dos barrancos cercanos en la misma salida: los horarios se encadenan, con una sola hora de alerta para el día.</string>
     <string name="outing_canyons_add">Añadir un barranco</string>
     <string name="outing_canyons_remove">Quitar %1$s</string>
+    <string name="outing_open_sheet">Ver la ficha del barranco</string>
+    <string name="outing_canyons_open_sheet">Ver la ficha de %1$s</string>
     <string name="outing_canyons_search_hint">Nombre del barranco</string>
     <string name="outing_canyons_nearby">Alrededor de %1$s</string>
     <string name="outing_canyons_none">No se ha encontrado ningún barranco.</string>
@@ -1292,11 +1290,13 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="outing_step_back_at_car">De vuelta al coche</string>
     <string name="outing_durations_source_of">%1$s, según la ficha: aproximación %2$s, descenso %3$s, retorno %4$s.</string>
     <string name="stay_weather_later">Previsión del tiempo a partir del %1$s</string>
-    <string name="stay_weather_offline">Sin conexión: aún no hay previsión para este lugar.</string>
+    <string name="stay_weather_offline">Sin conexión: no hay previsión reciente para este lugar.</string>
     <string name="stay_weather_failed">Previsión no disponible por ahora.</string>
     <string name="stay_outing_night">Riesgo de terminar de noche: salga antes</string>
     <string name="stay_outing_change">Cambiar de barranco</string>
     <string name="stay_outing_remove">Quitar este barranco</string>
+    <string name="stay_outing_removed">%1$s quitado</string>
+    <string name="stay_edit_overlap">Estas fechas se solapan con la estancia en %1$s (del %2$s al %3$s).</string>
     <string name="stay_done_title">Ya descendidos durante la estancia</string>
     <string name="stay_day_done">%1$s: descendido</string>
     <string name="stay_picker_search_hint">Buscar un barranco por su nombre</string>
@@ -1316,9 +1316,9 @@ Busca un barranco y añádelo a tus favoritos.</string>
         <item quantity="other">%1$d barrancos descendidos</item>
     </plurals>
     <plurals name="stay_edit_left_out">
-        <item quantity="one">%1$d salida prevista fuera de estas fechas saldrá de la estancia; sigue en Salidas previstas.</item>
-        <item quantity="many">%1$d salidas previstas fuera de estas fechas saldrán de la estancia; siguen en Salidas previstas.</item>
-        <item quantity="other">%1$d salidas previstas fuera de estas fechas saldrán de la estancia; siguen en Salidas previstas.</item>
+        <item quantity="one">%1$d barranco previsto fuera de estas fechas se quitará.</item>
+        <item quantity="many">%1$d barrancos previstos fuera de estas fechas se quitarán.</item>
+        <item quantity="other">%1$d barrancos previstos fuera de estas fechas se quitarán.</item>
     </plurals>
     <plurals name="home_stay_soon">
         <item quantity="one">Dentro de %1$d día</item>

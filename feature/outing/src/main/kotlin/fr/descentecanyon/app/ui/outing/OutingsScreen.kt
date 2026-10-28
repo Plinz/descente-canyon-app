@@ -76,8 +76,9 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 
 /**
- * Opens the plan of an outing: a kept one ([outingId]), or a new one of [date] from [placeId] (0: none),
- * for a day of the stay [stayId] (0: none); [startNow] turns its follow-up on at once.
+ * Opens the plan of an outing: a planned one ([outingId], moved to [canyonId] when it differs), or a new
+ * one of [date] from [placeId] (0: none); for a day of the stay [stayId] (0: none) or with [startNow]
+ * it is planned at once.
  */
 data class OutingPlanRequest(
     val canyonId: Int,
@@ -91,21 +92,23 @@ data class OutingPlanRequest(
 /** A stay with its place, its outings planned and the canyons done during it. */
 data class StaySummary(val stay: Stay, val place: Place?, val outings: Int, val done: Int = 0)
 
+/** A day of the stay [stayId] to give a canyon, or whose outing [outingId] (0: none) takes another canyon. */
+data class StayDayRequest(val stayId: Long, val date: java.time.LocalDate, val outingId: Long = 0)
+
 data class OutingsUiState(
     val isLoading: Boolean = true,
     val underway: PlannedOuting? = null,
+    /** Outside the stays shown: those are in their stay. */
     val upcoming: List<PlannedOuting> = emptyList(),
-    /** Drafts outside the stays shown: those are in their stay. */
-    val drafts: List<PlannedOuting> = emptyList(),
     /** The stays still to come or under way. */
     val stays: List<StaySummary> = emptyList(),
     /** The stays over, last one first. */
     val pastStays: List<StaySummary> = emptyList(),
 ) {
-    val isEmpty: Boolean get() = underway == null && upcoming.isEmpty() && drafts.isEmpty() && stays.isEmpty()
+    val isEmpty: Boolean get() = underway == null && upcoming.isEmpty() && stays.isEmpty()
 }
 
-/** The outing under way first, the followed ones, the stays, the drafts, then the stays over. */
+/** The outing under way first, the outings to come, the stays with theirs, then the stays over. */
 @HiltViewModel
 class OutingsViewModel @Inject constructor(
     outingRepository: OutingRepository,
@@ -124,7 +127,7 @@ class OutingsViewModel @Inject constructor(
     ) { agenda, stays, places, logbook ->
         val today = LocalDate.now(clock)
         val (over, shown) = stays.partition { it.isOver(today) }
-        val all = listOfNotNull(agenda.underway) + agenda.upcoming + agenda.drafts
+        val all = listOfNotNull(agenda.underway) + agenda.upcoming
         fun summary(stay: Stay) = StaySummary(
             stay = stay,
             place = places.firstOrNull { it.id == stay.placeId },
@@ -134,8 +137,7 @@ class OutingsViewModel @Inject constructor(
         OutingsUiState(
             isLoading = false,
             underway = agenda.underway,
-            upcoming = agenda.upcoming,
-            drafts = agenda.drafts.filterNot { draft -> shown.any { it.includes(draft) } },
+            upcoming = agenda.upcoming.filterNot { outing -> shown.any { it.includes(outing) } },
             stays = shown.map(::summary),
             pastStays = over.sortedByDescending { it.end }.map(::summary),
         )
@@ -187,7 +189,6 @@ fun OutingsScreen(
                         })
                     }
                 }
-                // Followed outings first: a relative may be waiting on them.
                 if (state.upcoming.isNotEmpty()) {
                     item(key = "upcoming") { SectionTitle(stringResource(R.string.outings_upcoming)) }
                     items(state.upcoming, key = { "outing-${it.id}" }) { outing ->
@@ -206,14 +207,6 @@ fun OutingsScreen(
                             Icon(Icons.Default.Add, contentDescription = null)
                             Text(stringResource(R.string.stay_new), modifier = Modifier.padding(start = 8.dp))
                         }
-                    }
-                }
-                if (state.drafts.isNotEmpty()) {
-                    item(key = "drafts") { SectionTitle(stringResource(R.string.outings_drafts)) }
-                    items(state.drafts, key = { "draft-${it.id}" }) { outing ->
-                        OutingRow(outing = outing, underway = false, onClick = {
-                            onOpenOuting(OutingPlanRequest(outing.canyonId, outing.id))
-                        })
                     }
                 }
                 if (!state.isLoading && state.isEmpty) {
@@ -329,16 +322,7 @@ internal fun OutingRow(outing: PlannedOuting, underway: Boolean, onClick: () -> 
                 Text(stringResource(times, departure, back), style = MaterialTheme.typography.bodySmall)
                 Text(
                     buildString {
-                        append(
-                            if (outing.tracked) {
-                                stringResource(
-                                    R.string.outings_row_alert,
-                                    alert,
-                                )
-                            } else {
-                                stringResource(R.string.outings_row_draft)
-                            },
-                        )
+                        append(stringResource(R.string.outings_row_alert, alert))
                         outing.groupSize?.let { append(" · ").append(pluralStringResource(R.plurals.outing_group_size, it, it)) }
                     },
                     style = MaterialTheme.typography.bodySmall,

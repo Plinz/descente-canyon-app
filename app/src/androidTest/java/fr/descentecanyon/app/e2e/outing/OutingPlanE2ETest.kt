@@ -32,22 +32,21 @@ import java.time.ZoneId
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 
 /**
- * An outing is planned from the canyon page and its follow-up turned on, then found again from the
- * home screen and the list of outings; a second canyon is chained to it; a stay is made at a
- * campsite found by its name, and gets a canyon for one of its days.
+ * An outing is planned from the canyon page once confirmed, then found again from the home screen and
+ * the list of outings; a second canyon is chained to it; a stay is made at a campsite found by its
+ * name, and gets a canyon for one of its days, then another one in its place.
  */
 @HiltAndroidTest
 class OutingPlanE2ETest : BaseE2eTest() {
 
     @Before
     override fun setUp() {
-        // Turning the follow-up on asks for the notification permission: granted beforehand, no system dialog.
+        // Confirming an outing asks for the notification permission: granted beforehand, no system dialog.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             val instrumentation = InstrumentationRegistry.getInstrumentation()
             instrumentation.uiAutomation.grantRuntimePermission(
@@ -59,7 +58,7 @@ class OutingPlanE2ETest : BaseE2eTest() {
     }
 
     @Test
-    fun theCanyonPagePlansAnOutingWithItsGroupAndTurnsItsFollowUpOn() {
+    fun theCanyonPagePlansAnOutingWithItsGroupOnceConfirmed() {
         openRiolan()
         composeRule.onNodeWithTag(TestTags.DETAIL_LIST).performScrollToNode(hasTestTag(TestTags.DETAIL_PLAN_OUTING))
         // The page runs under the bottom bar: on a small screen (CI) the scroll leaves the card behind it, a tap would hit the bar.
@@ -79,13 +78,13 @@ class OutingPlanE2ETest : BaseE2eTest() {
         }
         Espresso.pressBack()
 
-        // The change is kept at once, as a draft.
-        composeRule.waitUntil(10_000) { runBlocking { outingRepository.observeAll().first().isNotEmpty() } }
-        assertFalse(runBlocking { outingRepository.observeAll().first().single().tracked })
+        // Only shown until the outing is confirmed: there is no draft.
+        composeRule.waitForIdle()
+        assertTrue(runBlocking { outingRepository.observeAll().first().isEmpty() })
 
         waitForTag(TestTags.OUTING_ACTIVATE_BUTTON)
         composeRule.onNodeWithTag(TestTags.OUTING_ACTIVATE_BUTTON, useUnmergedTree = true).performClick()
-        composeRule.waitUntil(10_000) { runBlocking { outingRepository.observeAll().first().singleOrNull()?.tracked == true } }
+        composeRule.waitUntil(10_000) { runBlocking { outingRepository.observeAll().first().isNotEmpty() } }
         val outing = runBlocking { outingRepository.observeAll().first().single() }
         assertEquals(101, outing.canyonId)
         assertEquals(5, outing.groupSize)
@@ -117,13 +116,16 @@ class OutingPlanE2ETest : BaseE2eTest() {
         // Straight on, on foot or by car, with what is counted between the two.
         waitForTag(TestTags.outingCanyonLink(0))
 
-        // Kept at once as one outing of two canyons, reached by car.
+        // Confirmed, one outing of two canyons, reached by car.
+        Espresso.pressBack()
+        waitForTag(TestTags.OUTING_ACTIVATE_BUTTON)
+        composeRule.onNodeWithTag(TestTags.OUTING_ACTIVATE_BUTTON, useUnmergedTree = true).performClick()
         composeRule.waitUntil(10_000) {
             runBlocking { outingRepository.observeAll().first().singleOrNull()?.canyonIds == listOf(101, 102) }
         }
-        val draft = runBlocking { outingRepository.observeAll().first().single() }
-        assertEquals("Riolan + Aiglun", draft.title)
-        assertEquals(CanyonLink.BY_CAR, draft.choices?.nextCanyons?.single()?.link)
+        val outing = runBlocking { outingRepository.observeAll().first().single() }
+        assertEquals("Riolan + Aiglun", outing.title)
+        assertEquals(CanyonLink.BY_CAR, outing.choices?.nextCanyons?.single()?.link)
     }
 
     @Test
@@ -163,12 +165,12 @@ class OutingPlanE2ETest : BaseE2eTest() {
     }
 
     @Test
-    fun leavingNowFromTheCanyonPageTurnsTheFollowUpOnAtOnce() {
+    fun leavingNowFromTheCanyonPagePlansTheOutingAtOnce() {
         openRiolan()
         composeRule.onNodeWithTag(TestTags.DETAIL_LIST).performScrollToNode(hasTestTag(TestTags.DETAIL_START_NOW))
         composeRule.onNodeWithTag(TestTags.DETAIL_START_NOW).performSemanticsAction(SemanticsActions.OnClick)
 
-        composeRule.waitUntil(10_000) { runBlocking { outingRepository.observeAll().first().singleOrNull()?.tracked == true } }
+        composeRule.waitUntil(10_000) { runBlocking { outingRepository.observeAll().first().isNotEmpty() } }
         // Under way at once: the main action is the return.
         waitForTag(TestTags.OUTING_END_BUTTON)
     }
@@ -234,19 +236,35 @@ class OutingPlanE2ETest : BaseE2eTest() {
         waitForTag(TestTags.canyonCard(101))
         composeRule.onNodeWithTag(TestTags.canyonCard(101)).performSemanticsAction(SemanticsActions.OnClick)
 
-        // The canyon is kept at once for that day of the stay, as a draft.
+        // The canyon is planned at once for that day of the stay.
         waitForTag(TestTags.OUTING_SUMMARY)
         composeRule.waitUntil(10_000) { runBlocking { outingRepository.observeAll().first().isNotEmpty() } }
-        val draft = runBlocking { outingRepository.observeAll().first().single() }
-        assertEquals(stayId, draft.stayId)
-        assertEquals(day, draft.choices?.date)
-        assertFalse(draft.tracked)
+        val outing = runBlocking { outingRepository.observeAll().first().single() }
+        assertEquals(stayId, outing.stayId)
+        assertEquals(day, outing.choices?.date)
+
+        // Its sheet is one tap away from the plan, and back is the plan again.
+        composeRule.onNodeWithTag(TestTags.OUTING_OPEN_SHEET, useUnmergedTree = true).performClick()
+        waitForTag(TestTags.DETAIL_LIST)
+        Espresso.pressBack()
+        waitForTag(TestTags.OUTING_SUMMARY)
 
         // Back to the stay: the day shows its canyon.
         Espresso.pressBack()
         waitForTag(TestTags.STAY_LIST)
-        composeRule.onNodeWithTag(TestTags.STAY_LIST).performScrollToNode(hasTestTag(TestTags.outingRow(draft.id)))
-        assertTrue(composeRule.onAllNodes(hasTestTag(TestTags.outingRow(draft.id))).fetchSemanticsNodes().isNotEmpty())
+        composeRule.onNodeWithTag(TestTags.STAY_LIST).performScrollToNode(hasTestTag(TestTags.outingRow(outing.id)))
+        assertTrue(composeRule.onAllNodes(hasTestTag(TestTags.outingRow(outing.id))).fetchSemanticsNodes().isNotEmpty())
+
+        // Another canyon that day: the outing stays, with the canyon picked in place of the first one.
+        composeRule.onNodeWithTag(TestTags.stayOutingMenu(outing.id), useUnmergedTree = true).performClick()
+        composeRule.onNodeWithText(string(R.string.stay_outing_change)).performClick()
+        waitForTag(TestTags.canyonCard(102))
+        composeRule.onNodeWithTag(TestTags.canyonCard(102)).performSemanticsAction(SemanticsActions.OnClick)
+        waitForTag(TestTags.OUTING_SUMMARY)
+        composeRule.waitUntil(10_000) { runBlocking { outingRepository.observeAll().first().singleOrNull()?.canyonId == 102 } }
+        val changed = runBlocking { outingRepository.observeAll().first().single() }
+        assertEquals(outing.id, changed.id)
+        assertEquals(day, changed.choices?.date)
     }
 
     @Test

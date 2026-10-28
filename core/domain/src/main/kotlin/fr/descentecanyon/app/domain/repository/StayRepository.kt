@@ -13,6 +13,6 @@ interface StayRepository {
     /** Adds a stay ([Stay.id] 0) or replaces it; returns its id. */
     suspend fun save(stay: Stay): Long
 
-    /** Forgets the stay and the drafts of its outings; its followed outings stay planned. */
+    /** Forgets the stay and the canyons planned for its days; the outing under way stays planned without it. */
     suspend fun delete(id: Long)
 }

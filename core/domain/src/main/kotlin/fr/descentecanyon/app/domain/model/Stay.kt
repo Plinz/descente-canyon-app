@@ -10,6 +10,9 @@ data class Stay(val placeId: Long, val start: LocalDate, val end: LocalDate, val
 
     fun covers(date: LocalDate): Boolean = date in start..end
 
+    /** Shares at least one day with [other]: one is at one place a day, so two such stays are refused. */
+    fun overlaps(other: Stay): Boolean = !start.isAfter(other.end) && !other.start.isAfter(end)
+
     /** Over: its last day is before [today]. */
     fun isOver(today: LocalDate): Boolean = end.isBefore(today)
 
@@ -24,6 +27,12 @@ data class Stay(val placeId: Long, val start: LocalDate, val end: LocalDate, val
         return outing.stayId == null && choices.placeId == placeId && covers(choices.date)
     }
 
+    /** The days its outings move by when it becomes [moved]: the whole stay shifted, null when its length changes. */
+    fun shiftTo(moved: Stay): Long? {
+        val days = moved.start.toEpochDay() - start.toEpochDay()
+        return days.takeIf { it != 0L && moved.end.toEpochDay() - end.toEpochDay() == it }
+    }
+
     companion object {
         /** A stay of more than a month is a place one lives at, not a stay. */
         const val MAX_DAYS = 31
@@ -32,3 +41,6 @@ data class Stay(val placeId: Long, val start: LocalDate, val end: LocalDate, val
         const val DEFAULT_DAYS = 7L
     }
 }
+
+/** The other stay that shares a day with [stay], if any. */
+fun List<Stay>.overlapping(stay: Stay): Stay? = firstOrNull { it.id != stay.id && it.overlaps(stay) }
