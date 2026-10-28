@@ -175,9 +175,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="map_visible_empty_title">No canyon visible</string>
     <string name="map_visible_empty_description">Move or zoom out on the map to show canyons.</string>
     <string name="connected_as">Connected: %1$s</string>
-    <string name="approach_time">Approach time</string>
-    <string name="descent_time">Descent time</string>
-    <string name="return_time">Return time</string>
     <string name="tab_topo">Topo</string>
     <string name="tab_photos_with_count">Photos (%1$d)</string>
     <string name="tab_photos_loading">Photos (…)</string>

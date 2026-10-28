@@ -116,10 +116,14 @@ fun debitRangeWordRes(level: NiveauDebit): Int = when (level) {
 fun canyonDurationText(raw: String?): String? {
     val text = raw?.trim()?.takeIf { it.isNotEmpty() } ?: return null
     // Cut by the site at ten characters: shown as such.
-    val shown = if (CanyonDuration.isCut(text)) "$text…" else text
+    // A number keeps its unit on its line; "1h50/2h30" may go to the line after its slash.
+    val shown = (if (CanyonDuration.isCut(text)) "$text…" else text).replace(NUMBER_BEFORE_UNIT, "$1\u00A0").replace("/", "/\u200B")
     return when (CanyonDuration.parse(text)) {
         CanyonDuration.None -> stringResource(R.string.duration_none)
         CanyonDuration.Unknown -> if (text.all { it == '?' }) stringResource(R.string.duration_unknown) else shown
-        is CanyonDuration.Known -> text.toIntOrNull()?.let { stringResource(R.string.duration_minutes, it) } ?: shown
+        is CanyonDuration.Known -> text.toIntOrNull()?.let { stringResource(R.string.duration_minutes, it).replace(' ', '\u00A0') } ?: shown
     }
 }
+
+/** "5 à" then "60 min" rather than "60" then "min". */
+private val NUMBER_BEFORE_UNIT = Regex("""(\d)\s+(?=(?:min|mn|h|heures?|j|jours?)\b)""", RegexOption.IGNORE_CASE)

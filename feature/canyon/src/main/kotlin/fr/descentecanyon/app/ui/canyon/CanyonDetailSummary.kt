@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material3.Card
@@ -28,9 +29,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDetail
@@ -45,6 +48,7 @@ import fr.descentecanyon.app.ui.design.DcMetricTile
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
 import fr.descentecanyon.app.ui.design.LocalDcSpacing
+import fr.descentecanyon.app.ui.design.LocalDcTypography
 import java.util.Locale
 
 @Composable
@@ -208,9 +212,9 @@ private fun SummaryStatsGrid(detail: CanyonDetail, modifier: Modifier = Modifier
     ).filter { !it.value.isNullOrBlank() }
 
     val timeStats = listOf(
-        SummaryStat(stringResource(R.string.approach_time), canyonDurationText(canyon.tempsApproche)),
-        SummaryStat(stringResource(R.string.descent_time), canyonDurationText(canyon.tempsDescente)),
-        SummaryStat(stringResource(R.string.return_time), canyonDurationText(canyon.tempsRetour)),
+        SummaryStat(stringResource(R.string.approach), canyonDurationText(canyon.tempsApproche)),
+        SummaryStat(stringResource(R.string.descent), canyonDurationText(canyon.tempsDescente)),
+        SummaryStat(stringResource(R.string.return_path), canyonDurationText(canyon.tempsRetour)),
     ).filter { !it.value.isNullOrBlank() }
 
     Column(
@@ -224,7 +228,7 @@ private fun SummaryStatsGrid(detail: CanyonDetail, modifier: Modifier = Modifier
             )
         }
         if (timeStats.isNotEmpty()) {
-            SummaryMetricSection(
+            SummaryTimesSection(
                 title = stringResource(R.string.canyon_summary_timing),
                 stats = timeStats,
             )
@@ -326,18 +330,14 @@ private fun SummarySection(title: String, stats: List<SummaryStat>, modifier: Mo
 @Composable
 private fun SummaryMetricSection(title: String, stats: List<SummaryStat>, modifier: Modifier = Modifier) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = LocalDcColors.current.textSecondary,
-        )
+        MetricSectionTitle(title)
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
             stats.chunked(2).forEach { rowStats ->
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
+                    // A tile alone on its row takes all of it: no hole beside it.
                     rowStats.forEach { stat ->
                         DcMetricTile(
                             label = stat.label,
@@ -345,11 +345,99 @@ private fun SummaryMetricSection(title: String, stats: List<SummaryStat>, modifi
                             modifier = Modifier.weight(1f),
                         )
                     }
-                    if (rowStats.size == 1) {
-                        Spacer(modifier = Modifier.weight(1f))
-                    }
                 }
             }
         }
     }
 }
+
+/** The times of the outing in one tile, in the order of the day: approach › descent › return. */
+@Composable
+private fun SummaryTimesSection(title: String, stats: List<SummaryStat>, modifier: Modifier = Modifier) {
+    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        MetricSectionTitle(title)
+        DcCard(modifier = Modifier.fillMaxWidth(), variant = DcCardVariant.Condition, contentPadding = 12.dp) {
+            StepsRow(stats)
+        }
+    }
+}
+
+@Composable
+private fun MetricSectionTitle(title: String) {
+    Text(
+        text = title,
+        style = MaterialTheme.typography.labelLarge,
+        fontWeight = FontWeight.SemiBold,
+        color = LocalDcColors.current.textSecondary,
+    )
+}
+
+/**
+ * The [steps] side by side, a chevron between two. Each takes its width and the room left goes
+ * between them; short of room, each keeps its longest word, its label shortened first, and the
+ * rest goes to the longest values, which wrap.
+ */
+@Composable
+private fun StepsRow(steps: List<SummaryStat>) {
+    val colors = LocalDcColors.current
+    val typography = LocalDcTypography.current
+    Layout(
+        content = {
+            steps.forEachIndexed { index, stat ->
+                Text(
+                    text = stat.label.uppercase(),
+                    style = typography.metricLabel,
+                    color = colors.textMuted,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(text = stat.value ?: "-", style = typography.metricValue, color = colors.textPrimary)
+                if (index < steps.lastIndex) {
+                    Icon(Icons.Default.ChevronRight, contentDescription = null, tint = colors.textMuted, modifier = Modifier.size(16.dp))
+                }
+            }
+        },
+    ) { measurables, constraints ->
+        val labels = measurables.filterIndexed { index, _ -> index % 3 == 0 }
+        val values = measurables.filterIndexed { index, _ -> index % 3 == 1 }
+        val chevrons = measurables.filterIndexed { index, _ -> index % 3 == 2 }.map { it.measure(Constraints()) }
+        val gap = STEP_GAP.roundToPx()
+        val room = (constraints.maxWidth - chevrons.sumOf { it.width + 2 * gap }).coerceAtLeast(0)
+        val labelWidths = labels.map { it.maxIntrinsicWidth(Constraints.Infinity) }
+        val valueWords = values.map { it.minIntrinsicWidth(Constraints.Infinity) }
+        val preferred = values.mapIndexed { index, value -> maxOf(labelWidths[index], value.maxIntrinsicWidth(Constraints.Infinity)) }
+        val least = valueWords.zip(labelWidths, ::maxOf).takeIf { it.sum() <= room } ?: valueWords
+        val widths = when {
+            preferred.sum() <= room -> preferred
+
+            least.sum() >= room -> least.map { it * room / least.sum().coerceAtLeast(1) }
+
+            else -> {
+                val extra = room - least.sum()
+                val wanted = preferred.sum() - least.sum()
+                least.zip(preferred) { low, high -> low + (high - low) * extra / wanted }
+            }
+        }
+        val labelPlaceables = labels.zip(widths) { label, width -> label.measure(Constraints(maxWidth = width)) }
+        val valuePlaceables = values.zip(widths) { value, width -> value.measure(Constraints(maxWidth = width)) }
+        val labelHeight = labelPlaceables.maxOf { it.height }
+        // On the first line of the values.
+        val chevronCenter = labelHeight + typography.metricValue.lineHeight.roundToPx() / 2
+        val spread = if (chevrons.isEmpty()) 0 else (room - widths.sum()) / (2 * chevrons.size)
+        layout(constraints.maxWidth, labelHeight + valuePlaceables.maxOf { it.height }) {
+            var x = 0
+            widths.forEachIndexed { index, width ->
+                labelPlaceables[index].placeRelative(x, 0)
+                valuePlaceables[index].placeRelative(x, labelHeight)
+                x += width
+                chevrons.getOrNull(index)?.let { chevron ->
+                    x += gap + spread
+                    chevron.placeRelative(x, chevronCenter - chevron.height / 2)
+                    x += chevron.width + gap + spread
+                }
+            }
+        }
+    }
+}
+
+private val STEP_GAP = 4.dp

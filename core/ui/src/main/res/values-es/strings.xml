@@ -175,9 +175,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="map_visible_empty_title">No hay barrancos visibles</string>
     <string name="map_visible_empty_description">Mueve el mapa o aleja el zoom para mostrar barrancos.</string>
     <string name="connected_as">Cuenta conectada: %1$s</string>
-    <string name="approach_time">Tiempo de aproximación</string>
-    <string name="descent_time">Tiempo de descenso</string>
-    <string name="return_time">Tiempo de retorno</string>
     <string name="tab_topo">Topo</string>
     <string name="tab_photos_with_count">Fotos (%1$d)</string>
     <string name="tab_photos_loading">Fotos (…)</string>
