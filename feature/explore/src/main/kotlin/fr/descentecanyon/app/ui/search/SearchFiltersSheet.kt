@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -52,6 +53,7 @@ import fr.descentecanyon.app.ui.design.DcZonePickerSheet
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
 import fr.descentecanyon.app.ui.design.zoneFieldValue
+import fr.descentecanyon.app.ui.test.TestTags
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -114,6 +116,24 @@ fun SearchFiltersSheet(
                     onClick = { showZonePicker = true },
                     onClear = { onCriteriaChanged(criteria.copy(selectedCountry = null, selectedDepartment = null)) },
                 )
+                // Around the user's position, or the place of a stay: only once that point is known.
+                if (criteria.hasReferencePoint) {
+                    Text(
+                        stringResource(R.string.search_filter_distance),
+                        style = MaterialTheme.typography.labelLarge,
+                        color = colors.textSecondary,
+                    )
+                    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        SearchCriteria.MAX_DISTANCES_KM.forEach { km ->
+                            FilterChip(
+                                selected = criteria.maxDistanceKm == km,
+                                onClick = { onCriteriaChanged(criteria.copy(maxDistanceKm = km.takeIf { criteria.maxDistanceKm != it })) },
+                                label = { Text(stringResource(R.string.search_distance_km, km)) },
+                                modifier = Modifier.testTag(TestTags.searchDistance(km)),
+                            )
+                        }
+                    }
+                }
             }
 
             FilterSection(title = stringResource(R.string.search_filter_cotation)) {
@@ -360,6 +380,7 @@ fun buildActiveFilterActions(uiState: SearchUiState, viewModel: SearchViewModel)
     val lengthLabel = stringResource(R.string.length)
     val maxWaterfallLabel = stringResource(R.string.max_waterfall)
     val ropeLabel = stringResource(R.string.rope)
+    val distanceLabel = criteria.maxDistanceKm?.let { stringResource(R.string.search_filter_distance_active, it) }
     return buildList {
         if (criteria.favoritesOnly) {
             add(
@@ -374,6 +395,9 @@ fun buildActiveFilterActions(uiState: SearchUiState, viewModel: SearchViewModel)
         }
         criteria.selectedCountry?.let { add(ActiveFilterAction(it, viewModel::clearCountry)) }
         criteria.selectedDepartment?.let { add(ActiveFilterAction(it, viewModel::clearDepartment)) }
+        distanceLabel?.takeIf { criteria.hasReferencePoint }?.let { label ->
+            add(ActiveFilterAction(label) { viewModel.onCriteriaChanged(criteria.copy(maxDistanceKm = null)) })
+        }
         criteria.verticalRange.takeIf(IntRangeFilter::isActive)?.let {
             add(ActiveFilterAction(rangeLabel("V", it)) { viewModel.onCriteriaChanged(criteria.copy(verticalRange = IntRangeFilter())) })
         }

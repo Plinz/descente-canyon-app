@@ -29,8 +29,18 @@ sealed interface Screen {
     @Serializable
     data class UserProfile(val username: String) : Screen
 
+    /**
+     * A canyon page. Opened from the search of a day of a stay ([stayId], [stayDate] ISO, and
+     * [stayOutingId] the outing whose canyon it replaces, 0 for none), it plans the canyon for that day.
+     */
     @Serializable
-    data class CanyonDetail(val canyonId: Int, val openDebitsTab: Boolean = false) : Screen
+    data class CanyonDetail(
+        val canyonId: Int,
+        val openDebitsTab: Boolean = false,
+        val stayId: Long = 0,
+        val stayDate: String? = null,
+        val stayOutingId: Long = 0,
+    ) : Screen
 
     /** A flow report; an outing just logged prefills its [date] (ISO), [descended] and flow [level] (NiveauDebit name). */
     @Serializable
@@ -88,7 +98,7 @@ sealed interface Screen {
     @Serializable
     data class StayEdit(val stayId: Long = 0) : Screen
 
-    /** The canyons around the place of the stay [stayId], for its day [date] (ISO), or in place of the canyon of [outingId]. */
+    /** The search, around the place of the stay [stayId], for its day [date] (ISO), or in place of the canyon of [outingId]. */
     @Serializable
     data class StayCanyonPicker(val stayId: Long, val date: String, val outingId: Long = 0) : Screen
 

@@ -1,6 +1,5 @@
 package fr.descentecanyon.app.ui.outing
 
-import android.text.format.DateFormat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -87,7 +86,9 @@ import fr.descentecanyon.app.domain.usecase.GetPlaceWeatherUseCase
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.debitLevelColor
 import fr.descentecanyon.app.ui.components.debitLevelLabel
+import fr.descentecanyon.app.ui.components.longDayLabel
 import fr.descentecanyon.app.ui.components.relativeDayLabel
+import fr.descentecanyon.app.ui.components.shortDayLabel
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcDropdownMenu
 import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
@@ -461,20 +462,6 @@ internal fun stayRangeLabel(stay: Stay): String {
     return stringResource(R.string.places_stay_range, stay.start.format(formatter), stay.end.format(formatter))
 }
 
-/** "Mardi 14 juillet". */
-@Composable
-internal fun stayDayLabel(date: LocalDate): String {
-    val locale = LocalLocale.current.platformLocale
-    return DateTimeFormatter.ofPattern("EEEE d MMMM", locale).format(date).replaceFirstChar { it.titlecase(locale) }
-}
-
-/** "lun. 26 oct.". */
-@Composable
-internal fun shortDayLabel(date: LocalDate): String {
-    val locale = LocalLocale.current.platformLocale
-    return DateTimeFormatter.ofPattern(DateFormat.getBestDateTimePattern(locale, "EEEdMMM"), locale).format(date)
-}
-
 /** The canyons done on the days of the stay already past. */
 @Composable
 private fun StayDoneCard(done: List<LogbookEntry>) {
@@ -511,7 +498,7 @@ private fun StayDayCard(
         Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(stayDayLabel(day.date), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
+                    Text(longDayLabel(day.date), style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
                     if (day.date == today) {
                         Text(
                             stringResource(R.string.outing_day_today),

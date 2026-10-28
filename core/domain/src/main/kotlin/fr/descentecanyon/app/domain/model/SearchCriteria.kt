@@ -34,11 +34,17 @@ data class SearchCriteria(
     val lengthRange: IntRangeFilter = IntRangeFilter(),
     val maxWaterfallRange: IntRangeFilter = IntRangeFilter(),
     val ropeRange: IntRangeFilter = IntRangeFilter(),
+    /** At most this far in a straight line from the point distances are measured from, when it is known. */
+    val maxDistanceKm: Int? = null,
     val sortField: SearchSortField = SearchSortField.RELEVANCE,
     val sortDirection: SortDirection = SortDirection.DESC,
+    /** The point distances are measured from: the user's position, or the place of a stay. */
     val userLatitude: Double? = null,
     val userLongitude: Double? = null,
 ) {
+    /** The point distances are measured from is known: the distance filter and sort apply. */
+    val hasReferencePoint: Boolean get() = userLatitude != null && userLongitude != null
+
     fun hasCotationFilter(): Boolean = verticalRange.isActive() || aquaticRange.isActive() || engagementRange.isActive()
 
     fun hasAdvancedFilters(): Boolean = hasCotationFilter() ||
@@ -52,10 +58,10 @@ data class SearchCriteria(
         ropeRange.isActive()
 
     fun shouldDeferBroadResults(): Boolean {
-        val canSortByDistance = sortField == SearchSortField.DISTANCE &&
-            userLatitude != null &&
-            userLongitude != null
+        val canSortByDistance = sortField == SearchSortField.DISTANCE && hasReferencePoint
+        val isAroundPoint = maxDistanceKm != null && hasReferencePoint
         return query.normalizeForSearch().length < 2 &&
+            !isAroundPoint &&
             !favoritesOnly &&
             logbookFilter != LogbookFilter.DESCENDED &&
             selectedCountry == null &&
@@ -81,6 +87,7 @@ data class SearchCriteria(
         if (lengthRange.isActive()) count++
         if (maxWaterfallRange.isActive()) count++
         if (ropeRange.isActive()) count++
+        if (maxDistanceKm != null) count++
         return count
     }
 
@@ -100,7 +107,13 @@ data class SearchCriteria(
         lengthRange = IntRangeFilter(),
         maxWaterfallRange = IntRangeFilter(),
         ropeRange = IntRangeFilter(),
+        maxDistanceKm = null,
     )
+
+    companion object {
+        /** The distances offered for [maxDistanceKm]. */
+        val MAX_DISTANCES_KM = listOf(20, 40, 60, 100)
+    }
 }
 
 /** Filter on the user's logbook. */

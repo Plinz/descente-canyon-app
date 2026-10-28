@@ -3,6 +3,7 @@ package fr.descentecanyon.app.ui.test
 object TestTags {
     const val HOME_QUICK_SEARCH = "home_quick_search"
     const val SEARCH_QUERY_FIELD = "search_query_field"
+    const val SEARCH_STAY_DAY = "search_stay_day"
     const val DETAIL_FAVORITE_BUTTON = "detail_favorite_button"
     const val DETAIL_DEBIT_NOTIFICATION_BUTTON = "detail_debit_notification_button"
     const val DETAIL_REPORT_DEBIT_BUTTON = "detail_report_debit_button"
@@ -92,8 +93,6 @@ object TestTags {
     const val STAY_EDIT_SAVE = "stay_edit_save"
     const val STAY_DATES = "stay_dates"
     const val STAY_ADD_PLACE = "stay_add_place"
-    const val STAY_PICKER_LIST = "stay_picker_list"
-    const val STAY_PICKER_SEARCH = "stay_picker_search"
     const val STAY_EDIT_LEFT_OUT = "stay_edit_left_out"
     const val STAY_EDIT_OVERLAP = "stay_edit_overlap"
     const val STAY_WEATHER_PROBLEM = "stay_weather_problem"
@@ -103,6 +102,7 @@ object TestTags {
     const val DETAIL_START_NOW = "detail_start_now"
 
     fun canyonCard(id: Int): String = "canyon_card_$id"
+    fun searchDistance(km: Int): String = "search_distance_$km"
 
     fun bottomNavItem(name: String): String = "bottom_nav_$name"
 
@@ -117,8 +117,6 @@ object TestTags {
     fun outingAudience(name: String): String = "outing_audience_$name"
 
     fun outingRow(id: Long): String = "outing_row_$id"
-
-    fun stayCandidateSheet(id: Int): String = "stay_candidate_sheet_$id"
 
     fun stayDay(date: String): String = "stay_day_$date"
 

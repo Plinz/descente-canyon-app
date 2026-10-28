@@ -685,6 +685,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="weather_storm_today_at">Orages prévus vers %1$s : une crue subite peut survenir même sans pluie sur place.</string>
     <string name="prediction_offline_cached">Hors connexion : estimation calculée le %1$s</string>
     <string name="outing_plan_action">Préparer la sortie</string>
+    <string name="outing_plan_for_day">Prévoir pour %1$s</string>
     <string name="outing_plan_action_hint">Horaires de la journée, matériel, messages pour le groupe</string>
     <string name="outing_active_summary">Sortie prévue %1$s · retour vers %2$s</string>
     <string name="outing_plan_title">Préparer la sortie</string>
@@ -919,6 +920,9 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="favorites_todo_empty">Tous vos favoris sont déjà dans le carnet.</string>
     <string name="search_filter_descended">Déjà descendus</string>
     <string name="search_filter_not_descended">Jamais descendus</string>
+    <string name="search_filter_distance">Distance max</string>
+    <string name="search_distance_km">%1$d km</string>
+    <string name="search_filter_distance_active">≤ %1$d km</string>
     <plurals name="my_canyon_all_outings">
         <item quantity="one">Voir %1$d sortie</item>
         <item quantity="many">Voir les %1$d sorties</item>
@@ -1149,11 +1153,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="settings_places_hint">Camping, gîte, domicile : la route est comptée</string>
     <string name="stay_title">Séjour</string>
     <string name="stay_intro">La météo affichée est celle du lieu du séjour ; celle de chaque canyon est dans sa sortie.</string>
-    <string name="stay_radius">%1$d km</string>
-    <string name="stay_filter_favorites">Favoris</string>
-    <string name="stay_filter_not_descended">Jamais descendus</string>
-    <string name="stay_empty">Aucun canyon autour de ce lieu</string>
-    <string name="stay_empty_hint">Élargissez le rayon ou changez de filtre.</string>
     <string name="stay_drive">%1$s de route</string>
     <string name="stay_drive_estimate">≈ %1$s de route</string>
     <plurals name="emergency_group">
@@ -1299,11 +1298,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="stay_edit_overlap">Ces dates chevauchent le séjour à %1$s (du %2$s au %3$s).</string>
     <string name="stay_done_title">Déjà descendus pendant le séjour</string>
     <string name="stay_day_done">%1$s : descendu</string>
-    <string name="stay_picker_search_hint">Chercher un canyon par son nom</string>
-    <string name="stay_picker_open_sheet">Voir la fiche</string>
     <string name="stay_picker_planned">Déjà prévu le %1$s</string>
-    <string name="stay_search_empty">Aucun canyon de ce nom</string>
-    <string name="stay_search_empty_hint">Vérifiez l\'orthographe ou retirez un filtre.</string>
     <string name="outings_past_stays">Séjours passés (%1$d)</string>
     <string name="home_stay_title">Séjour à %1$s</string>
     <string name="home_stay_day">Jour %1$d sur %2$d</string>

@@ -269,60 +269,6 @@ class OutingScreensTest {
     }
 
     @Test
-    fun `the canyons around the stay come nearest by road first, and a filter touched again shows them all`() = runTest {
-        val place = Place("Camping", 44.0, 6.8, id = 7)
-        val drives = FakeDriveTimeRepository().apply { manual[7L to 1] = DriveTime(50, DriveTimeSource.MANUAL) }
-        val viewModel = pickerViewModel(place, drives)
-        backgroundScope.launch { viewModel.uiState.collect {} }
-        advanceUntilIdle()
-
-        val state = viewModel.uiState.value
-        assertEquals(LocalDate.of(2026, 7, 15), state.date)
-        assertEquals(listOf(2, 1), state.candidates.map { it.canyon.id })
-        assertEquals(listOf(DriveTimeSource.ESTIMATE, DriveTimeSource.MANUAL), state.candidates.map { it.drive.source })
-
-        viewModel.toggleFilter(StayFilter.NOT_DESCENDED)
-        advanceUntilIdle()
-        assertEquals(listOf(1), viewModel.uiState.value.candidates.map { it.canyon.id })
-        viewModel.toggleFilter(StayFilter.NOT_DESCENDED)
-        advanceUntilIdle()
-        assertEquals(StayFilter.ALL, viewModel.uiState.value.filter)
-    }
-
-    @Test
-    fun `a name finds a canyon beyond the radius, and a canyon planned another day of the stay says so`() = runTest {
-        val place = Place("Camping", 44.0, 6.8, id = 7)
-        val outings = FakeOutingRepository()
-        outings.save(outingOn(LocalDate.of(2026, 7, 16), "Riolan", stayId = 3).copy(canyonId = 1))
-        val viewModel = pickerViewModel(place, FakeDriveTimeRepository(), outings)
-        backgroundScope.launch { viewModel.uiState.collect {} }
-        advanceUntilIdle()
-        assertEquals(LocalDate.of(2026, 7, 16), viewModel.uiState.value.candidates.single { it.canyon.id == 1 }.plannedOn)
-
-        // One letter is not a name yet.
-        viewModel.search("l")
-        advanceUntilIdle()
-        assertEquals(listOf(2, 1), viewModel.uiState.value.candidates.map { it.canyon.id })
-        viewModel.search("Loin")
-        advanceUntilIdle()
-        assertTrue(viewModel.uiState.value.isSearching)
-        assertEquals(listOf(3), viewModel.uiState.value.candidates.map { it.canyon.id })
-    }
-
-    @Test
-    fun `online, the real drive to the nearest canyons replaces the estimate`() = runTest {
-        val place = Place("Camping", 44.0, 6.8, id = 7)
-        val drives = FakeDriveTimeRepository(route = DriveTime(35, DriveTimeSource.ROUTE, 22.0))
-        val viewModel = pickerViewModel(place, drives, online = true)
-        backgroundScope.launch { viewModel.uiState.collect {} }
-        advanceUntilIdle()
-
-        val candidates = viewModel.uiState.value.candidates
-        assertEquals(listOf(DriveTimeSource.ROUTE, DriveTimeSource.ROUTE), candidates.map { it.drive.source })
-        assertEquals(listOf(35, 35), candidates.map { it.drive.minutes })
-    }
-
-    @Test
     fun `the outing settings are changed within bounds and reset`() = runTest {
         val preferences = FakeOutingPreferencesRepository()
         val viewModel = OutingSettingsViewModel(
@@ -437,53 +383,6 @@ class OutingScreensTest {
         )
     }
 
-    private fun pickerViewModel(
-        place: Place,
-        drives: FakeDriveTimeRepository,
-        outings: FakeOutingRepository = FakeOutingRepository(),
-        online: Boolean = false,
-    ): StayCanyonPickerViewModel {
-        val catalog = listOf(
-            searchItem(1, "Riolan", 44.05, 6.85),
-            searchItem(2, "Bollinette", 44.02, 6.82),
-            searchItem(3, "Loin", 46.0, 7.5),
-            searchItem(4, "Interdit", 44.01, 6.81, forbidden = true),
-        )
-        return StayCanyonPickerViewModel(
-            savedStateHandle = SavedStateHandle(mapOf("stayId" to 3L, "date" to "2026-07-15")),
-            stayRepository = FakeStayRepository(listOf(Stay(7, LocalDate.of(2026, 7, 14), LocalDate.of(2026, 7, 16), id = 3))),
-            placeRepository = FakePlaceRepository(listOf(place)),
-            canyonRepository = mockk<CanyonRepository> {
-                every { observeSearchCatalog() } returns flowOf(catalog)
-                coEvery { getCanyonPreview(any()) } answers {
-                    val id = firstArg<Int>()
-                    Result.success(
-                        CanyonDetail(
-                            canyon = Canyon(
-                                id = id,
-                                nom = "Canyon $id",
-                                nomComplet = "Canyon $id",
-                                pays = "France",
-                                commune = "",
-                                cotation = "v3a3II",
-                                url = "",
-                            ),
-                            geoPoints = listOf(
-                                GeoPoint(canyonId = id, type = GeoPointType.PARKING_AMONT, latitude = 44.03, longitude = 6.83),
-                            ),
-                        ),
-                    )
-                }
-            },
-            logbookRepository = mockk<LogbookRepository> { every { observeDescendedCanyonIds() } returns flowOf(setOf(2)) },
-            outingRepository = outings,
-            driveTimeRepository = drives,
-            debitRepository = mockk<DebitRepository> { every { observeLatestKnownDebits(any()) } returns flowOf(emptyMap()) },
-            connectivityObserver = mockk<ConnectivityObserver> { every { isCurrentlyOnline() } returns online },
-            clock = clock,
-        )
-    }
-
     private fun outingOn(date: LocalDate, name: String, placeId: Long? = null, stayId: Long? = null, hour: Int = 9): PlannedOuting {
         val start = date.atTime(hour, 0).atZone(zone).toInstant()
         return PlannedOuting(
@@ -496,20 +395,4 @@ class OutingScreensTest {
             stayId = stayId,
         )
     }
-
-    private fun searchItem(id: Int, name: String, latitude: Double, longitude: Double, forbidden: Boolean = false) = CanyonSearchItem(
-        id = id,
-        nom = name,
-        nomComplet = name,
-        pays = "France",
-        cotation = "v3a3II",
-        cotationRating = CotationRating.parse("v3a3II"),
-        isForbidden = forbidden,
-        representativeLat = latitude,
-        representativeLng = longitude,
-        url = "https://example.test/$id",
-        searchableText = name.lowercase(),
-        normalizedNom = name.lowercase(),
-        normalizedNomComplet = name.lowercase(),
-    )
 }

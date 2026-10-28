@@ -187,6 +187,29 @@ class SearchCanyonsUseCaseTest {
     }
 
     @Test
+    fun `the distance filter keeps the canyons around the point, in any order, and waits for the point`() {
+        val catalog = listOf(
+            canyon(id = 1, interet = 2f, latitude = 43.7000, longitude = 6.9000),
+            // About 37 km away.
+            canyon(id = 2, interet = 4f, latitude = 43.9000, longitude = 7.3000),
+            canyon(id = 3, interet = 3f, latitude = 44.5000, longitude = 5.5000),
+        )
+        val around =
+            SearchCriteria(maxDistanceKm = 40, sortField = SearchSortField.INTEREST, userLatitude = 43.7050, userLongitude = 6.9050)
+
+        val result = useCase(catalog = catalog, criteria = around)
+        assertEquals(false, result.isResultListDeferred)
+        assertEquals(listOf(2, 1), result.results.map { it.id })
+        assertEquals(listOf(1), useCase(catalog = catalog, criteria = around.copy(maxDistanceKm = 20)).results.map { it.id })
+        assertEquals(1, around.activeFilterCount())
+        // Without the point, nothing narrows the catalog yet.
+        assertEquals(
+            true,
+            useCase(catalog = catalog, criteria = around.copy(userLatitude = null, userLongitude = null)).isResultListDeferred,
+        )
+    }
+
+    @Test
     fun `search ignores punctuation and matches tokens out of order`() {
         val result = useCase(
             catalog = listOf(
@@ -225,6 +248,7 @@ class SearchCanyonsUseCaseTest {
         subdivisionsByCountry: Map<String, List<String>> = emptyMap(),
         latitude: Double? = null,
         longitude: Double? = null,
+        interet: Float? = null,
         searchableText: String = listOf(nom, nomComplet, pays)
             .plus(countryTokens)
             .plus(listOfNotNull(departement))
@@ -233,6 +257,7 @@ class SearchCanyonsUseCaseTest {
             .normalizeForSearch(),
     ) = CanyonSearchItem(
         id = id,
+        interet = interet,
         nom = nom,
         nomComplet = nomComplet,
         pays = pays,

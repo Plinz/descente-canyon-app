@@ -671,6 +671,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="weather_storm_today_at">Gewitter gegen %1$s erwartet: eine Sturzflut kann auch ohne Regen vor Ort kommen.</string>
     <string name="prediction_offline_cached">Offline: Schätzung vom %1$s</string>
     <string name="outing_plan_action">Tour planen</string>
+    <string name="outing_plan_for_day">Für %1$s planen</string>
     <string name="outing_plan_action_hint">Tagesablauf, Ausrüstung, Nachrichten an die Gruppe</string>
     <string name="outing_active_summary">Tour geplant %1$s · zurück gegen %2$s</string>
     <string name="outing_plan_title">Tour planen</string>
@@ -901,6 +902,9 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="favorites_todo_empty">Alle Ihre Favoriten stehen schon im Tourenbuch.</string>
     <string name="search_filter_descended">Bereits begangen</string>
     <string name="search_filter_not_descended">Nie begangen</string>
+    <string name="search_filter_distance">Maximale Entfernung</string>
+    <string name="search_distance_km">%1$d km</string>
+    <string name="search_filter_distance_active">≤ %1$d km</string>
     <plurals name="my_canyon_all_outings">
         <item quantity="one">%1$d Tour ansehen</item>
         <item quantity="other">Alle %1$d Touren ansehen</item>
@@ -1125,11 +1129,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="settings_places_hint">Campingplatz, Unterkunft, Zuhause: die Fahrt wird mitgerechnet</string>
     <string name="stay_title">Aufenthalt</string>
     <string name="stay_intro">Das angezeigte Wetter gilt für den Ort des Aufenthalts; das Wetter jedes Canyons steht in seiner Tour.</string>
-    <string name="stay_radius">%1$d km</string>
-    <string name="stay_filter_favorites">Favoriten</string>
-    <string name="stay_filter_not_descended">Noch nie begangen</string>
-    <string name="stay_empty">Kein Canyon in der Nähe dieses Orts</string>
-    <string name="stay_empty_hint">Vergrößern Sie den Umkreis oder ändern Sie den Filter.</string>
     <string name="stay_drive">%1$s Fahrt</string>
     <string name="stay_drive_estimate">≈ %1$s Fahrt</string>
     <plurals name="emergency_group">
@@ -1266,11 +1265,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="stay_edit_overlap">Diese Daten überschneiden sich mit dem Aufenthalt in %1$s (%2$s – %3$s).</string>
     <string name="stay_done_title">Schon während des Aufenthalts begangen</string>
     <string name="stay_day_done">%1$s: begangen</string>
-    <string name="stay_picker_search_hint">Canyon nach Namen suchen</string>
-    <string name="stay_picker_open_sheet">Steckbrief ansehen</string>
     <string name="stay_picker_planned">Schon geplant am %1$s</string>
-    <string name="stay_search_empty">Kein Canyon mit diesem Namen</string>
-    <string name="stay_search_empty_hint">Prüfen Sie die Schreibweise oder entfernen Sie einen Filter.</string>
     <string name="outings_past_stays">Vergangene Aufenthalte (%1$d)</string>
     <string name="home_stay_title">Aufenthalt in %1$s</string>
     <string name="home_stay_day">Tag %1$d von %2$d</string>

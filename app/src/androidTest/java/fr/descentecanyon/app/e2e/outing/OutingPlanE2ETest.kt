@@ -227,14 +227,13 @@ class OutingPlanE2ETest : BaseE2eTest() {
         composeRule.onNodeWithTag(TestTags.STAY_LIST).performScrollToNode(hasTestTag(TestTags.stayChoose(day.toString())))
         composeRule.onNodeWithTag(TestTags.stayChoose(day.toString()), useUnmergedTree = true).performClick()
 
-        // The sheet is read before choosing, and back is the list again.
-        waitForTag(TestTags.stayCandidateSheet(101))
-        composeRule.onNodeWithTag(TestTags.stayCandidateSheet(101)).performClick()
+        // The search, around the campsite: a canyon opens its sheet, which plans it for that day.
+        waitForTag(TestTags.SEARCH_STAY_DAY)
+        waitForTag(TestTags.canyonCard(101))
+        composeRule.onNodeWithTag(TestTags.canyonCard(101), useUnmergedTree = true).performSemanticsAction(SemanticsActions.OnClick)
         waitForTag(TestTags.DETAIL_LIST)
         assertTrue(runBlocking { outingRepository.observeAll().first().isEmpty() })
-        Espresso.pressBack()
-        waitForTag(TestTags.canyonCard(101))
-        composeRule.onNodeWithTag(TestTags.canyonCard(101)).performSemanticsAction(SemanticsActions.OnClick)
+        planFromTheSheet()
 
         // The canyon is planned at once for that day of the stay.
         waitForTag(TestTags.OUTING_SUMMARY)
@@ -249,7 +248,7 @@ class OutingPlanE2ETest : BaseE2eTest() {
         Espresso.pressBack()
         waitForTag(TestTags.OUTING_SUMMARY)
 
-        // Back to the stay: the day shows its canyon.
+        // Back to the stay, the search and the sheet left: the day shows its canyon.
         Espresso.pressBack()
         waitForTag(TestTags.STAY_LIST)
         composeRule.onNodeWithTag(TestTags.STAY_LIST).performScrollToNode(hasTestTag(TestTags.outingRow(outing.id)))
@@ -259,7 +258,9 @@ class OutingPlanE2ETest : BaseE2eTest() {
         composeRule.onNodeWithTag(TestTags.stayOutingMenu(outing.id), useUnmergedTree = true).performClick()
         composeRule.onNodeWithText(string(R.string.stay_outing_change)).performClick()
         waitForTag(TestTags.canyonCard(102))
-        composeRule.onNodeWithTag(TestTags.canyonCard(102)).performSemanticsAction(SemanticsActions.OnClick)
+        composeRule.onNodeWithTag(TestTags.canyonCard(102), useUnmergedTree = true).performSemanticsAction(SemanticsActions.OnClick)
+        waitForTag(TestTags.DETAIL_LIST)
+        planFromTheSheet()
         waitForTag(TestTags.OUTING_SUMMARY)
         composeRule.waitUntil(10_000) { runBlocking { outingRepository.observeAll().first().singleOrNull()?.canyonId == 102 } }
         val changed = runBlocking { outingRepository.observeAll().first().single() }
@@ -281,6 +282,13 @@ class OutingPlanE2ETest : BaseE2eTest() {
         // Today's card: its canyon to choose, or the one done if the logbook has one today.
         composeRule.onNodeWithTag(TestTags.STAY_LIST).performScrollToNode(hasTestTag(TestTags.stayDay(today.toString())))
         assertTrue(runBlocking { stayRepository.get(stayId) } != null)
+    }
+
+    /** "Prévoir pour …" on the canyon page opened from the search of a day of a stay. */
+    private fun planFromTheSheet() {
+        composeRule.onNodeWithTag(TestTags.DETAIL_LIST).performScrollToNode(hasTestTag(TestTags.DETAIL_PLAN_OUTING))
+        // The page runs under the bottom bar: on a small screen (CI) a tap could hit the bar.
+        composeRule.onNodeWithTag(TestTags.DETAIL_PLAN_OUTING).performSemanticsAction(SemanticsActions.OnClick)
     }
 
     private fun openRiolan() {

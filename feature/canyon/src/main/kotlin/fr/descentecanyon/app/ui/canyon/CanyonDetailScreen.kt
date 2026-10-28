@@ -84,6 +84,7 @@ import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.test.TestTags
+import java.time.LocalDate
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -98,6 +99,8 @@ fun CanyonDetailScreen(
     onUserClick: (String) -> Unit = {},
     onOpenCanyon: (Int) -> Unit = {},
     onPlanOuting: () -> Unit = {},
+    /** Opened from the search of a day of a stay: the outing is planned for that day. */
+    planForDay: LocalDate? = null,
     onStartOutingNow: () -> Unit = {},
     onOpenEmergency: () -> Unit = {},
     /** A flow report prefilled from an outing just logged (date, descended, flow seen). */
@@ -287,6 +290,7 @@ fun CanyonDetailScreen(
                             onSavePersonalNote = viewModel::savePersonalNote,
                             nearbyCanyons = uiState.nearbyCanyons,
                             onPlanOuting = onPlanOuting,
+                            planForDay = planForDay,
                             onStartOutingNow = onStartOutingNow,
                             logbook = uiState.logbook,
                             knownCompanions = uiState.knownCompanions,

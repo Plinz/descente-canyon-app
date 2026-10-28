@@ -685,6 +685,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="weather_storm_today_at">Tormentas previstas hacia las %1$s: puede llegar una crecida súbita aunque no llueva donde estás.</string>
     <string name="prediction_offline_cached">Sin conexión: estimación calculada el %1$s</string>
     <string name="outing_plan_action">Preparar la salida</string>
+    <string name="outing_plan_for_day">Prever para %1$s</string>
     <string name="outing_plan_action_hint">Horarios del día, material, mensajes para el grupo</string>
     <string name="outing_active_summary">Salida prevista %1$s · vuelta hacia las %2$s</string>
     <string name="outing_plan_title">Preparar la salida</string>
@@ -919,6 +920,9 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="favorites_todo_empty">Todos sus favoritos ya están en el cuaderno.</string>
     <string name="search_filter_descended">Ya descendidos</string>
     <string name="search_filter_not_descended">Nunca descendidos</string>
+    <string name="search_filter_distance">Distancia máxima</string>
+    <string name="search_distance_km">%1$d km</string>
+    <string name="search_filter_distance_active">≤ %1$d km</string>
     <plurals name="my_canyon_all_outings">
         <item quantity="one">Ver %1$d salida</item>
         <item quantity="many">Ver las %1$d salidas</item>
@@ -1149,11 +1153,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="settings_places_hint">Camping, alojamiento, casa: se cuenta el trayecto</string>
     <string name="stay_title">Estancia</string>
     <string name="stay_intro">El tiempo mostrado es el del lugar de la estancia; el de cada barranco está en su salida.</string>
-    <string name="stay_radius">%1$d km</string>
-    <string name="stay_filter_favorites">Favoritos</string>
-    <string name="stay_filter_not_descended">Nunca descendidos</string>
-    <string name="stay_empty">Ningún barranco alrededor de este lugar</string>
-    <string name="stay_empty_hint">Amplíe el radio o cambie el filtro.</string>
     <string name="stay_drive">%1$s de trayecto</string>
     <string name="stay_drive_estimate">≈ %1$s de trayecto</string>
     <plurals name="emergency_group">
@@ -1299,11 +1298,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="stay_edit_overlap">Estas fechas se solapan con la estancia en %1$s (del %2$s al %3$s).</string>
     <string name="stay_done_title">Ya descendidos durante la estancia</string>
     <string name="stay_day_done">%1$s: descendido</string>
-    <string name="stay_picker_search_hint">Buscar un barranco por su nombre</string>
-    <string name="stay_picker_open_sheet">Ver la ficha</string>
     <string name="stay_picker_planned">Ya previsto el %1$s</string>
-    <string name="stay_search_empty">Ningún barranco con ese nombre</string>
-    <string name="stay_search_empty_hint">Compruebe la ortografía o quite un filtro.</string>
     <string name="outings_past_stays">Estancias pasadas (%1$d)</string>
     <string name="home_stay_title">Estancia en %1$s</string>
     <string name="home_stay_day">Día %1$d de %2$d</string>

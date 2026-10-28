@@ -46,7 +46,6 @@ import fr.descentecanyon.app.ui.outing.OutingPlanScreen
 import fr.descentecanyon.app.ui.outing.OutingSettingsScreen
 import fr.descentecanyon.app.ui.outing.OutingsScreen
 import fr.descentecanyon.app.ui.outing.PlacesScreen
-import fr.descentecanyon.app.ui.outing.StayCanyonPickerScreen
 import fr.descentecanyon.app.ui.outing.StayDayRequest
 import fr.descentecanyon.app.ui.outing.StayEditScreen
 import fr.descentecanyon.app.ui.outing.StayScreen
@@ -55,6 +54,7 @@ import fr.descentecanyon.app.ui.search.SearchScreen
 import fr.descentecanyon.app.ui.settings.SettingsScreen
 import fr.descentecanyon.app.ui.users.UserProfileScreen
 import fr.descentecanyon.app.ui.users.UserSearchScreen
+import java.time.LocalDate
 
 /**
  * Every navigation started from a click goes through [dropUnlessResumed]: while a screen enters or
@@ -167,6 +167,8 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
 
         composable<Screen.CanyonDetail> { backStackEntry ->
             val detail = backStackEntry.toRoute<Screen.CanyonDetail>()
+            // From the search of a day of a stay: the page plans the canyon for that day.
+            val planDay = detail.stayDate?.takeIf { detail.stayId > 0 }?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
             val refreshDebitsAfterSubmission by backStackEntry.savedStateHandle
                 .getStateFlow(DEBIT_SUBMISSION_REFRESH_KEY, false)
                 .collectAsStateWithLifecycle()
@@ -186,9 +188,26 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                     navController.navigateSingleTop(Screen.PhotoGallery(detail.canyonId, photoId))
                 },
                 onUserClick = dropUnlessResumedWith { username: String -> navController.navigateSingleTop(Screen.UserProfile(username)) },
-                // Not single top: another canyon is pushed so "back" returns to this one.
-                onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigate(Screen.CanyonDetail(canyonId)) },
-                onPlanOuting = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingPlan(detail.canyonId)) },
+                // Not single top: another canyon is pushed so "back" returns to this one; still for the day of the stay.
+                onOpenCanyon = dropUnlessResumedWith { canyonId: Int ->
+                    navController.navigate(detail.copy(canyonId = canyonId, openDebitsTab = false))
+                },
+                planForDay = planDay,
+                onPlanOuting = dropUnlessResumed {
+                    if (planDay == null) {
+                        navController.navigateSingleTop(Screen.OutingPlan(detail.canyonId))
+                    } else {
+                        // The plan takes the place of the search: back from it is the stay, which shows the day filled.
+                        navController.popBackStack<Screen.StayCanyonPicker>(inclusive = true)
+                        navController.openOutingPlan(
+                            if (detail.stayOutingId > 0) {
+                                OutingPlanRequest(detail.canyonId, detail.stayOutingId)
+                            } else {
+                                OutingPlanRequest(detail.canyonId, date = planDay, stayId = detail.stayId)
+                            },
+                        )
+                    }
+                },
                 onStartOutingNow = dropUnlessResumed {
                     navController.navigateSingleTop(Screen.OutingPlan(detail.canyonId, startNow = true))
                 },
@@ -342,16 +361,16 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
             )
         }
 
-        composable<Screen.StayCanyonPicker> {
-            StayCanyonPickerScreen(
-                onBackClick = dropUnlessResumed { navController.popBackStack() },
-                // The sheet read, back is the list again.
-                onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
-                // The plan takes the place of the list: back from it is the stay, which shows the day filled.
-                onPick = dropUnlessResumedWith { request: OutingPlanRequest ->
-                    navController.closeIfCurrent<Screen.StayCanyonPicker>()
-                    navController.openOutingPlan(request)
+        composable<Screen.StayCanyonPicker> { backStackEntry ->
+            val day = backStackEntry.toRoute<Screen.StayCanyonPicker>()
+            // The search the user knows, around the place of the stay: a canyon opens its page, which plans it for the day.
+            SearchScreen(
+                onCanyonClick = dropUnlessResumedWith { canyonId: Int ->
+                    navController.navigateSingleTop(
+                        Screen.CanyonDetail(canyonId, stayId = day.stayId, stayDate = day.date, stayOutingId = day.outingId),
+                    )
                 },
+                onBackClick = dropUnlessResumed { navController.popBackStack() },
             )
         }
 

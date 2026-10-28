@@ -54,8 +54,10 @@ import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.NearbyCanyon
+import fr.descentecanyon.app.ui.components.longDayLabel
 import fr.descentecanyon.app.ui.design.DcOutdoorActionCard
 import fr.descentecanyon.app.ui.test.TestTags
+import java.time.LocalDate
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -91,6 +93,8 @@ internal fun CanyonDetailContent(
     nearbyCanyons: List<NearbyCanyon> = emptyList(),
     onNearbyCanyonClick: (Int) -> Unit = {},
     onPlanOuting: () -> Unit = {},
+    /** Opened for a day of a stay: the outing is planned for it. */
+    planForDay: LocalDate? = null,
     onStartOutingNow: () -> Unit = {},
     logbook: List<LogbookEntry> = emptyList(),
     knownCompanions: List<String> = emptyList(),
@@ -144,7 +148,8 @@ internal fun CanyonDetailContent(
         }
         item {
             DcOutdoorActionCard(
-                title = stringResource(R.string.outing_plan_action),
+                title = planForDay?.let { stringResource(R.string.outing_plan_for_day, longDayLabel(it, capitalized = false)) }
+                    ?: stringResource(R.string.outing_plan_action),
                 hint = stringResource(R.string.outing_plan_action_hint),
                 icon = Icons.Default.Hiking,
                 onClick = onPlanOuting,

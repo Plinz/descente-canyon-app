@@ -83,7 +83,18 @@ class SearchCanyonsUseCase @Inject constructor(
         criteria.elevationRange.matches(item.denivele) &&
         criteria.lengthRange.matches(item.longueur) &&
         criteria.maxWaterfallRange.matches(item.cascadeMax) &&
-        criteria.ropeRange.matches(item.cordeMin)
+        criteria.ropeRange.matches(item.cordeMin) &&
+        matchesDistance(item, criteria)
+
+    /** Without the point distances are measured from, the distance filter waits for it. */
+    private fun matchesDistance(item: CanyonSearchItem, criteria: SearchCriteria): Boolean {
+        val maxKm = criteria.maxDistanceKm ?: return true
+        val latitude = criteria.userLatitude ?: return true
+        val longitude = criteria.userLongitude ?: return true
+        val itemLatitude = item.representativeLat ?: return false
+        val itemLongitude = item.representativeLng ?: return false
+        return haversineKm(latitude, longitude, itemLatitude, itemLongitude) <= maxKm
+    }
 
     private fun matchesLogbook(item: CanyonSearchItem, filter: LogbookFilter): Boolean = when (filter) {
         LogbookFilter.ALL -> true
