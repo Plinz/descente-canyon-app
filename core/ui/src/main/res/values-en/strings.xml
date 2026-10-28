@@ -17,7 +17,6 @@
     <string name="last_debits">Latest flow reports</string>
     <string name="home_feed_debits">Flow reports</string>
     <string name="home_feed_forum">Forum</string>
-    <string name="home_debits_subtitle">The latest useful observations for choosing an outing.</string>
     <string name="home_debit_external_only">Route page not embedded - opening on Descente-Canyon</string>
     <string name="home_debit_filter_no_results_title">No recent flow reports in this area</string>
     <string name="home_debit_filter_no_results_body">Change the country or subdivision to broaden the list.</string>
@@ -31,7 +30,6 @@
     <string name="home_forum_filter_no_results_body">Only the latest active topics of the forum are listed here. Track the section to be notified of its new posts, or open it on the forum.</string>
     <string name="home_forum_filter_open">Open the section</string>
     <string name="home_forum_title">Active topics</string>
-    <string name="home_forum_subtitle">Recent discussions on Descente-Canyon.</string>
     <string name="home_offline_banner_title">Offline mode</string>
     <string name="home_offline_banner_debits_body">Showing the latest flow reports synced on this device.</string>
     <string name="home_offline_banner_forum_body">Showing forum topics synced on this device.</string>
@@ -54,20 +52,15 @@
     <string name="notifications_screen_title">Notifications</string>
     <string name="notifications_activity_title">Tracked activity</string>
     <string name="notifications_activity_subtitle">The latest flow reports and forum messages detected for your tracked items.</string>
-    <string name="notifications_activity_empty_title">No recent activity</string>
-    <string name="notifications_activity_empty_body">New tracked flow reports and forum messages will appear here.</string>
+    <string name="notifications_empty_body">Follow a canyon with the bell of its page, a forum section from the forum tab of the home screen, or a member from their profile: their new reports and messages will show here.</string>
     <string name="notifications_clear_activity">Clear activity</string>
     <string name="notifications_permission_title">Allow notifications</string>
     <string name="notifications_permission_body">Android is still blocking alerts. Allow notifications to receive new tracked flow reports and forum messages.</string>
     <string name="notifications_permission_action">Allow</string>
     <string name="notifications_canyons_title">Tracked canyons</string>
     <string name="notifications_canyons_subtitle">Enable a canyon from its detail page to receive new flow reports.</string>
-    <string name="notifications_canyons_empty_title">No tracked canyon</string>
-    <string name="notifications_canyons_empty_body">Open a canyon page and enable the flow report bell.</string>
     <string name="notifications_forum_title">Tracked forum sections</string>
     <string name="notifications_forum_subtitle">Enable a section from the forum feed on the home screen.</string>
-    <string name="notifications_forum_empty_title">No tracked forum section</string>
-    <string name="notifications_forum_empty_body">From the home screen, open the forum feed and enable the bell for a section.</string>
     <string name="notifications_followed_canyon_meta">Canyon #%1$d</string>
     <string name="notifications_followed_forum_meta">Tracked section</string>
     <string name="notifications_open">Open</string>
@@ -502,8 +495,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="user_open_forum_posts">See their forum posts</string>
     <string name="notifications_followed_users_title">Followed members</string>
     <string name="notifications_followed_users_subtitle">New forum posts</string>
-    <string name="notifications_followed_users_empty_title">No followed members</string>
-    <string name="notifications_followed_users_empty_body">Follow a member from their profile to be told about their new forum posts.</string>
     <string name="notifications_followed_user_forum">Forum posts followed</string>
     <plurals name="notification_debit_group_title">
         <item quantity="one">%1$d new tracked flow report</item>
@@ -573,7 +564,8 @@ Search for a canyon and add it to your favorites.</string>
     <string name="settings_section_notifications">Notifications</string>
     <string name="settings_notifications_system">Notification settings</string>
     <string name="settings_notifications_system_hint">Permission, sounds and categories, in Android settings</string>
-    <string name="settings_section_contributions">My contributions</string>
+    <string name="settings_notifications_center_hint">Followed canyons, forum topics and members, and their activity</string>
+    <string name="settings_theme_title">Theme</string>
     <string name="settings_section_offline">Offline</string>
     <string name="settings_offline_refresh">Topos older than a month are refreshed from the site when opened online. Flow reports and weather already viewed stay visible offline.</string>
     <string name="settings_section_about">About</string>
@@ -876,7 +868,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="account_identity_forget">Forget</string>
     <string name="account_identity_edit">Edit</string>
     <string name="account_identity_cleared">Name and e-mail forgotten</string>
-    <string name="account_logbook_empty">No outing yet: add one from a canyon page.</string>
     <string name="account_see_all">See all</string>
     <string name="account_import_site">Import my list of descents</string>
     <string name="account_import_site_hint">Your descents reported on descente-canyon.com, with the flow and your comments</string>
@@ -886,8 +877,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="account_import_site_login">Log in to import your list of descents.</string>
     <string name="account_import_site_failed">Your list of descents could not be read.</string>
     <string name="account_section_memos">Memos</string>
-    <string name="account_memos_none">No memo yet</string>
-    <string name="account_memos_hint">Access, gear, traps: write them down from a canyon page.</string>
     <string name="account_section_follows">Follows</string>
     <string name="account_follows_none">Nothing followed yet</string>
     <string name="account_follows_summary">Canyons: %1$d · forums: %2$d · topics: %3$d · members: %4$d</string>

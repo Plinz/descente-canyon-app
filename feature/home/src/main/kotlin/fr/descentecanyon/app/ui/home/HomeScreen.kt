@@ -16,7 +16,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -61,7 +60,6 @@ fun HomeScreen(
     onCanyonClick: (Int) -> Unit,
     onQuickSearchClick: () -> Unit,
     onMapClick: () -> Unit,
-    onNotificationsClick: () -> Unit,
     onUsersClick: () -> Unit,
     onPendingDebitsClick: () -> Unit = {},
     onSettingsClick: () -> Unit = {},
@@ -132,13 +130,6 @@ fun HomeScreen(
                 actions = {
                     // The canyon is found from the outing under way or the position.
                     EmergencyIconButton(onClick = { onEmergencyClick(0) })
-                    IconButton(onClick = onNotificationsClick) {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = stringResource(R.string.notifications_screen_title),
-                            modifier = Modifier.size(24.dp),
-                        )
-                    }
                     IconButton(onClick = onAccountClick, modifier = Modifier.testTag(TestTags.HOME_ACCOUNT_BUTTON)) {
                         Icon(
                             imageVector = Icons.Default.AccountCircle,

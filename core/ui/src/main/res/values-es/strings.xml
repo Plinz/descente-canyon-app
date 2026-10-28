@@ -17,7 +17,6 @@
     <string name="last_debits">Últimos caudales</string>
     <string name="home_feed_debits">Caudales</string>
     <string name="home_feed_forum">Foro</string>
-    <string name="home_debits_subtitle">Las últimas observaciones útiles para elegir una salida.</string>
     <string name="home_debit_external_only">Ficha no incluida - apertura en Descente-Canyon</string>
     <string name="home_debit_filter_no_results_title">No hay caudales recientes en esta zona</string>
     <string name="home_debit_filter_no_results_body">Modifica el país o la subdivisión para ampliar la lista.</string>
@@ -31,7 +30,6 @@
     <string name="home_forum_filter_no_results_body">Aquí solo aparecen los últimos temas activos del foro. Sigue la sección para recibir un aviso de sus nuevos mensajes, o ábrela en el foro.</string>
     <string name="home_forum_filter_open">Abrir la sección</string>
     <string name="home_forum_title">Temas activos</string>
-    <string name="home_forum_subtitle">Las conversaciones actualizadas recientemente en Descente-Canyon.</string>
     <string name="home_offline_banner_title">Modo sin conexión</string>
     <string name="home_offline_banner_debits_body">Mostrando los últimos caudales sincronizados en este dispositivo.</string>
     <string name="home_offline_banner_forum_body">Mostrando los temas del foro sincronizados en este dispositivo.</string>
@@ -54,20 +52,15 @@
     <string name="notifications_screen_title">Notificaciones</string>
     <string name="notifications_activity_title">Actividad seguida</string>
     <string name="notifications_activity_subtitle">Los últimos caudales y mensajes del foro detectados para tus seguimientos.</string>
-    <string name="notifications_activity_empty_title">Sin actividad reciente</string>
-    <string name="notifications_activity_empty_body">Los nuevos caudales y mensajes del foro seguidos aparecerán aquí.</string>
+    <string name="notifications_empty_body">Siga un barranco con la campana de su ficha, una sección desde la pestaña foro del inicio o un miembro desde su perfil: sus nuevos caudales y mensajes aparecerán aquí.</string>
     <string name="notifications_clear_activity">Borrar actividad</string>
     <string name="notifications_permission_title">Permitir notificaciones</string>
     <string name="notifications_permission_body">Android sigue bloqueando las alertas. Autoriza las notificaciones para recibir nuevos caudales y mensajes del foro seguidos.</string>
     <string name="notifications_permission_action">Permitir</string>
     <string name="notifications_canyons_title">Barrancos seguidos</string>
     <string name="notifications_canyons_subtitle">Activa un barranco desde su ficha para recibir nuevos caudales.</string>
-    <string name="notifications_canyons_empty_title">Ningún barranco seguido</string>
-    <string name="notifications_canyons_empty_body">Abre la ficha de un barranco y activa la campana de caudales.</string>
     <string name="notifications_forum_title">Secciones del foro seguidas</string>
     <string name="notifications_forum_subtitle">Activa una sección desde el flujo del foro en la pantalla de inicio.</string>
-    <string name="notifications_forum_empty_title">Ninguna sección seguida</string>
-    <string name="notifications_forum_empty_body">Desde la pantalla de inicio, abre el foro y activa la campana de una sección.</string>
     <string name="notifications_followed_canyon_meta">Barranco #%1$d</string>
     <string name="notifications_followed_forum_meta">Sección vigilada</string>
     <string name="notifications_open">Abrir</string>
@@ -502,8 +495,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="user_open_forum_posts">Ver sus mensajes en el foro</string>
     <string name="notifications_followed_users_title">Miembros seguidos</string>
     <string name="notifications_followed_users_subtitle">Nuevos mensajes del foro</string>
-    <string name="notifications_followed_users_empty_title">Ningún miembro seguido</string>
-    <string name="notifications_followed_users_empty_body">Sigue a un miembro desde su perfil para recibir sus nuevos mensajes del foro.</string>
     <string name="notifications_followed_user_forum">Mensajes del foro seguidos</string>
     <plurals name="notification_debit_group_title">
         <item quantity="one">%1$d nuevo caudal seguido</item>
@@ -581,7 +572,8 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="settings_section_notifications">Notificaciones</string>
     <string name="settings_notifications_system">Ajustes de notificaciones</string>
     <string name="settings_notifications_system_hint">Permiso, sonidos y categorías, en los ajustes de Android</string>
-    <string name="settings_section_contributions">Mis contribuciones</string>
+    <string name="settings_notifications_center_hint">Barrancos, secciones y miembros seguidos, y su actividad</string>
+    <string name="settings_theme_title">Tema</string>
     <string name="settings_section_offline">Sin conexión</string>
     <string name="settings_offline_refresh">Las fichas de más de un mes se actualizan desde el sitio al abrirlas con conexión. Los caudales y la meteorología ya consultados siguen visibles sin conexión.</string>
     <string name="settings_section_about">Acerca de</string>
@@ -895,7 +887,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="account_identity_forget">Olvidar</string>
     <string name="account_identity_edit">Editar</string>
     <string name="account_identity_cleared">Nombre y correo olvidados</string>
-    <string name="account_logbook_empty">Aún no hay salidas: añada una desde la ficha de un barranco.</string>
     <string name="account_see_all">Ver todo</string>
     <string name="account_import_site">Importar mi lista de descensos</string>
     <string name="account_import_site_hint">Sus descensos señalados en descente-canyon.com, con el caudal y sus comentarios</string>
@@ -905,8 +896,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="account_import_site_login">Inicie sesión para importar su lista de descensos.</string>
     <string name="account_import_site_failed">No se ha podido leer su lista de descensos.</string>
     <string name="account_section_memos">Notas</string>
-    <string name="account_memos_none">Aún no hay notas</string>
-    <string name="account_memos_hint">Acceso, material, trampas: anótelos desde la ficha de un barranco.</string>
     <string name="account_section_follows">Seguimientos</string>
     <string name="account_follows_none">Aún no sigue nada</string>
     <string name="account_follows_summary">Barrancos: %1$d · secciones: %2$d · temas: %3$d · miembros: %4$d</string>

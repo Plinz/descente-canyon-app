@@ -30,6 +30,7 @@ import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.DeleteOutline
+import androidx.compose.material.icons.filled.EventAvailable
 import androidx.compose.material.icons.filled.FileDownload
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.material.icons.filled.Hiking
@@ -103,9 +104,7 @@ fun MyAccountScreen(
     onOpenMemberProfile: (String) -> Unit,
     onOpenOuting: (canyonId: Int, outingId: Long) -> Unit,
     onOpenOutings: () -> Unit,
-    onOpenPendingDebits: () -> Unit,
     onOpenNotifications: () -> Unit,
-    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MyAccountViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
@@ -232,48 +231,38 @@ fun MyAccountScreen(
                         onOpenAll = onOpenOutings,
                     )
                 }
-                item(key = "logbook") {
-                    LogbookSummary(
-                        state = state,
-                        isConnected = state.authState is AuthState.Connected,
-                        onOpenLogbook = onOpenLogbook,
-                        onImportFromSite = viewModel::importFromSite,
-                    )
-                }
-                item(key = "memos") { MemosSummary(state = state, onOpen = { onOpenLogbook(LogbookTab.CANYONS) }) }
-                item(key = "contributions") {
-                    AccountSection(stringResource(R.string.settings_section_contributions)) {
-                        AccountRow(
-                            icon = Icons.Default.CloudUpload,
-                            title = stringResource(R.string.pending_debits_title),
-                            subtitle = if (state.pendingDebitCount > 0) {
-                                pluralStringResource(R.plurals.debit_pending_count, state.pendingDebitCount, state.pendingDebitCount)
-                            } else {
-                                stringResource(R.string.pending_debits_empty_title)
-                            },
-                            onClick = onOpenPendingDebits,
+                // What is empty is not shown: the logbook only to fill it from the site, once connected.
+                val isConnected = state.authState is AuthState.Connected
+                if (state.stats.outings > 0 || isConnected) {
+                    item(key = "logbook") {
+                        LogbookSummary(
+                            state = state,
+                            isConnected = isConnected,
+                            onOpenLogbook = onOpenLogbook,
+                            onImportFromSite = viewModel::importFromSite,
                         )
                     }
                 }
-                item(key = "follows") {
-                    AccountSection(stringResource(R.string.account_section_follows)) {
-                        val follows = state.follows
-                        AccountRow(
-                            icon = Icons.Default.Notifications,
-                            title = stringResource(R.string.notifications_screen_title),
-                            subtitle = if (follows.total == 0) {
-                                stringResource(R.string.account_follows_none)
-                            } else {
-                                stringResource(
+                if (state.memoCount > 0) {
+                    item(key = "memos") { MemosSummary(state = state, onOpen = { onOpenLogbook(LogbookTab.CANYONS) }) }
+                }
+                if (state.follows.total > 0) {
+                    item(key = "follows") {
+                        AccountSection(stringResource(R.string.account_section_follows)) {
+                            val follows = state.follows
+                            AccountRow(
+                                icon = Icons.Default.Notifications,
+                                title = stringResource(R.string.notifications_screen_title),
+                                subtitle = stringResource(
                                     R.string.account_follows_summary,
                                     follows.canyons,
                                     follows.forumCategories,
                                     follows.forumThreads,
                                     follows.members,
-                                )
-                            },
-                            onClick = onOpenNotifications,
-                        )
+                                ),
+                                onClick = onOpenNotifications,
+                            )
+                        }
                     }
                 }
                 item(key = "data") {
@@ -307,17 +296,6 @@ fun MyAccountScreen(
                             color = LocalDcColors.current.textSecondary,
                             modifier = Modifier.padding(vertical = 4.dp),
                         )
-                    }
-                }
-                item(key = "settings") {
-                    DcCard(modifier = Modifier.fillMaxWidth(), contentPadding = 8.dp) {
-                        Box(Modifier.padding(horizontal = 8.dp)) {
-                            AccountRow(
-                                icon = Icons.Default.Settings,
-                                title = stringResource(R.string.settings_title),
-                                onClick = onOpenSettings,
-                            )
-                        }
                     }
                 }
             }
@@ -438,12 +416,10 @@ private fun OutingsSummary(outings: List<PlannedOuting>, onOpen: (PlannedOuting)
     val locale = LocalLocale.current.platformLocale
     val zone = ZoneId.systemDefault()
     AccountSection(stringResource(R.string.outings_title), modifier = Modifier.testTag(TestTags.MY_ACCOUNT_OUTINGS)) {
+        // Nothing planned: only the way to the outings and stays, to prepare one.
         if (outings.isEmpty()) {
-            Text(
-                stringResource(R.string.outings_empty_title),
-                style = MaterialTheme.typography.bodyMedium,
-                color = LocalDcColors.current.textSecondary,
-            )
+            AccountRow(icon = Icons.Default.EventAvailable, title = stringResource(R.string.account_outings_all), onClick = onOpenAll)
+            return@AccountSection
         }
         outings.take(SHOWN_OUTINGS).forEach { outing ->
             val start = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(locale)
@@ -478,6 +454,10 @@ private fun LogbookSummary(
     val colors = LocalDcColors.current
     val formatter = rememberLogbookDateFormatter()
     AccountSection(stringResource(R.string.logbook_card_title), modifier = Modifier.testTag(TestTags.MY_ACCOUNT_LOGBOOK)) {
+        if (state.stats.outings == 0) {
+            if (isConnected) SiteImportRow(state = state, onImportFromSite = onImportFromSite)
+            return@AccountSection
+        }
         Row(
             modifier = Modifier.fillMaxWidth().clickable { onOpenLogbook(LogbookTab.OUTINGS) }.padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -495,24 +475,20 @@ private fun LogbookSummary(
             )
             Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = colors.textMuted)
         }
-        if (state.recentEntries.isEmpty()) {
-            Text(stringResource(R.string.account_logbook_empty), style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
-        } else {
-            state.recentEntries.forEach { entry ->
-                Row(
-                    modifier = Modifier.fillMaxWidth().clickable { onOpenLogbook(LogbookTab.OUTINGS) }.padding(vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        entry.canyonName,
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        modifier = Modifier.weight(1f),
-                    )
-                    Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
-                }
+        state.recentEntries.forEach { entry ->
+            Row(
+                modifier = Modifier.fillMaxWidth().clickable { onOpenLogbook(LogbookTab.OUTINGS) }.padding(vertical = 4.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    entry.canyonName,
+                    style = MaterialTheme.typography.bodyMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f),
+                )
+                Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
             }
         }
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
@@ -524,20 +500,26 @@ private fun LogbookSummary(
         }
         if (isConnected) {
             HorizontalDivider(color = colors.borderSubtle)
-            AccountRow(
-                icon = Icons.Default.CloudDownload,
-                title = stringResource(R.string.account_import_site),
-                subtitle = stringResource(
-                    if (state.isImportingFromSite) R.string.account_import_site_running else R.string.account_import_site_hint,
-                ),
-                onClick = onImportFromSite.takeUnless { state.isImportingFromSite },
-                trailing = {
-                    if (state.isImportingFromSite) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
-                },
-                modifier = Modifier.testTag(TestTags.MY_ACCOUNT_IMPORT_SITE),
-            )
+            SiteImportRow(state = state, onImportFromSite = onImportFromSite)
         }
     }
+}
+
+/** The outings of the user's list on the site, into the logbook. */
+@Composable
+private fun SiteImportRow(state: MyAccountUiState, onImportFromSite: () -> Unit) {
+    AccountRow(
+        icon = Icons.Default.CloudDownload,
+        title = stringResource(R.string.account_import_site),
+        subtitle = stringResource(
+            if (state.isImportingFromSite) R.string.account_import_site_running else R.string.account_import_site_hint,
+        ),
+        onClick = onImportFromSite.takeUnless { state.isImportingFromSite },
+        trailing = {
+            if (state.isImportingFromSite) CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
+        },
+        modifier = Modifier.testTag(TestTags.MY_ACCOUNT_IMPORT_SITE),
+    )
 }
 
 @Composable
@@ -546,12 +528,7 @@ private fun MemosSummary(state: MyAccountUiState, onOpen: () -> Unit) {
     AccountSection(stringResource(R.string.account_section_memos)) {
         AccountRow(
             icon = Icons.AutoMirrored.Filled.StickyNote2,
-            title = if (state.memoCount == 0) {
-                stringResource(R.string.account_memos_none)
-            } else {
-                pluralStringResource(R.plurals.account_memo_count, state.memoCount, state.memoCount)
-            },
-            subtitle = stringResource(R.string.account_memos_hint).takeIf { state.memoCount == 0 },
+            title = pluralStringResource(R.plurals.account_memo_count, state.memoCount, state.memoCount),
             onClick = onOpen,
         )
         state.recentMemos.forEach { memo ->

@@ -148,6 +148,10 @@ class OutingPlanTest {
         assertEquals(Duration.ofMinutes(7 * 60 + 4), ok.margin)
         // Latest return 13:56 from a descent started at 9:58 at worst: the descent must start by 16:32.
         assertEquals(LocalTime.of(16, 32), ok.latestDescentStart)
+        // Seven hours of daylight left: nothing to say about the night.
+        assertTrue(ok.isComfortable)
+        // An hour and a half left: the margin and the time to start by are worth a word.
+        assertFalse((DaylightCheck.of(morning, LocalTime.of(15, 30)) as DaylightCheck.Ok).isComfortable)
 
         val afternoon = schedule(anchorTime = LocalTime.of(15, 0))
         // At worst back at 19:56; with sunset at 19:00 the parking must be reached by 13:34.

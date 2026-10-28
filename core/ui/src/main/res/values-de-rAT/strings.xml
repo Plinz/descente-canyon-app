@@ -17,12 +17,10 @@
     <string name="last_debits">Neueste Wasserstände</string>
     <string name="home_feed_debits">Wasserstände</string>
     <string name="home_feed_forum">Forum</string>
-    <string name="home_debits_subtitle">Die neuesten Beobachtungen, die bei der Tourenwahl helfen.</string>
     <string name="home_debit_external_only">Eintrag nicht offline verfügbar - wird auf Descente-Canyon geöffnet</string>
     <string name="home_debit_filter_no_results_title">Keine aktuellen Wasserstände in diesem Gebiet</string>
     <string name="home_debit_filter_no_results_body">Ändere das Land oder die Unterteilung, um die Liste zu erweitern.</string>
     <string name="home_forum_title">Aktive Themen</string>
-    <string name="home_forum_subtitle">Kürzlich aktualisierte Diskussionen auf Descente-Canyon.</string>
     <string name="home_offline_banner_title">Offline-Modus</string>
     <string name="home_offline_banner_debits_body">Anzeige der zuletzt auf diesem Gerät synchronisierten Wasserstände.</string>
     <string name="home_offline_banner_forum_body">Anzeige der auf diesem Gerät synchronisierten Forumsthemen.</string>

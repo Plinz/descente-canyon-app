@@ -305,7 +305,10 @@ sealed interface DaylightCheck {
      * Back at the car before the sunset even when every step takes long, with [margin] left; the
      * descent must start by [latestDescentStart] to keep it so.
      */
-    data class Ok(val sunset: LocalTime, val margin: Duration, val latestDescentStart: LocalTime? = null) : DaylightCheck
+    data class Ok(val sunset: LocalTime, val margin: Duration, val latestDescentStart: LocalTime? = null) : DaylightCheck {
+        /** So much daylight left that the night is not a concern of this outing: nothing to say about it. */
+        val isComfortable: Boolean get() = margin >= COMFORTABLE_MARGIN
+    }
 
     /** At worst back after the sunset (or less than [SAFETY_MARGIN] before): the anchor time must move to [latestAnchor]. */
     data class Late(val sunset: LocalTime, val latestAnchor: LocalTime?) : DaylightCheck
@@ -316,6 +319,9 @@ sealed interface DaylightCheck {
     companion object {
         /** Keep half an hour of daylight for the unexpected (a jammed rope, a slow member). */
         val SAFETY_MARGIN: Duration = Duration.ofMinutes(30)
+
+        /** Daylight left at the latest return from which the night needs no word. */
+        val COMFORTABLE_MARGIN: Duration = Duration.ofHours(2)
 
         /** Back at the car at [latestBack] at worst, on an outing of [day]: too close to the [sunset] or after it. */
         fun endsTooLate(day: LocalDate, latestBack: LocalDateTime, sunset: LocalTime): Boolean =

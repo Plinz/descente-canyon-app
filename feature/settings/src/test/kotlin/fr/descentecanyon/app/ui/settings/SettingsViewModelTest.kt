@@ -22,35 +22,32 @@ class SettingsViewModelTest {
 
     private val preferences = FakePreferencesRepository(themeMode = ThemeMode.DARK)
     private val pendingCount = MutableStateFlow(2)
-    private val debitSubmissionRepository = mockk<DebitSubmissionRepository> {
-        every { observePendingCount() } returns pendingCount
-    }
     private val canyonRepository = mockk<CanyonRepository> {
         coEvery { getCatalogSize() } returns 4127
     }
 
     @Test
-    fun `state shows the theme, the pending reports and the catalog size`() = runTest {
-        val viewModel = SettingsViewModel(preferences, debitSubmissionRepository, canyonRepository)
+    fun `state shows the theme and the catalog size`() = runTest {
+        val viewModel = SettingsViewModel(preferences, canyonRepository)
 
         viewModel.uiState.test {
             var state = awaitItem()
             while (state.catalogSize == null) state = awaitItem()
-            assertEquals(SettingsUiState(themeMode = ThemeMode.DARK, pendingDebitCount = 2, catalogSize = 4127), state)
+            assertEquals(SettingsUiState(themeMode = ThemeMode.DARK, catalogSize = 4127), state)
             cancelAndIgnoreRemainingEvents()
         }
     }
 
     @Test
     fun `initial state already has the saved theme`() {
-        val viewModel = SettingsViewModel(preferences, debitSubmissionRepository, canyonRepository)
+        val viewModel = SettingsViewModel(preferences, canyonRepository)
 
         assertEquals(ThemeMode.DARK, viewModel.uiState.value.themeMode)
     }
 
     @Test
     fun `choosing a theme saves it`() = runTest {
-        val viewModel = SettingsViewModel(preferences, debitSubmissionRepository, canyonRepository)
+        val viewModel = SettingsViewModel(preferences, canyonRepository)
 
         viewModel.uiState.test {
             awaitItem()

@@ -93,9 +93,6 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onMapClick = dropUnlessResumed {
                     navController.navigateSingleTop(Screen.Map)
                 },
-                onNotificationsClick = dropUnlessResumed {
-                    navController.navigateSingleTop(Screen.Notifications)
-                },
                 onUsersClick = dropUnlessResumed {
                     navController.navigateSingleTop(Screen.UserSearch)
                 },
@@ -299,7 +296,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
         composable<Screen.Settings> {
             SettingsScreen(
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
-                onOpenPendingDebits = dropUnlessResumed { navController.navigateSingleTop(Screen.PendingDebits) },
+                onOpenNotifications = dropUnlessResumed { navController.navigateSingleTop(Screen.Notifications) },
                 onOpenOutingSettings = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingSettings) },
                 onOpenPlaces = dropUnlessResumed { navController.navigateSingleTop(Screen.Places) },
                 contentPadding = topLevelContentPadding,
@@ -389,9 +386,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                     navController.navigateSingleTop(Screen.OutingPlan(canyonId, outingId))
                 },
                 onOpenOutings = dropUnlessResumed { navController.navigateSingleTop(Screen.Outings) },
-                onOpenPendingDebits = dropUnlessResumed { navController.navigateSingleTop(Screen.PendingDebits) },
                 onOpenNotifications = dropUnlessResumed { navController.navigateSingleTop(Screen.Notifications) },
-                onOpenSettings = dropUnlessResumed { navController.navigateSingleTop(Screen.Settings) },
             )
         }
 

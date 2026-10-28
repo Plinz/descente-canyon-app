@@ -17,7 +17,6 @@
     <string name="last_debits">Derniers débits</string>
     <string name="home_feed_debits">Débits</string>
     <string name="home_feed_forum">Forum</string>
-    <string name="home_debits_subtitle">Les dernières observations utiles pour choisir une sortie.</string>
     <string name="home_debit_external_only">Fiche non embarquée - ouverture sur Descente-Canyon</string>
     <string name="home_debit_filter_no_results_title">Aucun débit récent dans cette zone</string>
     <string name="home_debit_filter_no_results_body">Modifiez le pays ou la subdivision pour élargir la liste.</string>
@@ -31,7 +30,6 @@
     <string name="home_forum_filter_no_results_body">Seuls les derniers sujets actifs du forum sont listés ici. Suivez la rubrique pour recevoir une notification à chaque nouveau message, ou ouvrez-la sur le forum.</string>
     <string name="home_forum_filter_open">Ouvrir la rubrique</string>
     <string name="home_forum_title">Sujets actifs</string>
-    <string name="home_forum_subtitle">Les discussions récemment alimentées sur Descente-Canyon.</string>
     <string name="home_offline_banner_title">Mode hors ligne</string>
     <string name="home_offline_banner_debits_body">Affichage des derniers débits synchronisés sur cet appareil.</string>
     <string name="home_offline_banner_forum_body">Affichage des sujets du forum synchronisés sur cet appareil.</string>
@@ -54,20 +52,15 @@
     <string name="notifications_screen_title">Notifications</string>
     <string name="notifications_activity_title">Activité suivie</string>
     <string name="notifications_activity_subtitle">Les derniers débits et messages détectés pour vos suivis.</string>
-    <string name="notifications_activity_empty_title">Aucune activité récente</string>
-    <string name="notifications_activity_empty_body">Les nouveaux débits et messages suivis apparaîtront ici.</string>
+    <string name="notifications_empty_body">Suivez un canyon avec la cloche de sa fiche, une rubrique depuis l\'onglet forum de l\'accueil, ou un membre depuis son profil : leurs nouveaux débits et messages apparaîtront ici.</string>
     <string name="notifications_clear_activity">Vider l\'activité</string>
     <string name="notifications_permission_title">Autoriser les notifications</string>
     <string name="notifications_permission_body">Android bloque encore les alertes. Autorisez les notifications pour recevoir les nouveaux débits et messages suivis.</string>
     <string name="notifications_permission_action">Autoriser</string>
     <string name="notifications_canyons_title">Canyons suivis</string>
     <string name="notifications_canyons_subtitle">Activez un canyon depuis sa fiche pour recevoir les nouveaux débits.</string>
-    <string name="notifications_canyons_empty_title">Aucun canyon suivi</string>
-    <string name="notifications_canyons_empty_body">Ouvrez une fiche canyon puis activez la cloche des débits.</string>
     <string name="notifications_forum_title">Rubriques forum suivies</string>
     <string name="notifications_forum_subtitle">Activez une rubrique depuis le flux forum de l\'accueil.</string>
-    <string name="notifications_forum_empty_title">Aucune rubrique suivie</string>
-    <string name="notifications_forum_empty_body">Depuis l\'accueil, ouvrez l\'onglet forum puis activez la cloche d\'une rubrique.</string>
     <string name="notifications_followed_canyon_meta">Canyon #%1$d</string>
     <string name="notifications_followed_forum_meta">Rubrique surveillée</string>
     <string name="notifications_open">Ouvrir</string>
@@ -502,8 +495,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="user_open_forum_posts">Voir ses messages sur le forum</string>
     <string name="notifications_followed_users_title">Membres suivis</string>
     <string name="notifications_followed_users_subtitle">Nouveaux messages du forum</string>
-    <string name="notifications_followed_users_empty_title">Aucun membre suivi</string>
-    <string name="notifications_followed_users_empty_body">Suivez un membre depuis sa fiche pour recevoir une notification à chacun de ses nouveaux messages du forum.</string>
     <string name="notifications_followed_user_forum">Messages du forum suivis</string>
     <plurals name="notification_debit_group_title">
         <item quantity="one">%1$d nouveau débit suivi</item>
@@ -581,7 +572,8 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="settings_section_notifications">Notifications</string>
     <string name="settings_notifications_system">Réglages des notifications</string>
     <string name="settings_notifications_system_hint">Autorisation, sons et catégories, dans les réglages d\'Android</string>
-    <string name="settings_section_contributions">Mes contributions</string>
+    <string name="settings_notifications_center_hint">Canyons, rubriques et membres suivis, et leur activité</string>
+    <string name="settings_theme_title">Thème</string>
     <string name="settings_section_offline">Hors ligne</string>
     <string name="settings_offline_refresh">Les fiches de plus d\'un mois sont actualisées depuis le site à leur ouverture, quand le réseau est disponible. Les débits et la météo déjà consultés restent visibles hors ligne.</string>
     <string name="settings_section_about">À propos</string>
@@ -895,7 +887,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="account_identity_forget">Oublier</string>
     <string name="account_identity_edit">Modifier</string>
     <string name="account_identity_cleared">Nom et e-mail oubliés</string>
-    <string name="account_logbook_empty">Aucune sortie : ajoutez-en depuis la fiche d\'un canyon.</string>
     <string name="account_see_all">Tout voir</string>
     <string name="account_import_site">Importer ma liste de courses</string>
     <string name="account_import_site_hint">Vos descentes signalées sur descente-canyon.com, avec le débit et vos commentaires</string>
@@ -905,8 +896,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="account_import_site_login">Connectez-vous pour importer votre liste de courses.</string>
     <string name="account_import_site_failed">Votre liste de courses n\'a pas pu être lue.</string>
     <string name="account_section_memos">Mémos</string>
-    <string name="account_memos_none">Aucun mémo</string>
-    <string name="account_memos_hint">Accès, matériel, pièges : notez-les depuis la fiche d\'un canyon.</string>
     <string name="account_section_follows">Suivis</string>
     <string name="account_follows_none">Rien de suivi pour l\'instant</string>
     <string name="account_follows_summary">Canyons : %1$d · rubriques : %2$d · discussions : %3$d · membres : %4$d</string>

@@ -695,7 +695,8 @@ private fun DaylightSignals(state: OutingPlanUiState, timeFormatter: DateTimeFor
     val colors = LocalDcColors.current
     val tag = Modifier.testTag(TestTags.OUTING_DAYLIGHT)
     when (val daylight = state.daylight) {
-        is DaylightCheck.Ok -> {
+        // Hours of daylight left: nothing to watch.
+        is DaylightCheck.Ok -> if (!daylight.isComfortable) {
             SignalRow(
                 Icons.Default.WbTwilight,
                 stringResource(R.string.outing_daylight_ok, formatDuration(daylight.margin), daylight.sunset.format(timeFormatter)),

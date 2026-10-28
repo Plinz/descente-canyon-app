@@ -17,7 +17,6 @@
     <string name="last_debits">Letzte Wasserstände</string>
     <string name="home_feed_debits">Wasserstände</string>
     <string name="home_feed_forum">Forum</string>
-    <string name="home_debits_subtitle">Die neuesten nützlichen Beobachtungen zur Auswahl einer Tour.</string>
     <string name="home_debit_external_only">Beschreibung nicht lokal verfügbar - wird auf Descente-Canyon geöffnet</string>
     <string name="home_debit_filter_no_results_title">Keine aktuellen Wasserstände in diesem Gebiet</string>
     <string name="home_debit_filter_no_results_body">Ändere das Land oder die Unterteilung, um die Liste zu erweitern.</string>
@@ -31,7 +30,6 @@
     <string name="home_forum_filter_no_results_body">Hier stehen nur die neuesten aktiven Themen des Forums. Verfolge den Bereich, um über neue Beiträge benachrichtigt zu werden, oder öffne ihn im Forum.</string>
     <string name="home_forum_filter_open">Bereich öffnen</string>
     <string name="home_forum_title">Aktive Themen</string>
-    <string name="home_forum_subtitle">Kürzlich aktualisierte Diskussionen auf Descente-Canyon.</string>
     <string name="home_offline_banner_title">Offline-Modus</string>
     <string name="home_offline_banner_debits_body">Anzeige der letzten auf diesem Gerät synchronisierten Wasserstände.</string>
     <string name="home_offline_banner_forum_body">Anzeige der auf diesem Gerät synchronisierten Forumsthemen.</string>
@@ -54,20 +52,15 @@
     <string name="notifications_screen_title">Benachrichtigungen</string>
     <string name="notifications_activity_title">Verfolgte Aktivität</string>
     <string name="notifications_activity_subtitle">Die neuesten Wasserstände und Forenbeiträge, die für deine verfolgten Elemente erkannt wurden.</string>
-    <string name="notifications_activity_empty_title">Keine aktuelle Aktivität</string>
-    <string name="notifications_activity_empty_body">Neue verfolgte Wasserstände und Forenbeiträge erscheinen hier.</string>
+    <string name="notifications_empty_body">Folgen Sie einem Canyon mit der Glocke seiner Seite, einem Forenbereich über den Forum-Tab der Startseite oder einem Mitglied über sein Profil: Neue Meldungen und Nachrichten erscheinen hier.</string>
     <string name="notifications_clear_activity">Aktivität leeren</string>
     <string name="notifications_permission_title">Benachrichtigungen erlauben</string>
     <string name="notifications_permission_body">Android blockiert die Hinweise noch. Erlaube Benachrichtigungen, um neue verfolgte Wasserstände und Forenbeiträge zu erhalten.</string>
     <string name="notifications_permission_action">Erlauben</string>
     <string name="notifications_canyons_title">Verfolgte Canyons</string>
     <string name="notifications_canyons_subtitle">Aktiviere einen Canyon auf seiner Detailseite, um neue Wasserstände zu erhalten.</string>
-    <string name="notifications_canyons_empty_title">Kein verfolgter Canyon</string>
-    <string name="notifications_canyons_empty_body">Öffne die Seite eines Canyons und aktiviere die Glocke für Wasserstände.</string>
     <string name="notifications_forum_title">Verfolgte Forenbereiche</string>
     <string name="notifications_forum_subtitle">Aktiviere einen Bereich im Forum-Feed auf der Startseite.</string>
-    <string name="notifications_forum_empty_title">Kein verfolgter Forenbereich</string>
-    <string name="notifications_forum_empty_body">Öffne auf der Startseite den Forum-Feed und aktiviere die Glocke eines Bereichs.</string>
     <string name="notifications_followed_canyon_meta">Canyon #%1$d</string>
     <string name="notifications_followed_forum_meta">Verfolgter Bereich</string>
     <string name="notifications_open">Öffnen</string>
@@ -502,8 +495,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="user_open_forum_posts">Forumsbeiträge ansehen</string>
     <string name="notifications_followed_users_title">Gefolgte Mitglieder</string>
     <string name="notifications_followed_users_subtitle">Neue Forumsbeiträge</string>
-    <string name="notifications_followed_users_empty_title">Keine gefolgten Mitglieder</string>
-    <string name="notifications_followed_users_empty_body">Folge einem Mitglied über sein Profil, um über seine neuen Forumsbeiträge informiert zu werden.</string>
     <string name="notifications_followed_user_forum">Forumsbeiträge gefolgt</string>
     <plurals name="notification_debit_group_title">
         <item quantity="one">%1$d neuer verfolgter Wasserstand</item>
@@ -573,7 +564,8 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="settings_section_notifications">Benachrichtigungen</string>
     <string name="settings_notifications_system">Benachrichtigungseinstellungen</string>
     <string name="settings_notifications_system_hint">Berechtigung, Töne und Kategorien in den Android-Einstellungen</string>
-    <string name="settings_section_contributions">Meine Beiträge</string>
+    <string name="settings_notifications_center_hint">Verfolgte Canyons, Forenbereiche und Mitglieder und ihre Aktivität</string>
+    <string name="settings_theme_title">Design</string>
     <string name="settings_section_offline">Offline</string>
     <string name="settings_offline_refresh">Beschreibungen, die älter als ein Monat sind, werden beim Öffnen mit Netz von der Website aktualisiert. Bereits angesehene Wasserstände und Wetterdaten bleiben offline sichtbar.</string>
     <string name="settings_section_about">Über die App</string>
@@ -876,7 +868,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="account_identity_forget">Vergessen</string>
     <string name="account_identity_edit">Bearbeiten</string>
     <string name="account_identity_cleared">Name und E-Mail vergessen</string>
-    <string name="account_logbook_empty">Noch keine Tour: Tragen Sie eine auf der Canyonseite ein.</string>
     <string name="account_see_all">Alle ansehen</string>
     <string name="account_import_site">Meine Tourenliste importieren</string>
     <string name="account_import_site_hint">Ihre auf descente-canyon.com gemeldeten Begehungen, mit Wasserstand und Kommentaren</string>
@@ -886,8 +877,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="account_import_site_login">Melden Sie sich an, um Ihre Tourenliste zu importieren.</string>
     <string name="account_import_site_failed">Ihre Tourenliste konnte nicht gelesen werden.</string>
     <string name="account_section_memos">Notizen</string>
-    <string name="account_memos_none">Noch keine Notiz</string>
-    <string name="account_memos_hint">Zugang, Material, Fallen: Notieren Sie sie auf der Canyonseite.</string>
     <string name="account_section_follows">Verfolgt</string>
     <string name="account_follows_none">Noch nichts verfolgt</string>
     <string name="account_follows_summary">Canyons: %1$d · Rubriken: %2$d · Themen: %3$d · Mitglieder: %4$d</string>

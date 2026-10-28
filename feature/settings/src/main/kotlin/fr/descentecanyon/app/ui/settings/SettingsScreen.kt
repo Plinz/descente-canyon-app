@@ -25,11 +25,14 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.NotificationsActive
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Public
@@ -66,6 +69,8 @@ import fr.descentecanyon.app.ui.common.openUrl
 import fr.descentecanyon.app.ui.common.startActivitySafely
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.design.DcCard
+import fr.descentecanyon.app.ui.design.DcDropdownMenu
+import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
@@ -73,7 +78,8 @@ import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
 @Composable
 fun SettingsScreen(
     onBackClick: () -> Unit,
-    onOpenPendingDebits: () -> Unit,
+    /** What the app follows for the user and what it found: canyons, forum topics, members. */
+    onOpenNotifications: () -> Unit,
     onOpenOutingSettings: () -> Unit,
     onOpenPlaces: () -> Unit,
     modifier: Modifier = Modifier,
@@ -125,7 +131,7 @@ fun SettingsScreen(
             ) {
                 item {
                     SettingsSection(title = stringResource(R.string.settings_section_appearance)) {
-                        ThemeModeOptions(selected = uiState.themeMode, onSelected = viewModel::setThemeMode)
+                        ThemeModeDropdown(selected = uiState.themeMode, onSelected = viewModel::setThemeMode)
                     }
                 }
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -142,6 +148,12 @@ fun SettingsScreen(
                 }
                 item {
                     SettingsSection(title = stringResource(R.string.settings_section_notifications)) {
+                        SettingsLinkRow(
+                            icon = Icons.Default.NotificationsActive,
+                            title = stringResource(R.string.notifications_screen_title),
+                            subtitle = stringResource(R.string.settings_notifications_center_hint),
+                            onClick = onOpenNotifications,
+                        )
                         SettingsLinkRow(
                             icon = Icons.Default.Notifications,
                             title = stringResource(R.string.settings_notifications_system),
@@ -163,20 +175,6 @@ fun SettingsScreen(
                             title = stringResource(R.string.places_title),
                             subtitle = stringResource(R.string.settings_places_hint),
                             onClick = onOpenPlaces,
-                        )
-                    }
-                }
-                item {
-                    SettingsSection(title = stringResource(R.string.settings_section_contributions)) {
-                        SettingsLinkRow(
-                            icon = Icons.Default.CloudUpload,
-                            title = stringResource(R.string.pending_debits_title),
-                            subtitle = if (uiState.pendingDebitCount > 0) {
-                                pluralStringResource(R.plurals.debit_pending_count, uiState.pendingDebitCount, uiState.pendingDebitCount)
-                            } else {
-                                stringResource(R.string.pending_debits_empty_title)
-                            },
-                            onClick = onOpenPendingDebits,
                         )
                     }
                 }
@@ -259,30 +257,38 @@ private fun SettingsSection(title: String, content: @Composable ColumnScope.() -
     }
 }
 
+/** The theme in one line: the choice shown, the others in a menu. */
 @Composable
-private fun ThemeModeOptions(selected: ThemeMode, onSelected: (ThemeMode) -> Unit) {
-    Column(modifier = Modifier.selectableGroup()) {
-        ThemeMode.entries.forEach { mode ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .heightIn(min = 48.dp)
-                    .selectable(selected = mode == selected, role = Role.RadioButton, onClick = { onSelected(mode) }),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                RadioButton(selected = mode == selected, onClick = null)
-                Text(
-                    text = when (mode) {
-                        ThemeMode.SYSTEM -> stringResource(R.string.settings_theme_system)
-                        ThemeMode.LIGHT -> stringResource(R.string.settings_theme_light)
-                        ThemeMode.DARK -> stringResource(R.string.settings_theme_dark)
+private fun ThemeModeDropdown(selected: ThemeMode, onSelected: (ThemeMode) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        SettingsLinkRow(
+            icon = Icons.Default.Palette,
+            title = stringResource(R.string.settings_theme_title),
+            subtitle = themeModeLabel(selected),
+            onClick = { expanded = true },
+            trailingIcon = Icons.Default.ArrowDropDown,
+        )
+        DcDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            ThemeMode.entries.forEach { mode ->
+                DcDropdownMenuItem(
+                    text = themeModeLabel(mode),
+                    isSelected = mode == selected,
+                    onClick = {
+                        expanded = false
+                        onSelected(mode)
                     },
-                    style = MaterialTheme.typography.bodyLarge,
                 )
             }
         }
     }
+}
+
+@Composable
+private fun themeModeLabel(mode: ThemeMode): String = when (mode) {
+    ThemeMode.SYSTEM -> stringResource(R.string.settings_theme_system)
+    ThemeMode.LIGHT -> stringResource(R.string.settings_theme_light)
+    ThemeMode.DARK -> stringResource(R.string.settings_theme_dark)
 }
 
 @Composable

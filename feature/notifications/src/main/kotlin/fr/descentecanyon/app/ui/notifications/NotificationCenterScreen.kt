@@ -138,22 +138,26 @@ fun NotificationCenterScreen(
                     }
                 }
 
-                item {
-                    SectionHeader(
-                        title = stringResource(R.string.notifications_activity_title),
-                        subtitle = stringResource(R.string.notifications_activity_subtitle),
-                    )
-                }
-
-                if (uiState.recentEvents.isEmpty()) {
+                // What is empty is not shown; with nothing at all, how to follow.
+                val followsNothing = uiState.followedCanyons.isEmpty() && uiState.followedForumCategories.isEmpty() &&
+                    uiState.followedForumThreads.isEmpty() && uiState.followedUsers.isEmpty()
+                if (followsNothing && uiState.recentEvents.isEmpty()) {
                     item {
                         EmptyCard(
                             icon = Icons.Default.NotificationsActive,
-                            title = stringResource(R.string.notifications_activity_empty_title),
-                            body = stringResource(R.string.notifications_activity_empty_body),
+                            title = stringResource(R.string.account_follows_none),
+                            body = stringResource(R.string.notifications_empty_body),
                         )
                     }
-                } else {
+                }
+
+                if (uiState.recentEvents.isNotEmpty()) {
+                    item {
+                        SectionHeader(
+                            title = stringResource(R.string.notifications_activity_title),
+                            subtitle = stringResource(R.string.notifications_activity_subtitle),
+                        )
+                    }
                     item {
                         Row(
                             modifier = Modifier.fillMaxWidth(),
@@ -177,22 +181,13 @@ fun NotificationCenterScreen(
                     }
                 }
 
-                item {
-                    SectionHeader(
-                        title = stringResource(R.string.notifications_canyons_title),
-                        subtitle = stringResource(R.string.notifications_canyons_subtitle),
-                    )
-                }
-
-                if (uiState.followedCanyons.isEmpty()) {
+                if (uiState.followedCanyons.isNotEmpty()) {
                     item {
-                        EmptyCard(
-                            icon = Icons.Default.WaterDrop,
-                            title = stringResource(R.string.notifications_canyons_empty_title),
-                            body = stringResource(R.string.notifications_canyons_empty_body),
+                        SectionHeader(
+                            title = stringResource(R.string.notifications_canyons_title),
+                            subtitle = stringResource(R.string.notifications_canyons_subtitle),
                         )
                     }
-                } else {
                     items(uiState.followedCanyons, key = { it.canyonId }) { canyon ->
                         FollowedCanyonCard(
                             canyon = canyon,
@@ -203,22 +198,13 @@ fun NotificationCenterScreen(
                     }
                 }
 
-                item {
-                    SectionHeader(
-                        title = stringResource(R.string.notifications_forum_title),
-                        subtitle = stringResource(R.string.notifications_forum_subtitle),
-                    )
-                }
-
-                if (uiState.followedForumCategories.isEmpty() && uiState.followedForumThreads.isEmpty()) {
+                if (uiState.followedForumCategories.isNotEmpty() || uiState.followedForumThreads.isNotEmpty()) {
                     item {
-                        EmptyCard(
-                            icon = Icons.Default.Tune,
-                            title = stringResource(R.string.notifications_forum_empty_title),
-                            body = stringResource(R.string.notifications_forum_empty_body),
+                        SectionHeader(
+                            title = stringResource(R.string.notifications_forum_title),
+                            subtitle = stringResource(R.string.notifications_forum_subtitle),
                         )
                     }
-                } else {
                     items(uiState.followedForumCategories, key = { it.key }) { forumCategory ->
                         FollowedForumCategoryCard(
                             forumCategory = forumCategory,
@@ -233,22 +219,13 @@ fun NotificationCenterScreen(
                     }
                 }
 
-                item {
-                    SectionHeader(
-                        title = stringResource(R.string.notifications_followed_users_title),
-                        subtitle = stringResource(R.string.notifications_followed_users_subtitle),
-                    )
-                }
-
-                if (uiState.followedUsers.isEmpty()) {
+                if (uiState.followedUsers.isNotEmpty()) {
                     item {
-                        EmptyCard(
-                            icon = Icons.Default.NotificationsActive,
-                            title = stringResource(R.string.notifications_followed_users_empty_title),
-                            body = stringResource(R.string.notifications_followed_users_empty_body),
+                        SectionHeader(
+                            title = stringResource(R.string.notifications_followed_users_title),
+                            subtitle = stringResource(R.string.notifications_followed_users_subtitle),
                         )
                     }
-                } else {
                     items(uiState.followedUsers, key = { it.username }) { user ->
                         FollowedUserCard(
                             user = user,

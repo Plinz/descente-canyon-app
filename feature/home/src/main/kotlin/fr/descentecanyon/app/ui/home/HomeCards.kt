@@ -55,6 +55,7 @@ import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.ui.common.openUrl
 import fr.descentecanyon.app.ui.components.DebitBadge
 import fr.descentecanyon.app.ui.components.debitLevelColor
+import fr.descentecanyon.app.ui.components.relativeDayLabel
 import fr.descentecanyon.app.ui.design.DcDropdownMenu
 import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.test.TestTags
@@ -204,7 +205,7 @@ internal fun DebitCard(debit: Debit, isExternalOnly: Boolean, onClick: () -> Uni
                 ) {
                     // Where the canyon is: the feed mixes every country of the site.
                     Text(
-                        text = listOfNotNull(debit.date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")), place).joinToString(" · "),
+                        text = listOfNotNull(relativeDayLabel(debit.date), place).joinToString(" · "),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                         maxLines = 1,

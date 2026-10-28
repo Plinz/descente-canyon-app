@@ -17,7 +17,6 @@
     <string name="last_debits">Ultime portate</string>
     <string name="home_feed_debits">Portate</string>
     <string name="home_feed_forum">Forum</string>
-    <string name="home_debits_subtitle">Le ultime osservazioni utili per scegliere un\'uscita.</string>
     <string name="home_debit_external_only">Scheda non integrata - apertura su Descente-Canyon</string>
     <string name="home_debit_filter_no_results_title">Nessuna portata recente in questa zona</string>
     <string name="home_debit_filter_no_results_body">Modifica il paese o la suddivisione per ampliare la lista.</string>
@@ -31,7 +30,6 @@
     <string name="home_forum_filter_no_results_body">Qui compaiono solo le ultime discussioni attive del forum. Segui la sezione per ricevere una notifica dei nuovi messaggi, oppure aprila sul forum.</string>
     <string name="home_forum_filter_open">Apri la sezione</string>
     <string name="home_forum_title">Argomenti attivi</string>
-    <string name="home_forum_subtitle">Le discussioni aggiornate di recente su Descente-Canyon.</string>
     <string name="home_offline_banner_title">Modalità offline</string>
     <string name="home_offline_banner_debits_body">Visualizzazione delle ultime portate sincronizzate su questo dispositivo.</string>
     <string name="home_offline_banner_forum_body">Visualizzazione degli argomenti del forum sincronizzati su questo dispositivo.</string>
@@ -54,20 +52,15 @@
     <string name="notifications_screen_title">Notifiche</string>
     <string name="notifications_activity_title">Attività seguita</string>
     <string name="notifications_activity_subtitle">Le ultime portate e i messaggi del forum rilevati per i tuoi elementi seguiti.</string>
-    <string name="notifications_activity_empty_title">Nessuna attività recente</string>
-    <string name="notifications_activity_empty_body">Le nuove portate e i messaggi del forum seguiti appariranno qui.</string>
+    <string name="notifications_empty_body">Segui un canyon con la campanella della sua scheda, una sezione dalla scheda forum della home o un membro dal suo profilo: le loro nuove portate e i messaggi appariranno qui.</string>
     <string name="notifications_clear_activity">Svuota attività</string>
     <string name="notifications_permission_title">Consenti notifiche</string>
     <string name="notifications_permission_body">Android sta ancora bloccando gli avvisi. Consenti le notifiche per ricevere nuove portate e messaggi del forum seguiti.</string>
     <string name="notifications_permission_action">Consenti</string>
     <string name="notifications_canyons_title">Canyon seguiti</string>
     <string name="notifications_canyons_subtitle">Attiva un canyon dalla sua scheda per ricevere nuove portate.</string>
-    <string name="notifications_canyons_empty_title">Nessun canyon seguito</string>
-    <string name="notifications_canyons_empty_body">Apri la scheda di un canyon e attiva la campanella delle portate.</string>
     <string name="notifications_forum_title">Sezioni del forum seguite</string>
     <string name="notifications_forum_subtitle">Attiva una sezione dal flusso forum nella schermata iniziale.</string>
-    <string name="notifications_forum_empty_title">Nessuna sezione seguita</string>
-    <string name="notifications_forum_empty_body">Dalla schermata iniziale, apri il forum e attiva la campanella di una sezione.</string>
     <string name="notifications_followed_canyon_meta">Canyon #%1$d</string>
     <string name="notifications_followed_forum_meta">Sezione monitorata</string>
     <string name="notifications_open">Apri</string>
@@ -502,8 +495,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="user_open_forum_posts">Vedi i suoi messaggi nel forum</string>
     <string name="notifications_followed_users_title">Membri seguiti</string>
     <string name="notifications_followed_users_subtitle">Nuovi messaggi del forum</string>
-    <string name="notifications_followed_users_empty_title">Nessun membro seguito</string>
-    <string name="notifications_followed_users_empty_body">Segui un membro dal suo profilo per ricevere una notifica dei suoi nuovi messaggi del forum.</string>
     <string name="notifications_followed_user_forum">Messaggi del forum seguiti</string>
     <plurals name="notification_debit_group_title">
         <item quantity="one">%1$d nuova portata seguita</item>
@@ -581,7 +572,8 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="settings_section_notifications">Notifiche</string>
     <string name="settings_notifications_system">Impostazioni delle notifiche</string>
     <string name="settings_notifications_system_hint">Autorizzazione, suoni e categorie, nelle impostazioni di Android</string>
-    <string name="settings_section_contributions">I miei contributi</string>
+    <string name="settings_notifications_center_hint">Canyon, sezioni e membri seguiti, e la loro attività</string>
+    <string name="settings_theme_title">Tema</string>
     <string name="settings_section_offline">Offline</string>
     <string name="settings_offline_refresh">Le schede più vecchie di un mese vengono aggiornate dal sito quando le apri con la rete. Portate e meteo già consultati restano visibili offline.</string>
     <string name="settings_section_about">Informazioni</string>
@@ -895,7 +887,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="account_identity_forget">Dimentica</string>
     <string name="account_identity_edit">Modifica</string>
     <string name="account_identity_cleared">Nome ed e-mail dimenticati</string>
-    <string name="account_logbook_empty">Ancora nessuna uscita: aggiungetene una dalla scheda di una forra.</string>
     <string name="account_see_all">Vedi tutto</string>
     <string name="account_import_site">Importa la mia lista delle discese</string>
     <string name="account_import_site_hint">Le discese segnalate su descente-canyon.com, con la portata e i vostri commenti</string>
@@ -905,8 +896,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="account_import_site_login">Accedete per importare la lista delle discese.</string>
     <string name="account_import_site_failed">Non è stato possibile leggere la lista delle discese.</string>
     <string name="account_section_memos">Note</string>
-    <string name="account_memos_none">Ancora nessuna nota</string>
-    <string name="account_memos_hint">Accesso, materiale, insidie: annotateli dalla scheda di una forra.</string>
     <string name="account_section_follows">Seguiti</string>
     <string name="account_follows_none">Ancora niente di seguito</string>
     <string name="account_follows_summary">Forre: %1$d · sezioni: %2$d · discussioni: %3$d · membri: %4$d</string>

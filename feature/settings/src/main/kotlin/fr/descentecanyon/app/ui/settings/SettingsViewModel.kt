@@ -6,7 +6,6 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.ThemeMode
 import fr.descentecanyon.app.domain.repository.CanyonRepository
-import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.SharingStarted
@@ -16,23 +15,16 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-data class SettingsUiState(val themeMode: ThemeMode = ThemeMode.SYSTEM, val pendingDebitCount: Int = 0, val catalogSize: Int? = null)
+data class SettingsUiState(val themeMode: ThemeMode = ThemeMode.SYSTEM, val catalogSize: Int? = null)
 
 @HiltViewModel
-class SettingsViewModel @Inject constructor(
-    private val preferencesRepository: PreferencesRepository,
-    debitSubmissionRepository: DebitSubmissionRepository,
-    canyonRepository: CanyonRepository,
-) : ViewModel() {
+class SettingsViewModel @Inject constructor(private val preferencesRepository: PreferencesRepository, canyonRepository: CanyonRepository) :
+    ViewModel() {
 
     private val catalogSize = flow { emit(suspendRunCatching { canyonRepository.getCatalogSize() }.getOrNull()) }
 
-    val uiState: StateFlow<SettingsUiState> = combine(
-        preferencesRepository.observeThemeMode(),
-        debitSubmissionRepository.observePendingCount(),
-        catalogSize,
-    ) { themeMode, pendingCount, size ->
-        SettingsUiState(themeMode = themeMode, pendingDebitCount = pendingCount, catalogSize = size)
+    val uiState: StateFlow<SettingsUiState> = combine(preferencesRepository.observeThemeMode(), catalogSize) { themeMode, size ->
+        SettingsUiState(themeMode = themeMode, catalogSize = size)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS),

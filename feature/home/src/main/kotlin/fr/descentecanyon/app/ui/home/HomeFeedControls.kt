@@ -70,14 +70,5 @@ internal fun HomeFeedHeader(selectedFeed: HomeFeedType, onRefresh: () -> Unit, m
                 )
             }
         }
-        Text(
-            text = if (selectedFeed == HomeFeedType.DEBITS) {
-                stringResource(R.string.home_debits_subtitle)
-            } else {
-                stringResource(R.string.home_forum_subtitle)
-            },
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
     }
 }
