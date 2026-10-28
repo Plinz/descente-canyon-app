@@ -1,6 +1,8 @@
 package fr.descentecanyon.app.domain.model
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class CanyonDurationTest {
@@ -38,6 +40,21 @@ class CanyonDurationTest {
         assertEquals(CanyonDuration.Unknown, CanyonDuration.parse("variable"))
         assertEquals(CanyonDuration.Unknown, CanyonDuration.parse(null))
         assertEquals(CanyonDuration.Unknown, CanyonDuration.parse("1h à 2h à 3h"))
+    }
+
+    @Test
+    fun `a duration cut by the site at ten characters reads its started minutes as tens and leaves out a lost unit`() {
+        // "1h15 à 1h45" on the site, kept as "1h15 à 1h4": not 1 h 04 to 1 h 15.
+        assertTrue(CanyonDuration.isCut("1h15 à 1h4"))
+        assertEquals(known(75, 100), CanyonDuration.parse("1h15 à 1h4"))
+        assertEquals(known(90, 120), CanyonDuration.parse("1h30 à 2h0"))
+        assertEquals(known(45, 45), CanyonDuration.parse("45min ou 1"))
+        assertEquals(known(15, 45), CanyonDuration.parse("15min-45mi"))
+        // Ten characters, but complete.
+        assertFalse(CanyonDuration.isCut("10 à 25min"))
+        assertFalse(CanyonDuration.isCut("30min/1h30"))
+        assertFalse(CanyonDuration.isCut("1h à 1h4"))
+        assertEquals(known(64, 64), CanyonDuration.parse("1h04"))
     }
 
     private fun known(min: Int, max: Int) = CanyonDuration.Known(DurationRange(min, max))

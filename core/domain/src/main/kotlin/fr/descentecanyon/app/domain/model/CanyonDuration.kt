@@ -24,6 +24,18 @@ sealed interface CanyonDuration {
     companion object {
         private val NONE_WORDS = setOf("néant", "neant", "aucun", "aucune", "0", "0min")
         private val PART_SEPARATORS = Regex("""\s+(?:à|ou|a)\s+|\s*[-/,–—]\s*""")
+
+        /** The site keeps these fields to this many characters: a longer duration is cut, "1h15 à 1h4" for "1h15 à 1h45". */
+        const val SITE_FIELD_LENGTH = 10
+        private val COMPLETE_END = Regex("""(?:min|mn|h|h\d{2}|jours?|j|')$""")
+        private val STARTED_MINUTES = Regex("""^(\d{1,3})\s*h\s*(\d)$""")
+
+        /** Cut by the site, its last part unfinished: "1h15 à 1h4", "45min ou 1". */
+        fun isCut(raw: String?): Boolean {
+            val text = raw?.trim() ?: return false
+            return text.length == SITE_FIELD_LENGTH && !COMPLETE_END.containsMatchIn(text.lowercase())
+        }
+
         private val PART = Regex("""^(\d{1,3})\s*(?:(h|heures?|j|jours?)\s*(\d{1,2})?\s*(?:mins?|mn|mi|m)?|(mins?|mn|mi|m|'))?$""")
 
         /** The parts of an outing (approach, descent, return) added up; null when one of them is unknown. */
@@ -50,7 +62,9 @@ sealed interface CanyonDuration {
             val text = raw?.trim()?.lowercase()?.trimEnd('.')?.replace(Regex("""\s+"""), " ").orEmpty()
             if (text.isEmpty()) return Unknown
             if (text in NONE_WORDS) return None
-            val parts = text.split(PART_SEPARATORS).filter { it.isNotBlank() }
+            val parts = text.split(PART_SEPARATORS).filter { it.isNotBlank() }.let { parts ->
+                if (isCut(raw) && parts.isNotEmpty()) parts.dropLast(1) + listOfNotNull(finished(parts.last().trim())) else parts
+            }
             if (parts.isEmpty() || parts.size > 2) return Unknown
             val parsed = parts.map { PART.matchEntire(it.trim()) ?: return Unknown }
             val units = parsed.map { match -> unitOf(match) }
@@ -67,6 +81,15 @@ sealed interface CanyonDuration {
             val low = minutes.min()
             val high = minutes.max()
             return if (high == 0) None else Known(DurationRange(low, high))
+        }
+
+        /**
+         * The last part of a duration cut by the site: minutes started count in tens ("1h4" is at least
+         * 1 h 40), a number cut from its unit is left out.
+         */
+        private fun finished(part: String): String? {
+            STARTED_MINUTES.matchEntire(part)?.let { return "${it.groupValues[1]}h${it.groupValues[2]}0" }
+            return part.takeUnless { it.all(Char::isDigit) }
         }
 
         private fun unitOf(match: MatchResult): Unit? {

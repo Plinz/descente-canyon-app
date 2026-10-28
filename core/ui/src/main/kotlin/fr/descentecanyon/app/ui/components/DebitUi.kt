@@ -115,9 +115,11 @@ fun debitRangeWordRes(level: NiveauDebit): Int = when (level) {
 @Composable
 fun canyonDurationText(raw: String?): String? {
     val text = raw?.trim()?.takeIf { it.isNotEmpty() } ?: return null
+    // Cut by the site at ten characters: shown as such.
+    val shown = if (CanyonDuration.isCut(text)) "$text…" else text
     return when (CanyonDuration.parse(text)) {
         CanyonDuration.None -> stringResource(R.string.duration_none)
-        CanyonDuration.Unknown -> if (text.all { it == '?' }) stringResource(R.string.duration_unknown) else text
-        is CanyonDuration.Known -> text.toIntOrNull()?.let { stringResource(R.string.duration_minutes, it) } ?: text
+        CanyonDuration.Unknown -> if (text.all { it == '?' }) stringResource(R.string.duration_unknown) else shown
+        is CanyonDuration.Known -> text.toIntOrNull()?.let { stringResource(R.string.duration_minutes, it) } ?: shown
     }
 }
