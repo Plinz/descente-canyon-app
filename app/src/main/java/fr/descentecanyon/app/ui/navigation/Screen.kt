@@ -66,8 +66,8 @@ sealed interface Screen {
 
     /**
      * The plan of an outing: planned ([outingId], given the canyon [canyonId] instead when it differs),
-     * else new, on [date] (ISO) from the place [placeId] when given; for a day of the stay [stayId] or
-     * with [startNow] ("I'm leaving now") it is planned at once.
+     * else new, on [date] (ISO) from the place [placeId] when given; for a day of the stay [stayId] it
+     * is planned at once.
      */
     @Serializable
     data class OutingPlan(
@@ -76,7 +76,6 @@ sealed interface Screen {
         val date: String? = null,
         val placeId: Long = 0,
         val stayId: Long = 0,
-        val startNow: Boolean = false,
     ) : Screen
 
     /** The outings planned and the stays. */

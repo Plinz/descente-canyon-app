@@ -77,8 +77,7 @@ import kotlinx.coroutines.flow.stateIn
 
 /**
  * Opens the plan of an outing: a planned one ([outingId], moved to [canyonId] when it differs), or a new
- * one of [date] from [placeId] (0: none); for a day of the stay [stayId] (0: none) or with [startNow]
- * it is planned at once.
+ * one of [date] from [placeId] (0: none); for a day of the stay [stayId] (0: none) it is planned at once.
  */
 data class OutingPlanRequest(
     val canyonId: Int,
@@ -86,7 +85,6 @@ data class OutingPlanRequest(
     val date: java.time.LocalDate? = null,
     val placeId: Long = 0,
     val stayId: Long = 0,
-    val startNow: Boolean = false,
 )
 
 /** A stay with its place, its outings planned and the canyons done during it. */

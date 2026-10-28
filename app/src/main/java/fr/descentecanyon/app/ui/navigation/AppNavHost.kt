@@ -208,9 +208,6 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                         )
                     }
                 },
-                onStartOutingNow = dropUnlessResumed {
-                    navController.navigateSingleTop(Screen.OutingPlan(detail.canyonId, startNow = true))
-                },
                 onOpenEmergency = dropUnlessResumed { navController.navigateSingleTop(Screen.Emergency(detail.canyonId)) },
                 onReportOuting = dropUnlessResumedWith { entry: LogbookEntry ->
                     navController.navigateSingleTop(
@@ -456,7 +453,7 @@ private fun <A, B> dropUnlessResumedWith(block: (A, B) -> Unit): (A, B) -> Unit 
 }
 
 private fun NavHostController.openOutingPlan(request: OutingPlanRequest) = navigateSingleTop(
-    Screen.OutingPlan(request.canyonId, request.outingId, request.date?.toString(), request.placeId, request.stayId, request.startNow),
+    Screen.OutingPlan(request.canyonId, request.outingId, request.date?.toString(), request.placeId, request.stayId),
 )
 
 private const val DEBIT_SUBMISSION_REFRESH_KEY = "debit_submission_refresh"

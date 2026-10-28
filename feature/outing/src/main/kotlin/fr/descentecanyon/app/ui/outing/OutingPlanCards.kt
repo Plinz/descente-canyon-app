@@ -257,6 +257,8 @@ internal fun DepartureSheet(
     state: OutingPlanUiState,
     onDismiss: () -> Unit,
     onPlaceSelected: (Long?) -> Unit,
+    /** Today, now: already at the parking or about to leave. */
+    onDepartNow: () -> Unit,
     onTimeSelected: (java.time.LocalTime) -> Unit,
     onManagePlaces: () -> Unit,
     onSetManualDrive: (Int?) -> Unit,
@@ -298,12 +300,15 @@ internal fun DepartureSheet(
             )
         }
         HorizontalDivider(color = colors.borderSubtle)
+        Text(timeLabel, style = MaterialTheme.typography.bodyMedium, color = colors.textSecondary)
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
             OutlinedButton(onClick = { showTimePicker = true }, modifier = Modifier.testTag(TestTags.OUTING_START_TIME)) {
                 Icon(Icons.Default.AccessTime, contentDescription = stringResource(R.string.outing_change_time))
                 Text(state.choices.anchorTime.format(rememberTimeFormatter()), modifier = Modifier.padding(start = 8.dp))
             }
-            Text(timeLabel, style = MaterialTheme.typography.bodyMedium, color = colors.textSecondary)
+            TextButton(onClick = onDepartNow, modifier = Modifier.testTag(TestTags.OUTING_DEPART_NOW)) {
+                Text(stringResource(R.string.outing_depart_now))
+            }
         }
         if (place != null) DriveLine(state = state, onSetManualDrive = onSetManualDrive)
     }

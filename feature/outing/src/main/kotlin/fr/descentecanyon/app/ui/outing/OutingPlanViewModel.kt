@@ -173,8 +173,6 @@ data class OutingPlanUiState(
     val messageSections: Map<MessageAudience, Set<MessageSection>> = MessageAudience.entries.associateWith { it.defaultSections },
     /** The relative was sent another alert time than the one planned now. */
     val alertChangedSinceInformed: Boolean = false,
-    /** "I'm leaving now" just planned the outing: the screen asks for notifications and offers to tell a relative. */
-    val startedNow: Boolean = false,
     /** A canyon given to a day of a stay just planned the outing: the screen asks for notifications and says so. */
     val addedToStay: Boolean = false,
     /** The canyons after the first one, in their order. */
@@ -224,7 +222,6 @@ class OutingPlanViewModel @Inject constructor(
     private val requestedDate: LocalDate? = savedStateHandle.get<String>("date")?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
     private val requestedPlaceId: Long = savedStateHandle["placeId"] ?: 0L
     private val requestedStayId: Long = savedStateHandle["stayId"] ?: 0L
-    private val startNow: Boolean = savedStateHandle["startNow"] ?: false
 
     private val choices = MutableStateFlow<OutingChoices?>(null)
     private val sources = MutableStateFlow(Sources())
@@ -285,11 +282,19 @@ class OutingPlanViewModel @Inject constructor(
         viewModelScope.launch { followComputedTimes() }
     }
 
+    /** Leaving now, already at the parking or about to: today, the time set now; the place follows the day. */
+    fun departNow() {
+        val now = LocalDateTime.now(clock).truncatedTo(ChronoUnit.MINUTES)
+        updateChoices { choices -> choices.onDate(now.toLocalDate()).copy(anchorTime = now.toLocalTime()) }
+    }
+
     /** The starting place follows the day while it is the default one: the campsite on the days of a stay, home after. */
-    fun selectDate(date: LocalDate) = updateChoices { choices ->
+    fun selectDate(date: LocalDate) = updateChoices { it.onDate(date) }
+
+    private fun OutingChoices.onDate(date: LocalDate): OutingChoices {
         val current = sources.value
-        val placeId = current.places.placeOnNewDate(choices.placeId, choices.date, date, current.stays)
-        if (placeId == choices.placeId) choices.copy(date = date) else choices.copy(date = date).withPlace(placeId)
+        val placeId = current.places.placeOnNewDate(placeId, this.date, date, current.stays)
+        return if (placeId == this.placeId) copy(date = date) else copy(date = date).withPlace(placeId)
     }
 
     /** The time set is leaving the place when there is one, else arriving at the parking (an outing of 2.7 may differ). */
@@ -425,9 +430,6 @@ class OutingPlanViewModel @Inject constructor(
         persist { if (informed) it.copy(informedAlertAt = it.alertAt) else it }
     }
 
-    /** "I'm leaving now" was shown its follow-up: the screen asked for notifications. */
-    fun startedNowShown() = sources.update { it.copy(startedNow = false) }
-
     /** The canyon given to the day of the stay was said planned. */
     fun addedToStayShown() = sources.update { it.copy(addedToStay = false) }
 
@@ -523,7 +525,6 @@ class OutingPlanViewModel @Inject constructor(
         val today = LocalDate.now(clock)
         val existing = when {
             requestedOutingId > 0 -> outings.firstOrNull { it.id == requestedOutingId } ?: outingRepository.get(requestedOutingId)
-            startNow -> outings.firstOrNull { it.canyonId == canyonId && it.choices?.date == today }
             requestedDate == null -> outings.firstOrNull { it.canyonId == canyonId }
             else -> outings.firstOrNull { it.canyonId == canyonId && it.choices?.date == requestedDate }
         }
@@ -531,16 +532,6 @@ class OutingPlanViewModel @Inject constructor(
         planned = existing != null
         val kept = existing?.let { it.choices ?: legacyChoices(it) }
         when {
-            startNow && existing?.isUnderway(clock.instant()) != true -> {
-                // Leaving now: the time set is now, from the place of the day if any.
-                val now = LocalDateTime.now(clock).truncatedTo(ChronoUnit.MINUTES)
-                val base = kept ?: newChoices(settings, places, stays, outings)
-                choices.value = base.copy(date = today, anchorTime = now.toLocalTime(), alertDelayMinutes = 0)
-                awaitPlan()
-                plan()
-                sources.update { it.copy(startedNow = true) }
-            }
-
             // Another canyon for the day of a stay: the day, the group and the rest stay; what was the
             // previous canyon's (the canyons after it, the steps lengthened, its shuttle) goes.
             existing != null && kept != null && existing.canyonId != canyonId -> {
@@ -772,7 +763,6 @@ class OutingPlanViewModel @Inject constructor(
             ),
             messageSections = sources.messageSections,
             alertChangedSinceInformed = informedAlertAt != null && alertAt != null && informedAlertAt != alertAt.toInstant(),
-            startedNow = sources.startedNow,
             addedToStay = sources.addedToStay,
             nextCanyons = nextCanyons,
         )
@@ -863,7 +853,6 @@ class OutingPlanViewModel @Inject constructor(
         val chains: Map<Int, List<CanyonChain>> = emptyMap(),
         val gearList: GearListSettings = GearListSettings(),
         val messageSections: Map<MessageAudience, Set<MessageSection>> = MessageAudience.entries.associateWith { it.defaultSections },
-        val startedNow: Boolean = false,
         val addedToStay: Boolean = false,
     )
 

@@ -165,12 +165,20 @@ class OutingPlanE2ETest : BaseE2eTest() {
     }
 
     @Test
-    fun leavingNowFromTheCanyonPagePlansTheOutingAtOnce() {
+    fun leavingNowIsTheTimeOfNowInTheDepartureOfThePlan() {
         openRiolan()
-        composeRule.onNodeWithTag(TestTags.DETAIL_LIST).performScrollToNode(hasTestTag(TestTags.DETAIL_START_NOW))
-        composeRule.onNodeWithTag(TestTags.DETAIL_START_NOW).performSemanticsAction(SemanticsActions.OnClick)
+        composeRule.onNodeWithTag(TestTags.DETAIL_LIST).performScrollToNode(hasTestTag(TestTags.DETAIL_PLAN_OUTING))
+        composeRule.onNodeWithTag(TestTags.DETAIL_PLAN_OUTING).performSemanticsAction(SemanticsActions.OnClick)
+        waitForTag(TestTags.OUTING_DEPARTURE_ROW)
+        composeRule.onNodeWithTag(TestTags.OUTING_DEPARTURE_ROW).performClick()
+        waitForTag(TestTags.OUTING_DEPART_NOW)
+        composeRule.onNodeWithTag(TestTags.OUTING_DEPART_NOW).performClick()
+        Espresso.pressBack()
 
+        waitForTag(TestTags.OUTING_ACTIVATE_BUTTON)
+        composeRule.onNodeWithTag(TestTags.OUTING_ACTIVATE_BUTTON, useUnmergedTree = true).performClick()
         composeRule.waitUntil(10_000) { runBlocking { outingRepository.observeAll().first().isNotEmpty() } }
+        assertEquals(LocalDate.now(), runBlocking { outingRepository.observeAll().first().single().choices?.date })
         // Under way at once: the main action is the return.
         waitForTag(TestTags.OUTING_END_BUTTON)
     }

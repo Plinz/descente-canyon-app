@@ -95,7 +95,6 @@ internal fun CanyonDetailContent(
     onPlanOuting: () -> Unit = {},
     /** Opened for a day of a stay: the outing is planned for it. */
     planForDay: LocalDate? = null,
-    onStartOutingNow: () -> Unit = {},
     logbook: List<LogbookEntry> = emptyList(),
     knownCompanions: List<String> = emptyList(),
     onSaveLogbookEntry: (LogbookEntry) -> Unit = {},
@@ -160,27 +159,12 @@ internal fun CanyonDetailContent(
             )
         }
         item {
-            // Already at the parking or about to leave: the follow-up starts at once, the plan can wait.
-            TextButton(
-                onClick = onStartOutingNow,
-                modifier = Modifier.padding(horizontal = 16.dp).testTag(TestTags.DETAIL_START_NOW),
-            ) {
-                Icon(Icons.AutoMirrored.Filled.DirectionsRun, contentDescription = null)
-                Text(stringResource(R.string.outing_start_now), modifier = Modifier.padding(start = 8.dp))
-            }
-        }
-        item {
             val canyon = detail.canyon
             MyCanyonCard(
                 canyonId = canyon.id,
                 canyonName = canyon.nom,
                 memo = personalNote,
                 entries = logbook,
-                topoDuration = CanyonDuration.total(
-                    CanyonDuration.parse(canyon.tempsApproche),
-                    CanyonDuration.parse(canyon.tempsDescente),
-                    CanyonDuration.parse(canyon.tempsRetour),
-                ),
                 knownCompanions = knownCompanions,
                 onSaveMemo = onSavePersonalNote,
                 onSaveEntry = onSaveLogbookEntry,

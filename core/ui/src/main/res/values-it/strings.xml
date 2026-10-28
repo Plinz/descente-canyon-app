@@ -696,6 +696,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="outing_day_today">Oggi</string>
     <string name="outing_day_tomorrow">Domani</string>
     <string name="outing_change_time">Cambia l\'ora di partenza</string>
+    <string name="outing_depart_now">Adesso</string>
     <string name="outing_step_start">Partenza a piedi</string>
     <string name="outing_step_descent_start">Inizio della discesa</string>
     <string name="outing_step_descent_end">Fine della discesa</string>
@@ -858,8 +859,14 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="logbook_duration_minutes">min</string>
     <string name="logbook_note_label">Racconto</string>
     <string name="my_canyon_title">La mia forra</string>
-    <string name="my_canyon_duration">Il vostro tempo medio: %1$s</string>
-    <string name="my_canyon_duration_vs_sheet">Il vostro tempo medio: %1$s · scheda: %2$s</string>
+    <string name="my_canyon_memo">Nota</string>
+    <string name="my_canyon_descended">L\'ho già fatto</string>
+    <string name="my_canyon_add_descent">Discesa</string>
+    <plurals name="my_canyon_times">
+        <item quantity="one">%1$d volta</item>
+        <item quantity="many">%1$d volte</item>
+        <item quantity="other">%1$d volte</item>
+    </plurals>
     <string name="logbook_tab_outings">Uscite</string>
     <string name="logbook_tab_canyons">Forre</string>
     <string name="logbook_tab_bilan">Bilancio</string>
@@ -1210,8 +1217,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="outing_notify_relative">Avvisa una persona cara</string>
     <string name="outing_notify_title">Avvisare</string>
     <string name="outing_shuttle_short">navetta %1$d km</string>
-    <string name="outing_start_now">Parto adesso</string>
-    <string name="outing_started_now">Buona uscita! L\'uscita è confermata.</string>
     <string name="outing_status_alert_changed">La persona cara attende notizie alle %1$s; l\'allerta è ora alle %2$s.</string>
     <string name="outing_status_relative_not_informed">Nessuna persona cara ha ancora ricevuto il programma.</string>
     <string name="outing_status_tracked">Uscita confermata · allerta alle %1$s</string>

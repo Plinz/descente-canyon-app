@@ -696,6 +696,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="outing_day_today">Aujourd\'hui</string>
     <string name="outing_day_tomorrow">Demain</string>
     <string name="outing_change_time">Changer l\'heure de départ</string>
+    <string name="outing_depart_now">Maintenant</string>
     <string name="outing_step_start">Départ à pied</string>
     <string name="outing_step_descent_start">Début de la descente</string>
     <string name="outing_step_descent_end">Fin de la descente</string>
@@ -858,8 +859,14 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="logbook_duration_minutes">min</string>
     <string name="logbook_note_label">Récit</string>
     <string name="my_canyon_title">Mon canyon</string>
-    <string name="my_canyon_duration">Votre durée moyenne : %1$s</string>
-    <string name="my_canyon_duration_vs_sheet">Votre durée moyenne : %1$s · fiche : %2$s</string>
+    <string name="my_canyon_memo">Mémo</string>
+    <string name="my_canyon_descended">Je l\'ai descendu</string>
+    <string name="my_canyon_add_descent">Descente</string>
+    <plurals name="my_canyon_times">
+        <item quantity="one">%1$d fois</item>
+        <item quantity="many">%1$d fois</item>
+        <item quantity="other">%1$d fois</item>
+    </plurals>
     <string name="logbook_tab_outings">Sorties</string>
     <string name="logbook_tab_canyons">Canyons</string>
     <string name="logbook_tab_bilan">Bilan</string>
@@ -1210,8 +1217,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="outing_notify_relative">Prévenir un proche</string>
     <string name="outing_notify_title">Prévenir</string>
     <string name="outing_shuttle_short">navette %1$d km</string>
-    <string name="outing_start_now">Je pars maintenant</string>
-    <string name="outing_started_now">Bonne sortie ! La sortie est confirmée.</string>
     <string name="outing_status_alert_changed">Votre proche attend des nouvelles à %1$s ; l\'alerte est maintenant à %2$s.</string>
     <string name="outing_status_relative_not_informed">Aucun proche n\'a encore reçu le programme.</string>
     <string name="outing_status_tracked">Sortie confirmée · alerte à %1$s</string>

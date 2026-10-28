@@ -696,6 +696,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="outing_day_today">Hoy</string>
     <string name="outing_day_tomorrow">Mañana</string>
     <string name="outing_change_time">Cambiar la hora de salida</string>
+    <string name="outing_depart_now">Ahora</string>
     <string name="outing_step_start">Salida a pie</string>
     <string name="outing_step_descent_start">Inicio del descenso</string>
     <string name="outing_step_descent_end">Fin del descenso</string>
@@ -858,8 +859,14 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="logbook_duration_minutes">min</string>
     <string name="logbook_note_label">Relato</string>
     <string name="my_canyon_title">Mi barranco</string>
-    <string name="my_canyon_duration">Su tiempo medio: %1$s</string>
-    <string name="my_canyon_duration_vs_sheet">Su tiempo medio: %1$s · ficha: %2$s</string>
+    <string name="my_canyon_memo">Nota</string>
+    <string name="my_canyon_descended">Ya lo he hecho</string>
+    <string name="my_canyon_add_descent">Descenso</string>
+    <plurals name="my_canyon_times">
+        <item quantity="one">%1$d vez</item>
+        <item quantity="many">%1$d veces</item>
+        <item quantity="other">%1$d veces</item>
+    </plurals>
     <string name="logbook_tab_outings">Salidas</string>
     <string name="logbook_tab_canyons">Barrancos</string>
     <string name="logbook_tab_bilan">Balance</string>
@@ -1210,8 +1217,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="outing_notify_relative">Avisar a un allegado</string>
     <string name="outing_notify_title">Avisar</string>
     <string name="outing_shuttle_short">combinación de vehículos %1$d km</string>
-    <string name="outing_start_now">Salgo ahora</string>
-    <string name="outing_started_now">¡Buena salida! La salida está confirmada.</string>
     <string name="outing_status_alert_changed">Su allegado espera noticias a las %1$s; la alerta es ahora a las %2$s.</string>
     <string name="outing_status_relative_not_informed">Ningún allegado ha recibido aún el plan.</string>
     <string name="outing_status_tracked">Salida confirmada · alerta a las %1$s</string>

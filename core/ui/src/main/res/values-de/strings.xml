@@ -682,6 +682,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="outing_day_today">Heute</string>
     <string name="outing_day_tomorrow">Morgen</string>
     <string name="outing_change_time">Startzeit ändern</string>
+    <string name="outing_depart_now">Jetzt</string>
     <string name="outing_step_start">Aufbruch zu Fuß</string>
     <string name="outing_step_descent_start">Beginn der Begehung</string>
     <string name="outing_step_descent_end">Ende der Begehung</string>
@@ -840,8 +841,13 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="logbook_duration_minutes">min</string>
     <string name="logbook_note_label">Bericht</string>
     <string name="my_canyon_title">Mein Canyon</string>
-    <string name="my_canyon_duration">Ihre Durchschnittszeit: %1$s</string>
-    <string name="my_canyon_duration_vs_sheet">Ihre Durchschnittszeit: %1$s · Topo: %2$s</string>
+    <string name="my_canyon_memo">Notiz</string>
+    <string name="my_canyon_descended">Schon gemacht</string>
+    <string name="my_canyon_add_descent">Begehung</string>
+    <plurals name="my_canyon_times">
+        <item quantity="one">%1$d-mal</item>
+        <item quantity="other">%1$d-mal</item>
+    </plurals>
     <string name="logbook_tab_outings">Touren</string>
     <string name="logbook_tab_canyons">Canyons</string>
     <string name="logbook_tab_bilan">Bilanz</string>
@@ -1180,8 +1186,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="outing_notify_relative">Angehörige informieren</string>
     <string name="outing_notify_title">Informieren</string>
     <string name="outing_shuttle_short">Shuttle %1$d km</string>
-    <string name="outing_start_now">Ich breche jetzt auf</string>
-    <string name="outing_started_now">Gute Tour! Die Tour ist bestätigt.</string>
     <string name="outing_status_alert_changed">Ihre Angehörigen erwarten Nachricht um %1$s; der Alarm ist jetzt um %2$s.</string>
     <string name="outing_status_relative_not_informed">Noch keine Angehörigen haben den Plan erhalten.</string>
     <string name="outing_status_tracked">Tour bestätigt · Alarm um %1$s</string>

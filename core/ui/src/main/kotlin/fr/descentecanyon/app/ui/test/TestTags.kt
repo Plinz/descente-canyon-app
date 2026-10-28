@@ -87,6 +87,7 @@ object TestTags {
     const val OUTING_NOTIFY_BUTTON = "outing_notify_button"
     const val OUTING_MENU = "outing_menu"
     const val OUTING_OPEN_SHEET = "outing_open_sheet"
+    const val OUTING_DEPART_NOW = "outing_depart_now"
     const val OUTING_DETAIL = "outing_detail"
     const val OUTING_BAG = "outing_bag"
     const val OUTINGS_NEW_STAY = "outings_new_stay"
@@ -99,7 +100,6 @@ object TestTags {
     const val STAY_DONE = "stay_done"
     const val OUTINGS_PAST_STAYS = "outings_past_stays"
     const val HOME_STAY = "home_stay"
-    const val DETAIL_START_NOW = "detail_start_now"
 
     fun canyonCard(id: Int): String = "canyon_card_$id"
     fun searchDistance(km: Int): String = "search_distance_$km"

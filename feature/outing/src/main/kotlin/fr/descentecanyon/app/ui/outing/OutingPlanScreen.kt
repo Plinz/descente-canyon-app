@@ -138,18 +138,6 @@ fun OutingPlanScreen(
         pendingShare = null
     }
 
-    // "I'm leaving now" turned the follow-up on: notifications are asked for, then a relative can be told.
-    val startedPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {}
-    LaunchedEffect(state.startedNow) {
-        if (!state.startedNow) return@LaunchedEffect
-        viewModel.startedNowShown()
-        if (context.needsNotificationPermission()) startedPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        val result = snackbarHostState.showSnackbar(
-            message = resources.getString(R.string.outing_started_now),
-            actionLabel = resources.getString(R.string.outing_alert_changed_action),
-        )
-        if (result == SnackbarResult.ActionPerformed) openNotify(MessageAudience.RELATIVE)
-    }
     // A canyon given to a day of a stay is planned: as a confirmed outing, notifications are asked for.
     LaunchedEffect(state.addedToStay) {
         if (!state.addedToStay) return@LaunchedEffect
@@ -338,6 +326,7 @@ fun OutingPlanScreen(
             state = state,
             onDismiss = dismiss,
             onPlaceSelected = viewModel::selectPlace,
+            onDepartNow = viewModel::departNow,
             onTimeSelected = viewModel::selectAnchorTime,
             onManagePlaces = {
                 overlay = null

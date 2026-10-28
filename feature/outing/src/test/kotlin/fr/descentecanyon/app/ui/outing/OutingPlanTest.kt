@@ -467,19 +467,21 @@ class OutingPlanTest {
     }
 
     @Test
-    fun `I'm leaving now plans the outing with the time of now`() = runTest {
-        val viewModel = viewModel(startNow = true)
+    fun `leaving now sets today at the time of now, and the outing confirmed is under way`() = runTest {
+        val viewModel = viewModel(date = LocalDate.of(2026, 7, 20))
         advanceUntilIdle()
 
-        val outing = outingRepository.outings.value.single()
-        assertEquals(LocalDate.of(2026, 7, 14), outing.choices?.date)
-        assertEquals(LocalTime.of(8, 5), outing.choices?.anchorTime)
-        assertTrue(viewModel.uiState.value.startedNow)
+        viewModel.departNow()
+        advanceUntilIdle()
+        assertEquals(LocalDate.of(2026, 7, 14), viewModel.uiState.value.choices.date)
+        assertEquals(LocalTime.of(8, 5), viewModel.uiState.value.choices.anchorTime)
+        // Like any change, only shown until the outing is confirmed.
+        assertTrue(outingRepository.outings.value.isEmpty())
+
+        viewModel.confirm()
+        advanceUntilIdle()
+        assertEquals(LocalTime.of(8, 5), outingRepository.outings.value.single().choices?.anchorTime)
         assertEquals(OutingStage.UNDERWAY, viewModel.uiState.value.stage)
-
-        viewModel.startedNowShown()
-        advanceUntilIdle()
-        assertFalse(viewModel.uiState.value.startedNow)
     }
 
     @Test
@@ -629,7 +631,6 @@ class OutingPlanTest {
         outingId: Long = 0,
         date: LocalDate? = null,
         stayId: Long = 0,
-        startNow: Boolean = false,
         chains: List<CanyonChain> = emptyList(),
     ): OutingPlanViewModel {
         val canyonRepository = mockk<CanyonRepository> {
@@ -672,7 +673,6 @@ class OutingPlanTest {
                     "canyonId" to CANYON_ID,
                     "outingId" to outingId,
                     "stayId" to stayId,
-                    "startNow" to startNow,
                     date?.let { "date" to it.toString() },
                 ).toMap(),
             ),

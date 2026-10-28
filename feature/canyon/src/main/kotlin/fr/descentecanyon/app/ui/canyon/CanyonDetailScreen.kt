@@ -101,7 +101,6 @@ fun CanyonDetailScreen(
     onPlanOuting: () -> Unit = {},
     /** Opened from the search of a day of a stay: the outing is planned for that day. */
     planForDay: LocalDate? = null,
-    onStartOutingNow: () -> Unit = {},
     onOpenEmergency: () -> Unit = {},
     /** A flow report prefilled from an outing just logged (date, descended, flow seen). */
     onReportOuting: (LogbookEntry) -> Unit = {},
@@ -291,7 +290,6 @@ fun CanyonDetailScreen(
                             nearbyCanyons = uiState.nearbyCanyons,
                             onPlanOuting = onPlanOuting,
                             planForDay = planForDay,
-                            onStartOutingNow = onStartOutingNow,
                             logbook = uiState.logbook,
                             knownCompanions = uiState.knownCompanions,
                             onSaveLogbookEntry = viewModel::saveLogbookEntry,

@@ -110,6 +110,8 @@ fun DescendedBadge(
     modifier: Modifier = Modifier,
     /** Only the check, where room is short. */
     compact: Boolean = false,
+    /** In place of "Fait": "2 fois". */
+    text: String? = null,
 ) {
     val colors = LocalDcColors.current
     val description = stringResource(R.string.logbook_descended_badge_description)
@@ -128,7 +130,7 @@ fun DescendedBadge(
             Icon(Icons.Default.CheckCircle, contentDescription = description, modifier = Modifier.size(13.dp))
             if (!compact) {
                 Text(
-                    stringResource(R.string.logbook_descended_badge),
+                    text ?: stringResource(R.string.logbook_descended_badge),
                     style = MaterialTheme.typography.labelSmall,
                     fontWeight = FontWeight.Bold,
                     maxLines = 1,
