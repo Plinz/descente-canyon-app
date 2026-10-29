@@ -22,7 +22,7 @@ hilt = "2.60.1"
 androidxHilt = "1.4.0"
 
 # Network / Scraping
-okhttp = "5.5.0"
+okhttp = "5.5.1"
 jsoup = "1.23.2"
 kotlinxSerialization = "1.11.0"
 
