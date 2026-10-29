@@ -128,6 +128,28 @@ observations antérieures à cette période, comme l'app le premier jour).
 Données : 166 802 observations Descente-Canyon (1988 → 07/10/2026), dont 8 canyons interdits
 restaurés depuis le scraping de juin. Météo ERA5 pour 3 330 cibles.
 
+### v6 (29/10/2026) : bassins versants corrigés
+
+Même modèle et mêmes reports, nouvelles données de bassin : 265 bassins recalculés et contrôlés à
+l'œil (118 canyons qui n'en avaient pas, 147 exutoires mal placés), descripteurs de ces bassins, et
+cible météo au centre du bassin actuel pour 2 567 canyons (série ERA5 de la même maille, sur l'union
+des séries de la maille). 168 007 lignes, 36 265 reports de test.
+
+Comparaison v5 → v6 sur les 36 258 reports de test communs :
+
+| | v5 J0 | v6 J0 | v5 J+1 | v6 J+1 |
+| --- | ---: | ---: | ---: | ---: |
+| Exactitude | 0,757 | 0,754 | 0,754 | 0,751 |
+| MAE ordinale | 0,267 | 0,270 | 0,273 | 0,275 |
+| GROS+ F1 | 0,603 | 0,607 | 0,588 | 0,591 |
+| RPS | 0,0381 | 0,0380 | 0,0390 | 0,0389 |
+| AUC P(≥ GROS) | 0,915 | 0,915 | 0,907 | 0,908 |
+| 265 bassins corrigés (1 797 reports) : GROS+ F1 / RPS | 0,48 / 0,0458 | 0,55 / 0,0448 | 0,47 / 0,0471 | 0,53 / 0,0459 |
+
+Le RPS baisse un peu en 2023 et 2024 et reste égal en 2025-2026 ; l'exactitude perd 0,2 à 0,5 point
+selon la période, sous le bruit d'une graine (≈ 0,8 point). Le gain est sur les canyons corrigés : la
+détection des gros débits y progresse sur les trois périodes (F1 +9, +9 et +2 points à J0).
+
 ### Walk-forward (3 périodes jamais vues, 36 343 observations)
 
 Évaluation avec l'information réellement disponible chaque matin (tableau ci-dessus).

@@ -28,6 +28,17 @@ Run from the repository root with the project virtualenv.
   --gap-dir build/debit-pipeline/era5-gap-<name> \
   --output build/debit-model/weather/era5_daily.npz
 
+#    After a watershed change (room-import watersheds.json): weather targets at the new bbox
+#    centres (the app's weather point), ERA5 series derived from the same ERA5 cell, then the
+#    static source (catalog + watersheds + descriptors of the world and overlay packages).
+PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/update_weather_targets.py \
+  --output-targets build/debit-pipeline/weather-planning-YYYY-MM-DD/weather_targets.jsonl \
+  --output-store build/debit-model/weather/era5_daily-YYYY-MM-DD.npz
+PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/build_static_source.py \
+  --output build/debit-model/source/canyon_static_descriptors-YYYY-MM-DD.json
+#    then point DEFAULT_TARGETS / DEFAULT_WEATHER / DEFAULT_STATIC of build_dataset.py (and the
+#    --targets / --weather defaults of export_app_assets.py) to them.
+
 # 3. Real-time sources (open data, no key): Météo-France daily climatology and MeteoSwiss OGD
 .venv/bin/python scripts/debit_model/fetch_meteofrance.py                      # RR-T-Vent, all departments
 .venv/bin/python scripts/debit_model/fetch_meteoswiss.py                       # stations within 25 km
@@ -43,7 +54,7 @@ PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/train.py fin
 
 # 7. App assets (model.onnx, model_horizon.onnx, lookups...), ONNX parity check and golden vectors
 PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/export_app_assets.py --final-dir build/debit-model/final-v4 --walkforward-dir build/debit-model/walkforward-v4
-bash gradlew :app:testDebugUnitTest --tests '*DebitFeatureBuilderGoldenTest*'
+bash gradlew :core:data:testDebugUnitTest --tests '*DebitFeatureBuilderGoldenTest*'
 ```
 
 ## Modules
@@ -54,6 +65,8 @@ bash gradlew :app:testDebugUnitTest --tests '*DebitFeatureBuilderGoldenTest*'
 | `features.py` | Feature contract (`FEATURE_NAMES`), static/hydro/history feature functions. |
 | `history.py` | Causal canyon history and massif/region priors for training rows. |
 | `build_dataset.py` | Builds `build/debit-model/dataset/`. |
+| `update_weather_targets.py` | Moves weather targets to the current watershed bbox centres, ERA5 series from the same cell. |
+| `build_static_source.py` | Static per-canyon source: catalog, watersheds, descriptors of the world and overlay packages. |
 | `neighbors.py` | Recent reports of canyons within 30 km (site "derniers débits" day grid). |
 | `meteofrance.py`, `meteoswiss.py` | Rain gauges within 25 km (Météo-France + MeteoSwiss networks). |
 | `experiment.py`, `providers.py` | A/B harness for candidate sources and parameters (2 folds). |
@@ -63,7 +76,7 @@ bash gradlew :app:testDebugUnitTest --tests '*DebitFeatureBuilderGoldenTest*'
 | `evaluation.py` | Cumulative ordinal decision rule, threshold tuning, metrics. |
 | `train.py` | Walk-forward evaluation and final fit. |
 | `runtime_reference.py` | Single-prediction replica of the app path (golden vectors). |
-| `export_app_assets.py` | Writes `modele_statistique/` and `app/src/test/resources/debit/golden_vectors.json`. |
+| `export_app_assets.py` | Writes `modele_statistique/` and `core/data/src/test/resources/debit/golden_vectors.json`. |
 
 ## Contract with the app
 

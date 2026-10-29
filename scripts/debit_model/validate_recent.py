@@ -76,7 +76,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dataset-dir", default="build/debit-model/dataset")
     parser.add_argument("--model-dir", default="modele_statistique")
-    parser.add_argument("--targets", default="build/debit-pipeline/weather-planning/weather_targets.jsonl")
+    parser.add_argument("--targets", default="build/debit-pipeline/weather-planning-2026-10-29/weather_targets.jsonl")
     parser.add_argument("--output-dir", default="build/debit-model/recent-validation")
     parser.add_argument("--after", default="2026-06-04", help="Only score reports strictly after this day")
     parser.add_argument("--canyon-count", type=int, default=60)

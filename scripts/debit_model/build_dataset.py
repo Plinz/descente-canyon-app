@@ -45,9 +45,9 @@ def with_archived(current: list[dict], archived: list[dict]) -> tuple[list[dict]
     restored_set = set(restored)
     return current + [row for row in archived if row["canyonId"] in restored_set], restored
 DEFAULT_CANYONS = "offline-data/full/room-import/canyons.json"
-DEFAULT_STATIC = "build/debit-model/source/canyon_static_descriptors.json"
-DEFAULT_TARGETS = "build/debit-pipeline/weather-planning/weather_targets.jsonl"
-DEFAULT_WEATHER = "build/debit-model/weather/era5_daily.npz"
+DEFAULT_STATIC = "build/debit-model/source/canyon_static_descriptors-2026-10-29.json"
+DEFAULT_TARGETS = "build/debit-pipeline/weather-planning-2026-10-29/weather_targets.jsonl"
+DEFAULT_WEATHER = "build/debit-model/weather/era5_daily-2026-10-29.npz"
 
 
 def load_observations(path: Path) -> list[dict]:

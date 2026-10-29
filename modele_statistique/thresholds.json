@@ -4,7 +4,7 @@
   "defaultPolicy": "balanced",
   "policies": {
     "balanced": {
-      "highThreshold": 0.31
+      "highThreshold": 0.29
     },
     "prudent": {
       "highThreshold": 0.64
@@ -14,11 +14,11 @@
     }
   },
   "cumulativeThresholds": [
-    0.57,
-    0.5,
-    0.27,
+    0.51,
+    0.48,
     0.26,
-    0.35
+    0.25,
+    0.27
   ],
   "ordinalCutpoints": {
     "secFilet": 0.5,
@@ -31,21 +31,21 @@
     "modelAsset": "model_horizon.onnx",
     "policies": {
       "balanced": {
-        "highThreshold": 0.26
+        "highThreshold": 0.32
       },
       "prudent": {
-        "highThreshold": 0.66
+        "highThreshold": 0.67
       },
       "safety_first": {
         "highThreshold": 0.07
       }
     },
     "cumulativeThresholds": [
-      0.53,
-      0.51,
-      0.24,
-      0.28,
-      0.23
+      0.5,
+      0.5,
+      0.32,
+      0.25,
+      0.29
     ]
   }
 }
