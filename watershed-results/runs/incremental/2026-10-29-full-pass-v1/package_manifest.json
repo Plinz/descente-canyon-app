@@ -1,0 +1,16 @@
+{
+  "generatedAt": "2026-10-29T12:01:25.569418+00:00",
+  "sourceDir": "/home/plinz/descente-canyon-app/build/watersheds/batch-run-guided-2026-10-29-accepted",
+  "scope": "overlay",
+  "track": "incremental",
+  "label": "2026-10-29-full-pass-v1",
+  "copiedFiles": [
+    "summary.json",
+    "import_ready_catchments.json",
+    "import_ready_watershed_descriptors.json",
+    "import_ready_watersheds.json",
+    "watershed_polygons.geojson"
+  ],
+  "canyonStatusCount": 265,
+  "failedCount": 0
+}

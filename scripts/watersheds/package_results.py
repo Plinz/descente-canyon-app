@@ -49,6 +49,12 @@ def parse_args() -> argparse.Namespace:
         help="Run family/category",
     )
     parser.add_argument("--label", required=True, help="Run label, e.g. 2026-03-25-fr-v1")
+    parser.add_argument(
+        "--scope",
+        choices=["world", "overlay"],
+        default="world",
+        help="'overlay' for a run of a few canyons whose rows replace those of the latest world run at export.",
+    )
     parser.add_argument("--output-root", type=Path, default=Path("watershed-results"))
     parser.add_argument("--include-debug", action="store_true")
     parser.add_argument("--include-canyon-json", action="store_true")
@@ -125,7 +131,7 @@ def main() -> int:
     manifest = {
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "sourceDir": str(source_dir),
-        "scope": "world",
+        "scope": args.scope,
         "track": args.track,
         "label": args.label,
         "copiedFiles": copied_files,

@@ -52,14 +52,14 @@ def build_package(run_dir: Path, import_ready_path: Path) -> WatershedPackage:
     )
 
 
-def discover_world_packages(root: Path) -> list[WatershedPackage]:
+def discover_world_packages(root: Path, scope: str = "world") -> list[WatershedPackage]:
     search_root = root / "runs" if (root / "runs").is_dir() else root
     packages: list[WatershedPackage] = []
     for manifest_path in sorted(search_root.glob("**/package_manifest.json")):
         manifest = load_json(manifest_path)
         if not isinstance(manifest, dict):
             continue
-        if manifest.get("scope") != "world":
+        if manifest.get("scope") != scope:
             continue
         run_dir = manifest_path.parent
         import_ready_path = run_dir / "import_ready_watersheds.json"
@@ -95,6 +95,15 @@ def select_latest_package(packages: list[WatershedPackage]) -> WatershedPackage:
             package.track,
             package.label,
         ),
+    )
+
+
+def overlays_after(packages: list[WatershedPackage], base: WatershedPackage) -> list[WatershedPackage]:
+    """Overlay packages generated after the base world run, oldest first: the newest row wins."""
+    base_time = parse_generated_at(base.generated_at)
+    return sorted(
+        (package for package in packages if parse_generated_at(package.generated_at) > base_time),
+        key=lambda package: parse_generated_at(package.generated_at),
     )
 
 
@@ -160,6 +169,11 @@ def parse_args() -> argparse.Namespace:
         help="Manifest Room a mettre a jour.",
     )
     parser.add_argument(
+        "--no-overlays",
+        action="store_true",
+        help="N'applique pas les packages overlay (scope overlay) generes apres le run world retenu.",
+    )
+    parser.add_argument(
         "--skip-manifest",
         action="store_true",
         help="N'actualise pas le manifest d'import.",
@@ -170,6 +184,7 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     explicit_package = resolve_explicit_package(args.input)
+    overlay_packages: list[WatershedPackage] = []
     if explicit_package is not None:
         selected_package = explicit_package
     else:
@@ -181,20 +196,26 @@ def main() -> int:
                 f"Aucun package watershed world trouve dans: {args.input}"
             )
         selected_package = select_latest_package(packages)
+        if not args.no_overlays:
+            overlay_packages = overlays_after(discover_world_packages(args.input, scope="overlay"), selected_package)
 
-    raw_rows = load_json(selected_package.import_ready_path)
-    if not isinstance(raw_rows, list):
-        raise ValueError(
-            f"Le fichier source doit contenir une liste JSON: {selected_package.import_ready_path}"
-        )
+    rows_by_canyon: dict[int, dict[str, Any]] = {}
+    overlay_counts: dict[str, int] = {}
+    for package in [selected_package, *overlay_packages]:
+        raw_rows = load_json(package.import_ready_path)
+        if not isinstance(raw_rows, list):
+            raise ValueError(f"Le fichier source doit contenir une liste JSON: {package.import_ready_path}")
+        count = 0
+        for item in raw_rows:
+            normalized = normalize_row(item) if isinstance(item, dict) else None
+            if normalized is not None:
+                rows_by_canyon[normalized["canyonId"]] = normalized
+                count += 1
+        if package is not selected_package:
+            overlay_counts[package.label] = count
 
-    output_rows = [
-        normalized
-        for item in raw_rows
-        if isinstance(item, dict)
-        for normalized in [normalize_row(item)]
-        if normalized is not None
-    ]
+    # Keeps the world run order: an overlay row takes the place of the row it replaces, new canyons go last.
+    output_rows = list(rows_by_canyon.values())
     write_json(args.output, output_rows)
 
     if not args.skip_manifest and args.manifest.exists():
@@ -208,6 +229,7 @@ def main() -> int:
                 "selectedLabel": selected_package.label,
                 "selectedGeneratedAt": selected_package.generated_at,
                 "input": str(selected_package.import_ready_path),
+                "overlays": overlay_counts,
                 "output": str(args.output),
                 "watersheds": len(output_rows),
                 "manifestUpdated": (not args.skip_manifest and args.manifest.exists()),

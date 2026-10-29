@@ -190,12 +190,12 @@
     "canyonId": 218,
     "status": "bad",
     "gps": {
-      "latitude": 45.138611,
-      "longitude": 5.385
+      "latitude": 45.138264,
+      "longitude": 5.385615
     },
     "adminPlaced": true,
     "pointType": "REVIEW_GPS",
-    "label": "review_truth"
+    "label": "manual_map"
   },
   {
     "canyonId": 219,
@@ -2630,14 +2630,14 @@
   },
   {
     "canyonId": 2282,
-    "status": "good",
+    "status": "bad",
     "gps": {
-      "latitude": 43.974888,
-      "longitude": 3.674083
+      "latitude": 43.97448,
+      "longitude": 3.679982
     },
-    "adminPlaced": false,
-    "pointType": "PARKING_AVAL",
-    "label": null
+    "adminPlaced": true,
+    "pointType": "REVIEW_GPS",
+    "label": "manual_map"
   },
   {
     "canyonId": 2283,
@@ -3446,12 +3446,12 @@
     "canyonId": 2364,
     "status": "bad",
     "gps": {
-      "latitude": 45.199742,
-      "longitude": 6.687498
+      "latitude": 45.193042,
+      "longitude": 6.689875
     },
     "adminPlaced": true,
     "pointType": "REVIEW_GPS",
-    "label": "review_truth"
+    "label": "manual_map"
   },
   {
     "canyonId": 2365,
@@ -11982,12 +11982,12 @@
     "canyonId": 21257,
     "status": "bad",
     "gps": {
-      "latitude": -21.209167,
-      "longitude": 55.34111
+      "latitude": -21.202255,
+      "longitude": 55.353786
     },
     "adminPlaced": true,
     "pointType": "REVIEW_GPS",
-    "label": "review_truth"
+    "label": "manual_map"
   },
   {
     "canyonId": 21268,
@@ -33707,12 +33707,12 @@
     "canyonId": 23888,
     "status": "bad",
     "gps": {
-      "latitude": 43.767006,
-      "longitude": 6.289812
+      "latitude": 43.766318,
+      "longitude": 6.292099
     },
     "adminPlaced": true,
     "pointType": "REVIEW_GPS",
-    "label": "review_truth"
+    "label": "manual_map"
   },
   {
     "canyonId": 23889,
@@ -33900,6 +33900,17 @@
     "adminPlaced": false,
     "pointType": "SORTIE",
     "label": null
+  },
+  {
+    "canyonId": 23915,
+    "status": "bad",
+    "gps": {
+      "latitude": 32.787242,
+      "longitude": -17.116156
+    },
+    "adminPlaced": true,
+    "pointType": "REVIEW_GPS",
+    "label": "manual_map"
   },
   {
     "canyonId": 23920,

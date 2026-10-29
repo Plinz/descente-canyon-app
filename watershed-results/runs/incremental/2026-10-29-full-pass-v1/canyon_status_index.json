@@ -1,0 +1,2652 @@
+[
+  {
+    "canyonId": 21037,
+    "canyonName": "Ravin des Rouyes, Attente",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.626275
+  },
+  {
+    "canyonId": 21041,
+    "canyonName": "Baranco de la Loma de Guega",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.850601
+  },
+  {
+    "canyonId": 21046,
+    "canyonName": "Barranco San Martin, L'Antigua",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.893124
+  },
+  {
+    "canyonId": 21055,
+    "canyonName": "Bras Sec",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.794375
+  },
+  {
+    "canyonId": 21057,
+    "canyonName": "Canyon de Cagateille, Ruisseau des Cors",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 18.008575
+  },
+  {
+    "canyonId": 21061,
+    "canyonName": "Canyon de Riou fred",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 2.57645
+  },
+  {
+    "canyonId": 21064,
+    "canyonName": "Canyon de la Tine des Fonts (amont), Ravin des Chaux (aval)",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.88045
+  },
+  {
+    "canyonId": 21067,
+    "canyonName": "Canyon des Gnioles",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 14.0327
+  },
+  {
+    "canyonId": 21110,
+    "canyonName": "Ruisseau de la Caïnée",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 3.771925
+  },
+  {
+    "canyonId": 21117,
+    "canyonName": "Trou de Fer, Trou d'enfer, Bras de Caverne",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 16.060375
+  },
+  {
+    "canyonId": 21149,
+    "canyonName": "Rio Colombaia (supérieur)",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.3665
+  },
+  {
+    "canyonId": 21168,
+    "canyonName": "Taravo",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 17.33375
+  },
+  {
+    "canyonId": 21173,
+    "canyonName": "Trigradska Reka, Cascade de l'enfer",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 57.409897
+  },
+  {
+    "canyonId": 21239,
+    "canyonName": "Valat de Coumbies",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 1.857825
+  },
+  {
+    "canyonId": 21257,
+    "canyonName": "Bras de Jeanne supérieur, Canyon de Tévelave",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.190125
+  },
+  {
+    "canyonId": 21275,
+    "canyonName": "Barranco de Juanes, Cueva Turche, Cueva de las Palomas",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 36.917305
+  },
+  {
+    "canyonId": 21306,
+    "canyonName": "Vallon de Bolega",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.2937
+  },
+  {
+    "canyonId": 21317,
+    "canyonName": "Bras de Sainte Suzanne [Bras de], Bras de Sainte Suzanne",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 10.73915
+  },
+  {
+    "canyonId": 21325,
+    "canyonName": "Ravine Ferrière",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.859975
+  },
+  {
+    "canyonId": 21387,
+    "canyonName": "Kanangara, Kanangra Main",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 14.872807
+  },
+  {
+    "canyonId": 21389,
+    "canyonName": "Cascade de Doran, Torrent de Dière",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 5.60955
+  },
+  {
+    "canyonId": 21407,
+    "canyonName": "Bras Mazerin [Trou de fer]",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 15.84405
+  },
+  {
+    "canyonId": 21417,
+    "canyonName": "Canyon de Bras Rouge (Médian), Rivière St Etienne, Bras de Cilaos",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 6.3067
+  },
+  {
+    "canyonId": 21419,
+    "canyonName": "Défilé d' Aidy, Laboo d'Aidy, Arpet",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 5.7008
+  },
+  {
+    "canyonId": 21452,
+    "canyonName": "Rivière des Roches I",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 35.546249
+  },
+  {
+    "canyonId": 21469,
+    "canyonName": "Roska",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.023035
+  },
+  {
+    "canyonId": 21481,
+    "canyonName": "Ravine des Salazes, Salazes",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 1.396375
+  },
+  {
+    "canyonId": 215,
+    "canyonName": "Le Ruisant",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.336625
+  },
+  {
+    "canyonId": 21515,
+    "canyonName": "Vallon de Kardelis",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.593032
+  },
+  {
+    "canyonId": 21571,
+    "canyonName": "Ruisseau de Coume (supérieur), Coume",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.627225
+  },
+  {
+    "canyonId": 21577,
+    "canyonName": "Baoubouillier, Saint Arnoux 2",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.243975
+  },
+  {
+    "canyonId": 21591,
+    "canyonName": "Barranc del Torto",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 5.183383
+  },
+  {
+    "canyonId": 21593,
+    "canyonName": "Canyon Gria Vathra, Plata",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 1.986751
+  },
+  {
+    "canyonId": 21606,
+    "canyonName": "Rio Pombeiro",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 29.29468
+  },
+  {
+    "canyonId": 21649,
+    "canyonName": "Barranco de Almanchares, Rio Almanchares",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.161215
+  },
+  {
+    "canyonId": 21672,
+    "canyonName": "Tsigenorema",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 32.620773
+  },
+  {
+    "canyonId": 21680,
+    "canyonName": "Rio Gioglio",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.6151
+  },
+  {
+    "canyonId": 21686,
+    "canyonName": "Titou gorge (inférieur)",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 5.653899
+  },
+  {
+    "canyonId": 21709,
+    "canyonName": "Canyon Nefeli, Rogovos Papigo",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 19.302696
+  },
+  {
+    "canyonId": 21711,
+    "canyonName": "Canyon du Taillat",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 1.0962
+  },
+  {
+    "canyonId": 21714,
+    "canyonName": "Val Maggiore",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 6.6467
+  },
+  {
+    "canyonId": 21740,
+    "canyonName": "Palatimone",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 12.0167
+  },
+  {
+    "canyonId": 21761,
+    "canyonName": "Rivière Ferry",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-guadeloupe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.48585
+  },
+  {
+    "canyonId": 21765,
+    "canyonName": "Jungle's End, Affluent RD de Kobelach",
+    "status": "ok",
+    "sourceName": "austria-bev-als-dtm",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 20.659496
+  },
+  {
+    "canyonId": 21791,
+    "canyonName": "Rivière Beaugendre, Rivière de Beaugendre",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-guadeloupe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 5.835175
+  },
+  {
+    "canyonId": 21797,
+    "canyonName": "Cascades d' Oëx",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.8695
+  },
+  {
+    "canyonId": 218,
+    "canyonName": "Le Neyron",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 1.298725
+  },
+  {
+    "canyonId": 21805,
+    "canyonName": "Wadi Ibn Hammad",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "PARKING_AVAL",
+    "selectedUpstreamCatchmentAreaKm2": 101.069565
+  },
+  {
+    "canyonId": 21846,
+    "canyonName": "Vallon de Donaréo, Donaréo",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 2.863275
+  },
+  {
+    "canyonId": 21942,
+    "canyonName": "Barranc de Boixols (par affluent RD), Rio de Pujals, amont du riu Rialb",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 18.219921
+  },
+  {
+    "canyonId": 21944,
+    "canyonName": "Canyon de l' Alzeau",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 30.259075
+  },
+  {
+    "canyonId": 21946,
+    "canyonName": "Cascades de Capèche, Cascade de l'Oule, Ruisseau de Port-Bielh",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 28.899525
+  },
+  {
+    "canyonId": 21970,
+    "canyonName": "Rio Pili, Rio Silvano, Rio delle Pili",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.0028
+  },
+  {
+    "canyonId": 21982,
+    "canyonName": "Cascade de Nardet (intégrale), Ruisseau de Nardet",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.935
+  },
+  {
+    "canyonId": 21995,
+    "canyonName": "Colognati",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 22.6031
+  },
+  {
+    "canyonId": 22024,
+    "canyonName": "Selvaromana",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 10.8152
+  },
+  {
+    "canyonId": 22025,
+    "canyonName": "Val Piccola",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 5.9298
+  },
+  {
+    "canyonId": 22034,
+    "canyonName": "Ruisseau du Faby",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 36.825424
+  },
+  {
+    "canyonId": 22050,
+    "canyonName": "Ru Felizon",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 31.843399
+  },
+  {
+    "canyonId": 22074,
+    "canyonName": "Cascades d' Ars",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 9.61665
+  },
+  {
+    "canyonId": 22083,
+    "canyonName": "Infernaccio dell’Ambro",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 11.081
+  },
+  {
+    "canyonId": 22133,
+    "canyonName": "Cascadas de Duratón, Turaton, Barranco del Puerto, Rio Duratón",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.714959
+  },
+  {
+    "canyonId": 22140,
+    "canyonName": "Ribeira da Hortela (Partie 1)",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.657045
+  },
+  {
+    "canyonId": 22141,
+    "canyonName": "Ribeira da Hortelã (partie 2)",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 2.829848
+  },
+  {
+    "canyonId": 22142,
+    "canyonName": "Ribeira da Hortela (partie 3)",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 7.232135
+  },
+  {
+    "canyonId": 22144,
+    "canyonName": "Ribeira do Seixal (supérieur)",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 2.252448
+  },
+  {
+    "canyonId": 22145,
+    "canyonName": "Ribeira do Seixal (inférieur)",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 7.232135
+  },
+  {
+    "canyonId": 22179,
+    "canyonName": "Potok Bogutovski",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 19.312122
+  },
+  {
+    "canyonId": 22193,
+    "canyonName": "Grabovica",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.449914
+  },
+  {
+    "canyonId": 22197,
+    "canyonName": "Grlja",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 65.721863
+  },
+  {
+    "canyonId": 22199,
+    "canyonName": "Tresonečki, Tresonečka ou Tresanačkar",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 24.262928
+  },
+  {
+    "canyonId": 22200,
+    "canyonName": "Duf Dol, Vodopad Duf, Par Mala reka",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 7.973341
+  },
+  {
+    "canyonId": 22208,
+    "canyonName": "Ruisseau de la Hillette, Cagateille supérieur",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.288425
+  },
+  {
+    "canyonId": 22277,
+    "canyonName": "Schellaine",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 2.280997
+  },
+  {
+    "canyonId": 2228,
+    "canyonName": "Riou de La Bollène",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 10.18065
+  },
+  {
+    "canyonId": 22322,
+    "canyonName": "Raindu Khola",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 6.951473
+  },
+  {
+    "canyonId": 2236,
+    "canyonName": "Vallon de Morghé",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 19.81625
+  },
+  {
+    "canyonId": 22368,
+    "canyonName": "Kramerlaine",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 4.030879
+  },
+  {
+    "canyonId": 2237,
+    "canyonName": "Vallon de la Carléva",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 7.6025
+  },
+  {
+    "canyonId": 22379,
+    "canyonName": "Plattengraben - Albertsbach, Albertsbach",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 6.025522
+  },
+  {
+    "canyonId": 22383,
+    "canyonName": "Gachentodklamm, Eschenlaine",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 26.007215
+  },
+  {
+    "canyonId": 22391,
+    "canyonName": "Fahrmannslaine",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 2.019763
+  },
+  {
+    "canyonId": 22406,
+    "canyonName": "Vallon de Sanson",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.466725
+  },
+  {
+    "canyonId": 22408,
+    "canyonName": "Ravine Grand-mère, Grand mère",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 6.601275
+  },
+  {
+    "canyonId": 22419,
+    "canyonName": "Ravine Blanche Sup",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 2.044625
+  },
+  {
+    "canyonId": 22423,
+    "canyonName": "Rivière Noire Vauchelet, Cascade Vauchelet, Rivière Noire",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-guadeloupe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 2.595225
+  },
+  {
+    "canyonId": 22425,
+    "canyonName": "Canyon do Alecrim, Ribeira do Alecrim",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.890032
+  },
+  {
+    "canyonId": 22427,
+    "canyonName": "Ravin de Cadiol, Ruisseau du cabro",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 0.3681
+  },
+  {
+    "canyonId": 22437,
+    "canyonName": "Cascades de St Même, Le guiers vif",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 8.753775
+  },
+  {
+    "canyonId": 22444,
+    "canyonName": "Canale Levigliese",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.3091
+  },
+  {
+    "canyonId": 22454,
+    "canyonName": "Glasbachgraben, Glasbach",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 3.660353
+  },
+  {
+    "canyonId": 22455,
+    "canyonName": "Rappinschlucht, Rappinlaine",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 4.380208
+  },
+  {
+    "canyonId": 22456,
+    "canyonName": "Staffelbach",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 2.579423
+  },
+  {
+    "canyonId": 22458,
+    "canyonName": "Ruisseau de Saint Jean, Ruisseau de St Jean",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.366925
+  },
+  {
+    "canyonId": 22525,
+    "canyonName": "Fonissa",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 50.661858
+  },
+  {
+    "canyonId": 22541,
+    "canyonName": "Barranco de los Porqueros",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 0.795438
+  },
+  {
+    "canyonId": 22552,
+    "canyonName": "Oo (inférieur), Neste d'Oo",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 23.084076
+  },
+  {
+    "canyonId": 2257,
+    "canyonName": "Torrent de Tramouillon (inférieur)",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 8.925425
+  },
+  {
+    "canyonId": 22641,
+    "canyonName": "Cascades du Guiers Mort",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 1.8128
+  },
+  {
+    "canyonId": 22649,
+    "canyonName": "Torrent de Binifaldo",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 3.451678
+  },
+  {
+    "canyonId": 22650,
+    "canyonName": "Torrent de Lluc",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 26.450453
+  },
+  {
+    "canyonId": 22662,
+    "canyonName": "Canyon de Delgado (Partie A)",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.315151
+  },
+  {
+    "canyonId": 22663,
+    "canyonName": "Ses Olibes",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.124522
+  },
+  {
+    "canyonId": 22666,
+    "canyonName": "Font de S'Espinal",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.517022
+  },
+  {
+    "canyonId": 2267,
+    "canyonName": "Cascades de Buchardet",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.7762
+  },
+  {
+    "canyonId": 22670,
+    "canyonName": "Canal d' En Marc",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.055542
+  },
+  {
+    "canyonId": 22677,
+    "canyonName": "Trois roches, Rivière des galets",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 15.182475
+  },
+  {
+    "canyonId": 22679,
+    "canyonName": "Ravine Citron",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.548725
+  },
+  {
+    "canyonId": 22686,
+    "canyonName": "Canyon des Cocus",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.081
+  },
+  {
+    "canyonId": 22695,
+    "canyonName": "Korovesou, Gorovesi",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 17.231627
+  },
+  {
+    "canyonId": 2270,
+    "canyonName": "Gorges de La Chalp, Ruisseau des Roberts",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.9231
+  },
+  {
+    "canyonId": 22719,
+    "canyonName": "Gorge de Kria Vrisi",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.117996
+  },
+  {
+    "canyonId": 22721,
+    "canyonName": "Canyon de Valaha",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.814832
+  },
+  {
+    "canyonId": 2273,
+    "canyonName": "Torrent de Naval, Naval",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 14.67625
+  },
+  {
+    "canyonId": 22741,
+    "canyonName": "Canyon de la Méga, Ribeira da Agua Do Vento",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.145702
+  },
+  {
+    "canyonId": 22745,
+    "canyonName": "Karagiannaki Canyon",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 9.428384
+  },
+  {
+    "canyonId": 22751,
+    "canyonName": "Canyon de Lombo (centre)",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.066612
+  },
+  {
+    "canyonId": 22753,
+    "canyonName": "Canyon de Laje Gauche, Deux Chatons gauche, Ribeira da Laje",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.606658
+  },
+  {
+    "canyonId": 22754,
+    "canyonName": "Canyon de Laje Droit, Deux Chatons droit, Affluent Ribeira da Laje",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.577715
+  },
+  {
+    "canyonId": 22759,
+    "canyonName": "Canyon du Pari, Affluent RD de Ribeira da Metade",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.297752
+  },
+  {
+    "canyonId": 22762,
+    "canyonName": "Canyon des Pigeons, Affluent rive droite de Ribeira do Passo",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.694179
+  },
+  {
+    "canyonId": 22766,
+    "canyonName": "Canyon de la Résurrection",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.35748
+  },
+  {
+    "canyonId": 22768,
+    "canyonName": "Kanyonu Göynük, Göynük",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 49.252956
+  },
+  {
+    "canyonId": 2277,
+    "canyonName": "Canyon du Diable",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 27.516199
+  },
+  {
+    "canyonId": 22785,
+    "canyonName": "Canyon Kakoskala Stomiou",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 4.547197
+  },
+  {
+    "canyonId": 22788,
+    "canyonName": "Panäratobel",
+    "status": "ok",
+    "sourceName": "switzerland-swissalti3d",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.455311
+  },
+  {
+    "canyonId": 22811,
+    "canyonName": "Giuf, Valle di Villa",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.9456
+  },
+  {
+    "canyonId": 22813,
+    "canyonName": "Gallavesa",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 10.9678
+  },
+  {
+    "canyonId": 2282,
+    "canyonName": "Cascade de la Boudène, Tufs de la Boudène",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 1.211425
+  },
+  {
+    "canyonId": 22822,
+    "canyonName": "Vèrtova",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.7801
+  },
+  {
+    "canyonId": 2289,
+    "canyonName": "La Cause (aval), Infernet",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 45.199001
+  },
+  {
+    "canyonId": 22911,
+    "canyonName": "La Salanfe, Salanfe",
+    "status": "ok",
+    "sourceName": "switzerland-swissalti3d",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "PARKING_AVAL",
+    "selectedUpstreamCatchmentAreaKm2": 24.968592
+  },
+  {
+    "canyonId": 22912,
+    "canyonName": "Eager Beaver, Waiorongomai Stream, Waiorongomai River",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 25.180973
+  },
+  {
+    "canyonId": 22946,
+    "canyonName": "Barranco de la Usia",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 87.303902
+  },
+  {
+    "canyonId": 22966,
+    "canyonName": "Saut du vallon de la Beaume noire",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.267925
+  },
+  {
+    "canyonId": 22980,
+    "canyonName": "Obergailer Bach, Goldbach",
+    "status": "ok",
+    "sourceName": "austria-bev-als-dtm",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 7.0496
+  },
+  {
+    "canyonId": 23056,
+    "canyonName": "Saxetbach (amont)",
+    "status": "ok",
+    "sourceName": "switzerland-swissalti3d",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 5.595172
+  },
+  {
+    "canyonId": 23069,
+    "canyonName": "Valle delle Montarezze",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 1.2008
+  },
+  {
+    "canyonId": 23083,
+    "canyonName": "Barranc de Lloret, Raco del Moro, Lloret",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 6.055386
+  },
+  {
+    "canyonId": 23084,
+    "canyonName": "Barranc de Coll Redo, Terre Roig",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 3.665758
+  },
+  {
+    "canyonId": 23090,
+    "canyonName": "Ravin de Peyroutilles, Rec de la Piche",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.697075
+  },
+  {
+    "canyonId": 23127,
+    "canyonName": "Ruisseau de Petra, Piscia di Gallu amont",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 4.74115
+  },
+  {
+    "canyonId": 23131,
+    "canyonName": "Ravin de Malamort",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.531975
+  },
+  {
+    "canyonId": 23153,
+    "canyonName": "Wadi Bani Awf, Snake Canyon, Big Snake Canyon, Snake Gorge ou Wadi Bimmah",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 34.927639
+  },
+  {
+    "canyonId": 23155,
+    "canyonName": "Torrent de Salvadon",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 5.908925
+  },
+  {
+    "canyonId": 23179,
+    "canyonName": "Pourtoune 6 - Fours, Ravine PF6, affluent des Fours",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.677525
+  },
+  {
+    "canyonId": 23193,
+    "canyonName": "Barranco de Otal",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 12.519261
+  },
+  {
+    "canyonId": 23196,
+    "canyonName": "Ruisseau de Melaghia",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 10.458175
+  },
+  {
+    "canyonId": 232,
+    "canyonName": "Rivière du Haut Tech",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 10.194
+  },
+  {
+    "canyonId": 23201,
+    "canyonName": "Torrent de Mal Cros",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.844325
+  },
+  {
+    "canyonId": 23203,
+    "canyonName": "Mülibach",
+    "status": "ok",
+    "sourceName": "switzerland-swissalti3d",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 8.17837
+  },
+  {
+    "canyonId": 23208,
+    "canyonName": "Gorges du grand canyon du Verdon",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 964.359741
+  },
+  {
+    "canyonId": 23210,
+    "canyonName": "Torrent de Gariveau, Coste Belle",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 2.252625
+  },
+  {
+    "canyonId": 23251,
+    "canyonName": "Sanguinhal Esquerda",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 1.495368
+  },
+  {
+    "canyonId": 23263,
+    "canyonName": "Cedros Medio",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 1.392924
+  },
+  {
+    "canyonId": 23270,
+    "canyonName": "Cabras",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 0.162002
+  },
+  {
+    "canyonId": 23271,
+    "canyonName": "Serrado Novo",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 5.52487
+  },
+  {
+    "canyonId": 23272,
+    "canyonName": "Abreu",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 1.128903
+  },
+  {
+    "canyonId": 23276,
+    "canyonName": "Salto Esquerdo",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 4.028751
+  },
+  {
+    "canyonId": 23282,
+    "canyonName": "Três Voltas Supérior",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.740684
+  },
+  {
+    "canyonId": 2329,
+    "canyonName": "Piscia de l'Onda",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.13075
+  },
+  {
+    "canyonId": 23314,
+    "canyonName": "Ravin de La Rouvière, Affluent RD Baou",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.8109
+  },
+  {
+    "canyonId": 23319,
+    "canyonName": "Cascades de La Beaume",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.396975
+  },
+  {
+    "canyonId": 23322,
+    "canyonName": "Rio Lona",
+    "status": "ok",
+    "sourceName": "italy-liguria-dem",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.204476
+  },
+  {
+    "canyonId": 23333,
+    "canyonName": "Machinery Creek",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 11.356917
+  },
+  {
+    "canyonId": 23335,
+    "canyonName": "Cascade d' Aigache, Ruisseau d'Aigasse",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.849
+  },
+  {
+    "canyonId": 23336,
+    "canyonName": "Ravine Ouayaneri",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.499337
+  },
+  {
+    "canyonId": 23337,
+    "canyonName": "Ravine Fond Calabasse",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.563314
+  },
+  {
+    "canyonId": 2334,
+    "canyonName": "Canyon de Piscia di Gallu, Piscia d'U Ghialgu",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 9.418325
+  },
+  {
+    "canyonId": 23342,
+    "canyonName": "Stuarts Rivers",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.588056
+  },
+  {
+    "canyonId": 23345,
+    "canyonName": "Rivière Ouayaneri",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.753606
+  },
+  {
+    "canyonId": 23393,
+    "canyonName": "Barranco Hoya del Laurel",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 9.556228
+  },
+  {
+    "canyonId": 23404,
+    "canyonName": "Barranco de los Solapones",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.388794
+  },
+  {
+    "canyonId": 23405,
+    "canyonName": "Barranco del Mulato, Barranco de la presa del Mulato",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 7.714671
+  },
+  {
+    "canyonId": 23419,
+    "canyonName": "Barranco de la Calabacera",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.570429
+  },
+  {
+    "canyonId": 2342,
+    "canyonName": "Ruisseau de Vadone",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 13.83895
+  },
+  {
+    "canyonId": 23425,
+    "canyonName": "Barranco de los Garañones [Tenerife]",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.376006
+  },
+  {
+    "canyonId": 23432,
+    "canyonName": "Ruisseau de Benacciola, Ruisseau de Benacciola",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.206175
+  },
+  {
+    "canyonId": 23468,
+    "canyonName": "Canyon Mtsapéré I, Mro oua Gouloué",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-976-mayotte",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.190725
+  },
+  {
+    "canyonId": 23486,
+    "canyonName": "Cascade du Dard, Nant du Dard",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.231675
+  },
+  {
+    "canyonId": 23487,
+    "canyonName": "Vorderer Steinbach",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 5.310982
+  },
+  {
+    "canyonId": 23498,
+    "canyonName": "Ruisseaux de Volpajola et San Petru",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 3.291075
+  },
+  {
+    "canyonId": 23520,
+    "canyonName": "Cedros Inferior",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 1.887977
+  },
+  {
+    "canyonId": 23524,
+    "canyonName": "Cascade du Déchargeux, Nant Large",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.113425
+  },
+  {
+    "canyonId": 23525,
+    "canyonName": "Rio Socraggio",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 8.0933
+  },
+  {
+    "canyonId": 23531,
+    "canyonName": "Canyon de Palanggenbach, Palanggenbach",
+    "status": "ok",
+    "sourceName": "switzerland-swissalti3d",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 10.535221
+  },
+  {
+    "canyonId": 23540,
+    "canyonName": "Rio Piumesc, Cascata di Trarego",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.8525
+  },
+  {
+    "canyonId": 23541,
+    "canyonName": "Rio Cinzago",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.8116
+  },
+  {
+    "canyonId": 23568,
+    "canyonName": "Bras Guillaume",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 6.084625
+  },
+  {
+    "canyonId": 23571,
+    "canyonName": "Barrancos de Jordan y Arrako, Barranco de Arrakogoiti",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 4.501017
+  },
+  {
+    "canyonId": 23585,
+    "canyonName": "Bärentrittfälle-Zügenschlucht, Brüggentobelbach, Landwasser",
+    "status": "ok",
+    "sourceName": "switzerland-swissalti3d",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 269.313324
+  },
+  {
+    "canyonId": 23616,
+    "canyonName": "Ravin de Romezelier, Cascades d'Eyroles",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 1.707925
+  },
+  {
+    "canyonId": 23634,
+    "canyonName": "Bras de Pontho",
+    "status": "ok",
+    "sourceName": "ign-rgealti5m-974-la-reunion",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 26.372225
+  },
+  {
+    "canyonId": 2364,
+    "canyonName": "Ruisseau de Saint-Antoine (amont), Féerie des eaux (partie 1)",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.452975
+  },
+  {
+    "canyonId": 23650,
+    "canyonName": "Cascade du Mône, Ruisseau de Rosuel",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.99345
+  },
+  {
+    "canyonId": 23684,
+    "canyonName": "Hoque de Barbaute, Hoque",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 0.28175
+  },
+  {
+    "canyonId": 23690,
+    "canyonName": "Rio Belepeit",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.4073
+  },
+  {
+    "canyonId": 23691,
+    "canyonName": "Rio Barbar",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.008
+  },
+  {
+    "canyonId": 23713,
+    "canyonName": "Mala Koritnica",
+    "status": "ok",
+    "sourceName": "slovenia-dmv5-direct",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 37.866745
+  },
+  {
+    "canyonId": 23740,
+    "canyonName": "Strmi Graben",
+    "status": "ok",
+    "sourceName": "slovenia-dmv5-direct",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.028585
+  },
+  {
+    "canyonId": 23791,
+    "canyonName": "Val Rui Bianch",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.0919
+  },
+  {
+    "canyonId": 23802,
+    "canyonName": "Kreuzgraben",
+    "status": "ok",
+    "sourceName": "austria-bev-als-dtm",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 3.131983
+  },
+  {
+    "canyonId": 23823,
+    "canyonName": "Ore Stream",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 12.305858
+  },
+  {
+    "canyonId": 23832,
+    "canyonName": "Klammbach",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 2.774621
+  },
+  {
+    "canyonId": 23845,
+    "canyonName": "Wadi Bani Kharus",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 51.459469
+  },
+  {
+    "canyonId": 23857,
+    "canyonName": "Wadi Al Hail, Wadi Al Arbeieen",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 23.702353
+  },
+  {
+    "canyonId": 23858,
+    "canyonName": "Wadi Halfain, Halfeen",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 23.565384
+  },
+  {
+    "canyonId": 23861,
+    "canyonName": "Wadi Al Hijri",
+    "status": "ok",
+    "sourceName": "copernicus-global",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 79.871849
+  },
+  {
+    "canyonId": 23874,
+    "canyonName": "Negovanka",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "ENTREE",
+    "selectedUpstreamCatchmentAreaKm2": 1.773175
+  },
+  {
+    "canyonId": 23875,
+    "canyonName": "Torrent de Chaudun, Les sources du Petit Buëch, Petit Buëch",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.595625
+  },
+  {
+    "canyonId": 23888,
+    "canyonName": "Ravin de La Faye",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 1.11285
+  },
+  {
+    "canyonId": 239,
+    "canyonName": "Canyon d' Aigues Bonnes",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 5.86575
+  },
+  {
+    "canyonId": 23915,
+    "canyonName": "Lajinhas",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.421144
+  },
+  {
+    "canyonId": 23919,
+    "canyonName": "Córrego do Pau Branco",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.315105
+  },
+  {
+    "canyonId": 23948,
+    "canyonName": "Ruisseau de la Montagnette 2 (supérieur)",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.264075
+  },
+  {
+    "canyonId": 2395,
+    "canyonName": "Saut de Vezoles, Ruisseau de Bureau",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 8.484825
+  },
+  {
+    "canyonId": 23969,
+    "canyonName": "Ruisseau de Saint-Antoine (aval), Féérie des eaux (aval)",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 4.6274
+  },
+  {
+    "canyonId": 23998,
+    "canyonName": "Barranc Riqüerna (superior)",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 17.284216
+  },
+  {
+    "canyonId": 24024,
+    "canyonName": "Ruisseau de Pozzi",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 1.8756
+  },
+  {
+    "canyonId": 24033,
+    "canyonName": "Barranco de la Tosquera",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.870335
+  },
+  {
+    "canyonId": 24054,
+    "canyonName": "Combe de l' Aubrié",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 1.140125
+  },
+  {
+    "canyonId": 2409,
+    "canyonName": "Le Veyton",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 17.85585
+  },
+  {
+    "canyonId": 24118,
+    "canyonName": "Ruisseau de Pista (supérieur), Phista (supérieur)",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 3.154475
+  },
+  {
+    "canyonId": 24121,
+    "canyonName": "Ruisseau de Crémieux",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 12.6923
+  },
+  {
+    "canyonId": 24148,
+    "canyonName": "La Blanche de Laverq",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 11.7191
+  },
+  {
+    "canyonId": 24153,
+    "canyonName": "Kakoskala Koutsoupias",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 27.593283
+  },
+  {
+    "canyonId": 24160,
+    "canyonName": "Tripis",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 13.265346
+  },
+  {
+    "canyonId": 24167,
+    "canyonName": "Dounos, Rema",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 35.770912
+  },
+  {
+    "canyonId": 24168,
+    "canyonName": "Potistides",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 9.326336
+  },
+  {
+    "canyonId": 24175,
+    "canyonName": "Barranc de les Salines, Salt del Gripau, Còrrec de les Salines, Riera de Les-Illes",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.884185
+  },
+  {
+    "canyonId": 24180,
+    "canyonName": "Torrente Ellero",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 36.484299
+  },
+  {
+    "canyonId": 24193,
+    "canyonName": "Chärstelenbach",
+    "status": "ok",
+    "sourceName": "switzerland-swissalti3d",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 25.041967
+  },
+  {
+    "canyonId": 24207,
+    "canyonName": "Ravin du Riou [Soleilhas]",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.151125
+  },
+  {
+    "canyonId": 2423,
+    "canyonName": "La Barberine",
+    "status": "ok",
+    "sourceName": "copernicus-europe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 32.782856
+  },
+  {
+    "canyonId": 2426,
+    "canyonName": "Ruisseau de Senaris",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 9.112
+  },
+  {
+    "canyonId": 243,
+    "canyonName": "Canyon du Mas Cal Sant, Mas Calsan",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 5.04835
+  },
+  {
+    "canyonId": 2438,
+    "canyonName": "Cascades de Belcaire (Aval)",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.86395
+  },
+  {
+    "canyonId": 2518,
+    "canyonName": "Barranco de Guadalatin inférieur, Bolera",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 172.26239
+  },
+  {
+    "canyonId": 2520,
+    "canyonName": "Cascades du Seebach, Canyon d'Alfeld, Canyon de Sewen, Seebach",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 6.2146
+  },
+  {
+    "canyonId": 2528,
+    "canyonName": "Canyon de Tiarno, Gorg de l'Abyss, Val di Croina, Torrente Massanglia",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 6.7565
+  },
+  {
+    "canyonId": 2529,
+    "canyonName": "Torrente Val Zemola",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 15.5091
+  },
+  {
+    "canyonId": 2535,
+    "canyonName": "Canyon de Juliana",
+    "status": "ok",
+    "sourceName": "slovenia-dmv5-direct",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.712709
+  },
+  {
+    "canyonId": 2544,
+    "canyonName": "Ruisseau de Ciuffatu",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 5.0658
+  },
+  {
+    "canyonId": 2557,
+    "canyonName": "Ruisseau de Chavardès",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.363075
+  },
+  {
+    "canyonId": 2585,
+    "canyonName": "Les Trois Cascades, Les Sagnes",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.47715
+  },
+  {
+    "canyonId": 2591,
+    "canyonName": "Les Côtes",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 5.518375
+  },
+  {
+    "canyonId": 260,
+    "canyonName": "Figaret",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 17.063101
+  },
+  {
+    "canyonId": 2610,
+    "canyonName": "Torrente Aviana, Cascata Prafessa",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.9806
+  },
+  {
+    "canyonId": 2616,
+    "canyonName": "Torrente Caffaro",
+    "status": "ok",
+    "sourceName": "italy-tinitaly-10m",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 148.641907
+  },
+  {
+    "canyonId": 264,
+    "canyonName": "Vallon de la Zouayné",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 2.122275
+  },
+  {
+    "canyonId": 2718,
+    "canyonName": "Canyon du Cély, Cascade du Serpent",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.2707
+  },
+  {
+    "canyonId": 2727,
+    "canyonName": "Rivière du Galion (Partie Basse), Galion",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-guadeloupe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 2.083825
+  },
+  {
+    "canyonId": 2730,
+    "canyonName": "Ravine de la Citerne, La Citerne",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-guadeloupe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 0.402225
+  },
+  {
+    "canyonId": 2759,
+    "canyonName": "Rivière Noire",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-guadeloupe",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.421325
+  },
+  {
+    "canyonId": 276,
+    "canyonName": "Torrent du Fournel",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 49.948074
+  },
+  {
+    "canyonId": 279,
+    "canyonName": "Ravin de Vénascle",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 5.665975
+  },
+  {
+    "canyonId": 2807,
+    "canyonName": "Estrechos del Balcez [Estrechos del], Balces inferior, Os Zillares de la Sierra de Rufas, Rio Isuala",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 24.966274
+  },
+  {
+    "canyonId": 282,
+    "canyonName": "Ravin de Valdemars",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 4.5956
+  },
+  {
+    "canyonId": 2831,
+    "canyonName": "Torrent de Turixant",
+    "status": "ok",
+    "sourceName": "spain-ign-mdt25",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 3.404173
+  },
+  {
+    "canyonId": 2877,
+    "canyonName": "Barrancou d' Astazou-Barrade, Torrent d'Astazou",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.8166
+  },
+  {
+    "canyonId": 2933,
+    "canyonName": "Ravin de Chabrières, Affluent de Malle Vesse amont",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.450025
+  },
+  {
+    "canyonId": 2959,
+    "canyonName": "Cascades de la Sèche, Affluent RD de Bussing",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 0.428775
+  },
+  {
+    "canyonId": 2974,
+    "canyonName": "Cascades de Subra",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 6.17065
+  },
+  {
+    "canyonId": 2987,
+    "canyonName": "Canyon du Bitet (superieur), Garganta de Cujala",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "REVIEW_GPS",
+    "selectedUpstreamCatchmentAreaKm2": 10.1076
+  },
+  {
+    "canyonId": 2995,
+    "canyonName": "Canyon du Larrandaburu",
+    "status": "ok",
+    "sourceName": "ign-wms-rgealti-metropole",
+    "watershedStatus": "built",
+    "watershedSkipReason": null,
+    "selectedPointType": "SORTIE",
+    "selectedUpstreamCatchmentAreaKm2": 1.056425
+  }
+]

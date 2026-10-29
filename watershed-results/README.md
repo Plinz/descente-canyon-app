@@ -63,6 +63,22 @@ python3 scripts/watersheds/export_room_import.py \
   --input watershed-results/runs/full/2026-03-30-world-v1
 ```
 
+## Overlay packages
+
+A run of a few recomputed canyons is packaged with `--scope overlay` (track `incremental`). The export takes the latest world package, then applies the overlay packages generated after it, oldest first: an overlay row replaces the world row of the same canyon.
+
+```bash
+python3 scripts/watersheds/package_results.py \
+  --source-dir build/watersheds/batch-run-guided-2026-10-28-accepted \
+  --track incremental \
+  --scope overlay \
+  --label 2026-10-28-guided-outlet-v1
+```
+
+`--no-overlays` exports the world package alone.
+
+`runs/incremental/2026-10-29-full-pass-v1` holds the full pass of 2026-10-29: the canyons without a watershed or with a misplaced outlet (GPS point off the stream, outlet on the receiving river), recomputed with `--entry-guided-outlet` and the descriptors, then checked by eye one by one. `visual_checks.json` keeps the verdict of every checked canyon; only the `ok` ones are in the package (`audit_outlets.py --visual-checks`), the `rejected` ones keep their world watershed.
+
 ## Notes
 
 - `build/` stays ignored by Git

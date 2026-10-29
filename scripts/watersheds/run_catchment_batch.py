@@ -30,7 +30,7 @@ from rasterio.features import shapes
 from rasterio.warp import transform, transform_geom
 
 from common.cli_tools import default_gdal_translate, default_gdalwarp, resolve_executable
-from compute_entry_watersheds import EntryPoint, create_raster, evaluate_entry, load_canyons
+from compute_entry_watersheds import FLOW_DIRECTION_OFFSETS, EntryPoint, create_raster, evaluate_entry, load_canyons
 from osm_regulation import query_osm_regulation, summarize_osm_regulation
 from run_local_ign_workflow import DEFAULT_LAMBERT93_PROJ4
 from features import (
@@ -66,10 +66,14 @@ DYNAMIC_AUTOPREPARE_PROVIDERS = {
     "liguria-wcs",
     "madeira-wcs",
     "copernicus",
+    "ign-wms",
 }
 
 DEFAULT_REVIEW_FILE = Path("watershed-review/watershed-review.json")
 REVIEW_HYDRO_SNAP_SEARCH_RADII_M = (15.0, 20.0, 30.0)
+ENTRY_GUIDED_MAX_OFFSET_M = 150.0
+ENTRY_GUIDED_REFERENCE_TYPES = ("SORTIE", "PARKING_AVAL")
+ENTRY_GUIDED_MIN_UPA_KM2 = 0.05
 AUTOPREPARE_CACHE_LOCK = threading.Lock()
 AUTOPREPARE_CACHE: dict[tuple[Any, ...], dict[str, Any]] = {}
 
@@ -513,6 +517,11 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=Path("build/watersheds/batch-run"),
     )
+    parser.add_argument(
+        "--extra-points-json",
+        type=Path,
+        help="Points absents du site (texte du topo, OpenCanyon...), utilises pour le calcul seulement: liste de {canyonId, type, latitude, longitude, label, source}.",
+    )
     parser.add_argument("--only-canyon-id", type=int, action="append")
     parser.add_argument("--only-canyon-id-file", type=Path)
     parser.add_argument(
@@ -548,6 +557,22 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--enable-osm-regulation", action="store_true")
     parser.add_argument("--prepare-france-ign-first", action="store_true")
     parser.add_argument("--keep-work", action="store_true")
+    parser.add_argument(
+        "--entry-guided-outlet",
+        action="store_true",
+        help="Place l'exutoire sur le chemin d'ecoulement D8 des points ENTREE, au plus pres du point de sortie (review, SORTIE, parking aval).",
+    )
+    parser.add_argument(
+        "--entry-guided-min-upa-km2",
+        type=float,
+        default=ENTRY_GUIDED_MIN_UPA_KM2,
+        help="Surface amont minimale de l'exutoire guide (plus bas pour les ravines seches sur un MNT a 5 m).",
+    )
+    parser.add_argument(
+        "--skip-descriptors",
+        action="store_true",
+        help="Calcule seulement la surface et le polygone, sans les descripteurs (sols, climat, occupation du sol...).",
+    )
     return parser.parse_args()
 
 
@@ -891,6 +916,29 @@ def auto_prepare_source(
         subprocess.run(command, check=True)
         prepared = dict(source)
         prepared["dem"] = str(local_output_dir / "raw" / "liguria_5m.tif")
+        prepared["preparedDynamically"] = True
+        return prepared
+
+    if provider == "ign-wms":
+        # Kept in the canyon work dir: a fresh extract per canyon, removed with the work files.
+        local_output_dir = output_dir / "work" / str(canyon["id"]) / "ign-wms"
+        command = [
+            sys.executable,
+            "scripts/watersheds/sources/prepare_ign_wms_dem.py",
+            "--output-dir",
+            str(local_output_dir),
+            "--buffer-km",
+            str(auto_prepare.get("bufferKm", source.get("bufferKm", 8.0))),
+            "--crs",
+            str(auto_prepare.get("crs", "EPSG:2154")),
+            "--resolution-m",
+            str(auto_prepare.get("resolutionM", 5.0)),
+        ]
+        for point in points:
+            command.extend(["--point", f"{point['latitude']},{point['longitude']}"])
+        subprocess.run(command, check=True)
+        prepared = dict(source)
+        prepared["dem"] = str(local_output_dir / "raw" / "ign_wms_dem.tif")
         prepared["preparedDynamically"] = True
         return prepared
 
@@ -1651,6 +1699,214 @@ def review_metadata_for_points(points: list[dict[str, Any]]) -> dict[str, Any] |
     }
 
 
+def trace_flow_path(flow: np.ndarray, row: int, col: int) -> list[tuple[int, int]]:
+    path: list[tuple[int, int]] = []
+    seen: set[tuple[int, int]] = set()
+    while 0 <= row < flow.shape[0] and 0 <= col < flow.shape[1] and (row, col) not in seen:
+        seen.add((row, col))
+        path.append((row, col))
+        offset = FLOW_DIRECTION_OFFSETS.get(int(flow[row, col]))
+        if offset is None:
+            break
+        row, col = row + offset[0], col + offset[1]
+    return path
+
+
+def entry_guided_candidate(
+    *,
+    canyon: dict[str, Any],
+    points: list[dict[str, Any]],
+    raster_paths: dict[str, Path],
+) -> dict[str, Any] | None:
+    """Outlet on the stream that flows through the canyon entry.
+
+    The usual snap takes a channel cell near the exit point, which lands on a side gully when the point
+    sits a few metres off the main stream, and the scoring prefers a downstream parking far from the
+    canyon. Here the D8 path of each ENTREE point is followed downstream and the outlet is the path cell
+    closest to the exit reference: the review point when one was placed by hand, else the SORTIE points,
+    else the downstream parking. None when no path passes within ENTRY_GUIDED_MAX_OFFSET_M of it.
+    Without any exit reference, the outlet is where the path has dropped by the canyon's denivele.
+    """
+    entries = [point for point in points if point.get("type") == "ENTREE"]
+    review_point = next((point for point in points if is_review_hydrology_override(point)), None)
+    references: list[dict[str, Any]] = [review_point] if review_point is not None else []
+    for point_type in ENTRY_GUIDED_REFERENCE_TYPES:
+        if references:
+            break
+        references = [point for point in points if point.get("type") == point_type]
+    drop_m = canyon.get("denivele")
+    drop_m = float(drop_m) if isinstance(drop_m, (int, float)) and drop_m > 0 else None
+    if not entries or raster_paths.get("flowdir") is None or raster_paths.get("elevation") is None:
+        return None
+    if not references and drop_m is None:
+        return None
+
+    with rasterio.open(raster_paths["flowdir"]) as src:
+        flow = src.read(1, masked=True).filled(0).astype(np.int16)
+        raster_crs = src.crs
+        raster_transform = src.transform
+    with rasterio.open(raster_paths["upa"]) as src:
+        upa = src.read(1, masked=True).astype(np.float64).filled(np.nan)
+    with rasterio.open(raster_paths["elevation"]) as src:
+        elevation = src.read(1, masked=True).astype(np.float64).filled(np.nan)
+
+    ref_xs, ref_ys = transform(
+        "EPSG:4326",
+        raster_crs,
+        [float(point["longitude"]) for point in references],
+        [float(point["latitude"]) for point in references],
+    ) if references else ([], [])
+    entry_xs, entry_ys = transform(
+        "EPSG:4326",
+        raster_crs,
+        [float(point["longitude"]) for point in entries],
+        [float(point["latitude"]) for point in entries],
+    )
+    best: dict[str, Any] | None = None
+    for entry, entry_x, entry_y in zip(entries, entry_xs, entry_ys):
+        row, col = rasterio.transform.rowcol(raster_transform, entry_x, entry_y)
+        path = trace_flow_path(flow, int(row), int(col))
+        if len(path) < 2:
+            continue
+        path_xs, path_ys = rasterio.transform.xy(
+            raster_transform,
+            [cell[0] for cell in path],
+            [cell[1] for cell in path],
+        )
+        path_xs = np.asarray(path_xs, dtype=np.float64)
+        path_ys = np.asarray(path_ys, dtype=np.float64)
+        if not references:
+            path_elevations = np.array([elevation[cell] for cell in path])
+            below = np.flatnonzero(path_elevations <= path_elevations[0] - drop_m)
+            if below.size == 0:
+                continue
+            index = int(below[0])
+            path_length_m = float(np.hypot(np.diff(path_xs[: index + 1]), np.diff(path_ys[: index + 1])).sum())
+            length_m = canyon.get("longueur")
+            max_length_m = max(3.0 * float(length_m), 3000.0) if isinstance(length_m, (int, float)) and length_m > 0 else 5000.0
+            # The highest entry starts the canyon.
+            if path_length_m > max_length_m or (best is not None and path_elevations[0] <= best["startElevationM"]):
+                continue
+            best = {
+                "method": "entry_drop",
+                "offsetM": 0.0,
+                "entry": entry,
+                "reference": entry,
+                "referenceXY": (entry_x, entry_y),
+                "path": path,
+                "index": index,
+                "distanceM": path_length_m,
+                "startElevationM": float(path_elevations[0]),
+            }
+            continue
+        for reference, ref_x, ref_y in zip(references, ref_xs, ref_ys):
+            distances = np.hypot(path_xs - ref_x, path_ys - ref_y)
+            offset_m = float(distances.min())
+            if best is not None and offset_m >= best["offsetM"]:
+                continue
+            # At a confluence the closest cell can already be on the receiving river: take the first
+            # cell about as close, then step back over an inflow that makes the area jump anywhere on
+            # the stretch of path that is about as close (the jump can be a few cells upstream).
+            index = int(np.argmax(distances <= offset_m + 10.0))
+            cell = index
+            while cell > 0 and distances[cell - 1] <= offset_m + 30.0:
+                if upa[path[cell]] > 1.5 * upa[path[cell - 1]]:
+                    index = cell - 1
+                cell -= 1
+            best = {
+                "method": "exit_reference",
+                "offsetM": offset_m,
+                "entry": entry,
+                "reference": reference,
+                "referenceXY": (ref_x, ref_y),
+                "path": path,
+                "index": index,
+                "distanceM": float(distances[index]),
+            }
+    if best is None or best["offsetM"] > ENTRY_GUIDED_MAX_OFFSET_M:
+        return None
+
+    row, col = best["path"][best["index"]]
+    snapped_upa = float(upa[row, col])
+    # A path that never reaches a channel runs down a slope, not along the canyon (coarse DEMs).
+    if not math.isfinite(snapped_upa) or snapped_upa < ENTRY_GUIDED_MIN_UPA_KM2:
+        return None
+    cell_x, cell_y = rasterio.transform.xy(raster_transform, row, col)
+    (snapped_longitude,), (snapped_latitude,) = transform(raster_crs, "EPSG:4326", [cell_x], [cell_y])
+    reference = best["reference"]
+    raw_row, raw_col = (int(value) for value in rasterio.transform.rowcol(raster_transform, *best["referenceXY"]))
+    raw_upa = None
+    if 0 <= raw_row < upa.shape[0] and 0 <= raw_col < upa.shape[1] and math.isfinite(float(upa[raw_row, raw_col])):
+        raw_upa = float(upa[raw_row, raw_col])
+    elevation_m = None
+    if math.isfinite(float(elevation[row, col])):
+        elevation_m = round(float(elevation[row, col]), 2)
+    entry = best["entry"]
+    return {
+        "pointType": reference.get("type"),
+        "label": reference.get("label"),
+        "latitude": reference.get("latitude"),
+        "longitude": reference.get("longitude"),
+        "forcedByReview": is_review_hydrology_override(reference),
+        "reviewStatus": reference.get("_reviewStatus"),
+        "reviewAdminPlaced": bool(reference.get("_reviewAdminPlaced", False)),
+        "reviewSourceFile": reference.get("_reviewSourceFile"),
+        "reviewSnapAttemptedRadiiM": None,
+        "reviewSnapRadiusM": None,
+        "evaluation": {
+            "canyon_id": int(canyon["id"]),
+            "canyon_name": str(canyon.get("nomComplet") or canyon.get("nom") or canyon["id"]),
+            "entry_index": 0,
+            "geo_point_index": 0,
+            "latitude": float(reference["latitude"]),
+            "longitude": float(reference["longitude"]),
+            "label": reference.get("label"),
+            "label_hint": best["method"],
+            "raw_upa_km2": raw_upa,
+            "snapped_upa_km2": round(snapped_upa, 6),
+            "raw_cell": {"row": raw_row, "col": raw_col},
+            "snapped_cell": {"row": int(row), "col": int(col)},
+            "snapped_latitude": round(float(snapped_latitude), 6),
+            "snapped_longitude": round(float(snapped_longitude), 6),
+            "snap_distance_m": round(best["distanceM"], 3),
+            "pixel_size_m": round(abs(float(raster_transform.a)), 3),
+            "candidate_count": len(best["path"]),
+            "raw_to_snapped_upa_ratio": round(snapped_upa / raw_upa, 6) if raw_upa else None,
+            "elevation_m": elevation_m,
+            "flowdir_value": int(flow[row, col]),
+            "status": "ok",
+            "status_detail": None,
+        },
+        "analysis": {
+            "selectionScore": None,
+            "selectionVerdict": "entry_guided",
+            "selectionReasons": ["outlet_on_entry_flow_path" if best["method"] == "exit_reference" else "outlet_after_canyon_drop"],
+            "relativeUpaRatioToBest": None,
+        },
+        "entryGuided": {
+            "method": best["method"],
+            "entryLatitude": float(entry["latitude"]),
+            "entryLongitude": float(entry["longitude"]),
+            "entryLabel": entry.get("label"),
+            "pathOffsetM": round(best["offsetM"], 3),
+            "pathIndex": best["index"],
+            "pathCellCount": len(best["path"]),
+        },
+    }
+
+
+def watershed_max_elevation(mask_data: dict[str, Any], elevation_path: Path | None) -> float | None:
+    if elevation_path is None:
+        return None
+    with rasterio.open(elevation_path) as src:
+        elevation = src.read(1, masked=True).astype(np.float64).filled(np.nan)
+    mask = mask_data.get("mask")
+    if not isinstance(mask, np.ndarray) or mask.shape != elevation.shape or not mask.any():
+        return None
+    value = float(np.nanmax(np.where(mask, elevation, np.nan)))
+    return round(value, 2) if math.isfinite(value) else None
+
+
 def candidate_diagnostic(candidate: dict[str, Any] | None) -> dict[str, Any] | None:
     if not isinstance(candidate, dict):
         return None
@@ -2043,6 +2299,8 @@ def process_single_canyon(
     enable_osm_regulation: bool,
     keep_work: bool,
     shared_descriptor_inputs: dict[str, Any],
+    entry_guided_outlet: bool = False,
+    skip_descriptors: bool = False,
 ) -> str:
     canyon_file = output_dir / "canyons" / f"{canyon_id}.json"
     print(f"START canyon {canyon_id} {canyon.get('nomComplet') or canyon.get('nom')}", flush=True)
@@ -2148,6 +2406,12 @@ def process_single_canyon(
         started = time.perf_counter()
         candidate_analysis = analyze_point_candidates(point_results)
         stage_timings["analyzeCandidatesSec"] = stage_timings.get("analyzeCandidatesSec", 0.0) + (time.perf_counter() - started)
+        if entry_guided_outlet and source["mode"] == "derive_local_hydrology":
+            guided_candidate = entry_guided_candidate(canyon=canyon, points=points, raster_paths=raster_paths)
+            candidate_analysis["analysisSummary"]["entryGuidedUsed"] = guided_candidate is not None
+            if guided_candidate is not None:
+                candidate_analysis["bestHydroProxyCandidate"] = guided_candidate
+                candidate_analysis["analysisSummary"]["bestHydroProxyPointType"] = guided_candidate["pointType"]
         analyzed_points = candidate_analysis["points"]
         selected_candidate = candidate_analysis["bestHydroProxyCandidate"]
         suggested_candidate = candidate_analysis.get("suggestedCandidate")
@@ -2257,6 +2521,7 @@ def process_single_canyon(
                 "selectedUpstreamCatchmentAreaKm2": selected_candidate["evaluation"].get("snapped_upa_km2"),
                 "selectedSelectionVerdict": selected_candidate.get("analysis", {}).get("selectionVerdict"),
                 "simplifyToleranceM": float(source.get("watershedSimplifyToleranceM", 10.0)),
+                "basinMaxElevationM": watershed_max_elevation(mask_data, raster_paths.get("elevation")),
             }
             watershed_status = "built"
         else:
@@ -2293,7 +2558,12 @@ def process_single_canyon(
             source=source,
         )
 
-    if mask_data is not None and raster_paths.get("elevation") is not None and selected_candidate is not None:
+    if (
+        not skip_descriptors
+        and mask_data is not None
+        and raster_paths.get("elevation") is not None
+        and selected_candidate is not None
+    ):
         climate_info = shared_descriptor_inputs.get("climate")
         worldcover_info = shared_descriptor_inputs.get("worldcover")
         ghsl_info = shared_descriptor_inputs.get("ghsl")
@@ -2447,6 +2717,8 @@ def process_single_canyon_safe(
     enable_osm_regulation: bool,
     keep_work: bool,
     shared_descriptor_inputs: dict[str, Any],
+    entry_guided_outlet: bool = False,
+    skip_descriptors: bool = False,
 ) -> str:
     try:
         return process_single_canyon(
@@ -2460,6 +2732,8 @@ def process_single_canyon_safe(
             enable_osm_regulation=enable_osm_regulation,
             keep_work=keep_work,
             shared_descriptor_inputs=shared_descriptor_inputs,
+            entry_guided_outlet=entry_guided_outlet,
+            skip_descriptors=skip_descriptors,
         )
     except KeyboardInterrupt:
         raise
@@ -2490,7 +2764,9 @@ def process_single_canyon_safe(
 
 
 def main() -> int:
+    global ENTRY_GUIDED_MIN_UPA_KM2
     args = parse_args()
+    ENTRY_GUIDED_MIN_UPA_KM2 = args.entry_guided_min_upa_km2
     configure_runtime_caches()
     output_dir = args.output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -2508,6 +2784,8 @@ def main() -> int:
     canyons = load_canyons(args.canyons_json)
     point_types = set(args.point_type)
     geo_points = load_json(args.geo_points_json)
+    if args.extra_points_json:
+        geo_points = [*geo_points, *load_json(args.extra_points_json)]
     points_by_canyon = all_canyon_points(geo_points, point_types)
     review_overrides: dict[int, dict[str, Any]] = {}
     if args.review_file and args.review_file.exists():
@@ -2555,7 +2833,7 @@ def main() -> int:
                 continue
             pending.append((canyon_id, canyon, points))
 
-        shared_descriptor_inputs = prepare_shared_descriptor_inputs(output_dir, pending) if pending else {
+        shared_descriptor_inputs = prepare_shared_descriptor_inputs(output_dir, pending) if pending and not args.skip_descriptors else {
             "climate": None,
             "worldcover": None,
             "ghsl": None,
@@ -2580,6 +2858,8 @@ def main() -> int:
                     enable_osm_regulation=args.enable_osm_regulation,
                     keep_work=args.keep_work,
                     shared_descriptor_inputs=shared_descriptor_inputs,
+                    entry_guided_outlet=args.entry_guided_outlet,
+                    skip_descriptors=args.skip_descriptors,
                 )
                 processed += 1
                 write_progress(output_dir, processed=processed, pending=max(pending_total - processed, 0))
@@ -2616,6 +2896,8 @@ def main() -> int:
                         enable_osm_regulation=args.enable_osm_regulation,
                         keep_work=args.keep_work,
                         shared_descriptor_inputs=shared_descriptor_inputs,
+                        entry_guided_outlet=args.entry_guided_outlet,
+                        skip_descriptors=args.skip_descriptors,
                     )
                     in_flight[future] = (canyon_id, canyon, points)
 
@@ -2653,6 +2935,8 @@ def main() -> int:
                             enable_osm_regulation=args.enable_osm_regulation,
                             keep_work=args.keep_work,
                             shared_descriptor_inputs=shared_descriptor_inputs,
+                            entry_guided_outlet=args.entry_guided_outlet,
+                            skip_descriptors=args.skip_descriptors,
                         )
                         in_flight[new_future] = (canyon_id, canyon, points)
                     if broken_pool_exc is not None:
@@ -2674,6 +2958,8 @@ def main() -> int:
                         enable_osm_regulation=args.enable_osm_regulation,
                         keep_work=args.keep_work,
                         shared_descriptor_inputs=shared_descriptor_inputs,
+                        entry_guided_outlet=args.entry_guided_outlet,
+                        skip_descriptors=args.skip_descriptors,
                     )
                     processed += 1
                     write_progress(output_dir, processed=processed, pending=max(pending_total - processed, 0))

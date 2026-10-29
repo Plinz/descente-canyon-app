@@ -1,0 +1,293 @@
+# Canyons recomputed on 2026-10-28 with --entry-guided-outlet: no watershed yet, or a suspicious one that was not
+# reviewed as good (scripts/watersheds/audit_outlets.py: entry outside the basin, outlet above the canyon start,
+# tiny basin, outlet far from the canyon points...).
+# Format: canyonId | canyonName | reason
+214 | Gaz | missing
+215 | Ruisant | missing
+218 | Neyron | bad_admin_suspicious
+224 | Rhéby | bad_admin_suspicious
+226 | Diosaz | bad_admin_suspicious
+232 | Haut Tech | bad_admin_suspicious
+239 | Aigues Bonnes | bad_admin_suspicious
+243 | Mas Cal Sant | bad_admin_suspicious
+260 | Figaret | bad_admin_suspicious
+264 | Zouayné | missing
+276 | Fournel | bad_admin_suspicious
+279 | Vénascle | bad_admin_suspicious
+282 | Valdemars | bad_admin_suspicious
+2169 | Chaley | bad_admin_suspicious
+2228 | La Bollène | bad_admin_suspicious
+2236 | Morghé | bad_admin_suspicious
+2237 | Carléva | bad_admin_suspicious
+2257 | Tramouillon (inférieur) | bad_admin_suspicious
+2267 | Buchardet | missing
+2270 | La Chalp | missing
+2273 | Naval | missing
+2277 | Diable | bad_admin_suspicious
+2289 | Cause (aval) | bad_admin_suspicious
+2329 | Piscia de l'Onda | bad_admin_suspicious
+2334 | Piscia di Gallu | missing
+2342 | Vadone | bad_admin_suspicious
+2395 | Vezoles | missing
+2409 | Veyton | bad_admin_suspicious
+2423 | Barberine | auto_suspicious
+2426 | Senaris | missing
+2438 | Belcaire (Aval) | missing
+2468 | Falavel | bad_admin_suspicious
+2518 | Guadalatin inférieur | bad_admin_suspicious
+2528 | Tiarno | missing
+2529 | Val Zemola | bad_admin_suspicious
+2544 | Ciuffatu | auto_suspicious
+2546 | Moulin Marquis | missing
+2557 | Chavardès | bad_admin_suspicious
+2562 | Penyagalera | bad_admin_suspicious
+2585 | Trois Cascades | missing
+2591 | Côtes | bad_admin_suspicious
+2610 | Aviana | bad_admin_suspicious
+2616 | Caffaro | missing
+2718 | Cély | bad_admin_suspicious
+2796 | Niscoude (inférieur) | bad_admin_suspicious
+2807 | Balcez [Estrechos del] | bad_admin_suspicious
+2831 | Turixant | bad_admin_suspicious
+2877 | Astazou-Barrade | missing
+2933 | Chabrières | bad_admin_suspicious
+2959 | Sèche | missing
+2974 | Subra | missing
+2987 | Bitet (superieur) | bad_admin_suspicious
+21037 | Rouyes | missing
+21041 | Loma de Guega | missing
+21046 | San Martin | bad_admin_suspicious
+21055 | Bras Sec | missing
+21057 | Cagateille | bad_admin_suspicious
+21064 | Tine des Fonts (amont) | bad_admin_suspicious
+21079 | Clocher | bad_admin_suspicious
+21117 | Trou de Fer | bad_admin_suspicious
+21149 | Colombaia (supérieur) | bad_admin_suspicious
+21168 | Taravo | bad_admin_suspicious
+21184 | Tsoutsouros | auto_suspicious
+21256 | Sant Gili | bad_admin_suspicious
+21257 | Bras de Jeanne supérieur | bad_admin_suspicious
+21295 | Roquefavour | missing
+21303 | Courbons | bad_admin_suspicious
+21306 | Bolega | bad_admin_suspicious
+21314 | Valcarlos | bad_admin_suspicious
+21325 | Ferrière | missing
+21354 | Saut du Chien | bad_admin_suspicious
+21358 | Verrières | bad_admin_suspicious
+21387 | Kanangara | bad_admin_suspicious
+21389 | Doran | missing
+21407 | Bras Mazerin [Trou de fer] | bad_admin_suspicious
+21413 | Arzenc d'Apcher | bad_admin_suspicious
+21417 | Bras Rouge (Médian) | missing
+21419 | Aidy | missing
+21451 | Gobert (inférieur) | missing
+21452 | Roches I | bad_admin_suspicious
+21459 | Coin (supérieur) | bad_admin_suspicious
+21469 | Roska | bad_admin_suspicious
+21472 | Stenovouni | auto_suspicious
+21481 | Salazes | missing
+21515 | Kardelis | auto_suspicious
+21541 | Cuevas de la Reina | missing
+21570 | Parisien | missing
+21571 | Coume (supérieur) | missing
+21577 | Baoubouillier | bad_admin_suspicious
+21593 | Gria Vathra | bad_admin_suspicious
+21597 | Giali | auto_suspicious
+21598 | Fonias | auto_suspicious
+21599 | Kremastos | auto_suspicious
+21622 | Corrals | bad_admin_suspicious
+21644 | Chorro | bad_admin_suspicious
+21649 | Almanchares | bad_admin_suspicious
+21652 | Guadiaro | bad_admin_suspicious
+21656 | Bell Creek | auto_suspicious
+21672 | Tsigenorema | bad_admin_suspicious
+21680 | Gioglio | missing
+21681 | Sari Sari river | bad_admin_suspicious
+21686 | Titou gorge (inférieur) | auto_suspicious
+21699 | Fornazos | missing
+21709 | Nefeli | auto_suspicious
+21711 | Taillat | missing
+21714 | Maggiore | missing
+21765 | Jungle's End | auto_suspicious
+21797 | Oëx | missing
+21802 | Hidan (supérieur-II) | auto_suspicious
+21803 | Mujib (inférieur) | auto_suspicious
+21804 | Hidan Siq (inférieur-III) | auto_suspicious
+21805 | Ibn Hammad | auto_suspicious
+21831 | Vessadas (inférieur) | auto_suspicious
+21834 | Pousterle | missing
+21858 | Terrasse | bad_admin_suspicious
+21875 | Mattre | bad_admin_suspicious
+21883 | San Sebastiano | missing
+21893 | Carbassou | missing
+21930 | Lou Gabian | missing
+21940 | Alberghi | bad_admin_suspicious
+21942 | Boixols (par affluent RD) | bad_admin_suspicious
+21944 | Alzeau | bad_admin_suspicious
+21946 | Capèche | bad_admin_suspicious
+21957 | Sainte Victoire | missing
+21961 | Lou Souleou | missing
+21963 | Lou Pitchoun | missing
+21965 | Silvio | missing
+21966 | Résurrection (intégral, grand rappel) | missing
+21970 | Pili | bad_admin_suspicious
+21999 | Sulz Bach | bad_admin_suspicious
+22003 | Molinières | bad_admin_suspicious
+22025 | Piccola | bad_admin_suspicious
+22026 | Chevaline | missing
+22034 | Faby | bad_admin_suspicious
+22074 | Ars | bad_admin_suspicious
+22083 | Infernaccio dell’Ambro | bad_admin_suspicious
+22133 | Duratón | bad_admin_suspicious
+22140 | Hortela (Partie 1) | auto_suspicious
+22141 | Hortelã (partie 2) | auto_suspicious
+22142 | Hortela (partie 3) | auto_suspicious
+22144 | Seixal (supérieur) | auto_suspicious
+22145 | Seixal (inférieur) | auto_suspicious
+22148 | Miroir | missing
+22189 | Tapume de Verissimo | auto_suspicious
+22191 | Skurda | auto_suspicious
+22199 | Tresonečki | bad_admin_suspicious
+22200 | Duf Dol | bad_admin_suspicious
+22203 | Agua d'Alto | auto_suspicious
+22208 | Hillette | bad_admin_suspicious
+22248 | Cap de l'Aigle | missing
+22277 | Schellaine | auto_suspicious
+22318 | Vernes | bad_admin_suspicious
+22324 | Garde | missing
+22328 | Lèches | bad_admin_suspicious
+22347 | Pena Calma | missing
+22368 | Kramerlaine | auto_suspicious
+22379 | Plattengraben - Albertsbach | auto_suspicious
+22383 | Gachentodklamm | auto_suspicious
+22391 | Fahrmannslaine | auto_suspicious
+22406 | Sanson | bad_admin_suspicious
+22414 | Hudeira | auto_suspicious
+22425 | Alecrim | bad_admin_suspicious
+22437 | St Même | bad_admin_suspicious
+22438 | Tenaison | missing
+22444 | Levigliese | missing
+22454 | Glasbachgraben | auto_suspicious
+22455 | Rappinschlucht | auto_suspicious
+22456 | Staffelbach | auto_suspicious
+22458 | Saint Jean | bad_admin_suspicious
+22525 | Fonissa | auto_suspicious
+22550 | Planque | missing
+22552 | Oo (inférieur) | bad_admin_suspicious
+22578 | Baousse del Biel | missing
+22604 | Milon canyon | auto_suspicious
+22615 | Ermitage Saint-Michel | missing
+22641 | Guiers Mort | bad_admin_suspicious
+22662 | Delgado (Partie A) | auto_suspicious
+22668 | Brondelière 2 | bad_admin_suspicious
+22686 | Cocus | bad_admin_suspicious
+22718 | Sfakohonos | auto_suspicious
+22719 | Kria Vrisi | bad_admin_suspicious
+22721 | Valaha | bad_admin_suspicious
+22728 | Erganos | auto_suspicious
+22741 | Méga | auto_suspicious
+22745 | Karagiannaki Canyon | bad_admin_suspicious
+22751 | Lombo (centre) | bad_admin_suspicious
+22753 | Laje Gauche | auto_suspicious
+22754 | Laje Droit | auto_suspicious
+22759 | Pari | bad_admin_suspicious
+22762 | Pigeons | bad_admin_suspicious
+22766 | Résurrection | auto_suspicious
+22768 | Göynük | auto_suspicious
+22778 | Alba | bad_admin_suspicious
+22779 | Barricate | bad_admin_suspicious
+22783 | Araplakos | auto_suspicious
+22785 | Kakoskala Stomiou | auto_suspicious
+22788 | Panäratobel | bad_admin_suspicious
+22811 | Giuf | missing
+22813 | Gallavesa | bad_admin_suspicious
+22830 | Nocca | bad_admin_suspicious
+22831 | Isorno (supérieur) | bad_admin_suspicious
+22854 | Purple Creek | auto_suspicious
+22875 | Carew Creek | auto_suspicious
+22879 | Granity Creek | auto_suspicious
+22889 | Tri Falls Canyon | auto_suspicious
+22903 | Mathews Creek | bad_admin_suspicious
+22904 | Waipehi Canyon | auto_suspicious
+22912 | Eager Beaver | bad_admin_suspicious
+22923 | Ruapae Falls | auto_suspicious
+22946 | Usia | bad_admin_suspicious
+22951 | Prayer | bad_admin_suspicious
+22966 | Beaume noire | bad_admin_suspicious
+22980 | Obergailer Bach | bad_admin_suspicious
+23012 | Flottes | bad_admin_suspicious
+23022 | Bacon | missing
+23038 | Mulins | bad_admin_suspicious
+23056 | Saxetbach (amont) | bad_admin_suspicious
+23069 | Montarezze | bad_admin_suspicious
+23090 | Peyroutilles | missing
+23131 | Malamort | bad_admin_suspicious
+23153 | Bani Awf | auto_suspicious
+23155 | Salvadon | missing
+23162 | Troggia | bad_admin_suspicious
+23179 | Pourtoune 6 - Fours | bad_admin_suspicious
+23193 | Otal | missing
+23196 | Melaghia | bad_admin_suspicious
+23201 | Mal Cros | bad_admin_suspicious
+23203 | Mülibach | bad_admin_suspicious
+23205 | Sandbach (Inner) | bad_admin_suspicious
+23208 | Verdon | bad_admin_suspicious
+23235 | Barrosas | auto_suspicious
+23251 | Sanguinhal Esquerda | bad_admin_suspicious
+23263 | Cedros Medio | auto_suspicious
+23276 | Salto Esquerdo | auto_suspicious
+23282 | Três Voltas Supérior | bad_admin_suspicious
+23314 | La Rouvière | missing
+23319 | La Beaume | bad_admin_suspicious
+23322 | Lona | bad_admin_suspicious
+23333 | Machinery Creek | auto_suspicious
+23335 | Aigache | auto_suspicious
+23336 | Ravine Ouayaneri | bad_admin_suspicious
+23337 | Fond Calabasse | bad_admin_suspicious
+23338 | O'Hara | bad_admin_suspicious
+23342 | Stuarts Rivers | bad_admin_suspicious
+23345 | Rivière Ouayaneri | bad_admin_suspicious
+23432 | Benacciola | bad_admin_suspicious
+23468 | Mtsapéré I | bad_admin_suspicious
+23486 | Dard | missing
+23487 | Vorderer Steinbach | auto_suspicious
+23505 | Rothmannbach | auto_suspicious
+23512 | Tartera | missing
+23520 | Cedros Inferior | auto_suspicious
+23524 | Déchargeux | missing
+23548 | Canal de la Chalp | missing
+23584 | Valentin (inférieur) | missing
+23585 | Bärentrittfälle-Zügenschlucht | bad_admin_suspicious
+23616 | Romezelier | bad_admin_suspicious
+23682 | Germeuil | missing
+23718 | Vorz intermédiaire | bad_admin_suspicious
+23731 | Afra | auto_suspicious
+23732 | Umruq | auto_suspicious
+23733 | Abu Kusheiba | auto_suspicious
+23734 | Dabi | auto_suspicious
+23791 | Bianch | bad_admin_suspicious
+23817 | Weißbach | auto_suspicious
+23823 | Ore Stream | auto_suspicious
+23832 | Klammbach | auto_suspicious
+23875 | Chaudun | bad_admin_suspicious
+23888 | La Faye | missing
+23902 | Fenbruan | missing
+23915 | Lajinhas | auto_suspicious
+23919 | Pau Branco | auto_suspicious
+23933 | Vachioux (affluent RG) | bad_admin_suspicious
+23967 | Touron | bad_admin_suspicious
+24005 | Pou de la Portella | missing
+24024 | Pozzi | bad_admin_suspicious
+24039 | Punta Camedda | missing
+24054 | Aubrié | missing
+24140 | Kamena Vourla | auto_suspicious
+24142 | Pré Girardin | missing
+24148 | Blanche de Laverq | missing
+24153 | Kakoskala Koutsoupias | bad_admin_suspicious
+24160 | Tripis | bad_admin_suspicious
+24167 | Dounos | bad_admin_suspicious
+24168 | Potistides | bad_admin_suspicious
+24170 | L'Etrier du Diable | missing
+24175 | Salines | auto_suspicious
+24196 | Eagle's Nest | auto_suspicious
+24198 | Red Granit Creek | auto_suspicious

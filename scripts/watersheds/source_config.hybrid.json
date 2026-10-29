@@ -1,6 +1,106 @@
 {
   "sources": [
     {
+      "name": "ign-wms-rgealti-metropole",
+      "mode": "derive_local_hydrology",
+      "srs": "EPSG:2154",
+      "bufferKm": 8.0,
+      "searchRadiusM": 120.0,
+      "channelMinUpaKm2": 0.05,
+      "candidateStrategy": "nearest_channel",
+      "autoPrepare": {
+        "provider": "ign-wms",
+        "crs": "EPSG:2154",
+        "resolutionM": 5.0,
+        "bufferKm": 8.0
+      },
+      "match": {
+        "pays": "France",
+        "departementNotIn": [
+          "Guadeloupe",
+          "La Réunion",
+          "Martinique",
+          "Mayotte"
+        ]
+      }
+    },
+    {
+      "name": "ign-wms-rgealti-la-reunion",
+      "mode": "derive_local_hydrology",
+      "srs": "EPSG:2975",
+      "bufferKm": 8.0,
+      "searchRadiusM": 120.0,
+      "channelMinUpaKm2": 0.05,
+      "candidateStrategy": "nearest_channel",
+      "autoPrepare": {
+        "provider": "ign-wms",
+        "crs": "EPSG:2975",
+        "resolutionM": 5.0,
+        "bufferKm": 8.0
+      },
+      "match": {
+        "pays": "France",
+        "departement": "La Réunion"
+      }
+    },
+    {
+      "name": "ign-wms-rgealti-martinique",
+      "mode": "derive_local_hydrology",
+      "srs": "EPSG:5490",
+      "bufferKm": 8.0,
+      "searchRadiusM": 120.0,
+      "channelMinUpaKm2": 0.05,
+      "candidateStrategy": "nearest_channel",
+      "autoPrepare": {
+        "provider": "ign-wms",
+        "crs": "EPSG:5490",
+        "resolutionM": 5.0,
+        "bufferKm": 8.0
+      },
+      "match": {
+        "pays": "France",
+        "departement": "Martinique"
+      }
+    },
+    {
+      "name": "ign-wms-rgealti-guadeloupe",
+      "mode": "derive_local_hydrology",
+      "srs": "EPSG:5490",
+      "bufferKm": 8.0,
+      "searchRadiusM": 120.0,
+      "channelMinUpaKm2": 0.05,
+      "candidateStrategy": "nearest_channel",
+      "autoPrepare": {
+        "provider": "ign-wms",
+        "crs": "EPSG:5490",
+        "resolutionM": 5.0,
+        "bufferKm": 8.0
+      },
+      "match": {
+        "pays": "France",
+        "departement": "Guadeloupe"
+      }
+    },
+    {
+      "name": "ign-wms-rgealti-mayotte",
+      "mode": "derive_local_hydrology",
+      "srs": "EPSG:4471",
+      "bufferKm": 8.0,
+      "searchRadiusM": 120.0,
+      "channelMinUpaKm2": 0.05,
+      "candidateStrategy": "nearest_channel",
+      "autoPrepare": {
+        "provider": "ign-wms",
+        "crs": "EPSG:4471",
+        "resolutionM": 5.0,
+        "bufferKm": 8.0
+      },
+      "match": {
+        "pays": "France",
+        "departement": "Mayotte"
+      }
+    },
+    {
       "name": "ign-rgealti5m-06-alpes-maritimes",
       "mode": "derive_local_hydrology",
       "dem": "build\\watersheds\\ign-data\\vrt\\rgealti5m\\_all_downloaded.vrt",
