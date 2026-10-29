@@ -35,7 +35,7 @@ coroutines = "1.11.0"
 
 # ML runtime. Not above 1.28: from 1.29 the Android build starts a Microsoft telemetry client at launch
 # (ai.onnxruntime.TelemetryInitializer), and the newer native libraries are 10 to 15 MB larger per ABI.
-onnxRuntime = "1.22.0"
+onnxRuntime = "1.28.0"
 
 # Image loading
 coil = "3.6.3"
