@@ -1,0 +1,1802 @@
+[
+ {
+  "canyonId": 2520,
+  "type": "ENTREE",
+  "latitude": 47.8169,
+  "longitude": 6.87656,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/64a9bd44-4794-42fa-9432-332f54b4175c"
+ },
+ {
+  "canyonId": 2520,
+  "type": "SORTIE",
+  "latitude": 47.815,
+  "longitude": 6.8787,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/64a9bd44-4794-42fa-9432-332f54b4175c"
+ },
+ {
+  "canyonId": 2535,
+  "type": "ENTREE",
+  "latitude": 46.398863,
+  "longitude": 13.750684,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/521856a7-3c4e-415c-8922-d2d437b5455b"
+ },
+ {
+  "canyonId": 2535,
+  "type": "PARKING_AMONT",
+  "latitude": 46.405137,
+  "longitude": 13.742784,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/521856a7-3c4e-415c-8922-d2d437b5455b"
+ },
+ {
+  "canyonId": 2535,
+  "type": "PARKING_AVAL",
+  "latitude": 46.397957,
+  "longitude": 13.744848,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/521856a7-3c4e-415c-8922-d2d437b5455b"
+ },
+ {
+  "canyonId": 2535,
+  "type": "SORTIE",
+  "latitude": 46.398762,
+  "longitude": 13.746468,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/521856a7-3c4e-415c-8922-d2d437b5455b"
+ },
+ {
+  "canyonId": 2727,
+  "type": "ENTREE",
+  "latitude": 16.03147,
+  "longitude": -61.662756,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Le Galion",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/2727/topo.html"
+ },
+ {
+  "canyonId": 2727,
+  "type": "SORTIE",
+  "latitude": 16.020187,
+  "longitude": -61.665168,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele, at the Ravine Chaude confluence (exit of 22329)",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/2727/topo.html"
+ },
+ {
+  "canyonId": 2730,
+  "type": "ENTREE",
+  "latitude": 16.035637,
+  "longitude": -61.657027,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Ravine de la Citerne",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/2730/topo.html"
+ },
+ {
+  "canyonId": 2730,
+  "type": "SORTIE",
+  "latitude": 16.03142,
+  "longitude": -61.662009,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele on the same waterway",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/2730/topo.html"
+ },
+ {
+  "canyonId": 2759,
+  "type": "ENTREE",
+  "latitude": 16.048418,
+  "longitude": -61.67026,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Rivière Noire",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/2759/topo.html"
+ },
+ {
+  "canyonId": 2759,
+  "type": "SORTIE",
+  "latitude": 16.037835,
+  "longitude": -61.676172,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele on the same waterway",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/2759/topo.html"
+ },
+ {
+  "canyonId": 2995,
+  "type": "ENTREE",
+  "latitude": 42.983677,
+  "longitude": -0.844485,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Upper end of the OSM stretch named Canyon Larrandaburu",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/2995/topo.html"
+ },
+ {
+  "canyonId": 2995,
+  "type": "SORTIE",
+  "latitude": 42.989084,
+  "longitude": -0.849382,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Lower end of the OSM stretch named Canyon Larrandaburu, above the Kakuetta confluence",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/2995/topo.html"
+ },
+ {
+  "canyonId": 21061,
+  "type": "ENTREE",
+  "latitude": 42.684887,
+  "longitude": 1.907392,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/92fb723d-bb54-46ae-ab83-0fd694e90190"
+ },
+ {
+  "canyonId": 21061,
+  "type": "SORTIE",
+  "latitude": 42.687184,
+  "longitude": 1.910609,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/92fb723d-bb54-46ae-ab83-0fd694e90190"
+ },
+ {
+  "canyonId": 21067,
+  "type": "ENTREE",
+  "latitude": 42.674787,
+  "longitude": 1.917631,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/774ede4e-af7c-4fa6-8a16-1ffed31f86da"
+ },
+ {
+  "canyonId": 21067,
+  "type": "SORTIE",
+  "latitude": 42.680443,
+  "longitude": 1.916763,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/774ede4e-af7c-4fa6-8a16-1ffed31f86da"
+ },
+ {
+  "canyonId": 21110,
+  "type": "ENTREE",
+  "latitude": 43.9089,
+  "longitude": 7.0554,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/71914796-78ff-4984-86d0-c51701df61b4"
+ },
+ {
+  "canyonId": 21173,
+  "type": "ENTREE",
+  "latitude": 41.598889,
+  "longitude": 24.380278,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/24686f26-1242-4629-88eb-46571557924d"
+ },
+ {
+  "canyonId": 21239,
+  "type": "ENTREE",
+  "latitude": 44.4338,
+  "longitude": 4.0309,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/51292642-0601-41fe-9b2c-d6041c28dc72"
+ },
+ {
+  "canyonId": 21275,
+  "type": "ENTREE",
+  "latitude": 39.401917,
+  "longitude": -0.800936,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/eeab233d-3f66-45cb-ac76-a37b070b6c5d"
+ },
+ {
+  "canyonId": 21275,
+  "type": "PARKING_AMONT",
+  "latitude": 39.401444,
+  "longitude": -0.800189,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/eeab233d-3f66-45cb-ac76-a37b070b6c5d"
+ },
+ {
+  "canyonId": 21275,
+  "type": "PARKING_AVAL",
+  "latitude": 39.405324,
+  "longitude": -0.78549,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/eeab233d-3f66-45cb-ac76-a37b070b6c5d"
+ },
+ {
+  "canyonId": 21275,
+  "type": "SORTIE",
+  "latitude": 39.404429,
+  "longitude": -0.790055,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/eeab233d-3f66-45cb-ac76-a37b070b6c5d"
+ },
+ {
+  "canyonId": 21317,
+  "type": "ENTREE",
+  "latitude": -21.172303,
+  "longitude": 55.5353,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/b5227007-e6cb-4739-a6e2-893df802e1ae"
+ },
+ {
+  "canyonId": 21317,
+  "type": "SORTIE",
+  "latitude": -21.184058,
+  "longitude": 55.529858,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/b5227007-e6cb-4739-a6e2-893df802e1ae"
+ },
+ {
+  "canyonId": 21591,
+  "type": "ENTREE",
+  "latitude": 41.0868,
+  "longitude": 0.8243,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/7f144971-73bf-4a7d-9fc2-59c63223f524"
+ },
+ {
+  "canyonId": 21591,
+  "type": "SORTIE",
+  "latitude": 41.077532,
+  "longitude": 0.822564,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/7f144971-73bf-4a7d-9fc2-59c63223f524"
+ },
+ {
+  "canyonId": 21606,
+  "type": "ENTREE",
+  "latitude": 40.931772,
+  "longitude": -7.938869,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/ceaa6f08-4f7a-4d79-94d0-67ae1fefd55c"
+ },
+ {
+  "canyonId": 21606,
+  "type": "SORTIE",
+  "latitude": 40.927381,
+  "longitude": -7.941522,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/ceaa6f08-4f7a-4d79-94d0-67ae1fefd55c"
+ },
+ {
+  "canyonId": 21740,
+  "type": "ENTREE",
+  "latitude": 38.0942,
+  "longitude": 12.6971,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/33a9b6d7-27df-4c20-92d1-ae18701b289e"
+ },
+ {
+  "canyonId": 21740,
+  "type": "SORTIE",
+  "latitude": 38.0988,
+  "longitude": 12.6927,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/33a9b6d7-27df-4c20-92d1-ae18701b289e"
+ },
+ {
+  "canyonId": 21761,
+  "type": "ENTREE",
+  "latitude": 16.2844,
+  "longitude": -61.7681,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/bb71bda5-06d1-457e-a3d8-15985161636d"
+ },
+ {
+  "canyonId": 21761,
+  "type": "PARKING_AMONT",
+  "latitude": 16.28867,
+  "longitude": -61.76556,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/bb71bda5-06d1-457e-a3d8-15985161636d"
+ },
+ {
+  "canyonId": 21761,
+  "type": "PARKING_AVAL",
+  "latitude": 16.28598,
+  "longitude": -61.77495,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/bb71bda5-06d1-457e-a3d8-15985161636d"
+ },
+ {
+  "canyonId": 21761,
+  "type": "SORTIE",
+  "latitude": 16.2854,
+  "longitude": -61.7751,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/bb71bda5-06d1-457e-a3d8-15985161636d"
+ },
+ {
+  "canyonId": 21791,
+  "type": "ENTREE",
+  "latitude": 16.1113,
+  "longitude": -61.7288,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/57cef768-7963-4f5d-8ebc-82fa9d829770"
+ },
+ {
+  "canyonId": 21791,
+  "type": "SORTIE",
+  "latitude": 16.1075,
+  "longitude": -61.7357,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/57cef768-7963-4f5d-8ebc-82fa9d829770"
+ },
+ {
+  "canyonId": 21846,
+  "type": "ENTREE",
+  "latitude": 43.78263,
+  "longitude": 7.230568,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/e3d90305-c6e2-42e9-824a-bc13a7020cfe"
+ },
+ {
+  "canyonId": 21846,
+  "type": "SORTIE",
+  "latitude": 43.773525,
+  "longitude": 7.224012,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/e3d90305-c6e2-42e9-824a-bc13a7020cfe"
+ },
+ {
+  "canyonId": 21982,
+  "type": "ENTREE",
+  "latitude": 42.917165,
+  "longitude": -0.583523,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Ruisseau de Nardet",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/21982/topo.html"
+ },
+ {
+  "canyonId": 21982,
+  "type": "SORTIE",
+  "latitude": 42.918875,
+  "longitude": -0.578117,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele, above the Aspe confluence",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/21982/topo.html"
+ },
+ {
+  "canyonId": 21995,
+  "type": "ENTREE",
+  "latitude": 39.5073,
+  "longitude": 16.5859,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/c5b8a790-ac25-465c-8068-cc9858e291bf"
+ },
+ {
+  "canyonId": 22050,
+  "type": "ENTREE",
+  "latitude": 46.597408,
+  "longitude": 12.119533,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/5410e1dc-e2e6-4d11-937c-b7d53360b2f7"
+ },
+ {
+  "canyonId": 22179,
+  "type": "ENTREE",
+  "latitude": 42.6834,
+  "longitude": 19.3592,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/fb35586f-e5ec-4d61-b451-0b308ecfb317"
+ },
+ {
+  "canyonId": 22179,
+  "type": "PARKING_AMONT",
+  "latitude": 42.686945,
+  "longitude": 19.355358,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/fb35586f-e5ec-4d61-b451-0b308ecfb317"
+ },
+ {
+  "canyonId": 22179,
+  "type": "PARKING_AVAL",
+  "latitude": 42.6875,
+  "longitude": 19.3751,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/fb35586f-e5ec-4d61-b451-0b308ecfb317"
+ },
+ {
+  "canyonId": 22179,
+  "type": "SORTIE",
+  "latitude": 42.6881,
+  "longitude": 19.375,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/fb35586f-e5ec-4d61-b451-0b308ecfb317"
+ },
+ {
+  "canyonId": 22193,
+  "type": "ENTREE",
+  "latitude": 42.9964,
+  "longitude": 19.0749,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/b6453b7a-b93f-4ce5-9590-3f84d65de97b"
+ },
+ {
+  "canyonId": 22193,
+  "type": "PARKING_AMONT",
+  "latitude": 42.9954,
+  "longitude": 19.0752,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/b6453b7a-b93f-4ce5-9590-3f84d65de97b"
+ },
+ {
+  "canyonId": 22193,
+  "type": "PARKING_AVAL",
+  "latitude": 42.9895,
+  "longitude": 19.069,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/b6453b7a-b93f-4ce5-9590-3f84d65de97b"
+ },
+ {
+  "canyonId": 22193,
+  "type": "SORTIE",
+  "latitude": 42.9905,
+  "longitude": 19.0695,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/b6453b7a-b93f-4ce5-9590-3f84d65de97b"
+ },
+ {
+  "canyonId": 22197,
+  "type": "ENTREE",
+  "latitude": 42.5228,
+  "longitude": 19.8414,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/360d6cc6-4139-472e-b30a-b6cb2ca63d49"
+ },
+ {
+  "canyonId": 22197,
+  "type": "PARKING_AMONT",
+  "latitude": 42.5227,
+  "longitude": 19.8422,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/360d6cc6-4139-472e-b30a-b6cb2ca63d49"
+ },
+ {
+  "canyonId": 22197,
+  "type": "PARKING_AVAL",
+  "latitude": 42.5273,
+  "longitude": 19.8357,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/360d6cc6-4139-472e-b30a-b6cb2ca63d49"
+ },
+ {
+  "canyonId": 22197,
+  "type": "SORTIE",
+  "latitude": 42.5264,
+  "longitude": 19.8376,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/360d6cc6-4139-472e-b30a-b6cb2ca63d49"
+ },
+ {
+  "canyonId": 22322,
+  "type": "ENTREE",
+  "latitude": 28.3755,
+  "longitude": 84.3933,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/328cfd95-7eac-43bf-8af0-f86c381f33fa"
+ },
+ {
+  "canyonId": 22322,
+  "type": "SORTIE",
+  "latitude": 28.3763,
+  "longitude": 84.3989,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/328cfd95-7eac-43bf-8af0-f86c381f33fa"
+ },
+ {
+  "canyonId": 22408,
+  "type": "ENTREE",
+  "latitude": -21.036445,
+  "longitude": 55.395269,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/48cb369a-dc1d-4539-a2ef-5ee49d955dd0"
+ },
+ {
+  "canyonId": 22419,
+  "type": "ENTREE",
+  "latitude": -20.953144,
+  "longitude": 55.456975,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/52e64abc-9823-4299-8abd-a46a6fc2827c"
+ },
+ {
+  "canyonId": 22419,
+  "type": "SORTIE",
+  "latitude": -20.944939,
+  "longitude": 55.459698,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/52e64abc-9823-4299-8abd-a46a6fc2827c"
+ },
+ {
+  "canyonId": 22423,
+  "type": "ENTREE",
+  "latitude": 16.0343,
+  "longitude": -61.6873,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/777ae963-2688-4588-b5df-d2a7af0dcfe5"
+ },
+ {
+  "canyonId": 22423,
+  "type": "ENTREE",
+  "latitude": 16.03682,
+  "longitude": -61.68354,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Alternative Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/777ae963-2688-4588-b5df-d2a7af0dcfe5"
+ },
+ {
+  "canyonId": 22423,
+  "type": "PARKING_AMONT",
+  "latitude": 16.0312,
+  "longitude": -61.68067,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/777ae963-2688-4588-b5df-d2a7af0dcfe5"
+ },
+ {
+  "canyonId": 22423,
+  "type": "PARKING_AVAL",
+  "latitude": 16.02984,
+  "longitude": -61.689,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/777ae963-2688-4588-b5df-d2a7af0dcfe5"
+ },
+ {
+  "canyonId": 22423,
+  "type": "SORTIE",
+  "latitude": 16.032,
+  "longitude": -61.6899,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/777ae963-2688-4588-b5df-d2a7af0dcfe5"
+ },
+ {
+  "canyonId": 22427,
+  "type": "ENTREE",
+  "latitude": 43.594,
+  "longitude": 3.001,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/3cb90a71-c623-45df-9f45-55e8e32139bc"
+ },
+ {
+  "canyonId": 22541,
+  "type": "ENTREE",
+  "latitude": 28.3912,
+  "longitude": -16.3728,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/0bd8fcb7-088c-45ac-95d4-c60e628bcbc7"
+ },
+ {
+  "canyonId": 22649,
+  "type": "ENTREE",
+  "latitude": 39.841,
+  "longitude": 2.8865,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/8221c2a3-8d1b-4d86-ab9d-bd20fd49bdbb"
+ },
+ {
+  "canyonId": 22650,
+  "type": "ENTREE",
+  "latitude": 39.842446,
+  "longitude": 2.854054,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/d41f636f-76a5-4506-9c8d-c5ebefa09373"
+ },
+ {
+  "canyonId": 22650,
+  "type": "SORTIE",
+  "latitude": 39.835809,
+  "longitude": 2.840038,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/d41f636f-76a5-4506-9c8d-c5ebefa09373"
+ },
+ {
+  "canyonId": 22663,
+  "type": "ENTREE",
+  "latitude": 39.744056,
+  "longitude": 2.627424,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/df74580a-1934-4937-a2ea-1031f7d650b9"
+ },
+ {
+  "canyonId": 22663,
+  "type": "SORTIE",
+  "latitude": 39.747712,
+  "longitude": 2.623044,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/df74580a-1934-4937-a2ea-1031f7d650b9"
+ },
+ {
+  "canyonId": 22666,
+  "type": "ENTREE",
+  "latitude": 39.825564,
+  "longitude": 2.855028,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/90fbad58-0787-4df7-b803-8880919a3d56"
+ },
+ {
+  "canyonId": 22666,
+  "type": "PARKING_AMONT",
+  "latitude": 39.825971,
+  "longitude": 2.847962,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/90fbad58-0787-4df7-b803-8880919a3d56"
+ },
+ {
+  "canyonId": 22666,
+  "type": "PARKING_AVAL",
+  "latitude": 39.820192,
+  "longitude": 2.884391,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/90fbad58-0787-4df7-b803-8880919a3d56"
+ },
+ {
+  "canyonId": 22666,
+  "type": "SORTIE",
+  "latitude": 39.83569,
+  "longitude": 2.861493,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/90fbad58-0787-4df7-b803-8880919a3d56"
+ },
+ {
+  "canyonId": 22670,
+  "type": "ENTREE",
+  "latitude": 40.75254,
+  "longitude": 0.333398,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/23d6fb3b-93bb-413d-84c9-bfcc81c75144"
+ },
+ {
+  "canyonId": 22670,
+  "type": "SORTIE",
+  "latitude": 40.747435,
+  "longitude": 0.332072,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/23d6fb3b-93bb-413d-84c9-bfcc81c75144"
+ },
+ {
+  "canyonId": 22677,
+  "type": "ENTREE",
+  "latitude": -21.0901602,
+  "longitude": 55.4116685,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Cascade des Trois Roches (OSM waterfall node), top of the falls at the topo altitude",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/22677/topo.html"
+ },
+ {
+  "canyonId": 22677,
+  "type": "SORTIE",
+  "latitude": -21.086395,
+  "longitude": 55.409012,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele on the Rivière des Galets",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/22677/topo.html"
+ },
+ {
+  "canyonId": 22679,
+  "type": "ENTREE",
+  "latitude": -21.24463,
+  "longitude": 55.482339,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/eaa97743-f4ad-4016-a265-38b6bc52e3f0"
+ },
+ {
+  "canyonId": 22679,
+  "type": "SORTIE",
+  "latitude": -21.248098,
+  "longitude": 55.482944,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/eaa97743-f4ad-4016-a265-38b6bc52e3f0"
+ },
+ {
+  "canyonId": 22695,
+  "type": "ENTREE",
+  "latitude": 39.5352,
+  "longitude": 20.95811,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/448599bd-ed57-4c65-ad5d-f2b13aeb3fcc"
+ },
+ {
+  "canyonId": 22695,
+  "type": "PARKING_AVAL",
+  "latitude": 39.53525,
+  "longitude": 20.95819,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/448599bd-ed57-4c65-ad5d-f2b13aeb3fcc"
+ },
+ {
+  "canyonId": 22695,
+  "type": "SORTIE",
+  "latitude": 39.53687,
+  "longitude": 20.9859,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/448599bd-ed57-4c65-ad5d-f2b13aeb3fcc"
+ },
+ {
+  "canyonId": 22822,
+  "type": "ENTREE",
+  "latitude": 45.843183,
+  "longitude": 9.786406,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Torrente Vertova",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/22822/topo.html"
+ },
+ {
+  "canyonId": 22822,
+  "type": "SORTIE",
+  "latitude": 45.840738,
+  "longitude": 9.788561,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele on the same waterway",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/22822/topo.html"
+ },
+ {
+  "canyonId": 22911,
+  "type": "ENTREE",
+  "latitude": 46.14019,
+  "longitude": 7.01577,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/248e914f-049c-4839-b0e4-af4d4c2e10cd"
+ },
+ {
+  "canyonId": 22911,
+  "type": "PARKING_AMONT",
+  "latitude": 46.14455,
+  "longitude": 7.03027,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/248e914f-049c-4839-b0e4-af4d4c2e10cd"
+ },
+ {
+  "canyonId": 22911,
+  "type": "PARKING_AVAL",
+  "latitude": 46.14013,
+  "longitude": 7.01542,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/248e914f-049c-4839-b0e4-af4d4c2e10cd"
+ },
+ {
+  "canyonId": 23083,
+  "type": "ENTREE",
+  "latitude": 40.771,
+  "longitude": 0.3339,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/2c4710f7-458f-49a3-9f05-708f8b01da94"
+ },
+ {
+  "canyonId": 23084,
+  "type": "ENTREE",
+  "latitude": 40.7969,
+  "longitude": 0.2451,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/8fcf5777-11e3-4c17-bad2-11b25c501026"
+ },
+ {
+  "canyonId": 23210,
+  "type": "ENTREE",
+  "latitude": 44.659788,
+  "longitude": 6.228311,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Le Gariveau",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23210/topo.html"
+ },
+ {
+  "canyonId": 23210,
+  "type": "SORTIE",
+  "latitude": 44.660435,
+  "longitude": 6.224687,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele on the same waterway",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23210/topo.html"
+ },
+ {
+  "canyonId": 23270,
+  "type": "ENTREE",
+  "latitude": 38.6082,
+  "longitude": -28.7498,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/e77de5b2-0123-4bfa-89f9-759a83114756"
+ },
+ {
+  "canyonId": 23271,
+  "type": "ENTREE",
+  "latitude": 38.6027,
+  "longitude": -28.7563,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/97b88a2e-735f-4c66-a9ca-23ffcbec334e"
+ },
+ {
+  "canyonId": 23272,
+  "type": "ENTREE",
+  "latitude": 38.584,
+  "longitude": -28.6921,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/181ce929-5772-48f1-b706-a2cd089975e9"
+ },
+ {
+  "canyonId": 23393,
+  "type": "ENTREE",
+  "latitude": 28.036488,
+  "longitude": -15.719842,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/1c15fef8-7a5a-4945-a946-9481b1e0cc17"
+ },
+ {
+  "canyonId": 23393,
+  "type": "SORTIE",
+  "latitude": 28.039443,
+  "longitude": -15.719593,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/1c15fef8-7a5a-4945-a946-9481b1e0cc17"
+ },
+ {
+  "canyonId": 23404,
+  "type": "ENTREE",
+  "latitude": 27.9506,
+  "longitude": -15.5585,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/3a5563e9-beb6-47d9-bb82-6e2f98305af0"
+ },
+ {
+  "canyonId": 23404,
+  "type": "PARKING_AMONT",
+  "latitude": 27.958058,
+  "longitude": -15.557752,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/3a5563e9-beb6-47d9-bb82-6e2f98305af0"
+ },
+ {
+  "canyonId": 23404,
+  "type": "PARKING_AVAL",
+  "latitude": 27.948192,
+  "longitude": -15.563638,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/3a5563e9-beb6-47d9-bb82-6e2f98305af0"
+ },
+ {
+  "canyonId": 23404,
+  "type": "SORTIE",
+  "latitude": 27.948458,
+  "longitude": -15.56125,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/3a5563e9-beb6-47d9-bb82-6e2f98305af0"
+ },
+ {
+  "canyonId": 23405,
+  "type": "ENTREE",
+  "latitude": 27.918243,
+  "longitude": -15.698323,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/b5a6d961-daec-477a-beb7-c6b9beae7a4a"
+ },
+ {
+  "canyonId": 23405,
+  "type": "SORTIE",
+  "latitude": 27.913039,
+  "longitude": -15.700783,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/b5a6d961-daec-477a-beb7-c6b9beae7a4a"
+ },
+ {
+  "canyonId": 23419,
+  "type": "ENTREE",
+  "latitude": 28.334989,
+  "longitude": -16.887691,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/3dae285e-507a-4876-9402-850ac9fdf019"
+ },
+ {
+  "canyonId": 23419,
+  "type": "PARKING_AMONT",
+  "latitude": 28.339593,
+  "longitude": -16.889853,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/3dae285e-507a-4876-9402-850ac9fdf019"
+ },
+ {
+  "canyonId": 23419,
+  "type": "SORTIE",
+  "latitude": 28.331041,
+  "longitude": -16.896153,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/3dae285e-507a-4876-9402-850ac9fdf019"
+ },
+ {
+  "canyonId": 23425,
+  "type": "ENTREE",
+  "latitude": 28.327805,
+  "longitude": -16.887336,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/667472b6-cb84-4512-9479-0c89fb0b9b14"
+ },
+ {
+  "canyonId": 23425,
+  "type": "PARKING_AMONT",
+  "latitude": 28.339455,
+  "longitude": -16.889803,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/667472b6-cb84-4512-9479-0c89fb0b9b14"
+ },
+ {
+  "canyonId": 23425,
+  "type": "SORTIE",
+  "latitude": 28.320463,
+  "longitude": -16.890631,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/667472b6-cb84-4512-9479-0c89fb0b9b14"
+ },
+ {
+  "canyonId": 23525,
+  "type": "ENTREE",
+  "latitude": 46.052165,
+  "longitude": 8.616341,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/cb733727-b0b4-4b53-957e-2d9fc3b31e28"
+ },
+ {
+  "canyonId": 23525,
+  "type": "SORTIE",
+  "latitude": 46.063218,
+  "longitude": 8.618662,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/cb733727-b0b4-4b53-957e-2d9fc3b31e28"
+ },
+ {
+  "canyonId": 23531,
+  "type": "ENTREE",
+  "latitude": 46.866001,
+  "longitude": 8.593114,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Palanggenbach",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23531/topo.html"
+ },
+ {
+  "canyonId": 23531,
+  "type": "SORTIE",
+  "latitude": 46.876944,
+  "longitude": 8.605222,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele, where the stream leaves the gorge above Seedorf",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23531/topo.html"
+ },
+ {
+  "canyonId": 23540,
+  "type": "ENTREE",
+  "latitude": 46.032328,
+  "longitude": 8.656672,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/52ba893e-ab6e-4bd4-8e9f-84c007e0df75"
+ },
+ {
+  "canyonId": 23540,
+  "type": "SORTIE",
+  "latitude": 46.02839,
+  "longitude": 8.657708,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/52ba893e-ab6e-4bd4-8e9f-84c007e0df75"
+ },
+ {
+  "canyonId": 23541,
+  "type": "ENTREE",
+  "latitude": 46.085521,
+  "longitude": 8.682332,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/2b68699d-5d50-4ef7-80e9-d9796e7b1d4d"
+ },
+ {
+  "canyonId": 23541,
+  "type": "SORTIE",
+  "latitude": 46.085725,
+  "longitude": 8.691102,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/2b68699d-5d50-4ef7-80e9-d9796e7b1d4d"
+ },
+ {
+  "canyonId": 23568,
+  "type": "ENTREE",
+  "latitude": -20.964374,
+  "longitude": 55.410595,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Bras Guillaume",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23568/topo.html"
+ },
+ {
+  "canyonId": 23568,
+  "type": "SORTIE",
+  "latitude": -20.943155,
+  "longitude": 55.41154,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele on the same waterway",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23568/topo.html"
+ },
+ {
+  "canyonId": 23571,
+  "type": "ENTREE",
+  "latitude": 42.940004,
+  "longitude": -0.856661,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/76c21b43-afa7-487a-b0bc-cc02bde231f9"
+ },
+ {
+  "canyonId": 23634,
+  "type": "ENTREE",
+  "latitude": -21.244417,
+  "longitude": 55.4917,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/97fdbea0-bf8f-40b9-a5b0-91c559d3360e"
+ },
+ {
+  "canyonId": 23634,
+  "type": "SORTIE",
+  "latitude": -21.24528,
+  "longitude": 55.486488,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/97fdbea0-bf8f-40b9-a5b0-91c559d3360e"
+ },
+ {
+  "canyonId": 23650,
+  "type": "ENTREE",
+  "latitude": 45.514657,
+  "longitude": 6.793076,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Ruisseau de Rosuel",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23650/topo.html"
+ },
+ {
+  "canyonId": 23650,
+  "type": "SORTIE",
+  "latitude": 45.51723,
+  "longitude": 6.791649,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele on the same waterway",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23650/topo.html"
+ },
+ {
+  "canyonId": 23684,
+  "type": "ENTREE",
+  "latitude": 42.9325,
+  "longitude": 1.443333,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/400847a8-4323-4883-bc55-62c7aec8d885"
+ },
+ {
+  "canyonId": 23690,
+  "type": "ENTREE",
+  "latitude": 46.4066,
+  "longitude": 13.2896,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/cc131979-be08-4c85-a39e-7114512725d9"
+ },
+ {
+  "canyonId": 23690,
+  "type": "SORTIE",
+  "latitude": 46.4053,
+  "longitude": 13.2918,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/cc131979-be08-4c85-a39e-7114512725d9"
+ },
+ {
+  "canyonId": 23691,
+  "type": "ENTREE",
+  "latitude": 46.3836,
+  "longitude": 13.1625,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/fa864b24-96ad-4ad3-97bc-2d55e26cd295"
+ },
+ {
+  "canyonId": 23691,
+  "type": "PARKING_AMONT",
+  "latitude": 46.3819,
+  "longitude": 13.1575,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/fa864b24-96ad-4ad3-97bc-2d55e26cd295"
+ },
+ {
+  "canyonId": 23691,
+  "type": "PARKING_AVAL",
+  "latitude": 46.38688,
+  "longitude": 13.15839,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/fa864b24-96ad-4ad3-97bc-2d55e26cd295"
+ },
+ {
+  "canyonId": 23691,
+  "type": "SORTIE",
+  "latitude": 46.3843,
+  "longitude": 13.1605,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/fa864b24-96ad-4ad3-97bc-2d55e26cd295"
+ },
+ {
+  "canyonId": 23713,
+  "type": "ENTREE",
+  "latitude": 46.3905,
+  "longitude": 13.5882,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/04350ec0-39e9-4644-b05a-a3d394054f0b"
+ },
+ {
+  "canyonId": 23713,
+  "type": "SORTIE",
+  "latitude": 46.3889,
+  "longitude": 13.5868,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/04350ec0-39e9-4644-b05a-a3d394054f0b"
+ },
+ {
+  "canyonId": 23740,
+  "type": "ENTREE",
+  "latitude": 46.487196,
+  "longitude": 13.887886,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Strmi Graben",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23740/topo.html"
+ },
+ {
+  "canyonId": 23740,
+  "type": "SORTIE",
+  "latitude": 46.481613,
+  "longitude": 13.887479,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele on the same waterway",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23740/topo.html"
+ },
+ {
+  "canyonId": 23845,
+  "type": "ENTREE",
+  "latitude": 23.136,
+  "longitude": 57.6718,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/c56d2d74-16af-4ae2-ab46-908894e07ea6"
+ },
+ {
+  "canyonId": 23845,
+  "type": "ENTREE",
+  "latitude": 23.137222,
+  "longitude": 57.668056,
+  "source": "TOPO",
+  "title": null,
+  "label": "Départ (topo)",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23845/topo.html"
+ },
+ {
+  "canyonId": 23845,
+  "type": "PARKING_AMONT",
+  "latitude": 23.1363,
+  "longitude": 57.6704,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/c56d2d74-16af-4ae2-ab46-908894e07ea6"
+ },
+ {
+  "canyonId": 23845,
+  "type": "PARKING_AVAL",
+  "latitude": 23.181389,
+  "longitude": 57.654444,
+  "source": "TOPO",
+  "title": "Arrivée Al Ulyah",
+  "label": "Arrivée Al Ulyah (topo)",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23845/topo.html"
+ },
+ {
+  "canyonId": 23845,
+  "type": "PARKING_AVAL",
+  "latitude": 23.1814,
+  "longitude": 57.6547,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/c56d2d74-16af-4ae2-ab46-908894e07ea6"
+ },
+ {
+  "canyonId": 23845,
+  "type": "SORTIE",
+  "latitude": 23.1807,
+  "longitude": 57.6535,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/c56d2d74-16af-4ae2-ab46-908894e07ea6"
+ },
+ {
+  "canyonId": 23857,
+  "type": "ENTREE",
+  "latitude": 23.002,
+  "longitude": 58.9611,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/c22791af-93ff-4f62-95c6-9b5fed07a39c"
+ },
+ {
+  "canyonId": 23857,
+  "type": "ENTREE",
+  "latitude": 23.015667,
+  "longitude": 58.963861,
+  "source": "TOPO",
+  "title": null,
+  "label": "Début du canyon (topo)",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23857/topo.html"
+ },
+ {
+  "canyonId": 23857,
+  "type": "PARKING_AVAL",
+  "latitude": 23.032944,
+  "longitude": 58.991417,
+  "source": "TOPO",
+  "title": null,
+  "label": "Parking (topo)",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23857/topo.html"
+ },
+ {
+  "canyonId": 23857,
+  "type": "SORTIE",
+  "latitude": 23.028111,
+  "longitude": 58.981194,
+  "source": "TOPO",
+  "title": null,
+  "label": "Fin du canyon (topo)",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23857/topo.html"
+ },
+ {
+  "canyonId": 23857,
+  "type": "SORTIE",
+  "latitude": 23.0343,
+  "longitude": 58.9912,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/c22791af-93ff-4f62-95c6-9b5fed07a39c"
+ },
+ {
+  "canyonId": 23858,
+  "type": "ENTREE",
+  "latitude": 23.0874,
+  "longitude": 57.7433,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/1b6429a5-3105-49bf-b0d3-1a7758f57bd1"
+ },
+ {
+  "canyonId": 23858,
+  "type": "PARKING_AMONT",
+  "latitude": 23.0899,
+  "longitude": 57.7338,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/1b6429a5-3105-49bf-b0d3-1a7758f57bd1"
+ },
+ {
+  "canyonId": 23858,
+  "type": "PARKING_AVAL",
+  "latitude": 23.0752,
+  "longitude": 57.7965,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/1b6429a5-3105-49bf-b0d3-1a7758f57bd1"
+ },
+ {
+  "canyonId": 23858,
+  "type": "SORTIE",
+  "latitude": 23.0877,
+  "longitude": 57.7587,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/1b6429a5-3105-49bf-b0d3-1a7758f57bd1"
+ },
+ {
+  "canyonId": 23861,
+  "type": "ENTREE",
+  "latitude": 23.133889,
+  "longitude": 57.559444,
+  "source": "TOPO",
+  "title": "Option Hulaylat",
+  "label": "Option Hulaylat (topo)",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23861/topo.html"
+ },
+ {
+  "canyonId": 23861,
+  "type": "ENTREE",
+  "latitude": 23.153333,
+  "longitude": 57.538333,
+  "source": "TOPO",
+  "title": "Option Mheibis",
+  "label": "Option Mheibis (topo)",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23861/topo.html"
+ },
+ {
+  "canyonId": 23861,
+  "type": "ENTREE",
+  "latitude": 23.1534,
+  "longitude": 57.5363,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/49a9e997-967e-4262-93fc-f8874c888419"
+ },
+ {
+  "canyonId": 23861,
+  "type": "PARKING_AMONT",
+  "latitude": 23.1533,
+  "longitude": 57.5385,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Entry (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/49a9e997-967e-4262-93fc-f8874c888419"
+ },
+ {
+  "canyonId": 23861,
+  "type": "PARKING_AVAL",
+  "latitude": 23.0756,
+  "longitude": 57.496,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Parking at Exit (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/49a9e997-967e-4262-93fc-f8874c888419"
+ },
+ {
+  "canyonId": 23861,
+  "type": "PARKING_AVAL",
+  "latitude": 23.076111,
+  "longitude": 57.495278,
+  "source": "TOPO",
+  "title": "Parking d'arrivée, confluence",
+  "label": "Parking d'arrivée, confluence (topo)",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23861/topo.html"
+ },
+ {
+  "canyonId": 23861,
+  "type": "SORTIE",
+  "latitude": 23.1102,
+  "longitude": 57.4882,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/49a9e997-967e-4262-93fc-f8874c888419"
+ },
+ {
+  "canyonId": 23874,
+  "type": "ENTREE",
+  "latitude": 43.075556,
+  "longitude": 25.617222,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/6b0cf2d4-d2bd-4df8-b99f-3ed2784189a2"
+ },
+ {
+  "canyonId": 23948,
+  "type": "ENTREE",
+  "latitude": 42.738622,
+  "longitude": 0.503455,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude, traced up from the entry of 21632",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23948/topo.html"
+ },
+ {
+  "canyonId": 23948,
+  "type": "SORTIE",
+  "latitude": 42.738798,
+  "longitude": 0.49942,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele (start of 21632)",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23948/topo.html"
+ },
+ {
+  "canyonId": 23969,
+  "type": "ENTREE",
+  "latitude": 45.192727,
+  "longitude": 6.689854,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Ruisseau de Saint-Antoine",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23969/topo.html"
+ },
+ {
+  "canyonId": 23969,
+  "type": "SORTIE",
+  "latitude": 45.198197,
+  "longitude": 6.687984,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at about 1220 m (topo: before the first check dam)",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23969/topo.html"
+ },
+ {
+  "canyonId": 23998,
+  "type": "ENTREE",
+  "latitude": 42.492205,
+  "longitude": 0.959063,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Confluence Franci / Coma del Port (topo), traced up from the entry of 23694",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23998/topo.html"
+ },
+ {
+  "canyonId": 23998,
+  "type": "SORTIE",
+  "latitude": 42.488036,
+  "longitude": 0.964437,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/23998/topo.html"
+ },
+ {
+  "canyonId": 24033,
+  "type": "ENTREE",
+  "latitude": 42.514682,
+  "longitude": -0.67567,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Upper end of the OSM stretch named Barranco Tosquera",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/24033/topo.html"
+ },
+ {
+  "canyonId": 24033,
+  "type": "SORTIE",
+  "latitude": 42.515288,
+  "longitude": -0.676677,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Lower end of the OSM stretch named Barranco Tosquera",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/24033/topo.html"
+ },
+ {
+  "canyonId": 24118,
+  "type": "ENTREE",
+  "latitude": 42.986296,
+  "longitude": -0.932598,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Ruisseau de Pista",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/24118/topo.html"
+ },
+ {
+  "canyonId": 24118,
+  "type": "SORTIE",
+  "latitude": 42.987518,
+  "longitude": -0.934888,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele, at the start of 21163 Ardane-Phista",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/24118/topo.html"
+ },
+ {
+  "canyonId": 24121,
+  "type": "ENTREE",
+  "latitude": 45.297289,
+  "longitude": 4.775582,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/9c27c1fb-7bc4-4acd-be0b-5769d9ebf3c6"
+ },
+ {
+  "canyonId": 24121,
+  "type": "SORTIE",
+  "latitude": 45.296663,
+  "longitude": 4.778311,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/9c27c1fb-7bc4-4acd-be0b-5769d9ebf3c6"
+ },
+ {
+  "canyonId": 24180,
+  "type": "ENTREE",
+  "latitude": 44.23834,
+  "longitude": 7.71745,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Torrente Ellero",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/24180/topo.html"
+ },
+ {
+  "canyonId": 24180,
+  "type": "SORTIE",
+  "latitude": 44.246104,
+  "longitude": 7.719411,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele on the same waterway",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/24180/topo.html"
+ },
+ {
+  "canyonId": 24193,
+  "type": "ENTREE",
+  "latitude": 46.8079,
+  "longitude": 8.824,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon Start (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/1f15ccef-b97e-4baa-90a1-35820495b32c"
+ },
+ {
+  "canyonId": 24193,
+  "type": "SORTIE",
+  "latitude": 46.79815,
+  "longitude": 8.80239,
+  "source": "OPENCANYON",
+  "title": null,
+  "label": "Canyon End (OpenCanyon)",
+  "reference": "https://www.opencanyon.org/en/canyon/1f15ccef-b97e-4baa-90a1-35820495b32c"
+ },
+ {
+  "canyonId": 24207,
+  "type": "ENTREE",
+  "latitude": 43.86698,
+  "longitude": 6.63769,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "Start at the topo altitude on the OSM waterway Ravin du Riou",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/24207/topo.html"
+ },
+ {
+  "canyonId": 24207,
+  "type": "SORTIE",
+  "latitude": 43.862097,
+  "longitude": 6.642294,
+  "source": "ESTIMATED",
+  "title": null,
+  "label": "End at the topo altitude minus denivele on the same waterway",
+  "reference": "https://www.descente-canyon.com/canyoning/canyon-description/24207/topo.html"
+ }
+]

@@ -11,7 +11,26 @@ data class GeoPoint(
     val longitude: Double,
     val title: String? = null,
     val remark: String? = null,
+    val source: GeoPointSource = GeoPointSource.SITE,
 )
+
+/**
+ * Where a point comes from. The site gives the points of most canyons; a few canyons without any point
+ * got theirs from elsewhere, less certain, and the app says so.
+ */
+enum class GeoPointSource {
+    /** The canyon sheet of the site. */
+    SITE,
+
+    /** Coordinates written in the topo text of the site. */
+    TOPO,
+
+    /** OpenCanyon.org, not checked on the ground. */
+    OPENCANYON,
+
+    /** Placed from the stream (OpenStreetMap) and the terrain at the altitudes of the topo. */
+    ESTIMATED,
+}
 
 enum class GeoPointType {
     PARKING_AVAL,

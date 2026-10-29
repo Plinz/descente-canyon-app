@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.GeoPoint
+import fr.descentecanyon.app.domain.model.GeoPointSource
 import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.ui.theme.CanyonBlue
 import fr.descentecanyon.app.ui.theme.CanyonBlueDark
@@ -28,6 +29,18 @@ fun GeoPoint.displayName(): String = normalizedTitleResource()?.let { stringReso
 }
 
 fun GeoPoint.displaySubtitle(): String? = remark?.trim()?.takeIf { it.isNotBlank() }
+
+/** Where the point comes from when it is not on the canyon sheet of the site, so that it is checked on the spot. */
+@Composable
+fun GeoPoint.sourceNote(): String? = sourceNoteResource()?.let { stringResource(it) }
+
+@StringRes
+fun GeoPoint.sourceNoteResource(): Int? = when (source) {
+    GeoPointSource.SITE -> null
+    GeoPointSource.TOPO -> R.string.geo_point_source_topo
+    GeoPointSource.OPENCANYON -> R.string.geo_point_source_opencanyon
+    GeoPointSource.ESTIMATED -> R.string.geo_point_source_estimated
+}
 
 fun GeoPoint.navigationLabel(context: Context): String =
     normalizedTitleResource()?.let(context::getString) ?: normalizedRawTitle() ?: context.getString(type.defaultTitleResource())

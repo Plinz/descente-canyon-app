@@ -452,6 +452,9 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="geo_point_remarkable_inside">Besonderer Punkt im Canyon</string>
     <string name="geo_point_escape">Notausstieg</string>
     <string name="geo_point_gps">GPS-Punkt</string>
+    <string name="geo_point_source_topo">Koordinaten aus dem Topo</string>
+    <string name="geo_point_source_opencanyon">Punkt von OpenCanyon</string>
+    <string name="geo_point_source_estimated">Geschätzte Position</string>
     <string name="error_offline">Keine Internetverbindung.</string>
     <string name="error_timeout">Der Dienst hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.</string>
     <string name="error_network">Verbindungsproblem. Bitte versuche es erneut.</string>
@@ -571,7 +574,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="settings_website">descente-canyon.com</string>
     <string name="settings_website_hint">Originale Beschreibungen, Wasserstände und Forum</string>
     <string name="settings_data_sources">Datenquellen</string>
-    <string name="settings_data_sources_body">• Beschreibungen, Wasserstände, Fotos und Forum: descente-canyon.com und seine Mitwirkenden.\n• Wetter: Open-Meteo.com (CC BY 4.0).\n• Regenmesser: Météo-France (Licence Ouverte Etalab 2.0) und MeteoSchweiz (offene Daten).\n• Wasserabgaben der Staudämme: EDF, „Ma rivière et moi“.\n• Karten: © OpenStreetMap-Mitwirkende (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Abflussschätzung: Modell, trainiert mit den auf descente-canyon.com veröffentlichten Wasserständen, nur zur Orientierung.\n• Routen: OSRM auf den Servern von FOSSGIS, Daten © OpenStreetMap-Mitwirkende (ODbL).</string>
+    <string name="settings_data_sources_body">• Beschreibungen, Wasserstände, Fotos und Forum: descente-canyon.com und seine Mitwirkenden.\n• Wetter: Open-Meteo.com (CC BY 4.0).\n• Regenmesser: Météo-France (Licence Ouverte Etalab 2.0) und MeteoSchweiz (offene Daten).\n• Wasserabgaben der Staudämme: EDF, „Ma rivière et moi“.\n• Karten: © OpenStreetMap-Mitwirkende (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Einzugsgebiete: Geländemodelle © IGN (RGE ALTI, BD ALTI, Licence Ouverte Etalab 2.0), © swisstopo, © Instituto Geográfico Nacional (MDT25), © BEV, INGV (TINITALY), Regione Liguria, GURS, Governo Regional da Madeira, Copernicus DEM (© DLR e.V., © Airbus Defence and Space GmbH, provided under COPERNICUS by the European Union and ESA).\n• GPS-Punkte einiger Canyons ohne Punkte auf der Website: OpenCanyon.org (CC BY-NC-SA 4.0) oder Position geschätzt aus den Gewässern © OpenStreetMap-Mitwirkende (ODbL) und dem Gelände.\n• Abflussschätzung: Modell, trainiert mit den auf descente-canyon.com veröffentlichten Wasserständen, nur zur Orientierung. Vergangenes Wetter: ERA5 (Copernicus Climate Change Service); Merkmale der Einzugsgebiete: ESA WorldCover, GLiM, HydroLAKES, Global Dam Watch, RGI, SoilGrids (ISRIC), OpenLandMap, WorldClim.\n• Routen: OSRM auf den Servern von FOSSGIS, Daten © OpenStreetMap-Mitwirkende (ODbL).</string>
     <string name="settings_licenses">Open-Source-Bibliotheken</string>
     <string name="settings_licenses_intro">Die App verwendet unter anderem:</string>
     <string name="settings_privacy">Datenschutz</string>

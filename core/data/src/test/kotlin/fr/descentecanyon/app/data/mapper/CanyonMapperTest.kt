@@ -4,6 +4,7 @@ import fr.descentecanyon.app.data.local.catalog.entity.CanyonEntity
 import fr.descentecanyon.app.data.local.catalog.entity.GeoPointEntity
 import fr.descentecanyon.app.data.local.catalog.entity.WatershedEntity
 import fr.descentecanyon.app.data.local.user.entity.DebitEntity
+import fr.descentecanyon.app.domain.model.GeoPointSource
 import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import java.time.LocalDate
@@ -241,6 +242,19 @@ class CanyonMapperTest {
         val geoPoint = entity.toDomain()
 
         assertEquals(GeoPointType.PARKING_AVAL, geoPoint.type)
+        assertEquals(GeoPointSource.SITE, geoPoint.source)
+    }
+
+    @Test
+    fun `GeoPointEntity toDomain keeps where a recovered point comes from`() {
+        fun sourceOf(source: String) = GeoPointEntity(canyonId = 42, type = "ENTREE", latitude = 43.85, longitude = 6.95, source = source)
+            .toDomain().source
+
+        assertEquals(GeoPointSource.OPENCANYON, sourceOf("OPENCANYON"))
+        assertEquals(GeoPointSource.TOPO, sourceOf("TOPO"))
+        assertEquals(GeoPointSource.ESTIMATED, sourceOf("ESTIMATED"))
+        // Never shown as a point of the site.
+        assertEquals(GeoPointSource.ESTIMATED, sourceOf("SOME_FUTURE_SOURCE"))
     }
 
     @Test

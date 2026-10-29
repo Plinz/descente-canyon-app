@@ -27,6 +27,7 @@ import fr.descentecanyon.app.domain.model.CotationRating
 import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.GeoBounds
 import fr.descentecanyon.app.domain.model.GeoPoint
+import fr.descentecanyon.app.domain.model.GeoPointSource
 import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.Regulation
@@ -448,6 +449,12 @@ fun GeoPointEntity.toDomain(): GeoPoint = GeoPoint(
     longitude = longitude,
     title = title,
     remark = remark,
+    source = when (source) {
+        null -> GeoPointSource.SITE
+
+        // An unknown source is not trusted as a point of the site.
+        else -> GeoPointSource.entries.firstOrNull { it.name == source } ?: GeoPointSource.ESTIMATED
+    },
 )
 
 fun DebitEntity.toDomain(): Debit = Debit(

@@ -54,6 +54,8 @@ class CatalogAssetTest {
         assertNotNull(catalog.canyonDao().getById(2186))
         // The reviewed chains: the upper Cagne goes straight on into the lower one.
         assertEquals("STRAIGHT_ON", catalog.canyonChainDao().getFrom(252).single { it.toCanyonId == 21308 }.way)
+        // Canyons without points on the site keep the points found elsewhere, with their source.
+        assertTrue(catalog.geoPointDao().getAll().any { it.source != null })
     }
 
     private companion object {

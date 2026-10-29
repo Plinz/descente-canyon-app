@@ -59,7 +59,7 @@ abstract class CatalogDatabase : RoomDatabase() {
     abstract fun canyonChainDao(): CanyonChainDao
 
     companion object {
-        const val SCHEMA_VERSION = 3
+        const val SCHEMA_VERSION = 4
         const val DATABASE_NAME = "catalog.db"
         const val ASSET_PATH = "databases/catalog.db"
     }

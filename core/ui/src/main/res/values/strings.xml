@@ -452,6 +452,9 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="geo_point_remarkable_inside">Point remarquable à l\'intérieur du canyon</string>
     <string name="geo_point_escape">Échappatoire</string>
     <string name="geo_point_gps">Point GPS</string>
+    <string name="geo_point_source_topo">Coordonnées du topo</string>
+    <string name="geo_point_source_opencanyon">Point OpenCanyon</string>
+    <string name="geo_point_source_estimated">Position estimée</string>
     <string name="error_offline">Pas de connexion internet.</string>
     <string name="error_timeout">Le service n\'a pas répondu à temps. Réessayez.</string>
     <string name="error_network">Problème de connexion. Réessayez.</string>
@@ -579,7 +582,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="settings_website">descente-canyon.com</string>
     <string name="settings_website_hint">Fiches, débits et forum d\'origine</string>
     <string name="settings_data_sources">Sources des données</string>
-    <string name="settings_data_sources_body">• Fiches, débits, photos et forum : descente-canyon.com et ses contributeurs.\n• Météo : Open-Meteo.com (CC BY 4.0).\n• Pluviomètres : Météo-France (Licence Ouverte Etalab 2.0) et MétéoSuisse (données publiques).\n• Lâchers d\'eau des barrages : EDF, « Ma rivière et moi ».\n• Cartes : © contributeurs OpenStreetMap (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Estimation du débit : modèle entraîné sur les débits publiés sur descente-canyon.com, à titre indicatif.\n• Itinéraires : OSRM sur les serveurs de FOSSGIS, données © contributeurs OpenStreetMap (ODbL).</string>
+    <string name="settings_data_sources_body">• Fiches, débits, photos et forum : descente-canyon.com et ses contributeurs.\n• Météo : Open-Meteo.com (CC BY 4.0).\n• Pluviomètres : Météo-France (Licence Ouverte Etalab 2.0) et MétéoSuisse (données publiques).\n• Lâchers d\'eau des barrages : EDF, « Ma rivière et moi ».\n• Cartes : © contributeurs OpenStreetMap (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Bassins versants : modèles de terrain © IGN (RGE ALTI, BD ALTI, Licence Ouverte Etalab 2.0), © swisstopo, © Instituto Geográfico Nacional (MDT25), © BEV, INGV (TINITALY), Regione Liguria, GURS, Governo Regional da Madeira, Copernicus DEM (© DLR e.V., © Airbus Defence and Space GmbH, provided under COPERNICUS by the European Union and ESA).\n• Points GPS de quelques canyons sans point sur le site : OpenCanyon.org (CC BY-NC-SA 4.0), ou position estimée d\'après les cours d\'eau © contributeurs OpenStreetMap (ODbL) et le relief.\n• Estimation du débit : modèle entraîné sur les débits publiés sur descente-canyon.com, à titre indicatif. Météo passée : ERA5 (Copernicus Climate Change Service) ; descripteurs des bassins : ESA WorldCover, GLiM, HydroLAKES, Global Dam Watch, RGI, SoilGrids (ISRIC), OpenLandMap, WorldClim.\n• Itinéraires : OSRM sur les serveurs de FOSSGIS, données © contributeurs OpenStreetMap (ODbL).</string>
     <string name="settings_licenses">Bibliothèques open source</string>
     <string name="settings_licenses_intro">L\'application utilise notamment :</string>
     <string name="settings_privacy">Confidentialité</string>

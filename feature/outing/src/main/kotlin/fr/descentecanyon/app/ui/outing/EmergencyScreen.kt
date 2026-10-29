@@ -81,6 +81,7 @@ import fr.descentecanyon.app.domain.model.EmergencyNumber
 import fr.descentecanyon.app.domain.model.EmergencyNumbers
 import fr.descentecanyon.app.domain.model.EmergencyService
 import fr.descentecanyon.app.domain.model.GeoPoint
+import fr.descentecanyon.app.domain.model.GeoPointSource
 import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.design.DcCard
@@ -525,6 +526,9 @@ private fun PointRow(item: EmergencyPoint) {
                         fontWeight = FontWeight.SemiBold,
                     )
                 }
+                pointSourceNote(point.source)?.let {
+                    Text(stringResource(it), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.SemiBold)
+                }
                 pointNotes(point, label).forEach {
                     Text(it, style = MaterialTheme.typography.bodySmall, maxLines = 3, overflow = TextOverflow.Ellipsis)
                 }
@@ -591,6 +595,15 @@ private fun pointNotes(point: GeoPoint, label: String): List<String> = listOfNot
     .map { it.trim() }
     .filter { it.isNotEmpty() && !it.equals(label, ignoreCase = true) }
     .distinct()
+
+/** A point that is not on the canyon sheet of the site may be off: the rescuers are told. */
+@StringRes
+private fun pointSourceNote(source: GeoPointSource): Int? = when (source) {
+    GeoPointSource.SITE -> null
+    GeoPointSource.TOPO -> R.string.geo_point_source_topo
+    GeoPointSource.OPENCANYON -> R.string.geo_point_source_opencanyon
+    GeoPointSource.ESTIMATED -> R.string.geo_point_source_estimated
+}
 
 @StringRes
 private fun pointTypeLabel(type: GeoPointType): Int = when (type) {

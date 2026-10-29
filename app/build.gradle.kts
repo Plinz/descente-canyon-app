@@ -66,8 +66,9 @@ val generatedPrepackagedDatabaseFile = layout.buildDirectory.file("generated/cat
 val prepackagedDatabaseGeneratorScript = rootProject.file("scripts/app/generate_prepackaged_room_db.py")
 val staticFeatureIndexGeneratorScript = rootProject.file("scripts/app/generate_static_feature_index.py")
 val runtimeLookupAssetGeneratorScript = rootProject.file("scripts/app/generate_runtime_lookup_assets.py")
-val prepackagedDatabaseSchemaFile = rootProject.file("core/data/schemas/fr.descentecanyon.app.data.local.catalog.CatalogDatabase/3.json")
+val prepackagedDatabaseSchemaFile = rootProject.file("core/data/schemas/fr.descentecanyon.app.data.local.catalog.CatalogDatabase/4.json")
 val canyonChainsFile = rootProject.file("data-overlay/canyon-chains.json")
+val recoveredGeoPointsFile = rootProject.file("data-overlay/recovered-geo-points.json")
 val prepackagedRoomImportDirectory = rootProject.file("offline-data/full/room-import")
 val staticFeaturesAssetFile = rootProject.file("modele_statistique/canyon_static_features.json")
 val runtimeLookupsAssetFile = rootProject.file("modele_statistique/runtime_feature_lookups.json")
@@ -83,6 +84,7 @@ val generatePrepackagedRoomDatabase = tasks.register<Exec>("generatePrepackagedR
     inputs.file(prepackagedDatabaseSchemaFile)
     inputs.dir(prepackagedRoomImportDirectory)
     inputs.file(canyonChainsFile)
+    inputs.file(recoveredGeoPointsFile)
     outputs.file(generatedPrepackagedDatabaseFile)
 
     commandLine(
@@ -96,6 +98,8 @@ val generatePrepackagedRoomDatabase = tasks.register<Exec>("generatePrepackagedR
         generatedPrepackagedDatabaseFile.get().asFile.path,
         "--canyon-chains",
         canyonChainsFile.path,
+        "--recovered-geo-points",
+        recoveredGeoPointsFile.path,
     )
 }
 

@@ -452,6 +452,9 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="geo_point_remarkable_inside">Punto destacado dentro del barranco</string>
     <string name="geo_point_escape">Escape</string>
     <string name="geo_point_gps">Punto GPS</string>
+    <string name="geo_point_source_topo">Coordenadas de la reseña</string>
+    <string name="geo_point_source_opencanyon">Punto de OpenCanyon</string>
+    <string name="geo_point_source_estimated">Posición estimada</string>
     <string name="error_offline">Sin conexión a internet.</string>
     <string name="error_timeout">El servicio no respondió a tiempo. Inténtalo de nuevo.</string>
     <string name="error_network">Problema de conexión. Inténtalo de nuevo.</string>
@@ -579,7 +582,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="settings_website">descente-canyon.com</string>
     <string name="settings_website_hint">Fichas, caudales y foro originales</string>
     <string name="settings_data_sources">Fuentes de datos</string>
-    <string name="settings_data_sources_body">• Fichas, caudales, fotos y foro: descente-canyon.com y sus colaboradores.\n• Meteorología: Open-Meteo.com (CC BY 4.0).\n• Pluviómetros: Météo-France (Licence Ouverte Etalab 2.0) y MeteoSuiza (datos abiertos).\n• Desembalses de presas: EDF, «Ma rivière et moi».\n• Mapas: © colaboradores de OpenStreetMap (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Estimación del caudal: modelo entrenado con los caudales publicados en descente-canyon.com, solo orientativa.\n• Itinerarios: OSRM en los servidores de FOSSGIS, datos © colaboradores de OpenStreetMap (ODbL).</string>
+    <string name="settings_data_sources_body">• Fichas, caudales, fotos y foro: descente-canyon.com y sus colaboradores.\n• Meteorología: Open-Meteo.com (CC BY 4.0).\n• Pluviómetros: Météo-France (Licence Ouverte Etalab 2.0) y MeteoSuiza (datos abiertos).\n• Desembalses de presas: EDF, «Ma rivière et moi».\n• Mapas: © colaboradores de OpenStreetMap (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Cuencas vertientes: modelos del terreno © IGN (RGE ALTI, BD ALTI, Licence Ouverte Etalab 2.0), © swisstopo, © Instituto Geográfico Nacional (MDT25), © BEV, INGV (TINITALY), Regione Liguria, GURS, Governo Regional da Madeira, Copernicus DEM (© DLR e.V., © Airbus Defence and Space GmbH, provided under COPERNICUS by the European Union and ESA).\n• Puntos GPS de algunos barrancos sin puntos en el sitio: OpenCanyon.org (CC BY-NC-SA 4.0), o posición estimada a partir de los cursos de agua © colaboradores de OpenStreetMap (ODbL) y del relieve.\n• Estimación del caudal: modelo entrenado con los caudales publicados en descente-canyon.com, solo orientativa. Meteorología pasada: ERA5 (Copernicus Climate Change Service); descriptores de las cuencas: ESA WorldCover, GLiM, HydroLAKES, Global Dam Watch, RGI, SoilGrids (ISRIC), OpenLandMap, WorldClim.\n• Itinerarios: OSRM en los servidores de FOSSGIS, datos © colaboradores de OpenStreetMap (ODbL).</string>
     <string name="settings_licenses">Bibliotecas de código abierto</string>
     <string name="settings_licenses_intro">La aplicación usa, entre otras:</string>
     <string name="settings_privacy">Privacidad</string>

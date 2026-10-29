@@ -25,4 +25,5 @@ data class GeoPointEntity(
     val longitude: Double,
     val title: String? = null,
     val remark: String? = null,
+    val source: String? = null, // GeoPointSource name, null for the points of the site
 )

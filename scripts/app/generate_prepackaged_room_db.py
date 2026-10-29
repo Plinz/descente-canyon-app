@@ -64,6 +64,11 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         help="Reviewed passages from a canyon to another one (data-overlay/canyon-chains.json).",
     )
+    parser.add_argument(
+        "--recovered-geo-points",
+        type=Path,
+        help="Reviewed points of canyons the site gives none for (data-overlay/recovered-geo-points.json).",
+    )
     return parser.parse_args()
 
 
@@ -314,6 +319,8 @@ def create_schema(connection: sqlite3.Connection, schema: dict):
 
 
 CHAIN_WAYS = {"STRAIGHT_ON", "ON_FOOT", "NOT_IN_STREAM"}
+RECOVERED_POINT_SOURCES = {"TOPO", "OPENCANYON", "ESTIMATED"}
+GEO_POINT_TYPES = {"PARKING_AVAL", "PARKING_AMONT", "ENTREE", "SORTIE", "POINT_REMARQUABLE", "ECHAPPATOIRE"}
 
 
 def load_canyon_chains(path: Path | None, canyon_ids: set[int]) -> list[tuple]:
@@ -334,9 +341,38 @@ def load_canyon_chains(path: Path | None, canyon_ids: set[int]) -> list[tuple]:
     return rows
 
 
-def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest: dict, canyon_chains_path: Path | None = None):
+def load_recovered_geo_points(path: Path | None, canyon_ids: set[int], site_points: list[dict]) -> list[dict]:
+    """Points found elsewhere for canyons without any on the site; once the site has some, the site wins."""
+    if path is None:
+        return []
+    canyons_with_site_points = {int(point["canyonId"]) for point in site_points}
+    rows = []
+    for point in load_json(path):
+        canyon_id = int(point["canyonId"])
+        if canyon_id not in canyon_ids:
+            raise RuntimeError(f"Recovered point of canyon {canyon_id}, missing from the catalog: review it again")
+        if point["source"] not in RECOVERED_POINT_SOURCES or point["type"] not in GEO_POINT_TYPES:
+            raise RuntimeError(f"Invalid recovered point {point!r}")
+        if canyon_id in canyons_with_site_points:
+            print(f"Canyon {canyon_id} has points on the site now: its recovered points are left out")
+            continue
+        rows.append({**point, "label": point.get("title")})
+    return rows
+
+
+def insert_rows(
+    connection: sqlite3.Connection,
+    room_import_dir: Path,
+    manifest: dict,
+    canyon_chains_path: Path | None = None,
+    recovered_geo_points_path: Path | None = None,
+):
     canyons = load_json(room_import_dir / "canyons.json")
-    geo_points = load_json(room_import_dir / "geo_points.json")
+    site_geo_points = load_json(room_import_dir / "geo_points.json")
+    recovered_geo_points = load_recovered_geo_points(
+        recovered_geo_points_path, {int(row["id"]) for row in canyons}, site_geo_points
+    )
+    geo_points = [*site_geo_points, *recovered_geo_points]
     bibliography_entries = load_json(room_import_dir / "bibliography_entries.json")
     canyon_bibliography = load_json(room_import_dir / "canyon_bibliography.json")
     regulation_texts = load_json(room_import_dir / "regulation_texts.json")
@@ -427,7 +463,7 @@ def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest:
     )
 
     connection.executemany(
-        "INSERT INTO geo_points (canyonId, type, latitude, longitude, title, remark) VALUES (?, ?, ?, ?, ?, NULL)",
+        "INSERT INTO geo_points (canyonId, type, latitude, longitude, title, remark, source) VALUES (?, ?, ?, ?, ?, NULL, ?)",
         [
             (
                 row["canyonId"],
@@ -435,6 +471,7 @@ def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest:
                 row["latitude"],
                 row["longitude"],
                 row.get("label"),
+                row.get("source"),
             )
             for row in geo_points
         ],
@@ -575,7 +612,8 @@ def insert_rows(connection: sqlite3.Connection, room_import_dir: Path, manifest:
     expected_counts = manifest.get("counts", {})
     actual_counts = {
         "canyons": len(canyons),
-        "geo_points": len(geo_points),
+        "geo_points": len(site_geo_points),
+        "recovered_geo_points": len(recovered_geo_points),
         "bibliography_entries": len(bibliography_entries),
         "canyon_bibliography": len(canyon_bibliography),
         "regulation_texts": len(regulation_texts),
@@ -621,7 +659,7 @@ def main() -> int:
         connection.execute("PRAGMA temp_store = MEMORY")
 
         create_schema(connection, schema)
-        actual_counts = insert_rows(connection, room_import_dir, manifest, args.canyon_chains)
+        actual_counts = insert_rows(connection, room_import_dir, manifest, args.canyon_chains, args.recovered_geo_points)
         connection.commit()
         connection.execute("PRAGMA optimize")
         connection.execute("VACUUM")

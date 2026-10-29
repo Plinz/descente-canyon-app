@@ -452,6 +452,9 @@ Search for a canyon and add it to your favorites.</string>
     <string name="geo_point_remarkable_inside">Remarkable point inside the canyon</string>
     <string name="geo_point_escape">Escape route</string>
     <string name="geo_point_gps">GPS point</string>
+    <string name="geo_point_source_topo">Coordinates from the topo</string>
+    <string name="geo_point_source_opencanyon">OpenCanyon point</string>
+    <string name="geo_point_source_estimated">Estimated position</string>
     <string name="error_offline">No internet connection.</string>
     <string name="error_timeout">The service did not respond in time. Please try again.</string>
     <string name="error_network">Connection problem. Please try again.</string>
@@ -571,7 +574,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="settings_website">descente-canyon.com</string>
     <string name="settings_website_hint">Original topos, flow reports and forum</string>
     <string name="settings_data_sources">Data sources</string>
-    <string name="settings_data_sources_body">• Topos, flow reports, photos and forum: descente-canyon.com and its contributors.\n• Weather: Open-Meteo.com (CC BY 4.0).\n• Rain gauges: Météo-France (Etalab Open Licence 2.0) and MeteoSwiss (open data).\n• Dam water releases: EDF, “Ma rivière et moi”.\n• Maps: © OpenStreetMap contributors (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Flow estimate: model trained on the flow reports published on descente-canyon.com, for guidance only.\n• Routes: OSRM on the FOSSGIS servers, data © OpenStreetMap contributors (ODbL).</string>
+    <string name="settings_data_sources_body">• Topos, flow reports, photos and forum: descente-canyon.com and its contributors.\n• Weather: Open-Meteo.com (CC BY 4.0).\n• Rain gauges: Météo-France (Etalab Open Licence 2.0) and MeteoSwiss (open data).\n• Dam water releases: EDF, “Ma rivière et moi”.\n• Maps: © OpenStreetMap contributors (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Watersheds: terrain models © IGN (RGE ALTI, BD ALTI, Etalab Open Licence 2.0), © swisstopo, © Instituto Geográfico Nacional (MDT25), © BEV, INGV (TINITALY), Regione Liguria, GURS, Governo Regional da Madeira, Copernicus DEM (© DLR e.V., © Airbus Defence and Space GmbH, provided under COPERNICUS by the European Union and ESA).\n• GPS points of a few canyons without any on the site: OpenCanyon.org (CC BY-NC-SA 4.0), or position estimated from the waterways © OpenStreetMap contributors (ODbL) and the terrain.\n• Flow estimate: model trained on the flow reports published on descente-canyon.com, for guidance only. Past weather: ERA5 (Copernicus Climate Change Service); basin descriptors: ESA WorldCover, GLiM, HydroLAKES, Global Dam Watch, RGI, SoilGrids (ISRIC), OpenLandMap, WorldClim.\n• Routes: OSRM on the FOSSGIS servers, data © OpenStreetMap contributors (ODbL).</string>
     <string name="settings_licenses">Open source libraries</string>
     <string name="settings_licenses_intro">The app notably uses:</string>
     <string name="settings_privacy">Privacy</string>

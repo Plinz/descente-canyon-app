@@ -452,6 +452,9 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="geo_point_remarkable_inside">Punto notevole all\'interno del canyon</string>
     <string name="geo_point_escape">Via di fuga</string>
     <string name="geo_point_gps">Punto GPS</string>
+    <string name="geo_point_source_topo">Coordinate della relazione</string>
+    <string name="geo_point_source_opencanyon">Punto di OpenCanyon</string>
+    <string name="geo_point_source_estimated">Posizione stimata</string>
     <string name="error_offline">Nessuna connessione a internet.</string>
     <string name="error_timeout">Il servizio non ha risposto in tempo. Riprova.</string>
     <string name="error_network">Problema di connessione. Riprova.</string>
@@ -579,7 +582,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="settings_website">descente-canyon.com</string>
     <string name="settings_website_hint">Schede, portate e forum originali</string>
     <string name="settings_data_sources">Fonti dei dati</string>
-    <string name="settings_data_sources_body">• Schede, portate, foto e forum: descente-canyon.com e i suoi contributori.\n• Meteo: Open-Meteo.com (CC BY 4.0).\n• Pluviometri: Météo-France (Licence Ouverte Etalab 2.0) e MeteoSvizzera (dati aperti).\n• Rilasci d\'acqua delle dighe: EDF, «Ma rivière et moi».\n• Mappe: © contributori di OpenStreetMap (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Stima della portata: modello addestrato sulle portate pubblicate su descente-canyon.com, solo indicativa.\n• Percorsi: OSRM sui server di FOSSGIS, dati © contributori di OpenStreetMap (ODbL).</string>
+    <string name="settings_data_sources_body">• Schede, portate, foto e forum: descente-canyon.com e i suoi contributori.\n• Meteo: Open-Meteo.com (CC BY 4.0).\n• Pluviometri: Météo-France (Licence Ouverte Etalab 2.0) e MeteoSvizzera (dati aperti).\n• Rilasci d\'acqua delle dighe: EDF, «Ma rivière et moi».\n• Mappe: © contributori di OpenStreetMap (ODbL), OpenTopoMap (CC BY-SA), SRTM.\n• Bacini idrografici: modelli del terreno © IGN (RGE ALTI, BD ALTI, Licence Ouverte Etalab 2.0), © swisstopo, © Instituto Geográfico Nacional (MDT25), © BEV, INGV (TINITALY), Regione Liguria, GURS, Governo Regional da Madeira, Copernicus DEM (© DLR e.V., © Airbus Defence and Space GmbH, provided under COPERNICUS by the European Union and ESA).\n• Punti GPS di alcune forre senza punti sul sito: OpenCanyon.org (CC BY-NC-SA 4.0), o posizione stimata dai corsi d\'acqua © contributori di OpenStreetMap (ODbL) e dal rilievo.\n• Stima della portata: modello addestrato sulle portate pubblicate su descente-canyon.com, solo indicativa. Meteo passata: ERA5 (Copernicus Climate Change Service); descrittori dei bacini: ESA WorldCover, GLiM, HydroLAKES, Global Dam Watch, RGI, SoilGrids (ISRIC), OpenLandMap, WorldClim.\n• Percorsi: OSRM sui server di FOSSGIS, dati © contributori di OpenStreetMap (ODbL).</string>
     <string name="settings_licenses">Librerie open source</string>
     <string name="settings_licenses_intro">L\'app utilizza in particolare:</string>
     <string name="settings_privacy">Privacy</string>

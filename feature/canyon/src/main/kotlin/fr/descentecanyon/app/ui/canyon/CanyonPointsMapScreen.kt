@@ -577,6 +577,14 @@ private fun GeoPointRow(point: GeoPoint, onNavigate: (GeoPoint) -> Unit, onCopyC
                 fontWeight = FontWeight.SemiBold,
                 color = point.type.mapColor(),
             )
+            point.sourceNote()?.let { note ->
+                Text(
+                    text = note,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.SemiBold,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
             point.displaySubtitle()?.let { subtitle ->
                 Text(
                     text = subtitle,
