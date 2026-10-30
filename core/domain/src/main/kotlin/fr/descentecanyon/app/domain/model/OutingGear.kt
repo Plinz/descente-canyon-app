@@ -5,8 +5,11 @@ enum class GearGroup {
     /** The user's own gear. */
     PERSONAL,
 
-    /** Gear of the group: ropes, rescue kit. */
+    /** Gear of the group: ropes, gear of whoever rigs and assists. */
     SHARED,
+
+    /** What the group needs to give the alert and wait for the rescuers. */
+    SAFETY,
 
     /** What accompanied beginners bring. */
     GUESTS_BRING,
@@ -15,21 +18,37 @@ enum class GearGroup {
     GUESTS_PROVIDED,
 }
 
-/** Gear the app suggests; the screens name it in the user's language. */
+/**
+ * Gear the app suggests, after the "Règles techniques et de sécurité canyonisme" (FFCAM, FFME, FFS,
+ * 2024, §6.2) and the EFC gear list for its courses (2022); the screens name it in the user's
+ * language. A key removed later is dropped from the stored settings.
+ */
 enum class GearKey(val group: GearGroup) {
     HELMET(GearGroup.PERSONAL),
-    HARNESS(GearGroup.PERSONAL),
-    DESCENDER(GearGroup.PERSONAL),
-    LANYARDS(GearGroup.PERSONAL),
     WETSUIT(GearGroup.PERSONAL),
+    NEOPRENE_SOCKS(GearGroup.PERSONAL),
     SHOES(GearGroup.PERSONAL),
-    DRY_BAG(GearGroup.PERSONAL),
+    HARNESS(GearGroup.PERSONAL),
+    LANYARDS(GearGroup.PERSONAL),
+    DESCENDER(GearGroup.PERSONAL),
     KNIFE(GearGroup.PERSONAL),
     WHISTLE(GearGroup.PERSONAL),
+    CANYON_BAG(GearGroup.PERSONAL),
+    DRY_BAG(GearGroup.PERSONAL),
+    SURVIVAL_BLANKET(GearGroup.PERSONAL),
+    WATER_AND_SNACK(GearGroup.PERSONAL),
     HEADLAMP(GearGroup.PERSONAL),
-    RESCUE_KIT(GearGroup.SHARED),
-    FIRST_AID(GearGroup.SHARED),
-    SURVIVAL_BLANKET(GearGroup.SHARED),
+    SPARE_ROPE(GearGroup.SHARED),
+    ROPE_BAG(GearGroup.SHARED),
+    RELEASABLE_SYSTEM(GearGroup.SHARED),
+    ASCENDING_KIT(GearGroup.SHARED),
+    PULLEY(GearGroup.SHARED),
+    ANCHOR_KIT(GearGroup.SHARED),
+    SPARE_DESCENDER(GearGroup.SHARED),
+    DIVING_MASK(GearGroup.SHARED),
+    FIRST_AID(GearGroup.SAFETY),
+    PHONE(GearGroup.SAFETY),
+    WARMING_KIT(GearGroup.SAFETY),
     SWIMSUIT(GearGroup.GUESTS_BRING),
     WATER_SHOES(GearGroup.GUESTS_BRING),
     WATER(GearGroup.GUESTS_BRING),
@@ -37,6 +56,7 @@ enum class GearKey(val group: GearGroup) {
     DRY_CLOTHES(GearGroup.GUESTS_BRING),
     TOWEL(GearGroup.GUESTS_BRING),
     GUEST_WETSUIT(GearGroup.GUESTS_PROVIDED),
+    GUEST_SOCKS(GearGroup.GUESTS_PROVIDED),
     GUEST_HELMET(GearGroup.GUESTS_PROVIDED),
     GUEST_HARNESS(GearGroup.GUESTS_PROVIDED),
 }
@@ -49,7 +69,7 @@ enum class GearHint(val group: GearGroup) {
     /** A shuttle needs two cars and their keys. */
     SHUTTLE_CARS(GearGroup.SHARED),
 
-    /** A long day: water and food for everyone. */
+    /** A long day: a real meal and more water. */
     FOOD_AND_WATER(GearGroup.PERSONAL),
 }
 

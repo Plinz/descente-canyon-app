@@ -10,6 +10,7 @@ import androidx.test.core.app.ApplicationProvider
 import dagger.hilt.android.testing.HiltAndroidRule
 import fr.descentecanyon.app.domain.model.GearListSettings
 import fr.descentecanyon.app.domain.model.OutingSettings
+import fr.descentecanyon.app.domain.repository.AccidentReportRepository
 import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PlaceRepository
@@ -51,6 +52,9 @@ abstract class BaseE2eTest {
     @Inject
     lateinit var outingPreferencesRepository: OutingPreferencesRepository
 
+    @Inject
+    lateinit var accidentReportRepository: AccidentReportRepository
+
     private var scenario: ActivityScenario<MainActivity>? = null
 
     @Before
@@ -65,6 +69,7 @@ abstract class BaseE2eTest {
             stayRepository.observeAll().first().forEach { stayRepository.delete(it.id) }
             outingPreferencesRepository.setSettings(OutingSettings())
             outingPreferencesRepository.setGearList(GearListSettings())
+            accidentReportRepository.clear()
         }
         fakeConnectivityObserver.setOnline(true)
         launchMainActivity()

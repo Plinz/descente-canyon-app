@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -407,8 +408,9 @@ private fun SummaryIconBadge(
     }
 }
 
+/** The cotation; with [onClick], it opens its explanation and shows an info mark. */
 @Composable
-fun CotationBadge(cotation: String, modifier: Modifier = Modifier, large: Boolean = false) {
+fun CotationBadge(cotation: String, modifier: Modifier = Modifier, large: Boolean = false, onClick: (() -> Unit)? = null) {
     val color = when {
         cotation.startsWith("v1") || cotation.startsWith("V1") -> CotationFacile
         cotation.startsWith("v2") || cotation.startsWith("V2") -> CotationFacile
@@ -428,6 +430,7 @@ fun CotationBadge(cotation: String, modifier: Modifier = Modifier, large: Boolea
         color = color,
         textStyle = textStyle,
         modifier = modifier,
+        onClick = onClick,
     )
 }
 
@@ -447,20 +450,38 @@ fun ForbiddenBadge(modifier: Modifier = Modifier, large: Boolean = false) {
 }
 
 @Composable
-private fun SummaryBadge(text: String, color: Color, textStyle: androidx.compose.ui.text.TextStyle, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier,
-        shape = LocalDcShapes.current.pill,
-        colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.12f)),
-        border = BorderStroke(1.dp, color.copy(alpha = 0.34f)),
-    ) {
-        Text(
-            text = text,
-            style = textStyle,
-            fontWeight = FontWeight.Bold,
-            color = color,
+private fun SummaryBadge(
+    text: String,
+    color: Color,
+    textStyle: androidx.compose.ui.text.TextStyle,
+    modifier: Modifier = Modifier,
+    onClick: (() -> Unit)? = null,
+) {
+    val content: @Composable () -> Unit = {
+        Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
-        )
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(text = text, style = textStyle, fontWeight = FontWeight.Bold, color = color)
+            if (onClick != null) {
+                Icon(Icons.Outlined.Info, contentDescription = null, tint = color, modifier = Modifier.size(16.dp))
+            }
+        }
+    }
+    val shape = LocalDcShapes.current.pill
+    val colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.12f))
+    val border = BorderStroke(1.dp, color.copy(alpha = 0.34f))
+    if (onClick != null) {
+        Card(
+            onClick = onClick,
+            modifier = modifier,
+            shape = shape,
+            colors = colors,
+            border = border,
+        ) { content() }
+    } else {
+        Card(modifier = modifier, shape = shape, colors = colors, border = border) { content() }
     }
 }
 

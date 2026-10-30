@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.testutil
 
+import fr.descentecanyon.app.domain.model.AccidentReport
 import fr.descentecanyon.app.domain.model.DriveTime
 import fr.descentecanyon.app.domain.model.DriveTimeSource
 import fr.descentecanyon.app.domain.model.FoundPlace
@@ -11,6 +12,7 @@ import fr.descentecanyon.app.domain.model.OutingSettings
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.Stay
+import fr.descentecanyon.app.domain.repository.AccidentReportRepository
 import fr.descentecanyon.app.domain.repository.DriveTimeRepository
 import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
@@ -160,5 +162,20 @@ class FakeOutingPreferencesRepository(settings: OutingSettings = OutingSettings(
 
     override suspend fun setGearList(settings: GearListSettings) {
         gear.value = settings
+    }
+}
+
+/** In-memory [AccidentReportRepository], without expiry. */
+class FakeAccidentReportRepository(report: AccidentReport? = null) : AccidentReportRepository {
+    val report = MutableStateFlow(report)
+
+    override fun observe(): Flow<AccidentReport?> = report
+
+    override suspend fun save(report: AccidentReport) {
+        this.report.value = report.takeUnless { it.isEmpty }
+    }
+
+    override suspend fun clear() {
+        report.value = null
     }
 }

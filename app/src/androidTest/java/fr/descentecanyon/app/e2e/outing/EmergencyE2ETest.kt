@@ -1,18 +1,25 @@
 package fr.descentecanyon.app.e2e.outing
 
+import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasAnyDescendant
+import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollToNode
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.performTextInput
 import dagger.hilt.android.testing.HiltAndroidTest
+import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.AccidentCircumstance
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.e2e.BaseE2eTest
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.Duration
 import java.time.Instant
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import org.junit.Test
 
@@ -56,6 +63,26 @@ class EmergencyE2ETest : BaseE2eTest() {
         composeRule.onNodeWithTag(TestTags.EMERGENCY_BUTTON, useUnmergedTree = true).performClick()
 
         assertEmergencyFor("Riolan")
+    }
+
+    @Test
+    fun theReportOpensFilledInAndIsKeptForTheNextOpening() {
+        waitForTag(TestTags.EMERGENCY_BUTTON)
+        composeRule.onNodeWithTag(TestTags.EMERGENCY_BUTTON, useUnmergedTree = true).performClick()
+        waitForTag(TestTags.EMERGENCY_LIST)
+
+        // Folded while empty, the report opens on demand.
+        composeRule.onNodeWithTag(TestTags.EMERGENCY_LIST).performScrollToNode(hasTestTag(TestTags.EMERGENCY_REPORT_OPEN))
+        // Through the semantics: on the small CI screen a plain click can land on what covers the button.
+        composeRule.onNodeWithTag(TestTags.EMERGENCY_REPORT_OPEN).performSemanticsAction(SemanticsActions.OnClick)
+        composeRule.onNodeWithTag(TestTags.EMERGENCY_LIST)
+            .performScrollToNode(hasText(string(R.string.emergency_circumstance_jump)))
+        composeRule.onNode(hasText(string(R.string.emergency_circumstance_jump)) and hasClickAction())
+            .performSemanticsAction(SemanticsActions.OnClick)
+
+        composeRule.waitUntil(5_000) {
+            runBlocking { accidentReportRepository.observe().first() }?.circumstances == setOf(AccidentCircumstance.JUMP)
+        }
     }
 
     private fun assertEmergencyFor(canyonName: String) {

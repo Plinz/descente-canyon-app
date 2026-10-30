@@ -261,6 +261,7 @@ private fun gearGroupLabel(group: GearGroup): String = stringResource(
     when (group) {
         GearGroup.PERSONAL -> R.string.gear_group_personal
         GearGroup.SHARED -> R.string.gear_group_shared
+        GearGroup.SAFETY -> R.string.gear_group_safety
         GearGroup.GUESTS_BRING -> R.string.gear_group_guests_bring
         GearGroup.GUESTS_PROVIDED -> R.string.gear_group_guests_provided
     },

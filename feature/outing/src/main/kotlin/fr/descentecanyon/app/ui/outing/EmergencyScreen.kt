@@ -112,6 +112,8 @@ import kotlin.math.roundToInt
 fun EmergencyScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier, viewModel: EmergencyViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val resources = LocalResources.current
+    val locale = LocalLocale.current.platformLocale
     val contentWidth = rememberDcContentWidth(maxWidth = 720.dp)
     var hasPermission by remember { mutableStateOf(context.hasLocationPermission()) }
     var hasPrecisePermission by remember { mutableStateOf(context.hasPreciseLocationPermission()) }
@@ -201,6 +203,25 @@ fun EmergencyScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier, view
                         },
                     )
                 }
+                item {
+                    AccidentReportCard(
+                        state = state,
+                        onChange = viewModel::updateReport,
+                        onTimeNow = viewModel::setAccidentTimeNow,
+                        onTimeSelected = viewModel::setAccidentTime,
+                    )
+                }
+                item { WaitingAdviceCard() }
+                item {
+                    VictimFollowUpCard(
+                        checks = state.report.checks,
+                        onAdd = viewModel::addCheck,
+                        onRemove = viewModel::removeCheck,
+                        onShare = {
+                            share(context, followUpMessage(resources, state.report.checks, state.canyon?.name, locale))
+                        },
+                    )
+                }
                 if (state.points.isNotEmpty()) {
                     item {
                         Text(
@@ -217,7 +238,7 @@ fun EmergencyScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier, view
                     }) { point -> PointRow(point) }
                 }
                 state.canyon?.engagement?.let { engagement -> item { EngagementCard(engagement) } }
-                item { AdviceCard() }
+                if (!state.report.isEmpty) item { ClearReportButton(onClear = viewModel::clearReport) }
             }
         }
     }
@@ -370,6 +391,7 @@ private fun CallCard(state: EmergencyUiState, isDeviceLocked: Boolean) {
                     OutlinedButton(onClick = onClick, modifier = buttonModifier) { CallButtonContent(number.number, service) }
                 }
             }
+            Text(stringResource(R.string.emergency_call_stay_on_line), style = MaterialTheme.typography.bodySmall)
             if (isDeviceLocked) {
                 Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
                     Icon(Icons.Default.Lock, contentDescription = null, modifier = Modifier.size(16.dp))
@@ -571,21 +593,6 @@ private fun EngagementCard(engagement: String) {
     }
 }
 
-@Composable
-private fun AdviceCard() {
-    DcCard(modifier = Modifier.fillMaxWidth()) {
-        Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-            Text(
-                stringResource(R.string.emergency_advice_title),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.semantics { heading() },
-            )
-            Text(stringResource(R.string.emergency_advice_body), style = MaterialTheme.typography.bodyMedium)
-        }
-    }
-}
-
 /** The kind of point, which tells the rescuers where it is: its title on the sheet is often a remark. */
 @Composable
 private fun pointLabel(point: GeoPoint): String = stringResource(pointTypeLabel(point.type))
@@ -630,12 +637,12 @@ private fun directionLabel(direction: CompassDirection): String = stringResource
     },
 )
 
-/** What to text the rescuers or a relative: canyon, position, closest point and a map link. */
+/** What to text the rescuers or a relative: canyon, position, closest point, the report and a map link. */
 private fun emergencyMessage(resources: Resources, state: EmergencyUiState, fix: DeviceFix, locale: Locale): String {
     val canyon = state.canyon
     val latitude = fix.latitude.format5()
     val longitude = fix.longitude.format5()
-    return listOfNotNull(
+    val lines = listOfNotNull(
         // Far from the canyon shown, the position alone says where help is needed.
         canyon?.takeIf {
             state.isAtCanyon
@@ -651,8 +658,8 @@ private fun emergencyMessage(resources: Resources, state: EmergencyUiState, fix:
             val label = resources.getString(pointTypeLabel(nearest.point.type))
             resources.getString(R.string.emergency_sms_nearest, formatDistance(nearest.distanceMeters ?: 0, locale), label)
         },
-        "https://www.openstreetmap.org/?mlat=$latitude&mlon=$longitude#map=16/$latitude/$longitude",
-    ).joinToString("\n")
+    ) + reportMessageLines(resources, state.report, state.peopleOnSite, locale)
+    return (lines + "https://www.openstreetmap.org/?mlat=$latitude&mlon=$longitude#map=16/$latitude/$longitude").joinToString("\n")
 }
 
 /**

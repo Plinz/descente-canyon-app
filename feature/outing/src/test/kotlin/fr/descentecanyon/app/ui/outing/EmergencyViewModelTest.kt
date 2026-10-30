@@ -1,6 +1,8 @@
 package fr.descentecanyon.app.ui.outing
 
 import androidx.lifecycle.SavedStateHandle
+import fr.descentecanyon.app.domain.model.AccidentCircumstance
+import fr.descentecanyon.app.domain.model.AccidentReport
 import fr.descentecanyon.app.domain.model.Canyon
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
@@ -9,9 +11,12 @@ import fr.descentecanyon.app.domain.model.CotationRating
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.Responsiveness
+import fr.descentecanyon.app.domain.model.VictimCheck
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.usecase.FindCanyonsAroundUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonPreviewUseCase
+import fr.descentecanyon.app.testutil.FakeAccidentReportRepository
 import fr.descentecanyon.app.testutil.FakeOutingRepository
 import fr.descentecanyon.app.testutil.MainDispatcherRule
 import fr.descentecanyon.app.ui.location.DeviceFix
@@ -22,6 +27,7 @@ import io.mockk.mockk
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
+import java.time.LocalTime
 import java.time.ZoneId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.flowOf
@@ -45,6 +51,7 @@ class EmergencyViewModelTest {
     private val now = Instant.parse("2026-07-14T10:00:00Z")
     private val clock = Clock.fixed(now, ZoneId.of("Europe/Paris"))
     private val outingRepository = FakeOutingRepository()
+    private val accidentReportRepository = FakeAccidentReportRepository()
 
     /** Riolan in France and its neighbour, Ecouges in Switzerland for the numbers, 2.5 km apart. */
     private val canyonRepository = mockk<CanyonRepository> {
@@ -207,11 +214,82 @@ class EmergencyViewModelTest {
         assertFalse(state.isCountryKnown)
     }
 
+    @Test
+    fun `the report of an accident under way comes back when the screen opens again`() = runTest {
+        val saved = AccidentReport(injuredCount = 1, waterRising = true, location = "Toboggan final")
+        accidentReportRepository.report.value = saved
+
+        val viewModel = viewModel(canyonId = 42)
+        advanceUntilIdle()
+
+        assertEquals(saved, viewModel.uiState.value.report)
+    }
+
+    @Test
+    fun `each answer is kept at once, and the people on site default to the group of the outing`() = runTest {
+        outingRepository.outings.value = listOf(
+            PlannedOuting(
+                canyonId = 42,
+                canyonName = "Riolan",
+                start = now.minus(Duration.ofHours(1)),
+                expectedBack = now.plus(Duration.ofHours(3)),
+                alertAt = now.plus(Duration.ofHours(5)),
+                groupSize = 6,
+                id = 1,
+            ),
+        )
+        val viewModel = viewModel(canyonId = 42)
+        advanceUntilIdle()
+        assertEquals(6, viewModel.uiState.value.peopleOnSite)
+
+        viewModel.updateReport { it.copy(peopleOnSite = 4, circumstances = setOf(AccidentCircumstance.FALL)) }
+        advanceUntilIdle()
+
+        assertEquals(4, viewModel.uiState.value.peopleOnSite)
+        assertEquals(setOf(AccidentCircumstance.FALL), accidentReportRepository.report.value?.circumstances)
+    }
+
+    @Test
+    fun `an accident time still to come today is yesterday's`() = runTest {
+        val viewModel = viewModel(canyonId = 42)
+        advanceUntilIdle()
+
+        // 12:00 in Paris: 11:30 is this morning, 13:00 was yesterday.
+        viewModel.setAccidentTime(LocalTime.of(11, 30))
+        assertEquals(Instant.parse("2026-07-14T09:30:00Z"), viewModel.uiState.value.report.accidentTime)
+        viewModel.setAccidentTime(LocalTime.of(13, 0))
+        assertEquals(Instant.parse("2026-07-13T11:00:00Z"), viewModel.uiState.value.report.accidentTime)
+        viewModel.setAccidentTimeNow()
+        assertEquals(now, viewModel.uiState.value.report.accidentTime)
+    }
+
+    @Test
+    fun `the follow-up dates each look, and the report is forgotten once cleared`() = runTest {
+        val viewModel = viewModel(canyonId = 42)
+        advanceUntilIdle()
+
+        viewModel.addCheck(VictimCheck(at = Instant.EPOCH, responds = Responsiveness.NORMAL, pain = 4))
+        advanceUntilIdle()
+        val check = viewModel.uiState.value.report.checks.single()
+        assertEquals(now, check.at)
+        assertEquals(4, check.pain)
+
+        viewModel.removeCheck(check.at)
+        assertTrue(viewModel.uiState.value.report.checks.isEmpty())
+
+        viewModel.updateReport { it.copy(injuredCount = 2) }
+        viewModel.clearReport()
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.report.isEmpty)
+        assertNull(accidentReportRepository.report.value)
+    }
+
     private fun viewModel(canyonId: Int = 0) = EmergencyViewModel(
         savedStateHandle = SavedStateHandle(mapOf(EmergencyViewModel.CANYON_ID_KEY to canyonId)),
         getCanyonPreviewUseCase = GetCanyonPreviewUseCase(canyonRepository),
         findCanyonsAroundUseCase = FindCanyonsAroundUseCase(canyonRepository),
         outingRepository = outingRepository,
+        accidentReportRepository = accidentReportRepository,
         clock = clock,
     )
 

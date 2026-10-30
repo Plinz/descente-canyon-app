@@ -43,6 +43,7 @@ import fr.descentecanyon.app.domain.model.LogbookFilter
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.ZoneCountry
+import fr.descentecanyon.app.ui.components.CotationGuideDialog
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
 import fr.descentecanyon.app.ui.design.DcDropdownMenu
@@ -68,6 +69,8 @@ fun SearchFiltersSheet(
     val colors = LocalDcColors.current
     val shapes = LocalDcShapes.current
     var showZonePicker by rememberSaveable { mutableStateOf(false) }
+    var showCotationGuide by rememberSaveable { mutableStateOf(false) }
+    if (showCotationGuide) CotationGuideDialog(cotation = null, onDismiss = { showCotationGuide = false })
 
     if (showZonePicker) {
         DcZonePickerSheet(
@@ -158,6 +161,7 @@ fun SearchFiltersSheet(
                     optionLabel = { CotationRating.engagementLabel(it) },
                     onRangeChanged = { onCriteriaChanged(criteria.copy(engagementRange = it)) },
                 )
+                TextButton(onClick = { showCotationGuide = true }) { Text(stringResource(R.string.cotation_guide_title)) }
             }
 
             FilterSection(title = stringResource(R.string.search_filter_interests_title)) {

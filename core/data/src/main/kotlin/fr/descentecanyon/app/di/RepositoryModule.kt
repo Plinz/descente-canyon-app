@@ -4,6 +4,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import fr.descentecanyon.app.data.repository.AccidentReportRepositoryImpl
 import fr.descentecanyon.app.data.repository.AuthRepositoryImpl
 import fr.descentecanyon.app.data.repository.CanyonNotesRepositoryImpl
 import fr.descentecanyon.app.data.repository.CanyonRepositoryImpl
@@ -30,6 +31,7 @@ import fr.descentecanyon.app.data.repository.RecentCanyonsRepositoryImpl
 import fr.descentecanyon.app.data.repository.SiteAccountRepositoryImpl
 import fr.descentecanyon.app.data.repository.StayRepositoryImpl
 import fr.descentecanyon.app.data.repository.WeatherRepositoryImpl
+import fr.descentecanyon.app.domain.repository.AccidentReportRepository
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
@@ -153,6 +155,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindOutingPreferencesRepository(impl: OutingPreferencesRepositoryImpl): OutingPreferencesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAccidentReportRepository(impl: AccidentReportRepositoryImpl): AccidentReportRepository
 
     @Binds
     @Singleton

@@ -177,6 +177,25 @@ class OutingSettingsTest {
         assertEquals(false, short.any { it is GearItem.Hint })
     }
 
+    @Test
+    fun `the suggested gear follows the federal lists, the emergency gear apart`() {
+        val list = gearChecklist(GearListSettings(), GearContext())
+        val groups = list.map { it.group }.distinct()
+
+        assertEquals(
+            listOf(GearGroup.PERSONAL, GearGroup.SHARED, GearGroup.SAFETY, GearGroup.GUESTS_BRING, GearGroup.GUESTS_PROVIDED),
+            groups,
+        )
+        assertEquals(
+            listOf(GearKey.FIRST_AID, GearKey.PHONE, GearKey.WARMING_KIT),
+            list.filter { it.group == GearGroup.SAFETY }.map { (it as GearItem.Suggested).key },
+        )
+        // Each person carries a survival blanket; the group carries the spare rope and the rope ascent kit.
+        assertEquals(GearGroup.PERSONAL, GearKey.SURVIVAL_BLANKET.group)
+        assertEquals(GearGroup.SHARED, GearKey.SPARE_ROPE.group)
+        assertEquals(GearGroup.SHARED, GearKey.ASCENDING_KIT.group)
+    }
+
     private fun canyon() =
         Canyon(id = 1, nom = "Riolan", nomComplet = "Riolan", pays = "France", commune = "Sigale", cotation = "v4", url = "")
 }

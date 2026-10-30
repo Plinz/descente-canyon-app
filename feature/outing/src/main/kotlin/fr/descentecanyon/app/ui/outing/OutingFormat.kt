@@ -108,18 +108,30 @@ internal fun gearLabel(resources: Resources, item: GearItem): String = when (ite
 
 internal fun gearKeyLabel(key: GearKey): Int = when (key) {
     GearKey.HELMET -> R.string.gear_helmet
-    GearKey.HARNESS -> R.string.gear_harness
-    GearKey.DESCENDER -> R.string.gear_descender
-    GearKey.LANYARDS -> R.string.gear_lanyards
     GearKey.WETSUIT -> R.string.gear_wetsuit
+    GearKey.NEOPRENE_SOCKS -> R.string.gear_neoprene_socks
     GearKey.SHOES -> R.string.gear_shoes
-    GearKey.DRY_BAG -> R.string.gear_dry_bag
+    GearKey.HARNESS -> R.string.gear_harness
+    GearKey.LANYARDS -> R.string.gear_lanyards
+    GearKey.DESCENDER -> R.string.gear_descender
     GearKey.KNIFE -> R.string.gear_knife
     GearKey.WHISTLE -> R.string.gear_whistle
-    GearKey.HEADLAMP -> R.string.gear_headlamp
-    GearKey.RESCUE_KIT -> R.string.gear_rescue_kit
-    GearKey.FIRST_AID -> R.string.gear_first_aid
+    GearKey.CANYON_BAG -> R.string.gear_canyon_bag
+    GearKey.DRY_BAG -> R.string.gear_dry_bag
     GearKey.SURVIVAL_BLANKET -> R.string.gear_survival_blanket
+    GearKey.WATER_AND_SNACK -> R.string.gear_water_and_snack
+    GearKey.HEADLAMP -> R.string.gear_headlamp
+    GearKey.SPARE_ROPE -> R.string.gear_spare_rope
+    GearKey.ROPE_BAG -> R.string.gear_rope_bag
+    GearKey.RELEASABLE_SYSTEM -> R.string.gear_releasable_system
+    GearKey.ASCENDING_KIT -> R.string.gear_ascending_kit
+    GearKey.PULLEY -> R.string.gear_pulley
+    GearKey.ANCHOR_KIT -> R.string.gear_anchor_kit
+    GearKey.SPARE_DESCENDER -> R.string.gear_spare_descender
+    GearKey.DIVING_MASK -> R.string.gear_diving_mask
+    GearKey.FIRST_AID -> R.string.gear_first_aid
+    GearKey.PHONE -> R.string.gear_phone
+    GearKey.WARMING_KIT -> R.string.gear_warming_kit
     GearKey.SWIMSUIT -> R.string.gear_swimsuit
     GearKey.WATER_SHOES -> R.string.gear_water_shoes
     GearKey.WATER -> R.string.gear_water
@@ -127,6 +139,7 @@ internal fun gearKeyLabel(key: GearKey): Int = when (key) {
     GearKey.DRY_CLOTHES -> R.string.gear_dry_clothes
     GearKey.TOWEL -> R.string.gear_towel
     GearKey.GUEST_WETSUIT -> R.string.gear_guest_wetsuit
+    GearKey.GUEST_SOCKS -> R.string.gear_guest_socks
     GearKey.GUEST_HELMET -> R.string.gear_guest_helmet
     GearKey.GUEST_HARNESS -> R.string.gear_guest_harness
 }

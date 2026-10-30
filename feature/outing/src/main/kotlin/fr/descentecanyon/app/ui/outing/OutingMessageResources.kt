@@ -128,7 +128,8 @@ internal fun outingMessageData(state: OutingPlanUiState, resources: Resources, l
         lastReport = state.lastReport?.let { report ->
             resources.getString(debitLevelLabelRes(report.niveau)) to relativeDayLabel(resources, report.date, state.today, locale)
         },
-        sharedGear = gearOf(GearGroup.SHARED),
+        // What the group carries: its gear and what the alert and the wait call for.
+        sharedGear = gearOf(GearGroup.SHARED) + gearOf(GearGroup.SAFETY),
         guestsBring = gearOf(GearGroup.GUESTS_BRING),
         guestsProvided = gearOf(GearGroup.GUESTS_PROVIDED),
         note = state.choices.note,

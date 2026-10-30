@@ -4,6 +4,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.components.SingletonComponent
 import dagger.hilt.testing.TestInstallIn
+import fr.descentecanyon.app.data.repository.AccidentReportRepositoryImpl
 import fr.descentecanyon.app.data.repository.CanyonNotesRepositoryImpl
 import fr.descentecanyon.app.data.repository.DebitPredictionSupportRepositoryImpl
 import fr.descentecanyon.app.data.repository.ForumUserRepositoryImpl
@@ -17,6 +18,7 @@ import fr.descentecanyon.app.data.repository.PreferencesRepositoryImpl
 import fr.descentecanyon.app.data.repository.RecentCanyonsRepositoryImpl
 import fr.descentecanyon.app.data.repository.StayRepositoryImpl
 import fr.descentecanyon.app.di.RepositoryModule
+import fr.descentecanyon.app.domain.repository.AccidentReportRepository
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
@@ -131,6 +133,9 @@ object TestRepositoryModule {
 
     @Provides @Singleton
     fun provideOutingPreferencesRepository(impl: OutingPreferencesRepositoryImpl): OutingPreferencesRepository = impl
+
+    @Provides @Singleton
+    fun provideAccidentReportRepository(impl: AccidentReportRepositoryImpl): AccidentReportRepository = impl
 
     @Provides @Singleton
     fun provideDriveTimeRepository(fake: FakeDriveTimeRepository): DriveTimeRepository = fake

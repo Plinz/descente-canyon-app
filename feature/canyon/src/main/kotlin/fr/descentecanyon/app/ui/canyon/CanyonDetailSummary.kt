@@ -26,12 +26,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -42,6 +47,7 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.Regulation
 import fr.descentecanyon.app.ui.components.CotationBadge
+import fr.descentecanyon.app.ui.components.CotationGuideDialog
 import fr.descentecanyon.app.ui.components.ForbiddenBadge
 import fr.descentecanyon.app.ui.components.InterestStars
 import fr.descentecanyon.app.ui.components.canyonDurationText
@@ -52,6 +58,7 @@ import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
 import fr.descentecanyon.app.ui.design.LocalDcSpacing
 import fr.descentecanyon.app.ui.design.LocalDcTypography
+import fr.descentecanyon.app.ui.test.TestTags
 import java.util.Locale
 
 @Composable
@@ -61,6 +68,8 @@ internal fun SummaryCard(detail: CanyonDetail, onPersistedPhotoMissing: (Long) -
     val colors = LocalDcColors.current
     val shapes = LocalDcShapes.current
     val spacing = LocalDcSpacing.current
+    var showCotationGuide by rememberSaveable { mutableStateOf(false) }
+    if (showCotationGuide) CotationGuideDialog(cotation = canyon.cotation, onDismiss = { showCotationGuide = false })
 
     DcCard(
         modifier = modifier
@@ -116,7 +125,11 @@ internal fun SummaryCard(detail: CanyonDetail, onPersistedPhotoMissing: (Long) -
                         if (canyon.isForbidden) {
                             ForbiddenBadge()
                         } else {
-                            CotationBadge(cotation = canyon.cotation)
+                            CotationBadge(
+                                cotation = canyon.cotation,
+                                onClick = { showCotationGuide = true }.takeIf { canyon.cotation.isNotBlank() },
+                                modifier = Modifier.testTag(TestTags.COTATION_BADGE),
+                            )
                         }
                         canyon.interet?.let { interest ->
                             // Over the photo scrim: light text, readable on any picture.

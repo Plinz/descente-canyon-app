@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import fr.descentecanyon.app.domain.model.AccidentReport
 import fr.descentecanyon.app.domain.model.CanyonAround
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CompassDirection
@@ -12,15 +13,20 @@ import fr.descentecanyon.app.domain.model.EmergencyNumbers
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.VictimCheck
 import fr.descentecanyon.app.domain.model.bearingDegrees
 import fr.descentecanyon.app.domain.model.distanceToCanyonKm
 import fr.descentecanyon.app.domain.model.haversineKm
 import fr.descentecanyon.app.domain.model.underwayAt
+import fr.descentecanyon.app.domain.repository.AccidentReportRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.usecase.FindCanyonsAroundUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonPreviewUseCase
 import fr.descentecanyon.app.ui.location.DeviceFix
 import java.time.Clock
+import java.time.Instant
+import java.time.LocalTime
+import java.time.ZonedDateTime
 import javax.inject.Inject
 import kotlin.math.roundToInt
 import kotlinx.coroutines.delay
@@ -81,7 +87,12 @@ data class EmergencyUiState(
     val position: DeviceFix? = null,
     /** Closest first with a position; escape routes first otherwise. */
     val points: List<EmergencyPoint> = emptyList(),
+    /** What the user noted of the accident and of the state of the injured person. */
+    val report: AccidentReport = AccidentReport(),
 ) {
+    /** The people there: as noted, else the group of the outing under way. */
+    val peopleOnSite: Int? get() = report.peopleOnSite ?: outing?.groupSize
+
     /** The point of the canyon closest to the position, to place the victim for the rescuers; none when far away. */
     val nearestPoint: EmergencyPoint?
         get() = points.filter { (it.distanceMeters ?: Int.MAX_VALUE) <= NEARBY_METERS }.minByOrNull { it.distanceMeters!! }
@@ -105,6 +116,7 @@ class EmergencyViewModel @Inject constructor(
     private val getCanyonPreviewUseCase: GetCanyonPreviewUseCase,
     private val findCanyonsAroundUseCase: FindCanyonsAroundUseCase,
     private val outingRepository: OutingRepository,
+    private val accidentReportRepository: AccidentReportRepository,
     private val clock: Clock,
 ) : ViewModel() {
 
@@ -125,6 +137,12 @@ class EmergencyViewModel @Inject constructor(
     private var canyonsAround: List<CanyonAround> = emptyList()
 
     init {
+        // The report of an accident still under way: the screen may have been closed meanwhile.
+        viewModelScope.launch {
+            accidentReportRepository.observe().first()?.let { saved ->
+                _uiState.update { if (it.report.isEmpty) it.copy(report = saved) else it }
+            }
+        }
         viewModelScope.launch {
             val now = clock.instant()
             val outing = outingRepository.observeAll().first().underwayAt(now)
@@ -193,6 +211,36 @@ class EmergencyViewModel @Inject constructor(
         userChoseCanyon = true
         viewModelScope.launch { show(id, EmergencyCanyonOrigin.POSITION, outing = null, distanceKm = chosen.distanceKm) }
     }
+
+    /** Any answer of the report; each change is kept on the phone at once. */
+    fun updateReport(change: (AccidentReport) -> AccidentReport) {
+        val updated = change(_uiState.value.report)
+        _uiState.update { it.copy(report = updated) }
+        viewModelScope.launch { accidentReportRepository.save(updated) }
+    }
+
+    /** The accident happened at [time] today, or yesterday when that time is still to come. */
+    fun setAccidentTime(time: LocalTime) {
+        val now = ZonedDateTime.now(clock)
+        val today = now.with(time).withSecond(0).withNano(0)
+        val at = if (today.isAfter(now)) today.minusDays(1) else today
+        updateReport { it.copy(accidentTime = at.toInstant()) }
+    }
+
+    fun setAccidentTimeNow() = updateReport { it.copy(accidentTime = clock.instant().truncatedToMinute()) }
+
+    /** A look at the injured person, dated now (to the millisecond: the date tells the looks apart). */
+    fun addCheck(check: VictimCheck) = updateReport { report -> report.copy(checks = report.checks + check.copy(at = clock.instant())) }
+
+    fun removeCheck(at: Instant) = updateReport { report -> report.copy(checks = report.checks.filterNot { it.at == at }) }
+
+    /** The accident is over: its report is forgotten. */
+    fun clearReport() {
+        _uiState.update { it.copy(report = AccidentReport()) }
+        viewModelScope.launch { accidentReportRepository.clear() }
+    }
+
+    private fun Instant.truncatedToMinute(): Instant = Instant.ofEpochSecond(epochSecond - epochSecond % 60)
 
     private fun locateCanyon(fix: DeviceFix) {
         locatedAt = fix
