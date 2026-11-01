@@ -55,6 +55,7 @@ import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
 import fr.descentecanyon.app.ui.design.zoneFieldValue
 import fr.descentecanyon.app.ui.test.TestTags
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -169,7 +170,7 @@ fun SearchFiltersSheet(
                     label = stringResource(R.string.search_filter_interest_min),
                     selected = criteria.interestMin,
                     options = listOf(1f, 1.5f, 2f, 2.5f, 3f, 3.5f, 4f),
-                    optionLabel = { if (it % 1f == 0f) it.toInt().toString() else it.toString() },
+                    optionLabel = { if (it % 1f == 0f) it.toInt().toString() else String.format(Locale.getDefault(), "%.1f", it) },
                     onSelected = { onCriteriaChanged(criteria.copy(interestMin = it)) },
                 )
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {

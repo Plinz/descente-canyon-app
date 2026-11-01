@@ -391,7 +391,8 @@ private fun LoginSuggestionCard(onLoginClick: () -> Unit) {
     }
 }
 
-private fun formatRating(value: Float): String = String.format(Locale.US, "%.1f/4", value.coerceIn(0f, 4f))
+/** "2,5/4" in French: the decimal separator of the language, like every other figure of the app. */
+private fun formatRating(value: Float): String = String.format(Locale.getDefault(), "%.1f/4", value.coerceIn(0f, 4f))
 
 private data class InterestRatingGuideItem(val labelRes: Int, val titleRes: Int, val descriptionRes: Int)
 

@@ -376,7 +376,10 @@ class OutingScreensTest {
             outingRepository = outings,
             logbookRepository = mockk<LogbookRepository> { every { observeAll() } returns flowOf(logbook) },
             canyonRepository = canyons,
-            debitRepository = mockk<DebitRepository> { every { observeLatestKnownDebits(any()) } returns flowOf(emptyMap()) },
+            debitRepository = mockk<DebitRepository> {
+                every { observeLatestKnownDebits(any()) } returns flowOf(emptyMap())
+                every { getDebitsForCanyon(any()) } returns flowOf(Result.success(emptyList()))
+            },
             getPlaceWeatherUseCase = GetPlaceWeatherUseCase(weather),
             connectivityObserver = mockk<ConnectivityObserver> { every { isCurrentlyOnline() } returns false },
             clock = clock,

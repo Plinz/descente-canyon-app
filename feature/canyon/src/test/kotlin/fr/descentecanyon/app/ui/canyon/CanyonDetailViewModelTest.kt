@@ -372,13 +372,13 @@ class CanyonDetailViewModelTest {
 
         logbook.value = listOf(outing)
         advanceUntilIdle()
-        viewModel.saveLogbookEntry(outing.copy(canyonId = 0, debitLevel = NiveauDebit.GROS))
+        viewModel.saveLogbookEntry(outing.copy(canyonId = 0, durationMinutes = 250))
         viewModel.deleteLogbookEntry(3)
         advanceUntilIdle()
 
         assertEquals(listOf(outing), viewModel.uiState.value.logbook)
         assertEquals(listOf("Paul", "Léa"), viewModel.uiState.value.knownCompanions)
-        coVerify { logbookRepository.save(outing.copy(debitLevel = NiveauDebit.GROS)) }
+        coVerify { logbookRepository.save(outing.copy(durationMinutes = 250)) }
         coVerify { logbookRepository.delete(3) }
     }
 

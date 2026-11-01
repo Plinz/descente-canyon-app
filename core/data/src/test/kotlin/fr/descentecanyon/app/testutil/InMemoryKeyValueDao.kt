@@ -24,6 +24,10 @@ class InMemoryKeyValueDao : KeyValueDao {
         it.key !in this.entries.value
     }.forEach { put(it) }
 
+    override suspend fun delete(key: String) {
+        entries.value = entries.value - key
+    }
+
     override suspend fun deleteByPrefixOlderThan(prefix: String, beforeEpochMs: Long) {
         entries.value = entries.value.filterNot { (key, entry) -> key.startsWith(prefix) && entry.updatedAt < beforeEpochMs }
     }

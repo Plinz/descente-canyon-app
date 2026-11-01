@@ -207,9 +207,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 },
                 onOpenEmergency = dropUnlessResumed { navController.navigateSingleTop(Screen.Emergency(detail.canyonId)) },
                 onReportOuting = dropUnlessResumedWith { entry: LogbookEntry ->
-                    navController.navigateSingleTop(
-                        Screen.DebitForm(entry.canyonId, date = entry.date.toString(), descended = true, level = entry.debitLevel?.name),
-                    )
+                    navController.navigateSingleTop(Screen.DebitForm(entry.canyonId, date = entry.date.toString()))
                 },
                 onOpenLogbook = dropUnlessResumed { navController.navigateSingleTop(Screen.Logbook()) },
                 openDebitsTabInitially = detail.openDebitsTab,
@@ -372,6 +370,9 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
             LogbookScreen(
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
                 onCanyonClick = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
+                onReportFlow = dropUnlessResumedWith { entry: LogbookEntry ->
+                    navController.navigateSingleTop(Screen.DebitForm(entry.canyonId, date = entry.date.toString()))
+                },
             )
         }
 

@@ -32,8 +32,8 @@ class ImportSiteLogbookUseCaseTest {
     private val useCase = ImportSiteLogbookUseCase(siteAccountRepository, logbookRepository)
 
     @Test
-    fun `descents go to the logbook with flow and comments, flows only looked at are left out`() = runTest {
-        coEvery { siteAccountRepository.fetchMyObservations() } returns Result.success(
+    fun `descents go to the logbook as outings without the flow, flows only looked at are left out`() = runTest {
+        coEvery { siteAccountRepository.refreshMyObservations() } returns Result.success(
             listOf(
                 observation(199338, 22146, "2026-07-30", publicRemark = "Approche 1h10", personalComment = "Avec Paul"),
                 observation(195489, 2283, "2026-05-25", descended = false, level = NiveauDebit.CRUE),
@@ -49,20 +49,16 @@ class ImportSiteLogbookUseCaseTest {
                 canyonId = 22146,
                 canyonName = "Canyon 22146",
                 date = LocalDate.of(2026, 7, 30),
-                note = "Avec Paul\n\nApproche 1h10",
-                debitLevel = NiveauDebit.GROS,
                 source = LogbookSource.SITE,
-                siteObservationId = 199338,
             ),
             recorded.first(),
         )
         assertEquals(listOf(22146, 21688), recorded.map { it.canyonId })
-        assertEquals(null, recorded.last().note)
     }
 
     @Test
     fun `without a session nothing is recorded`() = runTest {
-        coEvery { siteAccountRepository.fetchMyObservations() } returns Result.failure(AppException(AppError.AuthenticationRequired))
+        coEvery { siteAccountRepository.refreshMyObservations() } returns Result.failure(AppException(AppError.AuthenticationRequired))
 
         assertEquals(true, useCase().isFailure)
         coVerify(exactly = 0) { logbookRepository.record(any()) }

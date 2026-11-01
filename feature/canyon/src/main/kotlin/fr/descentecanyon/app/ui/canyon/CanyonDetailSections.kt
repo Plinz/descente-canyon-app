@@ -93,6 +93,8 @@ internal fun CanyonDetailContent(
     nearbyCanyons: List<NearbyCanyon> = emptyList(),
     onNearbyCanyonClick: (Int) -> Unit = {},
     onPlanOuting: () -> Unit = {},
+    /** The map of the points, offered on the header photo (the floating button only shows once scrolled). */
+    onShowMap: (() -> Unit)? = null,
     /** Opened for a day of a stay: the outing is planned for it. */
     planForDay: LocalDate? = null,
     logbook: List<LogbookEntry> = emptyList(),
@@ -143,6 +145,7 @@ internal fun CanyonDetailContent(
             SummaryCard(
                 detail = detail,
                 onPersistedPhotoMissing = onPersistedPhotoMissing,
+                onShowMap = onShowMap,
             )
         }
         item {

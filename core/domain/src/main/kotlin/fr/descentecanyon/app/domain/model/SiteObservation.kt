@@ -29,9 +29,15 @@ data class SiteLogbookImport(
     val descents: Int,
     /** Outings that were not in the logbook yet. */
     val added: Int,
-    /** Outings already logged that gained the flow or the comment of the site. */
+    /** Outings that were already in the logbook. */
     val completed: Int,
 )
 
 /** What a file exported by the app brought back. */
-data class PersonalDataImport(val outings: Int, val memos: Int, val favorites: Int)
+data class PersonalDataImport(
+    val outings: Int,
+    val memos: Int,
+    val favorites: Int,
+    /** Outings still to come, with their plan. */
+    val plannedOutings: Int = 0,
+)

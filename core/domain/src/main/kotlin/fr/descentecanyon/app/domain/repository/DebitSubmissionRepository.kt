@@ -20,6 +20,9 @@ interface DebitSubmissionRepository {
     /** Reports waiting to be sent (the ones refused by the site excluded). */
     fun observePendingCount(): Flow<Int>
 
+    /** When the app last sent a report to the site (epoch ms), null before the first one. */
+    fun observeLastSentAt(): Flow<Long?>
+
     /** Reports waiting to be sent and reports refused by the site, oldest first. */
     fun observePending(): Flow<List<PendingDebitSubmission>>
 

@@ -6,9 +6,12 @@ import fr.descentecanyon.app.data.remote.auth.SessionManager
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.appErrorOrNull
 import fr.descentecanyon.app.domain.model.AuthState
+import fr.descentecanyon.app.domain.repository.SiteAccountRepository
 import fr.descentecanyon.app.testutil.FakeSiteHttpClient
 import fr.descentecanyon.app.testutil.InMemoryCredentialStore
 import fr.descentecanyon.app.testutil.SitePages
+import io.mockk.coVerify
+import io.mockk.mockk
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import okhttp3.Cookie
@@ -22,7 +25,8 @@ class AuthRepositoryImplTest {
 
     private val siteClient = FakeSiteHttpClient()
     private val store = InMemoryCredentialStore()
-    private val repository = AuthRepositoryImpl(SessionManager(siteClient, SiteCookieJar(), store))
+    private val siteAccountRepository = mockk<SiteAccountRepository>(relaxed = true)
+    private val repository = AuthRepositoryImpl(SessionManager(siteClient, SiteCookieJar(), store), siteAccountRepository)
 
     @Test
     fun `initial state is disconnected`() = runTest {
@@ -56,6 +60,16 @@ class AuthRepositoryImplTest {
 
         assertEquals(AuthState.Disconnected, repository.authState.first())
         assertNull(store.storedUsername)
+    }
+
+    @Test
+    fun `logout forgets the copy of the reports of the account`() = runTest {
+        siteClient.onPost(SiteUrls.LOGIN, SitePages.loggedIn("antoine"))
+        repository.login("antoine", "secret")
+
+        repository.logout()
+
+        coVerify(exactly = 1) { siteAccountRepository.clearMyObservations() }
     }
 
     @Test

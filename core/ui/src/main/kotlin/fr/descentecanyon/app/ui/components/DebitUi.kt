@@ -110,20 +110,36 @@ fun debitRangeWordRes(level: NiveauDebit): Int = when (level) {
 
 /**
  * A duration of the sheet as shown to the user: "néant" and "??" translated, a bare number of
- * minutes given its unit ("5" becomes "5 min"), anything else as written.
+ * minutes given its unit ("5" becomes "5 min"), anything else as written with its units spaced
+ * ("1h30" becomes "1 h 30", "10min" becomes "10 min").
  */
 @Composable
 fun canyonDurationText(raw: String?): String? {
     val text = raw?.trim()?.takeIf { it.isNotEmpty() } ?: return null
-    // Cut by the site at ten characters: shown as such.
-    // A number keeps its unit on its line; "1h50/2h30" may go to the line after its slash.
-    val shown = (if (CanyonDuration.isCut(text)) "$text…" else text).replace(NUMBER_BEFORE_UNIT, "$1\u00A0").replace("/", "/\u200B")
     return when (CanyonDuration.parse(text)) {
         CanyonDuration.None -> stringResource(R.string.duration_none)
-        CanyonDuration.Unknown -> if (text.all { it == '?' }) stringResource(R.string.duration_unknown) else shown
-        is CanyonDuration.Known -> text.toIntOrNull()?.let { stringResource(R.string.duration_minutes, it).replace(' ', '\u00A0') } ?: shown
+
+        CanyonDuration.Unknown -> if (text.all { it == '?' }) stringResource(R.string.duration_unknown) else spacedDuration(text)
+
+        is CanyonDuration.Known -> text.toIntOrNull()?.let { stringResource(R.string.duration_minutes, it).replace(' ', '\u00A0') }
+            ?: spacedDuration(text)
     }
 }
+
+/**
+ * [text] as written on the sheet, its units spaced and kept with their number ("1h50/2h30" may go
+ * to the line after its slash). A text cut by the site at ten characters ends with an ellipsis.
+ */
+internal fun spacedDuration(text: String): String {
+    val spaced = text.replace(GLUED_UNIT, "$1\u00A0$2").replace(HOURS_THEN_MINUTES, "$1\u00A0$2")
+    return (if (CanyonDuration.isCut(text)) "$spaced…" else spaced).replace(NUMBER_BEFORE_UNIT, "$1\u00A0").replace("/", "/\u200B")
+}
+
+/** "10min", "1h", "1 h": a number and its unit, joined by a non-breaking space ("10m" may be metres: left alone). */
+private val GLUED_UNIT = Regex("""(\d)\s*(min|mn|h)(?![\p{L}])""", RegexOption.IGNORE_CASE)
+
+/** "1 h30" becomes "1 h 30". */
+private val HOURS_THEN_MINUTES = Regex("""(\d\u00A0h)(\d)""", RegexOption.IGNORE_CASE)
 
 /** "5 à" then "60 min" rather than "60" then "min". */
 private val NUMBER_BEFORE_UNIT = Regex("""(\d)\s+(?=(?:min|mn|h|heures?|j|jours?)\b)""", RegexOption.IGNORE_CASE)

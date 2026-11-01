@@ -35,7 +35,7 @@ class LogbookViewModelTest {
     private val entries = MutableStateFlow(
         listOf(
             LogbookEntry(id = 3, canyonId = 26, canyonName = "Furon", date = LocalDate.of(2026, 7, 30), companions = "Paul"),
-            LogbookEntry(id = 2, canyonId = 2283, canyonName = "Ga", date = LocalDate.of(2026, 7, 14), note = "Orage évité de peu"),
+            LogbookEntry(id = 2, canyonId = 2283, canyonName = "Ga", date = LocalDate.of(2026, 7, 14), companions = "Léa, Marc"),
             LogbookEntry(id = 1, canyonId = 26, canyonName = "Furon", date = LocalDate.of(2025, 8, 2)),
         ),
     )
@@ -87,11 +87,11 @@ class LogbookViewModelTest {
     }
 
     @Test
-    fun `one search filters outings and canyons by name, story, companions and memo`() = runTest {
+    fun `one search filters outings and canyons by name, companions and memo`() = runTest {
         val viewModel = viewModel()
         backgroundScope.launch(UnconfinedTestDispatcher(testScheduler)) { viewModel.uiState.collect {} }
 
-        viewModel.onQueryChanged("orage")
+        viewModel.onQueryChanged("marc")
         advanceUntilIdle()
         assertEquals(listOf(2L), viewModel.uiState.value.entries.map { it.id })
 
@@ -108,7 +108,7 @@ class LogbookViewModelTest {
     @Test
     fun `edits go to the logbook and the memos`() = runTest {
         val viewModel = viewModel()
-        val edited = entries.value.first().copy(note = "Nouveau récit")
+        val edited = entries.value.first().copy(companions = "Paul, Marie")
 
         viewModel.saveEntry(edited)
         viewModel.deleteEntry(1)

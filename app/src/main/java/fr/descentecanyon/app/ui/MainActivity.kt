@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -161,6 +162,8 @@ private fun AppStartupScreen(
 
                 StartupLaunchMode.BLOCKING_IMPORT -> {
                     PerformanceTrace.logEvent("startup_blocking_ui_required")
+                    // Several seconds on a first launch or after an update: said, rather than a bare spinner.
+                    value = StartupUiState.PreparingCatalog
                     runStartupInitialization(appStartupCoordinator)
                     StartupUiState.AppVisible(isBackgroundInitializing = false)
                 }
@@ -181,6 +184,31 @@ private fun AppStartupScreen(
                 contentAlignment = Alignment.Center,
             ) {
                 CircularProgressIndicator()
+            }
+        }
+
+        StartupUiState.PreparingCatalog -> {
+            Box(
+                modifier = Modifier.fillMaxSize().padding(32.dp),
+                contentAlignment = Alignment.Center,
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    CircularProgressIndicator()
+                    Text(
+                        stringResource(R.string.startup_preparing_catalog),
+                        style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                    )
+                    Text(
+                        stringResource(R.string.startup_preparing_catalog_hint),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center,
+                    )
+                }
             }
         }
 
@@ -225,6 +253,9 @@ private fun AppStartupScreen(
 
 private sealed interface StartupUiState {
     data object Resolving : StartupUiState
+
+    /** The offline catalogue is copied from the app (first launch, update): it takes a few seconds. */
+    data object PreparingCatalog : StartupUiState
     data class AppVisible(val isBackgroundInitializing: Boolean) : StartupUiState
     data object Error : StartupUiState
 }

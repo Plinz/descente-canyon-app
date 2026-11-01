@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.domain.error.requiresLogin
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.error.toAppError
@@ -45,9 +46,16 @@ data class DebitFormUiState(
     val airTemperature: AirTemperature? = null,
     val comment: String = "",
     val personalComment: String = "",
+    /** Logged in to the site account (the report then carries its name). */
     val isConnected: Boolean = false,
+    /** The network is there: without it the report waits in the queue. */
+    val isOnline: Boolean = true,
+    /** The name and e-mail of the last report sent without an account were filled in: they fold into one line. */
+    val hasRememberedIdentity: Boolean = false,
     val pendingCount: Int = 0,
     val isSubmitting: Boolean = false,
+    /** The report is complete: the person reads it one last time before it is published. */
+    val isConfirming: Boolean = false,
     val error: UiText? = null,
     val transientMessage: UiText? = null,
     val lastSubmissionStatus: DebitSubmissionStatus? = null,
@@ -62,6 +70,7 @@ class DebitFormViewModel @Inject constructor(
     private val debitSubmissionRepository: DebitSubmissionRepository,
     private val preferencesRepository: PreferencesRepository,
     private val canyonRepository: CanyonRepository,
+    private val connectivityObserver: ConnectivityObserver,
 ) : ViewModel() {
 
     private val canyonId: Int = checkNotNull(savedStateHandle["canyonId"])
@@ -72,6 +81,7 @@ class DebitFormViewModel @Inject constructor(
 
     init {
         observeAuth()
+        observeConnectivity()
         observePendingCount()
         prefillContributorIdentity()
         loadCanyon()
@@ -96,9 +106,12 @@ class DebitFormViewModel @Inject constructor(
                 if (state.isConnected) {
                     state
                 } else {
+                    val name = state.observerName.ifBlank { identity.name }
+                    val email = state.observerEmail.ifBlank { identity.email.orEmpty() }
                     state.copy(
-                        observerName = state.observerName.ifBlank { identity.name },
-                        observerEmail = state.observerEmail.ifBlank { identity.email.orEmpty() },
+                        observerName = name,
+                        observerEmail = email,
+                        hasRememberedIdentity = name == identity.name && email == identity.email && name.isNotBlank(),
                     )
                 }
             }
@@ -120,6 +133,12 @@ class DebitFormViewModel @Inject constructor(
                     }
                 }
             }
+        }
+    }
+
+    private fun observeConnectivity() {
+        viewModelScope.launch {
+            connectivityObserver.observe().collect { online -> _uiState.update { it.copy(isOnline = online) } }
         }
     }
 
@@ -173,44 +192,36 @@ class DebitFormViewModel @Inject constructor(
         _uiState.update { it.copy(personalComment = value, error = null) }
     }
 
-    fun submit() {
+    /** Checks the form, then asks for a last reading: nothing is published before [confirmSubmit]. */
+    fun requestSubmit() {
+        val state = _uiState.value
+        if (state.isSubmitting) return
+        validate(state)?.let { error ->
+            _uiState.update { it.copy(error = error) }
+            return
+        }
+        _uiState.update { it.copy(isConfirming = true, error = null) }
+    }
+
+    fun cancelConfirmation() {
+        _uiState.update { it.copy(isConfirming = false) }
+    }
+
+    fun confirmSubmit() {
         val state = _uiState.value
         // A second tap while the report is being sent would send it twice.
-        if (state.isSubmitting) return
+        if (state.isSubmitting || !state.isConfirming) return
+        // The form can change nothing between the reading and the confirmation, but check once more.
+        validate(state)?.let { error ->
+            _uiState.update { it.copy(isConfirming = false, error = error) }
+            return
+        }
         val observerName = state.observerName.trim()
         val observerEmail = state.observerEmail.trim().takeIf { it.isNotBlank() }
-        val observationType = state.observationType
-        val debitLevel = state.debitLevel
+        val observationType = checkNotNull(state.observationType)
+        val debitLevel = checkNotNull(state.debitLevel)
 
-        when {
-            observerName.isBlank() -> {
-                _uiState.update { it.copy(error = UiText.res(R.string.debit_observer_name_required)) }
-                return
-            }
-
-            !state.isConnected && observerEmail == null -> {
-                _uiState.update { it.copy(error = UiText.res(R.string.debit_observer_email_required_offline)) }
-                return
-            }
-
-            // Caught now: a report stored offline would only be refused by the site later.
-            !state.isConnected && observerEmail?.matches(PLAUSIBLE_EMAIL) != true -> {
-                _uiState.update { it.copy(error = UiText.res(R.string.debit_observer_email_invalid)) }
-                return
-            }
-
-            observationType == null -> {
-                _uiState.update { it.copy(error = UiText.res(R.string.debit_observation_type_required)) }
-                return
-            }
-
-            debitLevel == null -> {
-                _uiState.update { it.copy(error = UiText.res(R.string.debit_level_required)) }
-                return
-            }
-        }
-
-        _uiState.update { it.copy(isSubmitting = true, error = null, transientMessage = null) }
+        _uiState.update { it.copy(isSubmitting = true, isConfirming = false, error = null, transientMessage = null) }
         viewModelScope.launch {
             submitDebitUseCase(
                 DebitSubmission(
@@ -261,6 +272,25 @@ class DebitFormViewModel @Inject constructor(
         }
     }
 
+    /** What keeps the report from being sent, or null when it is complete. */
+    private fun validate(state: DebitFormUiState): UiText? {
+        val observerEmail = state.observerEmail.trim().takeIf { it.isNotBlank() }
+        return when {
+            state.observerName.isBlank() -> UiText.res(R.string.debit_observer_name_required)
+
+            !state.isConnected && observerEmail == null -> UiText.res(R.string.debit_observer_email_required_offline)
+
+            // Caught now: a report stored offline would only be refused by the site later.
+            !state.isConnected && observerEmail?.matches(PLAUSIBLE_EMAIL) != true -> UiText.res(R.string.debit_observer_email_invalid)
+
+            state.observationType == null -> UiText.res(R.string.debit_observation_type_required)
+
+            state.debitLevel == null -> UiText.res(R.string.debit_level_required)
+
+            else -> null
+        }
+    }
+
     fun clearTransientMessage() {
         _uiState.update { it.copy(transientMessage = null) }
     }
@@ -296,13 +326,14 @@ class DebitFormViewModel @Inject constructor(
             this[FORM_PERSONAL_COMMENT] = state.personalComment
         }
 
-        /** The form opened from an outing just logged: its day, "descended" and the flow seen. */
+        /**
+         * Only the day of an outing already logged is offered: what was seen (descended or not, the
+         * flow) is chosen by the person, since it is published under their name.
+         */
         fun SavedStateHandle.prefilledForm(canyonId: Int): DebitFormUiState {
             val initial = DebitFormUiState(canyonId = canyonId)
             return initial.copy(
                 observationDate = get<String>("date")?.let { runCatching { LocalDate.parse(it) }.getOrNull() } ?: initial.observationDate,
-                observationType = ObservationType.PARCOURU.takeIf { get<Boolean>("descended") == true },
-                debitLevel = get<String>("level")?.let { name -> NiveauDebit.entries.firstOrNull { it.name == name } },
             )
         }
 

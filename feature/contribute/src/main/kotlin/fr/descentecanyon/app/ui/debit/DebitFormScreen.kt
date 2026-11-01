@@ -36,6 +36,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -62,6 +63,7 @@ import fr.descentecanyon.app.ui.auth.LoginDialog
 import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.debitLevelColor
+import fr.descentecanyon.app.ui.components.debitLevelLabel
 import fr.descentecanyon.app.ui.design.DcDatePickerDialog
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
@@ -136,6 +138,14 @@ fun DebitFormScreen(
         }
     }
 
+    if (uiState.isConfirming) {
+        DebitConfirmationDialog(
+            state = uiState,
+            onConfirm = viewModel::confirmSubmit,
+            onEdit = viewModel::cancelConfirmation,
+        )
+    }
+
     Scaffold(
         containerColor = LocalDcColors.current.backgroundBase,
         topBar = {
@@ -155,7 +165,7 @@ fun DebitFormScreen(
         bottomBar = {
             DebitSubmitBar(
                 isSubmitting = uiState.isSubmitting,
-                onSubmit = viewModel::submit,
+                onSubmit = viewModel::requestSubmit,
             )
         },
         modifier = modifier,
@@ -196,29 +206,6 @@ fun DebitFormScreen(
                         Text(stringResource(R.string.pending_debits_view))
                     }
                 }
-            }
-
-            if (!uiState.isConnected) {
-                LoginSuggestionCard(onLoginClick = { showLoginDialog = true })
-                OutlinedTextField(
-                    value = uiState.observerName,
-                    onValueChange = viewModel::onObserverNameChanged,
-                    label = { Text(stringResource(R.string.debit_observer_name)) },
-                    supportingText = { Text(stringResource(R.string.debit_observer_name_help)) },
-                    modifier = Modifier.fillMaxWidth().testTag(TestTags.DEBIT_OBSERVER_NAME_FIELD),
-                )
-                OutlinedTextField(
-                    value = uiState.observerEmail,
-                    onValueChange = viewModel::onObserverEmailChanged,
-                    label = { Text(stringResource(R.string.debit_observer_email)) },
-                    supportingText = { Text(stringResource(R.string.debit_observer_email_help)) },
-                    modifier = Modifier.fillMaxWidth().testTag(TestTags.DEBIT_OBSERVER_EMAIL_FIELD),
-                )
-            } else {
-                Text(
-                    text = stringResource(R.string.debit_connected_as, uiState.observerName),
-                    style = MaterialTheme.typography.bodyMedium,
-                )
             }
 
             DatePickerField(date = uiState.observationDate, onDateSelected = viewModel::onObservationDateSelected)
@@ -379,6 +366,14 @@ fun DebitFormScreen(
                 )
             }
 
+            // What was seen comes first; who publishes it last, folded once it is known.
+            ObserverIdentitySection(
+                state = uiState,
+                onLoginClick = { showLoginDialog = true },
+                onNameChanged = viewModel::onObserverNameChanged,
+                onEmailChanged = viewModel::onObserverEmailChanged,
+            )
+
             uiState.error?.let {
                 Text(
                     text = it.asString(),
@@ -390,6 +385,57 @@ fun DebitFormScreen(
             Spacer(modifier = Modifier.height(72.dp))
         }
     }
+}
+
+/** The last reading before the report is published: it is public, under the person's name. */
+@Composable
+private fun DebitConfirmationDialog(state: DebitFormUiState, onConfirm: () -> Unit, onEdit: () -> Unit) {
+    val locale = LocalLocale.current.platformLocale
+    val level = state.debitLevel
+    AlertDialog(
+        onDismissRequest = onEdit,
+        title = { Text(stringResource(R.string.debit_confirm_title)) },
+        text = {
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                Column {
+                    state.canyonName?.let { Text(it, fontWeight = FontWeight.Bold) }
+                    Text(state.observationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(locale)))
+                    when (state.observationType) {
+                        ObservationType.PARCOURU -> Text(stringResource(R.string.debit_type_descended))
+                        ObservationType.NON_PARCOURU -> Text(stringResource(R.string.debit_type_not_descended))
+                        null -> Unit
+                    }
+                    if (level != null) {
+                        Text(
+                            text = stringResource(R.string.debit_confirm_level, debitLevelLabel(level)),
+                            fontWeight = FontWeight.Bold,
+                            color = debitLevelColor(level),
+                        )
+                    }
+                    state.comment.trim().takeIf { it.isNotEmpty() }?.let {
+                        Text(it, maxLines = 3, overflow = TextOverflow.Ellipsis, style = MaterialTheme.typography.bodyMedium)
+                    }
+                }
+                Text(
+                    text = stringResource(R.string.debit_confirm_public, state.observerName.trim()),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                if (!state.isOnline) {
+                    Text(
+                        text = stringResource(R.string.debit_confirm_offline),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onConfirm, modifier = Modifier.testTag(TestTags.DEBIT_CONFIRM_BUTTON)) {
+                Text(stringResource(R.string.debit_confirm_publish))
+            }
+        },
+        dismissButton = { TextButton(onClick = onEdit) { Text(stringResource(R.string.debit_confirm_edit)) } },
+    )
 }
 
 @Composable
@@ -636,6 +682,62 @@ private fun DatePickerField(date: LocalDate, onDateSelected: (LocalDate) -> Unit
                 .testTag(TestTags.DEBIT_OBSERVATION_DATE_FIELD)
                 .clickable { showDatePicker = true },
         )
+    }
+}
+
+/**
+ * Who the report is published under: the account, else a name and an e-mail. A name and e-mail
+ * already used fold into one line, with a way to change them or to log in.
+ */
+@Composable
+private fun ObserverIdentitySection(
+    state: DebitFormUiState,
+    onLoginClick: () -> Unit,
+    onNameChanged: (String) -> Unit,
+    onEmailChanged: (String) -> Unit,
+) {
+    var editing by rememberSaveable { mutableStateOf(false) }
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Text(
+            text = stringResource(R.string.debit_identity_title),
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.SemiBold,
+        )
+        when {
+            state.isConnected -> Text(
+                text = stringResource(R.string.debit_connected_as, state.observerName),
+                style = MaterialTheme.typography.bodyMedium,
+            )
+
+            state.hasRememberedIdentity && !editing -> Column {
+                Text(
+                    text = stringResource(R.string.debit_identity_remembered, state.observerName.trim(), state.observerEmail.trim()),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TextButton(onClick = { editing = true }) { Text(stringResource(R.string.debit_identity_edit)) }
+                    TextButton(onClick = onLoginClick) { Text(stringResource(R.string.debit_login_prompt_button)) }
+                }
+            }
+
+            else -> {
+                LoginSuggestionCard(onLoginClick = onLoginClick)
+                OutlinedTextField(
+                    value = state.observerName,
+                    onValueChange = onNameChanged,
+                    label = { Text(stringResource(R.string.debit_observer_name)) },
+                    supportingText = { Text(stringResource(R.string.debit_observer_name_help)) },
+                    modifier = Modifier.fillMaxWidth().testTag(TestTags.DEBIT_OBSERVER_NAME_FIELD),
+                )
+                OutlinedTextField(
+                    value = state.observerEmail,
+                    onValueChange = onEmailChanged,
+                    label = { Text(stringResource(R.string.debit_observer_email)) },
+                    supportingText = { Text(stringResource(R.string.debit_observer_email_help)) },
+                    modifier = Modifier.fillMaxWidth().testTag(TestTags.DEBIT_OBSERVER_EMAIL_FIELD),
+                )
+            }
+        }
     }
 }
 

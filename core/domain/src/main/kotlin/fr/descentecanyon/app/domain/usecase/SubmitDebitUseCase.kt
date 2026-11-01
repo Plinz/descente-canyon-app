@@ -12,8 +12,8 @@ import fr.descentecanyon.app.domain.repository.LogbookRepository
 import javax.inject.Inject
 
 /**
- * Sends a flow report (or queues it offline). A report of a descent also logs the outing, with the
- * flow seen and the personal comment, unless that outing is already in the logbook.
+ * Sends a flow report (or queues it offline). A report of a descent also logs the outing (canyon
+ * and day) unless it is already in the logbook; the flow itself stays on the site.
  */
 class SubmitDebitUseCase @Inject constructor(
     private val repository: DebitSubmissionRepository,
@@ -32,8 +32,6 @@ class SubmitDebitUseCase @Inject constructor(
                     canyonId = submission.canyonId,
                     canyonName = name,
                     date = submission.observationDate,
-                    note = submission.personalComment.trim().ifEmpty { null },
-                    debitLevel = submission.debitLevel,
                     source = LogbookSource.REPORT,
                 ),
             )

@@ -171,7 +171,7 @@ class MyAccountViewModel @Inject constructor(
         viewModelScope.launch {
             val message = personalDataRepository.importJson(content).fold(
                 onSuccess = { result ->
-                    UiText.res(R.string.account_data_import_done, result.outings, result.memos, result.favorites)
+                    UiText.res(R.string.account_data_import_done, result.outings, result.memos, result.favorites, result.plannedOutings)
                 },
                 onFailure = { UiText.res(R.string.account_data_import_failed) },
             )

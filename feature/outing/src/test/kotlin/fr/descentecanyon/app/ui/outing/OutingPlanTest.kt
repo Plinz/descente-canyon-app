@@ -9,6 +9,7 @@ import fr.descentecanyon.app.domain.model.CanyonLink
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CotationRating
 import fr.descentecanyon.app.domain.model.DaylightCheck
+import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.DriveTime
 import fr.descentecanyon.app.domain.model.DriveTimeSource
 import fr.descentecanyon.app.domain.model.GearGroup
@@ -22,12 +23,14 @@ import fr.descentecanyon.app.domain.model.LogbookSource
 import fr.descentecanyon.app.domain.model.MessageAudience
 import fr.descentecanyon.app.domain.model.MessageSection
 import fr.descentecanyon.app.domain.model.NextCanyon
+import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingPhase
 import fr.descentecanyon.app.domain.model.OutingSettings
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.SeasonCheck
 import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
@@ -56,6 +59,7 @@ import java.time.Duration
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
+import java.time.Month
 import java.time.ZoneId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -215,6 +219,43 @@ class OutingPlanTest {
     }
 
     @Test
+    fun `a day out of the usual season of the canyon is told`() = runTest {
+        // Reported from June to September only; the plan is for the 14th of July, then for November.
+        val summer = (6..9).flatMap { month ->
+            List(10) { Debit(canyonId = 42, date = LocalDate.of(2025, month, 1 + it), niveau = NiveauDebit.CORRECT) }
+        }
+        val viewModel = viewModel(reports = summer)
+        advanceUntilIdle()
+        assertEquals(SeasonCheck.InSeason, viewModel.uiState.value.season)
+
+        viewModel.selectDate(LocalDate.of(2026, 11, 7))
+        advanceUntilIdle()
+        assertEquals(
+            SeasonCheck.OffSeason(Month.NOVEMBER, 0, 40, Month.JUNE, Month.SEPTEMBER),
+            viewModel.uiState.value.season,
+        )
+    }
+
+    @Test
+    fun `a canyon in another time zone is planned in its own hours`() = runTest {
+        // The phone is in Paris (8:05), the canyon in La Réunion, two hours ahead in July (10:05).
+        val viewModel = viewModel(parking = -21.1 to 55.5)
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        val reunion = ZoneId.of("Indian/Reunion")
+        assertEquals(reunion, state.zone)
+        // Today at the next quarter hour of La Réunion, 20 min to gear up.
+        assertEquals(LocalDateTime.of(2026, 7, 14, 10, 35), state.schedule!!.walkStart)
+        // The sunset of La Réunion in its own hours (about 17:50), not two hours earlier.
+        assertTrue(state.sunset!! > LocalTime.of(17, 20) && state.sunset!! < LocalTime.of(18, 20))
+
+        viewModel.confirm()
+        advanceUntilIdle()
+        assertEquals(LocalDateTime.of(2026, 7, 14, 10, 35).atZone(reunion).toInstant(), outingRepository.outings.value.single().start)
+    }
+
+    @Test
     fun `sending the plan to a relative plans the outing, and the relative is told again when the alert moves`() = runTest {
         val viewModel = viewModel()
         advanceUntilIdle()
@@ -224,11 +265,18 @@ class OutingPlanTest {
         val saved = outingRepository.outings.value.single()
         assertEquals(saved.alertAt, saved.informedAlertAt)
 
-        // Pushed back during the outing: the relative is sent the new time.
+        // Pushed back during the outing: the relative keeps the old time until the message is said gone.
         viewModel.delayAlert(60)
         advanceUntilIdle()
+        val pushed = outingRepository.outings.value.single()
+        assertEquals(saved.alertAt.plus(Duration.ofHours(1)), pushed.alertAt)
+        assertEquals(saved.alertAt, pushed.informedAlertAt)
+        assertTrue(viewModel.uiState.value.alertChangedSinceInformed)
+
+        // The message left: the relative has the new time.
+        viewModel.markRelativeInformed()
+        advanceUntilIdle()
         val delayed = outingRepository.outings.value.single()
-        assertEquals(saved.alertAt.plus(Duration.ofHours(1)), delayed.alertAt)
         assertEquals(delayed.alertAt, delayed.informedAlertAt)
         assertFalse(viewModel.uiState.value.alertChangedSinceInformed)
 
@@ -632,6 +680,10 @@ class OutingPlanTest {
         date: LocalDate? = null,
         stayId: Long = 0,
         chains: List<CanyonChain> = emptyList(),
+        /** Where the parking of canyon 42 is: in mainland France by default. */
+        parking: Pair<Double, Double> = 43.95 to 6.9,
+        /** The flow reports of canyon 42 kept on the phone. */
+        reports: List<Debit> = emptyList(),
     ): OutingPlanViewModel {
         val canyonRepository = mockk<CanyonRepository> {
             coEvery { getChainsFrom(any()) } answers { chains.filter { it.fromCanyonId == firstArg<Int>() } }
@@ -642,7 +694,9 @@ class OutingPlanTest {
                         id = 42, nom = "Riolan", nomComplet = "Riolan", pays = "France", commune = "Sigale", cotation = "v4a4III",
                         url = "https://example.test/42", tempsApproche = "30min", tempsDescente = "2h", tempsRetour = "1h", cordeMin = 60,
                     ),
-                    geoPoints = listOf(GeoPoint(canyonId = 42, type = GeoPointType.PARKING_AMONT, latitude = 43.95, longitude = 6.9)),
+                    geoPoints = listOf(
+                        GeoPoint(canyonId = 42, type = GeoPointType.PARKING_AMONT, latitude = parking.first, longitude = parking.second),
+                    ),
                 ),
             )
             coEvery { getCanyonPreview(43) } returns Result.success(
@@ -664,7 +718,10 @@ class OutingPlanTest {
         }
         val weather = mockk<WeatherRepository> { coEvery { getCachedCanyonWeather(42) } returns null }
         val predictions = mockk<DebitPredictionRepository> { coEvery { getCachedPredictions(42) } returns null }
-        val debits = mockk<DebitRepository> { every { observeLatestKnownDebits(setOf(42)) } returns flowOf(emptyMap()) }
+        val debits = mockk<DebitRepository> {
+            every { observeLatestKnownDebits(setOf(42)) } returns flowOf(emptyMap())
+            every { getDebitsForCanyon(42) } returns flowOf(Result.success(reports))
+        }
         val connectivity = mockk<ConnectivityObserver> { every { isCurrentlyOnline() } returns false }
         val online = mockk<ConnectivityObserver> { every { isCurrentlyOnline() } returns true }
         return OutingPlanViewModel(

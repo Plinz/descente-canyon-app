@@ -11,6 +11,7 @@ import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonDuration
 import fr.descentecanyon.app.domain.model.CanyonLink
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
+import fr.descentecanyon.app.domain.model.CanyonTimeZone
 import fr.descentecanyon.app.domain.model.CanyonWeather
 import fr.descentecanyon.app.domain.model.DailyDebitPrediction
 import fr.descentecanyon.app.domain.model.DailyWeather
@@ -40,6 +41,7 @@ import fr.descentecanyon.app.domain.model.OutingSettings
 import fr.descentecanyon.app.domain.model.PersonalPace
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.SeasonCheck
 import fr.descentecanyon.app.domain.model.Shuttle
 import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.SunCalculator
@@ -133,6 +135,13 @@ data class OutingPlanUiState(
     val isLoading: Boolean = true,
     val choices: OutingChoices,
     val today: LocalDate,
+    /**
+     * The canyon's time zone: the times of the plan are its hours, like the sunset they are compared
+     * with (a canyon of La Réunion prepared from Lyon), else the phone's.
+     */
+    val zone: ZoneId = ZoneId.systemDefault(),
+    /** Whether the day is in the usual season of the canyon, from the months of its flow reports. */
+    val season: SeasonCheck = SeasonCheck.Unknown,
     val settings: OutingSettings = OutingSettings.DEFAULT,
     val pace: OutingPace,
     val personalPace: PersonalPace? = null,
@@ -268,6 +277,12 @@ class OutingPlanViewModel @Inject constructor(
                 sources.update { it.copy(lastReport = debits[canyonId]) }
             }
         }
+        // The reports kept from the canyon page: the months people go there, offline.
+        viewModelScope.launch {
+            debitRepository.getDebitsForCanyon(canyonId).collect { result ->
+                result.getOrNull()?.let { debits -> sources.update { it.copy(reports = debits) } }
+            }
+        }
         viewModelScope.launch { placeRepository.observeAll().collect { places -> sources.update { it.copy(places = places) } } }
         viewModelScope.launch { stayRepository.observeAll().collect { stays -> sources.update { it.copy(stays = stays) } } }
         viewModelScope.launch { outingPreferencesRepository.observeSettings().collect { s -> sources.update { it.copy(settings = s) } } }
@@ -284,7 +299,7 @@ class OutingPlanViewModel @Inject constructor(
 
     /** Leaving now, already at the parking or about to: today, the time set now; the place follows the day. */
     fun departNow() {
-        val now = LocalDateTime.now(clock).truncatedTo(ChronoUnit.MINUTES)
+        val now = LocalDateTime.now(localClock()).truncatedTo(ChronoUnit.MINUTES)
         updateChoices { choices -> choices.onDate(now.toLocalDate()).copy(anchorTime = now.toLocalTime()) }
     }
 
@@ -420,14 +435,20 @@ class OutingPlanViewModel @Inject constructor(
     /** Plans the outing: notifications during the outing, reminder at the return. */
     fun confirm() = plan()
 
-    /** The plan went to a relative who counts on its alert time: the outing is planned, if it was not. */
+    /**
+     * The relative has the alert time now on screen: the plan was sent, or the person confirmed that
+     * the message of a new time left. The outing is planned, if it was not.
+     */
     fun markRelativeInformed() = plan { it.copy(informedAlertAt = it.alertAt) }
 
-    /** The alert comes [minutes] later: the outing takes longer than planned; a relative informed is sent the new time. */
+    /**
+     * The alert comes [minutes] later: the outing takes longer than planned. A relative informed keeps
+     * the time last sent until the person confirms the new message left ([markRelativeInformed]):
+     * without signal in the canyon it may not, and the relative would call for help at the old time.
+     */
     fun delayAlert(minutes: Int) {
-        val informed = sources.value.saved?.relativeInformed == true
         choices.update { it?.copy(alertDelayMinutes = it.alertDelayMinutes + minutes) }
-        persist { if (informed) it.copy(informedAlertAt = it.alertAt) else it }
+        persist()
     }
 
     /** The canyon given to the day of the stay was said planned. */
@@ -522,7 +543,9 @@ class OutingPlanViewModel @Inject constructor(
         val places = placeRepository.observeAll().first()
         val stays = stayRepository.observeAll().first()
         val outings = outingRepository.observeAll().first()
-        val today = LocalDate.now(clock)
+        // The canyon first: its time zone gives "today" and the default start.
+        sources.first { !it.isLoading }
+        val today = LocalDate.now(localClock())
         val existing = when {
             requestedOutingId > 0 -> outings.firstOrNull { it.id == requestedOutingId } ?: outingRepository.get(requestedOutingId)
             requestedDate == null -> outings.firstOrNull { it.canyonId == canyonId }
@@ -580,14 +603,14 @@ class OutingPlanViewModel @Inject constructor(
      * of its outing nearest in days, the same people most of the time; else the one of the settings.
      */
     private fun newChoices(settings: OutingSettings, places: List<Place>, stays: List<Stay>, outings: List<PlannedOuting>): OutingChoices {
-        val now = LocalDateTime.now(clock)
+        val now = LocalDateTime.now(localClock())
         val default = defaultChoices(now)
         val date = requestedDate ?: default.date
         val time = if (date == default.date) default.anchorTime else LocalTime.of(DEFAULT_HOUR, 0)
         val stay = stays.firstOrNull { it.id == requestedStayId }
         val place = places.firstOrNull { it.id == (stay?.placeId ?: requestedPlaceId) } ?: places.defaultFor(date, stays)
         val group = (stay ?: stays.firstOrNull { it.covers(date) && it.placeId == place?.id })
-            ?.let { ofDay -> outings.filter(ofDay::includes).minByOrNull { abs(it.dayIn(clock.zone).toEpochDay() - date.toEpochDay()) } }
+            ?.let { ofDay -> outings.filter(ofDay::includes).minByOrNull { abs(it.dayIn(zoneOf()).toEpochDay() - date.toEpochDay()) } }
             ?.choices
         return OutingChoices(
             date = date,
@@ -600,7 +623,7 @@ class OutingPlanViewModel @Inject constructor(
 
     /** An outing saved before choices were kept: its day and walk start. */
     private fun legacyChoices(outing: PlannedOuting): OutingChoices {
-        val start = outing.start.atZone(clock.zone).toLocalDateTime()
+        val start = outing.start.atZone(zoneOf()).toLocalDateTime()
         return OutingChoices(date = start.toLocalDate(), anchorTime = start.toLocalTime(), groupSize = outing.groupSize ?: 4)
     }
 
@@ -626,7 +649,7 @@ class OutingPlanViewModel @Inject constructor(
     private fun load() {
         viewModelScope.launch {
             val detail = getCanyonPreviewUseCase(canyonId).getOrNull()
-            sources.update { it.copy(canyon = detail, isLoading = false) }
+            sources.update { it.copy(canyon = detail, zone = detail?.timeZone(), isLoading = false) }
             detail ?: return@launch
             val weather = if (connectivityObserver.isCurrentlyOnline()) {
                 getCanyonWeatherUseCase(detail).getOrNull() ?: getCanyonWeatherUseCase.cached(canyonId)
@@ -652,9 +675,10 @@ class OutingPlanViewModel @Inject constructor(
     }
 
     private fun buildState(choices: OutingChoices?, sources: Sources): OutingPlanUiState {
-        val today = LocalDate.now(clock)
+        val zone = zoneOf(sources)
+        val today = LocalDate.now(clock.withZone(zone))
         val settings = sources.settings
-        val current = choices ?: defaultChoices(LocalDateTime.now(clock))
+        val current = choices ?: defaultChoices(LocalDateTime.now(clock.withZone(zone)))
         val pace = OutingPace.of(settings, current.groupSize, current.groupLevel, sources.personalPace)
         val detail = sources.canyon
         val canyon = detail?.canyon
@@ -706,7 +730,7 @@ class OutingPlanViewModel @Inject constructor(
         }
         // An older forecast no longer tells the day: none rather than a stale storm or sun.
         val dayWeather = sources.weather?.takeIf { it.isFresh(clock.instant()) }?.dayOf(current.date)
-        val sunset = dayWeather?.sunset ?: detail?.let { computedSunset(it, current.date, sources.weather) }
+        val sunset = dayWeather?.sunset ?: detail?.let { computedSunset(it, current.date, zone) }
         val expectedBack = schedule?.let { it.backAtCar?.estimate ?: it.walkStart.plus(UNKNOWN_DURATION_ASSUMPTION) }
         val latestBack = schedule?.let { it.backAtCar?.latest ?: it.walkStart.plus(UNKNOWN_DURATION_ASSUMPTION) }
         val alertAt = latestBack?.plusHours(current.alertMarginHours.toLong())?.plusMinutes(current.alertDelayMinutes.toLong())
@@ -717,6 +741,8 @@ class OutingPlanViewModel @Inject constructor(
             isLoading = sources.isLoading || choices == null,
             choices = current,
             today = today,
+            zone = zone,
+            season = SeasonCheck.of(sources.reports, current.date),
             settings = settings,
             pace = pace,
             personalPace = sources.personalPace,
@@ -762,7 +788,7 @@ class OutingPlanViewModel @Inject constructor(
                 ),
             ),
             messageSections = sources.messageSections,
-            alertChangedSinceInformed = informedAlertAt != null && alertAt != null && informedAlertAt != alertAt.toInstant(),
+            alertChangedSinceInformed = informedAlertAt != null && alertAt != null && informedAlertAt != alertAt.toInstant(zone),
             addedToStay = sources.addedToStay,
             nextCanyons = nextCanyons,
         )
@@ -804,39 +830,53 @@ class OutingPlanViewModel @Inject constructor(
         return PlannedOuting(
             canyonId = canyon.id,
             canyonName = canyon.nom,
-            start = schedule.walkStart.toInstant(),
-            expectedBack = expectedBack?.toInstant() ?: return null,
-            alertAt = alertAt?.toInstant() ?: return null,
-            latestBack = latestBack?.toInstant() ?: return null,
-            departure = schedule.leavePlace?.toInstant(),
+            start = schedule.walkStart.toInstant(zone),
+            expectedBack = expectedBack?.toInstant(zone) ?: return null,
+            alertAt = alertAt?.toInstant(zone) ?: return null,
+            latestBack = latestBack?.toInstant(zone) ?: return null,
+            departure = schedule.leavePlace?.toInstant(zone),
             groupSize = choices.groupSize,
             choices = choices.copy(
                 nextCanyons = choices.nextCanyons.mapIndexed { index, next ->
                     val previousEnd = if (index == 0) schedule.descentEnd else schedule.nextCanyons.getOrNull(index - 1)?.descentEnd
-                    next.copy(from = previousEnd?.estimate?.toInstant())
+                    next.copy(from = previousEnd?.estimate?.toInstant(zone))
                 },
             ),
         )
     }
 
     /** Offline sunset at the start of the canyon (parking, else entry, else any point). */
-    private fun computedSunset(detail: CanyonDetail, date: LocalDate, weather: CanyonWeather?): LocalTime? {
+    private fun computedSunset(detail: CanyonDetail, date: LocalDate, zone: ZoneId): LocalTime? {
         val point = detail.geoPoints.firstOrNull { it.type == GeoPointType.PARKING_AMONT }
             ?: detail.geoPoints.firstOrNull { it.type == GeoPointType.ENTREE }
             ?: detail.geoPoints.firstOrNull()
             ?: return null
-        val zoneId = weather?.timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() } ?: clock.zone
-        return SunCalculator.sunTimes(date, point.latitude, point.longitude, zoneId).sunset
+        return SunCalculator.sunTimes(date, point.latitude, point.longitude, zone).sunset
     }
 
-    private fun LocalDateTime.toInstant(): Instant = atZone(clock.zone).toInstant()
+    private fun LocalDateTime.toInstant(zone: ZoneId): Instant = atZone(zone).toInstant()
+
+    /**
+     * The canyon's time zone, from its country and position; else the one of its forecast; else,
+     * before the canyon is read, the phone's.
+     */
+    private fun zoneOf(sources: Sources = this.sources.value): ZoneId = sources.zone
+        ?: sources.weather?.timezone?.let { runCatching { ZoneId.of(it) }.getOrNull() }
+        ?: clock.zone
+
+    /** The clock in the canyon's hours: "today" and "now" of the plan. */
+    private fun localClock(): Clock = clock.withZone(zoneOf())
 
     private data class Sources(
         val canyon: CanyonDetail? = null,
+        /** The time zone of [canyon], found offline. */
+        val zone: ZoneId? = null,
         val isLoading: Boolean = true,
         val weather: CanyonWeather? = null,
         val predictions: CanyonDebitPredictions? = null,
         val lastReport: Debit? = null,
+        /** The flow reports of the canyon kept on the phone. */
+        val reports: List<Debit> = emptyList(),
         val outings: List<PlannedOuting> = emptyList(),
         /** The outing as this screen last kept it: the base of the next write, whatever the database read says. */
         val saved: PlannedOuting? = null,
@@ -882,4 +922,10 @@ class OutingPlanViewModel @Inject constructor(
         /** A default start is not earlier: the group could not leave sooner. */
         private val EARLIEST_DEFAULT_START: LocalTime = LocalTime.of(6, 0)
     }
+}
+
+/** The canyon's time zone, offline, from its country and the position of its parking or first point. */
+internal fun CanyonDetail.timeZone(): ZoneId? {
+    val point = geoPoints.firstOrNull { it.type == GeoPointType.PARKING_AMONT } ?: geoPoints.firstOrNull()
+    return CanyonTimeZone.of(canyon.pays, point?.latitude, point?.longitude)
 }

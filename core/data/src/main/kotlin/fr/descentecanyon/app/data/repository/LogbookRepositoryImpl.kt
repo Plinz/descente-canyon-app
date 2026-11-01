@@ -1,26 +1,44 @@
 package fr.descentecanyon.app.data.repository
 
+import fr.descentecanyon.app.data.local.user.dao.DebitSendDao
 import fr.descentecanyon.app.data.local.user.dao.LogbookDao
+import fr.descentecanyon.app.data.local.user.dao.MySiteReportDao
+import fr.descentecanyon.app.data.local.user.dao.PendingDebitSubmissionDao
 import fr.descentecanyon.app.data.local.user.entity.LogbookEntryEntity
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.LogbookSource
-import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import java.time.Clock
 import java.time.LocalDate
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
 @Singleton
-class LogbookRepositoryImpl @Inject constructor(private val logbookDao: LogbookDao, private val clock: Clock) : LogbookRepository {
+class LogbookRepositoryImpl @Inject constructor(
+    private val logbookDao: LogbookDao,
+    private val mySiteReportDao: MySiteReportDao,
+    private val pendingDebitDao: PendingDebitSubmissionDao,
+    private val debitSendDao: DebitSendDao,
+    private val clock: Clock,
+) : LogbookRepository {
 
-    override fun observeAll(): Flow<List<LogbookEntry>> = logbookDao.observeAll().map { rows -> rows.mapNotNull { it.toDomain() } }
+    /** The outings with, for each, the flow report the site (or the send queue) holds for that canyon and day. */
+    override fun observeAll(): Flow<List<LogbookEntry>> = combine(
+        logbookDao.observeAll(),
+        mySiteReportDao.observeAll(),
+        pendingDebitDao.observeAll(),
+        debitSendDao.observeAll(),
+    ) { rows, reports, pending, sends ->
+        val lookup = LogbookDebitLookup(reports, pending, sends)
+        rows.mapNotNull { row -> row.toDomain()?.let { it.copy(debit = lookup.of(it.canyonId, it.date)) } }
+    }
 
     override fun observeForCanyon(canyonId: Int): Flow<List<LogbookEntry>> =
-        logbookDao.observeForCanyon(canyonId).map { rows -> rows.mapNotNull { it.toDomain() } }
+        observeAll().map { entries -> entries.filter { it.canyonId == canyonId } }
 
     override fun observeDescendedCanyonIds(): Flow<Set<Int>> = logbookDao.observeCanyonIds().map { it.toSet() }.distinctUntilChanged()
 
@@ -66,7 +84,6 @@ class LogbookRepositoryImpl @Inject constructor(private val logbookDao: LogbookD
 
     private fun LogbookEntry.cleaned(): LogbookEntry = copy(
         canyonName = canyonName.trim(),
-        note = note?.trim()?.ifEmpty { null },
         companions = LogbookEntry.splitCompanions(companions).joinToString(", ").ifEmpty { null },
         durationMinutes = durationMinutes?.takeIf { it > 0 },
     )
@@ -76,13 +93,10 @@ class LogbookRepositoryImpl @Inject constructor(private val logbookDao: LogbookD
         canyonId = canyonId,
         canyonName = canyonName,
         date = date.toString(),
-        note = note,
         createdAt = createdAt,
-        debitLevel = debitLevel?.name,
         companions = companions,
         durationMinutes = durationMinutes,
         source = source.name,
-        siteObservationId = siteObservationId,
         updatedAt = updatedAt,
     )
 }
@@ -93,11 +107,8 @@ internal fun LogbookEntryEntity.toDomain(): LogbookEntry? = runCatching { LocalD
         canyonId = canyonId,
         canyonName = canyonName,
         date = day,
-        note = note,
-        debitLevel = debitLevel?.let { name -> NiveauDebit.entries.firstOrNull { it.name == name } },
         companions = companions,
         durationMinutes = durationMinutes,
         source = LogbookSource.entries.firstOrNull { it.name == source } ?: LogbookSource.MANUAL,
-        siteObservationId = siteObservationId,
     )
 }

@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.layout.SubcomposeLayout
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -408,16 +409,28 @@ private fun SummaryIconBadge(
     }
 }
 
-/** The cotation; with [onClick], it opens its explanation and shows an info mark. */
+/**
+ * The cotation; with [onClick], it opens its explanation and shows an info mark. [onPhoto] draws it
+ * over a picture: light text on a dark pill, the colour of the level kept as its outline.
+ */
 @Composable
-fun CotationBadge(cotation: String, modifier: Modifier = Modifier, large: Boolean = false, onClick: (() -> Unit)? = null) {
-    val color = when {
-        cotation.startsWith("v1") || cotation.startsWith("V1") -> CotationFacile
-        cotation.startsWith("v2") || cotation.startsWith("V2") -> CotationFacile
-        cotation.startsWith("v3") || cotation.startsWith("V3") -> CotationMoyen
-        cotation.startsWith("v4") || cotation.startsWith("V4") -> CotationDifficile
-        cotation.startsWith("v5") || cotation.startsWith("V5") -> CotationTresDifficile
-        cotation.startsWith("v6") || cotation.startsWith("V6") -> CotationTresDifficile
+fun CotationBadge(
+    cotation: String,
+    modifier: Modifier = Modifier,
+    large: Boolean = false,
+    onPhoto: Boolean = false,
+    onClick: (() -> Unit)? = null,
+) {
+    val color = when (cotation.trim().lowercase().removePrefix("v").firstOrNull()) {
+        '1', '2' -> CotationFacile
+
+        '3' -> CotationMoyen
+
+        '4' -> CotationDifficile
+
+        // v7 exists (Trou de Fer, Cap Blanc): the hardest colour, not the one of an unknown cotation.
+        '5', '6', '7' -> CotationTresDifficile
+
         else -> MaterialTheme.colorScheme.outline
     }
     val textStyle = if (large) {
@@ -430,12 +443,13 @@ fun CotationBadge(cotation: String, modifier: Modifier = Modifier, large: Boolea
         color = color,
         textStyle = textStyle,
         modifier = modifier,
+        onPhoto = onPhoto,
         onClick = onClick,
     )
 }
 
 @Composable
-fun ForbiddenBadge(modifier: Modifier = Modifier, large: Boolean = false) {
+fun ForbiddenBadge(modifier: Modifier = Modifier, large: Boolean = false, onPhoto: Boolean = false) {
     val textStyle = if (large) {
         MaterialTheme.typography.titleLarge
     } else {
@@ -446,6 +460,7 @@ fun ForbiddenBadge(modifier: Modifier = Modifier, large: Boolean = false) {
         color = MaterialTheme.colorScheme.error,
         textStyle = textStyle,
         modifier = modifier,
+        onPhoto = onPhoto,
     )
 }
 
@@ -455,23 +470,26 @@ private fun SummaryBadge(
     color: Color,
     textStyle: androidx.compose.ui.text.TextStyle,
     modifier: Modifier = Modifier,
+    onPhoto: Boolean = false,
     onClick: (() -> Unit)? = null,
 ) {
+    // A tinted pill disappears on a dark or busy photo: there the text is light on a dark pill.
+    val textColor = if (onPhoto) Color.White else color
     val content: @Composable () -> Unit = {
         Row(
             modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(4.dp),
         ) {
-            Text(text = text, style = textStyle, fontWeight = FontWeight.Bold, color = color)
+            Text(text = text, style = textStyle, fontWeight = FontWeight.Bold, color = textColor)
             if (onClick != null) {
-                Icon(Icons.Outlined.Info, contentDescription = null, tint = color, modifier = Modifier.size(16.dp))
+                Icon(Icons.Outlined.Info, contentDescription = null, tint = textColor, modifier = Modifier.size(16.dp))
             }
         }
     }
     val shape = LocalDcShapes.current.pill
-    val colors = CardDefaults.cardColors(containerColor = color.copy(alpha = 0.12f))
-    val border = BorderStroke(1.dp, color.copy(alpha = 0.34f))
+    val colors = CardDefaults.cardColors(containerColor = if (onPhoto) Color.Black.copy(alpha = 0.6f) else color.copy(alpha = 0.12f))
+    val border = if (onPhoto) BorderStroke(2.dp, color) else BorderStroke(1.dp, color.copy(alpha = 0.34f))
     if (onClick != null) {
         Card(
             onClick = onClick,
@@ -525,7 +543,8 @@ fun InterestStars(
         }
         Spacer(modifier = Modifier.width(6.dp))
         Text(
-            text = String.format(Locale.US, if (showScale) "%.1f/4" else "%.1f", clampedInterest),
+            // The decimal separator of the language ("2,5" in French), as in the other lists.
+            text = String.format(LocalLocale.current.platformLocale, if (showScale) "%.1f/4" else "%.1f", clampedInterest),
             style = MaterialTheme.typography.labelMedium,
             color = textColor,
             fontWeight = FontWeight.Medium,

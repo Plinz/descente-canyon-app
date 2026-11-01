@@ -17,6 +17,10 @@
     <!-- Puts back the notification of the outing under way after a reboot -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <!-- The reminders of an outing ring at the minute even when the phone sleeps (alert time of a relative).
+         Asked with an explanation when an outing is confirmed; without it they are a few minutes late. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+
      <application
         android:name=".DescenteCanyonApp"
         android:allowBackup="true"
@@ -70,8 +74,15 @@
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+                <!-- "Alarms and reminders" granted: the reminders are set again, at the minute. -->
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
             </intent-filter>
         </receiver>
+
+        <!-- The reminders of an outing (back time, alert soon), set as alarms by OutingReminderScheduler. -->
+        <receiver
+            android:name=".outing.OutingAlarmReceiver"
+            android:exported="false" />
 
     </application>
 

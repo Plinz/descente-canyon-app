@@ -102,7 +102,7 @@ fun CanyonDetailScreen(
     /** Opened from the search of a day of a stay: the outing is planned for that day. */
     planForDay: LocalDate? = null,
     onOpenEmergency: () -> Unit = {},
-    /** A flow report prefilled from an outing just logged (date, descended, flow seen). */
+    /** A flow report for an outing already logged: only its day is prefilled. */
     onReportOuting: (LogbookEntry) -> Unit = {},
     onOpenLogbook: () -> Unit = {},
     openDebitsTabInitially: Boolean = false,
@@ -119,8 +119,9 @@ fun CanyonDetailScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val contentWidth = rememberDcContentWidth(maxWidth = 940.dp)
     val listState = rememberLazyListState()
-    // The map button would cover the content being read: it hides while scrolling down.
-    val showMapButton = listState.isAtTopOrScrollingUp()
+    // The map button would cover the content being read: it hides while scrolling down, and at the
+    // top the header photo offers the map instead (the button covered the first cards there).
+    val showMapButton = listState.isScrollingUpBelowTop()
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { viewModel.toggleDebitNotifications() }
@@ -289,6 +290,7 @@ fun CanyonDetailScreen(
                             onSavePersonalNote = viewModel::savePersonalNote,
                             nearbyCanyons = uiState.nearbyCanyons,
                             onPlanOuting = onPlanOuting,
+                            onShowMap = onShowMapClick,
                             planForDay = planForDay,
                             logbook = uiState.logbook,
                             knownCompanions = uiState.knownCompanions,
@@ -449,13 +451,13 @@ internal fun canyonShareText(canyon: Canyon): String {
 
 /** True at the top of the list and while it scrolls back up, false while it scrolls down. */
 @Composable
-private fun LazyListState.isAtTopOrScrollingUp(): Boolean {
+private fun LazyListState.isScrollingUpBelowTop(): Boolean {
     var previousIndex by remember(this) { mutableIntStateOf(firstVisibleItemIndex) }
     var previousOffset by remember(this) { mutableIntStateOf(firstVisibleItemScrollOffset) }
     return remember(this) {
         derivedStateOf {
             val isUp = when {
-                !canScrollBackward -> true
+                !canScrollBackward -> false
                 previousIndex != firstVisibleItemIndex -> previousIndex > firstVisibleItemIndex
                 else -> previousOffset >= firstVisibleItemScrollOffset
             }

@@ -143,10 +143,13 @@ class OutingPreferencesRepositoryImpl @Inject constructor(private val keyValueDa
         }
     }
 
-    private companion object {
+    internal companion object {
         const val KEY_SETTINGS = "outing.settings"
         const val KEY_MESSAGE_SECTIONS = "outing.message_sections"
         const val KEY_GEAR = "outing.gear"
+
+        /** Every outing preference, as kept: the export file carries them as they are. */
+        val KEYS = listOf(KEY_SETTINGS, KEY_MESSAGE_SECTIONS, KEY_GEAR)
         val json = Json {
             ignoreUnknownKeys = true
             encodeDefaults = true

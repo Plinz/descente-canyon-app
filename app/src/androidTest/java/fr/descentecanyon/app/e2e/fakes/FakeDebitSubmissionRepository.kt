@@ -35,6 +35,8 @@ class FakeDebitSubmissionRepository @Inject constructor(private val connectivity
 
     override fun observePendingCount(): Flow<Int> = E2eFixtureState.queuedSubmissions.map { it.size }
 
+    override fun observeLastSentAt(): Flow<Long?> = flowOf(null)
+
     override fun observePending(): Flow<List<PendingDebitSubmission>> = E2eFixtureState.queuedSubmissions.map { queued ->
         queued.mapIndexed { index, submission ->
             PendingDebitSubmission(id = index.toLong() + 1, submission = submission, createdAtEpochMs = 0L)

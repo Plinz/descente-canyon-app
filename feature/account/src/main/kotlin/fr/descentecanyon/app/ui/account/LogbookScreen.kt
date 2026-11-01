@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -49,21 +50,25 @@ import fr.descentecanyon.app.ui.components.CanyonMemoDialog
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.LogbookEntryDialog
 import fr.descentecanyon.app.ui.components.LogbookEntryLines
+import fr.descentecanyon.app.ui.components.ReportFlowButton
 import fr.descentecanyon.app.ui.components.rememberLogbookDateFormatter
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcEmptyState
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.test.TestTags
+import java.time.LocalDate
 
 /**
  * The logbook: outings by year, canyons with their memo, and the figures over the years, with one
- * search across canyons, accounts, companions and memos. It is never sent to the site.
+ * search across canyons, companions and memos. The flow of an outing is read from the site, never
+ * written here; the logbook itself is never sent.
  */
 @Composable
 fun LogbookScreen(
     onBackClick: () -> Unit,
     onCanyonClick: (Int) -> Unit,
+    onReportFlow: (LogbookEntry) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: LogbookViewModel = hiltViewModel(),
 ) {
@@ -118,7 +123,7 @@ fun LogbookScreen(
                         item(key = "search") { LogbookSearchField(query = query, onQueryChanged = viewModel::onQueryChanged) }
                     }
                     when (tab) {
-                        LogbookTab.OUTINGS -> outingItems(state, query, onCanyonClick, onEdit = { editedEntryId = it.id })
+                        LogbookTab.OUTINGS -> outingItems(state, query, onCanyonClick, onReportFlow, onEdit = { editedEntryId = it.id })
 
                         LogbookTab.CANYONS -> canyonItems(state, query, onCanyonClick, onEditMemo = { editedMemoCanyonId = it })
 
@@ -167,7 +172,13 @@ fun LogbookScreen(
     }
 }
 
-private fun LazyListScope.outingItems(state: LogbookUiState, query: String, onCanyonClick: (Int) -> Unit, onEdit: (LogbookEntry) -> Unit) {
+private fun LazyListScope.outingItems(
+    state: LogbookUiState,
+    query: String,
+    onCanyonClick: (Int) -> Unit,
+    onReportFlow: (LogbookEntry) -> Unit,
+    onEdit: (LogbookEntry) -> Unit,
+) {
     item(key = "stats") {
         Text(
             listOf(
@@ -193,6 +204,7 @@ private fun LazyListScope.outingItems(state: LogbookUiState, query: String, onCa
         }
         items(entries, key = { it.id }) { entry ->
             val formatter = rememberLogbookDateFormatter()
+            val today = remember { LocalDate.now() }
             DcCard(onClick = { onCanyonClick(entry.canyonId) }, modifier = Modifier.fillMaxWidth(), contentPadding = 12.dp) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     LogbookEntryLines(
@@ -201,6 +213,8 @@ private fun LazyListScope.outingItems(state: LogbookUiState, query: String, onCa
                         subtitle = entry.date.format(formatter),
                         modifier = Modifier.weight(1f),
                     )
+                    // The flow lives on the site: a recent outing without a report offers to write one.
+                    if (entry.awaitsFlowReport(today)) ReportFlowButton(onClick = { onReportFlow(entry) })
                     IconButton(onClick = { onEdit(entry) }) {
                         Icon(Icons.Default.Edit, contentDescription = stringResource(R.string.logbook_edit_title))
                     }

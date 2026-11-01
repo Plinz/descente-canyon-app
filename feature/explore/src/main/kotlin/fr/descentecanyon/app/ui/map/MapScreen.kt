@@ -167,6 +167,19 @@ fun MapScreen(
         if (context.hasLocationPermission()) {
             viewModel.onLocationPermissionResult(true)
         }
+        // A map never moved centres on the user when the position is already allowed and on: no
+        // permission or "turn on location" prompt nobody asked for.
+        if (uiState.isFirstOpen) {
+            viewModel.onFirstOpenHandled()
+            if (context.hasLocationPermission()) {
+                viewModel.onLocationLookupStarted()
+                loadCurrentDeviceLocation(
+                    context = context,
+                    onLocation = { latitude, longitude -> viewModel.focusAroundUser(latitude, longitude) },
+                    onUnavailable = viewModel::onFirstPositionUnavailable,
+                )
+            }
+        }
     }
 
     LaunchedEffect(uiState.transientMessage) {

@@ -42,6 +42,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -392,6 +393,9 @@ fun SearchScreen(
                         descendedIds = uiState.descendedIds,
                         onCanyonClick = onCanyonClick,
                         onClearRecentCanyons = viewModel::clearRecentCanyons,
+                        // For a stay, distances are from its place: there is no "around me".
+                        onAroundMe = if (viewModel.isStayPick) null else ({ requestCurrentLocation(applyDistanceSortWhenReady = true) }),
+                        isLocating = uiState.isLocating,
                         bottomPadding = contentPadding.calculateBottomPadding() + 96.dp,
                         modifier = Modifier.weight(1f),
                     )
@@ -644,6 +648,9 @@ private fun SearchIdleContent(
     onClearRecentCanyons: () -> Unit,
     bottomPadding: Dp,
     modifier: Modifier = Modifier,
+    /** Lists the canyons by distance from the position, asked for if needed. */
+    onAroundMe: (() -> Unit)? = null,
+    isLocating: Boolean = false,
 ) {
     LazyColumn(
         modifier = modifier.fillMaxWidth(),
@@ -657,6 +664,23 @@ private fun SearchIdleContent(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = 8.dp),
             )
+        }
+        // Without a name in mind, the nearest canyons are the usual start: one tap, offline.
+        onAroundMe?.let { onClick ->
+            item(key = "around-me") {
+                FilledTonalButton(
+                    onClick = onClick,
+                    enabled = !isLocating,
+                    modifier = Modifier.fillMaxWidth().testTag(TestTags.SEARCH_AROUND_ME),
+                ) {
+                    if (isLocating) {
+                        CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp)
+                    } else {
+                        Icon(Icons.Default.NearMe, contentDescription = null, modifier = Modifier.size(18.dp))
+                    }
+                    Text(stringResource(R.string.search_around_me), modifier = Modifier.padding(start = 8.dp))
+                }
+            }
         }
         if (recentCanyons.isNotEmpty()) {
             item {

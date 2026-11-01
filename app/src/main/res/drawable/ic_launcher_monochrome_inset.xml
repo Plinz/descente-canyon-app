@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Themed icon (Android 13+): the drop and its canyon as one silhouette, tinted by the system. -->
+<inset xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/icon_monochrome_512"
+    android:insetLeft="14dp"
+    android:insetTop="14dp"
+    android:insetRight="14dp"
+    android:insetBottom="14dp" />

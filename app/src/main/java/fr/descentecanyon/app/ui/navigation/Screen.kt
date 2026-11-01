@@ -42,9 +42,9 @@ sealed interface Screen {
         val stayOutingId: Long = 0,
     ) : Screen
 
-    /** A flow report; an outing just logged prefills its [date] (ISO), [descended] and flow [level] (NiveauDebit name). */
+    /** A flow report; an outing already logged prefills its [date] (ISO), nothing else. */
     @Serializable
-    data class DebitForm(val canyonId: Int, val date: String? = null, val descended: Boolean = false, val level: String? = null) : Screen
+    data class DebitForm(val canyonId: Int, val date: String? = null) : Screen
 
     @Serializable
     data class InterestRatingForm(val canyonId: Int) : Screen

@@ -8,13 +8,17 @@ import fr.descentecanyon.app.domain.error.failure
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.AuthState
 import fr.descentecanyon.app.domain.repository.AuthRepository
+import fr.descentecanyon.app.domain.repository.SiteAccountRepository
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 @Singleton
-class AuthRepositoryImpl @Inject constructor(private val sessionManager: SessionManager) : AuthRepository {
+class AuthRepositoryImpl @Inject constructor(
+    private val sessionManager: SessionManager,
+    private val siteAccountRepository: SiteAccountRepository,
+) : AuthRepository {
 
     override val authState: Flow<AuthState> = sessionManager.state.map { state ->
         when (state) {
@@ -30,6 +34,8 @@ class AuthRepositoryImpl @Inject constructor(private val sessionManager: Session
 
     override suspend fun logout() {
         sessionManager.logout()
+        // The reports of the account were kept to be shown in the logbook: they leave with the session.
+        siteAccountRepository.clearMyObservations()
     }
 
     override suspend fun tryRestoreSession(): Result<Unit> =

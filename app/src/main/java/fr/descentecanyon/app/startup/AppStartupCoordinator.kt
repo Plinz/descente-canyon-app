@@ -11,6 +11,7 @@ import fr.descentecanyon.app.outing.OutingReminderScheduler
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.sync.NotificationSyncScheduler
 import fr.descentecanyon.app.sync.PendingDebitSyncScheduler
+import fr.descentecanyon.app.sync.SiteReportsRefresher
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineScope
@@ -30,6 +31,7 @@ class AppStartupCoordinator @Inject constructor(
     private val legacyPhotoStorageMigrator: LegacyPhotoStorageMigrator,
     private val notificationSyncScheduler: NotificationSyncScheduler,
     private val pendingDebitSyncScheduler: PendingDebitSyncScheduler,
+    private val siteReportsRefresher: SiteReportsRefresher,
     private val outingReminderScheduler: OutingReminderScheduler,
     private val connectivityObserver: ConnectivityObserver,
 ) {
@@ -82,6 +84,7 @@ class AppStartupCoordinator @Inject constructor(
 
             notificationSyncScheduler.start()
             pendingDebitSyncScheduler.start()
+            siteReportsRefresher.start()
             outingReminderScheduler.start()
             initialized = true
             PerformanceTrace.logEvent("startup_initialize_marked_ready")

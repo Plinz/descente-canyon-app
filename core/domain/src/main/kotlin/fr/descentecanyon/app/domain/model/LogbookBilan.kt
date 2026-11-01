@@ -65,7 +65,7 @@ data class LogbookBilan(
                 repeated = counts.filter {
                     it.outings > 1
                 }.sortedWith(compareByDescending<LogbookCanyonCount> { it.outings }.thenBy { it.canyonName }),
-                levels = entries.mapNotNull { it.debitLevel?.takeIf { level -> level != NiveauDebit.INCONNU } }
+                levels = entries.mapNotNull { it.debit.level }
                     .groupingBy { it }
                     .eachCount()
                     .entries

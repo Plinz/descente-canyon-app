@@ -54,7 +54,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.MessageAudience
+import fr.descentecanyon.app.ui.common.needsExactAlarmPermission
 import fr.descentecanyon.app.ui.common.needsNotificationPermission
+import fr.descentecanyon.app.ui.common.openExactAlarmSettings
 import fr.descentecanyon.app.ui.common.startActivitySafely
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.design.DcDatePickerDialog
@@ -136,6 +138,60 @@ fun OutingPlanScreen(
     val sharePermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
         pendingShare?.let(::share)
         pendingShare = null
+    }
+
+    // Once the outing becomes planned (confirmed, plan sent, day of a stay), the reminders have to come
+    // on time even when the phone sleeps: "Alarms and reminders" is asked for, with the reason.
+    var askExactAlarms by rememberSaveable { mutableStateOf(false) }
+    var wasPlanned by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    val isPlanned = state.savedOuting != null
+    LaunchedEffect(isPlanned, state.isLoading) {
+        if (state.isLoading) return@LaunchedEffect
+        if (wasPlanned == false && isPlanned && context.needsExactAlarmPermission()) askExactAlarms = true
+        wasPlanned = isPlanned
+    }
+    if (askExactAlarms) {
+        AlertDialog(
+            onDismissRequest = { askExactAlarms = false },
+            title = { Text(stringResource(R.string.outing_exact_alarm_title)) },
+            text = { Text(stringResource(R.string.outing_exact_alarm_body)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    askExactAlarms = false
+                    context.openExactAlarmSettings()
+                }) { Text(stringResource(R.string.outing_exact_alarm_allow)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { askExactAlarms = false }) { Text(stringResource(R.string.outing_exact_alarm_later)) }
+            },
+        )
+    }
+
+    // A new alert time sent to the relative: asked on the way back from the messaging app, since in
+    // a canyon the message may never leave. Until then the relative keeps the time last confirmed.
+    var askNewAlertSent by rememberSaveable { mutableStateOf(false) }
+    fun shareNewAlertTime(message: String) {
+        askNewAlertSent = true
+        share(message)
+    }
+    if (askNewAlertSent) {
+        AlertDialog(
+            onDismissRequest = { askNewAlertSent = false },
+            title = { Text(stringResource(R.string.outing_alert_sent_title)) },
+            text = { Text(stringResource(R.string.outing_alert_sent_body)) },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        askNewAlertSent = false
+                        viewModel.markRelativeInformed()
+                    },
+                    modifier = Modifier.testTag(TestTags.OUTING_ALERT_SENT_CONFIRM),
+                ) { Text(stringResource(R.string.outing_alert_sent_yes)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { askNewAlertSent = false }) { Text(stringResource(R.string.outing_alert_sent_not_yet)) }
+            },
+        )
     }
 
     // A canyon given to a day of a stay is planned: as a confirmed outing, notifications are asked for.
@@ -246,7 +302,7 @@ fun OutingPlanScreen(
                         val informed = state.savedOuting?.relativeInformed == true
                         val newAlert = state.alertAt?.plusMinutes(minutes.toLong())
                         viewModel.delayAlert(minutes)
-                        if (informed && newAlert != null) share(delayMessage(context, state, newAlert, locale))
+                        if (informed && newAlert != null) shareNewAlertTime(delayMessage(context, state, newAlert, locale))
                     },
                     onEmergency = { state.canyon?.canyon?.id?.let(onOpenEmergency) },
                 )
@@ -354,6 +410,11 @@ fun OutingPlanScreen(
             onSaveSections = viewModel::saveMessageSections,
             onSend = { audience, message ->
                 overlay = null
+                if (audience == MessageAudience.RELATIVE && state.alertChangedSinceInformed) {
+                    // A new time for a relative who has an older one: kept as told until the message left.
+                    shareNewAlertTime(message)
+                    return@NotifySheet
+                }
                 if (audience == MessageAudience.RELATIVE) {
                     // The relative counts on its alert time: sending the plan plans the outing, so the app
                     // reminds the user at the return and keeps the emergency screen at hand.
@@ -398,7 +459,8 @@ fun OutingPlanScreen(
 /** "Back from the canyon at 17:10, all is well", for the relative who waits for news. */
 private fun backMessage(context: Context, state: OutingPlanUiState, locale: Locale): String {
     val strings = ResourceOutingMessageStrings(context.resources)
-    val now = LocalDateTime.now(ZoneId.systemDefault())
+    // In the canyon's hours, like every time of the plan the relative received.
+    val now = LocalDateTime.now(state.zone)
     return strings.back(state.title.orEmpty(), timeOfOuting(now, now.toLocalDate(), locale))
 }
 
@@ -418,7 +480,8 @@ private fun addToCalendar(context: Context, state: OutingPlanUiState, locale: Lo
     val schedule = state.schedule ?: return
     val begin = schedule.leavePlace ?: schedule.arriveParking
     val end = schedule.backAtPlace?.estimate ?: schedule.readyToLeave?.estimate ?: state.expectedBack ?: return
-    val zone = ZoneId.systemDefault()
+    // The times of the plan are the canyon's: the event lands at the right moment wherever the phone is.
+    val zone = state.zone
     val resources = context.resources
     val description = outingMessageData(state, resources, locale)?.let { data ->
         buildOutingMessage(

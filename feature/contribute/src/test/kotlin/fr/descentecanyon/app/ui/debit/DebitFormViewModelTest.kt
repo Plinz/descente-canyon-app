@@ -2,6 +2,7 @@ package fr.descentecanyon.app.ui.debit
 
 import androidx.lifecycle.SavedStateHandle
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.domain.model.AuthState
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.ContributorIdentity
@@ -30,6 +31,8 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -51,6 +54,13 @@ class DebitFormViewModelTest {
     private val logbookRepository = mockk<LogbookRepository> { coEvery { record(any()) } returns true }
     private val submitDebitUseCase = SubmitDebitUseCase(debitSubmissionRepository, logbookRepository, canyonRepository)
 
+    private val online = MutableStateFlow(true)
+    private val connectivityObserver = object : ConnectivityObserver {
+        override fun observe() = online
+
+        override fun isCurrentlyOnline() = online.value
+    }
+
     private fun createViewModel(savedStateHandle: SavedStateHandle = SavedStateHandle(mapOf("canyonId" to 2186))) = DebitFormViewModel(
         savedStateHandle = savedStateHandle,
         authRepository = authRepository,
@@ -58,6 +68,7 @@ class DebitFormViewModelTest {
         debitSubmissionRepository = debitSubmissionRepository,
         preferencesRepository = preferences,
         canyonRepository = canyonRepository,
+        connectivityObserver = connectivityObserver,
     )
 
     @Test
@@ -98,22 +109,71 @@ class DebitFormViewModelTest {
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun `a report opened from an outing just logged takes its day, descent and flow`() = runTest {
+    fun `a report opened for an outing already logged takes its day and nothing else`() = runTest {
         every { authRepository.authState } returns authStateFlow
         every { debitSubmissionRepository.observePendingCount() } returns flowOf(0)
 
+        // Older routes carried the descent and the flow: they are not read any more.
         val state = createViewModel(
             SavedStateHandle(mapOf("canyonId" to 2186, "date" to "2026-08-12", "descended" to true, "level" to "GROS")),
         ).uiState.value
 
         assertEquals(LocalDate.of(2026, 8, 12), state.observationDate)
-        assertEquals(ObservationType.PARCOURU, state.observationType)
-        assertEquals(NiveauDebit.GROS, state.debitLevel)
+        assertNull(state.observationType)
+        assertNull(state.debitLevel)
     }
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun `a report of a descent also logs the outing with the flow and the personal comment`() = runTest {
+    fun `a complete report is read once more and nothing is sent before the confirmation`() = runTest {
+        every { authRepository.authState } returns authStateFlow
+        every { debitSubmissionRepository.observePendingCount() } returns flowOf(0)
+        coEvery { debitSubmissionRepository.submit(any()) } returns Result.success(DebitSubmissionStatus.SUBMITTED)
+        val viewModel = createViewModel()
+        viewModel.onObserverNameChanged("Antoine")
+        viewModel.onObserverEmailChanged("antoine@example.com")
+        viewModel.onObservationTypeChanged(ObservationType.PARCOURU)
+        viewModel.onDebitLevelChanged(NiveauDebit.CORRECT)
+
+        viewModel.requestSubmit()
+        advanceUntilIdle()
+
+        assertTrue(viewModel.uiState.value.isConfirming)
+        coVerify(exactly = 0) { debitSubmissionRepository.submit(any()) }
+
+        viewModel.cancelConfirmation()
+        viewModel.confirmSubmit()
+        advanceUntilIdle()
+
+        assertFalse(viewModel.uiState.value.isConfirming)
+        coVerify(exactly = 0) { debitSubmissionRepository.submit(any()) }
+
+        viewModel.requestSubmit()
+        viewModel.confirmSubmit()
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { debitSubmissionRepository.submit(any()) }
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `an incomplete report is not offered for confirmation`() = runTest {
+        every { authRepository.authState } returns authStateFlow
+        every { debitSubmissionRepository.observePendingCount() } returns flowOf(0)
+        val viewModel = createViewModel()
+        viewModel.onObserverNameChanged("Antoine")
+        viewModel.onObserverEmailChanged("antoine@example.com")
+        viewModel.onObservationTypeChanged(ObservationType.PARCOURU)
+
+        viewModel.requestSubmit()
+
+        assertFalse(viewModel.uiState.value.isConfirming)
+        assertEquals(UiText.res(R.string.debit_level_required), viewModel.uiState.value.error)
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `a report of a descent also logs the outing, but not the flow nor the comments`() = runTest {
         every { authRepository.authState } returns authStateFlow
         every { debitSubmissionRepository.observePendingCount() } returns flowOf(0)
         coEvery { debitSubmissionRepository.submit(any()) } returns Result.success(DebitSubmissionStatus.SUBMITTED)
@@ -125,7 +185,7 @@ class DebitFormViewModelTest {
         viewModel.onDebitLevelChanged(NiveauDebit.CORRECT)
         viewModel.onPersonalCommentChanged("Avec Paul, corde 2x40")
 
-        viewModel.submit()
+        viewModel.submitConfirmed()
         advanceUntilIdle()
 
         coVerify {
@@ -134,8 +194,6 @@ class DebitFormViewModelTest {
                     canyonId = 2186,
                     canyonName = "Riolan",
                     date = LocalDate.of(2026, 8, 12),
-                    note = "Avec Paul, corde 2x40",
-                    debitLevel = NiveauDebit.CORRECT,
                     source = LogbookSource.REPORT,
                 ),
             )
@@ -154,7 +212,7 @@ class DebitFormViewModelTest {
         viewModel.onObservationTypeChanged(ObservationType.NON_PARCOURU)
         viewModel.onDebitLevelChanged(NiveauDebit.SEC)
 
-        viewModel.submit()
+        viewModel.submitConfirmed()
         advanceUntilIdle()
 
         coVerify(exactly = 0) { logbookRepository.record(any()) }
@@ -186,7 +244,7 @@ class DebitFormViewModelTest {
         viewModel.onObserverEmailChanged("antoine@example.com")
         viewModel.onObservationTypeChanged(ObservationType.PARCOURU)
         viewModel.onDebitLevelChanged(NiveauDebit.CORRECT)
-        viewModel.submit()
+        viewModel.submitConfirmed()
         advanceUntilIdle()
 
         assertEquals(UiText.res(R.string.debit_submission_saved_offline), viewModel.uiState.value.transientMessage)
@@ -204,7 +262,7 @@ class DebitFormViewModelTest {
         viewModel.onObservationTypeChanged(ObservationType.PARCOURU)
         viewModel.onDebitLevelChanged(NiveauDebit.CORRECT)
 
-        viewModel.submit()
+        viewModel.submitConfirmed()
         advanceUntilIdle()
 
         assertEquals(UiText.res(R.string.debit_observer_email_invalid), viewModel.uiState.value.error)
@@ -223,8 +281,8 @@ class DebitFormViewModelTest {
         viewModel.onObservationTypeChanged(ObservationType.PARCOURU)
         viewModel.onDebitLevelChanged(NiveauDebit.CORRECT)
 
-        viewModel.submit()
-        viewModel.submit()
+        viewModel.submitConfirmed()
+        viewModel.submitConfirmed()
         advanceUntilIdle()
 
         coVerify(exactly = 1) { debitSubmissionRepository.submit(any()) }
@@ -240,13 +298,13 @@ class DebitFormViewModelTest {
 
         viewModel.onObserverNameChanged("Antoine")
         viewModel.onObserverEmailChanged("antoine@example.com")
-        viewModel.submit()
+        viewModel.submitConfirmed()
         advanceUntilIdle()
 
         assertEquals(UiText.res(R.string.debit_observation_type_required), viewModel.uiState.value.error)
 
         viewModel.onObservationTypeChanged(ObservationType.PARCOURU)
-        viewModel.submit()
+        viewModel.submitConfirmed()
         advanceUntilIdle()
 
         assertEquals(UiText.res(R.string.debit_level_required), viewModel.uiState.value.error)
@@ -265,6 +323,25 @@ class DebitFormViewModelTest {
 
         assertEquals("Antoine", viewModel.uiState.value.observerName)
         assertEquals("antoine@example.com", viewModel.uiState.value.observerEmail)
+        // Known already: the form folds it into one line, after what was seen.
+        assertTrue(viewModel.uiState.value.hasRememberedIdentity)
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `the form knows when the report would wait for the network`() = runTest {
+        every { authRepository.authState } returns authStateFlow
+        every { debitSubmissionRepository.observePendingCount() } returns flowOf(0)
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.isOnline)
+        assertFalse(viewModel.uiState.value.hasRememberedIdentity)
+
+        online.value = false
+        advanceUntilIdle()
+
+        assertFalse(viewModel.uiState.value.isOnline)
     }
 
     @Test
@@ -294,7 +371,7 @@ class DebitFormViewModelTest {
         viewModel.onObserverEmailChanged("antoine@example.com")
         viewModel.onObservationTypeChanged(ObservationType.PARCOURU)
         viewModel.onDebitLevelChanged(NiveauDebit.CORRECT)
-        viewModel.submit()
+        viewModel.submitConfirmed()
         advanceUntilIdle()
 
         assertEquals(ContributorIdentity("Antoine", "antoine@example.com"), preferences.contributorIdentity)
@@ -312,9 +389,15 @@ class DebitFormViewModelTest {
         viewModel.onObserverEmailChanged("antoine@example.com")
         viewModel.onObservationTypeChanged(ObservationType.PARCOURU)
         viewModel.onDebitLevelChanged(NiveauDebit.CORRECT)
-        viewModel.submit()
+        viewModel.submitConfirmed()
         advanceUntilIdle()
 
         assertEquals(null, preferences.contributorIdentity)
     }
+}
+
+/** The two taps of a report: "Relire et publier", then "Publier". */
+private fun DebitFormViewModel.submitConfirmed() {
+    requestSubmit()
+    confirmSubmit()
 }

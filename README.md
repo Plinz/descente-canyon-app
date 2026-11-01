@@ -7,7 +7,9 @@ estimer le débit probable d'un canyon pour les trois prochains jours.
 - Catalogue complet embarqué dans l'APK (fiches, points GPS, bibliographie, réglementation, bassins versants) :
   la consultation ne dépend pas du réseau.
 - Débits, photos, forum et notes d'intérêt lus sur le site quand le réseau est disponible ; les débits saisis hors
-  ligne sont envoyés automatiquement au retour du réseau (file consultable, notification à l'envoi).
+  ligne sont envoyés automatiquement au retour du réseau (file consultable, notification à l'envoi). Un débit n'existe
+  que sur le site : l'envoi passe toujours par une relecture, et le carnet de sorties ne garde ni niveau ni commentaire
+  de débit, il lit le message publié (copie en lecture seule de « Ma liste de courses », oubliée à la déconnexion).
 - Données personnelles locales : favoris avec leur dernier débit connu, carnet de sorties, canyons consultés récemment, notes
   personnelles par canyon, nom et e-mail du dernier signalement.
 - Estimation du débit par un modèle ONNX exécuté sur l'appareil (météo Open-Meteo, pluviomètres Météo-France et
@@ -17,9 +19,11 @@ estimer le débit probable d'un canyon pour les trois prochains jours.
   graphique heure par heure et heures d'orage, 6 prochains jours, lever et coucher du soleil), canyons à moins de
   30 km avec leur dernier débit connu (plan B), répartition des débits signalés selon le mois. Les dernières
   prévisions et estimations téléchargées restent affichées hors ligne.
-- Préparation de sortie : horaires estimés d'après les temps de la fiche, marge avant le coucher du soleil (calculé
-  sur l'appareil), conditions du jour, message à envoyer à un proche (lieu, horaires, heure d'alerte, numéro
-  d'urgence, coordonnées des parkings) et rappel au retour pour signaler le débit observé.
+- Préparation de sortie : horaires estimés d'après les temps de la fiche, à l'heure locale du canyon, marge avant le
+  coucher du soleil (calculé sur l'appareil), conditions du jour (froid, hors saison d'après les mois des débits
+  signalés), message à envoyer à un proche (lieu, horaires, heure d'alerte, numéro d'urgence, coordonnées des
+  parkings) et rappel au retour pour signaler le débit observé. Les rappels de la sortie (retour, alerte proche) sont
+  des alarmes, à la minute avec l'autorisation « Alarmes et rappels ».
 - Carnet de sorties personnel (« Mes sorties », depuis les favoris) : sorties ajoutées depuis la fiche ou avec « Je
   suis rentré », statistiques ; il reste sur le téléphone.
 - Écran d'urgence hors ligne, à un geste : bouton SOS de l'accueil, de la fiche et de la carte, raccourci « Urgence »
@@ -37,7 +41,7 @@ estimer le débit probable d'un canyon pour les trois prochains jours.
 Projet Gradle multi-modules, en couches :
 
 ```
-app                      Activity, navigation, démarrage, synchronisations (WorkManager), notifications
+app                      Activity, navigation, démarrage, synchronisations (WorkManager), alarmes de sortie, notifications
 feature/home             Accueil : derniers débits, forum
 feature/explore          Recherche et carte
 feature/canyon           Fiche canyon, galerie, prédiction de débit

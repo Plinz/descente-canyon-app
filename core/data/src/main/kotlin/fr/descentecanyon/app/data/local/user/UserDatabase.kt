@@ -9,10 +9,12 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import fr.descentecanyon.app.data.local.user.dao.CanyonNoteDao
 import fr.descentecanyon.app.data.local.user.dao.DailyWeatherDao
 import fr.descentecanyon.app.data.local.user.dao.DebitDao
+import fr.descentecanyon.app.data.local.user.dao.DebitSendDao
 import fr.descentecanyon.app.data.local.user.dao.DriveTimeDao
 import fr.descentecanyon.app.data.local.user.dao.FavoriteDao
 import fr.descentecanyon.app.data.local.user.dao.KeyValueDao
 import fr.descentecanyon.app.data.local.user.dao.LogbookDao
+import fr.descentecanyon.app.data.local.user.dao.MySiteReportDao
 import fr.descentecanyon.app.data.local.user.dao.PendingDebitSubmissionDao
 import fr.descentecanyon.app.data.local.user.dao.PhotoDao
 import fr.descentecanyon.app.data.local.user.dao.PlaceDao
@@ -22,10 +24,12 @@ import fr.descentecanyon.app.data.local.user.dao.StayDao
 import fr.descentecanyon.app.data.local.user.entity.CanyonNoteEntity
 import fr.descentecanyon.app.data.local.user.entity.DailyWeatherEntity
 import fr.descentecanyon.app.data.local.user.entity.DebitEntity
+import fr.descentecanyon.app.data.local.user.entity.DebitSendEntity
 import fr.descentecanyon.app.data.local.user.entity.DriveTimeEntity
 import fr.descentecanyon.app.data.local.user.entity.FavoriteEntity
 import fr.descentecanyon.app.data.local.user.entity.KeyValueEntity
 import fr.descentecanyon.app.data.local.user.entity.LogbookEntryEntity
+import fr.descentecanyon.app.data.local.user.entity.MySiteReportEntity
 import fr.descentecanyon.app.data.local.user.entity.PendingDebitSubmissionEntity
 import fr.descentecanyon.app.data.local.user.entity.PhotoEntity
 import fr.descentecanyon.app.data.local.user.entity.PlaceEntity
@@ -55,8 +59,10 @@ import kotlinx.serialization.json.Json
         PlaceEntity::class,
         DriveTimeEntity::class,
         StayEntity::class,
+        MySiteReportEntity::class,
+        DebitSendEntity::class,
     ],
-    version = 8,
+    version = 9,
     exportSchema = true,
 )
 abstract class UserDatabase : RoomDatabase() {
@@ -73,6 +79,8 @@ abstract class UserDatabase : RoomDatabase() {
     abstract fun placeDao(): PlaceDao
     abstract fun driveTimeDao(): DriveTimeDao
     abstract fun stayDao(): StayDao
+    abstract fun mySiteReportDao(): MySiteReportDao
+    abstract fun debitSendDao(): DebitSendDao
 
     companion object {
         const val DATABASE_NAME = "user.db"
@@ -244,9 +252,59 @@ abstract class UserDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Version 9: the flow belongs to the site. An outing of the logbook keeps only its day, companions
+         * and duration (the flow and the note typed on it are dropped; the site holds the report),
+         * the reports of the account are kept as a read-only copy, and each report sent is dated.
+         */
+        val MIGRATION_8_9 = object : Migration(8, 9) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `logbook_entries_new` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`canyonId` INTEGER NOT NULL, `canyonName` TEXT NOT NULL, `date` TEXT NOT NULL, `createdAt` INTEGER NOT NULL, " +
+                        "`companions` TEXT, `durationMinutes` INTEGER, `source` TEXT NOT NULL DEFAULT 'MANUAL', `updatedAt` INTEGER)",
+                )
+                db.execSQL(
+                    "INSERT INTO logbook_entries_new " +
+                        "(id, canyonId, canyonName, date, createdAt, companions, durationMinutes, source, updatedAt) " +
+                        "SELECT id, canyonId, canyonName, date, createdAt, companions, durationMinutes, source, updatedAt " +
+                        "FROM logbook_entries",
+                )
+                db.execSQL("DROP TABLE logbook_entries")
+                db.execSQL("ALTER TABLE logbook_entries_new RENAME TO logbook_entries")
+                db.execSQL(
+                    "CREATE UNIQUE INDEX IF NOT EXISTS `index_logbook_entries_canyonId_date` ON `logbook_entries` (`canyonId`, `date`)",
+                )
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `my_site_reports` (`id` INTEGER NOT NULL, `canyonId` INTEGER, " +
+                        "`canyonName` TEXT NOT NULL, `date` TEXT NOT NULL, `isDescended` INTEGER NOT NULL, `debitLevel` TEXT, " +
+                        "`waterTemperature` TEXT, `airTemperature` TEXT, `publicRemark` TEXT, `personalComment` TEXT, " +
+                        "`fetchedAt` INTEGER NOT NULL, PRIMARY KEY(`id`))",
+                )
+                db.execSQL("CREATE INDEX IF NOT EXISTS `index_my_site_reports_canyonId_date` ON `my_site_reports` (`canyonId`, `date`)")
+                db.execSQL(
+                    "CREATE TABLE IF NOT EXISTS `debit_sends` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, " +
+                        "`canyonId` INTEGER NOT NULL, `observationDate` TEXT NOT NULL, `sentAt` INTEGER NOT NULL, " +
+                        "`origin` TEXT NOT NULL, `confirmed` INTEGER NOT NULL)",
+                )
+                db.execSQL(
+                    "CREATE INDEX IF NOT EXISTS `index_debit_sends_canyonId_observationDate` " +
+                        "ON `debit_sends` (`canyonId`, `observationDate`)",
+                )
+            }
+        }
+
         /** Migrations of the user database, oldest first. */
-        val MIGRATIONS =
-            arrayOf<Migration>(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5, MIGRATION_5_6, MIGRATION_6_7, MIGRATION_7_8)
+        val MIGRATIONS = arrayOf<Migration>(
+            MIGRATION_1_2,
+            MIGRATION_2_3,
+            MIGRATION_3_4,
+            MIGRATION_4_5,
+            MIGRATION_5_6,
+            MIGRATION_6_7,
+            MIGRATION_7_8,
+            MIGRATION_8_9,
+        )
 
         /** Key of the single outing of version 5. */
         private const val LEGACY_OUTING_KEY = "outing.current"

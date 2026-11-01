@@ -57,8 +57,10 @@ l'écosystème existant et aux retours des utilisateurs, puis combler les manque
    d'OpenStreetMap et d'OpenTopoMap interdisent le téléchargement massif. Une zone limitée autour d'un
    canyon depuis le Plan IGN (Géoplateforme, données ouvertes) serait la piste française la plus
    réaliste, à valider avec les conditions d'usage de l'IGN.
-2. **Signalement en un geste** depuis la notification de fin de sortie (niveau choisi dans la
-   notification, envoi en file hors ligne), pour aller plus loin que l'ouverture du formulaire.
+2. ~~**Signalement en un geste** depuis la notification de fin de sortie~~ : abandonné (novembre 2026). Un
+   débit est un message public publié sous le nom de la personne ; depuis la règle « débit = site »
+   (octobre 2026), il passe toujours par une relecture et une confirmation dans le formulaire. La
+   notification de fin de sortie ouvre ce formulaire, rien de plus.
 3. **Liste « à faire »** distincte des favoris, et suivi de trace GPS pendant la sortie (consommation de
    batterie à maîtriser, service au premier plan).
 4. **Widget d'écran d'accueil** : débit et estimation des favoris.

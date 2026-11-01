@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -18,8 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -45,13 +44,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.DurationRange
+import fr.descentecanyon.app.domain.model.LogbookDebit
 import fr.descentecanyon.app.domain.model.LogbookEntry
-import fr.descentecanyon.app.domain.model.NiveauDebit
+import fr.descentecanyon.app.domain.model.level
 import fr.descentecanyon.app.ui.design.DcDatePickerDialog
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
 import fr.descentecanyon.app.ui.test.TestTags
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import java.util.Locale
@@ -80,15 +82,34 @@ fun rememberLogbookDateFormatter(): DateTimeFormatter {
     return remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale) }
 }
 
-/** What an outing adds to its date: flow seen, duration and companions, on one line. */
+/** What an outing adds to its date: duration and companions, on one line. */
 @Composable
 fun logbookEntryFacts(entry: LogbookEntry): String = listOfNotNull(
-    entry.debitLevel?.takeIf { it != NiveauDebit.INCONNU }?.let { debitLevelLabel(it) },
     entry.durationMinutes?.let(::formatDurationMinutes),
     entry.companions?.let { stringResource(R.string.logbook_with, it) },
 ).joinToString(" · ")
 
-/** An outing in a list: date (or canyon), the facts of the day and the start of the account. */
+/**
+ * The flow of the day, as the site holds it: the logbook only reads it. Null when no flow report
+ * exists for that canyon and day.
+ */
+@Composable
+fun logbookDebitText(debit: LogbookDebit): String? = when (debit) {
+    LogbookDebit.None -> null
+
+    LogbookDebit.Waiting -> stringResource(R.string.logbook_debit_waiting)
+
+    is LogbookDebit.Sent -> {
+        val locale = LocalLocale.current.platformLocale
+        val format = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(locale)
+        stringResource(R.string.logbook_debit_sent, Instant.ofEpochMilli(debit.atEpochMs).atZone(ZoneId.systemDefault()).format(format))
+    }
+
+    is LogbookDebit.Published -> debit.level?.let { stringResource(R.string.logbook_debit_published, debitLevelLabel(it)) }
+        ?: stringResource(R.string.logbook_debit_published_unknown)
+}
+
+/** An outing in a list: date (or canyon), the facts of the day and the flow report of the site. */
 @Composable
 fun LogbookEntryLines(entry: LogbookEntry, title: String, modifier: Modifier = Modifier, subtitle: String? = null) {
     val colors = LocalDcColors.current
@@ -98,9 +119,20 @@ fun LogbookEntryLines(entry: LogbookEntry, title: String, modifier: Modifier = M
         logbookEntryFacts(entry).takeIf { it.isNotEmpty() }?.let { facts ->
             Text(facts, style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
         }
-        entry.note?.let { note ->
-            Text(note, style = MaterialTheme.typography.bodySmall, maxLines = 3, overflow = TextOverflow.Ellipsis)
+        logbookDebitText(entry.debit)?.let { debit ->
+            Text(debit, style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Medium)
         }
+    }
+}
+
+/**
+ * Offers the flow report of a recent outing that has none (see [LogbookEntry.awaitsFlowReport]),
+ * on the line of the outing.
+ */
+@Composable
+fun ReportFlowButton(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    TextButton(onClick = onClick, contentPadding = PaddingValues(horizontal = 8.dp), modifier = modifier) {
+        Text(stringResource(R.string.logbook_report_debit), style = MaterialTheme.typography.labelLarge, maxLines = 1)
     }
 }
 
@@ -141,8 +173,8 @@ fun DescendedBadge(
 }
 
 /**
- * Adds or edits an outing: date, flow seen, companions (with the names already typed), duration
- * from car to car and account. [initial] is null for a new outing of [canyonId] today.
+ * Adds or edits an outing: date, companions (with the names already typed) and duration from car to
+ * car. The flow is not asked here: it is reported on the site, through the flow form. [initial] is null for a new outing of [canyonId] today.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -158,11 +190,9 @@ fun LogbookEntryDialog(
     val formatter = rememberLogbookDateFormatter()
     val colors = LocalDcColors.current
     var date by rememberSaveable { mutableStateOf((initial?.date ?: LocalDate.now()).toString()) }
-    var level by rememberSaveable { mutableStateOf(initial?.debitLevel?.name) }
     var companions by rememberSaveable { mutableStateOf(initial?.companions.orEmpty()) }
     var hours by rememberSaveable { mutableStateOf(initial?.durationMinutes?.let { (it / 60).toString() }.orEmpty()) }
     var minutes by rememberSaveable { mutableStateOf(initial?.durationMinutes?.let { (it % 60).toString() }.orEmpty()) }
-    var note by rememberSaveable { mutableStateOf(initial?.note.orEmpty()) }
     var showDatePicker by remember { mutableStateOf(false) }
     var confirmDelete by remember { mutableStateOf(false) }
     val selectedDate = LocalDate.parse(date)
@@ -197,23 +227,6 @@ fun LogbookEntryDialog(
                 OutlinedButton(onClick = { showDatePicker = true }) {
                     Icon(Icons.Default.CalendarMonth, contentDescription = stringResource(R.string.logbook_change_date))
                     Text(stringResource(R.string.logbook_date, selectedDate.format(formatter)), modifier = Modifier.padding(start = 8.dp))
-                }
-
-                DialogLabel(stringResource(R.string.logbook_flow_label))
-                FlowRow(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                    LOGBOOK_LEVELS.forEach { option ->
-                        val color = debitLevelColor(option)
-                        FilterChip(
-                            selected = level == option.name,
-                            // A second tap clears it: the flow is optional.
-                            onClick = { level = if (level == option.name) null else option.name },
-                            label = { Text(debitLevelShortLabel(option)) },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = color.copy(alpha = 0.22f),
-                                selectedLabelColor = colors.textPrimary,
-                            ),
-                        )
-                    }
                 }
 
                 DialogLabel(stringResource(R.string.logbook_companions_label))
@@ -259,14 +272,6 @@ fun LogbookEntryDialog(
                     )
                 }
 
-                DialogLabel(stringResource(R.string.logbook_note_label))
-                OutlinedTextField(
-                    value = note,
-                    onValueChange = { note = it.take(MAX_NOTE_LENGTH) },
-                    placeholder = { Text(stringResource(R.string.logbook_note_hint)) },
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 96.dp),
-                    minLines = 3,
-                )
                 if (onDelete != null) {
                     TextButton(onClick = { confirmDelete = true }) {
                         Text(stringResource(R.string.logbook_delete), color = MaterialTheme.colorScheme.error)
@@ -280,10 +285,8 @@ fun LogbookEntryDialog(
                     val duration = (hours.toIntOrNull() ?: 0) * 60 + (minutes.toIntOrNull() ?: 0)
                     val edited = (initial ?: LogbookEntry(canyonId = canyonId, canyonName = canyonName, date = selectedDate)).copy(
                         date = selectedDate,
-                        debitLevel = level?.let { name -> NiveauDebit.entries.firstOrNull { it.name == name } },
                         companions = companions.ifBlank { null },
                         durationMinutes = duration.takeIf { it > 0 },
-                        note = note.ifBlank { null },
                     )
                     onSave(edited)
                 },
@@ -341,17 +344,6 @@ private fun DialogLabel(text: String) {
     Text(text, style = MaterialTheme.typography.labelLarge, color = LocalDcColors.current.textSecondary)
 }
 
-/** Levels offered for an outing: every level the site uses, driest first. */
-private val LOGBOOK_LEVELS = listOf(
-    NiveauDebit.SEC,
-    NiveauDebit.FILET,
-    NiveauDebit.CORRECT,
-    NiveauDebit.GROS,
-    NiveauDebit.TRES_GROS,
-    NiveauDebit.CRUE,
-)
-
-private const val MAX_NOTE_LENGTH = 2_000
 private const val MAX_MEMO_LENGTH = 2_000
 private const val MAX_COMPANIONS_LENGTH = 200
 private const val MAX_SUGGESTIONS = 6

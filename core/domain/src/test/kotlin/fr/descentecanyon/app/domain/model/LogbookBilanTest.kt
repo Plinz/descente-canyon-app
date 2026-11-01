@@ -71,8 +71,17 @@ class LogbookBilanTest {
         canyonId = canyonId,
         canyonName = name,
         date = LocalDate.parse(date),
-        debitLevel = level,
+        debit = level?.let { LogbookDebit.Published(report(canyonId, date, it)) } ?: LogbookDebit.None,
         companions = companions,
         durationMinutes = duration,
+    )
+
+    private fun report(canyonId: Int, date: String, level: NiveauDebit) = SiteObservation(
+        id = canyonId * 1_000L + date.takeLast(2).toLong(),
+        canyonId = canyonId,
+        canyonName = summaries[canyonId]?.nom.orEmpty(),
+        date = LocalDate.parse(date),
+        isDescended = true,
+        debitLevel = level,
     )
 }

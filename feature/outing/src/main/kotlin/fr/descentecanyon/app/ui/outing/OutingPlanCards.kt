@@ -24,6 +24,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.automirrored.filled.StickyNote2
+import androidx.compose.material.icons.filled.AcUnit
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
@@ -32,6 +33,7 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Directions
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EventBusy
 import androidx.compose.material.icons.filled.Flag
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Hiking
@@ -90,6 +92,7 @@ import fr.descentecanyon.app.domain.model.GroupLevel
 import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingSettings
+import fr.descentecanyon.app.domain.model.SeasonCheck
 import fr.descentecanyon.app.domain.model.TimeWindow
 import fr.descentecanyon.app.domain.model.WeatherCondition
 import fr.descentecanyon.app.ui.common.openUrl
@@ -106,8 +109,11 @@ import fr.descentecanyon.app.ui.design.DcTimePickerDialog
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.LocalDateTime
+import java.time.Month
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
+import java.time.format.TextStyle
+import kotlin.math.roundToInt
 
 /** A bottom sheet of the plan, styled as the pickers of the app; its content scrolls when long. */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -656,7 +662,27 @@ private fun Signals(state: OutingPlanUiState, timeFormatter: DateTimeFormatter) 
                 colors.textMuted,
             )
         }
+        // A cold day: the water of a torrent is then icy, whatever the flow.
+        day?.temperatureMaxC?.takeIf { it < COLD_DAY_MAX_C }?.let { max ->
+            SignalRow(Icons.Default.AcUnit, stringResource(R.string.outing_conditions_cold, "${max.roundToInt()}°"), colors.warning)
+        }
         DaylightSignals(state, timeFormatter)
+        (state.season as? SeasonCheck.OffSeason)?.let { season ->
+            val month = { m: Month -> m.getDisplayName(TextStyle.FULL_STANDALONE, locale) }
+            SignalRow(
+                Icons.Default.EventBusy,
+                stringResource(
+                    R.string.outing_conditions_off_season,
+                    month(season.month),
+                    season.reportsInMonth,
+                    season.totalReports,
+                    month(season.usualFrom),
+                    month(season.usualTo),
+                ),
+                colors.warning,
+                modifier = Modifier.testTag(TestTags.OUTING_OFF_SEASON),
+            )
+        }
         val flow = buildList {
             state.estimate?.let { estimate ->
                 val label = estimate.likelyRange()?.let { debitRangeLabel(it) } ?: estimate.ordinalLevel?.let { debitLevelLabel(it) }
@@ -814,7 +840,7 @@ internal fun FollowStatusCard(state: OutingPlanUiState, timeFormatter: DateTimeF
                 when {
                     state.alertChangedSinceInformed && informedAt != null -> {
                         val told = timeOfOuting(
-                            LocalDateTime.ofInstant(informedAt, java.time.ZoneId.systemDefault()),
+                            LocalDateTime.ofInstant(informedAt, state.zone),
                             state.choices.date,
                             locale,
                         )
@@ -954,3 +980,6 @@ private const val MEMO_LINES = 3
 
 /** The page of OpenStreetMap where anyone can report a mistake of the map, which routing services ask to show. */
 internal const val FIX_THE_MAP_URL = "https://www.openstreetmap.org/fixthemap"
+
+/** Below this maximum of the day (°C), the plan says to dress for cold water. */
+private const val COLD_DAY_MAX_C = 10.0

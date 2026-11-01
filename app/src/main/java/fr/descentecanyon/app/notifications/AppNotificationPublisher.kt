@@ -135,7 +135,9 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
      */
     fun publishOutingAlertSoon(outing: PlannedOuting): Boolean {
         if (!canPostNotifications(OUTINGS_CHANNEL_ID)) return false
-        val alert = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).format(outing.alertAt.atZone(ZoneId.systemDefault()))
+        // The time the relative holds (a later one not confirmed sent does not count for them).
+        val heldAlert = outing.informedAlertAt ?: outing.alertAt
+        val alert = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).format(heldAlert.atZone(ZoneId.systemDefault()))
         val body = context.getString(R.string.notification_outing_alert_body, alert)
         val intent = Intent(context, MainActivity::class.java)
             .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)

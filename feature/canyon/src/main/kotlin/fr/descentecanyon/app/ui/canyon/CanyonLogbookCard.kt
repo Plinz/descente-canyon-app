@@ -40,11 +40,11 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.LogbookEntry
-import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.ui.components.CanyonMemoDialog
 import fr.descentecanyon.app.ui.components.DescendedBadge
 import fr.descentecanyon.app.ui.components.LogbookEntryDialog
 import fr.descentecanyon.app.ui.components.LogbookEntryLines
+import fr.descentecanyon.app.ui.components.ReportFlowButton
 import fr.descentecanyon.app.ui.components.rememberLogbookDateFormatter
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.LocalDcColors
@@ -77,7 +77,6 @@ internal fun MyCanyonCard(
     var addingEntry by rememberSaveable { mutableStateOf(false) }
     var editedEntryId by rememberSaveable { mutableStateOf<Long?>(null) }
     var reportPromptDate by rememberSaveable { mutableStateOf<String?>(null) }
-    var lastAdded by rememberSaveable { mutableStateOf<String?>(null) }
 
     DcCard(
         modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp).testTag(TestTags.DETAIL_LOGBOOK),
@@ -127,6 +126,8 @@ internal fun MyCanyonCard(
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     LogbookEntryLines(entry = last, title = last.date.format(formatter), modifier = Modifier.weight(1f))
+                    // The flow lives on the site: a recent outing without a report offers to write one.
+                    if (last.awaitsFlowReport(LocalDate.now())) ReportFlowButton(onClick = { onReportFlow(last) })
                     Icon(
                         Icons.Default.Edit,
                         contentDescription = stringResource(R.string.logbook_edit_title),
@@ -185,9 +186,8 @@ internal fun MyCanyonCard(
             onSave = { entry ->
                 onSaveEntry(entry)
                 addingEntry = false
-                lastAdded = entry.debitLevel?.name
                 // A flow seen weeks ago no longer helps anyone decide: only recent outings are worth a report.
-                if (!entry.date.isBefore(LocalDate.now().minusDays(REPORT_PROMPT_DAYS))) reportPromptDate = entry.date.toString()
+                if (entry.awaitsFlowReport(LocalDate.now())) reportPromptDate = entry.date.toString()
             },
         )
     }
@@ -225,7 +225,6 @@ internal fun MyCanyonCard(
                             canyonId = canyonId,
                             canyonName = canyonName,
                             date = LocalDate.parse(date),
-                            debitLevel = lastAdded?.let { name -> NiveauDebit.entries.firstOrNull { it.name == name } },
                         ),
                     )
                 }) { Text(stringResource(R.string.outing_report_action)) }
@@ -257,4 +256,3 @@ private fun MemoEditButton(onClick: () -> Unit) {
 }
 
 private const val MEMO_COLLAPSED_LINES = 4
-private const val REPORT_PROMPT_DAYS = 30L

@@ -41,6 +41,8 @@ data class MapUiState(
     val userLatitude: Double? = null,
     val userLongitude: Double? = null,
     val cameraState: MapCameraState? = null,
+    /** The map was never moved: it opens on the mountains of the catalogue, then on the user once located. */
+    val isFirstOpen: Boolean = false,
     val focusLocationRequestId: Int = 0,
     val criteria: SearchCriteria = SearchCriteria(),
     val zones: List<ZoneCountry> = emptyList(),
@@ -60,16 +62,20 @@ class MapViewModel @Inject constructor(
 
     private val initialCriteria = loadCriteria()
     private val criteriaFlow = MutableStateFlow(initialCriteria)
+
+    // Back where the map was left, even after the app was closed, rather than on the whole world.
+    private val savedCamera = loadCameraState(savedStateHandle) ?: preferencesRepository.getLastMapPosition()?.let {
+        MapCameraState(latitude = it.latitude, longitude = it.longitude, zoom = it.zoom)
+    }
     private val _uiState = MutableStateFlow(
         MapUiState(
             hasLocationPermission = savedStateHandle[MAP_HAS_LOCATION_PERMISSION_KEY] ?: false,
             hasRequestedLocationPermission = savedStateHandle[MAP_HAS_REQUESTED_LOCATION_PERMISSION_KEY] ?: false,
             userLatitude = savedStateHandle.get<Double>(MAP_USER_LATITUDE_KEY),
             userLongitude = savedStateHandle.get<Double>(MAP_USER_LONGITUDE_KEY),
-            // Back where the map was left, even after the app was closed, rather than on the whole world.
-            cameraState = loadCameraState(savedStateHandle) ?: preferencesRepository.getLastMapPosition()?.let {
-                MapCameraState(latitude = it.latitude, longitude = it.longitude, zoom = it.zoom)
-            },
+            // Never moved: the Pyrenees to the Alps, where most canyons of the catalogue are, not the world.
+            cameraState = savedCamera ?: FIRST_OPEN_CAMERA,
+            isFirstOpen = savedCamera == null,
             focusLocationRequestId = savedStateHandle[MAP_FOCUS_LOCATION_REQUEST_ID_KEY] ?: 0,
             criteria = initialCriteria,
         ),
@@ -205,6 +211,16 @@ class MapViewModel @Inject constructor(
         _uiState.update { it.copy(error = null) }
     }
 
+    /** The first opening tried to centre on the user: done, found or not. */
+    fun onFirstOpenHandled() {
+        _uiState.update { it.copy(isFirstOpen = false) }
+    }
+
+    /** No position at the first opening: the map stays on the mountains, without a message nobody asked for. */
+    fun onFirstPositionUnavailable() {
+        _uiState.update { it.copy(isLocating = false) }
+    }
+
     fun onLocationUnavailable() {
         _uiState.update {
             it.copy(
@@ -321,3 +337,6 @@ private fun SearchCriteria.sanitizedForMap(): SearchCriteria = copy(
     userLongitude = null,
     selectedDepartment = selectedDepartment.takeIf { selectedCountry != null },
 )
+
+/** First view of a map never moved: from the Pyrenees to the Alps, where most canyons of the catalogue are. */
+internal val FIRST_OPEN_CAMERA = MapCameraState(latitude = 44.5, longitude = 3.5, zoom = 4.6)

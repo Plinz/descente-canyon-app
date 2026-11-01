@@ -1,6 +1,8 @@
 package fr.descentecanyon.app.data.repository
 
+import fr.descentecanyon.app.data.local.user.dao.DebitSendDao
 import fr.descentecanyon.app.data.local.user.dao.PendingDebitSubmissionDao
+import fr.descentecanyon.app.data.local.user.entity.DebitSendEntity
 import fr.descentecanyon.app.data.local.user.entity.PendingDebitSubmissionEntity
 import fr.descentecanyon.app.data.remote.scraper.DebitSubmissionRemoteSource
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
@@ -10,6 +12,7 @@ import fr.descentecanyon.app.domain.error.requiresLogin
 import fr.descentecanyon.app.domain.error.toAppError
 import fr.descentecanyon.app.domain.model.AirTemperature
 import fr.descentecanyon.app.domain.model.DebitDelivery
+import fr.descentecanyon.app.domain.model.DebitSendOrigin
 import fr.descentecanyon.app.domain.model.DebitSubmission
 import fr.descentecanyon.app.domain.model.DebitSubmissionStatus
 import fr.descentecanyon.app.domain.model.NiveauDebit
@@ -35,6 +38,7 @@ import kotlinx.coroutines.sync.withLock
 @Singleton
 class DebitSubmissionRepositoryImpl @Inject constructor(
     private val pendingDao: PendingDebitSubmissionDao,
+    private val debitSendDao: DebitSendDao,
     private val remoteSource: DebitSubmissionRemoteSource,
     private val connectivityObserver: ConnectivityObserver,
     private val clock: Clock,
@@ -51,7 +55,10 @@ class DebitSubmissionRepositoryImpl @Inject constructor(
         }
 
         return remoteSource.submit(submission).fold(
-            onSuccess = { delivery -> Result.success(delivery.toStatus()) },
+            onSuccess = { delivery ->
+                recordSend(submission, DebitSendOrigin.FORM, confirmed = delivery == DebitDelivery.CONFIRMED)
+                Result.success(delivery.toStatus())
+            },
             onFailure = { throwable ->
                 if (throwable.toAppError().isTransient()) {
                     // The report may have reached the site before the failure: it is read back before a new send.
@@ -72,6 +79,7 @@ class DebitSubmissionRepositoryImpl @Inject constructor(
             // A failed attempt may still have reached the site (timeout, unreadable answer): never publish twice.
             if (pending.failedAttempts > 0 && remoteSource.isPublished(submission)) {
                 pendingDao.deleteById(pending.id)
+                recordSend(submission, DebitSendOrigin.QUEUE, confirmed = true)
                 sent += SentDebitSubmission(canyonId = submission.canyonId, observationDate = submission.observationDate, confirmed = true)
                 continue
             }
@@ -79,6 +87,7 @@ class DebitSubmissionRepositoryImpl @Inject constructor(
             val delivery = result.getOrNull()
             if (delivery != null) {
                 pendingDao.deleteById(pending.id)
+                recordSend(submission, DebitSendOrigin.QUEUE, confirmed = delivery == DebitDelivery.CONFIRMED)
                 sent += SentDebitSubmission(
                     canyonId = submission.canyonId,
                     observationDate = submission.observationDate,
@@ -107,6 +116,8 @@ class DebitSubmissionRepositoryImpl @Inject constructor(
 
     override fun observePendingCount(): Flow<Int> = pendingDao.observeCount()
 
+    override fun observeLastSentAt(): Flow<Long?> = debitSendDao.observeLastSentAt()
+
     override fun observePending(): Flow<List<PendingDebitSubmission>> = pendingDao.observeAll().map { entities ->
         entities.map { entity ->
             PendingDebitSubmission(
@@ -126,6 +137,19 @@ class DebitSubmissionRepositoryImpl @Inject constructor(
 
     override suspend fun deletePending(id: Long) {
         pendingDao.deleteById(id)
+    }
+
+    /** Dates the send, so that "when did this go out, and by what path" can be answered later. */
+    private suspend fun recordSend(submission: DebitSubmission, origin: DebitSendOrigin, confirmed: Boolean) {
+        debitSendDao.insert(
+            DebitSendEntity(
+                canyonId = submission.canyonId,
+                observationDate = submission.observationDate.toString(),
+                sentAt = clock.millis(),
+                origin = origin.name,
+                confirmed = confirmed,
+            ),
+        )
     }
 
     private suspend fun queueSubmission(submission: DebitSubmission, failedAttempts: Int = 0) {

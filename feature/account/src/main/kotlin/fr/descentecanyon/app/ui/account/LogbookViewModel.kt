@@ -129,7 +129,7 @@ class LogbookViewModel @Inject constructor(
     }
 
     private fun LogbookEntry.matches(needle: String): Boolean =
-        listOfNotNull(canyonName, note, companions).any { it.normalizeForSearch().contains(needle) }
+        listOfNotNull(canyonName, companions).any { it.normalizeForSearch().contains(needle) }
 
     private fun LogbookCanyonRow.matches(needle: String): Boolean =
         listOfNotNull(canyonName, memo).any { it.normalizeForSearch().contains(needle) }

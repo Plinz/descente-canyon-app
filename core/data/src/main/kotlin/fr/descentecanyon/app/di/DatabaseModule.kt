@@ -24,10 +24,12 @@ import fr.descentecanyon.app.data.local.user.UserDatabase
 import fr.descentecanyon.app.data.local.user.dao.CanyonNoteDao
 import fr.descentecanyon.app.data.local.user.dao.DailyWeatherDao
 import fr.descentecanyon.app.data.local.user.dao.DebitDao
+import fr.descentecanyon.app.data.local.user.dao.DebitSendDao
 import fr.descentecanyon.app.data.local.user.dao.DriveTimeDao
 import fr.descentecanyon.app.data.local.user.dao.FavoriteDao
 import fr.descentecanyon.app.data.local.user.dao.KeyValueDao
 import fr.descentecanyon.app.data.local.user.dao.LogbookDao
+import fr.descentecanyon.app.data.local.user.dao.MySiteReportDao
 import fr.descentecanyon.app.data.local.user.dao.PendingDebitSubmissionDao
 import fr.descentecanyon.app.data.local.user.dao.PhotoDao
 import fr.descentecanyon.app.data.local.user.dao.PlaceDao
@@ -109,4 +111,8 @@ object DatabaseModule {
     @Provides fun provideDriveTimeDao(database: UserDatabase): DriveTimeDao = database.driveTimeDao()
 
     @Provides fun provideStayDao(database: UserDatabase): StayDao = database.stayDao()
+
+    @Provides fun provideMySiteReportDao(database: UserDatabase): MySiteReportDao = database.mySiteReportDao()
+
+    @Provides fun provideDebitSendDao(database: UserDatabase): DebitSendDao = database.debitSendDao()
 }

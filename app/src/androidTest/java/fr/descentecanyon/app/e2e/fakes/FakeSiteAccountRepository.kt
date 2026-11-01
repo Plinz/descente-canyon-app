@@ -7,5 +7,9 @@ import javax.inject.Singleton
 
 @Singleton
 class FakeSiteAccountRepository @Inject constructor() : SiteAccountRepository {
-    override suspend fun fetchMyObservations(): Result<List<SiteObservation>> = Result.success(emptyList())
+    override suspend fun refreshMyObservations(): Result<List<SiteObservation>> = Result.success(emptyList())
+
+    override suspend fun myObservationsReadAt(): Long? = null
+
+    override suspend fun clearMyObservations() = Unit
 }

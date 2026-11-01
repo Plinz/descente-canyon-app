@@ -2,22 +2,23 @@ package fr.descentecanyon.app.domain.model
 
 import java.time.LocalDate
 
-/** A canyon the user descended, kept in their logbook on the device. */
+/**
+ * A canyon the user descended, kept in their logbook on the device. The logbook holds what only
+ * the person knows (day, companions, duration); the flow of the day belongs to the site and is only
+ * read back through [debit].
+ */
 data class LogbookEntry(
     val id: Long = 0,
     val canyonId: Int,
     val canyonName: String,
     val date: LocalDate,
-    val note: String? = null,
-    /** Flow seen that day. */
-    val debitLevel: NiveauDebit? = null,
     /** Who came along, as typed: names separated by commas. */
     val companions: String? = null,
     /** From leaving the car to being back at it, in minutes. */
     val durationMinutes: Int? = null,
     val source: LogbookSource = LogbookSource.MANUAL,
-    /** The report of the site account this outing comes from, once imported. */
-    val siteObservationId: Long? = null,
+    /** The flow report of that canyon and day: read from the site and the send queue, never saved here. */
+    val debit: LogbookDebit = LogbookDebit.None,
 ) {
     /** Names of [companions], trimmed, in the order typed. */
     val companionNames: List<String> get() = splitCompanions(companions)
@@ -27,14 +28,21 @@ data class LogbookEntry(
      * from an outing, report, import): what is already written wins, only the gaps are filled.
      */
     fun completedWith(other: LogbookEntry): LogbookEntry = copy(
-        note = note ?: other.note,
-        debitLevel = debitLevel ?: other.debitLevel,
         companions = companions ?: other.companions,
         durationMinutes = durationMinutes ?: other.durationMinutes,
-        siteObservationId = siteObservationId ?: other.siteObservationId,
     )
 
+    /**
+     * A recent outing with no flow report found: worth offering one. A flow seen weeks ago no longer
+     * helps anyone decide, and an old outing may have been reported before the app kept track of it.
+     */
+    fun awaitsFlowReport(today: LocalDate): Boolean =
+        debit == LogbookDebit.None && !date.isAfter(today) && !date.isBefore(today.minusDays(FLOW_REPORT_DAYS))
+
     companion object {
+        /** Outings older than this are not offered a flow report. */
+        const val FLOW_REPORT_DAYS = 30L
+
         /** Longest outing recorded on its own: beyond, "I'm back" was tapped long after the return. */
         const val MAX_RECORDED_DURATION_MINUTES = 16 * 60
 

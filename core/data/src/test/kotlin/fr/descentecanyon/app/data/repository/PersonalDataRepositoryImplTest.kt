@@ -4,11 +4,13 @@ import android.app.Application
 import fr.descentecanyon.app.data.local.user.UserDatabase
 import fr.descentecanyon.app.data.local.user.entity.CanyonNoteEntity
 import fr.descentecanyon.app.data.local.user.entity.FavoriteEntity
+import fr.descentecanyon.app.data.local.user.entity.KeyValueEntity
 import fr.descentecanyon.app.data.local.user.entity.PlaceEntity
+import fr.descentecanyon.app.data.local.user.entity.PlannedOutingEntity
 import fr.descentecanyon.app.data.local.user.entity.StayEntity
+import fr.descentecanyon.app.domain.model.LogbookDebit
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.LogbookSource
-import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.PersonalDataImport
 import fr.descentecanyon.app.testutil.TestDatabases
 import java.time.Clock
@@ -19,6 +21,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -39,28 +42,36 @@ class PersonalDataRepositoryImplTest {
         target.close()
     }
 
+    private fun logbookOf(database: UserDatabase) = LogbookRepositoryImpl(
+        database.logbookDao(),
+        database.mySiteReportDao(),
+        database.pendingDebitSubmissionDao(),
+        database.debitSendDao(),
+        clock,
+    )
+
     private fun repositoryOf(database: UserDatabase): PersonalDataRepositoryImpl {
-        val logbook = LogbookRepositoryImpl(database.logbookDao(), clock)
+        val logbook = logbookOf(database)
         return PersonalDataRepositoryImpl(
             database.logbookDao(),
             database.canyonNoteDao(),
             database.favoriteDao(),
             database.placeDao(),
             database.stayDao(),
+            database.plannedOutingDao(),
+            database.keyValueDao(),
             logbook,
             clock,
         )
     }
 
     private suspend fun fillSource() {
-        val logbook = LogbookRepositoryImpl(source.logbookDao(), clock)
+        val logbook = logbookOf(source)
         logbook.save(
             LogbookEntry(
                 canyonId = 26,
                 canyonName = "Furon",
                 date = LocalDate.of(2026, 7, 30),
-                note = "Rappel \"arrosé\", puis\nretour, à pied",
-                debitLevel = NiveauDebit.CORRECT,
                 companions = "Paul, Léa",
                 durationMinutes = 250,
             ),
@@ -80,16 +91,61 @@ class PersonalDataRepositoryImplTest {
         val result = repositoryOf(target).importJson(json).getOrThrow()
 
         assertEquals(PersonalDataImport(outings = 2, memos = 1, favorites = 1), result)
-        val outings = LogbookRepositoryImpl(target.logbookDao(), clock).observeAll().first()
+        val outings = logbookOf(target).observeAll().first()
         assertEquals(listOf(26, 2283), outings.map { it.canyonId })
-        assertEquals("Rappel \"arrosé\", puis\nretour, à pied", outings.first().note)
-        assertEquals(NiveauDebit.CORRECT, outings.first().debitLevel)
+        assertEquals("Paul, Léa", outings.first().companions)
+        assertEquals(250, outings.first().durationMinutes)
         assertEquals(LogbookSource.FILE, outings.first().source)
         assertEquals("Parking après le pont", target.canyonNoteDao().observe(26).first())
         assertEquals(listOf(26), target.favoriteDao().observeIds().first())
         val campsite = target.placeDao().getAll().single()
         assertEquals("Camping", campsite.name)
         assertEquals(listOf(campsite.id to "2026-08-02"), target.stayDao().getAll().map { it.placeId to it.end })
+    }
+
+    @Test
+    fun `planned outings still to come and the outing preferences follow to another phone`() = runTest {
+        fillSource()
+        val stayId = source.stayDao().getAll().single().id
+        val day = Instant.parse("2026-11-05T07:00:00Z").toEpochMilli()
+        val hour = 3_600_000L
+        // To come, planned for the stay and sent to a relative.
+        source.plannedOutingDao().upsert(
+            PlannedOutingEntity(
+                canyonId = 26, canyonName = "Furon", start = day, expectedBack = day + 4 * hour, latestBack = day + 5 * hour,
+                alertAt = day + 7 * hour, informedAlertAt = day + 7 * hour, choicesJson = "{}", stayId = stayId, updatedAt = 1L,
+            ),
+        )
+        // Already over: not brought back.
+        val past = Instant.parse("2026-10-01T07:00:00Z").toEpochMilli()
+        source.plannedOutingDao().upsert(
+            PlannedOutingEntity(
+                canyonId = 2283,
+                canyonName = "Ga",
+                start = past,
+                expectedBack = past + hour,
+                latestBack = past + 2 * hour,
+                alertAt = past + 4 * hour,
+                updatedAt = 1L,
+            ),
+        )
+        source.keyValueDao().put(KeyValueEntity("outing.gear", """{"hidden":["HELMET"]}"""))
+        target.keyValueDao().put(KeyValueEntity("outing.settings", """{"prepMinutes":30}"""))
+        val json = repositoryOf(source).exportJson()
+
+        val result = repositoryOf(target).importJson(json).getOrThrow()
+
+        assertEquals(1, result.plannedOutings)
+        val planned = target.plannedOutingDao().observeAll().first().single()
+        assertEquals(26, planned.canyonId)
+        assertEquals(day, planned.start)
+        assertEquals(day + 7 * hour, planned.informedAlertAt)
+        assertEquals(target.stayDao().getAll().single().id, planned.stayId)
+        assertEquals("""{"hidden":["HELMET"]}""", target.keyValueDao().get("outing.gear"))
+        // A setting the phone already has stays as it is.
+        assertEquals("""{"prepMinutes":30}""", target.keyValueDao().get("outing.settings"))
+        // Once more: nothing twice.
+        assertEquals(0, repositoryOf(target).importJson(json).getOrThrow().plannedOutings)
     }
 
     @Test
@@ -124,6 +180,21 @@ class PersonalDataRepositoryImplTest {
     }
 
     @Test
+    fun `a file of an older version loses the flow and the note it carried, the site holds the flow`() = runTest {
+        val json = """{"format": "descente-canyon-personal-data", "exportedAt": "2026-10-19T06:00:00Z",
+            "logbook": [{"canyonId": 26, "canyonName": "Furon", "date": "2026-07-30", "note": "Récit", "debitLevel": "GROS",
+            "companions": "Paul", "durationMinutes": 250, "source": "SITE", "siteObservationId": 199338}]}"""
+
+        repositoryOf(target).importJson(json).getOrThrow()
+
+        val entry = logbookOf(target).observeAll().first().single()
+        assertEquals("Paul", entry.companions)
+        assertEquals(250, entry.durationMinutes)
+        assertEquals(LogbookDebit.None, entry.debit)
+        assertFalse(repositoryOf(target).exportJson().contains("GROS"))
+    }
+
+    @Test
     fun `a file that is not an export is refused`() = runTest {
         assertTrue(repositoryOf(target).importJson("""{"hello": 1}""").isFailure)
         assertTrue(repositoryOf(target).importJson("not json").isFailure)
@@ -135,9 +206,9 @@ class PersonalDataRepositoryImplTest {
 
         val lines = repositoryOf(source).exportLogbookCsv().split("\r\n")
 
-        assertEquals("date,canyon,canyon_id,flow,companions,duration_min,note,source", lines[0])
-        assertEquals("2025-08-02,Ga,2283,,,,,manual", lines[1])
-        assertEquals("2026-07-30,Furon,26,Débit correct,\"Paul, Léa\",250,\"Rappel \"\"arrosé\"\", puis\nretour, à pied\",manual", lines[2])
+        assertEquals("date,canyon,canyon_id,companions,duration_min,source", lines[0])
+        assertEquals("2025-08-02,Ga,2283,,,manual", lines[1])
+        assertEquals("2026-07-30,Furon,26,\"Paul, Léa\",250,manual", lines[2])
     }
 
     @Test

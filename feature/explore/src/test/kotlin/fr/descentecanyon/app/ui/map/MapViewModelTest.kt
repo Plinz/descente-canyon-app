@@ -49,6 +49,22 @@ class MapViewModelTest {
 
         viewModel.onCameraChanged(MapCameraState(latitude = 45.0, longitude = 6.0, zoom = 9.0))
         assertEquals(MapPosition(latitude = 45.0, longitude = 6.0, zoom = 9.0), preferences.mapPosition)
+        assertFalse(viewModel.uiState.value.isFirstOpen)
+    }
+
+    @Test
+    fun `a map never moved opens on the mountains of the catalogue, not on the world`() {
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(emptyList())
+
+        val viewModel = mapViewModel()
+
+        assertEquals(FIRST_OPEN_CAMERA, viewModel.uiState.value.cameraState)
+        assertTrue(viewModel.uiState.value.isFirstOpen)
+        // Not found at the first opening: no message, the map stays there.
+        viewModel.onFirstOpenHandled()
+        viewModel.onFirstPositionUnavailable()
+        assertFalse(viewModel.uiState.value.isFirstOpen)
+        assertEquals(null, viewModel.uiState.value.transientMessage)
     }
 
     @Test

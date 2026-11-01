@@ -2,19 +2,22 @@ package fr.descentecanyon.app.data.repository
 
 import fr.descentecanyon.app.data.local.user.dao.CanyonNoteDao
 import fr.descentecanyon.app.data.local.user.dao.FavoriteDao
+import fr.descentecanyon.app.data.local.user.dao.KeyValueDao
 import fr.descentecanyon.app.data.local.user.dao.LogbookDao
 import fr.descentecanyon.app.data.local.user.dao.PlaceDao
+import fr.descentecanyon.app.data.local.user.dao.PlannedOutingDao
 import fr.descentecanyon.app.data.local.user.dao.StayDao
 import fr.descentecanyon.app.data.local.user.entity.CanyonNoteEntity
 import fr.descentecanyon.app.data.local.user.entity.FavoriteEntity
+import fr.descentecanyon.app.data.local.user.entity.KeyValueEntity
 import fr.descentecanyon.app.data.local.user.entity.PlaceEntity
+import fr.descentecanyon.app.data.local.user.entity.PlannedOutingEntity
 import fr.descentecanyon.app.data.local.user.entity.StayEntity
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.appError
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.LogbookSource
-import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.PersonalDataImport
 import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.repository.LogbookRepository
@@ -36,23 +39,43 @@ class PersonalDataRepositoryImpl @Inject constructor(
     private val favoriteDao: FavoriteDao,
     private val placeDao: PlaceDao,
     private val stayDao: StayDao,
+    private val plannedOutingDao: PlannedOutingDao,
+    private val keyValueDao: KeyValueDao,
     private val logbookRepository: LogbookRepository,
     private val clock: Clock,
 ) : PersonalDataRepository {
 
-    override suspend fun exportJson(): String = JSON.encodeToString(
+    override suspend fun exportJson(): String {
+        val places = placeDao.getAll().associateBy { it.id }
+        val stays = stayDao.getAll().associateBy { it.id }
+        return exportJson(places, stays)
+    }
+
+    private suspend fun exportJson(places: Map<Long, PlaceEntity>, stays: Map<Long, StayEntity>): String = JSON.encodeToString(
         PersonalDataFile.serializer(),
         PersonalDataFile(
             exportedAt = Instant.ofEpochMilli(clock.millis()).toString(),
             logbook = logbookDao.getAll().mapNotNull { it.toDomain() }.map { it.toItem() },
             memos = canyonNoteDao.getAll().map { MemoItem(it.canyonId, it.text, it.updatedAt) },
             favorites = favoriteDao.observeIds().first(),
-            places = placeDao.getAll().map { PlaceItem(it.name, it.latitude, it.longitude) },
-            stays = placeDao.getAll().associateBy { it.id }.let { places ->
-                stayDao.getAll().mapNotNull { stay ->
-                    places[stay.placeId]?.let { place -> StayItem(place.name, place.latitude, place.longitude, stay.start, stay.end) }
-                }
+            places = places.values.map { PlaceItem(it.name, it.latitude, it.longitude) },
+            stays = stays.values.mapNotNull { stay ->
+                places[stay.placeId]?.let { place -> StayItem(place.name, place.latitude, place.longitude, stay.start, stay.end) }
             },
+            plannedOutings = plannedOutingDao.observeAll().first().map { outing ->
+                val stay = outing.stayId?.let(stays::get)
+                val place = stay?.let { places[it.placeId] }
+                outing.toItem(
+                    stay = if (stay != null &&
+                        place != null
+                    ) {
+                        StayRef(place.name, place.latitude, place.longitude, stay.start)
+                    } else {
+                        null
+                    },
+                )
+            },
+            outingPreferences = OutingPreferencesRepositoryImpl.KEYS.mapNotNull { key -> keyValueDao.get(key)?.let { key to it } }.toMap(),
         ),
     )
 
@@ -62,10 +85,8 @@ class PersonalDataRepositoryImpl @Inject constructor(
                 entry.date.toString(),
                 entry.canyonName,
                 entry.canyonId.toString(),
-                entry.debitLevel?.label.orEmpty(),
                 entry.companions.orEmpty(),
                 entry.durationMinutes?.toString().orEmpty(),
-                entry.note.orEmpty(),
                 entry.source.name.lowercase(),
             )
         }
@@ -114,7 +135,26 @@ class PersonalDataRepositoryImpl @Inject constructor(
                 stayDao.upsert(StayEntity(placeId = placeId, start = start.toString(), end = end.toString(), createdAt = clock.millis()))
             }
         }
-        PersonalDataImport(outings = outings, memos = memos, favorites = newFavorites.size)
+        // The plans still to come, on the stay of the same place and first day; an outing already
+        // planned (same canyon, same start) is left as it is here.
+        val now = clock.millis()
+        val staysByRef = stayDao.getAll().associateBy { stay -> stay.placeId to stay.start }
+        val knownOutings = plannedOutingDao.observeAll().first().map { it.canyonId to it.start }.toSet()
+        val plannedOutings = file.plannedOutings.count { item ->
+            if (item.latestBack < now || (item.canyonId to item.start) in knownOutings) return@count false
+            val stayId = item.stay?.let { ref ->
+                placeIds[Triple(ref.placeName, ref.latitude, ref.longitude)]?.let { placeId -> staysByRef[placeId to ref.start]?.id }
+            }
+            plannedOutingDao.upsert(item.toEntity(stayId = stayId, updatedAt = now))
+            true
+        }
+        // Outing preferences: a phone that has its own keeps them.
+        keyValueDao.putAllIfAbsent(
+            file.outingPreferences.filterKeys {
+                it in OutingPreferencesRepositoryImpl.KEYS
+            }.map { (key, value) -> KeyValueEntity(key, value, now) },
+        )
+        PersonalDataImport(outings = outings, memos = memos, favorites = newFavorites.size, plannedOutings = plannedOutings)
     }
 
     override suspend fun clearLogbookAndMemos() {
@@ -122,16 +162,42 @@ class PersonalDataRepositoryImpl @Inject constructor(
         canyonNoteDao.deleteAll()
     }
 
+    private fun PlannedOutingEntity.toItem(stay: StayRef?) = PlannedOutingItem(
+        canyonId = canyonId,
+        canyonName = canyonName,
+        start = start,
+        expectedBack = expectedBack,
+        latestBack = latestBack,
+        alertAt = alertAt,
+        departure = departure,
+        groupSize = groupSize,
+        informedAlertAt = informedAlertAt,
+        choicesJson = choicesJson,
+        stay = stay,
+    )
+
+    private fun PlannedOutingItem.toEntity(stayId: Long?, updatedAt: Long) = PlannedOutingEntity(
+        canyonId = canyonId,
+        canyonName = canyonName,
+        start = start,
+        expectedBack = expectedBack,
+        latestBack = latestBack,
+        alertAt = alertAt,
+        departure = departure,
+        groupSize = groupSize,
+        informedAlertAt = informedAlertAt,
+        choicesJson = choicesJson,
+        stayId = stayId,
+        updatedAt = updatedAt,
+    )
+
     private fun LogbookEntry.toItem() = LogbookItem(
         canyonId = canyonId,
         canyonName = canyonName,
         date = date.toString(),
-        note = note,
-        debitLevel = debitLevel?.name,
         companions = companions,
         durationMinutes = durationMinutes,
         source = source.name,
-        siteObservationId = siteObservationId,
     )
 
     private fun LogbookItem.toEntry(): LogbookEntry? {
@@ -140,12 +206,9 @@ class PersonalDataRepositoryImpl @Inject constructor(
             canyonId = canyonId,
             canyonName = canyonName,
             date = day,
-            note = note,
-            debitLevel = debitLevel?.let { name -> NiveauDebit.entries.firstOrNull { it.name == name } },
             companions = companions,
             durationMinutes = durationMinutes,
             source = LogbookSource.FILE,
-            siteObservationId = siteObservationId,
         )
     }
 
@@ -157,7 +220,7 @@ class PersonalDataRepositoryImpl @Inject constructor(
 
     private companion object {
         const val FORMAT = "descente-canyon-personal-data"
-        val CSV_HEADER = listOf("date", "canyon", "canyon_id", "flow", "companions", "duration_min", "note", "source")
+        val CSV_HEADER = listOf("date", "canyon", "canyon_id", "companions", "duration_min", "source")
         val JSON = Json {
             ignoreUnknownKeys = true
             prettyPrint = true
@@ -169,7 +232,8 @@ class PersonalDataRepositoryImpl @Inject constructor(
 @Serializable
 internal data class PersonalDataFile(
     val format: String = "descente-canyon-personal-data",
-    val version: Int = 1,
+    /** 2 from version 2.9: planned outings and outing preferences. */
+    val version: Int = 2,
     val exportedAt: String,
     val logbook: List<LogbookItem> = emptyList(),
     val memos: List<MemoItem> = emptyList(),
@@ -178,19 +242,41 @@ internal data class PersonalDataFile(
     val places: List<PlaceItem> = emptyList(),
     /** Stays at the places, from version 2.8. */
     val stays: List<StayItem> = emptyList(),
+    /** Outings planned, from version 2.9: a phone changed before a trip keeps its plans. */
+    val plannedOutings: List<PlannedOutingItem> = emptyList(),
+    /** Outing settings, bag list and message choices as kept (JSON values by key), from version 2.9. */
+    val outingPreferences: Map<String, String> = emptyMap(),
 )
+
+/** A planned outing as kept on the phone; times in epoch ms. */
+@Serializable
+internal data class PlannedOutingItem(
+    val canyonId: Int,
+    val canyonName: String,
+    val start: Long,
+    val expectedBack: Long,
+    val latestBack: Long,
+    val alertAt: Long,
+    val departure: Long? = null,
+    val groupSize: Int? = null,
+    val informedAlertAt: Long? = null,
+    val choicesJson: String? = null,
+    /** The stay it was planned for. */
+    val stay: StayRef? = null,
+)
+
+/** A stay by its place and first day. */
+@Serializable
+internal data class StayRef(val placeName: String, val latitude: Double, val longitude: Double, val start: String)
 
 @Serializable
 internal data class LogbookItem(
     val canyonId: Int,
     val canyonName: String,
     val date: String,
-    val note: String? = null,
-    val debitLevel: String? = null,
     val companions: String? = null,
     val durationMinutes: Int? = null,
     val source: String? = null,
-    val siteObservationId: Long? = null,
 )
 
 @Serializable

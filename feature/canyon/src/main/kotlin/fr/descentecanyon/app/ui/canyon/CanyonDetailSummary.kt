@@ -18,6 +18,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -62,7 +63,12 @@ import fr.descentecanyon.app.ui.test.TestTags
 import java.util.Locale
 
 @Composable
-internal fun SummaryCard(detail: CanyonDetail, onPersistedPhotoMissing: (Long) -> Unit, modifier: Modifier = Modifier) {
+internal fun SummaryCard(
+    detail: CanyonDetail,
+    onPersistedPhotoMissing: (Long) -> Unit,
+    modifier: Modifier = Modifier,
+    onShowMap: (() -> Unit)? = null,
+) {
     val canyon = detail.canyon
     val heroPhoto = detail.photos.firstOrNull()
     val colors = LocalDcColors.current
@@ -123,10 +129,11 @@ internal fun SummaryCard(detail: CanyonDetail, onPersistedPhotoMissing: (Long) -
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         if (canyon.isForbidden) {
-                            ForbiddenBadge()
+                            ForbiddenBadge(onPhoto = true)
                         } else {
                             CotationBadge(
                                 cotation = canyon.cotation,
+                                onPhoto = true,
                                 onClick = { showCotationGuide = true }.takeIf { canyon.cotation.isNotBlank() },
                                 modifier = Modifier.testTag(TestTags.COTATION_BADGE),
                             )
@@ -159,6 +166,28 @@ internal fun SummaryCard(detail: CanyonDetail, onPersistedPhotoMissing: (Long) -
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                         )
+                    }
+                }
+                onShowMap?.let { onClick ->
+                    // Where the floating map button would cover the first cards at the top of the page.
+                    Surface(
+                        onClick = onClick,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(spacing.md)
+                            .testTag(TestTags.DETAIL_HERO_MAP),
+                        shape = shapes.pill,
+                        color = colors.surfacePhotoScrim.copy(alpha = 0.72f),
+                        contentColor = colors.snow,
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(horizontal = spacing.md, vertical = spacing.sm),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Icon(Icons.Default.Map, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(modifier = Modifier.width(6.dp))
+                            Text(stringResource(R.string.show_map_points), style = MaterialTheme.typography.labelLarge)
+                        }
                     }
                 }
                 heroPhoto?.auteur?.takeIf { it.isNotBlank() }?.let { author ->
@@ -222,15 +251,15 @@ private fun SummaryStatsGrid(detail: CanyonDetail, modifier: Modifier = Modifier
     // In pairs, each in the same place from one canyon to the next: a row when one of its two is known.
     val parcoursRows = listOf(
         listOf(
-            SummaryStat(stringResource(R.string.altitude), canyon.altitudeDepart?.let { "${it}m" }),
-            SummaryStat(stringResource(R.string.elevation), canyon.denivele?.let { "${it}m" }),
+            SummaryStat(stringResource(R.string.altitude), canyon.altitudeDepart?.let { "${it}\u00A0m" }),
+            SummaryStat(stringResource(R.string.elevation), canyon.denivele?.let { "${it}\u00A0m" }),
         ),
         listOf(
-            SummaryStat(stringResource(R.string.length), canyon.longueur?.let { "${it}m" }),
-            SummaryStat(stringResource(R.string.max_waterfall), canyon.cascadeMax?.let { "${it}m" }),
+            SummaryStat(stringResource(R.string.length), canyon.longueur?.let { "${it}\u00A0m" }),
+            SummaryStat(stringResource(R.string.max_waterfall), canyon.cascadeMax?.let { "${it}\u00A0m" }),
         ),
         listOf(
-            SummaryStat(stringResource(R.string.rope), canyon.cordeMin?.let { "${it}m" }),
+            SummaryStat(stringResource(R.string.rope), canyon.cordeMin?.let { "${it}\u00A0m" }),
             SummaryStat(stringResource(R.string.watershed_area), detail.watershed?.areaKm2?.let(::formatAreaKm2)),
         ),
     ).filter { row -> row.any { !it.value.isNullOrBlank() } }

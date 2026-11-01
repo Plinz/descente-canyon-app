@@ -33,11 +33,8 @@ class OfflineDebitSyncE2ETest : BaseE2eTest() {
         composeRule.onNodeWithTag(TestTags.DETAIL_REPORT_DEBIT_BUTTON, useUnmergedTree = true)
             .performClick()
 
+        // What was seen first, who publishes it last.
         waitForTag(TestTags.DEBIT_OBSERVER_NAME_FIELD)
-        composeRule.onNodeWithTag(TestTags.DEBIT_OBSERVER_NAME_FIELD, useUnmergedTree = true)
-            .performTextInput("Testeur")
-        composeRule.onNodeWithTag(TestTags.DEBIT_OBSERVER_EMAIL_FIELD, useUnmergedTree = true)
-            .performTextInput("test@example.com")
         composeRule.onNodeWithText(string(R.string.debit_type_descended), useUnmergedTree = true)
             .performScrollTo()
             .performClick()
@@ -47,8 +44,18 @@ class OfflineDebitSyncE2ETest : BaseE2eTest() {
         composeRule.onNodeWithTag(TestTags.DEBIT_COMMENT_FIELD, useUnmergedTree = true)
             .performScrollTo()
             .performTextInput("Observation E2E")
+        composeRule.onNodeWithTag(TestTags.DEBIT_OBSERVER_NAME_FIELD, useUnmergedTree = true)
+            .performScrollTo()
+            .performTextInput("Testeur")
+        composeRule.onNodeWithTag(TestTags.DEBIT_OBSERVER_EMAIL_FIELD, useUnmergedTree = true)
+            .performScrollTo()
+            .performTextInput("test@example.com")
         // The submit button sits in the scaffold bottom bar, outside the scrollable form.
         composeRule.onNodeWithTag(TestTags.DEBIT_SUBMIT_BUTTON, useUnmergedTree = true)
+            .performClick()
+        // Nothing is published before the last reading is confirmed.
+        waitForTag(TestTags.DEBIT_CONFIRM_BUTTON)
+        composeRule.onNodeWithTag(TestTags.DEBIT_CONFIRM_BUTTON, useUnmergedTree = true)
             .performClick()
 
         waitForTag(TestTags.DETAIL_REPORT_DEBIT_BUTTON)

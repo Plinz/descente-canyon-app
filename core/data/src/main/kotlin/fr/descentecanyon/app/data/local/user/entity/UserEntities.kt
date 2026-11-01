@@ -101,18 +101,49 @@ data class LogbookEntryEntity(
     val canyonName: String,
     /** ISO date (yyyy-MM-dd), sortable as text. */
     val date: String,
-    val note: String? = null,
     val createdAt: Long,
-    /** NiveauDebit name of the flow seen. */
-    val debitLevel: String? = null,
     /** Companions as typed, separated by commas. */
     val companions: String? = null,
     val durationMinutes: Int? = null,
     /** LogbookSource name: how the outing got into the logbook. */
     @ColumnInfo(defaultValue = "MANUAL") val source: String = "MANUAL",
-    /** Report of the site account the outing was imported from. */
-    val siteObservationId: Long? = null,
     val updatedAt: Long? = null,
+)
+
+/**
+ * A flow report of the logged-in member as the site lists it: a read-only copy, replaced at each
+ * reading and forgotten at logout. The app has no flow of its own to compare it with.
+ */
+@Entity(tableName = "my_site_reports", indices = [Index(value = ["canyonId", "date"])])
+data class MySiteReportEntity(
+    /** Id of the report on the site. */
+    @PrimaryKey val id: Long,
+    val canyonId: Int?,
+    val canyonName: String,
+    /** ISO date (yyyy-MM-dd). */
+    val date: String,
+    val isDescended: Boolean,
+    /** NiveauDebit name. */
+    val debitLevel: String?,
+    val waterTemperature: String?,
+    val airTemperature: String?,
+    val publicRemark: String?,
+    val personalComment: String?,
+    val fetchedAt: Long,
+)
+
+/** A flow report the app published (or handed to the site later), kept to tell when and how. */
+@Entity(tableName = "debit_sends", indices = [Index(value = ["canyonId", "observationDate"])])
+data class DebitSendEntity(
+    @PrimaryKey(autoGenerate = true) val id: Long = 0,
+    val canyonId: Int,
+    /** ISO date of the observation. */
+    val observationDate: String,
+    val sentAt: Long,
+    /** DebitSendOrigin name. */
+    val origin: String,
+    /** Whether the site showed the report back right after the send. */
+    val confirmed: Boolean,
 )
 
 /** An outing the user planned; [choicesJson] keeps their choices so the plan reopens as it was. */
