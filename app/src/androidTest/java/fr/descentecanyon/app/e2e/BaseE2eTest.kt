@@ -102,6 +102,12 @@ abstract class BaseE2eTest {
         }
     }
 
+    /** Recreates the activity with its saved state, as a rotation or a new font size does. */
+    protected fun recreateActivity() {
+        scenario?.recreate()
+        composeRule.waitForIdle()
+    }
+
     /** Restarts the app as if [configure] had built the launch intent (deep link, notification...). */
     protected fun relaunchWith(configure: Intent.() -> Unit) {
         scenario?.close()

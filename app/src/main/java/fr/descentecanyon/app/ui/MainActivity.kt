@@ -31,8 +31,11 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -277,6 +280,9 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
     val showBottomBar = shouldShowBottomBar(navBackStackEntry)
     val dcColors = LocalDcColors.current
     val context = LocalContext.current
+    // Saved with the back stack: a recreated activity (rotation, font size, restored process) gets its
+    // screens back, and its intent, which still holds a canyon link, must not open the canyon over them.
+    var initialTargetOpened by rememberSaveable { mutableStateOf(false) }
 
     androidx.compose.runtime.LaunchedEffect(navController, initialLaunchTarget, incomingLaunchTargets) {
         fun navigateTo(target: AppLaunchTarget) {
@@ -329,7 +335,10 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
             }
         }
 
-        navigateTo(initialLaunchTarget)
+        if (!initialTargetOpened) {
+            navigateTo(initialLaunchTarget)
+            initialTargetOpened = true
+        }
         incomingLaunchTargets.collect(::navigateTo)
     }
 
