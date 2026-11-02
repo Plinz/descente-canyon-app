@@ -2,6 +2,7 @@ package fr.descentecanyon.app.e2e.outing
 
 import android.Manifest
 import android.os.Build
+import android.os.ParcelFileDescriptor
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.hasText
@@ -46,13 +47,16 @@ class OutingPlanE2ETest : BaseE2eTest() {
 
     @Before
     override fun setUp() {
-        // Confirming an outing asks for the notification permission: granted beforehand, no system dialog.
+        val instrumentation = InstrumentationRegistry.getInstrumentation()
+        val packageName = instrumentation.targetContext.packageName
+        // Planning an outing asks for the notification permission and "Alarms and reminders": granted
+        // beforehand, so that no dialog covers the screen (a back press would close it instead of leaving).
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            val instrumentation = InstrumentationRegistry.getInstrumentation()
-            instrumentation.uiAutomation.grantRuntimePermission(
-                instrumentation.targetContext.packageName,
-                Manifest.permission.POST_NOTIFICATIONS,
-            )
+            instrumentation.uiAutomation.grantRuntimePermission(packageName, Manifest.permission.POST_NOTIFICATIONS)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            instrumentation.uiAutomation.executeShellCommand("appops set --uid $packageName SCHEDULE_EXACT_ALARM allow")
+                .let { output -> ParcelFileDescriptor.AutoCloseInputStream(output).use { it.readBytes() } }
         }
         super.setUp()
     }
@@ -92,7 +96,7 @@ class OutingPlanE2ETest : BaseE2eTest() {
         assertEquals(
             Duration.ofMinutes(23),
             Duration.between(
-                outing.choices!!.date.atTime(outing.choices!!.anchorTime).atZone(ZoneId.systemDefault()).toInstant(),
+                outing.choices!!.date.atTime(outing.choices!!.anchorTime).atZone(RIOLAN_ZONE).toInstant(),
                 outing.start,
             ),
         )
@@ -130,6 +134,7 @@ class OutingPlanE2ETest : BaseE2eTest() {
 
     @Test
     fun aStayIsMadeAtACampsiteFoundByItsName() {
+        val dayBefore = LocalDate.now()
         waitForTag(TestTags.HOME_ACCOUNT_BUTTON)
         composeRule.onNodeWithTag(TestTags.HOME_ACCOUNT_BUTTON, useUnmergedTree = true).performClick()
         waitForTag(TestTags.MY_ACCOUNT_LIST)
@@ -161,7 +166,9 @@ class OutingPlanE2ETest : BaseE2eTest() {
         composeRule.waitUntil(10_000) { runBlocking { stayRepository.observeAll().first().isNotEmpty() } }
         val stay = runBlocking { stayRepository.observeAll().first().single() }
         assertEquals(place.id, stay.placeId)
-        assertEquals(LocalDate.now().plusDays(Stay.DEFAULT_DAYS - 1), stay.end)
+        // From today (in the phone's days, which may have turned meanwhile), for the default length.
+        assertTrue("${stay.start}", stay.start in dayBefore..LocalDate.now())
+        assertEquals(stay.start.plusDays(Stay.DEFAULT_DAYS - 1), stay.end)
     }
 
     @Test
@@ -172,13 +179,16 @@ class OutingPlanE2ETest : BaseE2eTest() {
         waitForTag(TestTags.OUTING_DEPARTURE_ROW)
         composeRule.onNodeWithTag(TestTags.OUTING_DEPARTURE_ROW).performClick()
         waitForTag(TestTags.OUTING_DEPART_NOW)
+        val dayBefore = LocalDate.now(RIOLAN_ZONE)
         composeRule.onNodeWithTag(TestTags.OUTING_DEPART_NOW).performClick()
         Espresso.pressBack()
 
         waitForTag(TestTags.OUTING_ACTIVATE_BUTTON)
         composeRule.onNodeWithTag(TestTags.OUTING_ACTIVATE_BUTTON, useUnmergedTree = true).performClick()
         composeRule.waitUntil(10_000) { runBlocking { outingRepository.observeAll().first().isNotEmpty() } }
-        assertEquals(LocalDate.now(), runBlocking { outingRepository.observeAll().first().single().choices?.date })
+        // Today in the Riolan's hours, which may have turned to the next day meanwhile.
+        val date = runBlocking { outingRepository.observeAll().first().single().choices?.date }
+        assertTrue("$date", date != null && date in dayBefore..LocalDate.now(RIOLAN_ZONE))
         // Under way at once: the main action is the return.
         waitForTag(TestTags.OUTING_END_BUTTON)
     }
@@ -196,7 +206,7 @@ class OutingPlanE2ETest : BaseE2eTest() {
                     alertAt = start.plus(Duration.ofHours(5)),
                     groupSize = 6,
                     choices = OutingChoices(
-                        date = start.atZone(ZoneId.systemDefault()).toLocalDate(),
+                        date = start.atZone(RIOLAN_ZONE).toLocalDate(),
                         anchorTime = LocalTime.of(9, 0),
                         groupSize = 6,
                     ),
@@ -219,9 +229,10 @@ class OutingPlanE2ETest : BaseE2eTest() {
         val today = LocalDate.now()
         val stayId = runBlocking {
             val place = placeRepository.save(Place("Camping du Riolan", 43.86, 6.78))
-            stayRepository.save(Stay(place, today, today.plusDays(2)))
+            stayRepository.save(Stay(place, today, today.plusDays(3)))
         }
-        val day = today.plusDays(1)
+        // A day still to come in the canyon's hours too, whatever the phone's zone and time: planned, not under way.
+        val day = today.plusDays(2)
 
         waitForTag(TestTags.HOME_ACCOUNT_BUTTON)
         composeRule.onNodeWithTag(TestTags.HOME_ACCOUNT_BUTTON, useUnmergedTree = true).performClick()
@@ -311,4 +322,9 @@ class OutingPlanE2ETest : BaseE2eTest() {
 
     private fun plural(resId: Int, count: Int): String =
         InstrumentationRegistry.getInstrumentation().targetContext.resources.getQuantityString(resId, count, count)
+
+    private companion object {
+        /** The Riolan's hours: an outing is planned in its canyon's zone, whatever the phone's (UTC on the emulators). */
+        val RIOLAN_ZONE: ZoneId = ZoneId.of("Europe/Paris")
+    }
 }
