@@ -77,7 +77,21 @@
       "label": "Parking touristique de l'erimitage"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_f62b32e9659a6cea",
+          "kind": "TOPOGUIDE",
+          "title": "Gorges et Canyons en Languedoc Roussillon",
+          "authors": [
+            "Jean-Pierre Lucot et Richard Quintilla"
+          ],
+          "publicationYear": 1990,
+          "reference": "ISBN 2-85744-467-9",
+          "editor": "Édisud",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/124/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

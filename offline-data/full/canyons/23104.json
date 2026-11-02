@@ -119,9 +119,47 @@
       "label": "parkink clinic - navette possible"
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_80a52b6e4b57f154",
+          "kind": "TOPOGUIDE",
+          "title": "Tiroler Canyoningführer - The Canyoning guide for Tyrol",
+          "authors": [
+            "Alexander Riml",
+            "Gunnar Amor"
+          ],
+          "publicationYear": 2012,
+          "reference": "978-3-200-02343-7",
+          "editor": null,
+          "status": "en stock\n\n- 44,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/170/Tiroler-Canyoningfuhrer---The-Canyoning-guide-for-Tyrol.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_70082f17ce0f94d1",
+          "kind": "MAP",
+          "title": "WK 323 Karwendel (Freytag & Berdt)",
+          "scale": "1.50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_e0f56861524d30a5",
+          "kind": "MAP",
+          "title": "5/1 Karwendelgebirge West (Alpenvereins (AV) Karte)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_636db6c0712ae6e6",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/GnaupenlochCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/GnaupenlochCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

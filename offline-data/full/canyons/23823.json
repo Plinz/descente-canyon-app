@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_39f8b64caac49317",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning in New Zealand",
+          "authors": [
+            "Daniel Clearwater"
+          ],
+          "publicationYear": 2015,
+          "reference": "9780473330965",
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1324/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {

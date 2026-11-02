@@ -107,18 +107,18 @@
       ],
       "resources": [
         {
-          "id": "resource_03708605fe40e80e",
+          "id": "resource_01b332dfebd12e35",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://leblogaplouflecanyoneur.blogspot......n-dans-la-yaute.html",
-          "url": "http://leblogaplouflecanyoneur.blogspot......n-dans-la-yaute.html"
+          "title": "http://leblogaplouflecanyoneur.blogspot.fr/2013/07/un-nouveau-canyon-dans-la-yaute.html",
+          "url": "http://leblogaplouflecanyoneur.blogspot.fr/2013/07/un-nouveau-canyon-dans-la-yaute.html"
         },
         {
-          "id": "resource_7c97cec9f206e876",
+          "id": "resource_fc19f03616f4b18d",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://saintjeoireescalade.wordpress.com.....s/sixt-fer-a-cheval/",
-          "url": "http://saintjeoireescalade.wordpress.com.....s/sixt-fer-a-cheval/"
+          "title": "http://saintjeoireescalade.wordpress.com/topos/sixt-fer-a-cheval/",
+          "url": "http://saintjeoireescalade.wordpress.com/topos/sixt-fer-a-cheval/"
         }
       ]
     },

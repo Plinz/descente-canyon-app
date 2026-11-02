@@ -93,7 +93,21 @@
       "label": "Le départ se situe à 5 min du parking du cirque de Troumouse"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_7992ba9ac2302817",
+          "kind": "TOPOGUIDE",
+          "title": "Pyrénées en Cascades - Les grandes verticales du canyonisme",
+          "authors": [
+            "Bruno Matéo"
+          ],
+          "publicationYear": 2012,
+          "reference": null,
+          "editor": "Rando éditions",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/172/Pyrenees-en-Cascades---Les-grandes-verticales-du-canyonisme.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

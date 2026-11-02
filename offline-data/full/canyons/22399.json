@@ -143,11 +143,11 @@
       ],
       "resources": [
         {
-          "id": "resource_16df11a94043c768",
+          "id": "resource_684dbf7c5d305d4a",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.geodaten.bayern.de/BayernView.....3390&layer=TK&step=4",
-          "url": "http://www.geodaten.bayern.de/BayernView.....3390&layer=TK&step=4"
+          "title": "http://www.geodaten.bayern.de/BayernViewer2.0/index.cgi?rw=4406570&hw=5263390&layer=TK&step=4",
+          "url": "http://www.geodaten.bayern.de/BayernViewer2.0/index.cgi?rw=4406570&hw=5263390&layer=TK&step=4"
         }
       ]
     },

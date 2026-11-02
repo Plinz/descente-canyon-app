@@ -95,7 +95,23 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_5e6010ef5948a928",
+          "kind": "TOPOGUIDE",
+          "title": "Descente de canyons dans les Alpes de Haute Provence",
+          "authors": [
+            "Bernard Gorgeon",
+            "Eric Olive",
+            "Patrice Tordjman"
+          ],
+          "publicationYear": 1995,
+          "reference": "ISBN 2-85744-758-2",
+          "editor": "Édisud",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/113/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_680c62deb49de2a2",

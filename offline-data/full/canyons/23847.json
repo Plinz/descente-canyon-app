@@ -96,8 +96,45 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_ff21942f4e737548",
+          "kind": "MAP",
+          "title": "021 Dolomiti di Sinistra Piave (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_f8feabc8cd74afa4",
+          "kind": "MAP",
+          "title": "23 I-NE Cimolais (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_287d6b6e1ad04f6a",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/ValCostamolinCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/ValCostamolinCanyon"
+        },
+        {
+          "id": "resource_8da0890eb5eb3d84",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://win.aic-canyoning.it/forum/topic.asp?TOPIC_ID=3088",
+          "url": "http://win.aic-canyoning.it/forum/topic.asp?TOPIC_ID=3088"
+        },
+        {
+          "id": "resource_8c21a567d2763eeb",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL043",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL043"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

@@ -111,7 +111,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_7390d09084f81bc3",
+          "kind": "TOPOGUIDE",
+          "title": "Cañones y barrancos de Andalucia. Sevilla, Cadiz y Malaga",
+          "authors": [
+            "Francisco José Garcia Algaba"
+          ],
+          "publicationYear": 2016,
+          "reference": "978-84-15030-72-0",
+          "editor": "Editorial La Serrania",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1113/Canones-y-Barrancos-de-Andalucia.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_1c2bc48ef3c7dc01",
@@ -123,11 +137,11 @@
       ],
       "resources": [
         {
-          "id": "resource_9500e9b764bdb4bb",
+          "id": "resource_33defeee93e36bce",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.actionman4x4.com/canonesybarr.....s/garganta_verde.htm",
-          "url": "http://www.actionman4x4.com/canonesybarr.....s/garganta_verde.htm"
+          "title": "http://www.actionman4x4.com/canonesybarrancos/recorridos/garganta_verde.htm",
+          "url": "http://www.actionman4x4.com/canonesybarrancos/recorridos/garganta_verde.htm"
         },
         {
           "id": "resource_954ca3a7b97546e2",

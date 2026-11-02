@@ -134,11 +134,11 @@
       ],
       "resources": [
         {
-          "id": "resource_e65cd93fd99c86b9",
+          "id": "resource_006cea550fc3862e",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cgi-bin/redirect.....action=detailed_desc",
-          "url": "http://canyon.carto.net/cgi-bin/redirect.....action=detailed_desc"
+          "title": "http://canyon.carto.net/cgi-bin/redirect_single_page.pl?page=http://canyon.carto.net/cgi-bin/parse_xml.pl%3fcanyon=52%26action=detailed_desc",
+          "url": "http://canyon.carto.net/cgi-bin/redirect_single_page.pl?page=http://canyon.carto.net/cgi-bin/parse_xml.pl%3fcanyon=52%26action=detailed_desc"
         }
       ]
     },

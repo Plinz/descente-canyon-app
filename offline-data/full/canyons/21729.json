@@ -104,7 +104,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_ec21c53da7996ef3",
+          "kind": "TOPOGUIDE",
+          "title": "Tour de l'Europe en Canyon - T2 - Ligurie, Italie centrale et du sud, Sicile, Sardaigne, Balkans...",
+          "authors": [
+            "Caracal et les Sancho Panza"
+          ],
+          "publicationYear": 2008,
+          "reference": "978-2-9526064-3-1",
+          "editor": null,
+          "status": "en stock\n\n- 29,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/132/Tour-de-l-Europe-en-Canyon---T2---Ligurie--Italie-centrale-et-du-Sud--Sicile--Sardaigne--Balkans.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {

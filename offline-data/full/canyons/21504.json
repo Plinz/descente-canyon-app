@@ -103,7 +103,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_e7d94bb2f47393ab",
+          "kind": "TOPOGUIDE",
+          "title": "Cascades, Gorges & Canyons : Pré-alpes d'Isère et de Savoie",
+          "authors": [
+            "Bertrand Hauser",
+            "Delphine Baratin"
+          ],
+          "publicationYear": 2007,
+          "reference": "978-2-9529407-0-2",
+          "editor": "Descente-Canyon.com",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/11/Cascades--Gorges-et-Canyons-:-Pre-alpes-d-Isere-et-de-Savoie.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_24c652994d6d1609",

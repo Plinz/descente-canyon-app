@@ -96,8 +96,45 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_3b30a2c9f99a94c6",
+          "kind": "MAP",
+          "title": "441 Galicia Asturias Leon (Michelin)",
+          "scale": "1:400000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_84d1a3cf1cde3940",
+          "kind": "MAP",
+          "title": "12-7 (102) Los Barrios de Luna (Cartografia Militar de Espana)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_cddbe3a8f5c8a0e3",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.tic.udc.es/~nino/leon/canon-quincoajo.htm",
+          "url": "http://www.tic.udc.es/~nino/leon/canon-quincoajo.htm"
+        },
+        {
+          "id": "resource_7e6703f41b467da6",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Quincoajo",
+          "url": "http://ropewiki.com/Quincoajo"
+        },
+        {
+          "id": "resource_aedd364e948bb6e9",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/QuincoajoCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/QuincoajoCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

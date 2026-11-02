@@ -117,7 +117,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_a7df45bfc4bd45d6",
+          "kind": "TOPOGUIDE",
+          "title": "Les canyons de Martinique",
+          "authors": [
+            "Comité Régional FFME Martinique"
+          ],
+          "publicationYear": 2001,
+          "reference": null,
+          "editor": "ARDTM",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/15/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_26889c74b599efbe",
@@ -129,11 +143,11 @@
       ],
       "resources": [
         {
-          "id": "resource_82beb727362ea95e",
+          "id": "resource_70361b021a53c791",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://ankanionla-madinina.com/Martiniqu.....0ravine%20Agathe.htm",
-          "url": "http://ankanionla-madinina.com/Martiniqu.....0ravine%20Agathe.htm"
+          "title": "http://ankanionla-madinina.com/Martinique/Pitons/Absalon%20ravine%20Agathe.htm",
+          "url": "http://ankanionla-madinina.com/Martinique/Pitons/Absalon%20ravine%20Agathe.htm"
         }
       ]
     },

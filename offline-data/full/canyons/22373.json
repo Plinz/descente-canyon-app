@@ -96,7 +96,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_a216ca92fa29ca51",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning in Bayern und Tirol",
+          "authors": [
+            "Werner Baumgarten"
+          ],
+          "publicationYear": 2010,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1226/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_0192cb86d241802c",
@@ -108,11 +122,11 @@
       ],
       "resources": [
         {
-          "id": "resource_027bca83101de4ed",
+          "id": "resource_135c7af90c42e93d",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.alpinesicherheit.com/canyonin.....h/hintertuxbach.html",
-          "url": "http://www.alpinesicherheit.com/canyonin.....h/hintertuxbach.html"
+          "title": "http://www.alpinesicherheit.com/canyoning/hintertuxbach/hintertuxbach.html",
+          "url": "http://www.alpinesicherheit.com/canyoning/hintertuxbach/hintertuxbach.html"
         }
       ]
     },

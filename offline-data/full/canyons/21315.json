@@ -85,7 +85,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_f02672f3db0c7f65",
+          "kind": "TOPOGUIDE",
+          "title": "Le paradis du canyoning",
+          "authors": [
+            "P. Colas"
+          ],
+          "publicationYear": 1995,
+          "reference": null,
+          "editor": "Maison de la montagne",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1138/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_13d26f471caae438",
@@ -97,11 +111,11 @@
       ],
       "resources": [
         {
-          "id": "resource_2f82f50727fdb7d7",
+          "id": "resource_1096e75975db5cbe",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://lrc-ffs.fr/Topographies/Accueil/C.....esentationcanyon.htm",
-          "url": "http://lrc-ffs.fr/Topographies/Accueil/C.....esentationcanyon.htm"
+          "title": "http://lrc-ffs.fr/Topographies/Accueil/Canyons/gendarmes/presentationcanyon.htm",
+          "url": "http://lrc-ffs.fr/Topographies/Accueil/Canyons/gendarmes/presentationcanyon.htm"
         }
       ]
     },

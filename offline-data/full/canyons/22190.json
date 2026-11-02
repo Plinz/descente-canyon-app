@@ -104,8 +104,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_bc57889a262fd788",
+          "kind": "MAP",
+          "title": "Il Parco Naturale Regionale del Beigua (Studio Cartografico Italiano Genova)",
+          "scale": "1/30000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_0aa6647f3e104bf5",
+          "kind": "MAP",
+          "title": "Il Parco Naturale Regionale dell'Aveto (Studio Cartografico Italiano Genova)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_924b8c2dfcbf67b7",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.cicarudeclan.com/ita/a5_calandrinosup.htm",
+          "url": "http://www.cicarudeclan.com/ita/a5_calandrinosup.htm"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

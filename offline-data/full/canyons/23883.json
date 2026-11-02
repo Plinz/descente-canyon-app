@@ -96,7 +96,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_d3ba8daa244cabe2",
+          "kind": "MAP",
+          "title": "3437 ET Orcieres-Merlette (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_83f652e7e3fab667",
+          "kind": "MAP",
+          "title": "3438 ET Embrun (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

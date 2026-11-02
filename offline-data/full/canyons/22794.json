@@ -108,11 +108,11 @@
       ],
       "resources": [
         {
-          "id": "resource_610af396bdbef080",
+          "id": "resource_7f2bfa850def991e",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....ic=HoellgrabenCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....ic=HoellgrabenCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=HoellgrabenCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=HoellgrabenCanyon"
         }
       ]
     },

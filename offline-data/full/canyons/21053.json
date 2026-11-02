@@ -102,7 +102,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_55f7e7495ecc3070",
+          "kind": "MAP",
+          "title": "4402RT Saint-Denis (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_c90940801a6e504a",
+          "kind": "MAP",
+          "title": "4401RT Saint-Paul Le port (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

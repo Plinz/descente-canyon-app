@@ -191,9 +191,47 @@
       "label": "navette possible, mais pas necessaire"
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_80a52b6e4b57f154",
+          "kind": "TOPOGUIDE",
+          "title": "Tiroler Canyoningführer - The Canyoning guide for Tyrol",
+          "authors": [
+            "Alexander Riml",
+            "Gunnar Amor"
+          ],
+          "publicationYear": 2012,
+          "reference": "978-3-200-02343-7",
+          "editor": null,
+          "status": "en stock\n\n- 44,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/170/Tiroler-Canyoningfuhrer---The-Canyoning-guide-for-Tyrol.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_70082f17ce0f94d1",
+          "kind": "MAP",
+          "title": "WK 323 Karwendel (Freytag & Berdt)",
+          "scale": "1.50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_b92e1be774787dcb",
+          "kind": "MAP",
+          "title": "5/3 Karwendel, Östliches Blatt (Alpenvereins (AV) Karte)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_c91fb8450a3d13cd",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/VomperLochCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/VomperLochCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

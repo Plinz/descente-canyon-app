@@ -65,8 +65,38 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_13fcb5d4350a1c03",
+          "kind": "TOPOGUIDE",
+          "title": "L'illa dels torrents - Guia Torrentera de Mallorca",
+          "authors": [
+            "J. Barcelo",
+            "M. Trias"
+          ],
+          "publicationYear": 2014,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/189/L-illa-dels-torrents---Guia-Torrentera-de-Mallorca.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_49a9380fe98a049c",
+          "kind": "MAP",
+          "title": "644-III Son Marc (CNIG)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_4e63ffff85d1d87a",
+          "kind": "MAP",
+          "title": "Tramuntana Nord (Alpina - E25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

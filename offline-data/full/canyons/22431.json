@@ -111,7 +111,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_3cf99204167f6619",
+          "kind": "TOPOGUIDE",
+          "title": "100 beaux canyons méditerranéens",
+          "authors": [
+            "Jean-François FIORINA et Franck JOURDAN"
+          ],
+          "publicationYear": 2007,
+          "reference": "978 2 7417 0339 6",
+          "editor": "GAP",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/111/100-beaux-canyons-mediterraneens.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_60c9507073659ab3",

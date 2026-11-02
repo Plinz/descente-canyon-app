@@ -95,9 +95,53 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_e5d77446b92dfce6",
+          "kind": "TOPOGUIDE",
+          "title": "Descentes de canyons en Ardèche et départements limitrophes",
+          "authors": [
+            "Franck Jourdan et Jean-François Fiorina"
+          ],
+          "publicationYear": 2005,
+          "reference": "ISBN : 2-9523920-0-5",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/116/Descentes-de-canyons-en-Ardeche.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_e5b0381895a648e6",
+          "kind": "MAP",
+          "title": "2738 E",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_18d12968db9544ef",
+          "kind": "MAP",
+          "title": "2838 OT Largentiere - Labastide P. Laurent (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_f2691b74dc88c84f",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://fr.coursange.free.fr/rouja.html",
+          "url": "http://fr.coursange.free.fr/rouja.html"
+        },
+        {
+          "id": "resource_12adf6d356a35a58",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.yadugaz07.com/roujanel.php",
+          "url": "http://www.yadugaz07.com/roujanel.php"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": true,

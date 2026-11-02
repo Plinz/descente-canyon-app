@@ -95,8 +95,38 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_2242f6ad0f62937a",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons d’Aventures des Préalpes d’Azur",
+          "authors": [
+            "Christophe Folleas",
+            "Brigitte Gimenez"
+          ],
+          "publicationYear": 2004,
+          "reference": null,
+          "editor": "Les doigts déglingués",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1118/topoguide.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_60c9507073659ab3",
+          "kind": "MAP",
+          "title": "3841 OT Vallée de La Roya (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_5554cf6ec81685b1",
+          "kind": "MAP",
+          "title": "88201(1) Côte d'Azur/Riviera dei fiori (Alpes sans frontières)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

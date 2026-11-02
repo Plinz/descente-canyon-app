@@ -93,7 +93,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_d20cf66336b9060d",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons Slovènes",
+          "authors": [
+            "Franck Jourdan",
+            "Jean-François Fiorina"
+          ],
+          "publicationYear": 2003,
+          "reference": "2-9520630-0-1",
+          "editor": "Association Corse Canyon",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1120/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

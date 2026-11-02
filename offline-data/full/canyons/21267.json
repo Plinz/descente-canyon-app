@@ -65,7 +65,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_944e7d3c51e7fb73",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning : classic canyons in Spain, France and Italy",
+          "authors": [
+            "John Bull"
+          ],
+          "publicationYear": 2008,
+          "reference": "978-1-85284-508-7",
+          "editor": "Cicerone",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1333/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

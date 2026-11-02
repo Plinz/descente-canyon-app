@@ -161,11 +161,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_d2b93aac1908a6e8",
+          "id": "resource_9c9a4c90d0a5cdb9",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://web.archive.org/web/2005020712264.....uege/2tagecanyon.htm",
-          "url": "http://web.archive.org/web/2005020712264.....uege/2tagecanyon.htm"
+          "title": "http://web.archive.org/web/20050207122647/http://kesit.com/de/tagesausfluege/2tagecanyon.htm",
+          "url": "http://web.archive.org/web/20050207122647/http://kesit.com/de/tagesausfluege/2tagecanyon.htm"
         }
       ]
     },

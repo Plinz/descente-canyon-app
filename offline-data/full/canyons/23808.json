@@ -96,8 +96,45 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_1814dc130d071e86",
+          "kind": "MAP",
+          "title": "27 Canin - Val Resia (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_cdef787a7b7235ad",
+          "kind": "MAP",
+          "title": "14 II-NE Jof di Montasio (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_cf58242e43bd94b2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioRondolonCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioRondolonCanyon"
+        },
+        {
+          "id": "resource_76a06832c8e9a370",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Rondolon",
+          "url": "http://ropewiki.com/Rondolon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

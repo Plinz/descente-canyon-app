@@ -204,11 +204,11 @@
       ],
       "resources": [
         {
-          "id": "resource_795ecf9891bfb8d5",
+          "id": "resource_419104ab7eb3e5f9",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://perso.wanadoo.fr/sports.montagnes.....oning/Richiusa01.htm",
-          "url": "http://perso.wanadoo.fr/sports.montagnes.....oning/Richiusa01.htm"
+          "title": "http://perso.wanadoo.fr/sports.montagnes/canyoning/Richiusa01.htm",
+          "url": "http://perso.wanadoo.fr/sports.montagnes/canyoning/Richiusa01.htm"
         },
         {
           "id": "resource_9a5a9eaa10f4e90b",
@@ -232,11 +232,11 @@
           "url": "http://corsica.canyon.free.fr/Richiusa.html"
         },
         {
-          "id": "resource_1cb0f4cafc9dce01",
+          "id": "resource_b5fecb6a6600940f",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://corse.canyoning.free.fr/photograp.....o/ajaccio_photo.html",
-          "url": "http://corse.canyoning.free.fr/photograp.....o/ajaccio_photo.html"
+          "title": "http://corse.canyoning.free.fr/photographie/ajaccio/ajaccio_photo.html",
+          "url": "http://corse.canyoning.free.fr/photographie/ajaccio/ajaccio_photo.html"
         }
       ]
     },

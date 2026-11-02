@@ -160,25 +160,25 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_dda5a3edc7a5a59a",
+          "id": "resource_c580c2dfa5fb0d4f",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://yelsub1.free.fr/canyons/italie/os.....izorno_antolina.html",
-          "url": "http://yelsub1.free.fr/canyons/italie/os.....izorno_antolina.html"
+          "title": "http://yelsub1.free.fr/canyons/italie/ossola_juin_2005/izorno_antolina.html",
+          "url": "http://yelsub1.free.fr/canyons/italie/ossola_juin_2005/izorno_antolina.html"
         },
         {
-          "id": "resource_ffdf01cc933b3fb5",
+          "id": "resource_6e6e9e98dc2aebc5",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://yelsub1.free.fr/canyons/italie/os.....006/carte_isorno.jpg",
-          "url": "http://yelsub1.free.fr/canyons/italie/os.....006/carte_isorno.jpg"
+          "title": "http://yelsub1.free.fr/canyons/italie/ossola_aout_2006/carte_isorno.jpg",
+          "url": "http://yelsub1.free.fr/canyons/italie/ossola_aout_2006/carte_isorno.jpg"
         },
         {
-          "id": "resource_57a137373a61c7b1",
+          "id": "resource_4bfeb55d250dcb7e",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://yelsub1.free.fr/canyons/italie/os.....-08-15-12-37-32.html",
-          "url": "http://yelsub1.free.fr/canyons/italie/os.....-08-15-12-37-32.html"
+          "title": "http://yelsub1.free.fr/canyons/italie/ossola_aout_2006/06-08-15-12-37-32.html",
+          "url": "http://yelsub1.free.fr/canyons/italie/ossola_aout_2006/06-08-15-12-37-32.html"
         }
       ]
     },

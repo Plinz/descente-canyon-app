@@ -65,7 +65,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_e351d4789a0451db",
+          "kind": "TOPOGUIDE",
+          "title": "50 barrancos del Pirineo. Los descensos mas bellos.",
+          "authors": [
+            "José A. Ortega / Miguel A. Cebrian"
+          ],
+          "publicationYear": 2017,
+          "reference": "9788498293890",
+          "editor": "Desnivel",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/140/50-barrancos-del-Pirineo.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

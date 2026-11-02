@@ -99,11 +99,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_26f6380c8e937ba4",
+          "id": "resource_9900468f7fb04444",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C...../RioCadramazzoCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C...../RioCadramazzoCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioCadramazzoCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioCadramazzoCanyon"
         }
       ]
     },

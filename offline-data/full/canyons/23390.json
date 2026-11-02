@@ -63,15 +63,29 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_645355fdabc6144e",
+          "kind": "TOPOGUIDE",
+          "title": "Barranquismo en Gran Canaria : barrancos, caideros y afluentes.",
+          "authors": [
+            "Hedwig Elisabet Solanas Garcia et Victor España Llamas"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-84-617-0693-8",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/199/Barranquismo-en-Gran-Canaria.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_11329b268fc2cf47",
+          "id": "resource_794f3a8cd0c2476e",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://barrancoscanarios.com/barrancos/g.....ranco-cho-idelfonso/",
-          "url": "http://barrancoscanarios.com/barrancos/g.....ranco-cho-idelfonso/"
+          "title": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-barranco-del-palmar/barranco-cho-idelfonso/",
+          "url": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-barranco-del-palmar/barranco-cho-idelfonso/"
         }
       ]
     },

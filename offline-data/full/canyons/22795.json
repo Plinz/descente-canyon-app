@@ -107,11 +107,11 @@
       ],
       "resources": [
         {
-          "id": "resource_60cd03a7628276b2",
+          "id": "resource_fc84c95fef504e30",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....StauseeabflussCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....StauseeabflussCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=StauseeabflussCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=StauseeabflussCanyon"
         }
       ]
     },

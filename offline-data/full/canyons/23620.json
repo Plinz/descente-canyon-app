@@ -93,7 +93,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_ee92621b53de3c8c",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning : Swiss Alps / Alpes Suisse",
+          "authors": [
+            "Association Openbach"
+          ],
+          "publicationYear": 2015,
+          "reference": "9782746679450",
+          "editor": "auto-edition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/195/Canyoning-:-Swiss-alps---Alpes-suisses-Vol-1.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_0d74531459b8c03f",

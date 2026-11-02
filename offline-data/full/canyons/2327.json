@@ -178,11 +178,11 @@
       ],
       "resources": [
         {
-          "id": "resource_77ad0e3e94218743",
+          "id": "resource_2e9a01a9a7c90d84",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.expemag.com/en-france-a-la-jo.....se-canyon-ziocu.html",
-          "url": "http://www.expemag.com/en-france-a-la-jo.....se-canyon-ziocu.html"
+          "title": "http://www.expemag.com/en-france-a-la-journee-ou-pour-un-week-end/corse-canyon-ziocu.html",
+          "url": "http://www.expemag.com/en-france-a-la-journee-ou-pour-un-week-end/corse-canyon-ziocu.html"
         },
         {
           "id": "resource_1f03178f3b783df5",
@@ -192,11 +192,11 @@
           "url": "http://sports.montagnes.free.fr/ZIOCU.htm"
         },
         {
-          "id": "resource_e79eed3312cb0c22",
+          "id": "resource_08889a07e8c12669",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://clubsalamandres.free.fr/modules/a.....viewarticle&artid=54",
-          "url": "http://clubsalamandres.free.fr/modules/a.....viewarticle&artid=54"
+          "title": "http://clubsalamandres.free.fr/modules/aventures/index.php?op=viewarticle&artid=54",
+          "url": "http://clubsalamandres.free.fr/modules/aventures/index.php?op=viewarticle&artid=54"
         }
       ]
     },

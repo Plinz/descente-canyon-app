@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_e8962726807da75d",
+          "kind": "TOPOGUIDE",
+          "title": "Valle de Benasque : descenso de barrancos",
+          "authors": [
+            "Ivan Rodriguez-Torices Gamarra"
+          ],
+          "publicationYear": 2013,
+          "reference": "978-84-9829-277-0",
+          "editor": "Desnivel",
+          "status": "stock très réduit !\n\n- 18,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/174/Valle-de-Benasque--Descenso-de-barrancos.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_262efb214f0f7551",

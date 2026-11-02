@@ -96,8 +96,45 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_fd029d73a53002a7",
+          "kind": "MAP",
+          "title": "14 II-SE Monte Canin (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_dc5b471d232c8e41",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.canyoning.it/raduni/carnia2009/FR/Impresis-fr.pdf",
+          "url": "http://www.canyoning.it/raduni/carnia2009/FR/Impresis-fr.pdf"
+        },
+        {
+          "id": "resource_d4eea10f822ea83d",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RiodelisCladisCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RiodelisCladisCanyon"
+        },
+        {
+          "id": "resource_835938505b016ad2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Rio%20Lis%20Cladis",
+          "url": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Rio%20Lis%20Cladis"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

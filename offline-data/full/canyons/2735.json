@@ -79,8 +79,37 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_d077bf79f60b4790",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning nelle Alpi Occidentali",
+          "authors": [
+            "Daniele Geuna/Dino Ruotolo"
+          ],
+          "publicationYear": 2010,
+          "reference": "978-88-87890-94-5",
+          "editor": "Versante Sud",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1232/topoguide.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_f8c24d19075ca506",
+          "kind": "MAP",
+          "title": "ASF n°1 Côte d'Azur - Riviera Dei Fiori (Alpes sans fronti?res)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_1a70229353b06292",
+          "kind": "MAP",
+          "title": "N° 14 Imperia (IGC)",
+          "scale": null,
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

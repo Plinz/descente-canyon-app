@@ -111,7 +111,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_3587d0b8faf4b102",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning valle Sabbia (fascicule)",
+          "authors": [
+            "collectif - Rassemblement AIC 2006"
+          ],
+          "publicationYear": 2006,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1157/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_2ae5774461284b58",

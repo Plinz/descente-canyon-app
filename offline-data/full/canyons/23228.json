@@ -77,7 +77,23 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_2c4dbd5112b989e9",
+          "kind": "TOPOGUIDE",
+          "title": "Along Water Trails... In The Azores",
+          "authors": [
+            "Francisco Silva",
+            "Maria do Céu Almeida",
+            "Paulo Pacheco"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-989-98432-5-7",
+          "editor": "Azores Promotion Board",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/192/Along-water-trails----in-the-Azores---Canyoning-Guidebook.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

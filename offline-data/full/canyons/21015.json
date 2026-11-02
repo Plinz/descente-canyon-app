@@ -88,7 +88,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_ce36a1b314c897a2",
+          "kind": "MAP",
+          "title": "2348 ET Prades (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_41a056b86869ff0c",
+          "kind": "MAP",
+          "title": "2349 ET Massif du Canigou (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

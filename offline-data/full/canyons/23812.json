@@ -96,8 +96,45 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_9e6fd2c5b047f2ba",
+          "kind": "MAP",
+          "title": "14 I-SE Malborghetto (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_41350b454a289bd3",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/ScinauzCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/ScinauzCanyon"
+        },
+        {
+          "id": "resource_a92c57db335ccd81",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD053",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD053"
+        },
+        {
+          "id": "resource_699605615bd9a482",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Scinauz",
+          "url": "http://ropewiki.com/Scinauz"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

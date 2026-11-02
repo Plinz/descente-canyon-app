@@ -104,7 +104,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_05f7a8dc05e74833",
+          "kind": "TOPOGUIDE",
+          "title": "Asturias, Cuenca, Granada, Mallorca, Tarragona y Terruel - Guia de descenso de cañones y barrancos",
+          "authors": [
+            "Eduardo Gomez",
+            "Laura Tejero"
+          ],
+          "publicationYear": 2004,
+          "reference": "8495744-37-6",
+          "editor": "Barrabes",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1123/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_96a993c8607bbbda",
@@ -130,11 +145,11 @@
           "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/JabaliCanyon"
         },
         {
-          "id": "resource_113f6f4b01319acd",
+          "id": "resource_cbed1811875ed28b",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.actionman4x4.com/canonesybarr.....ecorridos/jabali.htm",
-          "url": "http://www.actionman4x4.com/canonesybarr.....ecorridos/jabali.htm"
+          "title": "http://www.actionman4x4.com/canonesybarrancos/recorridos/jabali.htm",
+          "url": "http://www.actionman4x4.com/canonesybarrancos/recorridos/jabali.htm"
         }
       ]
     },

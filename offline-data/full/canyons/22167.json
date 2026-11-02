@@ -105,18 +105,18 @@
       ],
       "resources": [
         {
-          "id": "resource_73e8c9626540781e",
+          "id": "resource_64576355bdd4887e",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.barranquismo.net/paginas/barr.....anco_de_el_horno.htm",
-          "url": "http://www.barranquismo.net/paginas/barr.....anco_de_el_horno.htm"
+          "title": "http://www.barranquismo.net/paginas/barrancos/barranco_de_el_horno.htm",
+          "url": "http://www.barranquismo.net/paginas/barrancos/barranco_de_el_horno.htm"
         },
         {
-          "id": "resource_f5fe995dd6b99268",
+          "id": "resource_4a3034736fb0518b",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://barrancoscanarios.com/barrancos/g.....-barranco-de-hornos/",
-          "url": "http://barrancoscanarios.com/barrancos/g.....-barranco-de-hornos/"
+          "title": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-sector-sur/espanol-barranco-de-hornos/",
+          "url": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-sector-sur/espanol-barranco-de-hornos/"
         }
       ]
     },

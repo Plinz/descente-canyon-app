@@ -111,7 +111,21 @@
       "label": "pour 4x4"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_ac4af1f2594e871a",
+          "kind": "TOPOGUIDE",
+          "title": "Aragon. Gargantas y barrancos. 2 : Pirineo Central",
+          "authors": [
+            "BIARGE Ana. BIARGE Fernando"
+          ],
+          "publicationYear": 1991,
+          "reference": "84-404-8832-7",
+          "editor": "A compte d'auteur",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1134/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_870014ac9ee0f26d",

@@ -101,7 +101,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_ee92621b53de3c8c",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning : Swiss Alps / Alpes Suisse",
+          "authors": [
+            "Association Openbach"
+          ],
+          "publicationYear": 2015,
+          "reference": "9782746679450",
+          "editor": "auto-edition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/195/Canyoning-:-Swiss-alps---Alpes-suisses-Vol-1.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_2c43e3db298a4f10",
@@ -113,11 +127,11 @@
       ],
       "resources": [
         {
-          "id": "resource_3be70f6502b6ef39",
+          "id": "resource_1ba6d82b26eb46af",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.homepage.bluewin.ch/swestcany.....enasses/Tenasses.htm",
-          "url": "http://www.homepage.bluewin.ch/swestcany.....enasses/Tenasses.htm"
+          "title": "http://www.homepage.bluewin.ch/swestcanyon/Canyons/Tenasses/Tenasses.htm",
+          "url": "http://www.homepage.bluewin.ch/swestcanyon/Canyons/Tenasses/Tenasses.htm"
         }
       ]
     },

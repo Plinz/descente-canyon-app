@@ -96,8 +96,45 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_fd029d73a53002a7",
+          "kind": "MAP",
+          "title": "14 II-SE Monte Canin (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_44e1740106dc6b14",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioRivisCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioRivisCanyon"
+        },
+        {
+          "id": "resource_9def13ed884ca7bc",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyoningalpigiulie.blogspot.de/2011/05/esplorazione-127-ore-rio-rivis.html",
+          "url": "http://canyoningalpigiulie.blogspot.de/2011/05/esplorazione-127-ore-rio-rivis.html"
+        },
+        {
+          "id": "resource_59d840c1ca948d1e",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Rivis",
+          "url": "http://ropewiki.com/Rivis"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

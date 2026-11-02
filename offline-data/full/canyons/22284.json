@@ -102,7 +102,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_08eaa20e6e4398b0",
+          "kind": "MAP",
+          "title": "22 Bregenzer Wald (Kompass)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_dcb5df2435a55c1e",
+          "kind": "MAP",
+          "title": "111 Dornbirn (ÖK 50)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

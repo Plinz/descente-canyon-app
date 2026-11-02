@@ -306,6 +306,14 @@ def stable_id(prefix: str, *values: str | None) -> str:
     return f"{prefix}_{digest}"
 
 
+def uncut_address(text: str, href: str | None) -> str:
+    """The site shows long addresses cut in their middle ("http://site/a.....b.jpg"): its link holds the whole one."""
+    head, cut, tail = text.partition(".....")
+    if cut and href and href.startswith(head) and href.endswith(tail):
+        return href
+    return text
+
+
 def parse_map_index_ids(raw_body: str) -> list[int]:
     json_string = raw_body.split("var data=", 1)[-1].strip().removesuffix(";")
     if not json_string.startswith("{"):
@@ -594,6 +602,17 @@ def parse_map_page(canyon_id: int, html: str) -> dict[str, Any]:
     }
 
 
+# Section titles of the bibliography page, singular for a single entry ("Livre / Topoguide", "Carte").
+BIBLIOGRAPHY_SECTIONS = {
+    "livre topoguide": "topoguides",
+    "livres topoguides": "topoguides",
+    "carte": "maps",
+    "cartes": "maps",
+    "site internet": "resources",
+    "sites internet": "resources",
+}
+
+
 def parse_bibliography_page(html: str | None) -> dict[str, Any]:
     if not html:
         return {"topoguides": [], "maps": [], "resources": []}
@@ -608,11 +627,7 @@ def parse_bibliography_page(html: str | None) -> dict[str, Any]:
     for item in items:
         section_header = item.select_one("h2")
         if section_header is not None:
-            section_name = normalize_label(section_header.get_text(" ", strip=True))
-            if "livres topoguides" in section_name:
-                current_section = "topoguides"
-            elif section_name == "carte":
-                current_section = "maps"
+            current_section = BIBLIOGRAPHY_SECTIONS.get(normalize_label(section_header.get_text(" ", strip=True)))
             continue
 
         if current_section == "topoguides":
@@ -621,6 +636,8 @@ def parse_bibliography_page(html: str | None) -> dict[str, Any]:
                 continue
             link = item.select_one("a[href]")
             detail_url = absolute_url(link.get("href")) if link is not None else None
+            # Some websites are listed as topoguides, under their address.
+            title = uncut_address(title, detail_url)
             lines = split_lines(item.get_text("\n", strip=True))
 
             authors: list[str] = []
@@ -681,18 +698,6 @@ def parse_bibliography_page(html: str | None) -> dict[str, Any]:
             title_text = clean_text(title_block.get_text(" ", strip=True) if title_block is not None else None)
             if not title_text:
                 continue
-            if title_text.startswith("http://") or title_text.startswith("https://"):
-                entry_id = stable_id("resource", title_text)
-                resources.append(
-                    {
-                        "id": entry_id,
-                        "kind": "RESOURCE",
-                        "resourceType": "WEBSITE",
-                        "title": title_text,
-                        "url": title_text,
-                    }
-                )
-                continue
             title = title_text
             scale = None
             if " - " in title_text:
@@ -705,6 +710,23 @@ def parse_bibliography_page(html: str | None) -> dict[str, Any]:
                     "title": title,
                     "scale": scale,
                     "detailUrl": None,
+                }
+            )
+
+        elif current_section == "resources":
+            # A website is shown under its address, maybe cut (see uncut_address): its link is the address.
+            # A relative link ("page.doc") leads nowhere, on the site as well.
+            link = item.select_one("a[href]")
+            url = link.get("href", "").strip() if link is not None else ""
+            if urlparse(url).scheme not in {"http", "https"}:
+                continue
+            resources.append(
+                {
+                    "id": stable_id("resource", url),
+                    "kind": "RESOURCE",
+                    "resourceType": "WEBSITE",
+                    "title": url,
+                    "url": url,
                 }
             )
 

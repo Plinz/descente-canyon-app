@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_2915e4478efbb9f0",
+          "kind": "TOPOGUIDE",
+          "title": "PVC n°3 - Ariège",
+          "authors": [
+            "Collectif : Groupe Spéléologique des Pyrénées"
+          ],
+          "publicationYear": 2009,
+          "reference": null,
+          "editor": "auto-édition",
+          "status": "en stock\n\n- 24,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/154/Plastic-Visuel-Canyon-:-Ariege.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_76afcf8ad7f89c6a",

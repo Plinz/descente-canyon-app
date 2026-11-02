@@ -135,7 +135,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_4e3457ca73385032",
+          "kind": "TOPOGUIDE",
+          "title": "Grussgott 92",
+          "authors": [
+            "Catherine Caullier",
+            "Olivier Courtois"
+          ],
+          "publicationYear": 1992,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1241/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_975c78953190e02c",

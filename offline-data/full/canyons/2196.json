@@ -81,7 +81,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_bb6feb754aea9b5a",
+          "kind": "TOPOGUIDE",
+          "title": "Cascades, gorges et canyons du Haut Jura",
+          "authors": [
+            "Dominique Guyetand",
+            "Jean-Luc Lacroix"
+          ],
+          "publicationYear": 1992,
+          "reference": "ISBN 2-85744-590-3",
+          "editor": "Edisud",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/119/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_a27c55cfa21ad473",
@@ -93,11 +108,11 @@
       ],
       "resources": [
         {
-          "id": "resource_e3da79e0fcf10085",
+          "id": "resource_1ad721b27b0ee8b9",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://spelehautjura.com/le-canyon-dans-.....s-le-bief-des-parres",
-          "url": "http://spelehautjura.com/le-canyon-dans-.....s-le-bief-des-parres"
+          "title": "http://spelehautjura.com/le-canyon-dans-le-haut-jura/1-les-balbutiements-le-bief-des-parres",
+          "url": "http://spelehautjura.com/le-canyon-dans-le-haut-jura/1-les-balbutiements-le-bief-des-parres"
         }
       ]
     },

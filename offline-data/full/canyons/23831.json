@@ -116,11 +116,11 @@
       ],
       "resources": [
         {
-          "id": "resource_c8ccb1c000b5fd8f",
+          "id": "resource_4153955f4f7a266e",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....s/JenesierbachCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....s/JenesierbachCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/JenesierbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/JenesierbachCanyon"
         },
         {
           "id": "resource_cf8a6a9a80d80217",
@@ -130,11 +130,11 @@
           "url": "http://www.ctgernstein.com/schluchten/jenesier-bach"
         },
         {
-          "id": "resource_1ec110040b06eb5d",
+          "id": "resource_d158ed633df54408",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://catastoforre.aic-canyoning.it/ind.....IGE/pro/BZ/cod/BZ013",
-          "url": "http://catastoforre.aic-canyoning.it/ind.....IGE/pro/BZ/cod/BZ013"
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/TRENTINO+ALTO+ADIGE/pro/BZ/cod/BZ013",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/TRENTINO+ALTO+ADIGE/pro/BZ/cod/BZ013"
         }
       ]
     },

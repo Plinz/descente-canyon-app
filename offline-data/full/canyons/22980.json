@@ -96,8 +96,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_0452d24d53f23ed6",
+          "kind": "MAP",
+          "title": "182 Lienzer Dolomiten - Lesachtal (Freytag & Berndt )",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_3d342a09ce3de1f5",
+          "kind": "MAP",
+          "title": "196 Obertillach (ÖK50 - BEV)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_273b63bc9e25074f",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/ObergailerBachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/ObergailerBachCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

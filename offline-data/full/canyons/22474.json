@@ -97,7 +97,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_1b6eca29674d88a9",
+          "kind": "MAP",
+          "title": "3641 ET Moyenne Tinee (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_16cff64ac6385d2c",
+          "kind": "MAP",
+          "title": "3640 ET Haute Tinée 2 / Isola 2000 / Parc National du Mercantour (1/25000)",
+          "scale": "IGN TOP25",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

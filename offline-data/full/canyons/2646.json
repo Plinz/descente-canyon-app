@@ -103,7 +103,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_1a8cb19a79563bd8",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons Liguri, Provincia di Genova",
+          "authors": [
+            "Publication commune"
+          ],
+          "publicationYear": null,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1127/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {

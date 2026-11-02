@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_e58cde58d063e1f8",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons Pyrénées. 50 descentes.",
+          "authors": [
+            "Christian Perilhou"
+          ],
+          "publicationYear": 2014,
+          "reference": "9782954865706",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/186/Canyons-Pyreneens-:-50-Descentes-Canyons.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

@@ -96,8 +96,45 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_4dc4c39ccaa8da9d",
+          "kind": "MAP",
+          "title": "14 II-SO Chiusaforte (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_07dddd165c045834",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioDelMulinChiusaforteCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioDelMulinChiusaforteCanyon"
+        },
+        {
+          "id": "resource_600c42d255c58229",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.canyoning.it/raduni/carnia2009/FR/Rio%20del%20Mulin-fr.pdf",
+          "url": "http://www.canyoning.it/raduni/carnia2009/FR/Rio%20del%20Mulin-fr.pdf"
+        },
+        {
+          "id": "resource_b43871652bac9eb5",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Mulin",
+          "url": "http://ropewiki.com/Mulin"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

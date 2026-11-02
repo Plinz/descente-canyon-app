@@ -104,7 +104,24 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_226157f34704ebeb",
+          "kind": "TOPOGUIDE",
+          "title": "Schluchten-Canyon",
+          "authors": [
+            "A. Wieser",
+            "F. Karger",
+            "R. Ranner",
+            "I. Neumann"
+          ],
+          "publicationYear": 2004,
+          "reference": "3-901533-11-7",
+          "editor": "Edition Neumann",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1221/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_898c3ffd04ddaf84",
@@ -116,11 +133,11 @@
       ],
       "resources": [
         {
-          "id": "resource_ddabefa154dbad35",
+          "id": "resource_f264b9fabc1708c7",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C...../?topic=WoellaCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C...../?topic=WoellaCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=WoellaCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=WoellaCanyon"
         }
       ]
     },

@@ -129,7 +129,21 @@
       "label": "dans le village Krün"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_e6999a504a929a33",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning",
+          "authors": [
+            "Zaunhuber"
+          ],
+          "publicationYear": 1996,
+          "reference": null,
+          "editor": "Pollner Verlag",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1177/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_003da29f948341fb",

@@ -79,8 +79,39 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_2d51b6a6b1e9f79c",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons de Haute-Provence",
+          "authors": [
+            "Jean-François Fiorina",
+            "Franck Jourdan",
+            "Patrice Tordjman"
+          ],
+          "publicationYear": 2006,
+          "reference": "ISBN 2-9523920-1-3",
+          "editor": "Auto-édition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/117/Canyons-de-Haute-Provence.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_680c62deb49de2a2",
+          "kind": "MAP",
+          "title": "3441 OT Barreme (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_371b2a24e7aa2a73",
+          "kind": "MAP",
+          "title": "3442 OT Gorges du Verdon (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

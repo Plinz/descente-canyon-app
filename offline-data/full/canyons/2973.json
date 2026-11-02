@@ -140,31 +140,24 @@
           "editor": "Édisud",
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/113/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_92d4e3bf60284b3e",
-          "kind": "TOPOGUIDE",
-          "title": "3540 OT Barcelonnette (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_4b33d23fe845cd3b",
+          "kind": "MAP",
+          "title": "3540 OT Barcelonnette (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_35aabb101ae4f69c",
-          "kind": "TOPOGUIDE",
-          "title": "3240 OT Banon - Sault - Plateau de St-Christol (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_76c1acc5dfa57a75",
+          "kind": "MAP",
+          "title": "3240 OT Banon - Sault - Plateau de St-Christol (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

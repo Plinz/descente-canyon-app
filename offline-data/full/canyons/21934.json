@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_de5fbc3a649601b7",
+          "kind": "TOPOGUIDE",
+          "title": "Senderos de Agua del Alto Gállego",
+          "authors": [
+            "Ricardo Blanco et Alex Puyó"
+          ],
+          "publicationYear": 2009,
+          "reference": "978-84-8321-292-9",
+          "editor": "Prames",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/145/Senderos-de-Agua-del-Alto-Gallego.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

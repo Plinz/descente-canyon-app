@@ -63,15 +63,29 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_891a1e18739db3c7",
+          "kind": "TOPOGUIDE",
+          "title": "Tenerife - Tomo 1 - Descenso de Canones",
+          "authors": [
+            "Eduardo Gomez"
+          ],
+          "publicationYear": 1998,
+          "reference": null,
+          "editor": "Eduardo Gomez",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1173/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_43af5346e6a0a5cd",
+          "id": "resource_96ca776f229b563a",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://senderismoymontana.blogspot.com.e.....ranco-de-ajoque.html",
-          "url": "http://senderismoymontana.blogspot.com.e.....ranco-de-ajoque.html"
+          "title": "http://senderismoymontana.blogspot.com.es/2013/10/s-303-b-descenso-del-barranco-de-ajoque.html",
+          "url": "http://senderismoymontana.blogspot.com.es/2013/10/s-303-b-descenso-del-barranco-de-ajoque.html"
         }
       ]
     },

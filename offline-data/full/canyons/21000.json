@@ -103,9 +103,53 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_3813ed43a35207fd",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning in Lombardia",
+          "authors": [
+            "Pascal van Duin"
+          ],
+          "publicationYear": 2005,
+          "reference": "ISBN 88-901753-0-3",
+          "editor": "Edizioni TopCanyon",
+          "status": "en stock\n\n- 24,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/18/Canyoning-in-Lombardia.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_9088ca1f6cfd9d03",
+          "kind": "MAP",
+          "title": "CNS 277 kompas 91/92",
+          "scale": null,
+          "detailUrl": null
+        },
+        {
+          "id": "map_20f5354f23d65869",
+          "kind": "MAP",
+          "title": "91 Lago di Como - Lago di Lugano (Kompass)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_ad0f0d3203a4014d",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.x-gatt.com/lirone/scheda.htm",
+          "url": "http://www.x-gatt.com/lirone/scheda.htm"
+        },
+        {
+          "id": "resource_1a90f1023ff30ad1",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.comune.clainoconosteno.co.it/export/sites/claino-con-osteno/comune/bandi_old/elenco-bandi/Bandi-fornitura-beni-servizi/download/Canyoning_torrente_Lirone.pdf",
+          "url": "http://www.comune.clainoconosteno.co.it/export/sites/claino-con-osteno/comune/bandi_old/elenco-bandi/Bandi-fornitura-beni-servizi/download/Canyoning_torrente_Lirone.pdf"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

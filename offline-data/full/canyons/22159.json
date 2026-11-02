@@ -101,7 +101,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_9635a73c59339e35",
+          "kind": "TOPOGUIDE",
+          "title": "Cabo Verde Canyoning",
+          "authors": [
+            "Eduardo Gomez"
+          ],
+          "publicationYear": 2009,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1208/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_a0b95353ed9c3736",

@@ -79,7 +79,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_35be7c5ff782e9d6",
+          "kind": "TOPOGUIDE",
+          "title": "Lleida (Tomo II), Descenso de cañones",
+          "authors": [
+            "Eduardo Gómez"
+          ],
+          "publicationYear": 2002,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1162/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_a9041d20d126f712",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning Nord Italia",
+          "authors": [
+            "Pascal Van Duin"
+          ],
+          "publicationYear": 2009,
+          "reference": "978-88-901753-1-2",
+          "editor": "TopCanyon",
+          "status": "stock très réduit !\n\n- 25,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/135/Canyoning-Nord-Italia.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_423f01bde70e8d54",
@@ -121,11 +135,11 @@
           "url": "http://www.ctgernstein.com/schluchten/aschlbach"
         },
         {
-          "id": "resource_03fb3b4ba3916505",
+          "id": "resource_c39874ce0d7e6aa4",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.map-erlebnis.de/canyoning-top.....io-eschio-aschlbach/",
-          "url": "http://www.map-erlebnis.de/canyoning-top.....io-eschio-aschlbach/"
+          "title": "http://www.map-erlebnis.de/canyoning-topo/canyoning-rio-eschio-aschlbach/",
+          "url": "http://www.map-erlebnis.de/canyoning-topo/canyoning-rio-eschio-aschlbach/"
         },
         {
           "id": "resource_c3b4ae789d07d409",
@@ -135,11 +149,11 @@
           "url": "http://www.canyoning.it/procanyon/gargazzone.htm"
         },
         {
-          "id": "resource_588854a41c4363c7",
+          "id": "resource_99e2d30eb580ce5b",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.aic-canyoning.it/index.php?op.....&catid=10&Itemid=142",
-          "url": "http://www.aic-canyoning.it/index.php?op.....&catid=10&Itemid=142"
+          "title": "http://www.aic-canyoning.it/index.php?option=com_content&view=article&id=143:rio-eschio-aschl-bach-forra-di-gargazzone&catid=10&Itemid=142",
+          "url": "http://www.aic-canyoning.it/index.php?option=com_content&view=article&id=143:rio-eschio-aschl-bach-forra-di-gargazzone&catid=10&Itemid=142"
         },
         {
           "id": "resource_13b250de0007ba86",
@@ -149,11 +163,11 @@
           "url": "http://www.cicarudeclan.com/ita/a5_garga.htm"
         },
         {
-          "id": "resource_91525d315faf5fa9",
+          "id": "resource_94a8d4d60c98ad3a",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://catastoforre.aic-canyoning.it/ind.....IGE/pro/BZ/cod/BZ007",
-          "url": "http://catastoforre.aic-canyoning.it/ind.....IGE/pro/BZ/cod/BZ007"
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/TRENTINO+ALTO+ADIGE/pro/BZ/cod/BZ007",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/TRENTINO+ALTO+ADIGE/pro/BZ/cod/BZ007"
         }
       ]
     },

@@ -93,7 +93,19 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_9f88558c147f1042",
+          "kind": "TOPOGUIDE",
+          "title": "canyon near sydney",
+          "authors": [],
+          "publicationYear": null,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1154/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_745552a39a318bd6",

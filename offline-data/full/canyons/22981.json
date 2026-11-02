@@ -88,7 +88,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_ca745113c43bec1b",
+          "kind": "TOPOGUIDE",
+          "title": "Guia barrancos Alicante 2013",
+          "authors": [
+            "3° Encuentro Barranquista en Benilloba"
+          ],
+          "publicationYear": 2013,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1332/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

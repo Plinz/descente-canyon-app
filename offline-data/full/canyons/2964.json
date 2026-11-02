@@ -187,11 +187,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_a303cb03e53b3e11",
+          "id": "resource_1439bc2123f13f10",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.descensodebarrancos.com/barra.....trasito/trasito.html",
-          "url": "http://www.descensodebarrancos.com/barra.....trasito/trasito.html"
+          "title": "http://www.descensodebarrancos.com/barrancos/trasito/trasito.html",
+          "url": "http://www.descensodebarrancos.com/barrancos/trasito/trasito.html"
         }
       ]
     },

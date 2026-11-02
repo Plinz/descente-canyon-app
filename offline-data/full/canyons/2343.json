@@ -79,7 +79,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_8a8df6e04c56edf0",
+          "kind": "TOPOGUIDE",
+          "title": "Corse - 15 canyons Haute-Corse...",
+          "authors": [
+            "Jean-Paul Quilici"
+          ],
+          "publicationYear": 2001,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/17/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_9e844b589d47ef86",

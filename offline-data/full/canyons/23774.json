@@ -104,8 +104,38 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_d272647b9e202c89",
+          "kind": "MAP",
+          "title": "114 Holzgau (ÖK 50)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_3f375dd2b26ea036",
+          "kind": "MAP",
+          "title": "3/3 Lechtaler Alpen - Parseierspitze (Alpenvereins (AV) Karte)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_7b776f07079207b2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net//cwiki/bin/view/Canyons/SchreiterbachCanyon",
+          "url": "http://canyon.carto.net//cwiki/bin/view/Canyons/SchreiterbachCanyon"
+        },
+        {
+          "id": "resource_f9b538bb220bc53e",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Griestal",
+          "url": "http://ropewiki.com/Griestal"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

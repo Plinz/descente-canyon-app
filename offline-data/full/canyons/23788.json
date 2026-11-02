@@ -96,8 +96,38 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_ff21942f4e737548",
+          "kind": "MAP",
+          "title": "021 Dolomiti di Sinistra Piave (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_3c6f29792a121cbb",
+          "kind": "MAP",
+          "title": "23 I-SO Ponte nelle Alpi (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_0dd0b32ca4f70c95",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RuiDiFaoreCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RuiDiFaoreCanyon"
+        },
+        {
+          "id": "resource_e2062b38daf703e2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL050",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL050"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

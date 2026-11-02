@@ -143,43 +143,33 @@
           "editor": "Les Editions du Pélican",
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/154/topoguide.html"
-        },
-        {
-          "id": "biblio_224f56f910e544ee",
-          "kind": "TOPOGUIDE",
-          "title": "2640 OT Gorges du Tarn (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_b7966027b95ec68c",
-          "kind": "TOPOGUIDE",
-          "title": "2641 ET Mont-Aigoual (Le Vigan) (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_f4263b08495e34f8",
-          "kind": "TOPOGUIDE",
-          "title": "http://fr.coursange.free.fr/canailleur.html",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://fr.coursange.free.fr/canailleur.html"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_3bf86c23b7e29bf2",
+          "kind": "MAP",
+          "title": "2640 OT Gorges du Tarn (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_fb5949b340608cd9",
+          "kind": "MAP",
+          "title": "2641 ET Mont-Aigoual (Le Vigan) (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_6a8d12d9b0a4efe4",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://fr.coursange.free.fr/canailleur.html",
+          "url": "http://fr.coursange.free.fr/canailleur.html"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": true,

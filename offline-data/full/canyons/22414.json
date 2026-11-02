@@ -93,7 +93,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_1a056ec74c5c542b",
+          "kind": "TOPOGUIDE",
+          "title": "Trekking and Canyoning in the Jordanian Dead Sea Rift",
+          "authors": [
+            "Itai Haviv"
+          ],
+          "publicationYear": 2000,
+          "reference": "965-90315-0-5",
+          "editor": "Desert Breeze Press",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1175/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

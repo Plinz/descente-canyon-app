@@ -85,7 +85,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_5331934da8946eb4",
+          "kind": "TOPOGUIDE",
+          "title": "L'autre Martinique : le canyoning",
+          "authors": [
+            "Gérard Gsegner",
+            "Pascal Tanguy et André Exbrayat"
+          ],
+          "publicationYear": 2010,
+          "reference": "978-2-915390-41-4",
+          "editor": "Editions Exbrayat",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1328/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

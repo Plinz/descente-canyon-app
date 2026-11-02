@@ -122,31 +122,24 @@
           "editor": null,
           "status": null,
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1226/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_db04ab2061965eee",
-          "kind": "TOPOGUIDE",
-          "title": "35/2 Zillertaler Alpen (Alpenvereins (AV) Karte) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_b5c6025112066b63",
+          "kind": "MAP",
+          "title": "35/2 Zillertaler Alpen (Alpenvereins (AV) Karte)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_7edc9aee4fa26c98",
-          "kind": "TOPOGUIDE",
-          "title": "037 Mayrhofen/Tuxer Tal/Zillergrund (Kompass) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_b4cef357286b3442",
+          "kind": "MAP",
+          "title": "037 Mayrhofen/Tuxer Tal/Zillergrund (Kompass)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

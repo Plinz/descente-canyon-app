@@ -96,9 +96,46 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_a216ca92fa29ca51",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning in Bayern und Tirol",
+          "authors": [
+            "Werner Baumgarten"
+          ],
+          "publicationYear": 2010,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1226/topoguide.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_f14bf428f832a8fc",
+          "kind": "MAP",
+          "title": "UK L 30 Karwendelgebirge (Bayerisches Landesvermessungsamt)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_54b6bc3c3362fc67",
+          "kind": "MAP",
+          "title": "8435 Fall (Bayerisches Landesvermessungsamt)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_c662ba94d7981f8d",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.radportal-toelzer-land.de/#SID=DEFAULT&X=4464165&Y=5267526&Z=1516&MAP=Karte",
+          "url": "http://www.radportal-toelzer-land.de/#SID=DEFAULT&X=4464165&Y=5267526&Z=1516&MAP=Karte"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

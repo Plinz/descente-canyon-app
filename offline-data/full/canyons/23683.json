@@ -87,7 +87,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_008a478db03d7fff",
+          "kind": "TOPOGUIDE",
+          "title": "Canyonisme La sierra de Guara",
+          "authors": [
+            "P Gimat"
+          ],
+          "publicationYear": 2005,
+          "reference": "978-2952-4376-0-8",
+          "editor": "Pyrenees Aventure",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/119/Canyonisme-:-La-Sierra-de-Guara.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

@@ -103,7 +103,23 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_9a587136e3eea5ef",
+          "kind": "TOPOGUIDE",
+          "title": "Italia Nord-Est - Gole e Canyon Vol.2",
+          "authors": [
+            "Maurizio Biondi",
+            "Francesco Cacae",
+            "Roberto Schenone"
+          ],
+          "publicationYear": 2000,
+          "reference": "88-900260-0-6",
+          "editor": "Associazione Italiana Canyoning",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/114/Gole---Canyons-2-:-Italia-Nord-Est.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

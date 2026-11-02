@@ -131,11 +131,11 @@
       ],
       "resources": [
         {
-          "id": "resource_18ae2554c42cd337",
+          "id": "resource_ec7685bfcf431217",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....ischbachHeutalCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....ischbachHeutalCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/FischbachHeutalCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/FischbachHeutalCanyon"
         }
       ]
     },

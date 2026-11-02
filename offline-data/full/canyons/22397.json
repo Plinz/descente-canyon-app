@@ -122,54 +122,40 @@
           "editor": null,
           "status": null,
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1226/topoguide.html"
-        },
-        {
-          "id": "biblio_4c5c80fa4c9ac486",
-          "kind": "TOPOGUIDE",
-          "title": "114 (ÖK50 (BEV)) - 1/50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_47c610ca10afbb64",
-          "kind": "TOPOGUIDE",
-          "title": "2/2 Allgäuer-Lechtaler Alpen Ost (Alpenvereins (AV) Karte) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_c771c2b143bc8a3f",
-          "kind": "TOPOGUIDE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/EdelbachCanyon",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://canyon.carto.net/cwiki/bin/view/Canyons/EdelbachCanyon"
-        },
-        {
-          "id": "biblio_647f9fcd7233487d",
-          "kind": "TOPOGUIDE",
-          "title": "http://groupespeleoalsace.free.fr/web_acappella/crbst_24.html",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://groupespeleoalsace.free.fr/web_acappella/crbst_24.html"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_b6bd6e11c29897ad",
+          "kind": "MAP",
+          "title": "114 (ÖK50 (BEV))",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_975c78953190e02c",
+          "kind": "MAP",
+          "title": "2/2 Allgäuer-Lechtaler Alpen Ost (Alpenvereins (AV) Karte)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_09f9ead328a07242",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/EdelbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/EdelbachCanyon"
+        },
+        {
+          "id": "resource_4954c4a3afc35d3b",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://groupespeleoalsace.free.fr/web_acappella/crbst_24.html",
+          "url": "http://groupespeleoalsace.free.fr/web_acappella/crbst_24.html"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

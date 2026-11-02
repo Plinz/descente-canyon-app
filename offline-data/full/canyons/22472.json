@@ -86,7 +86,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_4c97deb8eb2bbdf3",
+          "kind": "MAP",
+          "title": "CA11 Aspiring Flats (NZTopo50 map)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_14d80367237055f3",
+          "kind": "MAP",
+          "title": "273-02 Mount Aspiring National Park (Parkmap)",
+          "scale": "1/150000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

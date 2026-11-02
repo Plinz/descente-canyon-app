@@ -125,31 +125,24 @@
           "editor": "Édisud",
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/113/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_92d4e3bf60284b3e",
-          "kind": "TOPOGUIDE",
-          "title": "3540 OT Barcelonnette (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_4b33d23fe845cd3b",
+          "kind": "MAP",
+          "title": "3540 OT Barcelonnette (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_932678f4dbf57419",
-          "kind": "TOPOGUIDE",
-          "title": "3540 Ouest Allos (IGN S?rie Bleue) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_d6e6a467efd43886",
+          "kind": "MAP",
+          "title": "3540 Ouest Allos (IGN S?rie Bleue)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

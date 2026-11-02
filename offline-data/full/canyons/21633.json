@@ -95,7 +95,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_41319bfdeffe5b29",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons des Préalpes Liguriennes et Piémontaises",
+          "authors": [
+            "Christophe Folléas",
+            "Brigitte Gimenez"
+          ],
+          "publicationYear": 2005,
+          "reference": "ISBN 2-952-0452-2-4",
+          "editor": "Les Doigts Déglingués",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1139/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_a3482111c0bd004f",

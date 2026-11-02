@@ -152,18 +152,18 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_fa604a09490fde92",
+          "id": "resource_50d4a2b37738ca3b",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://yelsub1.free.fr/canyons/italie/os.....in_2005/ogliana.html",
-          "url": "http://yelsub1.free.fr/canyons/italie/os.....in_2005/ogliana.html"
+          "title": "http://yelsub1.free.fr/canyons/italie/ossola_juin_2005/ogliana.html",
+          "url": "http://yelsub1.free.fr/canyons/italie/ossola_juin_2005/ogliana.html"
         },
         {
-          "id": "resource_6ff41ddaea09bbd3",
+          "id": "resource_c8c0bcf60b381c16",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://yelsub1.free.fr/canyons/italie/os.....out_2006/videos.html",
-          "url": "http://yelsub1.free.fr/canyons/italie/os.....out_2006/videos.html"
+          "title": "http://yelsub1.free.fr/canyons/italie/ossola_aout_2006/videos.html",
+          "url": "http://yelsub1.free.fr/canyons/italie/ossola_aout_2006/videos.html"
         }
       ]
     },

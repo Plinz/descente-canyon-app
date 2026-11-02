@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_64902f846ef24776",
+          "kind": "TOPOGUIDE",
+          "title": "Randonnée au Caroux",
+          "authors": [
+            "CAF Béziers"
+          ],
+          "publicationYear": null,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/160/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_fc07aa1bfb96647b",

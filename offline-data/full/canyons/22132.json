@@ -116,11 +116,11 @@
       ],
       "resources": [
         {
-          "id": "resource_4cb5a84cfd84ff70",
+          "id": "resource_5752370648facf6c",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....ic=DrachenmaulCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....ic=DrachenmaulCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=DrachenmaulCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=DrachenmaulCanyon"
         }
       ]
     },

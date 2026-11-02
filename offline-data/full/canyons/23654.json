@@ -132,11 +132,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_631a6fbdd8c1e0c0",
+          "id": "resource_f7396291936d1513",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....ZarqaMainLowerCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....ZarqaMainLowerCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/ZarqaMainLowerCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/ZarqaMainLowerCanyon"
         },
         {
           "id": "resource_d7c6cf54ccf0e346",

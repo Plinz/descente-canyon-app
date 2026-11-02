@@ -167,31 +167,24 @@
           "editor": null,
           "status": null,
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1128/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_a29a0c20dbef239c",
-          "kind": "TOPOGUIDE",
-          "title": "El Port (Piolet) - 1/30000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_997b6ea834e113e1",
+          "kind": "MAP",
+          "title": "El Port (Piolet)",
+          "scale": "1/30000",
           "detailUrl": null
         },
         {
-          "id": "biblio_fd9124c74f05a796",
-          "kind": "TOPOGUIDE",
-          "title": "Els Ports (Alpina) - 1/40000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_c12eb62994960d6a",
+          "kind": "MAP",
+          "title": "Els Ports (Alpina)",
+          "scale": "1/40000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

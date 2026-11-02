@@ -120,8 +120,66 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_0623293be93289fd",
+          "kind": "MAP",
+          "title": "646 Alpi Apuane Garfagnana Carrara - Viareggio (Kompass)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_dda017973552eb75",
+          "kind": "MAP",
+          "title": "101/102 Alpi Apuane (MULTIGRAPHIC - Carta dei sentieri e dei rifugi)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_2fea5bb09366b12d",
+          "kind": "MAP",
+          "title": "96 II-SO Monte Altissimo (IGMI Carta topografica d'Italia 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_055163d155d36ad8",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/AnguillaiaCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/AnguillaiaCanyon"
+        },
+        {
+          "id": "resource_18c22af66a08295a",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/TOSCANA/pro/LU/cod/LU003",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/TOSCANA/pro/LU/cod/LU003"
+        },
+        {
+          "id": "resource_08eb3a5f6c2fe30a",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.caifirenze.it/images/stories/scandicci/Marmitte_dei_giganti_29Settembre_2013.pdf",
+          "url": "http://www.caifirenze.it/images/stories/scandicci/Marmitte_dei_giganti_29Settembre_2013.pdf"
+        },
+        {
+          "id": "resource_78935849fddd782b",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.cicarudeclan.com/ita/a5_marmitte.htm",
+          "url": "http://www.cicarudeclan.com/ita/a5_marmitte.htm"
+        },
+        {
+          "id": "resource_a3eeeda11146a8bd",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.apuanegeopark.it/apuanegeopark_geotur_marmitte.html",
+          "url": "http://www.apuanegeopark.it/apuanegeopark_geotur_marmitte.html"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

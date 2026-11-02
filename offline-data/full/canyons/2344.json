@@ -172,31 +172,24 @@
           "editor": null,
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/17/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_243e67424adc1ef3",
-          "kind": "TOPOGUIDE",
-          "title": "4347 OT Cap Corse (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_e078ea6264eda2fb",
+          "kind": "MAP",
+          "title": "4347 OT Cap Corse (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_37004208f5e1338f",
-          "kind": "TOPOGUIDE",
-          "title": "4348 OT Bastia (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_bd48c5f6535efd23",
+          "kind": "MAP",
+          "title": "4348 OT Bastia (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

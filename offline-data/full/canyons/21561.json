@@ -95,15 +95,29 @@
       "label": "depart du sentier de la piste"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b021caf8b1429c77",
+          "kind": "TOPOGUIDE",
+          "title": "Tour de l'Europe en Canyon - Les plus belles descentes",
+          "authors": [
+            "Caracal et les Sancho Panza"
+          ],
+          "publicationYear": 2007,
+          "reference": "978-2-9526024-1-7",
+          "editor": null,
+          "status": "en stock\n\n- 25,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/13/Le-Tour-de-l-Europe-en-Canyon-:-les-plus-belles-descentes.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_6c8cb51fd283a0e6",
+          "id": "resource_55d514c7125bd509",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.tic.udc.es/~nino/fotos/canone.....-fafiao-articulo.htm",
-          "url": "http://www.tic.udc.es/~nino/fotos/canone.....-fafiao-articulo.htm"
+          "title": "http://www.tic.udc.es/~nino/fotos/canones_portugal/fafiao/canon-fafiao-articulo.htm",
+          "url": "http://www.tic.udc.es/~nino/fotos/canones_portugal/fafiao/canon-fafiao-articulo.htm"
         }
       ]
     },

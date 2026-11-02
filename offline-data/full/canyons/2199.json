@@ -80,7 +80,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_bb6feb754aea9b5a",
+          "kind": "TOPOGUIDE",
+          "title": "Cascades, gorges et canyons du Haut Jura",
+          "authors": [
+            "Dominique Guyetand",
+            "Jean-Luc Lacroix"
+          ],
+          "publicationYear": 1992,
+          "reference": "ISBN 2-85744-590-3",
+          "editor": "Edisud",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/119/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_a27c55cfa21ad473",
@@ -92,11 +107,11 @@
       ],
       "resources": [
         {
-          "id": "resource_40ea51ead1a889ad",
+          "id": "resource_3c5274087ec8c250",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://spelehautjura.com/le-canyon-dans-.....-ruisseau-des-gorges",
-          "url": "http://spelehautjura.com/le-canyon-dans-.....-ruisseau-des-gorges"
+          "title": "http://spelehautjura.com/le-canyon-dans-le-haut-jura/5-le-ruisseau-des-gorges",
+          "url": "http://spelehautjura.com/le-canyon-dans-le-haut-jura/5-le-ruisseau-des-gorges"
         }
       ]
     },

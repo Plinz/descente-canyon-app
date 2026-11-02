@@ -96,7 +96,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b228f4b2ce58d332",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning : Alpes Maritimes. 170 descentes",
+          "authors": [
+            "Franck Jourdan",
+            "Jean-François Fiorina"
+          ],
+          "publicationYear": 2026,
+          "reference": "9782958258054",
+          "editor": "auto-edition",
+          "status": "en stock\n\n- 35,99 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1175/Canyoning-:-Alpes-Maritimes--170-descentes.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_f5a5c0f3b7f39109",

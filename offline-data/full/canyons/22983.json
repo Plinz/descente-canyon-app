@@ -116,11 +116,11 @@
       ],
       "resources": [
         {
-          "id": "resource_d941b53bc2ba837f",
+          "id": "resource_7e5a5a1c074091d0",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....orderbergklammCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....orderbergklammCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/VorderbergklammCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/VorderbergklammCanyon"
         }
       ]
     },

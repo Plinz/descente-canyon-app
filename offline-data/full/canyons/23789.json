@@ -103,7 +103,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_a9041d20d126f712",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning Nord Italia",
+          "authors": [
+            "Pascal Van Duin"
+          ],
+          "publicationYear": 2009,
+          "reference": "978-88-901753-1-2",
+          "editor": "TopCanyon",
+          "status": "stock très réduit !\n\n- 25,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/135/Canyoning-Nord-Italia.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_8fb1574b05a5ff89",
@@ -122,11 +136,11 @@
           "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/AnfelaCanyon"
         },
         {
-          "id": "resource_d05686df68802bf6",
+          "id": "resource_d612e4f7f63ed355",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://catastoforre.aic-canyoning.it/ind.....ETO/pro/BL/cod/BL066",
-          "url": "http://catastoforre.aic-canyoning.it/ind.....ETO/pro/BL/cod/BL066"
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL066",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL066"
         }
       ]
     },

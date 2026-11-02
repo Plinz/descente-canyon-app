@@ -119,7 +119,22 @@
       "label": "pour D"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_80a52b6e4b57f154",
+          "kind": "TOPOGUIDE",
+          "title": "Tiroler Canyoningführer - The Canyoning guide for Tyrol",
+          "authors": [
+            "Alexander Riml",
+            "Gunnar Amor"
+          ],
+          "publicationYear": 2012,
+          "reference": "978-3-200-02343-7",
+          "editor": null,
+          "status": "en stock\n\n- 44,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/170/Tiroler-Canyoningfuhrer---The-Canyoning-guide-for-Tyrol.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_bd219646e968c54c",
@@ -131,11 +146,11 @@
       ],
       "resources": [
         {
-          "id": "resource_3774043dcbe69f3a",
+          "id": "resource_329e13cb3176df38",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.alpinesicherheit.com/canyonin...../tschingelsbach.html",
-          "url": "http://www.alpinesicherheit.com/canyonin...../tschingelsbach.html"
+          "title": "http://www.alpinesicherheit.com/canyoning/tschingelsbach/tschingelsbach.html",
+          "url": "http://www.alpinesicherheit.com/canyoning/tschingelsbach/tschingelsbach.html"
         }
       ]
     },

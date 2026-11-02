@@ -103,7 +103,22 @@
       "label": "parking amont optionnel (voir explications dans la fiche)"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b228f4b2ce58d332",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning : Alpes Maritimes. 170 descentes",
+          "authors": [
+            "Franck Jourdan",
+            "Jean-François Fiorina"
+          ],
+          "publicationYear": 2026,
+          "reference": "9782958258054",
+          "editor": "auto-edition",
+          "status": "en stock\n\n- 35,99 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1175/Canyoning-:-Alpes-Maritimes--170-descentes.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_011bc5ebf5b514b7",
@@ -115,11 +130,11 @@
       ],
       "resources": [
         {
-          "id": "resource_3bb7895d13e1683d",
+          "id": "resource_843968b98a79beab",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://carnaby.street.free.fr/pages_musi.....yons06.htm#bouirades",
-          "url": "http://carnaby.street.free.fr/pages_musi.....yons06.htm#bouirades"
+          "title": "http://carnaby.street.free.fr/pages_musiciens/canyons06/cartecanyons06.htm#bouirades",
+          "url": "http://carnaby.street.free.fr/pages_musiciens/canyons06/cartecanyons06.htm#bouirades"
         }
       ]
     },

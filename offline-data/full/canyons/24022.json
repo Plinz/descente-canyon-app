@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_2bafc8e0f7a42d9c",
+          "kind": "TOPOGUIDE",
+          "title": "La Corse en Canyon",
+          "authors": [
+            "Association CorseCanyon"
+          ],
+          "publicationYear": 2018,
+          "reference": null,
+          "editor": "auto-edition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1127/La-Corse-en-Canyon-3eme-edition.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_9e844b589d47ef86",
@@ -114,11 +128,11 @@
           "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/UFiascuCanyon"
         },
         {
-          "id": "resource_a659290f581a9316",
+          "id": "resource_10b7b7dded458808",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://ufiascu.rajce.idnes.cz/U_Fiascu_2.....se/#UFiascu-Topo.jpg",
-          "url": "http://ufiascu.rajce.idnes.cz/U_Fiascu_2.....se/#UFiascu-Topo.jpg"
+          "title": "http://ufiascu.rajce.idnes.cz/U_Fiascu_2017_Corse/#UFiascu-Topo.jpg",
+          "url": "http://ufiascu.rajce.idnes.cz/U_Fiascu_2017_Corse/#UFiascu-Topo.jpg"
         }
       ]
     },

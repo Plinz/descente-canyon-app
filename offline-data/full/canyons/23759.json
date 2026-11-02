@@ -95,9 +95,62 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_9a587136e3eea5ef",
+          "kind": "TOPOGUIDE",
+          "title": "Italia Nord-Est - Gole e Canyon Vol.2",
+          "authors": [
+            "Maurizio Biondi",
+            "Francesco Cacae",
+            "Roberto Schenone"
+          ],
+          "publicationYear": 2000,
+          "reference": "88-900260-0-6",
+          "editor": "Associazione Italiana Canyoning",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/114/Gole---Canyons-2-:-Italia-Nord-Est.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_edfde1014fbb7520",
+          "kind": "MAP",
+          "title": "14 III-SE Moggio Udinese (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_c0768ec89ae0ecc2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/ChiampeitCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/ChiampeitCanyon"
+        },
+        {
+          "id": "resource_a7dc5df336f42ff7",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.canyoning.it/raduni/carnia2009/FR/Chiampeit-fr.pdf",
+          "url": "http://www.canyoning.it/raduni/carnia2009/FR/Chiampeit-fr.pdf"
+        },
+        {
+          "id": "resource_a738f74aa006ad24",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Rio%20Chiampeit",
+          "url": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Rio%20Chiampeit"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

@@ -96,7 +96,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_2a760926b6d90e9e",
+          "kind": "MAP",
+          "title": "3544 ET Frejus - Saint-Raphael (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_7e0885449ad16b9f",
+          "kind": "MAP",
+          "title": "3544 OT Le Muy - Lorgues (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

@@ -77,7 +77,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b98de8eadeb3ed89",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning in the Alps : Northern Italy and Ticino",
+          "authors": [
+            "Simon Flower"
+          ],
+          "publicationYear": 2012,
+          "reference": "978 1 85284 683 1",
+          "editor": "Cicerone",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1105/Canyoning-in-the-Alps-:-Northern-Italy-and-Ticino.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

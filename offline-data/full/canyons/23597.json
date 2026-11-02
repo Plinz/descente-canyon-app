@@ -101,7 +101,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b440b623b8f939ea",
+          "kind": "TOPOGUIDE",
+          "title": "GRand CANYONS",
+          "authors": [
+            "Timo Stammwitz"
+          ],
+          "publicationYear": 2010,
+          "reference": "978-3-9523369-5-3",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/155/GRand-CANYONS.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_70fb813b807aff2d",

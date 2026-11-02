@@ -63,7 +63,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_f5c73c40e76292c8",
+          "kind": "TOPOGUIDE",
+          "title": "40 barrancos de Asturias",
+          "authors": [
+            "Pablo Solares"
+          ],
+          "publicationYear": 2008,
+          "reference": "978-84-9829-128-5",
+          "editor": "Desnivel",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1220/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

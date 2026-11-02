@@ -126,11 +126,11 @@
       ],
       "resources": [
         {
-          "id": "resource_7d3c156e7bb4924d",
+          "id": "resource_6e3c40ee02ca59f7",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....s/CholeregrabeCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....s/CholeregrabeCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/CholeregrabeCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/CholeregrabeCanyon"
         },
         {
           "id": "resource_cf814410931cbbac",

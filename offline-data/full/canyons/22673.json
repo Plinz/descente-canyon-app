@@ -79,8 +79,38 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_1ec3771dffe52076",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons de l'Aveyron et de la Lozère",
+          "authors": [
+            "Roland Pelissier",
+            "Frédéric Louart"
+          ],
+          "publicationYear": 1991,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/123/topoguide.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_69347a3abc975ca1",
+          "kind": "MAP",
+          "title": "2338 E Marcillac-Vallon. Conques (IGN S?rie Bleue)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_4c7190e261e90974",
+          "kind": "MAP",
+          "title": "2538 OT St-Geniez-d'Olt (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

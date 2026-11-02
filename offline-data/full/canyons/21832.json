@@ -173,18 +173,18 @@
       ],
       "resources": [
         {
-          "id": "resource_77801c5cfabeb3de",
+          "id": "resource_16dd6a2760c6d6bb",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://carnaby.street.free.fr/pages_musi.....canyons06.htm#riosec",
-          "url": "http://carnaby.street.free.fr/pages_musi.....canyons06.htm#riosec"
+          "title": "http://carnaby.street.free.fr/pages_musiciens/canyons06/cartecanyons06.htm#riosec",
+          "url": "http://carnaby.street.free.fr/pages_musiciens/canyons06/cartecanyons06.htm#riosec"
         },
         {
-          "id": "resource_17f41957512b0ea2",
+          "id": "resource_a3326353e546bf68",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.altisud.com/canyoning/alpes-m.....o-sec-amont.4.1.html",
-          "url": "http://www.altisud.com/canyoning/alpes-m.....o-sec-amont.4.1.html"
+          "title": "http://www.altisud.com/canyoning/alpes-maritimes/le-canyon-du-rio-sec-amont.4.1.html",
+          "url": "http://www.altisud.com/canyoning/alpes-maritimes/le-canyon-du-rio-sec-amont.4.1.html"
         }
       ]
     },

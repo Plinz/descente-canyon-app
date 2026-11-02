@@ -79,7 +79,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_2242f6ad0f62937a",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons d’Aventures des Préalpes d’Azur",
+          "authors": [
+            "Christophe Folleas",
+            "Brigitte Gimenez"
+          ],
+          "publicationYear": 2004,
+          "reference": null,
+          "editor": "Les doigts déglingués",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1118/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_f5a5c0f3b7f39109",
@@ -91,11 +106,11 @@
       ],
       "resources": [
         {
-          "id": "resource_e648f546625ea415",
+          "id": "resource_5c839ec7f3e3f8a9",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://carnaby.street.free.fr/pages_musi.....6/cartecanyons06.htm",
-          "url": "http://carnaby.street.free.fr/pages_musi.....6/cartecanyons06.htm"
+          "title": "http://carnaby.street.free.fr/pages_musiciens/canyons06/cartecanyons06.htm",
+          "url": "http://carnaby.street.free.fr/pages_musiciens/canyons06/cartecanyons06.htm"
         }
       ]
     },

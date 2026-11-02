@@ -95,7 +95,24 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_226157f34704ebeb",
+          "kind": "TOPOGUIDE",
+          "title": "Schluchten-Canyon",
+          "authors": [
+            "A. Wieser",
+            "F. Karger",
+            "R. Ranner",
+            "I. Neumann"
+          ],
+          "publicationYear": 2004,
+          "reference": "3-901533-11-7",
+          "editor": "Edition Neumann",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1221/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_593806870824c8ca",

@@ -96,8 +96,45 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_cdef787a7b7235ad",
+          "kind": "MAP",
+          "title": "14 II-NE Jof di Montasio (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_687505c71614af74",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioLivinalCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioLivinalCanyon"
+        },
+        {
+          "id": "resource_e4fac1b672e1dc60",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://win.aic-canyoning.it/Public/data/davidov/2013917151918_rio%20Livinal.pdf",
+          "url": "http://win.aic-canyoning.it/Public/data/davidov/2013917151918_rio%20Livinal.pdf"
+        },
+        {
+          "id": "resource_9ce930295cd276a9",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Livinal",
+          "url": "http://ropewiki.com/Livinal"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

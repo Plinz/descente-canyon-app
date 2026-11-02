@@ -95,7 +95,21 @@
       "label": "Se garer sur la bas coté à gauche juste avant le virage à gauche. Le départ de la marche d'approche se fait à partir du virage en montant tout droit dans la pente sur 15 mètres pour croiser un chemin (prendre à droite) qui nous mènera à l'entrée du canyon."
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_1b6c437b64d9f869",
+          "kind": "TOPOGUIDE",
+          "title": "PVC n°1 - Haute Garonne",
+          "authors": [
+            "Collectif : Groupe Spéléologique des Pyrénées"
+          ],
+          "publicationYear": 2006,
+          "reference": "9782952722605",
+          "editor": "auto-édition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/125/Plastic-Visuel-Canyon-:-Haute-Garonne.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_b4d10c31e88f9235",

@@ -103,7 +103,21 @@
       "label": "Parking accessible avec un véhicule tout terrain et après avoir demandé l'autorisation au fermier de traverser son exploitation."
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_645355fdabc6144e",
+          "kind": "TOPOGUIDE",
+          "title": "Barranquismo en Gran Canaria : barrancos, caideros y afluentes.",
+          "authors": [
+            "Hedwig Elisabet Solanas Garcia et Victor España Llamas"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-84-617-0693-8",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/199/Barranquismo-en-Gran-Canaria.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_c3bd5d203187ac5f",
@@ -115,11 +129,11 @@
       ],
       "resources": [
         {
-          "id": "resource_dbf3da2638e0f5a9",
+          "id": "resource_4fa04e0ebf15f837",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://barrancoscanarios.com/barrancos/g.....barranco-del-aguila/",
-          "url": "http://barrancoscanarios.com/barrancos/g.....barranco-del-aguila/"
+          "title": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-sector-sur/barranco-del-aguila/",
+          "url": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-sector-sur/barranco-del-aguila/"
         }
       ]
     },

@@ -95,7 +95,21 @@
       "label": "Refugio Santa Isabel"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_728585bf88b0a2ad",
+          "kind": "TOPOGUIDE",
+          "title": "Descentes de canyons dans le Haut Aragon - Tome 2",
+          "authors": [
+            "Patrick Gimat avec la collaboration de J.-P. Pontroué"
+          ],
+          "publicationYear": 1995,
+          "reference": "ISBN 2-85744-813-9",
+          "editor": "Co-édition Gimat/Pontroué/Edisud",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/156/Descentes-de-canyons-dans-le-Haut-Aragon---Tome-2.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

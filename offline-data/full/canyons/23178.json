@@ -96,7 +96,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_d901da6b05383bbf",
+          "kind": "TOPOGUIDE",
+          "title": "Carte N°4 - Cotiella Ribagorza : du rio Cinca à la Noguera Ribagorzana.",
+          "authors": [
+            "Patrick Gimat"
+          ],
+          "publicationYear": 1999,
+          "reference": "2-9503199-4-7",
+          "editor": null,
+          "status": "en stock\n\n- 7,50 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/123/Carte-n°4-:-Cotiella---Ribogorca.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

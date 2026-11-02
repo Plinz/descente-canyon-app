@@ -80,7 +80,23 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_88d79cdd1fda3607",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons du Haut Piémont Italien - Val d'Ossola",
+          "authors": [
+            "Speleo Club de la Vallée de la Vis",
+            "Club Omni Sport Perrier",
+            "Speleo-Club Vacances du CAF - Briancon"
+          ],
+          "publicationYear": 2002,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/14/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_9a5af571355994e9",

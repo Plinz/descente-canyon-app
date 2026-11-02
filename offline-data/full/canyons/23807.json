@@ -96,8 +96,38 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_cdef787a7b7235ad",
+          "kind": "MAP",
+          "title": "14 II-NE Jof di Montasio (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_c7e7fba7e3bf990b",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioSfonderatCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioSfonderatCanyon"
+        },
+        {
+          "id": "resource_87c98ff0a7630b82",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Sfonderat",
+          "url": "http://ropewiki.com/Sfonderat"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

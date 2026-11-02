@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b1ad86b923439e84",
+          "kind": "TOPOGUIDE",
+          "title": "Gorges et Canyons : Bearn et Pays Basque",
+          "authors": [
+            "Comité départemental de spéléologie des Pyrénées-Atlantiques"
+          ],
+          "publicationYear": 2013,
+          "reference": "978-2-7466-5930-8",
+          "editor": "CDS64",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/169/Gorges-et-Canyons-:-Bearn-et-Pays-Basque.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

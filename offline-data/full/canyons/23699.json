@@ -105,7 +105,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_28bb7a443c6e8f73",
+          "kind": "MAP",
+          "title": "N°3 Parco Nazionale Gran Paradiso (IGC)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_83fcecfa5db7e3bf",
+          "kind": "MAP",
+          "title": "N°4 Massicio del Monte Bianco (IGC)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

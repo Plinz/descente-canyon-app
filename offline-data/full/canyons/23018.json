@@ -115,11 +115,11 @@
       ],
       "resources": [
         {
-          "id": "resource_0a8483f4729952ca",
+          "id": "resource_221f8b5a86aef512",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....uenseeschluchtCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....uenseeschluchtCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/GruenseeschluchtCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/GruenseeschluchtCanyon"
         }
       ]
     },

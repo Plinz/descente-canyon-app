@@ -96,8 +96,45 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_26ada3d4ec0308c7",
+          "kind": "MAP",
+          "title": "14 I-SO Pontebba (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_99fb1fa17da88714",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/PricoticCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/PricoticCanyon"
+        },
+        {
+          "id": "resource_4a16ae064a89dc00",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD050",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD050"
+        },
+        {
+          "id": "resource_2491a4af71a6abad",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://win.aic-canyoning.it/forum/topic.asp?TOPIC_ID=2681",
+          "url": "http://win.aic-canyoning.it/forum/topic.asp?TOPIC_ID=2681"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

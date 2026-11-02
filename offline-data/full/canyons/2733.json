@@ -101,7 +101,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_af9b5816fe0efd72",
+          "kind": "TOPOGUIDE",
+          "title": "PVC n°2 - Hautes Pyrénées",
+          "authors": [
+            "Collectif : Groupe Spéléologique des Pyrénées"
+          ],
+          "publicationYear": 2007,
+          "reference": "9782852722612",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/127/Plastic-Visuel-Canyon-:-Hautes-Pyrenees.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_66d5328512d1b5a5",

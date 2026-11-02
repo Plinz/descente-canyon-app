@@ -104,8 +104,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_fd029d73a53002a7",
+          "kind": "MAP",
+          "title": "14 II-SE Monte Canin (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_ee6549bcfaee3985",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioSbriciCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioSbriciCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

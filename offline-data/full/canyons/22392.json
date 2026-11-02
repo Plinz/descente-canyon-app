@@ -96,15 +96,29 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_a216ca92fa29ca51",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning in Bayern und Tirol",
+          "authors": [
+            "Werner Baumgarten"
+          ],
+          "publicationYear": 2010,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1226/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_29657708abed5d5d",
+          "id": "resource_a37f595722413b25",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.radportal-toelzer-land.de/#SI.....709&Z=1197&MAP=Karte",
-          "url": "http://www.radportal-toelzer-land.de/#SI.....709&Z=1197&MAP=Karte"
+          "title": "http://www.radportal-toelzer-land.de/#SID=DEFAULT&X=4458842&Y=5265709&Z=1197&MAP=Karte",
+          "url": "http://www.radportal-toelzer-land.de/#SID=DEFAULT&X=4458842&Y=5265709&Z=1197&MAP=Karte"
         }
       ]
     },

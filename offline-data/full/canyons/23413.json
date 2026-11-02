@@ -63,7 +63,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_645355fdabc6144e",
+          "kind": "TOPOGUIDE",
+          "title": "Barranquismo en Gran Canaria : barrancos, caideros y afluentes.",
+          "authors": [
+            "Hedwig Elisabet Solanas Garcia et Victor España Llamas"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-84-617-0693-8",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/199/Barranquismo-en-Gran-Canaria.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_c3bd5d203187ac5f",
@@ -75,11 +89,11 @@
       ],
       "resources": [
         {
-          "id": "resource_8fe135b0a9ed82ee",
+          "id": "resource_4be9236f5b5ea1a3",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://barrancoscanarios.com/barrancos/g.....ranco-de-la-juliana/",
-          "url": "http://barrancoscanarios.com/barrancos/g.....ranco-de-la-juliana/"
+          "title": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-sector-sur/barranco-de-la-juliana/",
+          "url": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-sector-sur/barranco-de-la-juliana/"
         }
       ]
     },

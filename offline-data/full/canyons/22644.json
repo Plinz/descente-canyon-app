@@ -65,7 +65,23 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_44ffe35baf28d251",
+          "kind": "TOPOGUIDE",
+          "title": "Gorgs 2008 : barrancs als Ports",
+          "authors": [
+            "David Tomàs",
+            "Joan Sabater",
+            "Albert Ortiz"
+          ],
+          "publicationYear": 2008,
+          "reference": null,
+          "editor": "Federacio Catalan d'Espeleologia (FCE) et Federacio d'Entitats Excursionistes de Catalunya (FEEC)",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1336/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

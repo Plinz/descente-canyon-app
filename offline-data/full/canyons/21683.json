@@ -85,15 +85,29 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_f28b19f8a9b182fc",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons et randos de Dominique",
+          "authors": [
+            "An Kanion La - Madinina"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-2-7466-6779-2",
+          "editor": "auto-edition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/177/Canyons-et-randos-de-la-Dominique.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_5008197af76cdb62",
+          "id": "resource_867a00b579a8cffb",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://ankanionla-madinina.com/Dominique.....tons%20River.htm#2-7",
-          "url": "http://ankanionla-madinina.com/Dominique.....tons%20River.htm#2-7"
+          "title": "http://ankanionla-madinina.com/Dominique/Laudat-trafalgar/Trois%20Pitons%20River.htm#2-7",
+          "url": "http://ankanionla-madinina.com/Dominique/Laudat-trafalgar/Trois%20Pitons%20River.htm#2-7"
         }
       ]
     },

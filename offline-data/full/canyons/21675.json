@@ -117,15 +117,29 @@
       "label": "On peut aller plus haut, mais la piste est vraiment mauvaise"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_f28b19f8a9b182fc",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons et randos de Dominique",
+          "authors": [
+            "An Kanion La - Madinina"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-2-7466-6779-2",
+          "editor": "auto-edition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/177/Canyons-et-randos-de-la-Dominique.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_3409e5ab25e10fef",
+          "id": "resource_13c1a7a32e5c31ff",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://ankanionla-madinina.com/Dominique.....hite%20River.htm#3-1",
-          "url": "http://ankanionla-madinina.com/Dominique.....hite%20River.htm#3-1"
+          "title": "http://ankanionla-madinina.com/Dominique/Delice-La%20plaine/White%20River.htm#3-1",
+          "url": "http://ankanionla-madinina.com/Dominique/Delice-La%20plaine/White%20River.htm#3-1"
         }
       ]
     },

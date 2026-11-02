@@ -101,7 +101,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_fd66f3e51a87baa0",
+          "kind": "TOPOGUIDE",
+          "title": "50 Canyons in central Greece",
+          "authors": [
+            "George Andreou"
+          ],
+          "publicationYear": 2007,
+          "reference": "9789609300209",
+          "editor": null,
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/126/50-canyons-in-central-Greece.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_dbcee21edd7a708a",

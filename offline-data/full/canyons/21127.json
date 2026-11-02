@@ -103,22 +103,34 @@
       "label": "navette pas necessaire"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_d624b36bbe2e13ec",
+          "kind": "TOPOGUIDE",
+          "title": "Gorgs Organya. Guia de barrancs. Alt Urgell",
+          "authors": [],
+          "publicationYear": 2014,
+          "reference": "978-84-942504-6-0",
+          "editor": "Editions Saloria",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/190/Gorgs-Organya--Guia-de-barrancs--Alt-Urgell.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_aaf48f40cabc1a77",
+          "id": "resource_9a1e39dc0581ec48",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://simebuscasestoyconlascabras.blogs.....onc-o-de-perles.html",
-          "url": "http://simebuscasestoyconlascabras.blogs.....onc-o-de-perles.html"
+          "title": "http://simebuscasestoyconlascabras.blogspot.com.es/2013/06/barranco-de-sant-ponc-o-de-perles.html",
+          "url": "http://simebuscasestoyconlascabras.blogspot.com.es/2013/06/barranco-de-sant-ponc-o-de-perles.html"
         },
         {
-          "id": "resource_cc1d2dad6b340410",
+          "id": "resource_dd7c3eeb39d072a9",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.barranquismo.net/paginas/barr.....co_de_san_poncio.htm",
-          "url": "http://www.barranquismo.net/paginas/barr.....co_de_san_poncio.htm"
+          "title": "http://www.barranquismo.net/paginas/barrancos/barranco_de_san_poncio.htm",
+          "url": "http://www.barranquismo.net/paginas/barrancos/barranco_de_san_poncio.htm"
         }
       ]
     },

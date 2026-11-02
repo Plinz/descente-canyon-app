@@ -150,11 +150,11 @@
       ],
       "resources": [
         {
-          "id": "resource_5ffe284e6110ae67",
+          "id": "resource_3ad4c56327079c55",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.barrabes.com/entrevistas/arti.....asp?id_articulo=4561",
-          "url": "http://www.barrabes.com/entrevistas/arti.....asp?id_articulo=4561"
+          "title": "http://www.barrabes.com/entrevistas/articulos.asp?id_articulo=4561",
+          "url": "http://www.barrabes.com/entrevistas/articulos.asp?id_articulo=4561"
         },
         {
           "id": "resource_13ab02a100fc9125",
@@ -185,11 +185,11 @@
           "url": "http://www.efcanyon.net/pdf/TopoGuideHauteGaronne2.pdf"
         },
         {
-          "id": "resource_cbfd8cc4b87de2a2",
+          "id": "resource_c6d7e9c3c95e8c17",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://yelsub1.free.fr/canyons/31/gouffr...../niveaux_gouffre.jpg",
-          "url": "http://yelsub1.free.fr/canyons/31/gouffr...../niveaux_gouffre.jpg"
+          "title": "http://yelsub1.free.fr/canyons/31/gouffre/gouffre_2005/niveaux_gouffre.jpg",
+          "url": "http://yelsub1.free.fr/canyons/31/gouffre/gouffre_2005/niveaux_gouffre.jpg"
         }
       ]
     },

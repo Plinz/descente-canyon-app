@@ -119,9 +119,49 @@
       "label": "navette facultatif"
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_226157f34704ebeb",
+          "kind": "TOPOGUIDE",
+          "title": "Schluchten-Canyon",
+          "authors": [
+            "A. Wieser",
+            "F. Karger",
+            "R. Ranner",
+            "I. Neumann"
+          ],
+          "publicationYear": 2004,
+          "reference": "3-901533-11-7",
+          "editor": "Edition Neumann",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1221/topoguide.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_0452d24d53f23ed6",
+          "kind": "MAP",
+          "title": "182 Lienzer Dolomiten - Lesachtal (Freytag & Berndt )",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_c53735ebffb796f9",
+          "kind": "MAP",
+          "title": "223 Naturarena Kärnten-Gailtal, Gitschtal, Lesachtal, Weissensee, Oberes Drautal (Freytag & Berndt)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_5b895a06b875840f",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/SteinerneRinneCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/SteinerneRinneCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

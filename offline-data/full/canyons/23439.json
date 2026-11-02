@@ -79,7 +79,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_d46ced2ae68f52b6",
+          "kind": "TOPOGUIDE",
+          "title": "Figlie dell'Acqua e del Tempo",
+          "authors": [
+            "Antonioni"
+          ],
+          "publicationYear": 2001,
+          "reference": "88-86610-13-0",
+          "editor": "Società Editrice Ricerche",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1169/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {

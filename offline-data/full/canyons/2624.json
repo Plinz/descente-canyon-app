@@ -80,7 +80,23 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_cea7eadf1be0593f",
+          "kind": "TOPOGUIDE",
+          "title": "Aigua, Roca i Penombra, El Descens d'Engorjats a Catalunya : Geomorfologia, tècnica i seguretat",
+          "authors": [
+            "J.M. Concernau",
+            "A Civit",
+            "X. Boltà"
+          ],
+          "publicationYear": 2000,
+          "reference": "84-89890-52-8",
+          "editor": "Cossetània",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1125/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

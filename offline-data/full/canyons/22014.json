@@ -65,7 +65,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_756aaae9f4247297",
+          "kind": "TOPOGUIDE",
+          "title": "Gorges et Canyons du Haut Béarn",
+          "authors": [
+            "Comité Départemental de Spéléologie des Pyrénées-Orientales"
+          ],
+          "publicationYear": 1991,
+          "reference": "ISBN 2-909156-03-6",
+          "editor": "J.-C. Bihet",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/121/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_1e3ffadad605da6e",

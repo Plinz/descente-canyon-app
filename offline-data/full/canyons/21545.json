@@ -103,15 +103,30 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_c1524b8af0f1815f",
+          "kind": "TOPOGUIDE",
+          "title": "Pirineos - Guia de descenso de canones y barrancos",
+          "authors": [
+            "Eduardo Gomez",
+            "Laura Tejero"
+          ],
+          "publicationYear": 2002,
+          "reference": "84-95744-20-1",
+          "editor": "Barrabes",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1126/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_454cf17ed3e84452",
+          "id": "resource_a0616edaa8e69c82",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.barranquismo.net/paginas/barr....._del_rio_lavansa.htm",
-          "url": "http://www.barranquismo.net/paginas/barr....._del_rio_lavansa.htm"
+          "title": "http://www.barranquismo.net/paginas/barrancos/canon_del_rio_lavansa.htm",
+          "url": "http://www.barranquismo.net/paginas/barrancos/canon_del_rio_lavansa.htm"
         }
       ]
     },

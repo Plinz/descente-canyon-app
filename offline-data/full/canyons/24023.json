@@ -135,11 +135,11 @@
       ],
       "resources": [
         {
-          "id": "resource_c79d10f1994d895a",
+          "id": "resource_76ed8d39822835e8",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....HautfiumicelliCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....HautfiumicelliCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/HautfiumicelliCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/HautfiumicelliCanyon"
         }
       ]
     },

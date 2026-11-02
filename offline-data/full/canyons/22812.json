@@ -95,8 +95,37 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_a9041d20d126f712",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning Nord Italia",
+          "authors": [
+            "Pascal Van Duin"
+          ],
+          "publicationYear": 2009,
+          "reference": "978-88-901753-1-2",
+          "editor": "TopCanyon",
+          "status": "stock très réduit !\n\n- 25,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/135/Canyoning-Nord-Italia.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_20f5354f23d65869",
+          "kind": "MAP",
+          "title": "91 Lago di Como - Lago di Lugano (Kompass)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_9dbf5ccfa8e5f5c5",
+          "kind": "MAP",
+          "title": "287 Menaggio (Swisstopo)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

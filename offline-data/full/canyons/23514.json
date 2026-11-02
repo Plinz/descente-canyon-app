@@ -95,15 +95,29 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_7390d09084f81bc3",
+          "kind": "TOPOGUIDE",
+          "title": "Cañones y barrancos de Andalucia. Sevilla, Cadiz y Malaga",
+          "authors": [
+            "Francisco José Garcia Algaba"
+          ],
+          "publicationYear": 2016,
+          "reference": "978-84-15030-72-0",
+          "editor": "Editorial La Serrania",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1113/Canones-y-Barrancos-de-Andalucia.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_0bad76e38cad92eb",
+          "id": "resource_ba0bacf4de01b914",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.actionman4x4.com/canonesybarr.....s/puerto_de_ramo.htm",
-          "url": "http://www.actionman4x4.com/canonesybarr.....s/puerto_de_ramo.htm"
+          "title": "http://www.actionman4x4.com/canonesybarrancos/recorridos/puerto_de_ramo.htm",
+          "url": "http://www.actionman4x4.com/canonesybarrancos/recorridos/puerto_de_ramo.htm"
         },
         {
           "id": "resource_0acfc5f542fa5cb3",

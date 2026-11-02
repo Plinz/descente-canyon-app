@@ -99,11 +99,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_304b64058931a2bb",
+          "id": "resource_0a24e8b5c50065ab",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....ic=RotmoosbachCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....ic=RotmoosbachCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=RotmoosbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=RotmoosbachCanyon"
         }
       ]
     },

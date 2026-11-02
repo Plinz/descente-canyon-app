@@ -91,18 +91,18 @@
       ],
       "resources": [
         {
-          "id": "resource_2a7a88d52f8e57ba",
+          "id": "resource_8ca26ac4dde5577d",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.camptocamp.org/routes/112175/.....ntaine-de-la-molasse",
-          "url": "http://www.camptocamp.org/routes/112175/.....ntaine-de-la-molasse"
+          "title": "http://www.camptocamp.org/routes/112175/fr/val-de-lans-cascades-de-la-fontaine-de-la-molasse",
+          "url": "http://www.camptocamp.org/routes/112175/fr/val-de-lans-cascades-de-la-fontaine-de-la-molasse"
         },
         {
-          "id": "resource_b7fad634637bd099",
+          "id": "resource_5e0e5d3acb6dc7c6",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://bouzeland.over-blog.com/pages/Cas.....o_bouze-4853978.html",
-          "url": "http://bouzeland.over-blog.com/pages/Cas.....o_bouze-4853978.html"
+          "title": "http://bouzeland.over-blog.com/pages/Cascade_de_la_molasse_et_Cascade_de_plainevie_par_its_no_bouze-4853978.html",
+          "url": "http://bouzeland.over-blog.com/pages/Cascade_de_la_molasse_et_Cascade_de_plainevie_par_its_no_bouze-4853978.html"
         }
       ]
     },

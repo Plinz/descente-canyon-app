@@ -88,7 +88,19 @@
       "label": "2 pl maxi attention de ne pas gener les riverains"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_20a026fbaf73b95e",
+          "kind": "TOPOGUIDE",
+          "title": "Alpirando n°???",
+          "authors": [],
+          "publicationYear": null,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/185/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {

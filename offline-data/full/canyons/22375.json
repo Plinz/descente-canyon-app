@@ -120,54 +120,40 @@
           "editor": null,
           "status": null,
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1226/topoguide.html"
-        },
-        {
-          "id": "biblio_62ea7c9c13b902fd",
-          "kind": "TOPOGUIDE",
-          "title": "146 Imst (ÖK 50) - 1:50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_d4232c1ca7906fe7",
-          "kind": "TOPOGUIDE",
-          "title": "3/4 Lechtaler Alpen, Heiterwang - und Muttekopfgebiet (Alpenvereins (AV) Karte) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_6366f40dc50535b5",
-          "kind": "TOPOGUIDE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....ereRosengartenCanyon",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://canyon.carto.net/cwiki/bin/view/Canyons/ObereRosengartenCanyon"
-        },
-        {
-          "id": "biblio_0484386377e493d9",
-          "kind": "TOPOGUIDE",
-          "title": "https://www.alpinesicherheit.com/2008/ob.....g-schluchtenfuehrer/",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "https://www.alpinesicherheit.com/2008/obere-rosengartenschlucht-canyoning-schluchtenfuehrer/"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_223eef3bd7bbfcc1",
+          "kind": "MAP",
+          "title": "146 Imst (ÖK 50)",
+          "scale": "1:50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_5dbc8da78cba73f7",
+          "kind": "MAP",
+          "title": "3/4 Lechtaler Alpen, Heiterwang - und Muttekopfgebiet (Alpenvereins (AV) Karte)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_b49e86ef981de868",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/ObereRosengartenCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/ObereRosengartenCanyon"
+        },
+        {
+          "id": "resource_4af66936a0994055",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "https://www.alpinesicherheit.com/2008/obere-rosengartenschlucht-canyoning-schluchtenfuehrer/",
+          "url": "https://www.alpinesicherheit.com/2008/obere-rosengartenschlucht-canyoning-schluchtenfuehrer/"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

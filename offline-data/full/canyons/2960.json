@@ -142,54 +142,40 @@
           "editor": null,
           "status": "en stock\n\n- 29,90 € -\n\nCommandez cet ouvrage dès maintenant !",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/132/Tour-de-l-Europe-en-Canyon---T2---Ligurie--Italie-centrale-et-du-Sud--Sicile--Sardaigne--Balkans.html"
-        },
-        {
-          "id": "biblio_6b5cee5e5b3c0ba1",
-          "kind": "TOPOGUIDE",
-          "title": "ASF n°2 Moyenne Roya - Val Nervia e Argentina (Alpes sans fronti?res) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_902fa7a9da6f6c39",
-          "kind": "TOPOGUIDE",
-          "title": "Tavola n.113 “Alpi Marittime e Liguri” (MULTIGRAPHIC Firenze) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_d8d5acd704f7467f",
-          "kind": "TOPOGUIDE",
-          "title": "http://www.canyoning.it/procanyon/argentina.htm",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://www.canyoning.it/procanyon/argentina.htm"
-        },
-        {
-          "id": "biblio_87e4e67782466aa7",
-          "kind": "TOPOGUIDE",
-          "title": "http://www.cicarudeclan.com/ita/a5_argentina.htm",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://www.cicarudeclan.com/ita/a5_argentina.htm"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_a3482111c0bd004f",
+          "kind": "MAP",
+          "title": "ASF n°2 Moyenne Roya - Val Nervia e Argentina (Alpes sans fronti?res)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_a62e23a49437864a",
+          "kind": "MAP",
+          "title": "Tavola n.113 “Alpi Marittime e Liguri” (MULTIGRAPHIC Firenze)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_46f6423f50f6bce3",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.canyoning.it/procanyon/argentina.htm",
+          "url": "http://www.canyoning.it/procanyon/argentina.htm"
+        },
+        {
+          "id": "resource_23c801c2f5ba6c8c",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.cicarudeclan.com/ita/a5_argentina.htm",
+          "url": "http://www.cicarudeclan.com/ita/a5_argentina.htm"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

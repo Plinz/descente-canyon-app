@@ -175,11 +175,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_66adcf59dff887c5",
+          "id": "resource_502af8304be30c87",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.canyoneast.it/target.php?w=19.....t⌖=Rio%20Simon",
-          "url": "http://www.canyoneast.it/target.php?w=19.....t⌖=Rio%20Simon"
+          "title": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Rio%20Simon",
+          "url": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Rio%20Simon"
         }
       ]
     },

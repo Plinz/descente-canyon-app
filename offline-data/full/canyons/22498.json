@@ -115,11 +115,11 @@
       ],
       "resources": [
         {
-          "id": "resource_b4be7ff7516e9978",
+          "id": "resource_a2ab4820fdc7afa6",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....ssbachschluchtCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....ssbachschluchtCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=DiessbachschluchtCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=DiessbachschluchtCanyon"
         }
       ]
     },

@@ -95,9 +95,49 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_226157f34704ebeb",
+          "kind": "TOPOGUIDE",
+          "title": "Schluchten-Canyon",
+          "authors": [
+            "A. Wieser",
+            "F. Karger",
+            "R. Ranner",
+            "I. Neumann"
+          ],
+          "publicationYear": 2004,
+          "reference": "3-901533-11-7",
+          "editor": "Edition Neumann",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1221/topoguide.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_5e456f1fa55157d6",
+          "kind": "MAP",
+          "title": "182 Spittal an der Drau (ÖK50 - BEV)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_aff8d13ca40122c4",
+          "kind": "MAP",
+          "title": "WK 223 Gailtal – Gitschtal – Lesachtal – Weissensee – Oberes Drautal (Freytag & Berndt)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_33faab19012f2e25",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/FellbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/FellbachCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

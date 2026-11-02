@@ -136,31 +136,24 @@
           "editor": "DCL",
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/16/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_941c7cb0700df101",
-          "kind": "TOPOGUIDE",
-          "title": "4251 OT Monte-d'Oro - Monte-Rotondo (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_622572e949e0646f",
+          "kind": "MAP",
+          "title": "4251 OT Monte-d'Oro - Monte-Rotondo (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_eabd9e89ff341c7c",
-          "kind": "TOPOGUIDE",
-          "title": "4252 OT Monte-Renoso - Bastelica (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_11609288f76c61fe",
+          "kind": "MAP",
+          "title": "4252 OT Monte-Renoso - Bastelica (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

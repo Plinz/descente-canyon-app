@@ -104,8 +104,59 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_559f984e9ea9dc7d",
+          "kind": "MAP",
+          "title": "02 Forni di Sopra e di Sotto - Ampezzo-Sauris (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_e5410a3bfda6a0cb",
+          "kind": "MAP",
+          "title": "13 II-NO Sauris (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_db78e12112ebd0b5",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioStortoCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioStortoCanyon"
+        },
+        {
+          "id": "resource_d7553c701f4d9ce9",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://win.aic-canyoning.it/Public/data/davidov/20161017194548_Arzino%200.pdf",
+          "url": "http://win.aic-canyoning.it/Public/data/davidov/20161017194548_Arzino%200.pdf"
+        },
+        {
+          "id": "resource_37d40c4e2997c7cf",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://win.aic-canyoning.it/forum/topic.asp?TOPIC_ID=3221",
+          "url": "http://win.aic-canyoning.it/forum/topic.asp?TOPIC_ID=3221"
+        },
+        {
+          "id": "resource_ac87793d252ee6f2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD069",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD069"
+        },
+        {
+          "id": "resource_11ad80cb0492d094",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Storto",
+          "url": "http://ropewiki.com/Storto"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

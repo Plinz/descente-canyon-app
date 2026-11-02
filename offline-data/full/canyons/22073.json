@@ -136,43 +136,33 @@
           "editor": null,
           "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/130/Tour-de-l-Europe-en-Canyon---T1---Suisse--Autriche--Italie-du-Nord--Slovenie.html"
-        },
-        {
-          "id": "biblio_d4232c1ca7906fe7",
-          "kind": "TOPOGUIDE",
-          "title": "3/4 Lechtaler Alpen, Heiterwang - und Muttekopfgebiet (Alpenvereins (AV) Karte) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_f769a9df23229751",
-          "kind": "TOPOGUIDE",
-          "title": "2221 Imst (ÖK) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_06cbc7a7f281f585",
-          "kind": "TOPOGUIDE",
-          "title": "http://www.alpinesicherheit.com/canyonin...../hachleschlucht.html",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://www.alpinesicherheit.com/canyoning/hachleschlucht/hachleschlucht.html"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_5dbc8da78cba73f7",
+          "kind": "MAP",
+          "title": "3/4 Lechtaler Alpen, Heiterwang - und Muttekopfgebiet (Alpenvereins (AV) Karte)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_49709cc99022b783",
+          "kind": "MAP",
+          "title": "2221 Imst (ÖK)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_d5346d03ecf74c7e",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.alpinesicherheit.com/canyoning/hachleschlucht/hachleschlucht.html",
+          "url": "http://www.alpinesicherheit.com/canyoning/hachleschlucht/hachleschlucht.html"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

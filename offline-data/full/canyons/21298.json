@@ -93,15 +93,29 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_3ed05b9314e97090",
+          "kind": "TOPOGUIDE",
+          "title": "73 canyons à la Réunion et Madagascar",
+          "authors": [
+            "Ric a Ric"
+          ],
+          "publicationYear": 2009,
+          "reference": null,
+          "editor": "Ric a Ric",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/134/73-canyons-a-la-Reunion-et-a-Madagascar.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_15aeaf6d8d5bc523",
+          "id": "resource_ddf0cd11a28e931c",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.lrc-ffs.fr/Topographies/Accue.....esentationcanyon.htm",
-          "url": "http://www.lrc-ffs.fr/Topographies/Accue.....esentationcanyon.htm"
+          "title": "http://www.lrc-ffs.fr/Topographies/Accueil/Canyons/Ravine%20La%20Faim/presentationcanyon.htm",
+          "url": "http://www.lrc-ffs.fr/Topographies/Accueil/Canyons/Ravine%20La%20Faim/presentationcanyon.htm"
         },
         {
           "id": "resource_dc6a8fd735ab6f67",

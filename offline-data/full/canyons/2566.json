@@ -81,7 +81,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_96163e753595ca69",
+          "kind": "MAP",
+          "title": "3244 ET Montagne Sainte-Victoire (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_c55008676d4d8829",
+          "kind": "MAP",
+          "title": "3245 ET Aubagne - La Ciotat (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

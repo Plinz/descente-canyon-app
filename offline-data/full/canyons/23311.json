@@ -95,15 +95,29 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_487232d166db8f9e",
+          "kind": "TOPOGUIDE",
+          "title": "Cañones y barrancos de la Ribagorza : descenso de barrancos en alto Noguera Ribagorzana y el valle del Isabena",
+          "authors": [
+            "Javier Guerrero"
+          ],
+          "publicationYear": 2017,
+          "reference": "978-84-8321-864-8",
+          "editor": "Prames",
+          "status": "derniers exemplaires !\n\n- 26,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1121/Canones-y-barrancos-de-la-Ribagorza.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_1fdc100a917c3f11",
+          "id": "resource_db57e4938bef6597",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://desafioribagorza.blogspot.fr/2014.....-puebla-de-roda.html",
-          "url": "http://desafioribagorza.blogspot.fr/2014.....-puebla-de-roda.html"
+          "title": "http://desafioribagorza.blogspot.fr/2014/09/barranco-el-congustro-puebla-de-roda.html",
+          "url": "http://desafioribagorza.blogspot.fr/2014/09/barranco-el-congustro-puebla-de-roda.html"
         }
       ]
     },

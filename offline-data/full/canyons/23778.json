@@ -95,7 +95,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_80a52b6e4b57f154",
+          "kind": "TOPOGUIDE",
+          "title": "Tiroler Canyoningführer - The Canyoning guide for Tyrol",
+          "authors": [
+            "Alexander Riml",
+            "Gunnar Amor"
+          ],
+          "publicationYear": 2012,
+          "reference": "978-3-200-02343-7",
+          "editor": null,
+          "status": "en stock\n\n- 44,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/170/Tiroler-Canyoningfuhrer---The-Canyoning-guide-for-Tyrol.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_379b0b70a332bc00",
@@ -107,11 +122,11 @@
       ],
       "resources": [
         {
-          "id": "resource_86e8d9451bd5189c",
+          "id": "resource_f877be4bc9105ef1",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....s/AuerlingbachCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....s/AuerlingbachCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/AuerlingbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/AuerlingbachCanyon"
         }
       ]
     },

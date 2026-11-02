@@ -104,8 +104,38 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_0dcee14cdc13db79",
+          "kind": "MAP",
+          "title": "024 Prealpi e Dolomiti Bellunesi (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_6d0730e07191ca7e",
+          "kind": "MAP",
+          "title": "23 IV-SO Gosaldo (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_355e9c6436e67598",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/ValRuiBianchCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/ValRuiBianchCanyon"
+        },
+        {
+          "id": "resource_ccc029f63d7922c7",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL028",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL028"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

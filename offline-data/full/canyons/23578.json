@@ -81,7 +81,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_27bbb18d5b616f29",
+          "kind": "MAP",
+          "title": "05 Val Soana (MU)",
+          "scale": "1/20000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_30293dd559b3b979",
+          "kind": "MAP",
+          "title": "08 Valle d'Orco (MU)",
+          "scale": "1/20000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

@@ -165,11 +165,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_df52f1c5112ab2b7",
+          "id": "resource_9785f26fc5c4dab6",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://passport.aventure.free.fr/afficha.....?selcny=FORMIGA(Bco)",
-          "url": "http://passport.aventure.free.fr/afficha.....?selcny=FORMIGA(Bco)"
+          "title": "http://passport.aventure.free.fr/affichage.php3?selcny=FORMIGA(Bco)",
+          "url": "http://passport.aventure.free.fr/affichage.php3?selcny=FORMIGA(Bco)"
         },
         {
           "id": "resource_e47a0043cbb1c457",

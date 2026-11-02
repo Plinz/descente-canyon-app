@@ -94,8 +94,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_2dc9497c86ba98af",
+          "kind": "MAP",
+          "title": "8931-2s Wollangambee (Topographic Map NSW)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_d85d5e14ab078163",
+          "kind": "MAP",
+          "title": "8930-1n Mount Wilson (Topographic Map NSW)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_4b09f3fdff3bf90f",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ozultimate.com/canyoning/track_notes/water_dragon.htm",
+          "url": "http://ozultimate.com/canyoning/track_notes/water_dragon.htm"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

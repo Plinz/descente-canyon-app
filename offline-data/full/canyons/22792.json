@@ -155,11 +155,11 @@
       ],
       "resources": [
         {
-          "id": "resource_3c61a89ee0c57716",
+          "id": "resource_3a35ef65dca3817b",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....topic=OetzbachCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....topic=OetzbachCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=OetzbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=OetzbachCanyon"
         }
       ]
     },

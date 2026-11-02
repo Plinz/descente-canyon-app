@@ -113,7 +113,29 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_f14bf428f832a8fc",
+          "kind": "MAP",
+          "title": "UK L 30 Karwendelgebirge (Bayerisches Landesvermessungsamt)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_b90bfbbeeb59d6dc",
+          "kind": "MAP",
+          "title": "8434 Vorderriß (TK25 Bay. Landesvermessungsamt)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_623202a1f26e240b",
+          "kind": "MAP",
+          "title": "UK L 18 Bad Tölz - Lenggries (Bayerisches Landesvermessungsamt)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

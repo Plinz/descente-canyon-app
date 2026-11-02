@@ -80,8 +80,37 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_da30219dbb4dd176",
+          "kind": "TOPOGUIDE",
+          "title": "Les canyons de Savoie",
+          "authors": [
+            "Patrick Chollot"
+          ],
+          "publicationYear": 2018,
+          "reference": "978-2-95309-39-1-9",
+          "editor": "auto-édition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1125/Les-canyons-de-Savoie.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_41d94fc71141bb59",
+          "kind": "MAP",
+          "title": "3534 OT Les Trois-Vallees (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_ab1bfc77f4662d40",
+          "kind": "MAP",
+          "title": "3535 OT Nevache (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

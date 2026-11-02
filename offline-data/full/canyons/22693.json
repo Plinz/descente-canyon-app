@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_8ceccc070b9f43a8",
+          "kind": "TOPOGUIDE",
+          "title": "Rincones de Guara. Descenso de Barrancos : Parque Natural de la Sierra y Cañones de Guara",
+          "authors": [
+            "Pere Falcés"
+          ],
+          "publicationYear": 2014,
+          "reference": "AE-2014-1400759+3",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/196/Rincones-de-Guara.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

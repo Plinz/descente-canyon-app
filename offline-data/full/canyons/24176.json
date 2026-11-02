@@ -107,18 +107,18 @@
       ],
       "resources": [
         {
-          "id": "resource_16d60789924f6be3",
+          "id": "resource_e1fcea0518bab7ce",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....PflerscherbachCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....PflerscherbachCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/PflerscherbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/PflerscherbachCanyon"
         },
         {
-          "id": "resource_44dfcbf4bb450641",
+          "id": "resource_3345ed1b56817014",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "https://www.map-erlebnis.de/canyoning-to.....ch-jabron-suedtirol/",
-          "url": "https://www.map-erlebnis.de/canyoning-to.....ch-jabron-suedtirol/"
+          "title": "https://www.map-erlebnis.de/canyoning-topo/canyoning-fernerbach-jabron-suedtirol/",
+          "url": "https://www.map-erlebnis.de/canyoning-topo/canyoning-fernerbach-jabron-suedtirol/"
         },
         {
           "id": "resource_ee0d9b3ea4aec869",
@@ -128,11 +128,11 @@
           "url": "http://www.ctgernstein.com/schluchten/fernerbach"
         },
         {
-          "id": "resource_3573774e39669715",
+          "id": "resource_b4702ba4e57e2620",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://catastoforre.aic-canyoning.it/ind.....IGE/pro/BZ/cod/BZ028",
-          "url": "http://catastoforre.aic-canyoning.it/ind.....IGE/pro/BZ/cod/BZ028"
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/TRENTINO+ALTO+ADIGE/pro/BZ/cod/BZ028",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/TRENTINO+ALTO+ADIGE/pro/BZ/cod/BZ028"
         },
         {
           "id": "resource_726472a9af78c65e",

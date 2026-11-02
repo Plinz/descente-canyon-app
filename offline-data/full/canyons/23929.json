@@ -97,8 +97,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_003da29f948341fb",
+          "kind": "MAP",
+          "title": "UK L 31 Werdenfelser Land (Bayerisches Landesvermessungsamt)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_748267f4e119d571",
+          "kind": "MAP",
+          "title": "8433 Eschenlohe (TK25 Bay. Landesvermessungsamt)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_f4429528e9f47272",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/PustertallaineCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/PustertallaineCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

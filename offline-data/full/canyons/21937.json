@@ -93,7 +93,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_9635a73c59339e35",
+          "kind": "TOPOGUIDE",
+          "title": "Cabo Verde Canyoning",
+          "authors": [
+            "Eduardo Gomez"
+          ],
+          "publicationYear": 2009,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1208/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_a0b95353ed9c3736",
@@ -112,11 +126,11 @@
           "url": "http://www.caboverdenolimits.com/cuadros_barrancos.html"
         },
         {
-          "id": "resource_27bfd07d236c0cb6",
+          "id": "resource_6a3ac2b2fe76d492",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://web.archive.org/web/2006020308152.....cja.com/CV03Dogi.htm",
-          "url": "http://web.archive.org/web/2006020308152.....cja.com/CV03Dogi.htm"
+          "title": "http://web.archive.org/web/20060203081528/http://www.secja.com/CV03Dogi.htm",
+          "url": "http://web.archive.org/web/20060203081528/http://www.secja.com/CV03Dogi.htm"
         }
       ]
     },

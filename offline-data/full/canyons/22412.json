@@ -96,7 +96,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_80a52b6e4b57f154",
+          "kind": "TOPOGUIDE",
+          "title": "Tiroler Canyoningführer - The Canyoning guide for Tyrol",
+          "authors": [
+            "Alexander Riml",
+            "Gunnar Amor"
+          ],
+          "publicationYear": 2012,
+          "reference": "978-3-200-02343-7",
+          "editor": null,
+          "status": "en stock\n\n- 44,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/170/Tiroler-Canyoningfuhrer---The-Canyoning-guide-for-Tyrol.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_d12cfaad67e26bc1",
@@ -108,11 +123,11 @@
       ],
       "resources": [
         {
-          "id": "resource_872582b933f22894",
+          "id": "resource_a0396a270f76c550",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.geodaten.bayern.de/BayernView.....6920&layer=TK&step=4",
-          "url": "http://www.geodaten.bayern.de/BayernView.....6920&layer=TK&step=4"
+          "title": "http://www.geodaten.bayern.de/BayernViewer2.0/index.cgi?rw=4390360&hw=5266920&layer=TK&step=4",
+          "url": "http://www.geodaten.bayern.de/BayernViewer2.0/index.cgi?rw=4390360&hw=5266920&layer=TK&step=4"
         }
       ]
     },

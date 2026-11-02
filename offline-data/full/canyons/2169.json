@@ -95,7 +95,24 @@
       "label": "Parking et vestiaires obligatoires"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_856212416a724a24",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons et Cascades de l'Ain",
+          "authors": [
+            "B. Hugon",
+            "D. Gritti",
+            "P. Flochon",
+            "Groupe Spéléo d'Hauteville-Lompnès"
+          ],
+          "publicationYear": 2002,
+          "reference": null,
+          "editor": null,
+          "status": "en stock\n\n- 14,99 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/167/Canyons-et-Cascades-de-l-Ain.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_4b545689f5cb37fe",

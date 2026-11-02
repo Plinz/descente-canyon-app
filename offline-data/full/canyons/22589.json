@@ -177,11 +177,11 @@
       ],
       "resources": [
         {
-          "id": "resource_a31bb3e90b1d77ce",
+          "id": "resource_0183d09c545e67d0",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://passport.aventure.free.fr/afficha.....GAS%20%28BARRANCO%29",
-          "url": "http://passport.aventure.free.fr/afficha.....GAS%20%28BARRANCO%29"
+          "title": "http://passport.aventure.free.fr/affichage.php3?selcny=TRIGAS%20%28BARRANCO%29",
+          "url": "http://passport.aventure.free.fr/affichage.php3?selcny=TRIGAS%20%28BARRANCO%29"
         },
         {
           "id": "resource_2a180a721d372b8f",

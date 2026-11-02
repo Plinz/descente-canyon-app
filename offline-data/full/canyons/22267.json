@@ -93,9 +93,44 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_9f88558c147f1042",
+          "kind": "TOPOGUIDE",
+          "title": "canyon near sydney",
+          "authors": [],
+          "publicationYear": null,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1154/topoguide.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_2dc9497c86ba98af",
+          "kind": "MAP",
+          "title": "8931-2s Wollangambee (Topographic Map NSW)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_d85d5e14ab078163",
+          "kind": "MAP",
+          "title": "8930-1n Mount Wilson (Topographic Map NSW)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_d9f770a52cc3a189",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ozultimate.com/canyoning/track_notes/wollangambe_2.htm",
+          "url": "http://ozultimate.com/canyoning/track_notes/wollangambe_2.htm"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

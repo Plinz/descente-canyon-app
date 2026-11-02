@@ -104,8 +104,38 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_0dcee14cdc13db79",
+          "kind": "MAP",
+          "title": "024 Prealpi e Dolomiti Bellunesi (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_e22c392da08b8ad4",
+          "kind": "MAP",
+          "title": "23 III-SO Lentiai (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_c0f7c48af3e28960",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RimontaCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RimontaCanyon"
+        },
+        {
+          "id": "resource_50051903684abb9d",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL015",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL015"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

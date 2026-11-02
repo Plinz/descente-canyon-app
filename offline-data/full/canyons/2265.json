@@ -150,11 +150,11 @@
       ],
       "resources": [
         {
-          "id": "resource_c7538f29b52f37ca",
+          "id": "resource_1bfeedd8adeddedb",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.montagne-virtuel.com/05/canyo......php?Photos=pano.jpg",
-          "url": "http://www.montagne-virtuel.com/05/canyo......php?Photos=pano.jpg"
+          "title": "http://www.montagne-virtuel.com/05/canyonning/dormillouse/sortie.php?Photos=pano.jpg",
+          "url": "http://www.montagne-virtuel.com/05/canyonning/dormillouse/sortie.php?Photos=pano.jpg"
         },
         {
           "id": "resource_66d9fcfd12957957",

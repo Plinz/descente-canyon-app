@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_681c5187713f996f",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning auf Korsika (2.A.)",
+          "authors": [
+            "Martin Lendi"
+          ],
+          "publicationYear": 2008,
+          "reference": null,
+          "editor": "www.paradisu.ch",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1340/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_8957092b1100bffb",

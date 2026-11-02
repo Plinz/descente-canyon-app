@@ -173,11 +173,11 @@
       ],
       "resources": [
         {
-          "id": "resource_3f618895d47b28be",
+          "id": "resource_d7f05ceac4c6a0f1",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://fr.petzl.com/petzl/frontoffice/Sp.....valdibares/index.htm",
-          "url": "http://fr.petzl.com/petzl/frontoffice/Sp.....valdibares/index.htm"
+          "title": "http://fr.petzl.com/petzl/frontoffice/Sport/static/explorations/valdibares/index.htm",
+          "url": "http://fr.petzl.com/petzl/frontoffice/Sport/static/explorations/valdibares/index.htm"
         }
       ]
     },

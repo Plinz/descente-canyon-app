@@ -163,11 +163,11 @@
       ],
       "resources": [
         {
-          "id": "resource_776e093bd66aacc0",
+          "id": "resource_20b524c2e8394bb1",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....issgriesgrabenCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....issgriesgrabenCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/WeissgriesgrabenCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/WeissgriesgrabenCanyon"
         }
       ]
     },

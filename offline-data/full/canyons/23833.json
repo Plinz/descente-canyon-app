@@ -97,8 +97,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_3d7a2ebd5efa6d2b",
+          "kind": "MAP",
+          "title": "UK L 12 Mangfallgebirge (1/50000)",
+          "scale": "Bayersches L",
+          "detailUrl": null
+        },
+        {
+          "id": "map_1d270863adf0445f",
+          "kind": "MAP",
+          "title": "8336/8436 Rottach-Egern (TK25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_699ccbad2987c11f",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/TotengrabenCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/TotengrabenCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

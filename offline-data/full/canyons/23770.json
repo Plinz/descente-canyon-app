@@ -104,8 +104,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_20f5354f23d65869",
+          "kind": "MAP",
+          "title": "91 Lago di Como - Lago di Lugano (Kompass)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_45546c19c955dce0",
+          "kind": "MAP",
+          "title": "17 II-SE Premana (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_9dff1d9d97cac3f6",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/LargaCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/LargaCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

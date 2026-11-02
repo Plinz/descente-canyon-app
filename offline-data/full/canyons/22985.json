@@ -107,18 +107,18 @@
       ],
       "resources": [
         {
-          "id": "resource_18ff3697845ffba7",
+          "id": "resource_2bfb309b09b20145",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.outdooractive.com/de/wanderun.....hlucht/4211534/#fu=1",
-          "url": "http://www.outdooractive.com/de/wanderun.....hlucht/4211534/#fu=1"
+          "title": "http://www.outdooractive.com/de/wanderung/oberdrautal/ochsenschlucht/4211534/#fu=1",
+          "url": "http://www.outdooractive.com/de/wanderung/oberdrautal/ochsenschlucht/4211534/#fu=1"
         },
         {
-          "id": "resource_f1e2b9969c8f7434",
+          "id": "resource_3c1c088d06aaf195",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....OchsenschluchtCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....OchsenschluchtCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/OchsenschluchtCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/OchsenschluchtCanyon"
         }
       ]
     },

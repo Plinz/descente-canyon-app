@@ -85,8 +85,37 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_ee92621b53de3c8c",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning : Swiss Alps / Alpes Suisse",
+          "authors": [
+            "Association Openbach"
+          ],
+          "publicationYear": 2015,
+          "reference": "9782746679450",
+          "editor": "auto-edition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/195/Canyoning-:-Swiss-alps---Alpes-suisses-Vol-1.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_af87913a4231b177",
+          "kind": "MAP",
+          "title": "1264 MONTREUX (Carte Nationale Suisse)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_024dd8cf1ac46981",
+          "kind": "MAP",
+          "title": "1285 Les Diablerets (Carte Nationale Suisse)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

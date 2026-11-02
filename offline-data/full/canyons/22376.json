@@ -122,31 +122,24 @@
           "editor": null,
           "status": null,
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1226/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_62ea7c9c13b902fd",
-          "kind": "TOPOGUIDE",
-          "title": "146 Imst (ÖK 50) - 1:50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_223eef3bd7bbfcc1",
+          "kind": "MAP",
+          "title": "146 Imst (ÖK 50)",
+          "scale": "1:50000",
           "detailUrl": null
         },
         {
-          "id": "biblio_d4232c1ca7906fe7",
-          "kind": "TOPOGUIDE",
-          "title": "3/4 Lechtaler Alpen, Heiterwang - und Muttekopfgebiet (Alpenvereins (AV) Karte) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_5dbc8da78cba73f7",
+          "kind": "MAP",
+          "title": "3/4 Lechtaler Alpen, Heiterwang - und Muttekopfgebiet (Alpenvereins (AV) Karte)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

@@ -108,11 +108,11 @@
       ],
       "resources": [
         {
-          "id": "resource_5c8b981f5ba51d24",
+          "id": "resource_498cf4db3228e3fd",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....dererSteinbachCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....dererSteinbachCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/VordererSteinbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/VordererSteinbachCanyon"
         }
       ]
     },

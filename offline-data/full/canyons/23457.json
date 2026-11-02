@@ -115,11 +115,11 @@
       ],
       "resources": [
         {
-          "id": "resource_bdea6ea64b3307f0",
+          "id": "resource_d0b029c26e231f1b",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....CarloGaspariniCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....CarloGaspariniCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioCarloGaspariniCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioCarloGaspariniCanyon"
         }
       ]
     },

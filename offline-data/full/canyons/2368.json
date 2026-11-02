@@ -87,7 +87,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_6d273ae41f72e178",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons de Savoie",
+          "authors": [
+            "F. Martin",
+            "C. Altazin"
+          ],
+          "publicationYear": 2007,
+          "reference": "978-2-9528935-0-3",
+          "editor": null,
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/15/Descentes-de-canyons-en-Savoie.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_30a1a7d4e8445846",

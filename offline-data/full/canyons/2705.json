@@ -103,7 +103,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_2242f6ad0f62937a",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons d’Aventures des Préalpes d’Azur",
+          "authors": [
+            "Christophe Folleas",
+            "Brigitte Gimenez"
+          ],
+          "publicationYear": 2004,
+          "reference": null,
+          "editor": "Les doigts déglingués",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1118/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_fef4ae0a96dc33ed",
@@ -115,11 +130,11 @@
       ],
       "resources": [
         {
-          "id": "resource_09cc9e00c22f4d0f",
+          "id": "resource_3b7564318b2a4d6d",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.altisud.com/canyoning/france/.....l_detail-canyon.html",
-          "url": "http://www.altisud.com/canyoning/france/.....l_detail-canyon.html"
+          "title": "http://www.altisud.com/canyoning/france/le-var/vallee-de-l-artuby/l-artuby-de-comps-canyoning__i_4mxvn80qn9iu__al_detail-canyon.html",
+          "url": "http://www.altisud.com/canyoning/france/le-var/vallee-de-l-artuby/l-artuby-de-comps-canyoning__i_4mxvn80qn9iu__al_detail-canyon.html"
         }
       ]
     },

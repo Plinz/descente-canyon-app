@@ -96,8 +96,45 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_9e6fd2c5b047f2ba",
+          "kind": "MAP",
+          "title": "14 I-SE Malborghetto (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_dc57d6b335838ca1",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioDegliUcelliCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioDegliUcelliCanyon"
+        },
+        {
+          "id": "resource_93fc2bb45b2acfe6",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD055",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD055"
+        },
+        {
+          "id": "resource_c7a6b3688bcac8ba",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Uccelli",
+          "url": "http://ropewiki.com/Uccelli"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

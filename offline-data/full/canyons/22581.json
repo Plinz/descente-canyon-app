@@ -93,7 +93,23 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_818da916075bb17b",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning en Suisse 2",
+          "authors": [
+            "Franz Baumgartner",
+            "Andreas Brunner",
+            "Daniel Zimmermann"
+          ],
+          "publicationYear": 2010,
+          "reference": "9783033024694",
+          "editor": null,
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/158/Canyoning-en-Suisse-2.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

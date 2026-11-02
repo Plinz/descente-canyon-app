@@ -127,7 +127,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_7eceecd7e0d2e77b",
+          "kind": "TOPOGUIDE",
+          "title": "Torrentismo in Sardegna",
+          "authors": [
+            "Corrado Conca"
+          ],
+          "publicationYear": 2009,
+          "reference": "978-88-88776-04-X",
+          "editor": "Segnavia",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1227/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_b78a2c894921938b",

@@ -77,8 +77,37 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_ee92621b53de3c8c",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning : Swiss Alps / Alpes Suisse",
+          "authors": [
+            "Association Openbach"
+          ],
+          "publicationYear": 2015,
+          "reference": "9782746679450",
+          "editor": "auto-edition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/195/Canyoning-:-Swiss-alps---Alpes-suisses-Vol-1.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_606f92b7ede449ae",
+          "kind": "MAP",
+          "title": "1248 Mürren (Swisstopo)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_610dcd6819ed6fc8",
+          "kind": "MAP",
+          "title": "264T Jungfrau (Swisstopo)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

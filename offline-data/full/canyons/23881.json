@@ -112,8 +112,52 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_6691f7b9249adcf1",
+          "kind": "MAP",
+          "title": "036 Sand in Taufers - Campo Tures (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_fcc63152ae3cf3dc",
+          "kind": "MAP",
+          "title": "4A I-NO Lutago (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_d74a206b219b45b2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/NevesbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/NevesbachCanyon"
+        },
+        {
+          "id": "resource_9bccb0c93f7ca078",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.ctgernstein.com/schluchten/zosenklamm",
+          "url": "http://www.ctgernstein.com/schluchten/zosenklamm"
+        },
+        {
+          "id": "resource_08bc4be48acd80d2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.map-erlebnis.de/canyoning-topo/canyoning-zoesenklamm-suedtirol/",
+          "url": "http://www.map-erlebnis.de/canyoning-topo/canyoning-zoesenklamm-suedtirol/"
+        },
+        {
+          "id": "resource_0ed4d4590bd02ef3",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/TRENTINO+ALTO+ADIGE/pro/BZ/cod/BZ010",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/TRENTINO+ALTO+ADIGE/pro/BZ/cod/BZ010"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

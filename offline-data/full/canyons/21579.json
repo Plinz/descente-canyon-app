@@ -101,7 +101,19 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_d624b36bbe2e13ec",
+          "kind": "TOPOGUIDE",
+          "title": "Gorgs Organya. Guia de barrancs. Alt Urgell",
+          "authors": [],
+          "publicationYear": 2014,
+          "reference": "978-84-942504-6-0",
+          "editor": "Editions Saloria",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/190/Gorgs-Organya--Guia-de-barrancs--Alt-Urgell.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

@@ -130,25 +130,25 @@
           "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/ToscolanoCanyon"
         },
         {
-          "id": "resource_30345e5db4663e43",
+          "id": "resource_af60965e65934818",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://catastoforre.aic-canyoning.it/ind.....DIA/pro/BS/cod/BS023",
-          "url": "http://catastoforre.aic-canyoning.it/ind.....DIA/pro/BS/cod/BS023"
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/LOMBARDIA/pro/BS/cod/BS023",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/LOMBARDIA/pro/BS/cod/BS023"
         },
         {
-          "id": "resource_bab27734c99346ea",
+          "id": "resource_460ac1508e1ec0a8",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://fallocefali.altervista.org/torren.....--toscolano-m.-.html",
-          "url": "http://fallocefali.altervista.org/torren.....--toscolano-m.-.html"
+          "title": "http://fallocefali.altervista.org/torrente-toscolano--toscolano-m.-.html",
+          "url": "http://fallocefali.altervista.org/torrente-toscolano--toscolano-m.-.html"
         },
         {
-          "id": "resource_8089358914f4d971",
+          "id": "resource_b489b7ccf8226c0a",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.tntcanyoning.it/canyon-percor.....te-toscolano-maderno",
-          "url": "http://www.tntcanyoning.it/canyon-percor.....te-toscolano-maderno"
+          "title": "http://www.tntcanyoning.it/canyon-percorsi/torrente-toscolano-maderno",
+          "url": "http://www.tntcanyoning.it/canyon-percorsi/torrente-toscolano-maderno"
         }
       ]
     },

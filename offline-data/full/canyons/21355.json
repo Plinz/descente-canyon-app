@@ -80,7 +80,23 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_0ada102a5dea7773",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons arvernes",
+          "authors": [
+            "Philippe Viette-Coste",
+            "Serge Navarro",
+            "Pierre-Marie Orblin"
+          ],
+          "publicationYear": 2012,
+          "reference": "978-2-7466-3647-7",
+          "editor": "auto-édition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/165/Canyons-arvernes.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_a603aa4818255d95",

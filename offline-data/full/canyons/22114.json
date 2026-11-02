@@ -120,8 +120,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_48f062d8573a5fe8",
+          "kind": "MAP",
+          "title": "20 Dachstein (Kompass)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_99ee332e44c434c8",
+          "kind": "MAP",
+          "title": "95 Sankt Wolfgang (ÖK50 (BEV))",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_9b15cfb09998a837",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=KammersbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=KammersbachCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

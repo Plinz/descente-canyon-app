@@ -98,7 +98,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_28e68141a286bb81",
+          "kind": "MAP",
+          "title": "3338 ET Gap (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_698f23f50a61f9ad",
+          "kind": "MAP",
+          "title": "3339 OT Sisteron (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

@@ -161,31 +161,24 @@
           "editor": "DCL",
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/16/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_1c9a7101db45c5aa",
-          "kind": "TOPOGUIDE",
-          "title": "4253 ET Aiguilles-de-Bavella (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_b6fb73f30bb7590c",
+          "kind": "MAP",
+          "title": "4253 ET Aiguilles-de-Bavella (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_4060a639be6a7ec3",
-          "kind": "TOPOGUIDE",
-          "title": "4253 OT Petreto-Bicchisano - Zicavo (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_757b63ac5eceb22e",
+          "kind": "MAP",
+          "title": "4253 OT Petreto-Bicchisano - Zicavo (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

@@ -96,8 +96,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_791230ae0143f2bf",
+          "kind": "MAP",
+          "title": "103 (Kompass)",
+          "scale": null,
+          "detailUrl": null
+        },
+        {
+          "id": "map_e8138e097d11b2ec",
+          "kind": "MAP",
+          "title": "35 IV-SO Darzo (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_9033d81c8c3b47b3",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/CaffaroaltoCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/CaffaroaltoCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

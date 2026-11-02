@@ -96,8 +96,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_0dcee14cdc13db79",
+          "kind": "MAP",
+          "title": "024 Prealpi e Dolomiti Bellunesi (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_fca912247ae0128b",
+          "kind": "MAP",
+          "title": "23 III-SE Mel (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_bd00f67471fce855",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/ArdoCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/ArdoCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

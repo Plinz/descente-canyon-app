@@ -104,7 +104,24 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_6b7865a698c28634",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons alpins : Le tour de l'Oisans en canyons",
+          "authors": [
+            "Alain Bach",
+            "Marc Brunello",
+            "Christian Chillet",
+            "Philippe Drouin"
+          ],
+          "publicationYear": 1992,
+          "reference": "ISBN 2-7417-0054-0",
+          "editor": "Gap",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/117/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_d3ba8daa244cabe2",

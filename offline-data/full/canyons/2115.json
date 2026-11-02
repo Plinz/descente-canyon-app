@@ -167,31 +167,24 @@
           "editor": "Didier et Richard",
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/11/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_ab823aad5334b948",
-          "kind": "TOPOGUIDE",
-          "title": "3234 E - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_d22913c1e3dfa752",
+          "kind": "MAP",
+          "title": "3234 E",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_1061e9e156a6f922",
-          "kind": "TOPOGUIDE",
-          "title": "3334 OT Massif de la Chartreuse Sud (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_bf7324fa2ae1510e",
+          "kind": "MAP",
+          "title": "3334 OT Massif de la Chartreuse Sud (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

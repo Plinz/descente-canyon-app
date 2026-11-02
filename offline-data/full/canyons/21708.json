@@ -144,11 +144,11 @@
       ],
       "resources": [
         {
-          "id": "resource_c2daab68a1ea7ceb",
+          "id": "resource_70a06da9daf8003d",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://aecbarrancs.iespana.es/fitxes_bar.....arranc_espones_1.htm",
-          "url": "http://aecbarrancs.iespana.es/fitxes_bar.....arranc_espones_1.htm"
+          "title": "http://aecbarrancs.iespana.es/fitxes_barrancs_catalunya/barranc_espones_1.htm",
+          "url": "http://aecbarrancs.iespana.es/fitxes_barrancs_catalunya/barranc_espones_1.htm"
         }
       ]
     },

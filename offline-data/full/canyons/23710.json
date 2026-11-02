@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_c574a587f0904006",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning en Sardaigne",
+          "authors": [
+            "Franck Jourdan et Jean-François Fiorina"
+          ],
+          "publicationYear": 2009,
+          "reference": null,
+          "editor": "auto-édition",
+          "status": "en stock\n\n- 18,50 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/137/Canyoning-en-Sardaigne.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_e435bcb3ae381ba1",

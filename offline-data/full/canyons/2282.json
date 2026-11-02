@@ -87,7 +87,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_5a1e2d51a96055c0",
+          "kind": "TOPOGUIDE",
+          "title": "Les causses majeurs",
+          "authors": [
+            "E.-A. Martel"
+          ],
+          "publicationYear": null,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/157/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_fb5949b340608cd9",

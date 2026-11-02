@@ -128,11 +128,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_228ed5e90262190b",
+          "id": "resource_0287cd073c2c3cf7",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.canyoneast.it/target.php?w=19.....t⌖=Rio%20Patoc",
-          "url": "http://www.canyoneast.it/target.php?w=19.....t⌖=Rio%20Patoc"
+          "title": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Rio%20Patoc",
+          "url": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Rio%20Patoc"
         }
       ]
     },

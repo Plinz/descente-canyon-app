@@ -63,15 +63,29 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_3ed05b9314e97090",
+          "kind": "TOPOGUIDE",
+          "title": "73 canyons à la Réunion et Madagascar",
+          "authors": [
+            "Ric a Ric"
+          ],
+          "publicationYear": 2009,
+          "reference": null,
+          "editor": "Ric a Ric",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/134/73-canyons-a-la-Reunion-et-a-Madagascar.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_ff68da75f7269573",
+          "id": "resource_62c3386e1c8ed1f5",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "https://www.antsirabe-contacts.info/rand.....cascade-dantalavena/",
-          "url": "https://www.antsirabe-contacts.info/rand.....cascade-dantalavena/"
+          "title": "https://www.antsirabe-contacts.info/randonnee-cascade-dantalavena/",
+          "url": "https://www.antsirabe-contacts.info/randonnee-cascade-dantalavena/"
         }
       ]
     },

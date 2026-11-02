@@ -121,43 +121,33 @@
           "editor": "TopCanyon",
           "status": "stock très réduit !\n\n- 25,90 € -\n\nCommandez cet ouvrage dès maintenant !",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/135/Canyoning-Nord-Italia.html"
-        },
-        {
-          "id": "biblio_0ea3f9457285b169",
-          "kind": "TOPOGUIDE",
-          "title": "ASF n° 3 Mongioie (Alpes sans fronti?res) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_15f11698ead4fe98",
-          "kind": "TOPOGUIDE",
-          "title": "Carta dei sentieri della Provincia di Imperia (Blu Edizioni) - 1/50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_2d266dfc95d615c3",
-          "kind": "TOPOGUIDE",
-          "title": "http://www.cicarudeclan.com/ita/a5_prale.htm",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://www.cicarudeclan.com/ita/a5_prale.htm"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_72bdc11a52ae72bd",
+          "kind": "MAP",
+          "title": "ASF n° 3 Mongioie (Alpes sans fronti?res)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_03ae9f8fd1fd96dd",
+          "kind": "MAP",
+          "title": "Carta dei sentieri della Provincia di Imperia (Blu Edizioni)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_fd1da697aac0d739",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.cicarudeclan.com/ita/a5_prale.htm",
+          "url": "http://www.cicarudeclan.com/ita/a5_prale.htm"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

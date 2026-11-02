@@ -95,18 +95,18 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_a1ec29711e91d623",
+          "id": "resource_4ac7d12d36c8ef30",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "https://kapitanpedales.wordpress.com/201.....-serrania-de-cuenca/",
-          "url": "https://kapitanpedales.wordpress.com/201.....-serrania-de-cuenca/"
+          "title": "https://kapitanpedales.wordpress.com/2012/05/17/barranco-del-vasillo-el-rapel-volado-mas-largo-de-la-serrania-de-cuenca/",
+          "url": "https://kapitanpedales.wordpress.com/2012/05/17/barranco-del-vasillo-el-rapel-volado-mas-largo-de-la-serrania-de-cuenca/"
         },
         {
-          "id": "resource_3bd9f80ee3725b03",
+          "id": "resource_585769c9d6b9e28e",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.barranquismo.net/paginas/barr.....anco_del_vasillo.htm",
-          "url": "http://www.barranquismo.net/paginas/barr.....anco_del_vasillo.htm"
+          "title": "http://www.barranquismo.net/paginas/barrancos/barranco_del_vasillo.htm",
+          "url": "http://www.barranquismo.net/paginas/barrancos/barranco_del_vasillo.htm"
         }
       ]
     },

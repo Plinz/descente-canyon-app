@@ -145,11 +145,11 @@
       ],
       "resources": [
         {
-          "id": "resource_09855508188a07e3",
+          "id": "resource_16520ff5e6934f8e",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....s/SilbergrabenCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....s/SilbergrabenCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/SilbergrabenCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/SilbergrabenCanyon"
         }
       ]
     },

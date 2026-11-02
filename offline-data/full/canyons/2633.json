@@ -136,54 +136,40 @@
           "editor": "Barrabes",
           "status": null,
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1126/topoguide.html"
-        },
-        {
-          "id": "biblio_4c6dadc4f2dba0fd",
-          "kind": "TOPOGUIDE",
-          "title": "20 Puigmal Costabona (Mapa excursionista Piruneus) - 1/50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_f09613ef40d42b47",
-          "kind": "TOPOGUIDE",
-          "title": "21 Andorra-Cadi (Mapa excursionista Piruneus) - 1/50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_9e7401e9c3ed4348",
-          "kind": "TOPOGUIDE",
-          "title": "http://ropewiki.com/Pas_de_l%27Escalell",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://ropewiki.com/Pas_de_l%27Escalell"
-        },
-        {
-          "id": "biblio_5086dee2197b7861",
-          "kind": "TOPOGUIDE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/EscalellCanyon",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://canyon.carto.net/cwiki/bin/view/Canyons/EscalellCanyon"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_62922203b8628e40",
+          "kind": "MAP",
+          "title": "20 Puigmal Costabona (Mapa excursionista Piruneus)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_71283f3cc9b9f018",
+          "kind": "MAP",
+          "title": "21 Andorra-Cadi (Mapa excursionista Piruneus)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_06dcccf166804455",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Pas_de_l%27Escalell",
+          "url": "http://ropewiki.com/Pas_de_l%27Escalell"
+        },
+        {
+          "id": "resource_8928d10b89c911ae",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/EscalellCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/EscalellCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

@@ -138,54 +138,40 @@
           "editor": "Albiana",
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/133/Corse-Canyons.html"
-        },
-        {
-          "id": "biblio_9d84a00de5f6834e",
-          "kind": "TOPOGUIDE",
-          "title": "4151 OT Vico - Cargese (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_eabd9e89ff341c7c",
-          "kind": "TOPOGUIDE",
-          "title": "4252 OT Monte-Renoso - Bastelica (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_b25f06e232f9b80e",
-          "kind": "TOPOGUIDE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/CarazziCanyon",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://canyon.carto.net/cwiki/bin/view/Canyons/CarazziCanyon"
-        },
-        {
-          "id": "biblio_45609680a6fb0541",
-          "kind": "TOPOGUIDE",
-          "title": "http://www.ffme.info/canyon/CANYON_fiche.php?id=98",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://www.ffme.info/canyon/CANYON_fiche.php?id=98"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_a5b6751a1e6b6ec7",
+          "kind": "MAP",
+          "title": "4151 OT Vico - Cargese (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_11609288f76c61fe",
+          "kind": "MAP",
+          "title": "4252 OT Monte-Renoso - Bastelica (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_1574dce66ee5d1b2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/CarazziCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/CarazziCanyon"
+        },
+        {
+          "id": "resource_8c814bfaf0a5e4fc",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.ffme.info/canyon/CANYON_fiche.php?id=98",
+          "url": "http://www.ffme.info/canyon/CANYON_fiche.php?id=98"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": true,

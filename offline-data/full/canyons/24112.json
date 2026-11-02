@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_29d8dbb9ae9f9a10",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons du Haut-Couserans - Ariège, Pyrénées",
+          "authors": [
+            "Mickaël Ménager"
+          ],
+          "publicationYear": 2008,
+          "reference": "978-2-7466-0311-0",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/131/Canyons-du-Haut-Couserans.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_872fe3d6423900b2",

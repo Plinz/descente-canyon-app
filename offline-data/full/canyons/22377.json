@@ -151,11 +151,11 @@
       ],
       "resources": [
         {
-          "id": "resource_23f81cc19a9e6cef",
+          "id": "resource_eeb7713aba28e4a0",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....gleintaloberesCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....gleintaloberesCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/BergleintaloberesCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/BergleintaloberesCanyon"
         }
       ]
     },

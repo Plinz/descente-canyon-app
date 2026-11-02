@@ -96,8 +96,38 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_0dcee14cdc13db79",
+          "kind": "MAP",
+          "title": "024 Prealpi e Dolomiti Bellunesi (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_b3b85b311c44e86f",
+          "kind": "MAP",
+          "title": "23 IV-SE Monte Pelf (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_e4c254ff26aa0317",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/CarpenadaCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/CarpenadaCanyon"
+        },
+        {
+          "id": "resource_28d3bb252a26c3c9",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL051",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL051"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

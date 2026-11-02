@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_d077bf79f60b4790",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning nelle Alpi Occidentali",
+          "authors": [
+            "Daniele Geuna/Dino Ruotolo"
+          ],
+          "publicationYear": 2010,
+          "reference": "978-88-87890-94-5",
+          "editor": "Versante Sud",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1232/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

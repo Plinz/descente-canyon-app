@@ -96,7 +96,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_0fc41c1cd4753bef",
+          "kind": "MAP",
+          "title": "Feuille n° 9 Mont Avic (IGC)",
+          "scale": null,
+          "detailUrl": null
+        },
+        {
+          "id": "map_6d61ebd3926d2c01",
+          "kind": "MAP",
+          "title": "N°5 Cervino Matterhorn e Monte Rosa (IGC)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

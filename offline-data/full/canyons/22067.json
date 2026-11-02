@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_41402b7e45455e7d",
+          "kind": "TOPOGUIDE",
+          "title": "Tour de l'Europe en Canyon - T1 - Suisse, Autriche, Italie du Nord, Slovénie",
+          "authors": [
+            "Caracal et les Sancho Panza"
+          ],
+          "publicationYear": 2008,
+          "reference": "978-2-9526064-2-4",
+          "editor": null,
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/130/Tour-de-l-Europe-en-Canyon---T1---Suisse--Autriche--Italie-du-Nord--Slovenie.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_4efa32b3285a258d",
@@ -107,11 +121,11 @@
       ],
       "resources": [
         {
-          "id": "resource_b0dbdea0d917a991",
+          "id": "resource_8dbb80980f504c3f",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....?topic=GeojaglCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....?topic=GeojaglCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=GeojaglCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=GeojaglCanyon"
         }
       ]
     },

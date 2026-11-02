@@ -107,11 +107,11 @@
       ],
       "resources": [
         {
-          "id": "resource_1bcbc92d9dc90bab",
+          "id": "resource_31caed52927b74ea",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....ernitzengrabenCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....ernitzengrabenCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/DoebernitzengrabenCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/DoebernitzengrabenCanyon"
         },
         {
           "id": "resource_290440ce6ce239e4",

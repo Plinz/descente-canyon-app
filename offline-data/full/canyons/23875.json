@@ -94,7 +94,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_8f20ae98d683e3f6",
+          "kind": "MAP",
+          "title": "3337 OT Devoluy (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_b0e951331c704682",
+          "kind": "MAP",
+          "title": "3437 OT Champsaur - Parc des Ecrins (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

@@ -93,7 +93,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_1a056ec74c5c542b",
+          "kind": "TOPOGUIDE",
+          "title": "Trekking and Canyoning in the Jordanian Dead Sea Rift",
+          "authors": [
+            "Itai Haviv"
+          ],
+          "publicationYear": 2000,
+          "reference": "965-90315-0-5",
+          "editor": "Desert Breeze Press",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1175/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
@@ -104,11 +118,11 @@
           "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/AbuKusheibaCanyon"
         },
         {
-          "id": "resource_44b988a06020b14d",
+          "id": "resource_04d2cc2256c5224c",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://wikimapia.org/#lang=de⪫=31.562.....5/Wadi-Abu-Khushybah",
-          "url": "http://wikimapia.org/#lang=de⪫=31.562.....5/Wadi-Abu-Khushybah"
+          "title": "http://wikimapia.org/#lang=de&lat=31.562082&lon=35.588493&z=14&m=b&show=/31310875/Wadi-Abu-Khushybah",
+          "url": "http://wikimapia.org/#lang=de&lat=31.562082&lon=35.588493&z=14&m=b&show=/31310875/Wadi-Abu-Khushybah"
         },
         {
           "id": "resource_f7a62db643027213",
@@ -118,11 +132,11 @@
           "url": "http://www.everytrail.com/view_trip.php?trip_id=3113691"
         },
         {
-          "id": "resource_c6486687f08af09a",
+          "id": "resource_00e83b2233559151",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "https://web.archive.org/web/201402031020.....ure-Reserve_B.jpg",
-          "url": "https://web.archive.org/web/201402031020.....ure-Reserve_B.jpg"
+          "title": "https://web.archive.org/web/20140203102044/http://www.rscn.org.jo/orgsite/Portals/0/maps/established%20reserves%20maps/Mujib-Nature-Reserve_B.jpg",
+          "url": "https://web.archive.org/web/20140203102044/http://www.rscn.org.jo/orgsite/Portals/0/maps/established%20reserves%20maps/Mujib-Nature-Reserve_B.jpg"
         }
       ]
     },

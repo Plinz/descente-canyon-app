@@ -96,7 +96,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_e4c8c4f70fecf6cb",
+          "kind": "TOPOGUIDE",
+          "title": "Barrancos y Cañones de Euskal Herria",
+          "authors": [
+            "Javier ITURRITXA"
+          ],
+          "publicationYear": 2012,
+          "reference": "978-84-615-5658-8",
+          "editor": null,
+          "status": "en stock\n\n- 24,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/166/Barrancos-y-Canones-de-Euskal-Herria.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_95d54f38fafa9919",

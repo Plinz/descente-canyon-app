@@ -107,11 +107,11 @@
       ],
       "resources": [
         {
-          "id": "resource_2201c87162f25160",
+          "id": "resource_62fc553de5ae3231",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....ererSpringbachCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....ererSpringbachCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=HintererSpringbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=HintererSpringbachCanyon"
         }
       ]
     },

@@ -65,7 +65,23 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_e4d17cea52b1c46f",
+          "kind": "TOPOGUIDE",
+          "title": "Les Canyons Sauvages des Alpes-Maritimes",
+          "authors": [
+            "Jean-François Fiorina",
+            "Franck Jourdan",
+            "Jean-Claude Juda"
+          ],
+          "publicationYear": 2004,
+          "reference": "ISBN 2-9520630-1-X",
+          "editor": "Association Corse Canyon",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/188/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_733e9880e2523de2",

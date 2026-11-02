@@ -95,7 +95,21 @@
       "label": "depart GR"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_5b46f4873260c770",
+          "kind": "TOPOGUIDE",
+          "title": "Sierras de piedra y agua",
+          "authors": [
+            "Salamero Enrique"
+          ],
+          "publicationYear": 2002,
+          "reference": null,
+          "editor": "Camping Mascùn",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/148/Guia-de-Barrancos-de-la-Sierra-de-Guara.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

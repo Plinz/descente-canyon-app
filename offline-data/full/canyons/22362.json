@@ -63,7 +63,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_f02672f3db0c7f65",
+          "kind": "TOPOGUIDE",
+          "title": "Le paradis du canyoning",
+          "authors": [
+            "P. Colas"
+          ],
+          "publicationYear": 1995,
+          "reference": null,
+          "editor": "Maison de la montagne",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1138/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_b239997245dc5eb0",

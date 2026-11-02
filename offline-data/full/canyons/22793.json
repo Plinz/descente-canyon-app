@@ -131,11 +131,11 @@
       ],
       "resources": [
         {
-          "id": "resource_ac0aaeddbfd2f524",
+          "id": "resource_0ef9d90e1b947b31",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....topic=StierkarCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....topic=StierkarCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=StierkarCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=StierkarCanyon"
         }
       ]
     },

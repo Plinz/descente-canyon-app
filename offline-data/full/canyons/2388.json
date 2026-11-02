@@ -103,7 +103,19 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_ed82a11ff99071f2",
+          "kind": "TOPOGUIDE",
+          "title": "Corse (Guide IGN)",
+          "authors": [],
+          "publicationYear": null,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/181/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_b6fb73f30bb7590c",

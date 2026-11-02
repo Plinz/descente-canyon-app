@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_1b6c437b64d9f869",
+          "kind": "TOPOGUIDE",
+          "title": "PVC n°1 - Haute Garonne",
+          "authors": [
+            "Collectif : Groupe Spéléologique des Pyrénées"
+          ],
+          "publicationYear": 2006,
+          "reference": "9782952722605",
+          "editor": "auto-édition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/125/Plastic-Visuel-Canyon-:-Haute-Garonne.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_b4d10c31e88f9235",

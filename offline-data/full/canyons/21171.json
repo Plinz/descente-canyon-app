@@ -81,15 +81,7 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [
-        {
-          "id": "map_c33b1c690f36c010",
-          "kind": "MAP",
-          "title": "Cascades%20de%20MORTAIN.doc",
-          "scale": null,
-          "detailUrl": null
-        }
-      ],
+      "maps": [],
       "resources": []
     },
     "reglementation": {

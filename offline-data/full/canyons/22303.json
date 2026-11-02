@@ -104,7 +104,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_8a90929351debe63",
+          "kind": "TOPOGUIDE",
+          "title": "Maravillas del alto Guadiaro",
+          "authors": [
+            "Juan Mayoral Valsera",
+            "Ángel Martinez Garcia"
+          ],
+          "publicationYear": 2007,
+          "reference": null,
+          "editor": "Copyr, S.L.",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1224/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
@@ -115,11 +130,11 @@
           "url": "http://ropewiki.com/Hundidero-Gato"
         },
         {
-          "id": "resource_dbd84b22a8fbfd93",
+          "id": "resource_ac09353205f84492",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C...../HundideroGatoCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C...../HundideroGatoCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/HundideroGatoCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/HundideroGatoCanyon"
         }
       ]
     },

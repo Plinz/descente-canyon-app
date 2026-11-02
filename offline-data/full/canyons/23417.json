@@ -63,7 +63,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_645355fdabc6144e",
+          "kind": "TOPOGUIDE",
+          "title": "Barranquismo en Gran Canaria : barrancos, caideros y afluentes.",
+          "authors": [
+            "Hedwig Elisabet Solanas Garcia et Victor España Llamas"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-84-617-0693-8",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/199/Barranquismo-en-Gran-Canaria.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_c3bd5d203187ac5f",
@@ -75,11 +89,11 @@
       ],
       "resources": [
         {
-          "id": "resource_8e587b1a857f7bff",
+          "id": "resource_192e671dc053825c",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://barrancoscanarios.com/barrancos/g.....arranco-del-vaquero/",
-          "url": "http://barrancoscanarios.com/barrancos/g.....arranco-del-vaquero/"
+          "title": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-barranco-del-palmar/espanol-barranco-del-vaquero/",
+          "url": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-barranco-del-palmar/espanol-barranco-del-vaquero/"
         }
       ]
     },

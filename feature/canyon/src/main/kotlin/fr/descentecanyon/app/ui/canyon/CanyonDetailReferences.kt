@@ -107,13 +107,16 @@ private fun BibliographyGroup(title: String, entries: List<BibliographyEntry>) {
             fontWeight = FontWeight.SemiBold,
         )
         entries.forEach { entry ->
-            DcCard(variant = DcCardVariant.Condition, contentPadding = 12.dp) {
+            DcCard(modifier = Modifier.fillMaxWidth(), variant = DcCardVariant.Condition, contentPadding = 12.dp) {
                 Column(modifier = Modifier.padding(12.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text(
-                        text = entry.title,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.SemiBold,
-                    )
+                    // A website is listed by its address: written once, as the link.
+                    if (entry.title != entry.url) {
+                        Text(
+                            text = entry.title,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                    }
                     entry.authors.takeIf { it.isNotEmpty() }?.let { authors ->
                         Text(
                             text = stringResource(R.string.bibliography_authors, authors.joinToString()),

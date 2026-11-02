@@ -95,7 +95,24 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_226157f34704ebeb",
+          "kind": "TOPOGUIDE",
+          "title": "Schluchten-Canyon",
+          "authors": [
+            "A. Wieser",
+            "F. Karger",
+            "R. Ranner",
+            "I. Neumann"
+          ],
+          "publicationYear": 2004,
+          "reference": "3-901533-11-7",
+          "editor": "Edition Neumann",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1221/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_5e456f1fa55157d6",
@@ -107,11 +124,11 @@
       ],
       "resources": [
         {
-          "id": "resource_b4c80f5ed5910d6b",
+          "id": "resource_1fbf88a4b73f8dec",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.bergsteigen.com/sites/default.....83fe002_fallbach.pdf",
-          "url": "http://www.bergsteigen.com/sites/default.....83fe002_fallbach.pdf"
+          "title": "http://www.bergsteigen.com/sites/default/files/topos/659_Topo_0d94ae7a-9d22-4fd8-b584-9aed283fe002_fallbach.pdf",
+          "url": "http://www.bergsteigen.com/sites/default/files/topos/659_Topo_0d94ae7a-9d22-4fd8-b584-9aed283fe002_fallbach.pdf"
         }
       ]
     },

@@ -95,7 +95,22 @@
       "label": "même parking que pour le vallon des Molinières"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_1ec3771dffe52076",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons de l'Aveyron et de la Lozère",
+          "authors": [
+            "Roland Pelissier",
+            "Frédéric Louart"
+          ],
+          "publicationYear": 1991,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/123/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_a603aa4818255d95",

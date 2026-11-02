@@ -105,11 +105,11 @@
       ],
       "resources": [
         {
-          "id": "resource_0d13acebeadf5ff3",
+          "id": "resource_3f70e95126f422e6",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....pic=AltersbachCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....pic=AltersbachCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=AltersbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=AltersbachCanyon"
         }
       ]
     },

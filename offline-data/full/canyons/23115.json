@@ -104,7 +104,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_e6999a504a929a33",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning",
+          "authors": [
+            "Zaunhuber"
+          ],
+          "publicationYear": 1996,
+          "reference": null,
+          "editor": "Pollner Verlag",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1177/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_c53735ebffb796f9",
@@ -116,11 +130,11 @@
       ],
       "resources": [
         {
-          "id": "resource_69f63e4ee6571a0c",
+          "id": "resource_63a7dcbe673ff72d",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C...../MauthnerKlammCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C...../MauthnerKlammCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/MauthnerKlammCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/MauthnerKlammCanyon"
         }
       ]
     },

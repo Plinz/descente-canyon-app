@@ -87,7 +87,21 @@
       "label": "Se garer sans gêner"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_645355fdabc6144e",
+          "kind": "TOPOGUIDE",
+          "title": "Barranquismo en Gran Canaria : barrancos, caideros y afluentes.",
+          "authors": [
+            "Hedwig Elisabet Solanas Garcia et Victor España Llamas"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-84-617-0693-8",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/199/Barranquismo-en-Gran-Canaria.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_c3bd5d203187ac5f",
@@ -99,18 +113,18 @@
       ],
       "resources": [
         {
-          "id": "resource_726ac39144f1fd52",
+          "id": "resource_9f22f74cf63838e3",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://barrancoscanarios.com/barrancos/g.....barranco-de-la-mina/",
-          "url": "http://barrancoscanarios.com/barrancos/g.....barranco-de-la-mina/"
+          "title": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-sector-lagunetas/espanol-barranco-de-la-mina/",
+          "url": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-sector-lagunetas/espanol-barranco-de-la-mina/"
         },
         {
-          "id": "resource_b17546f9ebb6aec0",
+          "id": "resource_c82f8cff1a70ecf1",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://senderismoymontana.blogspot.com.e.....anco-de-la-mina.html",
-          "url": "http://senderismoymontana.blogspot.com.e.....anco-de-la-mina.html"
+          "title": "http://senderismoymontana.blogspot.com.es/2012/04/s-252-descenso-del-barranco-de-la-mina.html",
+          "url": "http://senderismoymontana.blogspot.com.es/2012/04/s-252-descenso-del-barranco-de-la-mina.html"
         }
       ]
     },

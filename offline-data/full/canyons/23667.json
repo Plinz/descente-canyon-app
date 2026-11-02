@@ -97,11 +97,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_19b8b8fc8ae1cbd0",
+          "id": "resource_23983077251dfbc2",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....aniKhalidUpperCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....aniKhalidUpperCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/WadiBaniKhalidUpperCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/WadiBaniKhalidUpperCanyon"
         },
         {
           "id": "resource_2bd065f1d431df9a",

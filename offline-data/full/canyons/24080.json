@@ -103,15 +103,30 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_e92d6244bf3c5943",
+          "kind": "TOPOGUIDE",
+          "title": "Descensos de barrancos en Tenerife (15 mas)",
+          "authors": [
+            "Emilio Aguilar Gutiérrez",
+            "Rosa Maria Hernandes Guzman"
+          ],
+          "publicationYear": 2014,
+          "reference": "ISBN : 9781495439933",
+          "editor": "Amazon",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/182/Descensos-de-barrancos-en-Tenerife-15-mas.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_93f592eb87eba238",
+          "id": "resource_b25f19ebb150cee3",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://franciscoadanfarina.blogspot.fr/2.....de-san-jeronimo.html",
-          "url": "http://franciscoadanfarina.blogspot.fr/2.....de-san-jeronimo.html"
+          "title": "http://franciscoadanfarina.blogspot.fr/2013/08/descenso-del-barranco-de-san-jeronimo.html",
+          "url": "http://franciscoadanfarina.blogspot.fr/2013/08/descenso-del-barranco-de-san-jeronimo.html"
         }
       ]
     },

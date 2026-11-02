@@ -104,8 +104,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_9e6fd2c5b047f2ba",
+          "kind": "MAP",
+          "title": "14 I-SE Malborghetto (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_bbf7715b826fa560",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioMalborghettoCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioMalborghettoCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

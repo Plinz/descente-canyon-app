@@ -95,7 +95,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b228f4b2ce58d332",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning : Alpes Maritimes. 170 descentes",
+          "authors": [
+            "Franck Jourdan",
+            "Jean-François Fiorina"
+          ],
+          "publicationYear": 2026,
+          "reference": "9782958258054",
+          "editor": "auto-edition",
+          "status": "en stock\n\n- 35,99 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1175/Canyoning-:-Alpes-Maritimes--170-descentes.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_306a6890e0a4c269",
@@ -107,11 +122,11 @@
       ],
       "resources": [
         {
-          "id": "resource_09cc9e00c22f4d0f",
+          "id": "resource_a31ade2f9384e56c",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.altisud.com/canyoning/france/.....l_detail-canyon.html",
-          "url": "http://www.altisud.com/canyoning/france/.....l_detail-canyon.html"
+          "title": "http://www.altisud.com/canyoning/france/alpes-maritimes/vallee-du-cians/ravin-des-cluots__i_4mxvn821taht__al_detail-canyon.html",
+          "url": "http://www.altisud.com/canyoning/france/alpes-maritimes/vallee-du-cians/ravin-des-cluots__i_4mxvn821taht__al_detail-canyon.html"
         }
       ]
     },

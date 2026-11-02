@@ -152,31 +152,24 @@
           "editor": "Édisud",
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/116/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_fe5b7b8fb110272b",
-          "kind": "TOPOGUIDE",
-          "title": "3339 ET La Motte-Du-Caire (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_ec844e72d95ece0e",
+          "kind": "MAP",
+          "title": "3339 ET La Motte-Du-Caire (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_bf739d63ebc3b81d",
-          "kind": "TOPOGUIDE",
-          "title": "3438 ET Embrun (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_83f652e7e3fab667",
+          "kind": "MAP",
+          "title": "3438 ET Embrun (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

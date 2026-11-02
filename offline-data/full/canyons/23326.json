@@ -96,8 +96,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_a3482111c0bd004f",
+          "kind": "MAP",
+          "title": "ASF n°2 Moyenne Roya - Val Nervia e Argentina (Alpes sans fronti?res)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_60a55acd0f9b09e5",
+          "kind": "MAP",
+          "title": "IM-7 Alpi Liguri, Mendatica: carta dei sentieri (Edizioni del Magistero)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_028f8855b634ac21",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/cod/IM023",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/cod/IM023"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

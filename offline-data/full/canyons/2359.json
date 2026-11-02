@@ -127,7 +127,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_2bafc8e0f7a42d9c",
+          "kind": "TOPOGUIDE",
+          "title": "La Corse en Canyon",
+          "authors": [
+            "Association CorseCanyon"
+          ],
+          "publicationYear": 2018,
+          "reference": null,
+          "editor": "auto-edition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1127/La-Corse-en-Canyon-3eme-edition.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_9e844b589d47ef86",

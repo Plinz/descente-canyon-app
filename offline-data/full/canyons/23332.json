@@ -63,7 +63,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_0710f326f5b4b107",
+          "kind": "TOPOGUIDE",
+          "title": "La Réunion : Topocanyon Ricaric",
+          "authors": [
+            "Ric A Ric"
+          ],
+          "publicationYear": 2003,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/156/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_b239997245dc5eb0",

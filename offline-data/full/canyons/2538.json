@@ -103,15 +103,29 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b021caf8b1429c77",
+          "kind": "TOPOGUIDE",
+          "title": "Tour de l'Europe en Canyon - Les plus belles descentes",
+          "authors": [
+            "Caracal et les Sancho Panza"
+          ],
+          "publicationYear": 2007,
+          "reference": "978-2-9526024-1-7",
+          "editor": null,
+          "status": "en stock\n\n- 25,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/13/Le-Tour-de-l-Europe-en-Canyon-:-les-plus-belles-descentes.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_35b7557a1dfa804f",
+          "id": "resource_9ad8093c564e5c39",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.actionman4x4.com/canonesybarr.....recorridos/tunez.htm",
-          "url": "http://www.actionman4x4.com/canonesybarr.....recorridos/tunez.htm"
+          "title": "http://www.actionman4x4.com/canonesybarrancos/recorridos/tunez.htm",
+          "url": "http://www.actionman4x4.com/canonesybarrancos/recorridos/tunez.htm"
         }
       ]
     },

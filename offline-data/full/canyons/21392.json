@@ -95,7 +95,23 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_2d51b6a6b1e9f79c",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons de Haute-Provence",
+          "authors": [
+            "Jean-François Fiorina",
+            "Franck Jourdan",
+            "Patrice Tordjman"
+          ],
+          "publicationYear": 2006,
+          "reference": "ISBN 2-9523920-1-3",
+          "editor": "Auto-édition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/117/Canyons-de-Haute-Provence.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_46895baacb4925db",

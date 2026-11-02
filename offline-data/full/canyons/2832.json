@@ -111,7 +111,21 @@
       "label": "Escorca - oratoire de Sant Pere et petite bar"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_98f7ebb142e98699",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons aux Baléares",
+          "authors": [
+            "Thierry Achmétoff"
+          ],
+          "publicationYear": 2004,
+          "reference": null,
+          "editor": "Auto-édition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/136/Canyons-aux-Baleares.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

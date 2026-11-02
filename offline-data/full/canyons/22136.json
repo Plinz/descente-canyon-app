@@ -95,7 +95,23 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_3112e5e6823eed7f",
+          "kind": "TOPOGUIDE",
+          "title": "Sistema central : descenso de barrancos",
+          "authors": [
+            "Luis Torija Gaitero",
+            "Felipe Gómez Zapatero",
+            "Javier Gil Terron"
+          ],
+          "publicationYear": 2016,
+          "reference": "978-84-9829-358-6",
+          "editor": "Ediciones Desnivel",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1114/Sistema-Central.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_3c04743922c0b4a5",

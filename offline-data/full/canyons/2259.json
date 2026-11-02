@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_0062918c2f446d19",
+          "kind": "TOPOGUIDE",
+          "title": "Les canyons des Hautes-Alpes",
+          "authors": [
+            "Henri VINCENS"
+          ],
+          "publicationYear": 2007,
+          "reference": "9782952944502",
+          "editor": "auto-édition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/12/Canyons-des-Hautes-Alpes.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_83f652e7e3fab667",

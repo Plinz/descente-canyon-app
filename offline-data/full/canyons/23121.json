@@ -96,7 +96,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_d3fcf40613d2c3c5",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons in Europa",
+          "authors": [
+            "Zaunhuber"
+          ],
+          "publicationYear": 1994,
+          "reference": "3-7634-1107-0",
+          "editor": "Berg",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1171/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_96e6058c83db2170",

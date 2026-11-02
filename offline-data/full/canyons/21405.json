@@ -77,7 +77,21 @@
       "label": "Le parking est équipé de tables et abris de pique-nique dont une pour handicapés.<br /> Départ du sentier indiqué par marque bleue et blanche peinte sur le 1er radier 1,7 km après le début de la RF2 en direction de la forêt de Bélouve."
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_3ed05b9314e97090",
+          "kind": "TOPOGUIDE",
+          "title": "73 canyons à la Réunion et Madagascar",
+          "authors": [
+            "Ric a Ric"
+          ],
+          "publicationYear": 2009,
+          "reference": null,
+          "editor": "Ric a Ric",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/134/73-canyons-a-la-Reunion-et-a-Madagascar.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_b239997245dc5eb0",
@@ -89,11 +103,11 @@
       ],
       "resources": [
         {
-          "id": "resource_462ef6278cbe0021",
+          "id": "resource_9869f9f6d8014eea",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.lrc-ffs.fr/Topos/Accueil/Cany.....esentationcanyon.htm",
-          "url": "http://www.lrc-ffs.fr/Topos/Accueil/Cany.....esentationcanyon.htm"
+          "title": "http://www.lrc-ffs.fr/Topos/Accueil/Canyons/Bras%20Noir%20Inf/presentationcanyon.htm",
+          "url": "http://www.lrc-ffs.fr/Topos/Accueil/Canyons/Bras%20Noir%20Inf/presentationcanyon.htm"
         }
       ]
     },

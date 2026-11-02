@@ -134,11 +134,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_3c0da8787194e9f8",
+          "id": "resource_6180f1083a1e1475",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.alpes-guide.com/sources/topo/......asp?pitineraire=235",
-          "url": "http://www.alpes-guide.com/sources/topo/......asp?pitineraire=235"
+          "title": "http://www.alpes-guide.com/sources/topo/fiche.asp?pitineraire=235",
+          "url": "http://www.alpes-guide.com/sources/topo/fiche.asp?pitineraire=235"
         }
       ]
     },

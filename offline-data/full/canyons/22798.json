@@ -97,11 +97,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_68515980dc71e94b",
+          "id": "resource_889351262f8b437c",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....?topic=RotbachCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....?topic=RotbachCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=RotbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=RotbachCanyon"
         }
       ]
     },

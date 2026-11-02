@@ -161,11 +161,11 @@
       ],
       "resources": [
         {
-          "id": "resource_451aca74c1f584a5",
+          "id": "resource_9be2f75ae5132207",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.canyons-arvernes.fr/index.php.....ory&id=83&Itemid=477",
-          "url": "http://www.canyons-arvernes.fr/index.php.....ory&id=83&Itemid=477"
+          "title": "http://www.canyons-arvernes.fr/index.php?option=com_content&view=category&id=83&Itemid=477",
+          "url": "http://www.canyons-arvernes.fr/index.php?option=com_content&view=category&id=83&Itemid=477"
         }
       ]
     },

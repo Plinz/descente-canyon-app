@@ -96,7 +96,19 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_6deba974c3fa69bb",
+          "kind": "TOPOGUIDE",
+          "title": "Espeleo & Canyons. Canyons i Cavitats de l'alt Bergueda. Mapa 1:50.000",
+          "authors": [],
+          "publicationYear": 2012,
+          "reference": "978-84-15075-66-0",
+          "editor": "Editorial Piolet",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1306/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {

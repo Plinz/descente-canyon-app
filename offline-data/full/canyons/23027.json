@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b98de8eadeb3ed89",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning in the Alps : Northern Italy and Ticino",
+          "authors": [
+            "Simon Flower"
+          ],
+          "publicationYear": 2012,
+          "reference": "978 1 85284 683 1",
+          "editor": "Cicerone",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1105/Canyoning-in-the-Alps-:-Northern-Italy-and-Ticino.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_ff21942f4e737548",
@@ -107,18 +121,18 @@
       ],
       "resources": [
         {
-          "id": "resource_2121fa9a28090940",
+          "id": "resource_96fa4aa3bf6b5031",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://lnx.canyoning.it/index/forra/reg/.....LIA/pro/PN/cod/PN012",
-          "url": "http://lnx.canyoning.it/index/forra/reg/.....LIA/pro/PN/cod/PN012"
+          "title": "http://lnx.canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/PN/cod/PN012",
+          "url": "http://lnx.canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/PN/cod/PN012"
         },
         {
-          "id": "resource_4c16d44783590aa1",
+          "id": "resource_6f4b265142fd1663",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.canyoneast.it/target.php?w=12.....rget=Rio%20Chiandola",
-          "url": "http://www.canyoneast.it/target.php?w=12.....rget=Rio%20Chiandola"
+          "title": "http://www.canyoneast.it/target.php?w=1280&lng=it&target=Rio%20Chiandola",
+          "url": "http://www.canyoneast.it/target.php?w=1280&lng=it&target=Rio%20Chiandola"
         }
       ]
     },

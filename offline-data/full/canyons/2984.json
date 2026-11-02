@@ -77,7 +77,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b021caf8b1429c77",
+          "kind": "TOPOGUIDE",
+          "title": "Tour de l'Europe en Canyon - Les plus belles descentes",
+          "authors": [
+            "Caracal et les Sancho Panza"
+          ],
+          "publicationYear": 2007,
+          "reference": "978-2-9526024-1-7",
+          "editor": null,
+          "status": "en stock\n\n- 25,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/13/Le-Tour-de-l-Europe-en-Canyon-:-les-plus-belles-descentes.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_eeb061f8e5a1dc6f",
@@ -89,11 +103,11 @@
       ],
       "resources": [
         {
-          "id": "resource_08dd1838ba4756be",
+          "id": "resource_578855475fb603e6",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon-maroc.com/wp-content/uploa.....OPO-Aqqa-NTaghia.jpg",
-          "url": "http://canyon-maroc.com/wp-content/uploa.....OPO-Aqqa-NTaghia.jpg"
+          "title": "http://canyon-maroc.com/wp-content/uploads/2014/09/TOPO-Aqqa-NTaghia.jpg",
+          "url": "http://canyon-maroc.com/wp-content/uploads/2014/09/TOPO-Aqqa-NTaghia.jpg"
         }
       ]
     },

@@ -113,7 +113,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_85c85a230e795ac4",
+          "kind": "MAP",
+          "title": "2249 ET Font-Romeu (Capcir) (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_df5566786c5c3e22",
+          "kind": "MAP",
+          "title": "2250 ET Bourg-Madame - Mont-Louis (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

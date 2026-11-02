@@ -103,9 +103,67 @@
       "label": "P"
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_a9041d20d126f712",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning Nord Italia",
+          "authors": [
+            "Pascal Van Duin"
+          ],
+          "publicationYear": 2009,
+          "reference": "978-88-901753-1-2",
+          "editor": "TopCanyon",
+          "status": "stock très réduit !\n\n- 25,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/135/Canyoning-Nord-Italia.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_8fb1574b05a5ff89",
+          "kind": "MAP",
+          "title": "016 Dolomiti del Centro Cadore (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_f5b45304167054e8",
+          "kind": "MAP",
+          "title": "12 I-SE Auronzo di Cadore (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_a09ebc1bdba59621",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/CampivieiCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/CampivieiCanyon"
+        },
+        {
+          "id": "resource_fb22693de3b96b1c",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.marmolo.it/montagna/monttorrentismo/torrentismociampeviei.html",
+          "url": "http://www.marmolo.it/montagna/monttorrentismo/torrentismociampeviei.html"
+        },
+        {
+          "id": "resource_a7c4dd63cb8b75e2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL062",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL062"
+        },
+        {
+          "id": "resource_4441d5ab1cd1b86b",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://win.aic-canyoning.it/forum/topic.asp?TOPIC_ID=1093",
+          "url": "http://win.aic-canyoning.it/forum/topic.asp?TOPIC_ID=1093"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

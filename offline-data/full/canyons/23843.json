@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_c5ad44922233045a",
+          "kind": "TOPOGUIDE",
+          "title": "Südtiroler Wasserfälle",
+          "authors": [
+            "Hanspaul Menara"
+          ],
+          "publicationYear": 1980,
+          "reference": "8870141209",
+          "editor": "Athesia",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1320/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_fb9e37eef667c82b",
@@ -121,11 +135,11 @@
           "url": "http://www.ctgernstein.com/schluchten/barbian"
         },
         {
-          "id": "resource_fb4540d9398fd6e1",
+          "id": "resource_3d2ff029ac1075f3",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.map-erlebnis.de/canyoning-top.....-barbian-ganderbach/",
-          "url": "http://www.map-erlebnis.de/canyoning-top.....-barbian-ganderbach/"
+          "title": "http://www.map-erlebnis.de/canyoning-topo/canyoning-barbian-ganderbach/",
+          "url": "http://www.map-erlebnis.de/canyoning-topo/canyoning-barbian-ganderbach/"
         }
       ]
     },

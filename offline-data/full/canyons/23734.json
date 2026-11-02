@@ -93,7 +93,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_1a056ec74c5c542b",
+          "kind": "TOPOGUIDE",
+          "title": "Trekking and Canyoning in the Jordanian Dead Sea Rift",
+          "authors": [
+            "Itai Haviv"
+          ],
+          "publicationYear": 2000,
+          "reference": "965-90315-0-5",
+          "editor": "Desert Breeze Press",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1175/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
@@ -104,11 +118,11 @@
           "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/WadiadDabiCanyon"
         },
         {
-          "id": "resource_20dbbbafa98c69d6",
+          "id": "resource_00e83b2233559151",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "https://web.archive.org/web/201402031020.....Nature-Reserve_B.jpg",
-          "url": "https://web.archive.org/web/201402031020.....Nature-Reserve_B.jpg"
+          "title": "https://web.archive.org/web/20140203102044/http://www.rscn.org.jo/orgsite/Portals/0/maps/established%20reserves%20maps/Mujib-Nature-Reserve_B.jpg",
+          "url": "https://web.archive.org/web/20140203102044/http://www.rscn.org.jo/orgsite/Portals/0/maps/established%20reserves%20maps/Mujib-Nature-Reserve_B.jpg"
         }
       ]
     },

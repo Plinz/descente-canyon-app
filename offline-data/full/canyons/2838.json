@@ -164,18 +164,18 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_c4576cb93bcd2b18",
+          "id": "resource_beceb1df76813c62",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://yelsub1.free.fr/canyons/espagne/b.....rtie_mer_na_mora.jpg",
-          "url": "http://yelsub1.free.fr/canyons/espagne/b.....rtie_mer_na_mora.jpg"
+          "title": "http://yelsub1.free.fr/canyons/espagne/baleares/sortie_mer_na_mora.jpg",
+          "url": "http://yelsub1.free.fr/canyons/espagne/baleares/sortie_mer_na_mora.jpg"
         },
         {
-          "id": "resource_64f4abb27b6e4705",
+          "id": "resource_f7c4cebc14956f14",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://yelsub1.free.fr/canyons/espagne/b...../sorties_na_mora.jpg",
-          "url": "http://yelsub1.free.fr/canyons/espagne/b...../sorties_na_mora.jpg"
+          "title": "http://yelsub1.free.fr/canyons/espagne/baleares/sorties_na_mora.jpg",
+          "url": "http://yelsub1.free.fr/canyons/espagne/baleares/sorties_na_mora.jpg"
         },
         {
           "id": "resource_f611dda69e7d97ed",

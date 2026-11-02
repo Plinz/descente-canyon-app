@@ -123,31 +123,24 @@
           "editor": null,
           "status": null,
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1226/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_53b43880fd9bdf35",
-          "kind": "TOPOGUIDE",
-          "title": "4 Füssen-Ausserfern (Kompass) - 1/50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_1264c301e3a70952",
+          "kind": "MAP",
+          "title": "4 Füssen-Ausserfern (Kompass)",
+          "scale": "1/50000",
           "detailUrl": null
         },
         {
-          "id": "biblio_4c5c80fa4c9ac486",
-          "kind": "TOPOGUIDE",
-          "title": "114 (ÖK50 (BEV)) - 1/50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_b6bd6e11c29897ad",
+          "kind": "MAP",
+          "title": "114 (ÖK50 (BEV))",
+          "scale": "1/50000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

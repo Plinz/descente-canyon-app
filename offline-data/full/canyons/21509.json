@@ -104,7 +104,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_72501cfca413dafd",
+          "kind": "MAP",
+          "title": "26 Pallars Sobira (Institut cartographic de Catalunya)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_de4432ab3827c86d",
+          "kind": "MAP",
+          "title": "26 pallars jussa (Institut cartographic de Catalunya)",
+          "scale": "50 000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

@@ -79,7 +79,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_1ec3771dffe52076",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons de l'Aveyron et de la Lozère",
+          "authors": [
+            "Roland Pelissier",
+            "Frédéric Louart"
+          ],
+          "publicationYear": 1991,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/123/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_a603aa4818255d95",
@@ -91,11 +106,11 @@
       ],
       "resources": [
         {
-          "id": "resource_478fa9771b24863a",
+          "id": "resource_7f08eb4a00d90caf",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.descente-canyon.com/forums/vi.....p?pid=103710#p103710",
-          "url": "http://www.descente-canyon.com/forums/vi.....p?pid=103710#p103710"
+          "title": "http://www.descente-canyon.com/forums/viewtopic.php?pid=103710#p103710",
+          "url": "http://www.descente-canyon.com/forums/viewtopic.php?pid=103710#p103710"
         }
       ]
     },

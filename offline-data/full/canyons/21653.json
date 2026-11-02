@@ -88,7 +88,22 @@
       "label": "Altitude 880m"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_83c09fd9dcf427c9",
+          "kind": "TOPOGUIDE",
+          "title": "Gorgas y barrancos de Cataluña - Mallorca y Alto Esera",
+          "authors": [
+            "Eduardo Gomez",
+            "Miquel Soro"
+          ],
+          "publicationYear": 1993,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1128/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {

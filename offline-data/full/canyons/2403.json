@@ -87,7 +87,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_c5e9cf6236f834de",
+          "kind": "TOPOGUIDE",
+          "title": "CDROM - Inventaire des canyons méditérannéens",
+          "authors": [
+            "Les Doigts Déglingués"
+          ],
+          "publicationYear": 2003,
+          "reference": "ISBN N°2-9513896-6-3",
+          "editor": "auto-édition",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1266/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_ea9d536253f21049",

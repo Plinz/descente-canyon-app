@@ -123,11 +123,11 @@
       ],
       "resources": [
         {
-          "id": "resource_d460f32b5cb65a2e",
+          "id": "resource_60246163fa26aa11",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....warzwasserbachCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....warzwasserbachCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/SchwarzwasserbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/SchwarzwasserbachCanyon"
         }
       ]
     },

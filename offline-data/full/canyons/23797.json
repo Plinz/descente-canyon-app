@@ -124,65 +124,47 @@
           "editor": "Adriambiente",
           "status": null,
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/153/topoguide.html"
-        },
-        {
-          "id": "biblio_8dc74a2785daa886",
-          "kind": "TOPOGUIDE",
-          "title": "N°2 Valli di Lanzo e Moncenisio (IGC) - 1/50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_adf3d0a83c0bbe64",
-          "kind": "TOPOGUIDE",
-          "title": "55 IV-SO Novalesa (IGMI 25/V) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_244c0b1a92b986fd",
-          "kind": "TOPOGUIDE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/MaloCanyon",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://canyon.carto.net/cwiki/bin/view/Canyons/MaloCanyon"
-        },
-        {
-          "id": "biblio_95f6e5b0460d60c3",
-          "kind": "TOPOGUIDE",
-          "title": "http://catastoforre.aic-canyoning.it/ind.....NTE/pro/TO/cod/TO013",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://catastoforre.aic-canyoning.it/index/forra/reg/PIEMONTE/pro/TO/cod/TO013"
-        },
-        {
-          "id": "biblio_eb5ec678410b8c80",
-          "kind": "TOPOGUIDE",
-          "title": "http://ropewiki.com/Malo",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://ropewiki.com/Malo"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_b660888aa85cccc3",
+          "kind": "MAP",
+          "title": "N°2 Valli di Lanzo e Moncenisio (IGC)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_8fd02516e27ca143",
+          "kind": "MAP",
+          "title": "55 IV-SO Novalesa (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_8514b75889f99d1c",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/MaloCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/MaloCanyon"
+        },
+        {
+          "id": "resource_8b9c5cc542668669",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/PIEMONTE/pro/TO/cod/TO013",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/PIEMONTE/pro/TO/cod/TO013"
+        },
+        {
+          "id": "resource_7ef1512201afa5b2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Malo",
+          "url": "http://ropewiki.com/Malo"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

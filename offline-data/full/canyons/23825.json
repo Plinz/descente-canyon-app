@@ -122,18 +122,18 @@
           "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/ValleFreddaCanyon"
         },
         {
-          "id": "resource_721911c94cf80bdb",
+          "id": "resource_3f48b97f1fb32957",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.sercantadventures.it/it/valle.....da/info-valle-fredda",
-          "url": "http://www.sercantadventures.it/it/valle.....da/info-valle-fredda"
+          "title": "http://www.sercantadventures.it/it/valle-fredda/info-valle-fredda",
+          "url": "http://www.sercantadventures.it/it/valle-fredda/info-valle-fredda"
         },
         {
-          "id": "resource_0169d67b81c184c7",
+          "id": "resource_098b7c97e4ab790a",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://catastoforre.aic-canyoning.it/ind.....IGE/pro/TN/cod/TN031",
-          "url": "http://catastoforre.aic-canyoning.it/ind.....IGE/pro/TN/cod/TN031"
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/TRENTINO+ALTO+ADIGE/pro/TN/cod/TN031",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/TRENTINO+ALTO+ADIGE/pro/TN/cod/TN031"
         }
       ]
     },

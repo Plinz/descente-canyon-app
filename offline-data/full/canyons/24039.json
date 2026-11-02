@@ -147,11 +147,11 @@
       ],
       "resources": [
         {
-          "id": "resource_c2cd62a31f4d4bde",
+          "id": "resource_be6ecc960e193ce1",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....s/PuntaCameddaCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....s/PuntaCameddaCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/PuntaCameddaCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/PuntaCameddaCanyon"
         }
       ]
     },

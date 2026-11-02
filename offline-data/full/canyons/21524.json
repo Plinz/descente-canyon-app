@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_876e7cdf8cadfc42",
+          "kind": "TOPOGUIDE",
+          "title": "Inventaire canyons, gorges et cascades du Doubs",
+          "authors": [
+            "Christian Jeannoutot"
+          ],
+          "publicationYear": 2006,
+          "reference": null,
+          "editor": "Comité Départemental de Spéléologie du Doubs",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1153/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_4f2c565821561837",

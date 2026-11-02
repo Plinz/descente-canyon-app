@@ -104,8 +104,38 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_519d6acfc47e762b",
+          "kind": "MAP",
+          "title": "013 Prealpi Carniche, Val Tagliamento (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_66a983e099f87fa8",
+          "kind": "MAP",
+          "title": "09 Alpi Carniche - Carnia Centrale (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_699af617c97c0b45",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioDellAmbruseitCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioDellAmbruseitCanyon"
+        },
+        {
+          "id": "resource_d393839f7a055047",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.canyoneast.it/files/it/Rio%20Ambruseit.pdf",
+          "url": "http://www.canyoneast.it/files/it/Rio%20Ambruseit.pdf"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

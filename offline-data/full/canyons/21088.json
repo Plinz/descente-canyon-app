@@ -118,31 +118,24 @@
           "editor": "J.-C. Bihet",
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/121/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_c0604fce2c71ae9c",
-          "kind": "TOPOGUIDE",
-          "title": "1546 ET Laruns - Gourette (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_31404aad0888192c",
+          "kind": "MAP",
+          "title": "1546 ET Laruns - Gourette (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_e324ef0c88dacd39",
-          "kind": "TOPOGUIDE",
-          "title": "1547 OT Ossau - Vallee d'Aspe (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_1e3ffadad605da6e",
+          "kind": "MAP",
+          "title": "1547 OT Ossau - Vallee d'Aspe (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

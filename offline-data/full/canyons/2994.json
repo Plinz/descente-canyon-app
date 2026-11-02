@@ -118,31 +118,24 @@
           "editor": "J.-C. Bihet",
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/121/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_e324ef0c88dacd39",
-          "kind": "TOPOGUIDE",
-          "title": "1547 OT Ossau - Vallee d'Aspe (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_1e3ffadad605da6e",
+          "kind": "MAP",
+          "title": "1547 OT Ossau - Vallee d'Aspe (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_b9e88de9fae28e4a",
-          "kind": "TOPOGUIDE",
-          "title": "1647 OT Vignemale (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_d62f93eff94c3bef",
+          "kind": "MAP",
+          "title": "1647 OT Vignemale (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

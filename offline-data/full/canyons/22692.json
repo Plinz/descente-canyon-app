@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b4c9f8b89ab25817",
+          "kind": "TOPOGUIDE",
+          "title": "Randonnées aquatiques et canyons faciles des Pyrénées",
+          "authors": [
+            "Bruno Matéo"
+          ],
+          "publicationYear": 2010,
+          "reference": "978-2-84182-454-0",
+          "editor": "Rando Editions",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/164/Randonnees-aquatiques--canyons-faciles-des-Pyrenees.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

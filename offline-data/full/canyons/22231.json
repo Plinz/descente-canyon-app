@@ -103,7 +103,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b228f4b2ce58d332",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning : Alpes Maritimes. 170 descentes",
+          "authors": [
+            "Franck Jourdan",
+            "Jean-François Fiorina"
+          ],
+          "publicationYear": 2026,
+          "reference": "9782958258054",
+          "editor": "auto-edition",
+          "status": "en stock\n\n- 35,99 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1175/Canyoning-:-Alpes-Maritimes--170-descentes.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_db1d7a85b782a57f",
@@ -115,11 +130,11 @@
       ],
       "resources": [
         {
-          "id": "resource_d4baef3a36bb09bd",
+          "id": "resource_ecebe9c74a3950e0",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://carnaby.street.free.fr/pages_musi.....yons06.htm#lantosque",
-          "url": "http://carnaby.street.free.fr/pages_musi.....yons06.htm#lantosque"
+          "title": "http://carnaby.street.free.fr/pages_musiciens/canyons06/cartecanyons06.htm#lantosque",
+          "url": "http://carnaby.street.free.fr/pages_musiciens/canyons06/cartecanyons06.htm#lantosque"
         }
       ]
     },

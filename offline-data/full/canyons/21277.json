@@ -103,7 +103,23 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_cea7eadf1be0593f",
+          "kind": "TOPOGUIDE",
+          "title": "Aigua, Roca i Penombra, El Descens d'Engorjats a Catalunya : Geomorfologia, tècnica i seguretat",
+          "authors": [
+            "J.M. Concernau",
+            "A Civit",
+            "X. Boltà"
+          ],
+          "publicationYear": 2000,
+          "reference": "84-89890-52-8",
+          "editor": "Cossetània",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1125/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
@@ -128,11 +144,11 @@
           "url": "http://www.latrencanous.com/barrancos/glorieta/topo.pdf"
         },
         {
-          "id": "resource_84cdded5eab5f0a6",
+          "id": "resource_b9a07d3788ae7694",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....iudelaGlorietaCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....iudelaGlorietaCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RiudelaGlorietaCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RiudelaGlorietaCanyon"
         }
       ]
     },

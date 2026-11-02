@@ -107,18 +107,18 @@
       ],
       "resources": [
         {
-          "id": "resource_c0a4bd70f3320053",
+          "id": "resource_eb960f7cf115dd22",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.bergsteigen.com/klettersteig/.....enklamm-klettersteig",
-          "url": "http://www.bergsteigen.com/klettersteig/.....enklamm-klettersteig"
+          "title": "http://www.bergsteigen.com/klettersteig/kaernten/gailtaler-alpen-lienzer-dolomiten/millnatzenklamm-klettersteig",
+          "url": "http://www.bergsteigen.com/klettersteig/kaernten/gailtaler-alpen-lienzer-dolomiten/millnatzenklamm-klettersteig"
         },
         {
-          "id": "resource_6385e393f88ee66a",
+          "id": "resource_e6d5ed33ae7efe17",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....illnatzenKlammCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....illnatzenKlammCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/MillnatzenKlammCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/MillnatzenKlammCanyon"
         }
       ]
     },

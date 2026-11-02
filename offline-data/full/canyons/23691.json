@@ -69,11 +69,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_e55e4c99d30aff45",
+          "id": "resource_36a5bbc5f7cd60aa",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.canyoneast.it/target.php?w=16.....⌖=Rio%20Barbar",
-          "url": "http://www.canyoneast.it/target.php?w=16.....⌖=Rio%20Barbar"
+          "title": "http://www.canyoneast.it/target.php?w=1600&lng=uk&target=Rio%20Barbar",
+          "url": "http://www.canyoneast.it/target.php?w=1600&lng=uk&target=Rio%20Barbar"
         }
       ]
     },

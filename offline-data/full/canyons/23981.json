@@ -87,7 +87,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_17b2bb33cf165b86",
+          "kind": "TOPOGUIDE",
+          "title": "Ramblas, barrancos y rincones perdidos de la provincia de Teruel",
+          "authors": [
+            "Amor Polo",
+            "Luis Torrijo"
+          ],
+          "publicationYear": 2008,
+          "reference": "9788483212400",
+          "editor": "Prames",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1335/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {

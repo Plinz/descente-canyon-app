@@ -79,7 +79,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_15c2d9128f5e2620",
+          "kind": "TOPOGUIDE",
+          "title": "Cascades et canyons littoraux à La Ciotat",
+          "authors": [
+            "Catherine & Jean-Carlo Fait"
+          ],
+          "publicationYear": 2009,
+          "reference": "9782953455007",
+          "editor": "Maison des falaises",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/153/Cascades-et-canyons-littoraux-a-La-Ciotat.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

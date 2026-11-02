@@ -105,11 +105,11 @@
       ],
       "resources": [
         {
-          "id": "resource_3309a215d3e84f89",
+          "id": "resource_e9c8577461d5d0d5",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....pic=WirtatobelCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....pic=WirtatobelCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=WirtatobelCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=WirtatobelCanyon"
         }
       ]
     },

@@ -77,7 +77,21 @@
       "label": "Parking et entrée intermédiaire du Canyon sous la route"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_ee92621b53de3c8c",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning : Swiss Alps / Alpes Suisse",
+          "authors": [
+            "Association Openbach"
+          ],
+          "publicationYear": 2015,
+          "reference": "9782746679450",
+          "editor": "auto-edition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/195/Canyoning-:-Swiss-alps---Alpes-suisses-Vol-1.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_2cbe04e8e4c810d5",
@@ -89,11 +103,11 @@
       ],
       "resources": [
         {
-          "id": "resource_d5b540ae2bca1ffd",
+          "id": "resource_28c1646d76e3f69a",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.homepage.bluewin.ch/swestcany.....havalet/Chavalet.htm",
-          "url": "http://www.homepage.bluewin.ch/swestcany.....havalet/Chavalet.htm"
+          "title": "http://www.homepage.bluewin.ch/swestcanyon/Canyons/Chavalet/Chavalet.htm",
+          "url": "http://www.homepage.bluewin.ch/swestcanyon/Canyons/Chavalet/Chavalet.htm"
         }
       ]
     },

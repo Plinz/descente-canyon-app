@@ -65,7 +65,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_8219a16db3ce5bff",
+          "kind": "TOPOGUIDE",
+          "title": "Carte N°5 - Hautes Pyrénées",
+          "authors": [
+            "Patrick Gimat"
+          ],
+          "publicationYear": 2000,
+          "reference": null,
+          "editor": null,
+          "status": "stock très réduit !\n\n- 9,00 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/124/Carte-n°5-:-Hautes-Pyrenees.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_2be2581234231e7f",

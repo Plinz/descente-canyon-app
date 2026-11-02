@@ -107,11 +107,11 @@
       ],
       "resources": [
         {
-          "id": "resource_ba556f6060b607fb",
+          "id": "resource_194d713778df53e6",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....oerschachklammCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....oerschachklammCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/WoerschachklammCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/WoerschachklammCanyon"
         }
       ]
     },

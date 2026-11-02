@@ -129,11 +129,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_fc0d03ab8e8a75c7",
+          "id": "resource_0e61cecbe78a9ec0",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://web.archive.org/web/2008051401193......madeira/retour.html",
-          "url": "http://web.archive.org/web/2008051401193......madeira/retour.html"
+          "title": "http://web.archive.org/web/20080514011935/http://pagesperso-orange.fr/canyon.madeira/retour.html",
+          "url": "http://web.archive.org/web/20080514011935/http://pagesperso-orange.fr/canyon.madeira/retour.html"
         },
         {
           "id": "resource_c5b8c68518d57085",

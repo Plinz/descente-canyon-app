@@ -80,7 +80,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_85c85a230e795ac4",
+          "kind": "MAP",
+          "title": "2249 ET Font-Romeu (Capcir) (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_9f78c45ba2e5b5de",
+          "kind": "MAP",
+          "title": "2249 OT Bourg-Madame (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

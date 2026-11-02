@@ -87,7 +87,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_dcb511a7e9f5f295",
+          "kind": "TOPOGUIDE",
+          "title": "Aran - Valle y barrancos.",
+          "authors": [
+            "Luis Mariano Mateos Marcos",
+            "Adolfo Morais Ezkerro"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-84-8321-402-2",
+          "editor": "Prames",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/180/Aran-:-Valle-y-Barrancos-.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

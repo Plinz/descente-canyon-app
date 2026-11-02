@@ -108,11 +108,11 @@
       ],
       "resources": [
         {
-          "id": "resource_58ab4a9ccc13eac2",
+          "id": "resource_5b2cf0f96c33b6bf",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....c=TengelgrabenCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....c=TengelgrabenCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=TengelgrabenCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=TengelgrabenCanyon"
         }
       ]
     },

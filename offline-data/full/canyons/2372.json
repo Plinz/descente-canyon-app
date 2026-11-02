@@ -87,8 +87,37 @@
       "label": "Facultatif. Préférez seulement le parking aval."
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_da30219dbb4dd176",
+          "kind": "TOPOGUIDE",
+          "title": "Les canyons de Savoie",
+          "authors": [
+            "Patrick Chollot"
+          ],
+          "publicationYear": 2018,
+          "reference": "978-2-95309-39-1-9",
+          "editor": "auto-édition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1125/Les-canyons-de-Savoie.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_706988e49e3d2c14",
+          "kind": "MAP",
+          "title": "3432 ET Albertville (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_30a1a7d4e8445846",
+          "kind": "MAP",
+          "title": "3532 OT Massif du Beaufortin (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

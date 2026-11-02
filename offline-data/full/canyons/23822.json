@@ -96,8 +96,38 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_437cfbba0cc56e85",
+          "kind": "MAP",
+          "title": "19 Alpi Giulie Occidentali - Tarvisiano (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_e5d932400b5b9b0c",
+          "kind": "MAP",
+          "title": "14A III-NO Cave del Predil (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_bb90a6e691d31f00",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/TorrenteCarnizzaCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/TorrenteCarnizzaCanyon"
+        },
+        {
+          "id": "resource_9ad6fb050c6c3284",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD064",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD064"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

@@ -85,7 +85,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_05f7a8dc05e74833",
+          "kind": "TOPOGUIDE",
+          "title": "Asturias, Cuenca, Granada, Mallorca, Tarragona y Terruel - Guia de descenso de cañones y barrancos",
+          "authors": [
+            "Eduardo Gomez",
+            "Laura Tejero"
+          ],
+          "publicationYear": 2004,
+          "reference": "8495744-37-6",
+          "editor": "Barrabes",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1123/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

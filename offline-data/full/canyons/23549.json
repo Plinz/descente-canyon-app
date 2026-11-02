@@ -91,11 +91,11 @@
       ],
       "resources": [
         {
-          "id": "resource_43c44c37e6e420fe",
+          "id": "resource_181d7ecd0980939b",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.descente-canyon.com/forums/vi.....php?pid=26652#p26652",
-          "url": "http://www.descente-canyon.com/forums/vi.....php?pid=26652#p26652"
+          "title": "http://www.descente-canyon.com/forums/viewtopic.php?pid=26652#p26652",
+          "url": "http://www.descente-canyon.com/forums/viewtopic.php?pid=26652#p26652"
         }
       ]
     },

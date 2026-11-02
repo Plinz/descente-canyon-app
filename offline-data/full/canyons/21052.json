@@ -96,7 +96,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_c1524b8af0f1815f",
+          "kind": "TOPOGUIDE",
+          "title": "Pirineos - Guia de descenso de canones y barrancos",
+          "authors": [
+            "Eduardo Gomez",
+            "Laura Tejero"
+          ],
+          "publicationYear": 2002,
+          "reference": "84-95744-20-1",
+          "editor": "Barrabes",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1126/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

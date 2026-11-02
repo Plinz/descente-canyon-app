@@ -96,8 +96,52 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_1814dc130d071e86",
+          "kind": "MAP",
+          "title": "27 Canin - Val Resia (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_fd029d73a53002a7",
+          "kind": "MAP",
+          "title": "14 II-SE Monte Canin (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_8fa9b3e8d0b587d2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioCostaStrettaCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioCostaStrettaCanyon"
+        },
+        {
+          "id": "resource_a840ff68dd5110ce",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyoningalpigiulie.blogspot.de/2011/05/esplorazione-costa-stretta_28.html",
+          "url": "http://canyoningalpigiulie.blogspot.de/2011/05/esplorazione-costa-stretta_28.html"
+        },
+        {
+          "id": "resource_3c4f9682a6cedb8f",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Costa_Stretta",
+          "url": "http://ropewiki.com/Costa_Stretta"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

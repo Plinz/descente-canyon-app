@@ -93,7 +93,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_487232d166db8f9e",
+          "kind": "TOPOGUIDE",
+          "title": "Cañones y barrancos de la Ribagorza : descenso de barrancos en alto Noguera Ribagorzana y el valle del Isabena",
+          "authors": [
+            "Javier Guerrero"
+          ],
+          "publicationYear": 2017,
+          "reference": "978-84-8321-864-8",
+          "editor": "Prames",
+          "status": "derniers exemplaires !\n\n- 26,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1121/Canones-y-barrancos-de-la-Ribagorza.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

@@ -93,7 +93,19 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_9f88558c147f1042",
+          "kind": "TOPOGUIDE",
+          "title": "canyon near sydney",
+          "authors": [],
+          "publicationYear": null,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1154/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_d85d5e14ab078163",
@@ -105,11 +117,11 @@
       ],
       "resources": [
         {
-          "id": "resource_e3178bcbe5fda64c",
+          "id": "resource_879006f6fc87707a",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://ozultimate.com/canyoning/track_no.....wens_creek_north.htm",
-          "url": "http://ozultimate.com/canyoning/track_no.....wens_creek_north.htm"
+          "title": "http://ozultimate.com/canyoning/track_notes/lower_bowens_creek_north.htm",
+          "url": "http://ozultimate.com/canyoning/track_notes/lower_bowens_creek_north.htm"
         }
       ]
     },

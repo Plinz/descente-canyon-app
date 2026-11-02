@@ -95,7 +95,24 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_60029af297dac6c3",
+          "kind": "TOPOGUIDE",
+          "title": "Italia Nord-Ovest - Gole e Canyon Vol.3",
+          "authors": [
+            "Franscesco Cacace",
+            "Roberto Jarre",
+            "Dino Ruotolo",
+            "Roberto Schenone. Traduit en français par Thierry Achmetoff"
+          ],
+          "publicationYear": 2003,
+          "reference": "88-900260-2-2",
+          "editor": "Adriambiente",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/153/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {

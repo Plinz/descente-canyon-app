@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_4934ec356d0da143",
+          "kind": "TOPOGUIDE",
+          "title": "Les Causses Majeurs",
+          "authors": [
+            "E.A. Martel"
+          ],
+          "publicationYear": 1936,
+          "reference": null,
+          "editor": "Artières et Maury",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1261/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_6ec0961689028659",

@@ -159,11 +159,11 @@
       ],
       "resources": [
         {
-          "id": "resource_f2d259d1fc1008d9",
+          "id": "resource_8c5e45c5e04c14fb",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.montagne-virtuel.com/05/canyo.....prareboul/sortie.php",
-          "url": "http://www.montagne-virtuel.com/05/canyo.....prareboul/sortie.php"
+          "title": "http://www.montagne-virtuel.com/05/canyonning/prareboul/sortie.php",
+          "url": "http://www.montagne-virtuel.com/05/canyonning/prareboul/sortie.php"
         },
         {
           "id": "resource_6f29a3d09c7d97fb",

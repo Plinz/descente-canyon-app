@@ -103,7 +103,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_9d6c02ea74c20d7a",
+          "kind": "TOPOGUIDE",
+          "title": "40 aventuras al final del camino",
+          "authors": [
+            "Murillo",
+            "Caballo"
+          ],
+          "publicationYear": 2004,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1166/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_d8684d1f78e52a5f",

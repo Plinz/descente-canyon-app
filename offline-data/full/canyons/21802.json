@@ -148,11 +148,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_be421fe23184a270",
+          "id": "resource_9958e95f9386110c",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/viewau.....ons/HidanUpperCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/viewau.....ons/HidanUpperCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/viewauth/Canyons/HidanUpperCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/viewauth/Canyons/HidanUpperCanyon"
         }
       ]
     },

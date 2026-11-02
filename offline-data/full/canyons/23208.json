@@ -103,7 +103,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_dd74fbf46cea43bb",
+          "kind": "TOPOGUIDE",
+          "title": "Le Guide des gorges du Verdon",
+          "authors": [
+            "Roger Verdegen"
+          ],
+          "publicationYear": 1974,
+          "reference": null,
+          "editor": "Association Plein-Air Promotion Alpes-Provence",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1283/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_371b2a24e7aa2a73",
@@ -115,11 +129,11 @@
       ],
       "resources": [
         {
-          "id": "resource_d4bef817c5a1bbc0",
+          "id": "resource_87863b0aeef56d4f",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....orgesduVerdonICanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....orgesduVerdonICanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/GorgesduVerdonICanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/GorgesduVerdonICanyon"
         }
       ]
     },

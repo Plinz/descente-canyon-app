@@ -79,7 +79,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_eed495d26e461ee5",
+          "kind": "TOPOGUIDE",
+          "title": "Descenso de Cañones - Gomera - Tomo 1",
+          "authors": [
+            "Eduardo Gómez"
+          ],
+          "publicationYear": 1997,
+          "reference": null,
+          "editor": "Eduardo Gómez",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1296/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

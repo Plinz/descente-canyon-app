@@ -96,8 +96,38 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_cdef787a7b7235ad",
+          "kind": "MAP",
+          "title": "14 II-NE Jof di Montasio (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_77db065a30d75408",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioDellaForchiaCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RioDellaForchiaCanyon"
+        },
+        {
+          "id": "resource_c5e7f16eb156eaf7",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Forchia",
+          "url": "http://ropewiki.com/Forchia"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

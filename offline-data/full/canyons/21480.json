@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_a9e8ab63fe4e5775",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning en Suisse",
+          "authors": [
+            "Andreas Brunner et Frédéric Bétrisey"
+          ],
+          "publicationYear": 2001,
+          "reference": "ISBN 3-85902-195-8",
+          "editor": "Club Alpin Suisse CAS",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/160/Canyoning-en-Suisse-1.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_2307d8f75f87a997",

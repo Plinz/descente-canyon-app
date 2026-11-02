@@ -121,31 +121,24 @@
           "editor": "Association Corse Canyon",
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/188/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_f515ddbb9962ef3f",
-          "kind": "TOPOGUIDE",
-          "title": "3640 ET Haute Tinée 2 / Isola 2000 / Parc National du Mercantour (1/25000) - IGN TOP25",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_16cff64ac6385d2c",
+          "kind": "MAP",
+          "title": "3640 ET Haute Tinée 2 / Isola 2000 / Parc National du Mercantour (1/25000)",
+          "scale": "IGN TOP25",
           "detailUrl": null
         },
         {
-          "id": "biblio_9d9c252d3c291b59",
-          "kind": "TOPOGUIDE",
-          "title": "3639 OT Haute Tinee (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_c8173d3d9c6bcfc9",
+          "kind": "MAP",
+          "title": "3639 OT Haute Tinee (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

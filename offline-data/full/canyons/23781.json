@@ -104,8 +104,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_c53735ebffb796f9",
+          "kind": "MAP",
+          "title": "223 Naturarena Kärnten-Gailtal, Gitschtal, Lesachtal, Weissensee, Oberes Drautal (Freytag & Berndt)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_ad9bcbeb673fad8f",
+          "kind": "MAP",
+          "title": "198 Weissbriach (ÖK50)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_2c90d6cdc0b50774",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/StraningbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/StraningbachCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

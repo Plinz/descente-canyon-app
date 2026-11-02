@@ -103,7 +103,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b98de8eadeb3ed89",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning in the Alps : Northern Italy and Ticino",
+          "authors": [
+            "Simon Flower"
+          ],
+          "publicationYear": 2012,
+          "reference": "978 1 85284 683 1",
+          "editor": "Cicerone",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1105/Canyoning-in-the-Alps-:-Northern-Italy-and-Ticino.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_e96372744d4c4932",
@@ -122,11 +136,11 @@
           "url": "http://www.canyoning.it/procanyon/cuestis.htm"
         },
         {
-          "id": "resource_2fd9bef8363e7d0f",
+          "id": "resource_3c4f054ffffa89aa",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.canyoneast.it/target.php?w=19.....target=Rio%20Cuestis",
-          "url": "http://www.canyoneast.it/target.php?w=19.....target=Rio%20Cuestis"
+          "title": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Rio%20Cuestis",
+          "url": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Rio%20Cuestis"
         }
       ]
     },

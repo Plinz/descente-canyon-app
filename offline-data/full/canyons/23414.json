@@ -63,15 +63,29 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_645355fdabc6144e",
+          "kind": "TOPOGUIDE",
+          "title": "Barranquismo en Gran Canaria : barrancos, caideros y afluentes.",
+          "authors": [
+            "Hedwig Elisabet Solanas Garcia et Victor España Llamas"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-84-617-0693-8",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/199/Barranquismo-en-Gran-Canaria.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_15be2cbb1c643be0",
+          "id": "resource_581a14e429537b60",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://barrancoscanarios.com/barrancos/g.....nco-de-los-gallegos/",
-          "url": "http://barrancoscanarios.com/barrancos/g.....nco-de-los-gallegos/"
+          "title": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-sector-caldera-de-tirajana/barranco-de-los-gallegos/",
+          "url": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-sector-caldera-de-tirajana/barranco-de-los-gallegos/"
         }
       ]
     },

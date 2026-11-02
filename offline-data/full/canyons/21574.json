@@ -146,11 +146,11 @@
           "url": "http://www.barrancos.org/sia.htm"
         },
         {
-          "id": "resource_ab3bf61fcff4e006",
+          "id": "resource_5bad4fddc4ff7dc6",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://passport.aventure.free.fr/afficha.....=PUERTO%20(BARRANCO)",
-          "url": "http://passport.aventure.free.fr/afficha.....=PUERTO%20(BARRANCO)"
+          "title": "http://passport.aventure.free.fr/affichage.php3?selcny=PUERTO%20(BARRANCO)",
+          "url": "http://passport.aventure.free.fr/affichage.php3?selcny=PUERTO%20(BARRANCO)"
         }
       ]
     },

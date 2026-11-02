@@ -146,11 +146,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_0a17b12dc7c0870b",
+          "id": "resource_a4f19ac370ffcba9",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://passport.aventure.free.fr/afficha.....=SIERRA%20(BARRANCO)",
-          "url": "http://passport.aventure.free.fr/afficha.....=SIERRA%20(BARRANCO)"
+          "title": "http://passport.aventure.free.fr/affichage.php3?selcny=SIERRA%20(BARRANCO)",
+          "url": "http://passport.aventure.free.fr/affichage.php3?selcny=SIERRA%20(BARRANCO)"
         }
       ]
     },

@@ -95,15 +95,31 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_88d79cdd1fda3607",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons du Haut Piémont Italien - Val d'Ossola",
+          "authors": [
+            "Speleo Club de la Vallée de la Vis",
+            "Club Omni Sport Perrier",
+            "Speleo-Club Vacances du CAF - Briancon"
+          ],
+          "publicationYear": 2002,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/14/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_41b841ea654d0fa8",
+          "id": "resource_ff6f0246f9373758",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://yelsub1.free.fr/canyons/italie/os.....aout_2006/devero.wmv",
-          "url": "http://yelsub1.free.fr/canyons/italie/os.....aout_2006/devero.wmv"
+          "title": "http://yelsub1.free.fr/canyons/italie/ossola_aout_2006/devero.wmv",
+          "url": "http://yelsub1.free.fr/canyons/italie/ossola_aout_2006/devero.wmv"
         }
       ]
     },

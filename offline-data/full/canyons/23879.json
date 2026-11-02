@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_c5ad44922233045a",
+          "kind": "TOPOGUIDE",
+          "title": "Südtiroler Wasserfälle",
+          "authors": [
+            "Hanspaul Menara"
+          ],
+          "publicationYear": 1980,
+          "reference": "8870141209",
+          "editor": "Athesia",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1320/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_6691f7b9249adcf1",
@@ -107,11 +121,11 @@
       ],
       "resources": [
         {
-          "id": "resource_61a09e920c0c72e2",
+          "id": "resource_c86c6b62fc6a94b4",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....bachbeiBruneckCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....bachbeiBruneckCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/SchwarzbachbeiBruneckCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/SchwarzbachbeiBruneckCanyon"
         },
         {
           "id": "resource_31a2332bc606a2c2",
@@ -121,18 +135,18 @@
           "url": "http://www.ctgernstein.com/schluchten/schwarzbach"
         },
         {
-          "id": "resource_05a168416d352546",
+          "id": "resource_e6fe938cfc285c5b",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.map-erlebnis.de/canyoning-top.....chwarzbach-trentino/",
-          "url": "http://www.map-erlebnis.de/canyoning-top.....chwarzbach-trentino/"
+          "title": "http://www.map-erlebnis.de/canyoning-topo/canyoning-schwarzbach-trentino/",
+          "url": "http://www.map-erlebnis.de/canyoning-topo/canyoning-schwarzbach-trentino/"
         },
         {
-          "id": "resource_05afd2a1d0b4ed18",
+          "id": "resource_4bb07c62843b0d04",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://catastoforre.aic-canyoning.it/ind.....IGE/pro/BZ/cod/BZ024",
-          "url": "http://catastoforre.aic-canyoning.it/ind.....IGE/pro/BZ/cod/BZ024"
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/TRENTINO+ALTO+ADIGE/pro/BZ/cod/BZ024",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/TRENTINO+ALTO+ADIGE/pro/BZ/cod/BZ024"
         }
       ]
     },

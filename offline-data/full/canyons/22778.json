@@ -113,31 +113,24 @@
           "editor": "TopCanyon",
           "status": "stock très réduit !\n\n- 25,90 € -\n\nCommandez cet ouvrage dès maintenant !",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/135/Canyoning-Nord-Italia.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_58cbf7973e01f319",
-          "kind": "TOPOGUIDE",
-          "title": "89 Domodossola (Kompass) - 1/50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_bda15ef254cb0bab",
+          "kind": "MAP",
+          "title": "89 Domodossola (Kompass)",
+          "scale": "1/50000",
           "detailUrl": null
         },
         {
-          "id": "biblio_c03f10c7348fe7bb",
-          "kind": "TOPOGUIDE",
-          "title": "11 Domodossola E Val Formazza (IGC) - 1/50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_24bbce7a020ccc7d",
+          "kind": "MAP",
+          "title": "11 Domodossola E Val Formazza (IGC)",
+          "scale": "1/50000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

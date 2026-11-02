@@ -112,8 +112,37 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_03ee7fe5c979f699",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons du Haut Piemont italien",
+          "authors": [
+            "Spéléo club de la Vallée de la Vis"
+          ],
+          "publicationYear": 2016,
+          "reference": null,
+          "editor": null,
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1107/Canyons-du-Haut-Piemont-italien.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_9a5af571355994e9",
+          "kind": "MAP",
+          "title": "285 Domodossola (Carte Nationale Suisse)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_160d770f88aec902",
+          "kind": "MAP",
+          "title": "284T Mischabel - Zermatt -Saas Fee (Carte Nationale Suisse)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

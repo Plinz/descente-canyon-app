@@ -101,15 +101,29 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_9fee8e80e3298324",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons de Madère - Descentes Sportives et Randonnées",
+          "authors": [
+            "Antoine Florin"
+          ],
+          "publicationYear": 2007,
+          "reference": "978-2-9529227-0-8",
+          "editor": "auto-édition",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1194/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_e0c587b1a50be946",
+          "id": "resource_ad0dbe922230c0ec",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyoning.camadeira.com/canyons/r.....da-hortela-inferior/",
-          "url": "http://canyoning.camadeira.com/canyons/r.....da-hortela-inferior/"
+          "title": "http://canyoning.camadeira.com/canyons/ribeira-da-hortela-inferior/",
+          "url": "http://canyoning.camadeira.com/canyons/ribeira-da-hortela-inferior/"
         }
       ]
     },

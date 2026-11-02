@@ -96,7 +96,21 @@
       "label": "Parking de la ferme (restaurée) de Bourlatier."
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_c73c54d72357ab93",
+          "kind": "TOPOGUIDE",
+          "title": "Zoom sur les gorges de l'Ardèche",
+          "authors": [
+            "Jean-Michel Metzger avec la collaboration du Comité Départemental d'Escalade Ardèche"
+          ],
+          "publicationYear": 1994,
+          "reference": "ISBN 2-85744-715-9",
+          "editor": "Edisud",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/115/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_e7e57be1ff994a91",

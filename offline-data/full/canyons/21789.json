@@ -103,15 +103,29 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_7390d09084f81bc3",
+          "kind": "TOPOGUIDE",
+          "title": "Cañones y barrancos de Andalucia. Sevilla, Cadiz y Malaga",
+          "authors": [
+            "Francisco José Garcia Algaba"
+          ],
+          "publicationYear": 2016,
+          "reference": "978-84-15030-72-0",
+          "editor": "Editorial La Serrania",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1113/Canones-y-Barrancos-de-Andalucia.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_80ba6367da737bf8",
+          "id": "resource_9baf48ce9275973b",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.actionman4x4.com/canonesybarr.....recorridos/tejas.htm",
-          "url": "http://www.actionman4x4.com/canonesybarr.....recorridos/tejas.htm"
+          "title": "http://www.actionman4x4.com/canonesybarrancos/recorridos/tejas.htm",
+          "url": "http://www.actionman4x4.com/canonesybarrancos/recorridos/tejas.htm"
         }
       ]
     },

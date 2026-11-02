@@ -148,11 +148,11 @@
       ],
       "resources": [
         {
-          "id": "resource_4d106c98a8134b60",
+          "id": "resource_13684fb0027c7b3f",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....s/SchmiedlaineCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....s/SchmiedlaineCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/SchmiedlaineCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/SchmiedlaineCanyon"
         }
       ]
     },

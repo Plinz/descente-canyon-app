@@ -87,7 +87,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_2242f6ad0f62937a",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons d’Aventures des Préalpes d’Azur",
+          "authors": [
+            "Christophe Folleas",
+            "Brigitte Gimenez"
+          ],
+          "publicationYear": 2004,
+          "reference": null,
+          "editor": "Les doigts déglingués",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1118/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_60c9507073659ab3",

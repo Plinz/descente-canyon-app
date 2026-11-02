@@ -79,8 +79,38 @@
       "label": "Parking urbain"
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_bb6feb754aea9b5a",
+          "kind": "TOPOGUIDE",
+          "title": "Cascades, gorges et canyons du Haut Jura",
+          "authors": [
+            "Dominique Guyetand",
+            "Jean-Luc Lacroix"
+          ],
+          "publicationYear": 1992,
+          "reference": "ISBN 2-85744-590-3",
+          "editor": "Edisud",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/119/topoguide.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_bcbfb16a48a9805a",
+          "kind": "MAP",
+          "title": "3328 E",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_2d63454f157ea14a",
+          "kind": "MAP",
+          "title": "3228 OT Oyonnax (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

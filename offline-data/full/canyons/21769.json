@@ -99,11 +99,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_1432adb1d672686b",
+          "id": "resource_55b0cdfd7a5784d1",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://congres2005.ffspeleo.fr/index.php.....40-canyon-de-temezou",
-          "url": "http://congres2005.ffspeleo.fr/index.php.....40-canyon-de-temezou"
+          "title": "http://congres2005.ffspeleo.fr/index.php?2005/01/09/40-canyon-de-temezou",
+          "url": "http://congres2005.ffspeleo.fr/index.php?2005/01/09/40-canyon-de-temezou"
         }
       ]
     },

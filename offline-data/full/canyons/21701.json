@@ -161,31 +161,24 @@
           "editor": null,
           "status": null,
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1156/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_6f55870ec8e13d8c",
-          "kind": "TOPOGUIDE",
-          "title": "179 Bielsa (IGN) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_130cd2039c34916a",
+          "kind": "MAP",
+          "title": "179 Bielsa (IGN)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_cb517985d5875790",
-          "kind": "TOPOGUIDE",
-          "title": "180 Benasque (IGN) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_be38eb4fad0fb8fc",
+          "kind": "MAP",
+          "title": "180 Benasque (IGN)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

@@ -142,31 +142,24 @@
           "editor": null,
           "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/130/Tour-de-l-Europe-en-Canyon---T1---Suisse--Autriche--Italie-du-Nord--Slovenie.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_3881d276e363de5a",
-          "kind": "TOPOGUIDE",
-          "title": "1211 Meiental (Carte Nationale Suisse) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_d9d92aca51de1dc8",
+          "kind": "MAP",
+          "title": "1211 Meiental (Carte Nationale Suisse)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_c25318cdff72ae27",
-          "kind": "TOPOGUIDE",
-          "title": "Beckenried 1171 Beckenried 1171 (Carte Nationale Suisse) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_c3731e9963401b77",
+          "kind": "MAP",
+          "title": "Beckenried 1171 Beckenried 1171 (Carte Nationale Suisse)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

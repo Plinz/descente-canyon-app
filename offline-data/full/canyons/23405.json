@@ -63,15 +63,29 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_645355fdabc6144e",
+          "kind": "TOPOGUIDE",
+          "title": "Barranquismo en Gran Canaria : barrancos, caideros y afluentes.",
+          "authors": [
+            "Hedwig Elisabet Solanas Garcia et Victor España Llamas"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-84-617-0693-8",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/199/Barranquismo-en-Gran-Canaria.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_912f639820015fc9",
+          "id": "resource_47c7298f3c693743",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://barrancoscanarios.com/barrancos/g.....barranco-del-mulato/",
-          "url": "http://barrancoscanarios.com/barrancos/g.....barranco-del-mulato/"
+          "title": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-sector-presa-de-las-ninas/espanol-barranco-del-mulato/",
+          "url": "http://barrancoscanarios.com/barrancos/gran-canaria/espanol-sector-presa-de-las-ninas/espanol-barranco-del-mulato/"
         }
       ]
     },

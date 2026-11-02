@@ -85,7 +85,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_1e5c67cde732c20d",
+          "kind": "TOPOGUIDE",
+          "title": "Eldorado Ticino",
+          "authors": [
+            "Anna & Luca Nizzola"
+          ],
+          "publicationYear": 2010,
+          "reference": "978-88-905017-7-7",
+          "editor": "SwissCanyon",
+          "status": "en stock\n\n- 39,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/157/Eldorado-Ticino.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_32104c8d93e1fde1",

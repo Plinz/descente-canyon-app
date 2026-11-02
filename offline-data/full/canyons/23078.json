@@ -77,15 +77,29 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_f28b19f8a9b182fc",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons et randos de Dominique",
+          "authors": [
+            "An Kanion La - Madinina"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-2-7466-6779-2",
+          "editor": "auto-edition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/177/Canyons-et-randos-de-la-Dominique.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_16aea755cc347c75",
+          "id": "resource_b2f0c237af158261",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://ankanionla-madinina.com/Dominique.....er%20Stream.htm#3-10",
-          "url": "http://ankanionla-madinina.com/Dominique.....er%20Stream.htm#3-10"
+          "title": "http://ankanionla-madinina.com/Dominique/Delice-La%20plaine/Cold%20Water%20Stream.htm#3-10",
+          "url": "http://ankanionla-madinina.com/Dominique/Delice-La%20plaine/Cold%20Water%20Stream.htm#3-10"
         }
       ]
     },

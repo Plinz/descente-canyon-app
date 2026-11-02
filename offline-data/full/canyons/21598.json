@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_98bc1e9e5fbce42b",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning in Samothraki",
+          "authors": [
+            "Hellenic Canyoning Association"
+          ],
+          "publicationYear": 2008,
+          "reference": "9789609137959",
+          "editor": null,
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/152/Canyoning-in-Samothraki.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_cd36008cf4c8fcc9",

@@ -79,7 +79,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_5a9c2ae1f6096043",
+          "kind": "TOPOGUIDE",
+          "title": "Vertiges d'en haut : Courses et randonnées insolites en Dauphiné",
+          "authors": [
+            "Sombardier",
+            "Pascal"
+          ],
+          "publicationYear": 2010,
+          "reference": "978-2723476409",
+          "editor": "Glénat",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1242/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_8f20ae98d683e3f6",

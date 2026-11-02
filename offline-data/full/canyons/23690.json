@@ -69,11 +69,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_a385924946eb2c41",
+          "id": "resource_633cf18bd9a91c3c",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.canyoneast.it/target.php?w=16.....arget=Rio%20Belepeit",
-          "url": "http://www.canyoneast.it/target.php?w=16.....arget=Rio%20Belepeit"
+          "title": "http://www.canyoneast.it/target.php?w=1600&lng=uk&target=Rio%20Belepeit",
+          "url": "http://www.canyoneast.it/target.php?w=1600&lng=uk&target=Rio%20Belepeit"
         }
       ]
     },

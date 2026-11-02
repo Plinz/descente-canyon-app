@@ -108,11 +108,11 @@
       ],
       "resources": [
         {
-          "id": "resource_e1b469356290a223",
+          "id": "resource_28565d2321455b29",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....elgrabenobererCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....elgrabenobererCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/StaffelgrabenobererCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/StaffelgrabenobererCanyon"
         }
       ]
     },

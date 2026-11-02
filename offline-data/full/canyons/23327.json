@@ -66,7 +66,22 @@
     "representativePoint": null,
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_1b6eca29674d88a9",
+          "kind": "MAP",
+          "title": "3641 ET Moyenne Tinee (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_db1d7a85b782a57f",
+          "kind": "MAP",
+          "title": "3741 OT Vallée de La Vésubie (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

@@ -63,7 +63,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_a8970105c80dae33",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning in Oman-12 Exceptional Wadis",
+          "authors": [
+            "Khaled Abdul Malak"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-99969-0-359-5",
+          "editor": "Ministry of Information, Oman",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1309/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

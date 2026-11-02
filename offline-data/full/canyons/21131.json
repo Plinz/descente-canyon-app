@@ -79,7 +79,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_ccddf620983c512e",
+          "kind": "TOPOGUIDE",
+          "title": "Male Vesse, dont 12 fiches-canyons de la vallée de la Bléone (04)",
+          "authors": [
+            "Caracal et les Sancho Panza"
+          ],
+          "publicationYear": 2006,
+          "reference": null,
+          "editor": "auto-édition",
+          "status": "en stock\n\n- 18,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/14/Male-Vesse-et-12-fiches-canyons.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_f6542a442811df8f",

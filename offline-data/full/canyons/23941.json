@@ -93,9 +93,47 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_80a52b6e4b57f154",
+          "kind": "TOPOGUIDE",
+          "title": "Tiroler Canyoningführer - The Canyoning guide for Tyrol",
+          "authors": [
+            "Alexander Riml",
+            "Gunnar Amor"
+          ],
+          "publicationYear": 2012,
+          "reference": "978-3-200-02343-7",
+          "editor": null,
+          "status": "en stock\n\n- 44,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/170/Tiroler-Canyoningfuhrer---The-Canyoning-guide-for-Tyrol.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_7df56d39cb86b7b5",
+          "kind": "MAP",
+          "title": "3213 Kufstein (ÖK25V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_d06a01ca7a013433",
+          "kind": "MAP",
+          "title": "8 Kaisergebirge (Alpenvereins (AV) Karte)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_2ace31769501ba06",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/SparchenbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/SparchenbachCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

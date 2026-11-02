@@ -95,7 +95,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_d72ca920b80a45d1",
+          "kind": "TOPOGUIDE",
+          "title": "Corse - Paradis du canyoning",
+          "authors": [
+            "Hubert Ayasse",
+            "Philippe Dubreuil"
+          ],
+          "publicationYear": 2001,
+          "reference": "ISBN 2-9117-9750-7",
+          "editor": "DCL",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/16/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_e078ea6264eda2fb",

@@ -95,7 +95,19 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_3c6a6f8e0f85a68f",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons et Cascades Ariège Pyrénées",
+          "authors": [],
+          "publicationYear": null,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1145/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_90c31be1b182c05b",

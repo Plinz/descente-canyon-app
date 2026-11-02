@@ -96,7 +96,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_3bf86c23b7e29bf2",
+          "kind": "MAP",
+          "title": "2640 OT Gorges du Tarn (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_6ec0961689028659",
+          "kind": "MAP",
+          "title": "2641 OT Millau (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

@@ -186,31 +186,24 @@
           "editor": "Édisud",
           "status": "ouvrage épuisé",
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/113/topoguide.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_bf739d63ebc3b81d",
-          "kind": "TOPOGUIDE",
-          "title": "3438 ET Embrun (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_83f652e7e3fab667",
+          "kind": "MAP",
+          "title": "3438 ET Embrun (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_8acb49189ce97ca7",
-          "kind": "TOPOGUIDE",
-          "title": "3439 ET Seyne - Chabanon-Grand-Puy (IGN TOP25) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_f6542a442811df8f",
+          "kind": "MAP",
+          "title": "3439 ET Seyne - Chabanon-Grand-Puy (IGN TOP25)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

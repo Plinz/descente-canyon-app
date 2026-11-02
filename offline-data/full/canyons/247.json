@@ -209,11 +209,11 @@
       ],
       "resources": [
         {
-          "id": "resource_853d2dbd565eff40",
+          "id": "resource_28d35e1515181829",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.randoxygene.org/pge/rando_cc/.....&current=cc-37&ct=cc",
-          "url": "http://www.randoxygene.org/pge/rando_cc/.....&current=cc-37&ct=cc"
+          "title": "http://www.randoxygene.org/pge/rando_cc/affiche_rando.php?rubrique=3&zone=1&rando=6¤t=cc-37&ct=cc",
+          "url": "http://www.randoxygene.org/pge/rando_cc/affiche_rando.php?rubrique=3&zone=1&rando=6¤t=cc-37&ct=cc"
         }
       ]
     },

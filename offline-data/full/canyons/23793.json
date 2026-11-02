@@ -107,11 +107,11 @@
       ],
       "resources": [
         {
-          "id": "resource_5d7aa5e63af826bb",
+          "id": "resource_997e43116b03aabe",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....hlenriederBachCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....hlenriederBachCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/KohlenriederBachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/KohlenriederBachCanyon"
         },
         {
           "id": "resource_64326ed27b2d69e9",

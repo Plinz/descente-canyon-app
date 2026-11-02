@@ -65,7 +65,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_00b8bc45bbaf23de",
+          "kind": "TOPOGUIDE",
+          "title": "Els 50 millors barrancs pel massis del Port",
+          "authors": [
+            "Carlos Martinez"
+          ],
+          "publicationYear": 2009,
+          "reference": "978-84-9791-398-0",
+          "editor": "Cossetania Edicions Azimut",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/150/Els-50-millors-barrancs-pel-Massis-del-Port.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_997b6ea834e113e1",

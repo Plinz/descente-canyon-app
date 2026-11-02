@@ -79,9 +79,47 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_bb6feb754aea9b5a",
+          "kind": "TOPOGUIDE",
+          "title": "Cascades, gorges et canyons du Haut Jura",
+          "authors": [
+            "Dominique Guyetand",
+            "Jean-Luc Lacroix"
+          ],
+          "publicationYear": 1992,
+          "reference": "ISBN 2-85744-590-3",
+          "editor": "Edisud",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/119/topoguide.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_739426983c5041a0",
+          "kind": "MAP",
+          "title": "3228 E",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_a27c55cfa21ad473",
+          "kind": "MAP",
+          "title": "3328 O",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_c34d1b51117bdc1b",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://spelehautjura.com/le-canyon-dans-le-haut-jura/9-le-canyon-des-conflits-les-cascades-de-la-bleniere",
+          "url": "http://spelehautjura.com/le-canyon-dans-le-haut-jura/9-le-canyon-des-conflits-les-cascades-de-la-bleniere"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": true,

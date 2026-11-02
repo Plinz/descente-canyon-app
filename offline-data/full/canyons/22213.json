@@ -131,11 +131,11 @@
       ],
       "resources": [
         {
-          "id": "resource_d7d92893871fdf86",
+          "id": "resource_1c4156a2e3e5eb35",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....pic=MuehltobelCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....pic=MuehltobelCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=MuehltobelCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=MuehltobelCanyon"
         }
       ]
     },

@@ -107,11 +107,11 @@
       ],
       "resources": [
         {
-          "id": "resource_889449bb852e9f61",
+          "id": "resource_2ce7ec031a8619e0",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C...../RiuDalBoschetCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C...../RiuDalBoschetCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/RiuDalBoschetCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/RiuDalBoschetCanyon"
         }
       ]
     },

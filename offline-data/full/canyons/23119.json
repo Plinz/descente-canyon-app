@@ -108,11 +108,11 @@
       ],
       "resources": [
         {
-          "id": "resource_3b02ffe9a1fa4929",
+          "id": "resource_60bcbf7245573c14",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C...../OstertaltobelCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C...../OstertaltobelCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/OstertaltobelCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/OstertaltobelCanyon"
         }
       ]
     },

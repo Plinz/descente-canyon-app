@@ -139,11 +139,11 @@
       ],
       "resources": [
         {
-          "id": "resource_24191c763b0faf3e",
+          "id": "resource_cf9a7669a22c710b",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....ic=BruckgrabenCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....ic=BruckgrabenCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=BruckgrabenCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=BruckgrabenCanyon"
         }
       ]
     },

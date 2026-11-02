@@ -95,7 +95,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_b228f4b2ce58d332",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning : Alpes Maritimes. 170 descentes",
+          "authors": [
+            "Franck Jourdan",
+            "Jean-François Fiorina"
+          ],
+          "publicationYear": 2026,
+          "reference": "9782958258054",
+          "editor": "auto-edition",
+          "status": "en stock\n\n- 35,99 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1175/Canyoning-:-Alpes-Maritimes--170-descentes.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_16cff64ac6385d2c",
@@ -107,11 +122,11 @@
       ],
       "resources": [
         {
-          "id": "resource_b52fde8e94f10c61",
+          "id": "resource_d2f8bedb15735417",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.altisud.com/canyoning/france/.....tent_21-PRESENTATION",
-          "url": "http://www.altisud.com/canyoning/france/.....tent_21-PRESENTATION"
+          "title": "http://www.altisud.com/canyoning/france/cascades-de-guercha-canyoning__i_4mxvn8hf4f3e__al_detail-canyon.html#ongletcontent_21-PRESENTATION",
+          "url": "http://www.altisud.com/canyoning/france/cascades-de-guercha-canyoning__i_4mxvn8hf4f3e__al_detail-canyon.html#ongletcontent_21-PRESENTATION"
         }
       ]
     },

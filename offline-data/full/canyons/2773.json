@@ -77,7 +77,26 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_0f06b44eb9a42186",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons du Vercors et Alentours",
+          "authors": [
+            "J-C. Botti",
+            "B. Rosset",
+            "Y. Launay",
+            "C. Larribe",
+            "T. Larribe",
+            "Spéléo Club MJC de Tullins"
+          ],
+          "publicationYear": 1997,
+          "reference": "ISBN 2-7417-0211-X",
+          "editor": "Gap",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/12/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_897a81a84c493147",

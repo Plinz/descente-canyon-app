@@ -95,7 +95,24 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_1c1e046792ce7e5b",
+          "kind": "TOPOGUIDE",
+          "title": "Barrancs, Torrents, Canyons i Cavitats del Pirineu de Girona",
+          "authors": [
+            "Crisi Gonzalez",
+            "Mari Nivera",
+            "Enric Peradalta",
+            "Damià Pérez i Lluis Domnigo"
+          ],
+          "publicationYear": 2015,
+          "reference": "978-84-606-8896-9",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1109/Barrancs--Torrents--Canyons-i-Cavitats-del-Pirineu-de-Girona.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_62922203b8628e40",

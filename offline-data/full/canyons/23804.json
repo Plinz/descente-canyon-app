@@ -96,8 +96,45 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_1814dc130d071e86",
+          "kind": "MAP",
+          "title": "27 Canin - Val Resia (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_fd029d73a53002a7",
+          "kind": "MAP",
+          "title": "14 II-SE Monte Canin (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_cdef787a7b7235ad",
+          "kind": "MAP",
+          "title": "14 II-NE Jof di Montasio (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_723150f0ab8fd35d",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/BiancoCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/BiancoCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

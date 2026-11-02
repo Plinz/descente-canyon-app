@@ -77,7 +77,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_3813ed43a35207fd",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning in Lombardia",
+          "authors": [
+            "Pascal van Duin"
+          ],
+          "publicationYear": 2005,
+          "reference": "ISBN 88-901753-0-3",
+          "editor": "Edizioni TopCanyon",
+          "status": "en stock\n\n- 24,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/18/Canyoning-in-Lombardia.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

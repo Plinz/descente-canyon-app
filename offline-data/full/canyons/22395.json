@@ -96,7 +96,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_a216ca92fa29ca51",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning in Bayern und Tirol",
+          "authors": [
+            "Werner Baumgarten"
+          ],
+          "publicationYear": 2010,
+          "reference": null,
+          "editor": null,
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1226/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_ab5503dd3abdeea8",
@@ -108,11 +122,11 @@
       ],
       "resources": [
         {
-          "id": "resource_819d03fdf33cd2fd",
+          "id": "resource_73ed9af0915355d3",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.geodaten.bayern.de/BayernView.....0070&layer=TK&step=4",
-          "url": "http://www.geodaten.bayern.de/BayernView.....0070&layer=TK&step=4"
+          "title": "http://www.geodaten.bayern.de/BayernViewer2.0/index.cgi?rw=4522830&hw=5290070&layer=TK&step=4",
+          "url": "http://www.geodaten.bayern.de/BayernViewer2.0/index.cgi?rw=4522830&hw=5290070&layer=TK&step=4"
         }
       ]
     },

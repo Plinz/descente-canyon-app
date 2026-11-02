@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_ec21c53da7996ef3",
+          "kind": "TOPOGUIDE",
+          "title": "Tour de l'Europe en Canyon - T2 - Ligurie, Italie centrale et du sud, Sicile, Sardaigne, Balkans...",
+          "authors": [
+            "Caracal et les Sancho Panza"
+          ],
+          "publicationYear": 2008,
+          "reference": "978-2-9526064-3-1",
+          "editor": null,
+          "status": "en stock\n\n- 29,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/132/Tour-de-l-Europe-en-Canyon---T2---Ligurie--Italie-centrale-et-du-Sud--Sicile--Sardaigne--Balkans.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
@@ -106,11 +120,11 @@
           "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/PoragineCanyon"
         },
         {
-          "id": "resource_83937dc47abd17a7",
+          "id": "resource_a346711eaf6985f9",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://catastoforre.aic-canyoning.it/ind.....RIA/pro/GE/cod/GE009",
-          "url": "http://catastoforre.aic-canyoning.it/ind.....RIA/pro/GE/cod/GE009"
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/LIGURIA/pro/GE/cod/GE009",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/LIGURIA/pro/GE/cod/GE009"
         },
         {
           "id": "resource_884651d8b06bf7c7",
@@ -141,11 +155,11 @@
           "url": "http://www.openspeleo.org/openspeleo/canyons-view-34.html"
         },
         {
-          "id": "resource_588854a41c4363c7",
+          "id": "resource_1963db154174261c",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.aic-canyoning.it/index.php?op.....&catid=10&Itemid=142",
-          "url": "http://www.aic-canyoning.it/index.php?op.....&catid=10&Itemid=142"
+          "title": "http://www.aic-canyoning.it/index.php?option=com_content&view=article&id=132:fosso-poragine-rio-pratomollo&catid=10&Itemid=142",
+          "url": "http://www.aic-canyoning.it/index.php?option=com_content&view=article&id=132:fosso-poragine-rio-pratomollo&catid=10&Itemid=142"
         }
       ]
     },

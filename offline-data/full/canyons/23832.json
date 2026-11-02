@@ -96,9 +96,46 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_e6999a504a929a33",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning",
+          "authors": [
+            "Zaunhuber"
+          ],
+          "publicationYear": 1996,
+          "reference": null,
+          "editor": "Pollner Verlag",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1177/topoguide.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_3d7a2ebd5efa6d2b",
+          "kind": "MAP",
+          "title": "UK L 12 Mangfallgebirge (1/50000)",
+          "scale": "Bayersches L",
+          "detailUrl": null
+        },
+        {
+          "id": "map_1d270863adf0445f",
+          "kind": "MAP",
+          "title": "8336/8436 Rottach-Egern (TK25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_0f407ea4503aed00",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/KlammbachzurWeissachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/KlammbachzurWeissachCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

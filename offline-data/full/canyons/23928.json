@@ -95,9 +95,54 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
-      "resources": []
+      "topoguides": [
+        {
+          "id": "biblio_80a52b6e4b57f154",
+          "kind": "TOPOGUIDE",
+          "title": "Tiroler Canyoningführer - The Canyoning guide for Tyrol",
+          "authors": [
+            "Alexander Riml",
+            "Gunnar Amor"
+          ],
+          "publicationYear": 2012,
+          "reference": "978-3-200-02343-7",
+          "editor": null,
+          "status": "en stock\n\n- 44,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/170/Tiroler-Canyoningfuhrer---The-Canyoning-guide-for-Tyrol.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_f14bf428f832a8fc",
+          "kind": "MAP",
+          "title": "UK L 30 Karwendelgebirge (Bayerisches Landesvermessungsamt)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_54b6bc3c3362fc67",
+          "kind": "MAP",
+          "title": "8435 Fall (Bayerisches Landesvermessungsamt)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_e6e7478f84dad600",
+          "kind": "MAP",
+          "title": "5/2 Karwendelgebirge Mitte (Alpenvereins (AV) Karte)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_02e473d63a1b7135",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/MoeserkargrabenCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/MoeserkargrabenCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

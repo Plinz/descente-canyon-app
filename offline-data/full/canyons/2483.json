@@ -63,15 +63,29 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_876e7cdf8cadfc42",
+          "kind": "TOPOGUIDE",
+          "title": "Inventaire canyons, gorges et cascades du Doubs",
+          "authors": [
+            "Christian Jeannoutot"
+          ],
+          "publicationYear": 2006,
+          "reference": null,
+          "editor": "Comité Départemental de Spéléologie du Doubs",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1153/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_8df6c014901ad707",
+          "id": "resource_283101e27c7c3f90",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://coquelicots.rando.free.fr/images/.....20de%20la%20loue.jpg",
-          "url": "http://coquelicots.rando.free.fr/images/.....20de%20la%20loue.jpg"
+          "title": "http://coquelicots.rando.free.fr/images/source%20de%20la%20loue.jpg",
+          "url": "http://coquelicots.rando.free.fr/images/source%20de%20la%20loue.jpg"
         }
       ]
     },

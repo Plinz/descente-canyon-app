@@ -135,11 +135,11 @@
       ],
       "resources": [
         {
-          "id": "resource_bdb80906194d2c89",
+          "id": "resource_c8492d81e1f01924",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....opic=FischbachCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....opic=FischbachCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=FischbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/?topic=FischbachCanyon"
         }
       ]
     },

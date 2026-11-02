@@ -213,18 +213,18 @@
           "url": "http://ropewiki.com/Escuain_(Lower)"
         },
         {
-          "id": "resource_986f474fe9fa929a",
+          "id": "resource_370b1570d5864f80",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....scuaininferiorCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....scuaininferiorCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/EscuaininferiorCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/EscuaininferiorCanyon"
         },
         {
-          "id": "resource_fc60011f05213f7d",
+          "id": "resource_3a3fd8e95e9cba2b",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.latrencanous.com/barrancos/ga....._de_escuain/topo.pdf",
-          "url": "http://www.latrencanous.com/barrancos/ga....._de_escuain/topo.pdf"
+          "title": "http://www.latrencanous.com/barrancos/garganta_de_escuain/topo.pdf",
+          "url": "http://www.latrencanous.com/barrancos/garganta_de_escuain/topo.pdf"
         }
       ]
     },

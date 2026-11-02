@@ -131,31 +131,24 @@
           "editor": null,
           "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/158/Canyoning-en-Suisse-2.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_261e903a8c9d1da7",
-          "kind": "TOPOGUIDE",
-          "title": "1313 Bellinzona (Carte Nationale Suisse) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_9a9578770c172929",
+          "kind": "MAP",
+          "title": "1313 Bellinzona (Carte Nationale Suisse)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_b0e33fe3c77c7209",
-          "kind": "TOPOGUIDE",
-          "title": "1312 Locarno (Carte Nationale Suisse) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_0cb1ef89bee0ed0d",
+          "kind": "MAP",
+          "title": "1312 Locarno (Carte Nationale Suisse)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

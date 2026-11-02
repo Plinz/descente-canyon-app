@@ -120,43 +120,33 @@
           "editor": null,
           "status": null,
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1226/topoguide.html"
-        },
-        {
-          "id": "biblio_62ea7c9c13b902fd",
-          "kind": "TOPOGUIDE",
-          "title": "146 Imst (ÖK 50) - 1:50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_d4232c1ca7906fe7",
-          "kind": "TOPOGUIDE",
-          "title": "3/4 Lechtaler Alpen, Heiterwang - und Muttekopfgebiet (Alpenvereins (AV) Karte) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_bb9d747dcbbdff0a",
-          "kind": "TOPOGUIDE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....ereRosengartenCanyon",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://canyon.carto.net/cwiki/bin/view/Canyons/MittlereRosengartenCanyon"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_223eef3bd7bbfcc1",
+          "kind": "MAP",
+          "title": "146 Imst (ÖK 50)",
+          "scale": "1:50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_5dbc8da78cba73f7",
+          "kind": "MAP",
+          "title": "3/4 Lechtaler Alpen, Heiterwang - und Muttekopfgebiet (Alpenvereins (AV) Karte)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_38dc3d9476a3f703",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/MittlereRosengartenCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/MittlereRosengartenCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

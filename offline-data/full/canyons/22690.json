@@ -65,7 +65,22 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_13fcb5d4350a1c03",
+          "kind": "TOPOGUIDE",
+          "title": "L'illa dels torrents - Guia Torrentera de Mallorca",
+          "authors": [
+            "J. Barcelo",
+            "M. Trias"
+          ],
+          "publicationYear": 2014,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/189/L-illa-dels-torrents---Guia-Torrentera-de-Mallorca.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

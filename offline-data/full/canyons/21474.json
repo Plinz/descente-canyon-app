@@ -95,7 +95,24 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_87a84633f292e5a0",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons de Haute-Savoie (réédition)",
+          "authors": [
+            "Ch. Charletty",
+            "G. Gudefin",
+            "B. Hugon",
+            "J-P. Beaudoin"
+          ],
+          "publicationYear": 2004,
+          "reference": "ISBN: 2741702888",
+          "editor": "GAP",
+          "status": "derniers exemplaires !\n\n- 16,99 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/128/Canyons-de-Haute-Savoie.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_8b9d320796dfc90b",

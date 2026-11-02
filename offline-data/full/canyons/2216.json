@@ -104,7 +104,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_e5d77446b92dfce6",
+          "kind": "TOPOGUIDE",
+          "title": "Descentes de canyons en Ardèche et départements limitrophes",
+          "authors": [
+            "Franck Jourdan et Jean-François Fiorina"
+          ],
+          "publicationYear": 2005,
+          "reference": "ISBN : 2-9523920-0-5",
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/116/Descentes-de-canyons-en-Ardeche.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_90d1e06fff182bef",

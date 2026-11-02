@@ -103,7 +103,21 @@
       "label": "Parking Amont longue navette"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_64902f846ef24776",
+          "kind": "TOPOGUIDE",
+          "title": "Randonnée au Caroux",
+          "authors": [
+            "CAF Béziers"
+          ],
+          "publicationYear": null,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/160/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_facf4ebf8b58d908",
@@ -122,18 +136,18 @@
           "url": "http://yelsub1.free.fr/saillens_rec_gd/"
         },
         {
-          "id": "resource_78cff9a0e6dd3611",
+          "id": "resource_0e8a419f2fe5e328",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://yelsub1.free.fr/canyons/34/saille.....ens_niveaux_max.html",
-          "url": "http://yelsub1.free.fr/canyons/34/saille.....ens_niveaux_max.html"
+          "title": "http://yelsub1.free.fr/canyons/34/saillens_rec_gd/saillens_niveaux_max.html",
+          "url": "http://yelsub1.free.fr/canyons/34/saillens_rec_gd/saillens_niveaux_max.html"
         },
         {
-          "id": "resource_78cff9a0e6dd3611",
+          "id": "resource_0e8a419f2fe5e328",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://yelsub1.free.fr/canyons/34/saille.....ens_niveaux_max.html",
-          "url": "http://yelsub1.free.fr/canyons/34/saille.....ens_niveaux_max.html"
+          "title": "http://yelsub1.free.fr/canyons/34/saillens_rec_gd/saillens_niveaux_max.html",
+          "url": "http://yelsub1.free.fr/canyons/34/saillens_rec_gd/saillens_niveaux_max.html"
         }
       ]
     },

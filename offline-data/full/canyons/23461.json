@@ -93,7 +93,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_eae3ac14971fca7d",
+          "kind": "TOPOGUIDE",
+          "title": "Spelunca n°115",
+          "authors": [
+            "Arnauld Malard"
+          ],
+          "publicationYear": 2009,
+          "reference": null,
+          "editor": "FFS",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1300/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_da6f1e50320f4a35",
@@ -105,11 +119,11 @@
       ],
       "resources": [
         {
-          "id": "resource_7552052c0971eea0",
+          "id": "resource_1f0a0e1c3316a78c",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "https://cariboumahore.wordpress.com/2015.....cascade-de-mtsapere/",
-          "url": "https://cariboumahore.wordpress.com/2015.....cascade-de-mtsapere/"
+          "title": "https://cariboumahore.wordpress.com/2015/06/27/la-grande-cascade-de-mtsapere/",
+          "url": "https://cariboumahore.wordpress.com/2015/06/27/la-grande-cascade-de-mtsapere/"
         }
       ]
     },

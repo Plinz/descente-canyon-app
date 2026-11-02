@@ -103,7 +103,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_3b796a12af7e4f0c",
+          "kind": "TOPOGUIDE",
+          "title": "Canyonisme et randonnées verticales en Provence",
+          "authors": [
+            "Franck Jourdan et Jean-François Fiorina"
+          ],
+          "publicationYear": 2017,
+          "reference": "978-2-9523920-2-0",
+          "editor": "Auto-édition",
+          "status": "en stock\n\n- 16,99 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1122/Canyonisme-et-randonnees-verticales-en-Provence.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_2f6c53ae7f1abe4d",

@@ -112,15 +112,31 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_9a587136e3eea5ef",
+          "kind": "TOPOGUIDE",
+          "title": "Italia Nord-Est - Gole e Canyon Vol.2",
+          "authors": [
+            "Maurizio Biondi",
+            "Francesco Cacae",
+            "Roberto Schenone"
+          ],
+          "publicationYear": 2000,
+          "reference": "88-900260-0-6",
+          "editor": "Associazione Italiana Canyoning",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/114/Gole---Canyons-2-:-Italia-Nord-Est.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {
-          "id": "resource_9294295c5b5653b6",
+          "id": "resource_4c68ec159aed699e",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.canyoneast.it/target.php?w=19.....rget=Rio%20Chiantone",
-          "url": "http://www.canyoneast.it/target.php?w=19.....rget=Rio%20Chiantone"
+          "title": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Rio%20Chiantone",
+          "url": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Rio%20Chiantone"
         }
       ]
     },

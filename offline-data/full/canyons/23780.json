@@ -95,7 +95,24 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_226157f34704ebeb",
+          "kind": "TOPOGUIDE",
+          "title": "Schluchten-Canyon",
+          "authors": [
+            "A. Wieser",
+            "F. Karger",
+            "R. Ranner",
+            "I. Neumann"
+          ],
+          "publicationYear": 2004,
+          "reference": "3-901533-11-7",
+          "editor": "Edition Neumann",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1221/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_ad9bcbeb673fad8f",
@@ -107,11 +124,11 @@
       ],
       "resources": [
         {
-          "id": "resource_32ad5fc9a28663b4",
+          "id": "resource_9f1b9f861c554b67",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....lblingerGrabenCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....lblingerGrabenCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/NoelblingerGrabenCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/NoelblingerGrabenCanyon"
         }
       ]
     },

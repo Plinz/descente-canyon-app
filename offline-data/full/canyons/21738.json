@@ -95,7 +95,25 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_176464b0d425952d",
+          "kind": "TOPOGUIDE",
+          "title": "Italia Centrale - Gole e Canyons Vol.1",
+          "authors": [
+            "Carlin",
+            "Dobosz",
+            "Ecker",
+            "Pinotti",
+            "Recchioni"
+          ],
+          "publicationYear": 1998,
+          "reference": "88-900260-0-6",
+          "editor": "Adriambiente",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1164/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_659a893bf9c90422",

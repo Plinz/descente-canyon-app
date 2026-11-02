@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_794c6164c09a8f92",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons et cascades en pays d'Auzat et du Vicdessos",
+          "authors": [
+            "collectif"
+          ],
+          "publicationYear": 1999,
+          "reference": null,
+          "editor": null,
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/197/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_90c31be1b182c05b",

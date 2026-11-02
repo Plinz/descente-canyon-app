@@ -93,7 +93,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_41402b7e45455e7d",
+          "kind": "TOPOGUIDE",
+          "title": "Tour de l'Europe en Canyon - T1 - Suisse, Autriche, Italie du Nord, Slovénie",
+          "authors": [
+            "Caracal et les Sancho Panza"
+          ],
+          "publicationYear": 2008,
+          "reference": "978-2-9526064-2-4",
+          "editor": null,
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/130/Tour-de-l-Europe-en-Canyon---T1---Suisse--Autriche--Italie-du-Nord--Slovenie.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_5686a14ecd53c5d4",
@@ -105,11 +119,11 @@
       ],
       "resources": [
         {
-          "id": "resource_e65cd93fd99c86b9",
+          "id": "resource_006cea550fc3862e",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cgi-bin/redirect.....action=detailed_desc",
-          "url": "http://canyon.carto.net/cgi-bin/redirect.....action=detailed_desc"
+          "title": "http://canyon.carto.net/cgi-bin/redirect_single_page.pl?page=http://canyon.carto.net/cgi-bin/parse_xml.pl%3fcanyon=52%26action=detailed_desc",
+          "url": "http://canyon.carto.net/cgi-bin/redirect_single_page.pl?page=http://canyon.carto.net/cgi-bin/parse_xml.pl%3fcanyon=52%26action=detailed_desc"
         }
       ]
     },

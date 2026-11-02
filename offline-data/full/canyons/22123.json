@@ -111,7 +111,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_691675baaeb76189",
+          "kind": "TOPOGUIDE",
+          "title": "35 descentes de canyons à Tenerife",
+          "authors": [
+            "Philip Van Den Berge"
+          ],
+          "publicationYear": 2016,
+          "reference": null,
+          "editor": "Autoédition",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1338/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_1755f027132ff050",

@@ -137,42 +137,31 @@
           "editor": "TopCanyon",
           "status": "stock très réduit !\n\n- 25,90 € -\n\nCommandez cet ouvrage dès maintenant !",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/135/Canyoning-Nord-Italia.html"
-        },
+        }
+      ],
+      "maps": [
         {
-          "id": "biblio_e4a6059c6e759a88",
-          "kind": "TOPOGUIDE",
-          "title": "ASF n°1 Côte d'Azur - Riviera Dei Fiori (Alpes sans fronti?res) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_f8c24d19075ca506",
+          "kind": "MAP",
+          "title": "ASF n°1 Côte d'Azur - Riviera Dei Fiori (Alpes sans fronti?res)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_6b5cee5e5b3c0ba1",
-          "kind": "TOPOGUIDE",
-          "title": "ASF n°2 Moyenne Roya - Val Nervia e Argentina (Alpes sans fronti?res) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_a3482111c0bd004f",
+          "kind": "MAP",
+          "title": "ASF n°2 Moyenne Roya - Val Nervia e Argentina (Alpes sans fronti?res)",
+          "scale": "1/25000",
           "detailUrl": null
         },
         {
-          "id": "biblio_902fa7a9da6f6c39",
-          "kind": "TOPOGUIDE",
-          "title": "Tavola n.113 “Alpi Marittime e Liguri” (MULTIGRAPHIC Firenze) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
+          "id": "map_a62e23a49437864a",
+          "kind": "MAP",
+          "title": "Tavola n.113 “Alpi Marittime e Liguri” (MULTIGRAPHIC Firenze)",
+          "scale": "1/25000",
           "detailUrl": null
         }
       ],
-      "maps": [],
       "resources": []
     },
     "reglementation": {

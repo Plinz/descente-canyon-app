@@ -77,7 +77,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_c1e2884f7ca062f9",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning - Crête",
+          "authors": [
+            "Yannis Bromirakis"
+          ],
+          "publicationYear": 2007,
+          "reference": "978-960-8189-80-5",
+          "editor": "Road Edition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/17/Canyoning-:-Crete.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_ca8f719b909427c3",

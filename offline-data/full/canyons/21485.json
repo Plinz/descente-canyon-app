@@ -87,7 +87,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_da30219dbb4dd176",
+          "kind": "TOPOGUIDE",
+          "title": "Les canyons de Savoie",
+          "authors": [
+            "Patrick Chollot"
+          ],
+          "publicationYear": 2018,
+          "reference": "978-2-95309-39-1-9",
+          "editor": "auto-édition",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1125/Les-canyons-de-Savoie.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_8066155d78a32d3f",

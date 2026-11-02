@@ -77,7 +77,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_daf9041e16b163a9",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons cantalous",
+          "authors": [
+            "Philippe VIETTE-COSTE"
+          ],
+          "publicationYear": 2018,
+          "reference": "97829563881-0-4",
+          "editor": "Auto-édition",
+          "status": "en stock\n\n- 14,00 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/1124/Canyons-cantalous.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_dca64d22e699a24f",

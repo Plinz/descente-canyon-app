@@ -103,7 +103,21 @@
       "label": "pour Chillar integral: Collado de los Apretaderos (livre Sanchez)"
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_5f9d5d522371041b",
+          "kind": "TOPOGUIDE",
+          "title": "Descenso de Canones y Barrancos en Andalucia",
+          "authors": [
+            "Sanchez"
+          ],
+          "publicationYear": 1997,
+          "reference": null,
+          "editor": "Federacion Andaluza Espeleogia",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1165/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_6a80b30c208de07b",

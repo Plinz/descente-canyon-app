@@ -94,8 +94,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_9088ca1f6cfd9d03",
+          "kind": "MAP",
+          "title": "CNS 277 kompas 91/92",
+          "scale": null,
+          "detailUrl": null
+        },
+        {
+          "id": "map_20f5354f23d65869",
+          "kind": "MAP",
+          "title": "91 Lago di Como - Lago di Lugano (Kompass)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_2508f66b4a3b9f33",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.x-gatt.com/santagiulia/scheda.htm",
+          "url": "http://www.x-gatt.com/santagiulia/scheda.htm"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

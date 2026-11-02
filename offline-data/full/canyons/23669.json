@@ -97,7 +97,22 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
+      "maps": [
+        {
+          "id": "map_692834e5ac300398",
+          "kind": "MAP",
+          "title": "Feuille NH-29-XXIII- Jbel Toubkal (Direction de la conservation foncière et des travaux topographiques)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_72fdbbb6063b3954",
+          "kind": "MAP",
+          "title": "Feuille NH-29-XXIII- Oukaimeden-Toubkal (Rabat Direction de la Conservation Foncière et des Travaux Topographiques)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

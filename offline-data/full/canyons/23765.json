@@ -107,18 +107,18 @@
       ],
       "resources": [
         {
-          "id": "resource_16622a6ad15d1058",
+          "id": "resource_b323f745c91460ce",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....leDellaTrinceaCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....leDellaTrinceaCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/CanaleDellaTrinceaCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/CanaleDellaTrinceaCanyon"
         },
         {
-          "id": "resource_eeaf51fd9943df90",
+          "id": "resource_69e0d91eab12c3ec",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://catastoforre.aic-canyoning.it/ind.....LIA/pro/UD/cod/UD054",
-          "url": "http://catastoforre.aic-canyoning.it/ind.....LIA/pro/UD/cod/UD054"
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD054",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD054"
         }
       ]
     },

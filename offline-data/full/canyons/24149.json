@@ -95,7 +95,23 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_831c9e6897eebb28",
+          "kind": "TOPOGUIDE",
+          "title": "Senderos de agua del rio Ara",
+          "authors": [
+            "Ricardo Blanco",
+            "Alex Puyo",
+            "David Tresaco"
+          ],
+          "publicationYear": 2014,
+          "reference": "978-84-8321-410-7",
+          "editor": "Prames",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1279/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_9963760d1a389b54",
@@ -114,11 +130,11 @@
           "url": "http://ropewiki.com/Bergazo"
         },
         {
-          "id": "resource_ec68338b9e767b35",
+          "id": "resource_abd42d4e9b7edc26",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "https://www.celaontinyent.es/resenas/cro.....barranco-bergazo.png",
-          "url": "https://www.celaontinyent.es/resenas/cro.....barranco-bergazo.png"
+          "title": "https://www.celaontinyent.es/resenas/croquis-barranco-bergazo.png",
+          "url": "https://www.celaontinyent.es/resenas/croquis-barranco-bergazo.png"
         }
       ]
     },

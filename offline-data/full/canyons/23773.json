@@ -96,8 +96,38 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_975c78953190e02c",
+          "kind": "MAP",
+          "title": "2/2 Allgäuer-Lechtaler Alpen Ost (Alpenvereins (AV) Karte)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_d272647b9e202c89",
+          "kind": "MAP",
+          "title": "114 Holzgau (ÖK 50)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_0559f8db73841f9d",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://www.aventurecanyon.com/gries-description.html",
+          "url": "http://www.aventurecanyon.com/gries-description.html"
+        },
+        {
+          "id": "resource_2f376df5fe440e9c",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/GriessbachCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/GriessbachCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

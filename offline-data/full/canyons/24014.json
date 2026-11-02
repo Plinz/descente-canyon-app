@@ -63,7 +63,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_d3958643a7e21bee",
+          "kind": "TOPOGUIDE",
+          "title": "Descenso de cañones - Granada - Tomo 1",
+          "authors": [
+            "Eduardo Gómez"
+          ],
+          "publicationYear": 1997,
+          "reference": null,
+          "editor": "Eduardo Gómez",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1299/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": [
         {

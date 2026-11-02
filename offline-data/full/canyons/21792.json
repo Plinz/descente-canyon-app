@@ -101,7 +101,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_5ffc257823ab3502",
+          "kind": "TOPOGUIDE",
+          "title": "Gaudeloupe, canyons, gouffres, découverte",
+          "authors": [
+            "D.Kuster et Vsilve"
+          ],
+          "publicationYear": 1997,
+          "reference": "2-7417-0200-4",
+          "editor": "Gap",
+          "status": "stock très réduit !\n\n- 18,49 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/112/Guadeloupe-:-Canyons--gouffres-et-decouverte.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_823671d200a5451f",

@@ -119,7 +119,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_a9041d20d126f712",
+          "kind": "TOPOGUIDE",
+          "title": "Canyoning Nord Italia",
+          "authors": [
+            "Pascal Van Duin"
+          ],
+          "publicationYear": 2009,
+          "reference": "978-88-901753-1-2",
+          "editor": "TopCanyon",
+          "status": "stock très réduit !\n\n- 25,90 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/135/Canyoning-Nord-Italia.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_ff21942f4e737548",
@@ -131,11 +145,11 @@
       ],
       "resources": [
         {
-          "id": "resource_8139da9015fdcb90",
+          "id": "resource_3704297b0ca90437",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....aldiBoscoBelloCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....aldiBoscoBelloCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/ValdiCimaMontagnaValdiBoscoBelloCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/ValdiCimaMontagnaValdiBoscoBelloCanyon"
         }
       ]
     },

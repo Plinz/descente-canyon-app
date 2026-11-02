@@ -97,8 +97,52 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_edfde1014fbb7520",
+          "kind": "MAP",
+          "title": "14 III-SE Moggio Udinese (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_1ff86e1ec47b3e32",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/StivaneCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/StivaneCanyon"
+        },
+        {
+          "id": "resource_f94a0003d64ca76c",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyoningalpigiulie.blogspot.de/search?q=stivane",
+          "url": "http://canyoningalpigiulie.blogspot.de/search?q=stivane"
+        },
+        {
+          "id": "resource_a36977e7c95c8ee3",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD038",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD038"
+        },
+        {
+          "id": "resource_380c7a32bfdc7c67",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Stivane",
+          "url": "http://ropewiki.com/Stivane"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

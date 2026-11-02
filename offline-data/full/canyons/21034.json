@@ -145,11 +145,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_a81ad394c60bab18",
+          "id": "resource_fa3a1b8ec1dd60be",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.speleo.ch/commissions/canyon/.....ents/TineDeMayen.pdf",
-          "url": "http://www.speleo.ch/commissions/canyon/.....ents/TineDeMayen.pdf"
+          "title": "http://www.speleo.ch/commissions/canyon/documents/TineDeMayen.pdf",
+          "url": "http://www.speleo.ch/commissions/canyon/documents/TineDeMayen.pdf"
         },
         {
           "id": "resource_9e54530975570c37",

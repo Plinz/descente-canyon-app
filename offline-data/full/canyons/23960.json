@@ -65,7 +65,22 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_be46736c07fb0418",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons des Pyrénées occidentales",
+          "authors": [
+            "Luis Mariano",
+            "Mateos Marcos"
+          ],
+          "publicationYear": 1992,
+          "reference": "84-7917-167-7",
+          "editor": "Elkar",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/141/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

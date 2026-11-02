@@ -124,43 +124,33 @@
           "editor": "Adriambiente",
           "status": null,
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/153/topoguide.html"
-        },
-        {
-          "id": "biblio_09d0afb529f60980",
-          "kind": "TOPOGUIDE",
-          "title": "297 kompass 105 (Carte Nationale Suisse)",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_9ab07e7f06775d80",
-          "kind": "TOPOGUIDE",
-          "title": "91 Lago di Como - Lago di Lugano (Kompass) - 1/50000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_245aac59a4561de2",
-          "kind": "TOPOGUIDE",
-          "title": "http://lnx.canyoning.it/index/forra/cod/LC004",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://lnx.canyoning.it/index/forra/cod/LC004"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_13e9ce73fe6633f7",
+          "kind": "MAP",
+          "title": "297 kompass 105 (Carte Nationale Suisse)",
+          "scale": null,
+          "detailUrl": null
+        },
+        {
+          "id": "map_20f5354f23d65869",
+          "kind": "MAP",
+          "title": "91 Lago di Como - Lago di Lugano (Kompass)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_c09c1e236088fe6d",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://lnx.canyoning.it/index/forra/cod/LC004",
+          "url": "http://lnx.canyoning.it/index/forra/cod/LC004"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

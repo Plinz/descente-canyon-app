@@ -105,54 +105,40 @@
           "editor": "TopCanyon",
           "status": "stock très réduit !\n\n- 25,90 € -\n\nCommandez cet ouvrage dès maintenant !",
           "detailUrl": "https://www.descente-canyon.com/boutique/produit/135/Canyoning-Nord-Italia.html"
-        },
-        {
-          "id": "biblio_4efb7758a2e24b65",
-          "kind": "TOPOGUIDE",
-          "title": "024 Prealpi e Dolomiti Bellunesi (Tabacco) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_93ac484913feefde",
-          "kind": "TOPOGUIDE",
-          "title": "23 IV-SE Monte Pelf (IGMI 25/V) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_2eb627b6ca834fe6",
-          "kind": "TOPOGUIDE",
-          "title": "http://canyon.carto.net//cwiki/bin/view/Canyons/ValFogareCanyon",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://canyon.carto.net//cwiki/bin/view/Canyons/ValFogareCanyon"
-        },
-        {
-          "id": "biblio_1317bcc11d9c428a",
-          "kind": "TOPOGUIDE",
-          "title": "http://catastoforre.aic-canyoning.it/ind.....ETO/pro/BL/cod/BL019",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL019"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_0dcee14cdc13db79",
+          "kind": "MAP",
+          "title": "024 Prealpi e Dolomiti Bellunesi (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_b3b85b311c44e86f",
+          "kind": "MAP",
+          "title": "23 IV-SE Monte Pelf (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_be2aeab42409ff59",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net//cwiki/bin/view/Canyons/ValFogareCanyon",
+          "url": "http://canyon.carto.net//cwiki/bin/view/Canyons/ValFogareCanyon"
+        },
+        {
+          "id": "resource_88cd6ea49ecc9806",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL019",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/VENETO/pro/BL/cod/BL019"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": true,

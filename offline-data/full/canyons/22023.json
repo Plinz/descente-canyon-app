@@ -178,11 +178,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_73d2c58c106b49f2",
+          "id": "resource_a6e26c4a1343d52e",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.canyoneast.it/target.php?w=19.....t=Torrente%20Vinadia",
-          "url": "http://www.canyoneast.it/target.php?w=19.....t=Torrente%20Vinadia"
+          "title": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Torrente%20Vinadia",
+          "url": "http://www.canyoneast.it/target.php?w=1920&lng=it&target=Torrente%20Vinadia"
         }
       ]
     },

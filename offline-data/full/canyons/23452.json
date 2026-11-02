@@ -93,8 +93,37 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
-      "maps": [],
+      "topoguides": [
+        {
+          "id": "biblio_774008f93c089927",
+          "kind": "TOPOGUIDE",
+          "title": "100 descentes de canyons autour de Grenoble",
+          "authors": [
+            "Arnaud Astier"
+          ],
+          "publicationYear": 2015,
+          "reference": "978-2-7466-7754-8",
+          "editor": "auto-édition",
+          "status": "stock vide !\n\nSans doute disponible prochainement : contactez-nous !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/194/100-Descentes-de-Canyons-autour-de-Grenoble.html"
+        }
+      ],
+      "maps": [
+        {
+          "id": "map_45fe654f05c1ff3a",
+          "kind": "MAP",
+          "title": "3336 OT La Mure Valbonnais (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_8f20ae98d683e3f6",
+          "kind": "MAP",
+          "title": "3337 OT Devoluy (IGN TOP25)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
       "resources": []
     },
     "reglementation": {

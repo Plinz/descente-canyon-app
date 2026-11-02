@@ -130,43 +130,33 @@
           "editor": "Les Doigts Déglingués",
           "status": null,
           "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1139/topoguide.html"
-        },
-        {
-          "id": "biblio_6b5cee5e5b3c0ba1",
-          "kind": "TOPOGUIDE",
-          "title": "ASF n°2 Moyenne Roya - Val Nervia e Argentina (Alpes sans fronti?res) - 1/25000",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_d7cc38b548488604",
-          "kind": "TOPOGUIDE",
-          "title": "N° 14 Imperia (IGC)",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": null
-        },
-        {
-          "id": "biblio_25d28d309f462145",
-          "kind": "TOPOGUIDE",
-          "title": "http://catastoforre.aic-canyoning.it/index/forra/cod/IM013",
-          "authors": [],
-          "publicationYear": null,
-          "reference": null,
-          "editor": null,
-          "status": null,
-          "detailUrl": "http://catastoforre.aic-canyoning.it/index/forra/cod/IM013"
         }
       ],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_a3482111c0bd004f",
+          "kind": "MAP",
+          "title": "ASF n°2 Moyenne Roya - Val Nervia e Argentina (Alpes sans fronti?res)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_1a70229353b06292",
+          "kind": "MAP",
+          "title": "N° 14 Imperia (IGC)",
+          "scale": null,
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_549b4b12333fdb6f",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/cod/IM013",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/cod/IM013"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

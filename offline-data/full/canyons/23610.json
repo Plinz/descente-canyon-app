@@ -99,11 +99,11 @@
       "maps": [],
       "resources": [
         {
-          "id": "resource_6cb3c2c2c65d13a9",
+          "id": "resource_dbd704229c54f4d8",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.barranquismo.net/paginas/barr.....anc_de_barraonse.htm",
-          "url": "http://www.barranquismo.net/paginas/barr.....anc_de_barraonse.htm"
+          "title": "http://www.barranquismo.net/paginas/barrancos/barranc_de_barraonse.htm",
+          "url": "http://www.barranquismo.net/paginas/barrancos/barranc_de_barraonse.htm"
         }
       ]
     },

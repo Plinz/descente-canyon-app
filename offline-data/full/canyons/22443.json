@@ -103,7 +103,21 @@
       "label": "Après le passage du pont, se garer sur le bord de route."
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_1b963ec66b81da00",
+          "kind": "TOPOGUIDE",
+          "title": "20 Canyons Béarn - Pays Basque",
+          "authors": [
+            "Jean-Pierre Danos"
+          ],
+          "publicationYear": 1991,
+          "reference": null,
+          "editor": "M.C.T",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/122/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_6e0de7f20dd30ca8",

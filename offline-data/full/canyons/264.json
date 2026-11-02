@@ -79,7 +79,22 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_8e1f2e1beafeb292",
+          "kind": "TOPOGUIDE",
+          "title": "Canyons méditerranéens - Les plus beaux canyons de l'Ubaye à la mer",
+          "authors": [
+            "Bernard Barbier",
+            "Bernard Ranc"
+          ],
+          "publicationYear": 1996,
+          "reference": "ISBN 2-7417-0178-4",
+          "editor": "Gap",
+          "status": "ouvrage épuisé",
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/111/topoguide.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_60c9507073659ab3",

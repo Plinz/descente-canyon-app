@@ -229,11 +229,11 @@
       ],
       "resources": [
         {
-          "id": "resource_205d4079a699fc94",
+          "id": "resource_f123e9a1ec3ec9ee",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://canyon.carto.net/cwiki/bin/view/C.....s/GorgasNegrasCanyon",
-          "url": "http://canyon.carto.net/cwiki/bin/view/C.....s/GorgasNegrasCanyon"
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/GorgasNegrasCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/GorgasNegrasCanyon"
         },
         {
           "id": "resource_cf0ba0682c4da6ec",

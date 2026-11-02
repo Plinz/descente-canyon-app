@@ -78,18 +78,18 @@
       ],
       "resources": [
         {
-          "id": "resource_d889997223424355",
+          "id": "resource_1367e25ba9a4966b",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.geomapguide.com/diren/etat_co.....=06117&source=simple",
-          "url": "http://www.geomapguide.com/diren/etat_co.....=06117&source=simple"
+          "title": "http://www.geomapguide.com/diren/etat_commune.asp?code=06117&source=simple",
+          "url": "http://www.geomapguide.com/diren/etat_commune.asp?code=06117&source=simple"
         },
         {
-          "id": "resource_b7720aec624d7a38",
+          "id": "resource_43cde2100a8d61ed",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://duman.polytech.unice.fr/album_cat.....rt_order=ASC&start=0",
-          "url": "http://duman.polytech.unice.fr/album_cat.....rt_order=ASC&start=0"
+          "title": "http://duman.polytech.unice.fr/album_cat.php?cat_id=45&sort_method=pic_time&sort_order=ASC&start=0",
+          "url": "http://duman.polytech.unice.fr/album_cat.php?cat_id=45&sort_method=pic_time&sort_order=ASC&start=0"
         }
       ]
     },

@@ -65,7 +65,21 @@
     "geoPoints": [],
     "representativePoint": null,
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_f98bab071a8a9693",
+          "kind": "TOPOGUIDE",
+          "title": "Carte N°2 - Pays Basque, Béarn, Navarre, Jacetania",
+          "authors": [
+            "Patrick Gimat + Bernard Trouvé"
+          ],
+          "publicationYear": 1999,
+          "reference": null,
+          "editor": null,
+          "status": "stock très réduit !\n\n- 7,50 € -\n\nCommandez cet ouvrage dès maintenant !",
+          "detailUrl": "https://www.descente-canyon.com/boutique/produit/121/Carte-n°2-:-Pays-Basque--Bearn--Navarre--Jacetania.html"
+        }
+      ],
       "maps": [
         {
           "id": "map_1e3ffadad605da6e",

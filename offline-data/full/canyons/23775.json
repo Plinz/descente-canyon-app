@@ -96,8 +96,31 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_0920eac300aaa064",
+          "kind": "MAP",
+          "title": "UK L 8 Allgäuer Alpen (Bayerisches Landesvermessungsamt)",
+          "scale": "1/50000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_11c4163492754279",
+          "kind": "MAP",
+          "title": "WK 364 Bregenzerwald (Freytag & Berndt)",
+          "scale": "1/50000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_94b0a371291228c8",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/GemstelCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/GemstelCanyon"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

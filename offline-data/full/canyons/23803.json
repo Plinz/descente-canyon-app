@@ -96,8 +96,45 @@
     },
     "bibliography": {
       "topoguides": [],
-      "maps": [],
-      "resources": []
+      "maps": [
+        {
+          "id": "map_e96372744d4c4932",
+          "kind": "MAP",
+          "title": "018 Alpi Carniche Orientali, Canal de Ferro (Tabacco)",
+          "scale": "1/25000",
+          "detailUrl": null
+        },
+        {
+          "id": "map_4dc4c39ccaa8da9d",
+          "kind": "MAP",
+          "title": "14 II-SO Chiusaforte (IGMI 25/V)",
+          "scale": "1/25000",
+          "detailUrl": null
+        }
+      ],
+      "resources": [
+        {
+          "id": "resource_6669c9a79286da8b",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://canyon.carto.net/cwiki/bin/view/Canyons/BrezziCanyon",
+          "url": "http://canyon.carto.net/cwiki/bin/view/Canyons/BrezziCanyon"
+        },
+        {
+          "id": "resource_1645b0415022074d",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://ropewiki.com/Brezzi",
+          "url": "http://ropewiki.com/Brezzi"
+        },
+        {
+          "id": "resource_1c2fc4e35f997ad2",
+          "kind": "RESOURCE",
+          "resourceType": "WEBSITE",
+          "title": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD067",
+          "url": "http://catastoforre.aic-canyoning.it/index/forra/reg/FRIULI+VENEZIA+GIULIA/pro/UD/cod/UD067"
+        }
+      ]
     },
     "reglementation": {
       "hasSpecificRegulation": false,

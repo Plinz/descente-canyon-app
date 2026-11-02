@@ -95,7 +95,21 @@
       "label": null
     },
     "bibliography": {
-      "topoguides": [],
+      "topoguides": [
+        {
+          "id": "biblio_85cf80a1f73bc50a",
+          "kind": "TOPOGUIDE",
+          "title": "Barranquismo en el Pirineo : Ainsa y alrededores",
+          "authors": [
+            "Federaciones de Espeologia y Montanismo de Aragon"
+          ],
+          "publicationYear": 2010,
+          "reference": null,
+          "editor": "Prames",
+          "status": null,
+          "detailUrl": "https://www.descente-canyon.com/canyoning/topoguide/1256/topoguide.html"
+        }
+      ],
       "maps": [],
       "resources": []
     },

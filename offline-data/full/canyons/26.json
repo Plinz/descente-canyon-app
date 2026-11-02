@@ -186,11 +186,11 @@
       ],
       "resources": [
         {
-          "id": "resource_61c056c80cae7820",
+          "id": "resource_6a79fdacff98e960",
           "kind": "RESOURCE",
           "resourceType": "WEBSITE",
-          "title": "http://www.parc-du-vercors.fr/plugins/si.....nrv&layout=decouvrir",
-          "url": "http://www.parc-du-vercors.fr/plugins/si.....nrv&layout=decouvrir"
+          "title": "http://www.parc-du-vercors.fr/plugins/sites_pratique/index.php?action=slide&id=22&theme=pnrv&layout=decouvrir",
+          "url": "http://www.parc-du-vercors.fr/plugins/sites_pratique/index.php?action=slide&id=22&theme=pnrv&layout=decouvrir"
         }
       ]
     },
