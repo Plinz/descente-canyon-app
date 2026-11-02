@@ -21,6 +21,8 @@ import fr.descentecanyon.app.domain.model.EdfPracticabilityCondition
 import fr.descentecanyon.app.domain.model.EdfPracticabilityReference
 import fr.descentecanyon.app.domain.model.EdfPracticabilitySample
 import fr.descentecanyon.app.domain.model.GeoBounds
+import fr.descentecanyon.app.domain.model.GeoPoint
+import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.NotificationCenterState
@@ -65,6 +67,7 @@ import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Rule
 import org.junit.Test
 
@@ -238,6 +241,26 @@ class CanyonDetailViewModelTest {
 
         assertEquals(true, viewModel.uiState.value.weather?.isFromCache)
         coVerify(exactly = 0) { weatherRepository.getCanyonWeather(any()) }
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `a canyon without any position asks neither the weather nor the flow estimate`() = runTest {
+        stubBaseState()
+        val unlocated = detail().copy(geoPoints = emptyList())
+        coEvery { canyonRepository.getCanyonPreview(42) } returns Result.success(unlocated)
+        coEvery { canyonRepository.getCanyonDetail(42) } returns Result.success(unlocated)
+
+        val viewModel = createViewModel()
+
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertFalse(state.isLoadingWeather || state.isLoadingPredictions)
+        assertNull(state.weatherError)
+        assertNull(state.predictionError)
+        coVerify(exactly = 0) { weatherRepository.getCanyonWeather(any()) }
+        coVerify(exactly = 0) { debitPredictionRepository.getPredictions(any()) }
     }
 
     @Test
@@ -465,6 +488,7 @@ class CanyonDetailViewModelTest {
             cotation = "v4a4III",
             url = "/canyoning/canyon/42/riolan.html",
         ),
+        geoPoints = listOf(GeoPoint(canyonId = 42, type = GeoPointType.ENTREE, latitude = 43.95, longitude = 6.90)),
         photos = listOf(
             CanyonPhoto(
                 id = 8,

@@ -186,21 +186,25 @@ internal fun CanyonDetailContent(
                 )
             }
         }
-        item {
-            CanyonWeatherCard(
-                weather = weather,
-                isLoading = isLoadingWeather,
-                error = weatherError,
-            )
-        }
-        item {
-            CanyonDebitPredictionCard(
-                predictions = predictions,
-                isLoading = isLoadingPredictions,
-                error = predictionError,
-                onInfoClick = onOpenPredictionInfo,
-                weather = weather,
-            )
+        if (detail.isLocated) {
+            item {
+                CanyonWeatherCard(
+                    weather = weather,
+                    isLoading = isLoadingWeather,
+                    error = weatherError,
+                )
+            }
+            item {
+                CanyonDebitPredictionCard(
+                    predictions = predictions,
+                    isLoading = isLoadingPredictions,
+                    error = predictionError,
+                    onInfoClick = onOpenPredictionInfo,
+                    weather = weather,
+                )
+            }
+        } else {
+            item { UnlocatedConditionsCard() }
         }
         if (nearbyCanyons.isNotEmpty()) {
             item {

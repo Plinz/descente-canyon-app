@@ -297,6 +297,8 @@ Search for a canyon and add it to your favorites.</string>
     <string name="weather_title">Weather</string>
     <string name="weather_loading">Loading the weather…</string>
     <string name="weather_unavailable">Weather unavailable for this canyon.</string>
+    <string name="canyon_conditions_title">Weather and flow estimate</string>
+    <string name="canyon_conditions_no_position">No GPS point for this canyon on descente-canyon.com: without its position, there is no weather, flow estimate or watershed.</string>
     <string name="weather_source_watershed_center">watershed center</string>
     <string name="weather_source_entry">entry</string>
     <string name="weather_source_upstream_parking">upstream parking</string>
@@ -696,6 +698,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="outing_conditions_estimate">Estimated flow: %1$s</string>
     <string name="outing_conditions_last_report">Last reported flow: %1$s, %2$s</string>
     <string name="outing_conditions_no_forecast">No weather forecast for that day (too far ahead or offline).</string>
+    <string name="outing_conditions_no_position">No weather forecast: this canyon has no GPS point on descente-canyon.com.</string>
     <string name="outing_alert_body">Send your plan to someone who is not coming. Without news from you at the alert time, they call the rescue services.</string>
     <string name="outing_alert_margin">Margin before the alert</string>
     <string name="outing_alert_margin_value">+%1$d h</string>

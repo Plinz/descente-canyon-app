@@ -242,6 +242,8 @@ Suche einen Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="watershed_area">Einzugsgebiet</string>
     <string name="watercourse">Gewässer</string>
     <string name="weather_unavailable">Wetter für diesen Canyon nicht verfügbar.</string>
+    <string name="canyon_conditions_title">Wetter und Wasserstandsschätzung</string>
+    <string name="canyon_conditions_no_position">Kein GPS-Punkt für diesen Canyon auf descente-canyon.com: Ohne seine Lage gibt es kein Wetter, keine Wasserstandsschätzung und kein Einzugsgebiet.</string>
     <string name="weather_source_watershed_center">Mitte des Einzugsgebiets</string>
     <string name="weather_source_entry">Einstieg</string>
     <string name="weather_source_upstream_parking">Parkplatz bergwärts</string>

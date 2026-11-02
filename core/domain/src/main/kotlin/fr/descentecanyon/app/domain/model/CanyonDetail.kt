@@ -23,4 +23,7 @@ data class CanyonDetail(
     val photos: List<CanyonPhoto> = emptyList(),
     val debits: List<Debit> = emptyList(),
     val watershed: CanyonWatershed? = null,
-)
+) {
+    /** Whether the canyon has a position: the weather and the flow estimate are computed from it. */
+    val isLocated: Boolean get() = watershed?.bounds != null || geoPoints.isNotEmpty()
+}

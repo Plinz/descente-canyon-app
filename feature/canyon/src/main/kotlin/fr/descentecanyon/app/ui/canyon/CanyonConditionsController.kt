@@ -73,6 +73,8 @@ class CanyonConditionsController @Inject constructor(
     /** Loads the sections that are missing or failed for [detail]. */
     fun loadFor(detail: CanyonDetail) {
         maybeLoadEdfStatus()
+        // Without a position there is nowhere to ask the weather for (the screen says so instead).
+        if (!detail.isLocated) return
         maybeLoadWeather(detail)
         maybeSchedulePredictions(detail)
     }

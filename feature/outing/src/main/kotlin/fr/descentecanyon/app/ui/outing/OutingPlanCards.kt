@@ -656,11 +656,15 @@ private fun Signals(state: OutingPlanUiState, timeFormatter: DateTimeFormatter) 
 
             day != null -> SignalRow(weatherIcon(day.condition), forecastText(resources, day, locale), colors.textSecondary)
 
-            else -> SignalRow(
-                weatherIcon(WeatherCondition.UNKNOWN),
-                stringResource(R.string.outing_conditions_no_forecast),
-                colors.textMuted,
-            )
+            else -> {
+                // Without a GPS point there is no forecast at all, whatever the day.
+                val unlocated = state.canyon?.isLocated == false
+                SignalRow(
+                    weatherIcon(WeatherCondition.UNKNOWN),
+                    stringResource(if (unlocated) R.string.outing_conditions_no_position else R.string.outing_conditions_no_forecast),
+                    colors.textMuted,
+                )
+            }
         }
         // A cold day: the water of a torrent is then icy, whatever the flow.
         day?.temperatureMaxC?.takeIf { it < COLD_DAY_MAX_C }?.let { max ->

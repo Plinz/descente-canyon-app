@@ -297,6 +297,8 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="weather_title">Tiempo</string>
     <string name="weather_loading">Cargando el tiempo…</string>
     <string name="weather_unavailable">Meteorología no disponible para este barranco.</string>
+    <string name="canyon_conditions_title">Tiempo y estimación del caudal</string>
+    <string name="canyon_conditions_no_position">Este barranco no tiene ningún punto GPS en descente-canyon.com: sin su posición, no hay tiempo, estimación del caudal ni cuenca vertiente.</string>
     <string name="weather_source_watershed_center">centro de la cuenca vertiente</string>
     <string name="weather_source_entry">entrada</string>
     <string name="weather_source_upstream_parking">aparcamiento aguas arriba</string>
@@ -710,6 +712,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="outing_conditions_estimate">Caudal estimado: %1$s</string>
     <string name="outing_conditions_last_report">Último caudal señalado: %1$s, %2$s</string>
     <string name="outing_conditions_no_forecast">Sin previsión meteorológica para ese día (demasiado lejos o sin conexión).</string>
+    <string name="outing_conditions_no_position">Sin previsión meteorológica: este barranco no tiene ningún punto GPS en descente-canyon.com.</string>
     <string name="outing_alert_body">Envíe su plan a alguien que no venga. Sin noticias suyas a la hora de alerta, llamará a los servicios de rescate.</string>
     <string name="outing_alert_margin">Margen antes de la alerta</string>
     <string name="outing_alert_margin_value">+%1$d h</string>

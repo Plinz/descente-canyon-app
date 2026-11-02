@@ -299,6 +299,8 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="weather_title">Météo</string>
     <string name="weather_loading">Chargement de la météo…</string>
     <string name="weather_unavailable">Météo indisponible pour ce canyon.</string>
+    <string name="canyon_conditions_title">Météo et estimation du débit</string>
+    <string name="canyon_conditions_no_position">Aucun point GPS pour ce canyon sur descente-canyon.com : sans sa position, ni météo, ni estimation du débit, ni bassin versant.</string>
     <string name="weather_source_watershed_center">centre du bassin versant</string>
     <string name="weather_source_entry">entrée</string>
     <string name="weather_source_upstream_parking">parking amont</string>
@@ -710,6 +712,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="outing_conditions_estimate">Débit estimé : %1$s</string>
     <string name="outing_conditions_last_report">Dernier débit signalé : %1$s, %2$s</string>
     <string name="outing_conditions_no_forecast">Pas de prévision météo pour ce jour (trop loin ou hors connexion).</string>
+    <string name="outing_conditions_no_position">Pas de prévision météo : aucun point GPS pour ce canyon sur descente-canyon.com.</string>
     <string name="outing_alert_body">Envoyez votre programme à une personne qui ne vient pas. Sans nouvelles de vous à l\'heure d\'alerte, elle appelle les secours.</string>
     <string name="outing_alert_margin">Marge avant l\'alerte</string>
     <string name="outing_alert_margin_value">+%1$d h</string>

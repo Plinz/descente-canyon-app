@@ -75,6 +75,34 @@ fun CanyonWeatherCard(weather: CanyonWeather?, isLoading: Boolean, error: String
     }
 }
 
+/** In place of the weather and the flow estimate of a canyon without any GPS point: nothing to compute them from. */
+@Composable
+internal fun UnlocatedConditionsCard(modifier: Modifier = Modifier) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
+    ) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.canyon_conditions_title),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+                modifier = Modifier.semantics { heading() },
+            )
+            Text(
+                text = stringResource(R.string.canyon_conditions_no_position),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
 @Composable
 private fun WeatherContent(weather: CanyonWeather, isRefreshing: Boolean) {
     // Times of the forecast are those of the weather point.
