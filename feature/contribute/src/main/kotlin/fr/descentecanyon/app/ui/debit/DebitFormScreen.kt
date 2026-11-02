@@ -600,6 +600,8 @@ private fun <T> CompactChoiceSection(title: String, options: List<FormOption<T>>
                 text = title,
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold,
+                // Measured after the button, which a long title would squeeze otherwise.
+                modifier = Modifier.weight(1f),
             )
             if (describedOptions.isNotEmpty()) {
                 TextButton(onClick = { showInfoDialog = true }) {

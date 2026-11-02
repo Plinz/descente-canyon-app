@@ -37,9 +37,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Measurable
+import androidx.compose.ui.layout.MeasureResult
+import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
@@ -61,6 +66,7 @@ import fr.descentecanyon.app.ui.design.LocalDcSpacing
 import fr.descentecanyon.app.ui.design.LocalDcTypography
 import fr.descentecanyon.app.ui.test.TestTags
 import java.util.Locale
+import kotlin.math.ceil
 
 @Composable
 internal fun SummaryCard(
@@ -422,19 +428,24 @@ private fun MetricSectionTitle(title: String) {
 }
 
 /**
- * The [steps] side by side and centered, a chevron between two, sharing the width as evenly as their
- * texts allow; short of room, the longest values wrap between their words. When even that does not
- * fit (a narrow screen, long labels), one step a line: its label, and its value at the end.
+ * The [steps] side by side, a chevron between two, in columns sharing the width as evenly as their
+ * texts allow; short of room, the longest values wrap between their words. The values on fewer lines
+ * and the chevrons are centered on the lines of the tallest value, and each chevron sits halfway
+ * between the two values it links. When even the longest words do not fit (a narrow screen, long
+ * labels), one step a line: its label, and its value at the end.
  */
 @Composable
 private fun StepsRow(steps: List<SummaryStat>) {
     val colors = LocalDcColors.current
     val typography = LocalDcTypography.current
+    val valueTexts = steps.map { it.value ?: "-" }
+    // A wrapped value is often narrower than the width it was given: where its lines end places the chevrons.
+    val textMeasurer = rememberTextMeasurer()
     Layout(
         content = {
             steps.forEachIndexed { index, stat ->
                 Text(text = stat.label.uppercase(), style = typography.metricLabel, color = colors.textMuted, maxLines = 1)
-                Text(text = stat.value ?: "-", style = typography.metricValue, color = colors.textPrimary, textAlign = TextAlign.Center)
+                Text(text = valueTexts[index], style = typography.metricValue, color = colors.textPrimary, textAlign = TextAlign.Center)
                 if (index < steps.lastIndex) {
                     Icon(Icons.Default.ChevronRight, contentDescription = null, tint = colors.textMuted, modifier = Modifier.size(16.dp))
                 }
@@ -445,56 +456,68 @@ private fun StepsRow(steps: List<SummaryStat>) {
         val values = measurables.filterIndexed { index, _ -> index % 3 == 1 }
         val chevrons = measurables.filterIndexed { index, _ -> index % 3 == 2 }.map { it.measure(Constraints()) }
         val gap = STEP_GAP.roundToPx()
-        val room = (constraints.maxWidth - chevrons.sumOf { it.width + 2 * gap }).coerceAtLeast(0)
+        val chevronSpace = chevrons.firstOrNull()?.let { it.width + 2 * gap } ?: 0
+        val room = (constraints.maxWidth - chevronSpace * chevrons.size).coerceAtLeast(0)
         val labelWidths = labels.map { it.maxIntrinsicWidth(Constraints.Infinity) }
-        val valueWords = values.map { it.minIntrinsicWidth(Constraints.Infinity) }
         val preferred = values.mapIndexed { index, value -> maxOf(labelWidths[index], value.maxIntrinsicWidth(Constraints.Infinity)) }
-        val least = valueWords.zip(labelWidths, ::maxOf)
-        if (least.sum() > room) {
-            // One step a line.
-            val labelPlaceables = labels.map { it.measure(Constraints(maxWidth = constraints.maxWidth)) }
-            val valuePlaceables = values.mapIndexed { index, value ->
-                value.measure(Constraints(maxWidth = (constraints.maxWidth - labelPlaceables[index].width - 2 * gap).coerceAtLeast(0)))
-            }
-            val heights = labelPlaceables.zip(valuePlaceables) { label, value -> maxOf(label.height, value.height) }
-            val lineGap = STEP_LINE_GAP.roundToPx()
-            return@Layout layout(constraints.maxWidth, heights.sum() + lineGap * (heights.size - 1)) {
-                var y = 0
-                heights.forEachIndexed { index, height ->
-                    labelPlaceables[index].placeRelative(0, y + (height - labelPlaceables[index].height) / 2)
-                    valuePlaceables[index].let { it.placeRelative(constraints.maxWidth - it.width, y + (height - it.height) / 2) }
-                    y += height + lineGap
-                }
-            }
-        }
-        val widths = if (preferred.sum() <= room) {
-            evened(preferred, room)
+        val least = values.mapIndexed { index, value -> maxOf(labelWidths[index], value.minIntrinsicWidth(Constraints.Infinity)) }
+        if (least.sum() > room) return@Layout stepsOneALine(labels, values, constraints.maxWidth, gap)
+
+        // Each value wrapped in its share of the room, then the columns fitted to the lines it took.
+        val wrapWidths = if (preferred.sum() <= room) {
+            preferred
         } else {
             val extra = room - least.sum()
             val wanted = preferred.sum() - least.sum()
             least.zip(preferred) { low, high -> low + (high - low) * extra / wanted }
         }
-        val labelPlaceables = labels.zip(widths) { label, width -> label.measure(Constraints(maxWidth = width)) }
-        val valuePlaceables = values.zip(widths) { value, width -> value.measure(Constraints(maxWidth = width)) }
+        val valuePlaceables = values.zip(wrapWidths) { value, width -> value.measure(Constraints(maxWidth = width)) }
+        val lineWidths = valueTexts.zip(wrapWidths) { text, width ->
+            textMeasurer.measure(text, typography.metricValue, constraints = Constraints(maxWidth = width)).widestLineWidth()
+        }
+        val columns = evened(labelWidths.zip(lineWidths, ::maxOf), room)
+        val labelPlaceables = labels.zip(columns) { label, width -> label.measure(Constraints(maxWidth = width)) }
         val labelHeight = labelPlaceables.maxOf { it.height }
-        // On the first line of the values.
-        val chevronCenter = labelHeight + typography.metricValue.lineHeight.roundToPx() / 2
-        val spread = if (chevrons.isEmpty()) 0 else (room - widths.sum()) / (2 * chevrons.size)
-        layout(constraints.maxWidth, labelHeight + valuePlaceables.maxOf { it.height }) {
-            var x = 0
-            widths.forEachIndexed { index, width ->
-                labelPlaceables[index].placeRelative(x + (width - labelPlaceables[index].width) / 2, 0)
-                valuePlaceables[index].placeRelative(x + (width - valuePlaceables[index].width) / 2, labelHeight)
-                x += width
-                chevrons.getOrNull(index)?.let { chevron ->
-                    x += gap + spread
-                    chevron.placeRelative(x, chevronCenter - chevron.height / 2)
-                    x += chevron.width + gap + spread
+        val valuesHeight = valuePlaceables.maxOf { it.height }
+        layout(constraints.maxWidth, labelHeight + valuesHeight) {
+            var columnStart = (room - columns.sum()) / 2
+            var previousValueEnd = 0
+            columns.forEachIndexed { index, width ->
+                val center = columnStart + width / 2
+                val valueStart = center - lineWidths[index] / 2
+                labelPlaceables[index].let { it.placeRelative(center - it.width / 2, 0) }
+                valuePlaceables[index].let { it.placeRelative(center - it.width / 2, labelHeight + (valuesHeight - it.height) / 2) }
+                chevrons.getOrNull(index - 1)?.let { chevron ->
+                    val between = (previousValueEnd + valueStart) / 2
+                    chevron.placeRelative(between - chevron.width / 2, labelHeight + (valuesHeight - chevron.height) / 2)
                 }
+                previousValueEnd = valueStart + lineWidths[index]
+                columnStart += width + chevronSpace
             }
         }
     }
 }
+
+/** One step a line: its label at the start, its value at the end. */
+private fun MeasureScope.stepsOneALine(labels: List<Measurable>, values: List<Measurable>, width: Int, gap: Int): MeasureResult {
+    val labelPlaceables = labels.map { it.measure(Constraints(maxWidth = width)) }
+    val valuePlaceables = values.mapIndexed { index, value ->
+        value.measure(Constraints(maxWidth = (width - labelPlaceables[index].width - 2 * gap).coerceAtLeast(0)))
+    }
+    val heights = labelPlaceables.zip(valuePlaceables) { label, value -> maxOf(label.height, value.height) }
+    val lineGap = STEP_LINE_GAP.roundToPx()
+    return layout(width, heights.sum() + lineGap * (heights.size - 1)) {
+        var y = 0
+        heights.forEachIndexed { index, height ->
+            labelPlaceables[index].let { it.placeRelative(0, y + (height - it.height) / 2) }
+            valuePlaceables[index].let { it.placeRelative(width - it.width, y + (height - it.height) / 2) }
+            y += height + lineGap
+        }
+    }
+}
+
+/** The width of the longest line, whatever the width the text was laid out in. */
+private fun TextLayoutResult.widestLineWidth(): Int = (0 until lineCount).maxOf { ceil(getLineRight(it) - getLineLeft(it)).toInt() }
 
 /** [widths] grown to share [room] as evenly as they can: the narrow ones widened first, none narrowed. */
 private fun evened(widths: List<Int>, room: Int): List<Int> {

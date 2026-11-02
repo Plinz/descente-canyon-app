@@ -62,6 +62,8 @@ internal fun HomeFeedHeader(selectedFeed: HomeFeedType, onRefresh: () -> Unit, m
                     stringResource(R.string.home_forum_title)
                 },
                 style = MaterialTheme.typography.titleLarge,
+                // Measured after the button, which a long title (large font) would squeeze otherwise.
+                modifier = Modifier.weight(1f),
             )
             IconButton(onClick = onRefresh, modifier = Modifier.excludeFromBackGesture()) {
                 Icon(

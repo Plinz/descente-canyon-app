@@ -3,6 +3,7 @@ package fr.descentecanyon.app.ui.outing
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -30,6 +31,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDuration
@@ -416,13 +418,16 @@ private fun AdjustPhaseDialog(title: String, span: TimeSpan?, adjustment: Int, o
                 span?.let {
                     Text(stringResource(R.string.outing_adjust_current, spanLabel(it)), style = MaterialTheme.typography.bodyMedium)
                 }
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                    OutlinedButton(onClick = { onAdjust(adjustment - step) }) { Text("−$step") }
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    StepButton(label = "−$step", onClick = { onAdjust(adjustment - step) })
+                    // Weighted, so measured after the buttons: a long text wraps instead of squeezing the last one.
                     Text(
                         if (adjustment == 0) stringResource(R.string.outing_adjust_none) else signedMinutes(adjustment),
                         style = MaterialTheme.typography.titleMedium,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(1f),
                     )
-                    OutlinedButton(onClick = { onAdjust(adjustment + step) }) { Text("+$step") }
+                    StepButton(label = "+$step", onClick = { onAdjust(adjustment + step) })
                 }
                 Text(
                     stringResource(R.string.outing_adjust_hint),
@@ -436,4 +441,12 @@ private fun AdjustPhaseDialog(title: String, span: TimeSpan?, adjustment: Int, o
             if (adjustment != 0) TextButton(onClick = { onAdjust(0) }) { Text(stringResource(R.string.outing_adjust_reset)) }
         },
     )
+}
+
+/** "−15", "+15": narrower than the default padding, to leave the text between them a line in a dialog. */
+@Composable
+private fun StepButton(label: String, onClick: () -> Unit) {
+    OutlinedButton(onClick = onClick, contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)) {
+        Text(label, maxLines = 1)
+    }
 }

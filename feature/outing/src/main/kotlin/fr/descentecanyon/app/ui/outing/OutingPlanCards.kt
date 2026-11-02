@@ -456,10 +456,11 @@ internal fun GroupSheet(
             IconButton(onClick = { onSizeSelected(size - 1) }, enabled = size > OutingSettings.GROUP_SIZE_RANGE.first) {
                 Icon(Icons.Default.Remove, contentDescription = stringResource(R.string.outing_group_less))
             }
+            // Measured after the buttons (a large font would squeeze the + otherwise), at its own width.
             Text(
                 pluralStringResource(R.plurals.outing_group_size, size, size),
                 style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.testTag(TestTags.OUTING_GROUP_SIZE),
+                modifier = Modifier.weight(1f, fill = false).testTag(TestTags.OUTING_GROUP_SIZE),
             )
             IconButton(onClick = { onSizeSelected(size + 1) }, enabled = size < OutingSettings.GROUP_SIZE_RANGE.last) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.outing_group_more))
