@@ -23,7 +23,7 @@ androidxHilt = "1.4.0"
 
 # Network / Scraping
 okhttp = "5.5.0"
-jsoup = "1.23.2"
+jsoup = "1.24.1"
 kotlinxSerialization = "1.11.0"
 
 # Maps
