@@ -6,8 +6,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.coroutines.DefaultDispatcher
+import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonSummary
+import fr.descentecanyon.app.domain.model.DailyDebitPrediction
 import fr.descentecanyon.app.domain.model.DriveTime
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.SearchCriteria
@@ -17,6 +19,7 @@ import fr.descentecanyon.app.domain.model.SortDirection
 import fr.descentecanyon.app.domain.model.ZoneCountry
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.ChooseStayCanyonUseCase
+import fr.descentecanyon.app.domain.usecase.EstimateCanyonsDebitUseCase
 import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
 import fr.descentecanyon.app.domain.usecase.driveTo
 import fr.descentecanyon.app.perf.PerformanceTrace
@@ -34,6 +37,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
@@ -81,6 +85,30 @@ data class SearchStayPick(
     fun driveTo(item: CanyonSearchItem): DriveTime? = driveTo(place, item, drives)
 }
 
+/** Where the estimation of the flow of the canyons matching the search stands. */
+data class DebitEstimationUiState(
+    val status: DebitEstimationStatus = DebitEstimationStatus.IDLE,
+    /** Canyons matching the other filters: the ones that are estimated. */
+    val candidateCount: Int = 0,
+    val done: Int = 0,
+    /** Canyons that cannot be estimated (no position, no usable weather). */
+    val unavailableCount: Int = 0,
+    /** Some canyons were left out because the network is unavailable. */
+    val offlineSkipped: Boolean = false,
+)
+
+enum class DebitEstimationStatus {
+    /** No flow filter. */
+    IDLE,
+
+    /** The area holds too many canyons: nothing is requested. */
+    TOO_BROAD,
+    RUNNING,
+    DONE,
+}
+
+private data class DebitCandidates(val ids: List<Int>, val count: Int)
+
 data class SearchUiState(
     val queryDraft: String = "",
     val criteria: SearchCriteria = SearchCriteria(),
@@ -104,6 +132,9 @@ data class SearchUiState(
     val recentCanyons: List<CanyonSummary> = emptyList(),
     /** Canyons of the user's logbook. */
     val descendedIds: Set<Int> = emptySet(),
+    val debitEstimation: DebitEstimationUiState = DebitEstimationUiState(),
+    /** The estimated flow of the canyons estimated so far, for the day of the flow filter (today without one). */
+    val estimatedFlows: Map<Int, DailyDebitPrediction> = emptyMap(),
 )
 
 @HiltViewModel
@@ -114,6 +145,7 @@ class SearchViewModel @Inject constructor(
     @param:DefaultDispatcher private val searchDispatcher: CoroutineDispatcher,
     private val recentCanyonsRepository: RecentCanyonsRepository,
     private val chooseStayCanyonUseCase: ChooseStayCanyonUseCase,
+    private val estimateCanyonsDebitUseCase: EstimateCanyonsDebitUseCase,
 ) : ViewModel() {
 
     /** The day of a stay the search was opened for, if any (route arguments). */
@@ -136,6 +168,13 @@ class SearchViewModel @Inject constructor(
     private val locationFlow = MutableStateFlow(SearchLocationUiState())
     private val resultViewModeFlow = MutableStateFlow(initialResultViewMode)
     private val selectedCanyonIdFlow = MutableStateFlow<Int?>(null)
+
+    /** Flow estimates received since the screen opened, by canyon id: changing a filter reuses them. */
+    private val estimatesFlow = MutableStateFlow<Map<Int, CanyonDebitPredictions>>(emptyMap())
+    private val debitEstimationFlow = MutableStateFlow(DebitEstimationUiState())
+
+    /** The canyons to estimate, null while there is no flow filter. */
+    private val debitCandidatesFlow = MutableStateFlow<DebitCandidates?>(null)
     private var queryDebounceJob: Job? = null
     private var hasLoggedInitialResults = false
 
@@ -159,12 +198,16 @@ class SearchViewModel @Inject constructor(
             }
         }
         viewModelScope.launch {
+            debitCandidatesFlow.collectLatest { candidates -> estimateDebits(candidates) }
+        }
+        viewModelScope.launch {
             combine(
                 searchCanyonsUseCase.observeCatalog(),
                 criteriaInputFlow,
                 // For a stay, nothing is listed before its place is known: the canyons around it come first.
                 if (isStayPick) locationFlow.filter { it.userLatitude != null } else locationFlow,
-            ) { catalog, criteriaInput, location ->
+                estimatesFlow,
+            ) { catalog, criteriaInput, location, estimates ->
                 SearchQueryInput(
                     catalog = catalog,
                     criteria = criteriaInput.filters.copy(
@@ -174,11 +217,22 @@ class SearchViewModel @Inject constructor(
                     ),
                     location = location,
                     scrollResetRequestId = criteriaInput.scrollResetRequestId,
+                    estimates = estimates,
                 )
             }
                 .mapLatest { input ->
                     val computationStartedAt = monotonicNowMs()
-                    val resultSet = searchCanyonsUseCase(input.catalog, input.criteria).let {
+                    debitCandidatesFlow.value = if (input.criteria.debitFilter?.isActive() == true) {
+                        // The canyons the other filters keep: only these are worth a weather request.
+                        val candidates = searchCanyonsUseCase(input.catalog, input.criteria.copy(debitFilter = null))
+                        DebitCandidates(
+                            ids = if (candidates.isResultListDeferred) emptyList() else candidates.results.map { it.id },
+                            count = candidates.totalResultsCount,
+                        )
+                    } else {
+                        null
+                    }
+                    val resultSet = searchCanyonsUseCase(input.catalog, input.criteria, input.estimates).let {
                         if (isStayPick) it.withoutForbidden() else it
                     }
                     PerformanceTrace.logEvent(
@@ -197,6 +251,7 @@ class SearchViewModel @Inject constructor(
                         resultSet = resultSet,
                         scrollResetRequestId = input.scrollResetRequestId,
                         descendedIds = input.catalog.mapNotNullTo(mutableSetOf()) { item -> item.id.takeIf { item.isDescended } },
+                        estimates = input.estimates,
                     )
                 }
                 .combine(resultViewModeFlow) { computed, resultViewMode ->
@@ -209,6 +264,10 @@ class SearchViewModel @Inject constructor(
                         (computed, resultViewMode, selectedCanyonId),
                         recentCanyons,
                     ->
+                    Triple(computed, Triple(resultViewMode, selectedCanyonId, recentCanyons), Unit)
+                }
+                .combine(debitEstimationFlow) { (computed, rest, _), debitEstimation ->
+                    val (resultViewMode, selectedCanyonId, recentCanyons) = rest
                     SearchUiState(
                         queryDraft = queryDraftFlow.value,
                         criteria = computed.criteria,
@@ -230,6 +289,8 @@ class SearchViewModel @Inject constructor(
                         scrollResetRequestId = computed.scrollResetRequestId,
                         recentCanyons = recentCanyons,
                         descendedIds = computed.descendedIds,
+                        debitEstimation = debitEstimation,
+                        estimatedFlows = computed.estimatedFlows(),
                     )
                 }
                 .flowOn(searchDispatcher)
@@ -275,6 +336,44 @@ class SearchViewModel @Inject constructor(
                     }
                     _uiState.update { current -> state.copy(error = current.error ?: state.error) }
                 }
+        }
+    }
+
+    /**
+     * Estimates the flow of the [candidates] while the flow filter is active. Nothing is requested
+     * when they are too many; a new set of candidates cancels the work in progress.
+     */
+    private suspend fun estimateDebits(candidates: DebitCandidates?) {
+        if (candidates == null) {
+            debitEstimationFlow.value = DebitEstimationUiState()
+            return
+        }
+        if (candidates.count > SearchCriteria.MAX_DEBIT_ESTIMATE_CANYONS) {
+            debitEstimationFlow.value = DebitEstimationUiState(DebitEstimationStatus.TOO_BROAD, candidateCount = candidates.count)
+            return
+        }
+        val toEstimate = candidates.ids
+        val known = estimatesFlow.value
+        debitEstimationFlow.value = DebitEstimationUiState(
+            status = DebitEstimationStatus.RUNNING,
+            candidateCount = toEstimate.size,
+            done = toEstimate.count { it in known },
+        )
+        estimateCanyonsDebitUseCase(toEstimate.filterNot { it in known })
+            .catch { debitEstimationFlow.value = debitEstimationFlow.value.copy(status = DebitEstimationStatus.DONE) }
+            .collect { progress ->
+                estimatesFlow.update { it + progress.estimates }
+                val alreadyKnown = toEstimate.size - progress.total
+                debitEstimationFlow.value = DebitEstimationUiState(
+                    status = if (progress.isComplete) DebitEstimationStatus.DONE else DebitEstimationStatus.RUNNING,
+                    candidateCount = toEstimate.size,
+                    done = alreadyKnown + progress.done,
+                    unavailableCount = progress.unavailableIds.size,
+                    offlineSkipped = progress.offlineSkipped,
+                )
+            }
+        if (toEstimate.isEmpty() || debitEstimationFlow.value.status == DebitEstimationStatus.RUNNING) {
+            debitEstimationFlow.value = debitEstimationFlow.value.copy(status = DebitEstimationStatus.DONE)
         }
     }
 
@@ -493,6 +592,7 @@ private data class SearchQueryInput(
     val criteria: SearchCriteria,
     val location: SearchLocationUiState,
     val scrollResetRequestId: Int,
+    val estimates: Map<Int, CanyonDebitPredictions>,
 )
 
 private data class SearchComputedState(
@@ -501,6 +601,7 @@ private data class SearchComputedState(
     val resultSet: SearchResultSet,
     val scrollResetRequestId: Int,
     val descendedIds: Set<Int>,
+    val estimates: Map<Int, CanyonDebitPredictions>,
 )
 
 /** A forbidden canyon cannot be planned for a day. */
@@ -515,6 +616,15 @@ private fun SearchCriteria.sanitizedForPersistence(): SearchCriteria = copy(
     userLatitude = null,
     userLongitude = null,
 )
+
+private fun SearchComputedState.estimatedFlows(): Map<Int, DailyDebitPrediction> {
+    val day = criteria.debitFilter?.horizonDays ?: 0
+    return buildMap {
+        resultSet.results.forEach { item ->
+            estimates[item.id]?.predictions?.firstOrNull { it.horizonDays == day }?.let { put(item.id, it) }
+        }
+    }
+}
 
 private fun monotonicNowMs(): Long = System.nanoTime() / 1_000_000
 

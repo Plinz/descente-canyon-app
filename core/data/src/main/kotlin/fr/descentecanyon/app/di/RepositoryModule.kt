@@ -8,6 +8,7 @@ import fr.descentecanyon.app.data.repository.AccidentReportRepositoryImpl
 import fr.descentecanyon.app.data.repository.AuthRepositoryImpl
 import fr.descentecanyon.app.data.repository.CanyonNotesRepositoryImpl
 import fr.descentecanyon.app.data.repository.CanyonRepositoryImpl
+import fr.descentecanyon.app.data.repository.DebitEstimateRepositoryImpl
 import fr.descentecanyon.app.data.repository.DebitPredictionRepositoryImpl
 import fr.descentecanyon.app.data.repository.DebitPredictionSupportRepositoryImpl
 import fr.descentecanyon.app.data.repository.DebitRepositoryImpl
@@ -35,6 +36,7 @@ import fr.descentecanyon.app.domain.repository.AccidentReportRepository
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
+import fr.descentecanyon.app.domain.repository.DebitEstimateRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionSupportRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
@@ -79,6 +81,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindDebitPredictionSupportRepository(impl: DebitPredictionSupportRepositoryImpl): DebitPredictionSupportRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDebitEstimateRepository(impl: DebitEstimateRepositoryImpl): DebitEstimateRepository
 
     @Binds
     @Singleton

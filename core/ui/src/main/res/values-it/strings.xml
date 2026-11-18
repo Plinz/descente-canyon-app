@@ -1486,4 +1486,15 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="startup_preparing_catalog_hint">Solo una volta dopo l\'installazione o un aggiornamento: poi le schede dei canyon si consultano senza rete.</string>
     <string name="outing_conditions_off_season">Fuori stagione: poche portate segnalate a %1$s (%2$d su %3$d). Stagione abituale: %4$s – %5$s. Topo, ancoraggi e acqua possono essere quelli di un\'altra stagione.</string>
     <string name="outing_conditions_cold">Giornata fredda (%1$s al massimo): muta spessa, cappuccio, guanti e vestiti asciutti di ricambio.</string>
+    <string name="search_filter_debit_title">Portata stimata</string>
+    <string name="search_filter_debit_today">Oggi</string>
+    <string name="search_filter_debit_tomorrow">Domani</string>
+    <string name="search_filter_debit_day_after">Dopodomani</string>
+    <string name="search_filter_debit_hint">Stima del modello dal meteo (serve la rete), da verificare sul posto. Un intervallo vale per entrambi i livelli.</string>
+    <string name="search_filter_debit_too_broad">Zona troppo ampia: %1$d canyon, al massimo %2$d. Scegliete un dipartimento o un massiccio.</string>
+    <string name="search_debit_progress">Stima della portata: %1$d/%2$d</string>
+    <string name="search_debit_unavailable">Non stimati: %1$d (senza posizione o meteo)</string>
+    <string name="search_debit_offline">Offline: sono elencati solo i canyon già stimati.</string>
+    <string name="search_filter_debit_active">Portata stimata %1$s · %2$s</string>
+    <string name="canyon_card_estimate_description">Portata stimata: %1$s</string>
 </resources>

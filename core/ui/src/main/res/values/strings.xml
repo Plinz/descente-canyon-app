@@ -1486,4 +1486,15 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="startup_preparing_catalog_hint">Une seule fois après l\'installation ou une mise à jour : les fiches des canyons se consultent ensuite sans réseau.</string>
     <string name="outing_conditions_off_season">Hors saison : peu de débits signalés en %1$s (%2$d sur %3$d). Saison habituelle : %4$s – %5$s. Topo, amarrages et eau peuvent être ceux d\'une autre saison.</string>
     <string name="outing_conditions_cold">Journée froide (%1$s au plus) : néoprène épais, cagoule, gants et vêtements secs de rechange.</string>
+    <string name="search_filter_debit_title">Débit estimé</string>
+    <string name="search_filter_debit_today">Aujourd\'hui</string>
+    <string name="search_filter_debit_tomorrow">Demain</string>
+    <string name="search_filter_debit_day_after">Après-demain</string>
+    <string name="search_filter_debit_hint">Estimation du modèle à partir de la météo (réseau nécessaire), à vérifier sur place. Une fourchette est comptée dans les deux niveaux.</string>
+    <string name="search_filter_debit_too_broad">Zone trop large : %1$d canyons, %2$d au plus. Choisissez un département ou un massif.</string>
+    <string name="search_debit_progress">Estimation du débit : %1$d/%2$d</string>
+    <string name="search_debit_unavailable">Non estimés : %1$d (sans position ou sans météo)</string>
+    <string name="search_debit_offline">Hors ligne : seuls les canyons déjà estimés sont listés.</string>
+    <string name="search_filter_debit_active">Débit estimé %1$s · %2$s</string>
+    <string name="canyon_card_estimate_description">Débit estimé : %1$s</string>
 </resources>

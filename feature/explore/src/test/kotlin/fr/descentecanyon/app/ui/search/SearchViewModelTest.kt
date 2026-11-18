@@ -3,25 +3,37 @@ package fr.descentecanyon.app.ui.search
 import androidx.lifecycle.SavedStateHandle
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.domain.model.Canyon
+import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.CotationRating
+import fr.descentecanyon.app.domain.model.DailyDebitPrediction
+import fr.descentecanyon.app.domain.model.DebitEstimateFilter
+import fr.descentecanyon.app.domain.model.DebitEstimationProgress
+import fr.descentecanyon.app.domain.model.DebitPredictionPolicy
 import fr.descentecanyon.app.domain.model.DriveTime
 import fr.descentecanyon.app.domain.model.DriveTimeSource
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointType
+import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.PredictedDebitLevel
+import fr.descentecanyon.app.domain.model.RuntimeLookupSource
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
 import fr.descentecanyon.app.domain.model.Stay
+import fr.descentecanyon.app.domain.model.WeatherLocationSource
+import fr.descentecanyon.app.domain.model.WeatherTarget
 import fr.descentecanyon.app.domain.repository.CanyonRepository
+import fr.descentecanyon.app.domain.repository.DebitEstimateRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.ChooseStayCanyonUseCase
+import fr.descentecanyon.app.domain.usecase.EstimateCanyonsDebitUseCase
 import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
 import fr.descentecanyon.app.testutil.FakeDriveTimeRepository
 import fr.descentecanyon.app.testutil.FakeOutingRepository
@@ -33,11 +45,13 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import java.time.Clock
+import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.ZoneId
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
@@ -57,6 +71,8 @@ class SearchViewModelTest {
 
     private val canyonRepository = mockk<CanyonRepository>()
     private val searchCanyonsUseCase = SearchCanyonsUseCase(canyonRepository, noOutings())
+    private val estimateRepository = FakeDebitEstimateRepository()
+    private val estimateUseCase = EstimateCanyonsDebitUseCase(estimateRepository)
     private val recentCanyons = MutableStateFlow<List<CanyonSummary>>(emptyList())
     private val recentCanyonsRepository = mockk<RecentCanyonsRepository>(relaxUnitFun = true) {
         every { observeRecentCanyons(any()) } returns recentCanyons
@@ -69,7 +85,14 @@ class SearchViewModelTest {
         recentCanyons.value =
             listOf(CanyonSummary(id = 7, nom = "Riolan", pays = "France", cotation = "v4a4III", url = "https://example.test/7"))
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                estimateUseCase,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -90,7 +113,14 @@ class SearchViewModelTest {
             ),
         )
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                estimateUseCase,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -112,7 +142,14 @@ class SearchViewModelTest {
             ),
         )
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                estimateUseCase,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -142,7 +179,14 @@ class SearchViewModelTest {
             ),
         )
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                estimateUseCase,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -184,7 +228,14 @@ class SearchViewModelTest {
             ),
         )
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                estimateUseCase,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -214,7 +265,14 @@ class SearchViewModelTest {
             ),
         )
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                estimateUseCase,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -241,7 +299,14 @@ class SearchViewModelTest {
     fun `selecting a canyon does not request a list scroll reset`() = runTest {
         every { canyonRepository.observeSearchCatalog() } returns flowOf(listOf(canyon(id = 1)))
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                estimateUseCase,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -263,7 +328,14 @@ class SearchViewModelTest {
             ),
         )
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                estimateUseCase,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -297,6 +369,7 @@ class SearchViewModelTest {
             mainDispatcherRule.dispatcher,
             recentCanyonsRepository,
             stayChoice(),
+            estimateUseCase,
         )
 
         advanceTimeBy(250)
@@ -397,12 +470,99 @@ class SearchViewModelTest {
         canyon(id = 4, nom = "Interdit", latitude = 44.01, longitude = 6.81).copy(isForbidden = true),
     )
 
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `flow filter estimates the canyons of the area and keeps the ones at the wanted level`() = runTest {
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(
+            listOf(canyon(id = 1), canyon(id = 2), canyon(id = 3, departement = "Isere")),
+        )
+        estimateRepository.estimates = mapOf(1 to predictions(NiveauDebit.GROS), 2 to predictions(NiveauDebit.SEC))
+        val viewModel = SearchViewModel(
+            searchCanyonsUseCase,
+            SavedStateHandle(),
+            mainDispatcherRule.dispatcher,
+            recentCanyonsRepository,
+            stayChoice(),
+            estimateUseCase,
+        )
+        val collection = launch { viewModel.uiState.collect {} }
+
+        viewModel.onCriteriaChanged(
+            SearchCriteria(
+                selectedCountry = "France",
+                selectedDepartment = "Ain",
+                debitFilter = DebitEstimateFilter(levels = setOf(NiveauDebit.GROS)),
+            ),
+        )
+        advanceTimeBy(250)
+        advanceUntilIdle()
+
+        assertEquals(listOf(setOf(1, 2)), estimateRepository.requests.map { it.toSet() })
+        assertEquals(listOf(1), viewModel.uiState.value.results.map { it.id })
+        assertEquals(DebitEstimationStatus.DONE, viewModel.uiState.value.debitEstimation.status)
+        // The badge of the card shows the estimate of the day of the filter.
+        assertEquals(setOf(1), viewModel.uiState.value.estimatedFlows.keys)
+        collection.cancel()
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `flow filter requests nothing when the area holds too many canyons`() = runTest {
+        val catalog = (1..SearchCriteria.MAX_DEBIT_ESTIMATE_CANYONS + 1).map { canyon(id = it) }
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(catalog)
+        val viewModel = SearchViewModel(
+            searchCanyonsUseCase,
+            SavedStateHandle(),
+            mainDispatcherRule.dispatcher,
+            recentCanyonsRepository,
+            stayChoice(),
+            estimateUseCase,
+        )
+        val collection = launch { viewModel.uiState.collect {} }
+
+        viewModel.onCriteriaChanged(
+            SearchCriteria(
+                selectedCountry = "France",
+                selectedDepartment = "Ain",
+                debitFilter = DebitEstimateFilter(levels = setOf(NiveauDebit.GROS)),
+            ),
+        )
+        advanceTimeBy(250)
+        advanceUntilIdle()
+
+        assertTrue(estimateRepository.requests.isEmpty())
+        assertEquals(DebitEstimationStatus.TOO_BROAD, viewModel.uiState.value.debitEstimation.status)
+        assertEquals(catalog.size, viewModel.uiState.value.debitEstimation.candidateCount)
+        collection.cancel()
+    }
+
+    private fun predictions(level: NiveauDebit) = CanyonDebitPredictions(
+        target = WeatherTarget(46.0, 5.5, WeatherLocationSource.ENTRY),
+        timezone = "Europe/Paris",
+        fetchedAt = Instant.EPOCH,
+        lookupSource = RuntimeLookupSource.CANYON,
+        usedWeatherCache = false,
+        policy = DebitPredictionPolicy.BALANCED,
+        predictions = listOf(
+            DailyDebitPrediction(
+                date = LocalDate.of(2026, 7, 15),
+                horizonDays = 0,
+                level = PredictedDebitLevel.MEDIUM,
+                probabilities = emptyMap(),
+                highThreshold = 0.5,
+                ordinalLevel = level,
+                levelProbabilities = mapOf(level to 0.9),
+            ),
+        ),
+    )
+
     private fun stayViewModel(choice: ChooseStayCanyonUseCase) = SearchViewModel(
         searchCanyonsUseCase,
         SavedStateHandle(mapOf("stayId" to 3L, "date" to "2026-07-15", "outingId" to 0L)),
         mainDispatcherRule.dispatcher,
         recentCanyonsRepository,
         choice,
+        estimateUseCase,
     )
 
     /** A stay at a campsite from the 14th to the 16th of July. */
@@ -452,3 +612,22 @@ class SearchViewModelTest {
 
 /** A logbook without outings, for the catalog search. */
 private fun noOutings(): LogbookRepository = mockk { every { observeDescendedCanyonIds() } returns flowOf(emptySet()) }
+
+/** Estimates every requested canyon at once from [estimates], remembering what was asked. */
+private class FakeDebitEstimateRepository : DebitEstimateRepository {
+    var estimates: Map<Int, CanyonDebitPredictions> = emptyMap()
+    val requests = mutableListOf<List<Int>>()
+
+    override fun estimate(canyonIds: List<Int>): Flow<DebitEstimationProgress> {
+        requests += canyonIds
+        val found = estimates.filterKeys { it in canyonIds }
+        return flowOf(
+            DebitEstimationProgress(
+                total = canyonIds.size,
+                done = canyonIds.size,
+                estimates = found,
+                unavailableIds = canyonIds.filterNot { it in found }.toSet(),
+            ),
+        )
+    }
+}

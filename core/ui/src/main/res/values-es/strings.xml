@@ -1486,4 +1486,15 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="startup_preparing_catalog_hint">Solo una vez tras la instalación o una actualización: después las fichas de los barrancos se consultan sin conexión.</string>
     <string name="outing_conditions_off_season">Fuera de temporada: pocos caudales señalados en %1$s (%2$d de %3$d). Temporada habitual: %4$s – %5$s. Croquis, anclajes y agua pueden ser los de otra estación.</string>
     <string name="outing_conditions_cold">Día frío (%1$s como máximo): neopreno grueso, capucha, guantes y ropa seca de recambio.</string>
+    <string name="search_filter_debit_title">Caudal estimado</string>
+    <string name="search_filter_debit_today">Hoy</string>
+    <string name="search_filter_debit_tomorrow">Mañana</string>
+    <string name="search_filter_debit_day_after">Pasado mañana</string>
+    <string name="search_filter_debit_hint">Estimación del modelo a partir del tiempo (requiere red), para comprobar in situ. Un intervalo cuenta para sus dos niveles.</string>
+    <string name="search_filter_debit_too_broad">Zona demasiado amplia: %1$d cañones, %2$d como máximo. Elija un departamento o un macizo.</string>
+    <string name="search_debit_progress">Estimando el caudal: %1$d/%2$d</string>
+    <string name="search_debit_unavailable">Sin estimar: %1$d (sin posición o sin datos meteorológicos)</string>
+    <string name="search_debit_offline">Sin conexión: solo se muestran los cañones ya estimados.</string>
+    <string name="search_filter_debit_active">Caudal estimado %1$s · %2$s</string>
+    <string name="canyon_card_estimate_description">Caudal estimado: %1$s</string>
 </resources>

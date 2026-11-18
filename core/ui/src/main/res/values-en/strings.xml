@@ -1450,4 +1450,15 @@ Search for a canyon and add it to your favorites.</string>
     <string name="startup_preparing_catalog_hint">Only once after installing or updating: the canyon sheets can then be read without a network.</string>
     <string name="outing_conditions_off_season">Off season: few flows reported in %1$s (%2$d of %3$d). Usual season: %4$s – %5$s. Topo, anchors and water may be those of another season.</string>
     <string name="outing_conditions_cold">Cold day (%1$s at most): thick wetsuit, hood, gloves and dry spare clothes.</string>
+    <string name="search_filter_debit_title">Estimated flow</string>
+    <string name="search_filter_debit_today">Today</string>
+    <string name="search_filter_debit_tomorrow">Tomorrow</string>
+    <string name="search_filter_debit_day_after">Day after tomorrow</string>
+    <string name="search_filter_debit_hint">The model\'s estimate from the weather (network needed), to check on site. A range counts for both of its levels.</string>
+    <string name="search_filter_debit_too_broad">Area too wide: %1$d canyons, %2$d at most. Choose a department or a massif.</string>
+    <string name="search_debit_progress">Estimating the flow: %1$d/%2$d</string>
+    <string name="search_debit_unavailable">Not estimated: %1$d (no position or no weather)</string>
+    <string name="search_debit_offline">Offline: only the canyons already estimated are listed.</string>
+    <string name="search_filter_debit_active">Estimated flow %1$s · %2$s</string>
+    <string name="canyon_card_estimate_description">Estimated flow: %1$s</string>
 </resources>

@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.domain.usecase
 
+import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CotationRating
 import fr.descentecanyon.app.domain.model.LogbookFilter
@@ -28,7 +29,15 @@ class SearchCanyonsUseCase @Inject constructor(
             if (descended.isEmpty()) items else items.map { if (it.id in descended) it.copy(isDescended = true) else it }
         }
 
-    operator fun invoke(catalog: List<CanyonSearchItem>, criteria: SearchCriteria): SearchResultSet {
+    /**
+     * [estimates] are the flow estimates known so far by canyon id: with a flow filter, a canyon
+     * without one is left out until its estimate arrives.
+     */
+    operator fun invoke(
+        catalog: List<CanyonSearchItem>,
+        criteria: SearchCriteria,
+        estimates: Map<Int, CanyonDebitPredictions> = emptyMap(),
+    ): SearchResultSet {
         val normalizedQuery = criteria.query.normalizeForSearch()
         val queryTokens = normalizedQuery.searchTokens()
         val shouldDeferResults = criteria.shouldDeferBroadResults()
@@ -49,6 +58,7 @@ class SearchCanyonsUseCase @Inject constructor(
 
         val results = countryMatches.asSequence()
             .filter { matchesDepartment(it, criteria.selectedCountry, criteria.selectedDepartment) }
+            .filter { criteria.debitFilter?.matches(estimates[it.id]) ?: true }
             .toList()
 
         if (shouldDeferResults) {

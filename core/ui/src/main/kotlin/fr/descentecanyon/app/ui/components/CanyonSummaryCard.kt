@@ -50,6 +50,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonSummary
+import fr.descentecanyon.app.domain.model.DailyDebitPrediction
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
@@ -88,6 +89,8 @@ fun CanyonSummaryCard(
     info: CanyonCardInfo? = null,
     /** The other day of a stay the canyon is planned for: the first of the badges. */
     plannedOn: LocalDate? = null,
+    /** The flow the model expects (for the day the list is about), shown after the planned day. */
+    estimate: DailyDebitPrediction? = null,
 ) {
     val colors = LocalDcColors.current
     val spacing = LocalDcSpacing.current
@@ -155,7 +158,7 @@ fun CanyonSummaryCard(
                 )
                 info?.let { InfoLabel(it) }
             }
-            val hasBadges = plannedOn != null || canyon.dernierDebit != null || isDescended
+            val hasBadges = plannedOn != null || estimate?.ordinalLevel != null || canyon.dernierDebit != null || isDescended
             if (canyon.interet != null || hasBadges || onFavoriteClick != null) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = spacing.sm),
@@ -164,7 +167,7 @@ fun CanyonSummaryCard(
                     canyon.interet?.let { InterestStars(interest = it, showScale = false) }
                     Spacer(modifier = Modifier.weight(1f).widthIn(min = spacing.sm))
                     if (hasBadges) {
-                        CardBadges(canyon = canyon, plannedOn = plannedOn, isDescended = isDescended)
+                        CardBadges(canyon = canyon, plannedOn = plannedOn, isDescended = isDescended, estimate = estimate)
                     }
                     onFavoriteClick?.let { FavoriteButton(isFavorite = isFavorite, onClick = it, size = 36.dp) }
                 }
@@ -204,7 +207,7 @@ private fun InfoLabel(info: CanyonCardInfo) {
  * flow its level.
  */
 @Composable
-private fun CardBadges(canyon: CanyonSummary, plannedOn: LocalDate?, isDescended: Boolean) {
+private fun CardBadges(canyon: CanyonSummary, plannedOn: LocalDate?, isDescended: Boolean, estimate: DailyDebitPrediction?) {
     val level = canyon.dernierDebit
     val levelWord = level?.let { capitalized(debitRangeWord(it)) }
     val reportDay = canyon.dernierDebitDate?.let { shortRelativeDayLabel(it) }
@@ -213,6 +216,7 @@ private fun CardBadges(canyon: CanyonSummary, plannedOn: LocalDate?, isDescended
     fun Badges(withDate: Boolean, fullDescended: Boolean) {
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
             plannedOn?.let { PlannedBadge(it) }
+            estimate?.let { EstimatedFlowBadge(it) }
             if (level != null && levelWord != null) {
                 DcFlowBadge(niveau = level, label = if (withDate && reportDay != null) "$levelWord · $reportDay" else levelWord)
             }
@@ -223,6 +227,23 @@ private fun CardBadges(canyon: CanyonSummary, plannedOn: LocalDate?, isDescended
         { Badges(withDate = true, fullDescended = true) },
         { Badges(withDate = true, fullDescended = false) },
         { Badges(withDate = false, fullDescended = false) },
+    )
+}
+
+/**
+ * "≈ Gros": the flow the model estimates, or "≈ Correct à gros" when it hesitates between two levels.
+ * The "≈" tells it from a flow reported on the site.
+ */
+@Composable
+private fun EstimatedFlowBadge(prediction: DailyDebitPrediction) {
+    val level = prediction.ordinalLevel ?: return
+    val range = prediction.likelyRange()
+    val text = if (range != null) debitRangeLabel(range) else debitLevelShortLabel(level)
+    val description = stringResource(R.string.canyon_card_estimate_description, text)
+    DcFlowBadge(
+        niveau = range?.high ?: level,
+        label = "≈ $text",
+        modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = description },
     )
 }
 

@@ -46,6 +46,7 @@ import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
@@ -369,6 +370,8 @@ fun SearchScreen(
                     )
                 }
 
+                DebitEstimationStatusRow(uiState.debitEstimation)
+
                 Spacer(modifier = Modifier.height(6.dp))
 
                 if (uiState.isLoading) {
@@ -421,6 +424,7 @@ fun SearchScreen(
                                 isDescended = canyon.isDescended,
                                 info = stayPick?.let { pick -> driveInfo(pick, canyon) } ?: distanceInfo(uiState.criteria, canyon),
                                 plannedOn = stayPick?.plannedOn?.get(canyon.id),
+                                estimate = uiState.estimatedFlows[canyon.id],
                             )
                         }
                         item { Spacer(modifier = Modifier.height(96.dp)) }
@@ -502,6 +506,7 @@ fun SearchScreen(
                 criteria = uiState.criteria,
                 zones = uiState.zones,
                 totalResultsCount = uiState.totalResultsCount,
+                debitEstimation = uiState.debitEstimation,
             ),
             onDismiss = { showFiltersSheet = false },
             onCriteriaChanged = viewModel::onCriteriaChanged,
@@ -725,4 +730,39 @@ private fun distanceInfo(criteria: SearchCriteria, canyon: CanyonSearchItem): Ca
     // A tenth below ten kilometres, whole kilometres above.
     val text = if (km < 10) String.format(locale, "%.1f km", km) else "${km.roundToInt()} km"
     return CanyonCardInfo(icon = Icons.Default.NearMe, text = text, description = stringResource(R.string.search_distance_away, text))
+}
+
+/** Progress of the flow estimation under the result count, and what was left out. */
+@Composable
+private fun DebitEstimationStatusRow(estimation: DebitEstimationUiState) {
+    if (estimation.status == DebitEstimationStatus.IDLE || estimation.status == DebitEstimationStatus.TOO_BROAD) return
+    val running = estimation.status == DebitEstimationStatus.RUNNING
+    Column(modifier = Modifier.fillMaxWidth().padding(top = 4.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        if (running) {
+            Text(
+                stringResource(R.string.search_debit_progress, estimation.done, estimation.candidateCount),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            LinearProgressIndicator(
+                progress = { if (estimation.candidateCount == 0) 0f else estimation.done.toFloat() / estimation.candidateCount },
+                modifier = Modifier.fillMaxWidth(),
+            )
+        } else {
+            if (estimation.unavailableCount > 0) {
+                Text(
+                    stringResource(R.string.search_debit_unavailable, estimation.unavailableCount),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            if (estimation.offlineSkipped) {
+                Text(
+                    stringResource(R.string.search_debit_offline),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
 }

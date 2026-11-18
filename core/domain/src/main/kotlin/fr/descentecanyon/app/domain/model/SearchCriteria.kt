@@ -36,6 +36,8 @@ data class SearchCriteria(
     val ropeRange: IntRangeFilter = IntRangeFilter(),
     /** At most this far in a straight line from the point distances are measured from, when it is known. */
     val maxDistanceKm: Int? = null,
+    /** Only the canyons whose estimated flow is one of these levels, on a given day. */
+    val debitFilter: DebitEstimateFilter? = null,
     val sortField: SearchSortField = SearchSortField.RELEVANCE,
     val sortDirection: SortDirection = SortDirection.DESC,
     /** The point distances are measured from: the user's position, or the place of a stay. */
@@ -55,7 +57,8 @@ data class SearchCriteria(
         elevationRange.isActive() ||
         lengthRange.isActive() ||
         maxWaterfallRange.isActive() ||
-        ropeRange.isActive()
+        ropeRange.isActive() ||
+        debitFilter.isActive()
 
     fun shouldDeferBroadResults(): Boolean {
         val canSortByDistance = sortField == SearchSortField.DISTANCE && hasReferencePoint
@@ -88,6 +91,7 @@ data class SearchCriteria(
         if (maxWaterfallRange.isActive()) count++
         if (ropeRange.isActive()) count++
         if (maxDistanceKm != null) count++
+        if (debitFilter.isActive()) count++
         return count
     }
 
@@ -108,13 +112,44 @@ data class SearchCriteria(
         maxWaterfallRange = IntRangeFilter(),
         ropeRange = IntRangeFilter(),
         maxDistanceKm = null,
+        debitFilter = null,
     )
 
     companion object {
         /** The distances offered for [maxDistanceKm]. */
         val MAX_DISTANCES_KM = listOf(20, 40, 60, 100)
+
+        /**
+         * The estimated flow is computed (weather requests) only for at most this many canyons: a
+         * department or a massif, never the whole catalog.
+         */
+        const val MAX_DEBIT_ESTIMATE_CANYONS = 150
     }
 }
+
+/**
+ * Filter on the estimated flow: the canyons expected to be at one of [levels] on the day [horizonDays]
+ * from today (0 = today, up to 2, the days the model estimates).
+ */
+@Serializable
+data class DebitEstimateFilter(val levels: Set<NiveauDebit> = emptySet(), val horizonDays: Int = 0) {
+    fun isActive(): Boolean = levels.isNotEmpty()
+
+    /** The estimate of the day, when the model hesitates, rules the canyon in if any of its likely levels is wanted. */
+    fun matches(predictions: CanyonDebitPredictions?): Boolean {
+        if (!isActive()) return true
+        val prediction = predictions?.predictions?.firstOrNull { it.horizonDays == horizonDays } ?: return false
+        val level = prediction.ordinalLevel ?: return false
+        val range = prediction.likelyRange()
+        return level in levels || (range != null && (range.low in levels || range.high in levels))
+    }
+
+    companion object {
+        const val MAX_HORIZON_DAYS = 2
+    }
+}
+
+private fun DebitEstimateFilter?.isActive(): Boolean = this?.isActive() == true
 
 /** Filter on the user's logbook. */
 @Serializable

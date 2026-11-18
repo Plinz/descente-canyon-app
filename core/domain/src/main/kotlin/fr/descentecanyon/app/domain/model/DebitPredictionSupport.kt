@@ -231,3 +231,17 @@ data class CanyonDebitPredictions(
     /** True when the network was unavailable and the last estimate computed is shown. */
     val isFromCache: Boolean = false,
 )
+
+/** Where the estimation of a list of canyons stands. */
+data class DebitEstimationProgress(
+    val total: Int,
+    /** Canyons dealt with, estimated or not. */
+    val done: Int,
+    val estimates: Map<Int, CanyonDebitPredictions>,
+    /** Canyons that cannot be estimated (no position, no usable weather). */
+    val unavailableIds: Set<Int>,
+    /** True when the network was needed for canyons left without an estimate. */
+    val offlineSkipped: Boolean = false,
+) {
+    val isComplete: Boolean get() = done >= total
+}

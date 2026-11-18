@@ -1,18 +1,29 @@
 package fr.descentecanyon.app.domain.usecase
 
+import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CotationRating
+import fr.descentecanyon.app.domain.model.DailyDebitPrediction
+import fr.descentecanyon.app.domain.model.DebitEstimateFilter
+import fr.descentecanyon.app.domain.model.DebitPredictionPolicy
 import fr.descentecanyon.app.domain.model.IntRangeFilter
 import fr.descentecanyon.app.domain.model.LogbookFilter
+import fr.descentecanyon.app.domain.model.NiveauDebit
+import fr.descentecanyon.app.domain.model.PredictedDebitLevel
+import fr.descentecanyon.app.domain.model.RuntimeLookupSource
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
+import fr.descentecanyon.app.domain.model.WeatherLocationSource
+import fr.descentecanyon.app.domain.model.WeatherTarget
 import fr.descentecanyon.app.domain.model.ZoneCountry
 import fr.descentecanyon.app.domain.model.ZoneSubdivision
 import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import io.mockk.mockk
+import java.time.Instant
+import java.time.LocalDate
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -234,6 +245,60 @@ class SearchCanyonsUseCaseTest {
 
         assertEquals(listOf(1, 2), result.results.map { it.id })
     }
+
+    @Test
+    fun `the flow filter keeps the canyons estimated at a wanted level that day, a hesitant range counting for both levels`() {
+        val catalog = listOf(canyon(id = 1), canyon(id = 2), canyon(id = 3), canyon(id = 4))
+        val estimates = mapOf(
+            1 to estimate(today = NiveauDebit.GROS),
+            2 to estimate(today = NiveauDebit.SEC, tomorrow = NiveauDebit.GROS),
+            3 to estimate(today = NiveauDebit.CORRECT, probabilities = mapOf(NiveauDebit.CORRECT to 0.5, NiveauDebit.GROS to 0.4)),
+        )
+        val today = SearchCriteria(query = "canyon", debitFilter = DebitEstimateFilter(setOf(NiveauDebit.GROS), horizonDays = 0))
+        val tomorrow = today.copy(debitFilter = DebitEstimateFilter(setOf(NiveauDebit.GROS), horizonDays = 1))
+
+        // Canyon 4 has no estimate (yet): it is left out.
+        assertEquals(setOf(1, 3), useCase(catalog, today, estimates).results.map { it.id }.toSet())
+        assertEquals(setOf(2), useCase(catalog, tomorrow, estimates).results.map { it.id }.toSet())
+    }
+
+    @Test
+    fun `without a flow level wanted every canyon stays, estimated or not`() {
+        val catalog = listOf(canyon(id = 1), canyon(id = 2))
+
+        val result = useCase(catalog, SearchCriteria(query = "canyon", debitFilter = DebitEstimateFilter()))
+
+        assertEquals(2, result.results.size)
+        assertEquals(0, SearchCriteria(debitFilter = DebitEstimateFilter()).activeFilterCount())
+        assertEquals(1, SearchCriteria(debitFilter = DebitEstimateFilter(setOf(NiveauDebit.SEC))).activeFilterCount())
+    }
+
+    private fun estimate(
+        today: NiveauDebit,
+        tomorrow: NiveauDebit? = null,
+        probabilities: Map<NiveauDebit, Double> = mapOf(today to 0.9),
+    ) = CanyonDebitPredictions(
+        target = WeatherTarget(46.0, 5.5, WeatherLocationSource.ENTRY),
+        timezone = "Europe/Paris",
+        fetchedAt = Instant.EPOCH,
+        lookupSource = RuntimeLookupSource.CANYON,
+        usedWeatherCache = false,
+        policy = DebitPredictionPolicy.BALANCED,
+        predictions = listOfNotNull(
+            dailyPrediction(0, today, probabilities),
+            tomorrow?.let { dailyPrediction(1, it, mapOf(it to 0.9)) },
+        ),
+    )
+
+    private fun dailyPrediction(horizonDays: Int, level: NiveauDebit, probabilities: Map<NiveauDebit, Double>) = DailyDebitPrediction(
+        date = LocalDate.of(2026, 7, 15).plusDays(horizonDays.toLong()),
+        horizonDays = horizonDays,
+        level = PredictedDebitLevel.MEDIUM,
+        probabilities = emptyMap(),
+        highThreshold = 0.5,
+        ordinalLevel = level,
+        levelProbabilities = probabilities,
+    )
 
     private fun canyon(
         id: Int,

@@ -1450,4 +1450,15 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="startup_preparing_catalog_hint">Nur einmal nach der Installation oder einem Update: Die Canyon-Seiten sind danach ohne Netz lesbar.</string>
     <string name="outing_conditions_off_season">Außerhalb der Saison: wenige Abflussmeldungen im %1$s (%2$d von %3$d). Übliche Saison: %4$s – %5$s. Topo, Verankerungen und Wasser können anders sein als in der Saison.</string>
     <string name="outing_conditions_cold">Kalter Tag (höchstens %1$s): dicker Neopren, Haube, Handschuhe und trockene Wechselkleidung.</string>
+    <string name="search_filter_debit_title">Geschätzter Abfluss</string>
+    <string name="search_filter_debit_today">Heute</string>
+    <string name="search_filter_debit_tomorrow">Morgen</string>
+    <string name="search_filter_debit_day_after">Übermorgen</string>
+    <string name="search_filter_debit_hint">Schätzung des Modells aus dem Wetter (Netz nötig), vor Ort zu prüfen. Eine Spanne zählt für beide Stufen.</string>
+    <string name="search_filter_debit_too_broad">Gebiet zu groß: %1$d Canyons, höchstens %2$d. Wählen Sie ein Departement oder ein Massiv.</string>
+    <string name="search_debit_progress">Abfluss wird geschätzt: %1$d/%2$d</string>
+    <string name="search_debit_unavailable">Nicht geschätzt: %1$d (ohne Position oder Wetter)</string>
+    <string name="search_debit_offline">Offline: Es werden nur bereits geschätzte Canyons angezeigt.</string>
+    <string name="search_filter_debit_active">Geschätzter Abfluss %1$s · %2$s</string>
+    <string name="canyon_card_estimate_description">Geschätzter Abfluss: %1$s</string>
 </resources>

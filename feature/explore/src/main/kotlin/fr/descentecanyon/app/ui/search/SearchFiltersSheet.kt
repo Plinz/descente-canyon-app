@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.ui.search
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,12 +39,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CotationRating
+import fr.descentecanyon.app.domain.model.DebitEstimateFilter
 import fr.descentecanyon.app.domain.model.IntRangeFilter
 import fr.descentecanyon.app.domain.model.LogbookFilter
+import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.ZoneCountry
 import fr.descentecanyon.app.ui.components.CotationGuideDialog
+import fr.descentecanyon.app.ui.components.debitLevelLabel
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
 import fr.descentecanyon.app.ui.design.DcDropdownMenu
@@ -204,6 +208,8 @@ fun SearchFiltersSheet(
                 }
             }
 
+            uiState.debitEstimation?.let { DebitEstimateFilterSection(criteria, it, onCriteriaChanged) }
+
             FilterSection(title = stringResource(R.string.search_filter_numeric_title)) {
                 NumericRangeRow(stringResource(R.string.altitude), criteria.altitudeRange) {
                     onCriteriaChanged(criteria.copy(altitudeRange = it))
@@ -233,7 +239,75 @@ fun SearchFiltersSheet(
     }
 }
 
-data class SearchFiltersSheetState(val criteria: SearchCriteria, val zones: List<ZoneCountry>, val totalResultsCount: Int)
+/** [debitEstimation] is null where the flow filter is not offered (the map). */
+data class SearchFiltersSheetState(
+    val criteria: SearchCriteria,
+    val zones: List<ZoneCountry>,
+    val totalResultsCount: Int,
+    val debitEstimation: DebitEstimationUiState? = null,
+)
+
+/** The levels offered by the flow filter, drier first. */
+private val DEBIT_FILTER_LEVELS = listOf(
+    NiveauDebit.SEC,
+    NiveauDebit.FILET,
+    NiveauDebit.CORRECT,
+    NiveauDebit.GROS,
+    NiveauDebit.TRES_GROS,
+    NiveauDebit.CRUE,
+)
+
+@StringRes
+private fun debitDayRes(horizonDays: Int): Int = when (horizonDays) {
+    0 -> R.string.search_filter_debit_today
+    1 -> R.string.search_filter_debit_tomorrow
+    else -> R.string.search_filter_debit_day_after
+}
+
+/** The estimated flow: levels wanted, day, and why nothing is computed when the area is too wide. */
+@Composable
+private fun DebitEstimateFilterSection(
+    criteria: SearchCriteria,
+    estimation: DebitEstimationUiState,
+    onCriteriaChanged: (SearchCriteria) -> Unit,
+) {
+    val colors = LocalDcColors.current
+    val filter = criteria.debitFilter ?: DebitEstimateFilter()
+    fun change(updated: DebitEstimateFilter) = onCriteriaChanged(criteria.copy(debitFilter = updated.takeIf { it.isActive() }))
+    FilterSection(title = stringResource(R.string.search_filter_debit_title)) {
+        Text(stringResource(R.string.search_filter_debit_hint), style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            (0..DebitEstimateFilter.MAX_HORIZON_DAYS).forEach { day ->
+                FilterChip(
+                    selected = filter.horizonDays == day,
+                    onClick = { change(filter.copy(horizonDays = day)) },
+                    label = { Text(stringResource(debitDayRes(day))) },
+                )
+            }
+        }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            DEBIT_FILTER_LEVELS.forEach { level ->
+                val selected = level in filter.levels
+                FilterChip(
+                    selected = selected,
+                    onClick = { change(filter.copy(levels = if (selected) filter.levels - level else filter.levels + level)) },
+                    label = { Text(debitLevelLabel(level)) },
+                )
+            }
+        }
+        if (estimation.status == DebitEstimationStatus.TOO_BROAD) {
+            Text(
+                stringResource(
+                    R.string.search_filter_debit_too_broad,
+                    estimation.candidateCount,
+                    SearchCriteria.MAX_DEBIT_ESTIMATE_CANYONS,
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
+        }
+    }
+}
 
 /** One of the two logbook choices; a second tap goes back to every canyon. */
 @Composable
@@ -385,6 +459,11 @@ fun buildActiveFilterActions(uiState: SearchUiState, viewModel: SearchViewModel)
     val lengthLabel = stringResource(R.string.length)
     val maxWaterfallLabel = stringResource(R.string.max_waterfall)
     val ropeLabel = stringResource(R.string.rope)
+    val debitFilter = criteria.debitFilter?.takeIf { it.isActive() }
+    val debitLevels = debitFilter?.levels?.sortedBy { it.ordinal }?.map { debitLevelLabel(it) }?.joinToString("/")
+    val debitLabel = debitFilter?.let {
+        stringResource(R.string.search_filter_debit_active, debitLevels.orEmpty(), stringResource(debitDayRes(it.horizonDays)))
+    }
     val distanceLabel = criteria.maxDistanceKm?.let { stringResource(R.string.search_filter_distance_active, it) }
     return buildList {
         if (criteria.favoritesOnly) {
@@ -402,6 +481,9 @@ fun buildActiveFilterActions(uiState: SearchUiState, viewModel: SearchViewModel)
         criteria.selectedDepartment?.let { add(ActiveFilterAction(it, viewModel::clearDepartment)) }
         distanceLabel?.takeIf { criteria.hasReferencePoint }?.let { label ->
             add(ActiveFilterAction(label) { viewModel.onCriteriaChanged(criteria.copy(maxDistanceKm = null)) })
+        }
+        debitLabel?.let { label ->
+            add(ActiveFilterAction(label) { viewModel.onCriteriaChanged(criteria.copy(debitFilter = null)) })
         }
         criteria.verticalRange.takeIf(IntRangeFilter::isActive)?.let {
             add(ActiveFilterAction(rangeLabel("V", it)) { viewModel.onCriteriaChanged(criteria.copy(verticalRange = IntRangeFilter())) })
