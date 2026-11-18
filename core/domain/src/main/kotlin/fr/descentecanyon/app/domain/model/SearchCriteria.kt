@@ -123,7 +123,7 @@ data class SearchCriteria(
          * The estimated flow is computed (weather requests) only for at most this many canyons: a
          * department or a massif, never the whole catalog.
          */
-        const val MAX_DEBIT_ESTIMATE_CANYONS = 150
+        const val MAX_DEBIT_ESTIMATE_CANYONS = 30
     }
 }
 
