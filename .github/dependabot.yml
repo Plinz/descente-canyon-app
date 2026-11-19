@@ -6,9 +6,10 @@ updates:
       interval: weekly
     open-pull-requests-limit: 10
     ignore:
-      # ONNX Runtime 1.29+ starts a telemetry client at app launch (see gradle/libs.versions.toml).
+      # ONNX Runtime stays at 1.22: later versions are much larger, and 1.29+ starts a telemetry
+      # client at app launch (see gradle/libs.versions.toml).
       - dependency-name: "com.microsoft.onnxruntime*"
-        versions: [">= 1.29.0"]
+        versions: [">= 1.23.0"]
     groups:
       androidx:
         patterns:

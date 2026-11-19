@@ -33,8 +33,9 @@ playServicesLocation = "21.4.0"
 # Coroutines
 coroutines = "1.11.0"
 
-# ML runtime. Not above 1.28: from 1.29 the Android build starts a Microsoft telemetry client at launch
-# (ai.onnxruntime.TelemetryInitializer), and the newer native libraries are 10 to 15 MB larger per ABI.
+# ML runtime, kept at 1.22. 1.28 gives the same predictions bit for bit, but its native libraries are
+# 7 to 12 MB larger per ABI (+41 MB in the universal APK). From 1.29 the Android build also starts a
+# Microsoft telemetry client at launch (ai.onnxruntime.TelemetryInitializer).
 onnxRuntime = "1.22.0"
 
 # Image loading
