@@ -21,7 +21,8 @@ import kotlinx.serialization.json.Json
 
 /**
  * The accident report as one JSON value of the user database. Health details of a third person:
- * it is dropped once [AccidentReport.EXPIRY] has passed since its last change.
+ * hidden once [AccidentReport.EXPIRY] has passed since its last change, and deleted by [deleteExpired],
+ * which the app runs at each start, so that it leaves the phone and its backups too.
  */
 @Singleton
 class AccidentReportRepositoryImpl @Inject constructor(private val keyValueDao: KeyValueDao, private val clock: Clock) :
@@ -42,6 +43,10 @@ class AccidentReportRepositoryImpl @Inject constructor(private val keyValueDao: 
     }
 
     override suspend fun clear() = keyValueDao.deleteByPrefixOlderThan(KEY, Long.MAX_VALUE)
+
+    // One statement on the row's write time, which save() sets with savedAtEpochMs: a report saved
+    // meanwhile is never deleted. "+ 1": a report exactly EXPIRY old is expired, as in observe().
+    override suspend fun deleteExpired() = keyValueDao.deleteByPrefixOlderThan(KEY, clock.millis() - AccidentReport.EXPIRY.toMillis() + 1)
 
     /** Enum values are stored by name: one removed later reads as unanswered. */
     @Serializable

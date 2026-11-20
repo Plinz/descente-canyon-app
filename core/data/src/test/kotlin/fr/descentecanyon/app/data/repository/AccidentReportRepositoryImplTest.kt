@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -46,7 +47,7 @@ class AccidentReportRepositoryImplTest {
     fun tearDown() = database.close()
 
     @Test
-    fun `the report is kept whole, then forgotten a day after its last change`() = runTest {
+    fun `the report is kept whole, then forgotten a week after its last change`() = runTest {
         val report = AccidentReport(
             accidentTime = now.minusSeconds(1800),
             injuredCount = 1,
@@ -71,6 +72,19 @@ class AccidentReportRepositoryImplTest {
     }
 
     @Test
+    fun `an expired report is deleted, a fresh one is kept`() = runTest {
+        repository.save(AccidentReport(injuredCount = 1))
+
+        clock = Clock.fixed(now.plus(AccidentReport.EXPIRY).minusSeconds(60), ZoneOffset.UTC)
+        repository.deleteExpired()
+        assertNotNull(database.keyValueDao().get(KEY))
+
+        clock = Clock.fixed(now.plus(AccidentReport.EXPIRY), ZoneOffset.UTC)
+        repository.deleteExpired()
+        assertNull(database.keyValueDao().get(KEY))
+    }
+
+    @Test
     fun `an emptied report and a cleared one are gone`() = runTest {
         repository.save(AccidentReport(waterRising = true))
         repository.save(AccidentReport())
@@ -85,7 +99,7 @@ class AccidentReportRepositoryImplTest {
     fun `answers a later version dropped read as unanswered`() = runTest {
         database.keyValueDao().put(
             KeyValueEntity(
-                "emergency.accident_report",
+                KEY,
                 """{"savedAtEpochMs":${now.toEpochMilli()},"circumstances":["JUMP","AVALANCHE"],"injuries":["HEAD","TAIL"],""" +
                     """"checks":[{"atEpochMs":${now.toEpochMilli()},"responds":"SLEEPY","pain":3}]}""",
             ),
@@ -96,7 +110,11 @@ class AccidentReportRepositoryImplTest {
         assertEquals(setOf(InjuryArea.HEAD), report?.injuries)
         assertEquals(VictimCheck(now, pain = 3), report?.checks?.single())
 
-        database.keyValueDao().put(KeyValueEntity("emergency.accident_report", "not json"))
+        database.keyValueDao().put(KeyValueEntity(KEY, "not json"))
         assertNull(repository.observe().first())
+    }
+
+    private companion object {
+        const val KEY = "emergency.accident_report"
     }
 }

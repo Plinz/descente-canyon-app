@@ -178,4 +178,6 @@ class FakeAccidentReportRepository(report: AccidentReport? = null) : AccidentRep
     override suspend fun clear() {
         report.value = null
     }
+
+    override suspend fun deleteExpired() = Unit
 }

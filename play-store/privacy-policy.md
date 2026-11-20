@@ -19,7 +19,7 @@ The Application stores on the device:
 - your logbook (outings done, canyons, totals), including the list of your descents read from your descente-canyon.com account if you import it;
 - your planned outings and stays: dates, times, group, gear list, the alert time given to a relative, chained canyons, and starting places, one of which can be your home;
 - flow reports waiting to be sent, with the name and e-mail address you typed when you are not logged in, and the list of the reports you sent;
-- the accident report you fill in on the emergency screen (circumstances, state of the injured person, follow-up), which the Application stops using 24 hours after its last change;
+- the accident report you fill in on the emergency screen (circumstances, state of the injured person, follow-up), which the Application deletes a week after its last change;
 - your settings, and caches (canyon pages, weather, flow reports, photos, drive times) for offline use;
 - if you log in to descente-canyon.com, your username and the session cookies, encrypted with a key kept in the Android Keystore. Your password is never stored.
 

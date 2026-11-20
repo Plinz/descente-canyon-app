@@ -5,7 +5,8 @@ import kotlinx.coroutines.flow.Flow
 
 /**
  * The report of the accident under way, kept on the phone so that it survives the emergency screen
- * being closed or the app being stopped. Forgotten [AccidentReport.EXPIRY] after its last change.
+ * being closed or the app being stopped. Ignored, then deleted, [AccidentReport.EXPIRY] after its
+ * last change.
  */
 interface AccidentReportRepository {
     fun observe(): Flow<AccidentReport?>
@@ -13,4 +14,7 @@ interface AccidentReportRepository {
     suspend fun save(report: AccidentReport)
 
     suspend fun clear()
+
+    /** Deletes the report once [AccidentReport.EXPIRY] has passed since its last change. */
+    suspend fun deleteExpired()
 }

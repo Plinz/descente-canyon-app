@@ -1361,7 +1361,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="emergency_report_clear">Borrar el parte y el seguimiento</string>
     <string name="emergency_report_clear_confirm">El parte y el seguimiento de este accidente se borrarán de este teléfono.</string>
     <string name="emergency_report_clear_action">Borrar</string>
-    <string name="emergency_report_kept">El parte y el seguimiento se quedan en este teléfono, solo salen de él si usted los envía, y se olvidan 24 h después de su último cambio.</string>
+    <string name="emergency_report_kept">El parte y el seguimiento se quedan en este teléfono, solo salen de él si usted los envía, y se borran una semana después de su último cambio.</string>
     <string name="emergency_sms_time">Accidente hacia las %1$s.</string>
     <string name="emergency_sms_injured">Personas heridas: %1$d.</string>
     <string name="emergency_sms_people">Personas en el lugar: %1$d.</string>

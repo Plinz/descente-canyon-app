@@ -1361,7 +1361,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="emergency_report_clear">Cancellare il quadro e il monitoraggio</string>
     <string name="emergency_report_clear_confirm">Il quadro e il monitoraggio di questo incidente saranno cancellati da questo telefono.</string>
     <string name="emergency_report_clear_action">Cancellare</string>
-    <string name="emergency_report_kept">Il quadro e il monitoraggio restano su questo telefono, ne escono solo se li inviate voi, e vengono dimenticati 24 h dopo l\'ultima modifica.</string>
+    <string name="emergency_report_kept">Il quadro e il monitoraggio restano su questo telefono, ne escono solo se li inviate voi, e vengono cancellati una settimana dopo l\'ultima modifica.</string>
     <string name="emergency_sms_time">Incidente verso le %1$s.</string>
     <string name="emergency_sms_injured">Persone ferite: %1$d.</string>
     <string name="emergency_sms_people">Persone sul posto: %1$d.</string>

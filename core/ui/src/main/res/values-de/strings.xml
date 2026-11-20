@@ -1325,7 +1325,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="emergency_report_clear">Lagebericht und Verlauf löschen</string>
     <string name="emergency_report_clear_confirm">Lagebericht und Verlauf dieses Unfalls werden von diesem Telefon gelöscht.</string>
     <string name="emergency_report_clear_action">Löschen</string>
-    <string name="emergency_report_kept">Lagebericht und Verlauf bleiben auf diesem Telefon, verlassen es nur, wenn Sie sie senden, und werden 24 h nach der letzten Änderung vergessen.</string>
+    <string name="emergency_report_kept">Lagebericht und Verlauf bleiben auf diesem Telefon, verlassen es nur, wenn Sie sie senden, und werden eine Woche nach der letzten Änderung gelöscht.</string>
     <string name="emergency_sms_time">Unfall gegen %1$s.</string>
     <string name="emergency_sms_injured">Verletzte Personen: %1$d.</string>
     <string name="emergency_sms_people">Personen vor Ort: %1$d.</string>

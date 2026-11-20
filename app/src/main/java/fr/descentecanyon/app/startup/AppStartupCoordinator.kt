@@ -6,6 +6,7 @@ import fr.descentecanyon.app.data.repository.LegacyPhotoStorageMigrator
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.error.toAppError
+import fr.descentecanyon.app.domain.repository.AccidentReportRepository
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.outing.OutingReminderScheduler
 import fr.descentecanyon.app.perf.PerformanceTrace
@@ -34,6 +35,7 @@ class AppStartupCoordinator @Inject constructor(
     private val siteReportsRefresher: SiteReportsRefresher,
     private val outingReminderScheduler: OutingReminderScheduler,
     private val connectivityObserver: ConnectivityObserver,
+    private val accidentReportRepository: AccidentReportRepository,
 ) {
 
     private val backgroundScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -89,6 +91,11 @@ class AppStartupCoordinator @Inject constructor(
             initialized = true
             PerformanceTrace.logEvent("startup_initialize_marked_ready")
             backgroundScope.launch {
+                suspendRunCatching {
+                    accidentReportRepository.deleteExpired()
+                }.onFailure { throwable ->
+                    Log.w(TAG, "Unable to delete an expired accident report", throwable)
+                }
                 if (restoreResult.isSuccess && connectivityObserver.isCurrentlyOnline()) {
                     // Tells the user now, rather than at their next submission, that the saved session expired.
                     authRepository.validateSession().onFailure { throwable ->

@@ -33,8 +33,8 @@ data class AccidentReport(
     val isEmpty: Boolean get() = !hasAnswers && checks.isEmpty()
 
     companion object {
-        /** A report left untouched this long belongs to an accident that is over. */
-        val EXPIRY: Duration = Duration.ofHours(24)
+        /** A report left untouched this long belongs to an accident that is over: it is deleted. */
+        val EXPIRY: Duration = Duration.ofDays(7)
 
         const val MAX_COUNT = 30
         const val MAX_LOCATION_LENGTH = 120

@@ -1325,7 +1325,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="emergency_report_clear">Clear the report and the follow-up</string>
     <string name="emergency_report_clear_confirm">The report and the follow-up of this accident will be deleted from this phone.</string>
     <string name="emergency_report_clear_action">Clear</string>
-    <string name="emergency_report_kept">The report and the follow-up stay on this phone, leave it only if you send them, and are forgotten 24 h after their last change.</string>
+    <string name="emergency_report_kept">The report and the follow-up stay on this phone, leave it only if you send them, and are deleted a week after their last change.</string>
     <string name="emergency_sms_time">Accident at about %1$s.</string>
     <string name="emergency_sms_injured">Injured people: %1$d.</string>
     <string name="emergency_sms_people">People on site: %1$d.</string>

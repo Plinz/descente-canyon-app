@@ -1361,7 +1361,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="emergency_report_clear">Effacer le bilan et le suivi</string>
     <string name="emergency_report_clear_confirm">Le bilan et le suivi de cet accident seront effacés de ce téléphone.</string>
     <string name="emergency_report_clear_action">Effacer</string>
-    <string name="emergency_report_kept">Le bilan et le suivi restent sur ce téléphone, ne partent que si vous les envoyez, et sont oubliés 24 h après leur dernière modification.</string>
+    <string name="emergency_report_kept">Le bilan et le suivi restent sur ce téléphone, ne partent que si vous les envoyez, et sont effacés une semaine après leur dernière modification.</string>
     <string name="emergency_sms_time">Accident vers %1$s.</string>
     <string name="emergency_sms_injured">Personnes blessées : %1$d.</string>
     <string name="emergency_sms_people">Personnes sur place : %1$d.</string>
