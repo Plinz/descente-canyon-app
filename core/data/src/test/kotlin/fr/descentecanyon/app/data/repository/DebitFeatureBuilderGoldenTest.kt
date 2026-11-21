@@ -1,17 +1,10 @@
 package fr.descentecanyon.app.data.repository
 
-import ai.onnxruntime.OnnxMap
-import ai.onnxruntime.OnnxSequence
-import ai.onnxruntime.OnnxTensor
-import ai.onnxruntime.OnnxValue
-import ai.onnxruntime.OrtEnvironment
-import ai.onnxruntime.OrtSession
 import fr.descentecanyon.app.domain.model.DailyWeatherSource
 import fr.descentecanyon.app.domain.model.DailyWeatherValue
 import fr.descentecanyon.app.domain.model.NeighborCanyon
 import fr.descentecanyon.app.domain.model.RainStation
 import fr.descentecanyon.app.domain.model.RecentDebitCell
-import java.nio.FloatBuffer
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.LocalDate
@@ -69,53 +62,47 @@ class DebitFeatureBuilderGoldenTest {
     }
 
     @Test
-    fun `onnx models and ordinal decision match the python reference`() {
+    fun `models and ordinal decision match the python reference`() {
         val thresholdsPath = Paths.get(
             System.getProperty("repoRoot") ?: "..",
             "modele_statistique",
             "thresholds.json",
         ).normalize().toAbsolutePath()
         val thresholdsRoot = Json.parseToJsonElement(Files.readAllBytes(thresholdsPath).toString(Charsets.UTF_8)).jsonObject
+        val horizonRoot = thresholdsRoot.getValue("horizonModel").jsonObject
         val todayThresholds = thresholdsRoot.getValue("cumulativeThresholds").jsonArray.map { it.jsonPrimitive.double }
-        val horizonThresholds = thresholdsRoot.getValue("horizonModel").jsonObject
-            .getValue("cumulativeThresholds").jsonArray.map { it.jsonPrimitive.double }
-        val environment = OrtEnvironment.getEnvironment()
+        val horizonThresholds = horizonRoot.getValue("cumulativeThresholds").jsonArray.map { it.jsonPrimitive.double }
         val modelDirectory = Paths.get(System.getProperty("repoRoot") ?: "..", "modele_statistique").normalize().toAbsolutePath()
-        environment.createSession(modelDirectory.resolve("model.onnx").toString(), OrtSession.SessionOptions()).use { today ->
-            environment.createSession(modelDirectory.resolve("model_horizon.onnx").toString(), OrtSession.SessionOptions()).use { horizon ->
-                vectors.forEach { vector ->
-                    val horizonDays = vector["horizon"]?.jsonPrimitive?.int ?: 0
-                    val session = if (horizonDays == 0) today else horizon
-                    val thresholds = if (horizonDays == 0) todayThresholds else horizonThresholds
-                    val values = builder.computeFeatureValues(vector.toInput())!!
-                    val features = FloatArray(featureNames.size) { index ->
-                        val value = values[featureNames[index]]
-                        (if (value == null || value.isNaN()) MISSING else value).toFloat()
-                    }
-                    val probabilities = OnnxTensor.createTensor(
-                        environment,
-                        FloatBuffer.wrap(features),
-                        longArrayOf(1, features.size.toLong()),
-                    ).use { tensor ->
-                        session.run(mapOf(session.inputNames.single() to tensor)).use { result ->
-                            result.firstNotNullOf { (_, value) -> probabilityMap(value) }
-                        }
-                    }
-                    val distribution = DoubleArray(LABELS.size) { probabilities.getValue(LABELS[it]) }
-                    val expected = vector.getValue("probabilities").jsonArray.map { it.jsonPrimitive.double }
-                    distribution.forEachIndexed { index, probability ->
-                        assertEquals("canyon ${vector.canyonId()} h$horizonDays p$index", expected[index], probability, 2e-4)
-                    }
-                    val decision = OnnxDebitPredictor.decideOrdinal(distribution, thresholds)
-                    assertEquals("canyon ${vector.canyonId()} level", vector.getValue("level").jsonPrimitive.int, decision.level)
-                    assertEquals(
-                        "canyon ${vector.canyonId()} score",
-                        vector.getValue("displayScore").jsonPrimitive.double,
-                        decision.displayScore,
-                        1e-3,
-                    )
-                }
+        fun model(treeAsset: String, network: JsonObject): DebitModel = DebitModel(
+            trees = ObliviousTreeModel.read(Files.readAllBytes(modelDirectory.resolve(treeAsset))),
+            network = NeuralNetworkModel.read(Files.readAllBytes(modelDirectory.resolve(network.getValue("asset").jsonPrimitive.content))),
+            networkWeight = network.getValue("weight").jsonPrimitive.double,
+        )
+        val today = model("model.trees", thresholdsRoot.getValue("network").jsonObject)
+        val horizon = model(horizonRoot.getValue("modelAsset").jsonPrimitive.content, horizonRoot.getValue("network").jsonObject)
+        vectors.forEach { vector ->
+            val horizonDays = vector["horizon"]?.jsonPrimitive?.int ?: 0
+            val model = if (horizonDays == 0) today else horizon
+            val thresholds = if (horizonDays == 0) todayThresholds else horizonThresholds
+            val values = builder.computeFeatureValues(vector.toInput())!!
+            val features = FloatArray(featureNames.size) { index ->
+                val value = values[featureNames[index]]
+                (if (value == null || value.isNaN()) MISSING else value).toFloat()
             }
+            // Model classes are in feature_spec.json "labels" order (SEC … CRUE), as the golden probabilities.
+            val distribution = model.predictProbabilities(features)
+            val expected = vector.getValue("probabilities").jsonArray.map { it.jsonPrimitive.double }
+            distribution.forEachIndexed { index, probability ->
+                assertEquals("canyon ${vector.canyonId()} h$horizonDays p$index", expected[index], probability, 2e-4)
+            }
+            val decision = DebitModelPredictor.decideOrdinal(distribution, thresholds)
+            assertEquals("canyon ${vector.canyonId()} level", vector.getValue("level").jsonPrimitive.int, decision.level)
+            assertEquals(
+                "canyon ${vector.canyonId()} score",
+                vector.getValue("displayScore").jsonPrimitive.double,
+                decision.displayScore,
+                1e-3,
+            )
         }
     }
 
@@ -204,22 +191,7 @@ class DebitFeatureBuilderGoldenTest {
 
     private fun JsonElement.doubleOrNullValue(): Double? = if (this is JsonNull) null else jsonPrimitive.doubleOrNull
 
-    private fun probabilityMap(value: OnnxValue): Map<String, Double>? = when (value) {
-        is OnnxMap -> value.value.entries.associate { (key, probability) -> key.toString() to (probability as Number).toDouble() }
-
-        is OnnxSequence -> (value.value as List<*>).firstNotNullOfOrNull { item ->
-            when (item) {
-                is OnnxMap -> item.value.entries.associate { (key, probability) -> key.toString() to (probability as Number).toDouble() }
-                is Map<*, *> -> item.entries.associate { (key, probability) -> key.toString() to (probability as Number).toDouble() }
-                else -> null
-            }
-        }
-
-        else -> null
-    }
-
     private companion object {
         const val MISSING = -9999.0
-        val LABELS = listOf("SEC", "FILET", "CORRECT", "GROS", "TRES_GROS", "CRUE")
     }
 }

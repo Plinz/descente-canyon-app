@@ -1,7 +1,5 @@
 package fr.descentecanyon.app.data.repository
 
-import ai.onnxruntime.OrtEnvironment
-import ai.onnxruntime.OrtSession
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.descentecanyon.app.data.AppBuildInfo
@@ -10,6 +8,7 @@ import fr.descentecanyon.app.domain.model.CanyonStaticFeatureSet
 import fr.descentecanyon.app.domain.model.DebitFeatureDefinition
 import fr.descentecanyon.app.domain.model.DebitFeatureSource
 import fr.descentecanyon.app.domain.model.DebitFeatureSpec
+import fr.descentecanyon.app.domain.model.DebitNetworkAsset
 import fr.descentecanyon.app.domain.model.DebitPredictionDriver
 import fr.descentecanyon.app.domain.model.DebitPredictionInfoSummary
 import fr.descentecanyon.app.domain.model.DebitPredictionPolicy
@@ -45,7 +44,7 @@ class EmbeddedDebitModelStore @Inject constructor(
     private val thresholdsMutex = Mutex()
     private val staticFeaturesMutex = Mutex()
     private val metricsMutex = Mutex()
-    private val sessionMutex = Mutex()
+    private val modelMutex = Mutex()
 
     @Volatile
     private var cachedFeatureSpec: DebitFeatureSpec? = null
@@ -66,10 +65,10 @@ class EmbeddedDebitModelStore @Inject constructor(
     private var cachedMetricsSummary: DebitPredictionInfoSummary? = null
 
     @Volatile
-    private var cachedSessionHolder: OnnxSessionHolder? = null
+    private var cachedModel: DebitModel? = null
 
     @Volatile
-    private var cachedHorizonSessionHolder: OnnxSessionHolder? = null
+    private var cachedHorizonModel: DebitModel? = null
 
     suspend fun getFeatureSpec(): DebitFeatureSpec {
         cachedFeatureSpec?.let { return it }
@@ -122,32 +121,34 @@ class EmbeddedDebitModelStore @Inject constructor(
         }
     }
 
-    /** Session of the J+1 / J+2 model ([assetPath] from thresholds.json). */
-    suspend fun getHorizonSession(assetPath: String): OnnxSessionHolder {
-        cachedHorizonSessionHolder?.let { return it }
-        return sessionMutex.withLock {
-            cachedHorizonSessionHolder?.let { return it }
-            withContext(ioDispatcher) {
-                val modelFile = ensureAssetFile(assetPath, "model-horizon-v${appBuildInfo.versionCode}.onnx")
-                val environment = OrtEnvironment.getEnvironment()
-                val session = environment.createSession(modelFile.absolutePath, OrtSession.SessionOptions())
-                OnnxSessionHolder(environment, session).also { cachedHorizonSessionHolder = it }
-            }
+    /** J+1 / J+2 model (assets named by thresholds.json). */
+    suspend fun getHorizonModel(horizon: HorizonModelThresholds): DebitModel {
+        cachedHorizonModel?.let { return it }
+        return modelMutex.withLock {
+            cachedHorizonModel?.let { return it }
+            loadModel(horizon.modelAsset, horizon.network).also { cachedHorizonModel = it }
         }
     }
 
-    suspend fun getSession(): OnnxSessionHolder {
-        cachedSessionHolder?.let { return it }
-        return sessionMutex.withLock {
-            cachedSessionHolder?.let { return it }
-            withContext(ioDispatcher) {
-                val modelFile = ensureAssetFile(MODEL_ASSET_PATH, "model-v${appBuildInfo.versionCode}.onnx")
-                val environment = OrtEnvironment.getEnvironment()
-                val session = environment.createSession(modelFile.absolutePath, OrtSession.SessionOptions())
-                OnnxSessionHolder(environment, session).also { cachedSessionHolder = it }
-            }
+    /** J0 model. */
+    suspend fun getModel(): DebitModel {
+        cachedModel?.let { return it }
+        val network = getThresholds().network
+        return modelMutex.withLock {
+            cachedModel?.let { return it }
+            loadModel(MODEL_ASSET_PATH, network).also { cachedModel = it }
         }
     }
+
+    private suspend fun loadModel(treeAsset: String, network: DebitNetworkAsset?): DebitModel = withContext(ioDispatcher) {
+        DebitModel(
+            trees = ObliviousTreeModel.read(readAsset(treeAsset)),
+            network = network?.let { NeuralNetworkModel.read(readAsset(it.asset)) },
+            networkWeight = network?.weight ?: 0.0,
+        )
+    }
+
+    private fun readAsset(path: String): ByteArray = context.assets.open(path).use { it.readBytes() }
 
     private suspend inline fun <reified T> loadJsonAsset(path: String): T {
         val payload = withContext(ioDispatcher) {
@@ -162,6 +163,8 @@ class EmbeddedDebitModelStore @Inject constructor(
             targetDir.mkdirs()
         }
         val targetFile = File(targetDir, targetFileName)
+        // Copies left by older app versions (including their ONNX models, 60 MB) are dead weight.
+        targetDir.listFiles()?.filter { it.name != targetFileName }?.forEach { it.delete() }
         if (!targetFile.exists() || targetFile.length() == 0L) {
             context.assets.open(assetPath).use { input ->
                 targetFile.outputStream().use { output -> input.copyTo(output) }
@@ -224,9 +227,13 @@ class EmbeddedDebitModelStore @Inject constructor(
                 highThresholdByPolicy = horizon.policies.mapKeys { (key, _) -> key.toPredictionPolicy() }
                     .mapValues { (_, value) -> value.highThreshold },
                 cumulativeThresholds = horizon.cumulativeThresholds,
+                network = horizon.network?.toDomain(),
             )
         },
+        network = network?.toDomain(),
     )
+
+    private fun NetworkDto.toDomain(): DebitNetworkAsset = DebitNetworkAsset(asset = asset, weight = weight)
 
     private fun MetricsDto.toDomain(): DebitPredictionInfoSummary = DebitPredictionInfoSummary(
         modelName = model,
@@ -277,13 +284,11 @@ class EmbeddedDebitModelStore @Inject constructor(
         private const val STATIC_FEATURES_ASSET_PATH = "canyon_static_features.json"
         private const val STATIC_FEATURE_INDEX_ASSET_PATH = "canyon_static_features.index.json"
         private const val METRICS_ASSET_PATH = "metrics.json"
-        private const val MODEL_ASSET_PATH = "model.onnx"
+        private const val MODEL_ASSET_PATH = "model.trees"
     }
 }
 
 private data class StaticFeatureIndexEntry(val startByteOffset: Long, val byteLength: Int)
-
-data class OnnxSessionHolder(val environment: OrtEnvironment, val session: OrtSession)
 
 @Serializable
 private data class FeatureSpecDto(
@@ -306,14 +311,19 @@ private data class ThresholdsDto(
     val cumulativeThresholds: List<Double> = emptyList(),
     val ordinalCutpoints: OrdinalCutpointsDto? = null,
     val horizonModel: HorizonModelDto? = null,
+    val network: NetworkDto? = null,
 )
 
 @Serializable
 private data class HorizonModelDto(
-    val modelAsset: String = "model_horizon.onnx",
+    val modelAsset: String = "model_horizon.trees",
     val policies: Map<String, ThresholdPolicyDto> = emptyMap(),
     val cumulativeThresholds: List<Double> = emptyList(),
+    val network: NetworkDto? = null,
 )
+
+@Serializable
+private data class NetworkDto(val asset: String, val weight: Double)
 
 @Serializable
 private data class ThresholdPolicyDto(val highThreshold: Double)

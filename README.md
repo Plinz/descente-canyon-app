@@ -12,9 +12,9 @@ estimer le débit probable d'un canyon pour les trois prochains jours.
   de débit, il lit le message publié (copie en lecture seule de « Ma liste de courses », oubliée à la déconnexion).
 - Données personnelles locales : favoris avec leur dernier débit connu, carnet de sorties, canyons consultés récemment, notes
   personnelles par canyon, nom et e-mail du dernier signalement.
-- Estimation du débit par un modèle ONNX exécuté sur l'appareil (météo Open-Meteo, pluviomètres Météo-France et
-  MeteoSwiss, état hydrologique simulé), affichée en fourchette quand le modèle hésite entre deux niveaux. Voir
-  [docs/debit-prediction-model.md](docs/debit-prediction-model.md).
+- Estimation du débit par un modèle exécuté sur l'appareil (moyenne d'un CatBoost et d'un petit réseau de neurones ;
+  météo Open-Meteo, pluviomètres Météo-France et MeteoSwiss, état hydrologique simulé), affichée en fourchette quand le
+  modèle hésite entre deux niveaux. Voir [docs/debit-prediction-model.md](docs/debit-prediction-model.md).
 - Fiche canyon orientée décision : météo en une carte (alerte orage, pluie tombée sur 72 h et prévue sur 48 h avec
   graphique heure par heure et heures d'orage, 6 prochains jours, lever et coucher du soleil), canyons à moins de
   30 km avec leur dernier débit connu (plan B), répartition des débits signalés selon le mois. Les dernières
@@ -53,7 +53,7 @@ feature/settings         Réglages (thème, langue, notifications), sources des 
 feature/outing           Préparation de sortie, sortie en cours, écran d'urgence
 feature/account          Mon espace (compte, identité de contribution, données) et carnet : sorties, mémos, bilan, import de la liste de courses du site
 core/ui                  Design system, composants partagés, widget carte, ressources (chaînes en 6 langues)
-core/data                Bases Room, réseau (OkHttp + Jsoup), scraping, repositories, modèle ONNX
+core/data                Bases Room, réseau (OkHttp + Jsoup), scraping, repositories, modèle de débit
 core/domain              Modèles, interfaces des repositories, cas d'usage, erreurs typées (Kotlin pur)
 core/testing             Outils de test partagés
 build-logic              Plugins de convention Gradle (descente.android.*, descente.jvm.library)
@@ -123,7 +123,7 @@ git config core.hooksPath .githooks
 | `offline-data/full/room-import/` | Export JSON du catalogue, source du `catalog.db` embarqué |
 | `data-overlay/`, `tools/overlay-merge/` | Canyons et enrichissements propres à l'application ([docs/overlay-architecture.md](docs/overlay-architecture.md)) |
 | `data-overlay/canyon-chains.json` | Enchaînements d'un canyon au suivant (à la suite, à pied avec le temps du topo, interdit dans le lit), relus à la main sur tout le catalogue ; après un nouveau scrap, `scripts/app/canyon_chain_candidates.py` liste les paires restant à relire |
-| `modele_statistique/` | Modèle de débit exporté (ONNX, seuils, tables de features) |
+| `modele_statistique/` | Modèle de débit exporté (arbres CatBoost `*.trees`, réseaux `*.mlp`, seuils, tables de features) |
 | `scripts/debit_model/` | Pipeline d'entraînement du modèle de débit ([README](scripts/debit_model/README.md)) |
 | `scripts/watersheds/`, `watershed-results/` | Calcul des bassins versants ([README](scripts/watersheds/README.md)) |
 | `scripts/app/` | Générateurs du catalogue embarqué et des index du modèle, appelés par le build |

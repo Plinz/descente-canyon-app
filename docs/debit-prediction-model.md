@@ -41,7 +41,7 @@ pour très bon :
    * priors massif/région strictement causaux à l'entraînement (le *leave-one-out* fait fuiter le
      label : c'est une fonction déterministe de celui-ci) ;
    * vecteurs dorés Python → test Kotlin (`DebitFeatureBuilderGoldenTest`) sur les features, la
-     sortie ONNX, la décision et le filtre de qualité des reports.
+     sortie du modèle, la décision et le filtre de qualité des reports.
 4. **Décision ordinale cumulative** : niveau = plus haut k tel que P(débit ≥ j) ≥ τ_j pour tout j ≤ k.
    Les seuils τ sont réglés hors échantillon avec un coût asymétrique : une sous-estimation d'un
    GROS ou plus coûte 2,5 fois plus. L'app affiche aussi « Risque de gros débit ou plus : x % ».
@@ -116,9 +116,42 @@ réparait J+1/J+2, mais coûtait significativement à J0 (+0,00035 de RPS).
 
 L'app embarque donc deux modèles qui partagent le même contrat de features :
 
-* `model.onnx` (J0) : information jusqu'à J-1 ;
-* `model_horizon.onnx` (J+1, J+2) : reports et pluviomètres décalés de l'horizon, feature
-  `infoLagDays` (entraîné sur toutes les lignes avec un décalage aléatoire de 1 ou 2 jours).
+* `model.trees` + `model.mlp` (J0) : information jusqu'à J-1 ;
+* `model_horizon.trees` + `model_horizon.mlp` (J+1, J+2) : reports et pluviomètres décalés de
+  l'horizon, feature `infoLagDays` (entraîné sur toutes les lignes avec un décalage aléatoire de 1
+  ou 2 jours).
+
+Depuis la v7, chacun est la moyenne à parts égales d'un CatBoost (`*.trees`) et d'un petit réseau
+de neurones (`*.mlp`, 3 graines) entraînés sur les mêmes lignes ; voir « LSTM pour l'état
+hydrologique » pour le choix.
+
+### Exécution dans l'app (novembre 2026)
+
+CatBoost construit des arbres symétriques : chaque niveau d'un arbre teste le même couple
+(feature, seuil), donc un arbre de profondeur 7 se réduit à 7 seuils et 128 vecteurs de feuilles, et
+la feuille d'une ligne est le nombre dont le bit j vaut `feature > seuil` pour le seuil j.
+`tree_model.py` écrit les modèles dans ce format compact (`*.trees`), et `ObliviousTreeModel.kt` les
+évalue directement en Kotlin, sans moteur d'inférence.
+
+Jusqu'à la 2.9, l'app exécutait un export ONNX avec ONNX Runtime. Cet export déplie chaque arbre en
+arbre binaire complet de 255 nœuds :
+
+| | ONNX Runtime 1.22 | Arbres en Kotlin |
+| --- | ---: | ---: |
+| Modèles J0 + J+1/J+2 | 31,6 + 29,0 Mo, recopiés dans `filesDir` au premier usage | 5,4 + 5,0 Mo, lus depuis les assets |
+| Bibliothèque native | 18,2 Mo (arm64), 75 Mo pour les 4 ABI de l'APK universel | aucune |
+| Mémoire des deux sessions (mesure PC) | ≈ 500 Mo | ≈ 11 Mo de tableaux |
+| Écart à CatBoost | 1,7·10⁻⁶ | 1,2·10⁻⁸ |
+
+La 1.22 était en outre bloquée : les versions suivantes grossissaient de 7 à 12 Mo par ABI, et la
+1.29 démarre un client de télémétrie Microsoft.
+
+Le réseau (`network.py`, format `*.mlp`) suit le même principe : `NeuralNetworkModel.kt` lit les
+poids et fait le calcul en Kotlin (entrées standardisées avec indicateurs de valeur manquante, deux
+couches cachées de 256 et 128 unités, GELU, softmax, moyenne des 3 graines). `DebitModel.kt` fait la
+moyenne avec les arbres, avec le poids donné par `thresholds.json` ; sans entrée `network`, l'app
+n'utilise que les arbres. Les deux réseaux pèsent 0,96 Mo chacun et s'écartent de PyTorch de
+4·10⁻⁷ au plus.
 
 ## Évaluation
 
@@ -127,6 +160,38 @@ observations antérieures à cette période, comme l'app le premier jour).
 
 Données : 166 802 observations Descente-Canyon (1988 → 07/10/2026), dont 8 canyons interdits
 restaurés depuis le scraping de juin. Météo ERA5 pour 3 330 cibles.
+
+### v7 (21/11/2026) : moyenne CatBoost + réseau
+
+Mêmes données et mêmes CatBoost que la v6 (les fichiers `*.trees` sont identiques octet pour
+octet), auxquels s'ajoute un réseau par modèle (`*.mlp`). Les probabilités sont la moyenne à parts
+égales des deux, et seuils de décision et seuils de risque sont réglés à nouveau sur cette moyenne.
+Le walk-forward entraîne les deux à chaque période, exactement comme le modèle final.
+
+| RPS (négatif = mieux) | CatBoost seul | CatBoost + réseau | Écart |
+| --- | ---: | ---: | ---: |
+| 2023, J0 | 0,04020 | 0,03955 | −1,6 % |
+| 2024, J0 | 0,04072 | 0,04020 | −1,3 % |
+| 2025 → oct. 2026, J0 | 0,03522 | 0,03483 | −1,1 % |
+| 2023 / 2024 / 2025-2026, J+1 | 0,04139 / 0,04186 / 0,03586 | 0,04078 / 0,04133 / 0,03556 | −1,5 / −1,3 / −0,8 % |
+| 2023 / 2024 / 2025-2026, J+2 | 0,04157 / 0,04214 / 0,03613 | 0,04094 / 0,04178 / 0,03587 | −1,5 / −0,8 / −0,7 % |
+
+Sur les 36 265 reports de test :
+
+| | J0 : v6 → v7 | J+1 : v6 → v7 |
+| --- | ---: | ---: |
+| Erreur de probabilité (RPS) | 0,0380 → 0,0375 (−1,3 %) | 0,0389 → 0,0384 (−1,2 %) |
+| AUC GROS+ | 0,915 → 0,917 | 0,908 → 0,910 |
+| Précision GROS+ à rappel de 70 % | 53,0 → 53,6 % | 50,4 → 50,8 % |
+| Rappel GROS+ à précision de 60 % | 61,3 → 61,8 % | 57,0 → 59,6 % |
+| Exactitude (niveau exact) | 75,4 → 76,1 % | 75,1 → 75,8 % |
+| MAE ordinale | 0,270 → 0,263 | 0,275 → 0,268 |
+| GROS+ sous-estimés de ≥ 2 niveaux | 8,4 → 8,2 % | 9,3 → 9,5 % |
+| GROS+ : précision / rappel / F1 (seuils réglés) | 0,57 / 0,65 / 0,607 → 0,58 / 0,64 / 0,611 | 0,55 / 0,63 / 0,592 → 0,58 / 0,62 / 0,601 |
+
+Le gain est celui prévu par l'étude : il porte sur toutes les périodes et les trois horizons. La
+confiance affichée reste calibrée : ce qui est affiché est juste 92,5 % du temps en confiance
+élevée (60 % des cas), 77 % en moyenne (29 %) et 64,5 % en faible (11 %).
 
 ### v6 (29/10/2026) : bassins versants corrigés
 
@@ -204,7 +269,7 @@ la fréquence observée (`metrics.json`, `calibrationHigh`).
 
 Pour vérifier la chaîne de bout en bout, le modèle entraîné jusqu'au 04/06/2026 a été rejoué sur
 1 375 reports publiés du 05/06 au 12/10/2026 (56 canyons parmi les plus suivis), avec la météo
-récupérée comme dans l'app, les assets exportés et ONNX (`validate_recent.py`). Résultats :
+récupérée comme dans l'app, les assets exportés et le modèle de l'app (`validate_recent.py`). Résultats :
 exactitude 0,835 contre 0,808 pour la persistance, MAE 0,18 contre 0,22, erreurs graves 1,0 % contre
 1,6 %. Sur les 46 « gros débits » de cet été sec, 7 étaient des messages (incendie, travaux,
 stationnement…), auxquels le modèle donnait à raison une probabilité quasi nulle. D'où le filtre
@@ -212,10 +277,11 @@ stationnement…), auxquels le modèle donnait à raison une probabilité quasi 
 
 ### Décision embarquée
 
-* modèle J0 : seuils cumulatifs τ = 0,57 / 0,50 / 0,27 / 0,26 / 0,35 (SEC→FILET … TRÈS GROS→CRUE) ;
-  risque « Fort » si P(≥ GROS) ≥ 0,31 (`balanced`), 0,64 (`prudent`), 0,07 (`safety_first`) ;
-* modèle J+1/J+2 : τ = 0,53 / 0,51 / 0,24 / 0,28 / 0,23 ; risque « Fort » si
-  P(≥ GROS) ≥ 0,26 (`balanced`), 0,66 (`prudent`), 0,07 (`safety_first`) ;
+* modèle J0 (v7) : seuils cumulatifs τ = 0,58 / 0,51 / 0,27 / 0,27 / 0,25 (SEC→FILET … TRÈS
+  GROS→CRUE) ; risque « Fort » si P(≥ GROS) ≥ 0,27 (`balanced`), 0,62 (`prudent`), 0,07
+  (`safety_first`) ;
+* modèle J+1/J+2 (v7) : τ = 0,53 / 0,52 / 0,30 / 0,21 / 0,27 ; risque « Fort » si
+  P(≥ GROS) ≥ 0,32 (`balanced`), 0,66 (`prudent`), 0,07 (`safety_first`) ;
 * confiance affichée : probabilité que le débit soit dans ce qui est affiché (le niveau, ou la
   fourchette quand le niveau a moins de 0,6), « élevée » à partir de 0,85, « moyenne » à partir de
   0,70. Cette probabilité est calibrée (±2 points par tranche ; canyons sans report depuis plus
@@ -327,6 +393,80 @@ cumuls météo 14 à 365 jours. Le modèle exploite déjà l'information disponi
 * Non testables sans clé ou quota payant : humidité du sol et CAPE ERA5 (Open-Meteo gratuit trop
   limité pour 3 330 points sur 20 ans), AROME 1,3 km historique. Les hauteurs de neige des postes
   (Nivôse compris) avaient déjà été testées sans gain.
+
+### LSTM pour l'état hydrologique (novembre 2026)
+
+Question : un réseau récurrent qui lit la météo quotidienne peut-il remplacer ou améliorer l'état
+hydrologique fait main (`hydro.py` : neige sur 5 bandes d'altitude, réservoir sol GR4J, réservoirs
+de 1 à 90 jours) ? Pour le débit mesuré, les LSTM entraînés sur des centaines de bassins sont l'état
+de l'art en hydrologie (Kratzert et al., jeux CAMELS), y compris sur des bassins non jaugés.
+
+Protocole (`scripts/debit_model/research/lstm_README.md`) : mêmes lignes, périodes et réglages que
+le banc d'essai, architecture choisie sur la validation seule, écarts de RPS avec intervalle à 95 %
+(bootstrap apparié par canyon). Le réseau lit 1 à 2 ans de météo de la cible du canyon (pluie,
+température, jour de l'année) avec un résumé appris des descripteurs statiques ; un LSTM de 64
+unités, puis une tête MLP qui reçoit aussi les features tabulaires. Entraînement sur CPU : 20 à
+80 minutes par modèle.
+
+| Essai (écart de RPS, négatif = mieux) | Référence | 2023 | 2024 | 2025-2026 |
+| --- | --- | ---: | ---: | ---: |
+| LSTM météo seul (moyenne de 2 graines) à la place de l'hydro fait main | CatBoost statique + hydro fait main | | +0,0018 | +0,0006 |
+| Sorties du LSTM (hors échantillon) ajoutées aux features de production | CatBoost production, réglages rapides | | +0,0003 | +0,0000 |
+| Même chose sans l'hydro fait main | idem | | +0,0014 | +0,0006 |
+| Production sans l'hydro fait main, pour comparaison | idem | | +0,0029 | +0,0015 |
+| Deux graines de CatBoost au lieu d'une | CatBoost production | −0,00018 | −0,00009 | −0,00025 |
+| Moyenne CatBoost + MLP sans LSTM (3 graines) | CatBoost production | −0,00078 | −0,00052 | −0,00036 |
+| Même chose pour le modèle J+1/J+2, évalué à J+1 | CatBoost J+1/J+2 production | | −0,00032 | −0,00028 |
+| Moyenne CatBoost + réseau LSTM complet (3 graines) | CatBoost production | −0,00103 | −0,00034 | −0,00052 |
+| Réseau LSTM au lieu du MLP dans la moyenne (2 graines de CatBoost) | CatBoost ×2 + MLP | −0,00024 | +0,00018 | −0,00017 |
+| Réseau LSTM ajouté à cette moyenne | CatBoost ×2 + MLP | −0,00021 | −0,00001 | −0,00016 |
+
+Intervalles à 95 % des deux dernières lignes : [−0,00041 ; −0,00008], [−0,00003 ; +0,00040],
+[−0,00030 ; −0,00005], puis [−0,00030 ; −0,00014], [−0,00012 ; +0,00010], [−0,00023 ; −0,00011].
+Les moyennes CatBoost + réseau gagnent sur les trois périodes avec des intervalles qui excluent
+zéro ; poids 1/2 – 1/2, la validation donne 0,4 à 0,6 avec un optimum plat.
+
+En unités plus parlantes (36 265 reports J0 des trois périodes, 26 151 à J+1 ; repères : ce
+qu'apporte l'hydro fait main, et ce que change la seule graine de CatBoost). Les détections GROS+
+sont comparées à rappel ou précision égal, car les seuils de décision réglés sur la validation
+déplacent à eux seuls précision et rappel de ±5 points d'un entraînement à l'autre :
+
+| | CatBoost + MLP, J0 | CatBoost + MLP, J+1 | Hydro fait main, 2 périodes (sans → avec) | Autre graine de CatBoost |
+| --- | ---: | ---: | ---: | ---: |
+| Erreur de probabilité (RPS) | −1,4 % | −0,8 % | −5,0 % | −0,2 % |
+| AUC GROS+ | 0,915 → 0,917 | 0,909 → 0,912 | 0,904 → 0,916 | 0,915 → 0,915 |
+| Précision GROS+ à rappel de 70 % | 52,8 → 53,7 % | 51,8 → 52,0 % | 49,9 → 53,7 % | 52,8 → 52,3 % |
+| Rappel GROS+ à précision de 60 % | 61,2 → 62,2 % | 59,0 → 61,2 % | 55,3 → 60,7 % | 61,2 → 61,6 % |
+| Exactitude (niveau exact) | 75,0 → 75,7 % | 75,6 → 76,7 % | 74,7 → 75,9 % | 75,0 → 76,2 % |
+
+Le gain vaut donc environ le quart de celui de l'hydro fait main et le double du bruit sur les
+mesures indépendantes des seuils ; sur l'exactitude, il reste dans le bruit des seuils.
+
+* **Le LSTM ne remplace pas l'hydro fait main.** Aucune des variantes essayées (GRU, 32 ou 128
+  unités, 2 couches, 2 ans de chauffe, perte RPS, 24 ou 32 époques, états de l'hydro fait main en
+  entrée) ne comble l'écart ; la meilleure reste à +0,0012 sur 2024. Les plongements PLR des
+  variables numériques surapprennent dès la 6e époque. Il récupère environ la moitié de ce
+  qu'apporte l'hydro fait main, et ce qu'il apprend y est déjà : empilé sur les features de
+  production, il n'ajoute rien. Contrairement à CAMELS, le label n'est pas un débit mesuré chaque
+  jour mais quelques reports ordinaux bruités par canyon, relatifs au canyon ; un modèle physique
+  avec ses a priori (neige, sol) reste plus efficace avec si peu de signal.
+* **L'essentiel du gain vient du mélange de deux apprenants, pas du LSTM.** Un MLP sur les mêmes
+  116 features, 20 fois plus rapide à entraîner, en apporte 55 à 95 % : arbres et réseaux se
+  trompent différemment, résultat connu sur données tabulaires. Le LSTM ajoute environ −0,0002 sur
+  2023 et 2025-2026, rien sur 2024 : un gain de l'ordre du bruit d'entraînement, non reproduit sur
+  toutes les périodes, pour un coût bien plus élevé dans l'app (400 jours de météo à dérouler par
+  canyon, un second réseau pour J+1).
+* **Où gagne la moyenne CatBoost + MLP** : régulièrement sur les basses eaux (SEC −0,0023 /
+  −0,0021 / −0,0025, FILET −0,0025 / −0,0021 / −0,0005) ; sur GROS et au-dessus le signe change
+  selon la période (GROS +0,0013 en 2023, −0,0013 et −0,0015 ensuite). Le F1 GROS+ gagne 1,9 / 0,8
+  / 0,9 point, l'exactitude 1,2 / 0,0 / 0,9 point. À J+1, l'exactitude gagne 1,0 / 1,1 point.
+* **Dans l'app depuis la v7** (« v7 » dans Évaluation) : un MLP de 80 000 paramètres lit le même
+  vecteur de 116 features que CatBoost. `train.py` entraîne trois graines pour J0 et trois pour
+  J+1/J+2 (`network.py`, 16 époques fixes : PyTorch devient une dépendance du pipeline), règle
+  seuils de décision et seuils de risque sur les probabilités moyennées et écrit les poids (2 ×
+  0,96 Mo en float32). `NeuralNetworkModel.kt` les évalue en Kotlin, et le test de référence
+  vérifie l'écart à Python. Gain mesuré : −1,3 % de RPS à J0 et −1,2 % à J+1, l'ordre de ce que
+  coûte l'absence des postes automatiques avant 05:44 UTC (0,0008).
 
 ### Leviers qui changeraient vraiment la prévision
 

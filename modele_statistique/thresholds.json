@@ -1,24 +1,24 @@
 {
-  "schemaVersion": 4,
+  "schemaVersion": 5,
   "targetMode": "six_ordinal_cumulative",
   "defaultPolicy": "balanced",
   "policies": {
     "balanced": {
-      "highThreshold": 0.29
+      "highThreshold": 0.27
     },
     "prudent": {
-      "highThreshold": 0.64
+      "highThreshold": 0.62
     },
     "safety_first": {
       "highThreshold": 0.07
     }
   },
   "cumulativeThresholds": [
+    0.58,
     0.51,
-    0.48,
-    0.26,
-    0.25,
-    0.27
+    0.27,
+    0.27,
+    0.25
   ],
   "ordinalCutpoints": {
     "secFilet": 0.5,
@@ -27,25 +27,33 @@
     "grosTresGros": 3.5,
     "tresGrosCrue": 4.5
   },
+  "network": {
+    "asset": "model.mlp",
+    "weight": 0.5
+  },
   "horizonModel": {
-    "modelAsset": "model_horizon.onnx",
+    "modelAsset": "model_horizon.trees",
+    "network": {
+      "asset": "model_horizon.mlp",
+      "weight": 0.5
+    },
     "policies": {
       "balanced": {
         "highThreshold": 0.32
       },
       "prudent": {
-        "highThreshold": 0.67
+        "highThreshold": 0.66
       },
       "safety_first": {
         "highThreshold": 0.07
       }
     },
     "cumulativeThresholds": [
-      0.5,
-      0.5,
-      0.32,
-      0.25,
-      0.29
+      0.53,
+      0.52,
+      0.3,
+      0.21,
+      0.27
     ]
   }
 }

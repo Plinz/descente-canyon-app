@@ -1,7 +1,10 @@
-# Debit model v3 (hydrological state + ordinal CatBoost)
+# Debit model v3 (hydrological state + ordinal CatBoost averaged with a network)
 
 Production pipeline of the debit prediction embedded in the app (`modele_statistique/`).
 Design notes and evaluation: `docs/debit-prediction-model.md`.
+
+The virtualenv needs CatBoost and PyTorch (CPU build) for training; the app ships neither (Kotlin
+evaluators of both formats).
 
 ## Pipeline
 
@@ -46,13 +49,14 @@ PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/build_static
 # 4. Dataset (time, static, weather/hydro, neighbour reports, rain gauges + lagged copies; ~3 min)
 PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/build_dataset.py
 
-# 5. Honest walk-forward evaluation (J0 and J+1/J+2 models per test period, ~25 min per fold)
+# 5. Honest walk-forward evaluation (J0 and J+1/J+2 models per test period: CatBoost + 3 network
+#    seeds each, ~40 min per fold)
 PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/train.py walkforward --output-dir build/debit-model/walkforward-v4
 
 # 6. Final models on all rows + decision thresholds from out-of-fold predictions
 PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/train.py final --walkforward-dir build/debit-model/walkforward-v4 --output-dir build/debit-model/final-v4
 
-# 7. App assets (model.onnx, model_horizon.onnx, lookups...), ONNX parity check and golden vectors
+# 7. App assets (model.trees, model.mlp, model_horizon.*, lookups...), CatBoost parity check and golden vectors
 PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/export_app_assets.py --final-dir build/debit-model/final-v4 --walkforward-dir build/debit-model/walkforward-v4
 bash gradlew :core:data:testDebugUnitTest --tests '*DebitFeatureBuilderGoldenTest*'
 ```
@@ -77,12 +81,16 @@ bash gradlew :core:data:testDebugUnitTest --tests '*DebitFeatureBuilderGoldenTes
 | `train.py` | Walk-forward evaluation and final fit. |
 | `runtime_reference.py` | Single-prediction replica of the app path (golden vectors). |
 | `export_app_assets.py` | Writes `modele_statistique/` and `core/data/src/test/resources/debit/golden_vectors.json`. |
+| `tree_model.py` | Compact oblivious-tree format of the CatBoost models (`*.trees`, read by `ObliviousTreeModel.kt`); `export` converts final models alone. |
+| `network.py` | Network averaged with CatBoost: training (PyTorch), format `*.mlp` read by `NeuralNetworkModel.kt`, numpy reference. |
 
 ## Contract with the app
 
 `DebitHydroModel.kt` and `DebitFeatureBuilder.kt` are line-by-line ports of `hydro.py` and
 `features.py`, and `DebitReportQuality.kt` of `label_quality.py`. Any change to a constant, a feature or the decision rule must be made on both sides
-and the golden vectors regenerated; `DebitFeatureBuilderGoldenTest` fails otherwise.
+and the golden vectors regenerated; `DebitFeatureBuilderGoldenTest` fails otherwise. The golden
+probabilities are those of the shipped average (CatBoost + `Network.predict_proba`, the reference of
+`NeuralNetworkModel.kt`).
 
 Rules that keep training and runtime identical:
 

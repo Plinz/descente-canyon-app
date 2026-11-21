@@ -1,7 +1,8 @@
 """Export the v3 debit model and its runtime data to ``modele_statistique/`` (Android assets).
 
-Also writes the golden vectors checked by the Kotlin unit test and verifies that the ONNX model
-reproduces CatBoost probabilities.
+Also writes the golden vectors checked by the Kotlin unit test and verifies that the exported tree
+models (``tree_model.py``) reproduce CatBoost probabilities. Each model is CatBoost averaged with the
+network of ``network.py`` (``model.mlp``, ``model_horizon.mlp``).
 """
 from __future__ import annotations
 
@@ -13,7 +14,6 @@ from datetime import date, datetime, timezone
 from pathlib import Path
 
 import numpy as np
-import onnxruntime as ort
 import pandas as pd
 from catboost import CatBoostClassifier
 
@@ -22,13 +22,17 @@ import features as F
 import history as H
 import meteofrance as M
 import neighbors as N
+import network as NN
 import runtime_reference as R
+import tree_model as T
 from label_quality import is_message_only_high_report
 from weather_store import WeatherStore
 
 UNKNOWN = "__UNKNOWN__"
 OBSOLETE_ASSETS = [
     "high_risk_overlay.onnx",
+    "model.onnx",
+    "model_horizon.onnx",
     "high_risk_overlay.json",
     "high_risk_overlay_feature_spec.json",
     "high_risk_overlay_metrics.json",
@@ -136,32 +140,27 @@ def neighbor_inputs(payload: dict, canyon_id: int) -> tuple[list[tuple[int, floa
     return neighbors, aggregates
 
 
-def export_model(final_dir: Path, output_dir: Path, sample: pd.DataFrame, model_name: str = "today", onnx_name: str = "model.onnx") -> dict:
+def export_model(final_dir: Path, output_dir: Path, sample: pd.DataFrame, model_name: str = "today", file_name: str = "model.trees") -> dict:
     model = CatBoostClassifier()
     model.load_model(str(final_dir / f"model_{model_name}.cbm"))
-    onnx_path = output_dir / onnx_name
-    model.save_model(str(onnx_path), format="onnx", export_parameters={"onnx_domain": "ai.catboost", "onnx_model_version": 3, "onnx_doc_string": "Descente-Canyon debit model v3"})
     matrix = sample[F.FEATURE_NAMES].to_numpy(dtype=np.float64)
     matrix = np.where(np.isnan(matrix), F.MISSING, matrix).astype(np.float32)
-    expected = model.predict_proba(matrix)
-    order = [list(model.classes_).index(level) for level in F.LEVELS]
-    expected = expected[:, order]
-    session = ort.InferenceSession(str(onnx_path), providers=["CPUExecutionProvider"])
-    outputs = session.run(None, {session.get_inputs()[0].name: matrix})
-    probabilities = outputs[1]
-    if isinstance(probabilities, list):  # zipmap: list of {label: probability}
-        probabilities = np.array([[row[level] for level in F.LEVELS] for row in probabilities])
-    else:
-        probabilities = np.asarray(probabilities)[:, order]
-    max_diff = float(np.abs(probabilities - expected).max())
-    if max_diff > 1e-4:
-        raise SystemExit(f"ONNX/CatBoost mismatch: {max_diff}")
+    max_diff = T.export(model, F.FEATURE_NAMES, F.LEVELS, output_dir / file_name, matrix)
     return {
-        "onnxMaxAbsDiff": max_diff,
-        "onnxOutputs": [o.name for o in session.get_outputs()],
+        "treeMaxAbsDiff": max_diff,
         "classes": [str(c) for c in model.classes_],
         "importances": model.get_feature_importance().tolist(),
     }
+
+
+def export_network(final_dir: Path, output_dir: Path, model_name: str, file_name: str) -> dict:
+    """Copies the trained network and checks that it reads back (``network.py`` format)."""
+    source = final_dir / f"network_{model_name}.mlp"
+    network = NN.Network.read(source)
+    shutil.copyfile(source, output_dir / file_name)
+    if NN.Network.read(output_dir / file_name).widths != network.widths:
+        raise SystemExit(f"{file_name}: copy does not read back")
+    return {"members": len(network.members), "widths": network.widths, "bytes": (output_dir / file_name).stat().st_size}
 
 
 def golden_vectors(
@@ -175,6 +174,7 @@ def golden_vectors(
     output_path: Path,
     count: int,
     models: dict[int, CatBoostClassifier],
+    networks: dict[int, NN.Network],
     thresholds: dict[int, list[float]],
     cells: dict[int, list[tuple[int, int]]] | None = None,
     rain_series: dict | None = None,
@@ -247,7 +247,7 @@ def golden_vectors(
         model = models[min(horizon, 1)]
         tau = np.array(thresholds[min(horizon, 1)])
         order = [list(model.classes_).index(level) for level in F.LEVELS]
-        probabilities = model.predict_proba(vector)[:, order]
+        probabilities = NN.blend(model.predict_proba(vector)[:, order], networks[min(horizon, 1)].predict_proba(vector))
         vectors.append({
             "horizon": horizon,
             "probabilities": [round(float(p), 6) for p in probabilities[0]],
@@ -323,8 +323,10 @@ def main() -> None:
     summary = json.loads((final_dir / "summary.json").read_text())
     walk = json.loads((Path(args.walkforward_dir) / "report.json").read_text())
 
-    model_info = export_model(final_dir, output_dir, pd.read_pickle(final_dir / "sample_rows_today.pkl"), "today", "model.onnx")
-    horizon_info = export_model(final_dir, output_dir, pd.read_pickle(final_dir / "sample_rows_horizon.pkl"), "horizon", "model_horizon.onnx")
+    model_info = export_model(final_dir, output_dir, pd.read_pickle(final_dir / "sample_rows_today.pkl"), "today", "model.trees")
+    horizon_info = export_model(final_dir, output_dir, pd.read_pickle(final_dir / "sample_rows_horizon.pkl"), "horizon", "model_horizon.trees")
+    network_info = export_network(final_dir, output_dir, "today", "model.mlp")
+    horizon_network_info = export_network(final_dir, output_dir, "horizon", "model_horizon.mlp")
     static = export_static(dataset_dir, output_dir)
     points = N.canyon_points(Path("offline-data/full/room-import/geo_points.json"), Path(args.targets))
     neighbor_table = N.neighbor_table(points)
@@ -351,15 +353,18 @@ def main() -> None:
     })
     risk = summary["today"]["riskThresholds"]
     write_json(output_dir / "thresholds.json", {
-        "schemaVersion": 4,
+        "schemaVersion": 5,
         "targetMode": "six_ordinal_cumulative",
         "defaultPolicy": "balanced",
         "policies": {name: {"highThreshold": value} for name, value in risk.items()},
         "cumulativeThresholds": [round(v, 4) for v in summary["today"]["thresholds"]],
         "ordinalCutpoints": {"secFilet": 0.5, "filetCorrect": 1.5, "correctGros": 2.5, "grosTresGros": 3.5, "tresGrosCrue": 4.5},
-        # J+1 / J+2 model (model_horizon.onnx): same contract, real-time information lagged.
+        # Network averaged with the trees: p = (1 - weight) * p_trees + weight * p_network.
+        "network": {"asset": "model.mlp", "weight": NN.WEIGHT},
+        # J+1 / J+2 model (model_horizon.trees): same contract, real-time information lagged.
         "horizonModel": {
-            "modelAsset": "model_horizon.onnx",
+            "modelAsset": "model_horizon.trees",
+            "network": {"asset": "model_horizon.mlp", "weight": NN.WEIGHT},
             "policies": {name: {"highThreshold": value} for name, value in summary["horizon"]["riskThresholds"].items()},
             "cumulativeThresholds": [round(v, 4) for v in summary["horizon"]["thresholds"]],
         },
@@ -369,7 +374,7 @@ def main() -> None:
     write_json(output_dir / "metrics.json", {
         "schemaVersion": 3,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
-        "model": "catboost_hydro_ordinal_v3",
+        "model": "catboost_mlp_hydro_ordinal_v3",
         "targetMode": "six_ordinal_cumulative",
         "labels": F.LEVELS,
         "featureCount": len(F.FEATURE_NAMES),
@@ -399,21 +404,29 @@ def main() -> None:
             "massifCount": len(lookups["massifs"]),
             "canyonCount": len(lookups["canyons"]),
         },
-        "onnx": {"maxAbsDiffVsCatBoost": max(model_info["onnxMaxAbsDiff"], horizon_info["onnxMaxAbsDiff"]), "outputs": model_info["onnxOutputs"]},
-        "files": {"model": "model.onnx", "horizonModel": "model_horizon.onnx", "featureSpec": "feature_spec.json", "canyonStaticFeatures": "canyon_static_features.json", "runtimeLookups": "runtime_feature_lookups.json", "thresholds": "thresholds.json"},
+        "files": {"model": "model.trees", "horizonModel": "model_horizon.trees", "network": "model.mlp", "horizonNetwork": "model_horizon.mlp", "featureSpec": "feature_spec.json", "canyonStaticFeatures": "canyon_static_features.json", "runtimeLookups": "runtime_feature_lookups.json", "thresholds": "thresholds.json"},
+        "treeModel": {"format": "DCOT v1 (scripts/debit_model/tree_model.py)", "maxAbsDiffVsCatBoost": float(f"{max(model_info['treeMaxAbsDiff'], horizon_info['treeMaxAbsDiff']):.3g}")},
+        "networkModel": {
+            "format": "DCMN v1 (scripts/debit_model/network.py)",
+            "weight": NN.WEIGHT,
+            "today": network_info,
+            "horizon": horizon_network_info,
+            "maxAbsDiffVsTorch": float(f"{max(summary['today']['network']['maxDiffVsTorch'], summary['horizon']['network']['maxDiffVsTorch']):.3g}"),
+        },
     })
-    models = {}
+    models, networks = {}, {}
     for horizon, name in ((0, "today"), (1, "horizon")):
         models[horizon] = CatBoostClassifier()
         models[horizon].load_model(str(final_dir / f"model_{name}.cbm"))
+        networks[horizon] = NN.Network.read(final_dir / f"network_{name}.mlp")
     golden = golden_vectors(
         dataset_dir, Path(args.weather), Path(args.targets), lookups, static, canyons, histories,
-        Path(args.golden_path), args.golden_count, models,
+        Path(args.golden_path), args.golden_count, models, networks,
         {0: summary["today"]["thresholds"], 1: summary["horizon"]["thresholds"]}, cells, rain_cache["series"],
         {code for codes in json.loads(Path(args.hourly_stations).read_text()).values() for code in codes},
     )
     quality = report_quality_cases(Path(args.history_observations), Path(args.golden_path))
-    print(json.dumps({"onnx": model_info["onnxMaxAbsDiff"], "outputs": model_info["onnxOutputs"], "goldenVectors": golden, "reportQualityCases": quality}, indent=1))
+    print(json.dumps({"treeModel": max(model_info["treeMaxAbsDiff"], horizon_info["treeMaxAbsDiff"]), "network": [network_info, horizon_network_info], "goldenVectors": golden, "reportQualityCases": quality}, indent=1))
 
 
 if __name__ == "__main__":

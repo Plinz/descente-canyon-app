@@ -33,11 +33,6 @@ playServicesLocation = "21.4.0"
 # Coroutines
 coroutines = "1.11.0"
 
-# ML runtime, kept at 1.22. 1.28 gives the same predictions bit for bit, but its native libraries are
-# 7 to 12 MB larger per ABI (+41 MB in the universal APK). From 1.29 the Android build also starts a
-# Microsoft telemetry client at launch (ai.onnxruntime.TelemetryInitializer).
-onnxRuntime = "1.22.0"
-
 # Image loading
 coil = "3.6.3"
 
@@ -117,10 +112,6 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 # Coroutines
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 kotlinx-coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutines" }
-
-# ONNX Runtime
-onnxruntime-android = { group = "com.microsoft.onnxruntime", name = "onnxruntime-android", version.ref = "onnxRuntime" }
-onnxruntime-jvm = { group = "com.microsoft.onnxruntime", name = "onnxruntime", version.ref = "onnxRuntime" }
 
 # MapLibre
 # OpenGL ES renderer: "android-sdk" switched to Vulkan in 13.0, whose drivers are less reliable on older phones.

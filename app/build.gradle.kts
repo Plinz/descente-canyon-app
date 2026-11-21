@@ -487,8 +487,6 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(libs.hilt.android.testing)
-    // The ONNX contract test runs the packaged model on the device.
-    androidTestImplementation(libs.onnxruntime.android)
     androidTestImplementation(libs.kotlinx.serialization.json)
     kspAndroidTest(libs.hilt.android.compiler)
 }

@@ -1,6 +1,7 @@
 """Walk-forward evaluation and final training of the debit models.
 
-Two models share the feature contract:
+Each model is a CatBoost classifier averaged with a small neural network (``network.py``) trained on
+the same rows. Two models share the feature contract:
 
 * ``today`` (J0): every real-time source is known up to J-1;
 * ``horizon`` (J+1, J+2): reports and gauges are only known up to today - 1, i.e. lagged by the
@@ -29,6 +30,7 @@ from catboost import CatBoostClassifier, Pool
 import evaluation as E
 import features as F
 import history as H
+import network as N
 
 FOLDS = [
     ("2023", "2023-01-01", "2024-01-01"),
@@ -179,8 +181,29 @@ def fit(train: pd.DataFrame, validation: pd.DataFrame | None, iterations: int | 
     return model
 
 
-def oof_frame(probabilities: np.ndarray, test: pd.DataFrame, name: str) -> pd.DataFrame:
+def fit_network(train: pd.DataFrame) -> N.Network:
+    """Network averaged with CatBoost, trained on the same augmented rows."""
+    rows = augment(train)
+    return N.train(matrix(rows), labels(rows), log=lambda line: print(line, flush=True))
+
+
+def predict_both(model: CatBoostClassifier, network: N.Network, frame: pd.DataFrame) -> tuple[np.ndarray, np.ndarray]:
+    """(CatBoost alone, CatBoost averaged with the network) probabilities."""
+    trees = predict(model, frame)
+    return trees, N.blend(trees, network.predict_proba(matrix(frame)))
+
+
+def trees_only(y_validation, validation_trees, y_test, test_trees) -> dict:
+    """Metrics of CatBoost alone (its own thresholds), to follow what the network adds."""
+    thresholds = E.tune_thresholds(y_validation, validation_trees)
+    return {**E.level_metrics(y_test, E.decide(test_trees, thresholds)), **E.probabilistic_metrics(y_test, test_trees)}
+
+
+def oof_frame(probabilities: np.ndarray, test: pd.DataFrame, name: str, trees: np.ndarray | None = None) -> pd.DataFrame:
     frame = pd.DataFrame(probabilities, columns=[f"p{k}" for k in range(6)])
+    if trees is not None:
+        for k in range(6):
+            frame[f"t{k}"] = trees[:, k]
     frame["rank"] = labels(test)
     frame["fold"] = name
     frame["day"] = test["day"].to_numpy()
@@ -196,7 +219,11 @@ def walkforward(args) -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
     base, histories, observations = load(Path(args.dataset_dir))
     lagged = load_lagged(Path(args.dataset_dir))
-    report = {"folds": {}, "params": {k: v for k, v in PARAMS.items() if k != "class_names"}}
+    report = {
+        "folds": {},
+        "params": {k: v for k, v in PARAMS.items() if k != "class_names"},
+        "network": {"hidden": list(N.HIDDEN), "epochs": N.EPOCHS, "members": len(N.SEEDS), "weight": N.WEIGHT},
+    }
     oof_today, oof_horizon = [], []
     for name, start, end in FOLDS:
         started = time.time()
@@ -211,13 +238,15 @@ def walkforward(args) -> None:
 
         # J0 model
         model = fit(train, validation)
-        validation_probabilities = predict(model, validation)
+        network = fit_network(train)
+        validation_trees, validation_probabilities = predict_both(model, network, validation)
         thresholds = E.tune_thresholds(labels(validation), validation_probabilities)
         risk = E.risk_thresholds(labels(validation), validation_probabilities)
-        test_probabilities = predict(model, test)
+        test_trees, test_probabilities = predict_both(model, network, test)
         block = report_block(labels(test), test_probabilities, thresholds, test)
+        block["treesOnly"] = trees_only(labels(validation), validation_trees, labels(test), test_trees)
         cold_test = H.cold_canyon(test)
-        cold_probabilities = predict(model, cold_test)
+        _, cold_probabilities = predict_both(model, network, cold_test)
         cold_y = labels(cold_test)
         block["coldCanyon"] = {
             "model": {**E.level_metrics(cold_y, E.decide(cold_probabilities, thresholds)), **E.probabilistic_metrics(cold_y, cold_probabilities)},
@@ -226,7 +255,7 @@ def walkforward(args) -> None:
         auto_missing = test.copy()
         auto_missing[[n for n in F.AUTO_RAIN_FEATURES if n != "mfAutoCount"]] = np.nan
         auto_missing["mfAutoCount"] = 0.0
-        missing_probabilities = predict(model, auto_missing)
+        _, missing_probabilities = predict_both(model, network, auto_missing)
         block["autoMissing"] = {**E.level_metrics(labels(test), E.decide(missing_probabilities, thresholds)), **E.probabilistic_metrics(labels(test), missing_probabilities)}
         block["thresholds"] = thresholds.tolist()
         block["riskThresholds"] = risk
@@ -238,7 +267,8 @@ def walkforward(args) -> None:
         horizon_train = with_lag(train, lagged, random_lags(train, 41))
         horizon_validation = with_lag(validation, lagged, random_lags(validation, 43))
         horizon_model = fit(horizon_train, horizon_validation)
-        horizon_validation_probabilities = predict(horizon_model, horizon_validation)
+        horizon_network = fit_network(horizon_train)
+        horizon_validation_trees, horizon_validation_probabilities = predict_both(horizon_model, horizon_network, horizon_validation)
         horizon_thresholds = E.tune_thresholds(labels(horizon_validation), horizon_validation_probabilities)
         block["horizonModel"] = {
             "thresholds": horizon_thresholds.tolist(),
@@ -248,17 +278,22 @@ def walkforward(args) -> None:
         block["horizons"] = {}
         for horizon in (1, 2):
             horizon_test = with_lag(test, lagged, np.full(len(test), horizon))
-            for model_name, current, current_thresholds in (("horizonModel", horizon_model, horizon_thresholds), ("todayModel", model, thresholds)):
-                probabilities = predict(current, horizon_test)
+            for model_name, current, current_network, current_thresholds in (
+                ("horizonModel", horizon_model, horizon_network, horizon_thresholds),
+                ("todayModel", model, network, thresholds),
+            ):
+                trees, probabilities = predict_both(current, current_network, horizon_test)
                 block["horizons"][f"J+{horizon}/{model_name}"] = {
                     **E.level_metrics(labels(test), E.decide(probabilities, current_thresholds)),
                     **E.probabilistic_metrics(labels(test), probabilities),
                 }
+                if model_name == "horizonModel":
+                    block["horizons"][f"J+{horizon}/horizonTreesOnly"] = trees_only(labels(horizon_validation), horizon_validation_trees, labels(test), trees)
                 if horizon == 1 and model_name == "horizonModel":
-                    oof_horizon.append(oof_frame(probabilities, test, name))
+                    oof_horizon.append(oof_frame(probabilities, test, name, trees))
         block["seconds"] = round(time.time() - started)
         report["folds"][name] = block
-        oof_today.append(oof_frame(test_probabilities, test, name))
+        oof_today.append(oof_frame(test_probabilities, test, name, test_trees))
         print(json.dumps({"fold": name, "model": block["model"], "persistence": block["persistence"], "horizons": block["horizons"]}, indent=1), flush=True)
         (output_dir / "report.json").write_text(json.dumps(report, indent=1, default=str))
 
@@ -273,6 +308,7 @@ def walkforward(args) -> None:
         pooled[model_name] = {
             "thresholds": thresholds.tolist(),
             "model": {**E.level_metrics(y, E.decide(probabilities, thresholds)), **E.probabilistic_metrics(y, probabilities)},
+            "treesOnly": E.probabilistic_metrics(y, frame[[f"t{k}" for k in range(6)]].to_numpy()),
             "persistence": E.level_metrics(y, frame["persistence"].to_numpy()),
             "recentPersistenceElseSeason": E.level_metrics(y, frame["recentPersistenceElseSeason"].to_numpy()),
             "seasonalClimatology": E.level_metrics(y, frame["seasonalClimatology"].to_numpy()),
@@ -299,6 +335,8 @@ def final(args) -> None:
         print(f"final {model_name} fit on {len(rows)} rows, {iterations} iterations", flush=True)
         model = fit(rows, None, iterations=iterations)
         model.save_model(str(output_dir / f"model_{model_name}.cbm"))
+        network = fit_network(rows)
+        network.write(output_dir / f"network_{model_name}.mlp")
         # Decision thresholds from honest out-of-fold predictions (models that never saw those rows).
         oof = pd.read_pickle(Path(args.walkforward_dir) / oof_file)
         probabilities = oof[[f"p{k}" for k in range(6)]].to_numpy()
@@ -307,6 +345,7 @@ def final(args) -> None:
         importances = model.get_feature_importance()
         summary[model_name] = {
             "iterations": iterations,
+            "network": {"members": len(network.members), "widths": network.widths, "weight": N.WEIGHT, "maxDiffVsTorch": network.max_diff_vs_torch},
             "thresholds": thresholds.tolist(),
             "riskThresholds": E.risk_thresholds(y, probabilities),
             "oofWithFinalThresholds": E.level_metrics(y, E.decide(probabilities, thresholds)),

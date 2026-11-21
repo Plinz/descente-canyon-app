@@ -29,9 +29,5 @@
 -keep class * extends androidx.room.RoomDatabase
 -dontwarn androidx.room.paging.**
 
-# ONNX Runtime
--keep class ai.onnxruntime.** { *; }
--dontwarn ai.onnxruntime.**
-
 # Tink / errorprone annotations referenced by androidx security
 -dontwarn com.google.errorprone.annotations.**

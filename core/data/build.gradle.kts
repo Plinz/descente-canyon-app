@@ -11,7 +11,7 @@ android {
         // OkHttp's Android build reads its public suffix list from its assets (cookie tests).
         unitTests.isIncludeAndroidResources = true
         unitTests.all {
-            // ONNX Runtime loads its native library in the model contract tests.
+            // Robolectric loads its native SQLite library.
             it.jvmArgs("--enable-native-access=ALL-UNNAMED")
             it.systemProperty("repoRoot", rootDir.absolutePath)
         }
@@ -41,11 +41,7 @@ dependencies {
     implementation(libs.okhttp)
     implementation(libs.jsoup)
 
-    // On-device debit model
-    implementation(libs.onnxruntime.android)
-
     testImplementation(libs.turbine)
-    testImplementation(libs.onnxruntime.jvm)
     testImplementation(libs.okhttp.mockwebserver)
     testImplementation(libs.robolectric)
     testImplementation(libs.androidx.test.core)

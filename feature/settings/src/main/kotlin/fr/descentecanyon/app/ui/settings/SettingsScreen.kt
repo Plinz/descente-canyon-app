@@ -382,6 +382,5 @@ private val OPEN_SOURCE_LIBRARIES = listOf(
     "Coil — Apache 2.0",
     "jsoup — MIT",
     "MapLibre Native — BSD 2-Clause",
-    "ONNX Runtime — MIT",
     "Google Play services Location — Android SDK License",
 )

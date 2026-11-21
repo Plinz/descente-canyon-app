@@ -3,7 +3,8 @@
 For the most observed canyons, scrapes the live debit reports published after the training period,
 fetches weather exactly like the app (ERA5 archive + ECMWF IFS 0.25 deg for the last days), builds
 features with ``runtime_reference`` from the exported assets (static features, frozen lookups) and
-scores the exported ONNX model with the exported thresholds.
+scores the exported J0 model (``model.trees`` averaged with the network named by thresholds.json)
+with the exported thresholds.
 """
 from __future__ import annotations
 
@@ -18,7 +19,6 @@ from datetime import date, timedelta
 from pathlib import Path
 
 import numpy as np
-import onnxruntime as ort
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "debits"))
@@ -28,6 +28,8 @@ import evaluation as E  # noqa: E402
 from label_quality import is_message_only_high_report  # noqa: E402
 import features as F  # noqa: E402
 import runtime_reference as R  # noqa: E402
+import network as N  # noqa: E402
+import tree_model as T  # noqa: E402
 from export_app_assets import resolve_lookup  # noqa: E402
 
 DEBIT_URL = "https://www.descente-canyon.com/canyoning/canyon-debit/{id}/observations.html"
@@ -90,10 +92,13 @@ def main() -> None:
     canyons = {int(row["id"]): row for row in json.loads(Path("offline-data/full/room-import/canyons.json").read_text())}
     static = json.loads((model_dir / "canyon_static_features.json").read_text())
     lookups = json.loads((model_dir / "runtime_feature_lookups.json").read_text())
-    thresholds = np.array(json.loads((model_dir / "thresholds.json").read_text())["cumulativeThresholds"])
+    thresholds_file = json.loads((model_dir / "thresholds.json").read_text())
+    thresholds = np.array(thresholds_file["cumulativeThresholds"])
+    network_entry = thresholds_file.get("network")
     spec = json.loads((model_dir / "feature_spec.json").read_text())
     names = [feature["name"] for feature in spec["features"]]
-    session = ort.InferenceSession(str(model_dir / "model.onnx"), providers=["CPUExecutionProvider"])
+    model = T.read(model_dir / "model.trees")
+    network = N.Network.read(model_dir / network_entry["asset"]) if network_entry else None
     targets = {}
     for line in Path(args.targets).read_text().splitlines():
         if line.strip():
@@ -145,8 +150,9 @@ def main() -> None:
     if not rows:
         raise SystemExit("no recent reports scored")
     matrix = np.array([row["vector"] for row in rows], dtype=np.float32)
-    outputs = session.run(None, {session.get_inputs()[0].name: matrix})[1]
-    probabilities = np.array([[row[level] for level in F.LEVELS] for row in outputs])
+    probabilities = model.predict_proba(matrix)  # columns in F.LEVELS order
+    if network is not None:
+        probabilities = N.blend(probabilities, network.predict_proba(matrix), network_entry["weight"])
     y = np.array([row["rank"] for row in rows])
     persistence = np.array([row["persistence"] for row in rows])
     predicted = E.decide(probabilities, thresholds)

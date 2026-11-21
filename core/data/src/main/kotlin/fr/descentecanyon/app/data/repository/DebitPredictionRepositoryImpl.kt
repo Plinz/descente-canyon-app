@@ -19,7 +19,7 @@ class DebitPredictionRepositoryImpl @Inject constructor(
     private val supportRepository: DebitPredictionSupportRepository,
     private val modelStore: EmbeddedDebitModelStore,
     private val featureBuilder: DebitFeatureBuilder,
-    private val predictor: OnnxDebitPredictor,
+    private val predictor: DebitModelPredictor,
     private val predictionCache: PredictionCache,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : DebitPredictionRepository {

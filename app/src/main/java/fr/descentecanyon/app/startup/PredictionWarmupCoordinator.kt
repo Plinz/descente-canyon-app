@@ -30,11 +30,11 @@ class PredictionWarmupCoordinator @Inject constructor(private val modelStore: Em
 
             PerformanceTrace.start(WARMUP_TRACE_KEY, "prediction_warmup")
             try {
-                // Keep warmup focused on the ONNX session and lightweight metadata.
+                // Keep warmup focused on the J0 model (trees and network) and lightweight metadata.
                 // The large lookup/static feature JSONs are loaded on first real prediction use.
                 modelStore.getFeatureSpec()
                 modelStore.getThresholds()
-                modelStore.getSession()
+                modelStore.getModel()
 
                 warmedUp = true
                 PerformanceTrace.end(

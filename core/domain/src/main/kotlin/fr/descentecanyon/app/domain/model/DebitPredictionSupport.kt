@@ -130,13 +130,20 @@ data class DebitThresholds(
     val targetMode: String = "six_ordinal_cumulative",
     /** Decision thresholds of the J+1 / J+2 model, when it is shipped. */
     val horizonModel: HorizonModelThresholds? = null,
+    /** Neural network averaged with the J0 trees, when it is shipped. */
+    val network: DebitNetworkAsset? = null,
 )
 
 data class HorizonModelThresholds(
     val modelAsset: String,
     val highThresholdByPolicy: Map<DebitPredictionPolicy, Double>,
     val cumulativeThresholds: List<Double>,
+    /** Neural network averaged with the J+1 / J+2 trees, when it is shipped. */
+    val network: DebitNetworkAsset? = null,
 )
+
+/** Network model file and its share in the probabilities averaged with the trees. */
+data class DebitNetworkAsset(val asset: String, val weight: Double)
 
 data class DailyDebitPrediction(
     val date: LocalDate,
