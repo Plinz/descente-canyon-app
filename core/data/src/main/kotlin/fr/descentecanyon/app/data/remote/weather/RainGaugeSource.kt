@@ -3,17 +3,28 @@ package fr.descentecanyon.app.data.remote.weather
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.descentecanyon.app.data.network.ApiHttpClient
+import fr.descentecanyon.app.domain.coroutines.IoDispatcher
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import java.io.ByteArrayInputStream
 import java.io.File
+import java.time.Clock
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import okhttp3.HttpUrl.Companion.toHttpUrl
+
+private typealias RainTable = Map<String, Map<LocalDate, Double>>
 
 /**
  * Daily rainfall (mm, 06-06 UTC) of rain gauges near the canyon, from open data without key:
@@ -23,61 +34,118 @@ import okhttp3.HttpUrl.Companion.toHttpUrl
  * * MeteoSwiss SwissMetNet (`CHS_<abbr>`) and precipitation network (`CHP_<abbr>`): one small CSV
  *   per station for the current year.
  *
- * Downloads are cached for the day; only the requested stations and the last [KEEP_DAYS] days are kept.
+ * Each file is read once a day for every canyon that needs it, then kept (only the last
+ * [KEEP_DAYS] days of the daily files, only yesterday of the hourly ones). Downloads run in
+ * [scope], so a download keeps going and is kept when the canyon page that asked for it is left.
  */
 @Singleton
-open class RainGaugeSource @Inject constructor(
+open class RainGaugeSource internal constructor(
     private val httpClient: ApiHttpClient,
-    @param:ApplicationContext private val context: Context,
+    private val cacheDirectory: File,
+    private val clock: Clock,
+    private val scope: CoroutineScope,
 ) {
 
-    private val mutex = Mutex()
-    private val memory = HashMap<String, Map<String, Map<LocalDate, Double>>>()
+    @Inject
+    constructor(
+        httpClient: ApiHttpClient,
+        @ApplicationContext context: Context,
+        clock: Clock,
+        @IoDispatcher ioDispatcher: CoroutineDispatcher,
+    ) : this(httpClient, File(context.cacheDir, CACHE_DIRECTORY), clock, CoroutineScope(SupervisorJob() + ioDispatcher))
+
+    private val memory = HashMap<String, CachedTable>()
+    private val inFlight = HashMap<String, Deferred<RainTable?>>()
 
     /** Rainfall by station code and day for [stationCodes]; stations without data are absent. */
-    open suspend fun dailyRain(stationCodes: Collection<String>, today: LocalDate): Map<String, Map<LocalDate, Double>> {
+    open suspend fun dailyRain(stationCodes: Collection<String>, today: LocalDate): RainTable = coroutineScope {
+        val (swiss, french) = stationCodes.partition(::isSwiss)
+        val departments = french.groupBy(::departmentOf).map { (department, codes) ->
+            async { codes to load("FR_$department", today) { downloadDepartment(department, today) } }
+        }
+        val stations = swiss.map { code -> async { listOf(code) to load(code, today) { downloadSwissStation(code) } } }
         val output = HashMap<String, Map<LocalDate, Double>>()
-        val (swiss, french) = stationCodes.partition { it.startsWith(SWISS_SMN) || it.startsWith(SWISS_PRECIP) }
-        for ((department, codes) in french.groupBy(::departmentOf)) {
-            val table =
-                suspendRunCatching { load("FR_$department", today) { downloadDepartment(department, today) } }.getOrNull() ?: continue
-            codes.forEach { code -> table[code]?.let { output[code] = it } }
+        (departments + stations).awaitAll().forEach { (codes, table) ->
+            codes.forEach { code -> table?.get(code)?.let { output[code] = it } }
         }
-        for (code in swiss) {
-            val table = suspendRunCatching { load(code, today) { downloadSwissStation(code) } }.getOrNull() ?: continue
-            table[code]?.let { output[code] = it }
-        }
-        return output
+        output
     }
 
     /**
      * Rain of yesterday (06 UTC yesterday -> 06 UTC today) at the automatic gauges among
-     * [stationCodes]: Météo-France hourly network (streamed hourly file, stopped once the requested
-     * stations are passed) and MeteoSwiss stations (daily file). Gauges with fewer than
-     * [MIN_HOURS] hours are left out (e.g. before the 05:44 UTC hourly publication).
+     * [stationCodes]: Météo-France hourly network and MeteoSwiss stations (daily file). Gauges with
+     * fewer than [MIN_HOURS] hours are left out (e.g. before the 05:44 UTC hourly publication).
      */
-    open suspend fun yesterdayAutomaticRain(stationCodes: Collection<String>, today: LocalDate): Map<String, Double> {
+    open suspend fun yesterdayAutomaticRain(stationCodes: Collection<String>, today: LocalDate): Map<String, Double> = coroutineScope {
         val yesterday = today.minusDays(1)
-        val output = HashMap<String, Double>()
-        val (swiss, french) = stationCodes.partition { it.startsWith(SWISS_SMN) || it.startsWith(SWISS_PRECIP) }
-        dailyRain(swiss, today).forEach { (code, values) -> values[yesterday]?.let { output[code] = it } }
-        for ((department, codes) in french.groupBy(::departmentOf)) {
-            // The hourly stream stops after the requested stations: cache per (department, station set).
-            val key = "FRH_${department}_${codes.toSortedSet().joinToString("").hashCode().toUInt()}"
-            val table = suspendRunCatching { load(key, today) { downloadHourly(department, today, codes.toSet()) } }.getOrNull() ?: continue
-            codes.forEach { code -> table[code]?.get(yesterday)?.let { output[code] = it } }
+        val (swiss, french) = stationCodes.partition(::isSwiss)
+        val swissRain = async { dailyRain(swiss, today) }
+        // The whole department file is read: one download serves every canyon of the department.
+        val departments = french.groupBy(::departmentOf).map { (department, codes) ->
+            async { codes to load("FRH_$department", today) { downloadHourly(department, today) } }
         }
-        return output
+        val output = HashMap<String, Double>()
+        swissRain.await().forEach { (code, values) -> values[yesterday]?.let { output[code] = it } }
+        departments.awaitAll().forEach { (codes, table) ->
+            codes.forEach { code -> table?.get(code)?.get(yesterday)?.let { output[code] = it } }
+        }
+        output
     }
 
-    private suspend fun downloadHourly(department: String, today: LocalDate, wanted: Set<String>): Map<String, Map<LocalDate, Double>>? {
+    /** The table of [key] for [today]: kept in memory, then on disk, else downloaded once for every caller. */
+    private suspend fun load(key: String, today: LocalDate, download: suspend () -> RainTable?): RainTable? {
+        val memoryKey = "$key-$today"
+        val pending = synchronized(memory) {
+            memory[memoryKey]?.takeIf { isFresh(it.fetchedAtMillis) }?.let { return it.table }
+            inFlight[memoryKey] ?: scope.async { suspendRunCatching { readOrDownload(key, memoryKey, today, download) }.getOrNull() }
+                .also { deferred ->
+                    inFlight[memoryKey] = deferred
+                    deferred.invokeOnCompletion { synchronized(memory) { inFlight.remove(memoryKey, deferred) } }
+                }
+        }
+        return pending.await()
+    }
+
+    private suspend fun readOrDownload(key: String, memoryKey: String, today: LocalDate, download: suspend () -> RainTable?): RainTable? {
+        val cached = File(cacheDirectory, "${key}_$today.txt")
+        val fetchedAtMillis: Long
+        val table = if (cached.exists() && isFresh(cached.lastModified())) {
+            fetchedAtMillis = cached.lastModified()
+            decode(cached.readText())
+        } else {
+            fetchedAtMillis = clock.millis()
+            cacheDirectory.mkdirs()
+            cacheDirectory.listFiles { file -> file.name.startsWith("${key}_") }?.forEach { it.delete() }
+            download()?.also { table ->
+                // Written aside then renamed: a copy cut short by a kill is never read as a whole one.
+                val partial = File(cacheDirectory, "${cached.name}.part")
+                partial.writeText(encode(table))
+                partial.renameTo(cached)
+                cached.setLastModified(fetchedAtMillis)
+            }
+        } ?: return null
+        synchronized(memory) { memory[memoryKey] = CachedTable(fetchedAtMillis, table) }
+        return table
+    }
+
+    /**
+     * Météo-France publishes its files around 05:45-05:56 UTC: a table fetched before today's
+     * publication is fetched again once it is out, so an early look does not hide yesterday all day.
+     */
+    private fun isFresh(fetchedAtMillis: Long): Boolean {
+        val now = clock.instant()
+        val publication = now.atZone(ZoneOffset.UTC).toLocalDate().atTime(PUBLICATION_TIME_UTC).toInstant(ZoneOffset.UTC)
+        return now < publication || fetchedAtMillis >= publication.toEpochMilli()
+    }
+
+    private suspend fun downloadHourly(department: String, today: LocalDate): RainTable? {
         val year = today.year
         for ((first, last) in listOf(year - 1 to year, year to year + 1)) {
             val url = "$METEO_FRANCE_HOURLY_URL/H_${department}_latest-$first-$last.csv.gz"
             val table = suspendRunCatching {
                 httpClient.getStream(url.toHttpUrl()) { input ->
-                    GZIPInputStream(input).bufferedReader(Charsets.UTF_8).use { reader ->
-                        parseMeteoFranceHourly(reader.lineSequence(), wanted, today)
+                    GZIPInputStream(input, STREAM_BUFFER_BYTES).bufferedReader(Charsets.UTF_8).use { reader ->
+                        parseMeteoFranceHourly(reader.lineSequence(), today)
                     }
                 }
             }.getOrNull()
@@ -86,26 +154,7 @@ open class RainGaugeSource @Inject constructor(
         return null
     }
 
-    private suspend fun load(
-        key: String,
-        today: LocalDate,
-        download: suspend () -> Map<String, Map<LocalDate, Double>>?,
-    ): Map<String, Map<LocalDate, Double>>? = mutex.withLock {
-        val memoryKey = "$key-$today"
-        memory[memoryKey]?.let { return@withLock it }
-        val directory = File(context.cacheDir, CACHE_DIRECTORY).apply { mkdirs() }
-        val cached = File(directory, "${key}_$today.txt")
-        val table = if (cached.exists() && cached.length() > 0) {
-            decode(cached.readText())
-        } else {
-            directory.listFiles { file -> file.name.startsWith("${key}_") }?.forEach { it.delete() }
-            download()?.also { cached.writeText(encode(it)) }
-        } ?: return@withLock null
-        memory[memoryKey] = table
-        table
-    }
-
-    private suspend fun downloadDepartment(department: String, today: LocalDate): Map<String, Map<LocalDate, Double>>? {
+    private suspend fun downloadDepartment(department: String, today: LocalDate): RainTable? {
         val year = today.year
         for ((first, last) in listOf(year - 1 to year, year to year + 1)) {
             val url = "$METEO_FRANCE_URL/Q_${department}_latest-$first-${last}_RR-T-Vent.csv.gz"
@@ -115,7 +164,7 @@ open class RainGaugeSource @Inject constructor(
         return null
     }
 
-    private suspend fun downloadSwissStation(code: String): Map<String, Map<LocalDate, Double>>? {
+    private suspend fun downloadSwissStation(code: String): RainTable? {
         val network = if (code.startsWith(SWISS_SMN)) "ogd-smn" else "ogd-smn-precip"
         val abbreviation = code.substringAfter('_').lowercase()
         val url = "$METEO_SWISS_URL/ch.meteoschweiz.$network/$abbreviation/${network}_${abbreviation}_d_recent.csv"
@@ -123,16 +172,20 @@ open class RainGaugeSource @Inject constructor(
         return mapOf(code to parseMeteoSwiss(bytes.toString(Charsets.ISO_8859_1)))
     }
 
+    private class CachedTable(val fetchedAtMillis: Long, val table: RainTable)
+
     companion object {
         private const val METEO_FRANCE_URL = "https://meteofrance.s3.sbg.io.cloud.ovh.net/data/synchro_ftp/BASE/QUOT"
         private const val METEO_FRANCE_HOURLY_URL = "https://meteofrance.s3.sbg.io.cloud.ovh.net/data/synchro_ftp/BASE/HOR"
         private const val MIN_HOURS = 18
         private val HOUR_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHH")
+        private val PUBLICATION_TIME_UTC: LocalTime = LocalTime.of(6, 15)
         private const val METEO_SWISS_URL = "https://data.geo.admin.ch"
         private const val SWISS_SMN = "CHS_"
         private const val SWISS_PRECIP = "CHP_"
         private const val CACHE_DIRECTORY = "rain-gauges"
         private const val KEEP_DAYS = 35L
+        private const val STREAM_BUFFER_BYTES = 64 * 1024
         private val BASIC_DATE: DateTimeFormatter = DateTimeFormatter.BASIC_ISO_DATE
         private val SWISS_DATE: DateTimeFormatter = DateTimeFormatter.ofPattern("dd.MM.yyyy")
 
@@ -140,7 +193,9 @@ open class RainGaugeSource @Inject constructor(
         fun departmentOf(stationCode: String): String =
             if (stationCode.startsWith("97") || stationCode.startsWith("98")) stationCode.take(3) else stationCode.take(2)
 
-        internal fun parseMeteoFrance(gzipped: ByteArray, firstDay: LocalDate): Map<String, Map<LocalDate, Double>> {
+        private fun isSwiss(stationCode: String): Boolean = stationCode.startsWith(SWISS_SMN) || stationCode.startsWith(SWISS_PRECIP)
+
+        internal fun parseMeteoFrance(gzipped: ByteArray, firstDay: LocalDate): RainTable {
             val output = HashMap<String, HashMap<LocalDate, Double>>()
             GZIPInputStream(ByteArrayInputStream(gzipped)).bufferedReader(Charsets.UTF_8).useLines { lines ->
                 val iterator = lines.iterator()
@@ -163,17 +218,14 @@ open class RainGaugeSource @Inject constructor(
         }
 
         /**
-         * Yesterday's rain from the hourly file: sum of RR1 for the hours ending 07 UTC yesterday to
-         * 06 UTC today (the daily RR convention). Lines are sorted by station: reading stops after
-         * the last requested station, which also stops the download.
+         * Yesterday's rain at every station of the hourly file: sum of RR1 for the hours ending
+         * 07 UTC yesterday to 06 UTC today (the daily RR convention). The file holds two years of
+         * hours, about 200 MB of text for a department: the hour of each line is compared in place,
+         * only the ~24 lines per station inside the window are split.
          */
-        internal fun parseMeteoFranceHourly(
-            lines: Sequence<String>,
-            wanted: Set<String>,
-            today: LocalDate,
-        ): Map<String, Map<LocalDate, Double>> {
+        internal fun parseMeteoFranceHourly(lines: Sequence<String>, today: LocalDate): Map<String, Map<LocalDate, Double>> {
             val iterator = lines.iterator()
-            if (!iterator.hasNext() || wanted.isEmpty()) return emptyMap()
+            if (!iterator.hasNext()) return emptyMap()
             val header = iterator.next().split(';')
             val stationIndex = header.indexOf("NUM_POSTE")
             val hourIndex = header.indexOf("AAAAMMJJHH")
@@ -182,23 +234,46 @@ open class RainGaugeSource @Inject constructor(
             val yesterday = today.minusDays(1)
             val firstHour = yesterday.atTime(7, 0).format(HOUR_FORMAT)
             val lastHour = today.atTime(6, 0).format(HOUR_FORMAT)
-            val lastWanted = wanted.max()
             val sums = HashMap<String, Double>()
             val hours = HashMap<String, Int>()
             while (iterator.hasNext()) {
                 val line = iterator.next()
-                val station = line.substringBefore(';')
-                if (station > lastWanted) break
-                if (station !in wanted) continue
+                val hourStart = fieldStart(line, hourIndex)
+                if (hourStart < 0 || !isHourWithin(line, hourStart, firstHour, lastHour)) continue
                 val columns = line.split(';')
                 if (columns.size <= rainIndex) continue
-                val hour = columns[hourIndex]
-                if (hour < firstHour || hour > lastHour) continue
                 val rain = columns[rainIndex].toDoubleOrNull() ?: continue
+                val station = columns[stationIndex]
                 sums[station] = (sums[station] ?: 0.0) + rain
                 hours[station] = (hours[station] ?: 0) + 1
             }
             return sums.filterKeys { (hours[it] ?: 0) >= MIN_HOURS }.mapValues { (_, total) -> mapOf(yesterday to total) }
+        }
+
+        /** Index of the first char of field [field] (from 0) of [line], -1 when the line has fewer fields. */
+        private fun fieldStart(line: String, field: Int): Int {
+            var start = 0
+            repeat(field) {
+                val separator = line.indexOf(';', start)
+                if (separator < 0) return -1
+                start = separator + 1
+            }
+            return start
+        }
+
+        /** True when the field of [line] starting at [start] is an hour between [first] and [last] (same format). */
+        private fun isHourWithin(line: String, start: Int, first: String, last: String): Boolean {
+            val end = start + first.length
+            if (end > line.length || (end < line.length && line[end] != ';')) return false
+            return compareAt(line, start, first) >= 0 && compareAt(line, start, last) <= 0
+        }
+
+        private fun compareAt(line: String, start: Int, other: String): Int {
+            for (offset in other.indices) {
+                val difference = line[start + offset] - other[offset]
+                if (difference != 0) return difference
+            }
+            return 0
         }
 
         internal fun parseMeteoSwiss(csv: String): Map<LocalDate, Double> {
@@ -219,13 +294,13 @@ open class RainGaugeSource @Inject constructor(
             return output
         }
 
-        private fun encode(table: Map<String, Map<LocalDate, Double>>): String = buildString {
+        private fun encode(table: RainTable): String = buildString {
             table.forEach { (code, values) ->
                 values.forEach { (date, rain) -> append(code).append(';').append(date).append(';').append(rain).append('\n') }
             }
         }
 
-        private fun decode(text: String): Map<String, Map<LocalDate, Double>> {
+        private fun decode(text: String): RainTable {
             val output = HashMap<String, HashMap<LocalDate, Double>>()
             text.lineSequence().filter { it.isNotBlank() }.forEach { line ->
                 val parts = line.split(';')

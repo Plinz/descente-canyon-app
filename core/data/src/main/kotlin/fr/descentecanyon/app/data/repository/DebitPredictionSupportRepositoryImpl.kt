@@ -23,9 +23,13 @@ import fr.descentecanyon.app.domain.repository.DebitPredictionSupportRepository
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.ZoneOffset
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.async
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
@@ -50,20 +54,31 @@ class DebitPredictionSupportRepositoryImpl @Inject constructor(
         suspendRunCatching {
             val target = WeatherTargetResolver.resolve(detail)
                 ?: appError(AppError.DataUnavailable)
-            val dailyWeather = loadDailyWeather(detail.canyon.id, target)
-            val runtimeLookup = runtimeLookupStore.resolve(detail.canyon)
-            DebitPredictionSupport(
-                target = target,
-                timezone = dailyWeather.timezone,
-                fetchedAt = dailyWeather.fetchedAt,
-                dailyWeather = dailyWeather.dailyWeather,
-                runtimeLookup = runtimeLookup,
-                usedWeatherCache = dailyWeather.usedCache,
-                weatherGrid = dailyWeather.grid,
-                recentCells = loadRecentCells(),
-                stationRain = loadStationRain(runtimeLookup.rainStations.map { it.code }, dailyWeather.timezone),
-                automaticRain = loadAutomaticRain(runtimeLookup.rainStations.map { it.code }, dailyWeather.timezone),
-            )
+            // The downloads run together: the rain gauges only wait for the canyon's time zone.
+            coroutineScope {
+                val timezone = CompletableDeferred<String>()
+                val dailyWeather = async {
+                    loadDailyWeather(detail.canyon.id, target) { timezone.complete(it) }.also { timezone.complete(it.timezone) }
+                }
+                val recentCells = async { loadRecentCells() }
+                val runtimeLookup = runtimeLookupStore.resolve(detail.canyon)
+                val stationCodes = runtimeLookup.rainStations.map { it.code }
+                val stationRain = async { loadStationRain(stationCodes, timezone.await()) }
+                val automaticRain = async { loadAutomaticRain(stationCodes, timezone.await()) }
+                val weather = dailyWeather.await()
+                DebitPredictionSupport(
+                    target = target,
+                    timezone = weather.timezone,
+                    fetchedAt = weather.fetchedAt,
+                    dailyWeather = weather.dailyWeather,
+                    runtimeLookup = runtimeLookup,
+                    usedWeatherCache = weather.usedCache,
+                    weatherGrid = weather.grid,
+                    recentCells = recentCells.await(),
+                    stationRain = stationRain.await(),
+                    automaticRain = automaticRain.await(),
+                )
+            }
         }
     }
 
@@ -101,81 +116,101 @@ class DebitPredictionSupportRepositoryImpl @Inject constructor(
     /**
      * Loads the daily weather window used by the debit model: ERA5 reanalysis (the training source)
      * for the past, completed by ECMWF IFS 0.25 deg for the last days ERA5 does not cover yet and for
-     * the forecast. ERA5 days are cached and only the recent days are refetched.
+     * the forecast. ERA5 days are cached and only the recent days are refetched. [onTimezone] gets
+     * the canyon's time zone as soon as the forecast gives it.
      */
-    private suspend fun loadDailyWeather(canyonId: Int, target: WeatherTarget): DailyWeatherLoadResult {
-        if (!connectivityObserver.isCurrentlyOnline()) {
-            return loadCachedFallback(canyonId)
-                ?: appError(AppError.Offline)
-        }
-
-        val forecastResult = suspendRunCatching {
-            retryOnConnectivityFailure {
-                remoteSource.fetchDebitForecast(
-                    latitude = target.latitude,
-                    longitude = target.longitude,
-                    pastDays = FORECAST_PAST_DAYS,
-                    forecastDays = FORECAST_DAYS,
-                )
+    private suspend fun loadDailyWeather(canyonId: Int, target: WeatherTarget, onTimezone: (String) -> Unit): DailyWeatherLoadResult =
+        coroutineScope {
+            if (!connectivityObserver.isCurrentlyOnline()) {
+                return@coroutineScope loadCachedFallback(canyonId)
+                    ?: appError(AppError.Offline)
             }
-        }
-        if (forecastResult.isFailure) {
-            return loadCachedFallback(canyonId)
-                ?: throw forecastResult.exceptionOrNull() ?: IllegalStateException("Météo journalière indisponible")
-        }
-        val forecast = forecastResult.getOrThrow()
-        val zoneId = forecast.timezone.toZoneIdOrUtc()
-        val today = LocalDate.now(zoneId)
-        val windowStart = today.minusDays(WINDOW_DAYS - 1)
-        val yesterday = today.minusDays(1)
-        val stableArchiveEnd = today.minusDays(ARCHIVE_REFRESH_DAYS)
 
-        val cachedRows = dailyWeatherDao.getByCanyonIdAndDateRange(
+            val archive = async { loadArchive(canyonId, target) }
+            val forecastResult = suspendRunCatching {
+                retryOnConnectivityFailure {
+                    remoteSource.fetchDebitForecast(
+                        latitude = target.latitude,
+                        longitude = target.longitude,
+                        pastDays = FORECAST_PAST_DAYS,
+                        forecastDays = FORECAST_DAYS,
+                    )
+                }
+            }
+            if (forecastResult.isFailure) {
+                archive.cancel()
+                return@coroutineScope loadCachedFallback(canyonId)
+                    ?: throw forecastResult.exceptionOrNull() ?: IllegalStateException("Météo journalière indisponible")
+            }
+            val forecast = forecastResult.getOrThrow()
+            onTimezone(forecast.timezone)
+            val zoneId = forecast.timezone.toZoneIdOrUtc()
+            val today = LocalDate.now(zoneId)
+            val windowStart = today.minusDays(WINDOW_DAYS - 1)
+
+            val cachedRows = dailyWeatherDao.getByCanyonIdAndDateRange(
+                canyonId = canyonId,
+                startDate = windowStart.toString(),
+                endDate = today.plusDays(FORECAST_DAYS.toLong() - 1).toString(),
+            ).map { it.toDomain() }
+            val archiveRows = archive.await()?.filter { !it.date.isBefore(windowStart) }
+
+            val merged = LinkedHashMap<LocalDate, DailyWeatherValue>()
+            cachedRows.forEach { merged[it.date] = it }
+            forecast.toDailyValues(DailyWeatherSource.FORECAST)
+                .filter { it.isComplete() }
+                .forEach { row ->
+                    val existing = merged[row.date]
+                    if (existing == null || existing.source != DailyWeatherSource.ARCHIVE || !existing.isComplete()) {
+                        merged[row.date] = row
+                    }
+                }
+            archiveRows?.forEach { merged[it.date] = it }
+            val mergedRows = merged.values.sortedBy { it.date }
+
+            val fetchedAt = Instant.now()
+            dailyWeatherDao.insertAll(mergedRows.map { row -> row.toEntity(canyonId, forecast.timezone, target, fetchedAt) })
+            dailyWeatherDao.deleteBefore(canyonId, today.minusDays(PRUNE_AFTER_DAYS).toString())
+
+            DailyWeatherLoadResult(
+                timezone = forecast.timezone,
+                fetchedAt = fetchedAt,
+                dailyWeather = mergedRows,
+                usedCache = archiveRows == null,
+                grid = WeatherGridInfo(forecast.latitude, forecast.longitude, forecast.elevation),
+            )
+        }
+
+    /**
+     * The ERA5 days missing from the cache, or null when the archive cannot be reached. It runs
+     * alongside the forecast, before the canyon's time zone is known: dates are taken in UTC with
+     * one more day at the start, which covers any time zone; ERA5 lags by about five days, so its
+     * end date never limits it.
+     */
+    private suspend fun loadArchive(canyonId: Int, target: WeatherTarget): List<DailyWeatherValue>? {
+        val today = LocalDate.now(ZoneOffset.UTC)
+        val windowStart = today.minusDays(WINDOW_DAYS)
+        val stableArchiveEnd = today.minusDays(ARCHIVE_REFRESH_DAYS + 1)
+        val cachedArchive = dailyWeatherDao.getByCanyonIdAndDateRange(
             canyonId = canyonId,
             startDate = windowStart.toString(),
-            endDate = today.plusDays(FORECAST_DAYS.toLong() - 1).toString(),
-        ).map { it.toDomain() }
-        val cachedArchive = cachedRows.filter { it.source == DailyWeatherSource.ARCHIVE && it.isComplete() }
+            endDate = stableArchiveEnd.toString(),
+        ).map { it.toDomain() }.filter { it.source == DailyWeatherSource.ARCHIVE && it.isComplete() }
         val archiveStart = if (hasCompleteCoverage(cachedArchive, windowStart, stableArchiveEnd)) {
             stableArchiveEnd.plusDays(1)
         } else {
             windowStart
         }
-        val archiveRows = suspendRunCatching {
+        return suspendRunCatching {
             retryOnConnectivityFailure {
                 remoteSource.fetchDebitArchive(
                     latitude = target.latitude,
                     longitude = target.longitude,
                     startDate = archiveStart.toString(),
-                    endDate = yesterday.toString(),
+                    endDate = today.minusDays(1).toString(),
                 )
             }.toDailyValues(DailyWeatherSource.ARCHIVE).filter { it.isComplete() }
         }.getOrNull()
-
-        val merged = LinkedHashMap<LocalDate, DailyWeatherValue>()
-        cachedRows.forEach { merged[it.date] = it }
-        forecast.toDailyValues(DailyWeatherSource.FORECAST)
-            .filter { it.isComplete() }
-            .forEach { row ->
-                val existing = merged[row.date]
-                if (existing == null || existing.source != DailyWeatherSource.ARCHIVE || !existing.isComplete()) {
-                    merged[row.date] = row
-                }
-            }
-        archiveRows?.forEach { merged[it.date] = it }
-        val mergedRows = merged.values.sortedBy { it.date }
-
-        val fetchedAt = Instant.now()
-        dailyWeatherDao.insertAll(mergedRows.map { row -> row.toEntity(canyonId, forecast.timezone, target, fetchedAt) })
-        dailyWeatherDao.deleteBefore(canyonId, today.minusDays(PRUNE_AFTER_DAYS).toString())
-
-        return DailyWeatherLoadResult(
-            timezone = forecast.timezone,
-            fetchedAt = fetchedAt,
-            dailyWeather = mergedRows,
-            usedCache = archiveRows == null,
-            grid = WeatherGridInfo(forecast.latitude, forecast.longitude, forecast.elevation),
-        )
     }
 
     private suspend fun loadCachedFallback(canyonId: Int): DailyWeatherLoadResult? {

@@ -15,7 +15,6 @@ import fr.descentecanyon.app.ui.common.toUiText
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -208,8 +207,6 @@ class CanyonConditionsController @Inject constructor(
                     _state.update { if (it.predictions == null) it.copy(predictions = cached) else it }
                 }
             }
-            // Let the canyon screen settle before loading the heaviest remote/native prediction stack.
-            delay(PREDICTION_LOAD_DELAY_MS)
             if (!connectivityObserver.isCurrentlyOnline()) {
                 PerformanceTrace.logEvent("canyon_predictions_load_skipped", "canyonId" to detail.canyon.id, "reason" to "offline")
                 showCachedPredictionsOr(detail.canyon.id, UiText.res(R.string.prediction_offline))
@@ -262,8 +259,6 @@ class CanyonConditionsController @Inject constructor(
     }
 
     private companion object {
-        const val PREDICTION_LOAD_DELAY_MS = 800L
-
         fun weatherLoadKey(canyonId: Int): String = "screen.canyon.$canyonId.weather"
 
         fun edfStatusLoadKey(canyonId: Int): String = "screen.canyon.$canyonId.edf"
