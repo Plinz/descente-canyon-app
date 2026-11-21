@@ -15,6 +15,7 @@ import java.time.format.DateTimeFormatter
 import java.util.zip.GZIPInputStream
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.sqrt
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Deferred
@@ -74,7 +75,8 @@ open class RainGaugeSource internal constructor(
     /**
      * Rain of yesterday (06 UTC yesterday -> 06 UTC today) at the automatic gauges among
      * [stationCodes]: Météo-France hourly network and MeteoSwiss stations (daily file). Gauges with
-     * fewer than [MIN_HOURS] hours are left out (e.g. before the 05:44 UTC hourly publication).
+     * fewer than [MIN_HOURS] hours are left out (e.g. before the 05:44 UTC hourly publication); the
+     * hours missing from the others are estimated (see [parseMeteoFranceHourly]).
      */
     open suspend fun yesterdayAutomaticRain(stationCodes: Collection<String>, today: LocalDate): Map<String, Double> = coroutineScope {
         val yesterday = today.minusDays(1)
@@ -124,7 +126,11 @@ open class RainGaugeSource internal constructor(
                 cached.setLastModified(fetchedAtMillis)
             }
         } ?: return null
-        synchronized(memory) { memory[memoryKey] = CachedTable(fetchedAtMillis, table) }
+        synchronized(memory) {
+            // One table per source and day: those of the previous days are never read again.
+            memory.keys.removeAll { it.startsWith("$key-") && it != memoryKey }
+            memory[memoryKey] = CachedTable(fetchedAtMillis, table)
+        }
         return table
     }
 
@@ -178,6 +184,8 @@ open class RainGaugeSource internal constructor(
         private const val METEO_FRANCE_URL = "https://meteofrance.s3.sbg.io.cloud.ovh.net/data/synchro_ftp/BASE/QUOT"
         private const val METEO_FRANCE_HOURLY_URL = "https://meteofrance.s3.sbg.io.cloud.ovh.net/data/synchro_ftp/BASE/HOR"
         private const val MIN_HOURS = 18
+        private const val DAY_HOURS = 24
+        private const val MISSING_HOUR_RAIN_FACTOR = 0.125
         private val HOUR_FORMAT: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHH")
         private val PUBLICATION_TIME_UTC: LocalTime = LocalTime.of(6, 15)
         private const val METEO_SWISS_URL = "https://data.geo.admin.ch"
@@ -219,9 +227,14 @@ open class RainGaugeSource internal constructor(
 
         /**
          * Yesterday's rain at every station of the hourly file: sum of RR1 for the hours ending
-         * 07 UTC yesterday to 06 UTC today (the daily RR convention). The file holds two years of
-         * hours, about 200 MB of text for a department: the hour of each line is compared in place,
-         * only the ~24 lines per station inside the window are split.
+         * 07 UTC yesterday to 06 UTC today (the daily RR convention, which the model is trained on).
+         * The morning file stops at 03 or 04 UTC: the rain of the missing hours is estimated as its
+         * mean given the hours read, [MISSING_HOUR_RAIN_FACTOR] x sqrt(sum) per hour (fitted on the
+         * 2025-2026 hourly files of Isère, Alpes-Maritimes and Hautes-Pyrénées; it removes the
+         * 0.9 to 1.6 mm under-estimate of the wet days and lowers the error).
+         *
+         * The file holds two years of hours, about 200 MB of text for a department: the hour of each
+         * line is compared in place, only the ~24 lines per station inside the window are split.
          */
         internal fun parseMeteoFranceHourly(lines: Sequence<String>, today: LocalDate): Map<String, Map<LocalDate, Double>> {
             val iterator = lines.iterator()
@@ -247,7 +260,10 @@ open class RainGaugeSource internal constructor(
                 sums[station] = (sums[station] ?: 0.0) + rain
                 hours[station] = (hours[station] ?: 0) + 1
             }
-            return sums.filterKeys { (hours[it] ?: 0) >= MIN_HOURS }.mapValues { (_, total) -> mapOf(yesterday to total) }
+            return sums.filterKeys { (hours[it] ?: 0) >= MIN_HOURS }.mapValues { (station, total) ->
+                val missingHours = (DAY_HOURS - (hours[station] ?: DAY_HOURS)).coerceAtLeast(0)
+                mapOf(yesterday to total + MISSING_HOUR_RAIN_FACTOR * missingHours * sqrt(total))
+            }
         }
 
         /** Index of the first char of field [field] (from 0) of [line], -1 when the line has fewer fields. */

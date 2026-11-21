@@ -11,6 +11,7 @@ import fr.descentecanyon.app.domain.model.DebitNetworkAsset
 import fr.descentecanyon.app.domain.model.DebitPredictionDriver
 import fr.descentecanyon.app.domain.model.DebitPredictionInfoSummary
 import fr.descentecanyon.app.domain.model.DebitPredictionPolicy
+import fr.descentecanyon.app.domain.model.DebitPredictionReliability
 import fr.descentecanyon.app.domain.model.DebitThresholds
 import fr.descentecanyon.app.domain.model.HorizonModelThresholds
 import java.io.File
@@ -66,6 +67,11 @@ class EmbeddedDebitModelStore @Inject constructor(
     @Volatile
     private var cachedModel: DebitModel? = null
 
+    private val reliabilityMutex = Mutex()
+
+    @Volatile
+    private var cachedReliability: ReliabilityDto? = null
+
     @Volatile
     private var cachedHorizonModel: DebitModel? = null
 
@@ -118,6 +124,22 @@ class EmbeddedDebitModelStore @Inject constructor(
             cachedMetricsSummary?.let { return it }
             loadJsonAsset<MetricsDto>(METRICS_ASSET_PATH).toDomain().also { cachedMetricsSummary = it }
         }
+    }
+
+    /** Walk-forward record of the estimate on [canyonId] (`canyon_reliability.json`), null below its minimum of reports. */
+    suspend fun getReliability(canyonId: Int): DebitPredictionReliability? {
+        val table = cachedReliability ?: reliabilityMutex.withLock {
+            cachedReliability ?: runCatching { loadJsonAsset<ReliabilityDto>(RELIABILITY_ASSET_PATH) }
+                .getOrElse { ReliabilityDto() }
+                .also { cachedReliability = it }
+        }
+        val (count, shownRight) = table.canyons[canyonId.toString()]?.takeIf { it.size >= 2 } ?: return null
+        return DebitPredictionReliability(
+            reportCount = count,
+            shownRight = shownRight,
+            firstYear = table.firstYear,
+            lastYear = table.lastYear,
+        )
     }
 
     /** J+1 / J+2 model (assets named by thresholds.json). */
@@ -223,7 +245,6 @@ class EmbeddedDebitModelStore @Inject constructor(
         targetMode = targetMode,
         featureCount = featureCount,
         trainRowCount = trainRowCount,
-        calibrationRowCount = calibrationRowCount,
         testRowCount = testRowCount,
         canyonCount = runtimeLookupMetadata?.canyonCount ?: 0,
         regionCount = runtimeLookupMetadata?.regionCount ?: 0,
@@ -237,6 +258,10 @@ class EmbeddedDebitModelStore @Inject constructor(
     private fun String.toDriverOrNull(): DebitPredictionDriver? = when {
         startsWith("hist") -> DebitPredictionDriver.CANYON_HISTORY
 
+        startsWith("nb") -> DebitPredictionDriver.NEIGHBOR_REPORTS
+
+        startsWith("mf") -> DebitPredictionDriver.RAIN_GAUGES
+
         startsWith("massif") || startsWith("region") -> DebitPredictionDriver.AREA_CONTEXT
 
         startsWith("wPrecip") || startsWith("hLiquid") || startsWith("hQ") || startsWith("hZQ") ||
@@ -248,8 +273,7 @@ class EmbeddedDebitModelStore @Inject constructor(
         startsWith("doy") -> DebitPredictionDriver.SEASON
 
         startsWith("hydro") || startsWith("area") || startsWith("basin") || startsWith("fraction") ||
-            this == "karstIndicator" || this == "carbonateFraction" || this == "glacierFraction" ->
-            DebitPredictionDriver.WATERSHED
+            this in WATERSHED_FEATURES || endsWith("Fraction") -> DebitPredictionDriver.WATERSHED
 
         else -> null
     }
@@ -268,6 +292,16 @@ class EmbeddedDebitModelStore @Inject constructor(
         private const val STATIC_FEATURE_INDEX_ASSET_PATH = "canyon_static_features.index.json"
         private const val METRICS_ASSET_PATH = "metrics.json"
         private const val MODEL_ASSET_PATH = "model.trees"
+        private const val RELIABILITY_ASSET_PATH = "canyon_reliability.json"
+
+        /** Watershed descriptors whose name says nothing of it (feature_spec.json). */
+        private val WATERSHED_FEATURES = setOf(
+            "karstIndicator",
+            "timeOfConcentrationKirpichMin",
+            "runoffPotentialIndex",
+            "meanSlopeDeg",
+            "drainageDensityKmPerKm2",
+        )
     }
 }
 
@@ -328,7 +362,6 @@ private data class MetricsDto(
     val targetMode: String,
     val featureCount: Int,
     val trainRowCount: Int,
-    val calibrationRowCount: Int,
     val testRowCount: Int,
     val topFeatureImportances: List<FeatureImportanceDto> = emptyList(),
     val runtimeLookupMetadata: RuntimeLookupMetadataDto? = null,
@@ -342,3 +375,7 @@ private data class RuntimeLookupMetadataDto(val regionCount: Int, val massifCoun
 
 @Serializable
 private data class StaticFeatureIndexEntryDto(val start: Long, val length: Int)
+
+/** `canyon_reliability.json` (export_app_assets.py): canyon id -> [reports, shown right]. */
+@Serializable
+private data class ReliabilityDto(val firstYear: Int = 0, val lastYear: Int = 0, val canyons: Map<String, List<Int>> = emptyMap())

@@ -4,6 +4,8 @@ Output (``--output-dir``):
 * ``base.pkl``: one row per usable observation with label, keys, time, static and weather/hydro
   features. History features are *not* included because massif/region priors depend on which
   observations are known (per walk-forward fold); ``history.py`` adds them.
+* ``realtime_lag1.pkl``, ``realtime_lag2.pkl``: for the J+1 / J+2 model, the real-time features
+  and the features measured since the canyon's last report as known 1 and 2 days earlier.
 * ``canyon_static.json``: static feature values per canyon (also exported to the app).
 * ``canyon_history.pkl``: (epochDay, rank) report lists per canyon.
 * ``metadata.json``.
@@ -48,6 +50,8 @@ DEFAULT_CANYONS = "offline-data/full/room-import/canyons.json"
 DEFAULT_STATIC = "build/debit-model/source/canyon_static_descriptors-2026-10-29.json"
 DEFAULT_TARGETS = "build/debit-pipeline/weather-planning-2026-10-29/weather_targets.jsonl"
 DEFAULT_WEATHER = "build/debit-model/weather/era5_daily-2026-10-29.npz"
+# Information lags of the J+1 / J+2 model (realtime_lag<lag>.pkl).
+LAGS = (1, 2)
 
 
 def load_observations(path: Path) -> list[dict]:
@@ -159,6 +163,7 @@ def build_rows(observations, canyons, static_values, targets, store, histories, 
     print(f"usable observations with weather target: {len(usable)} / {len(observations)}", flush=True)
 
     frames = []
+    since_lagged: dict[int, list[pd.DataFrame]] = {lag: [] for lag in LAGS}
     dropped = 0
     window = hydro.WINDOW_DAYS
     for start in range(0, len(usable), batch_size):
@@ -186,17 +191,24 @@ def build_rows(observations, canyons, static_values, targets, store, histories, 
         series_list = [store.get(targets[row["canyonId"]]) for row in batch]
         log_mean = np.array([[s.get(f"hydroLog{name}Mean") or np.nan for name in F.RESERVOIR_NAMES] for s in statics], dtype=float)
         log_std = np.array([[s.get(f"hydroLog{name}Std") or np.nan for name in F.RESERVOIR_NAMES] for s in statics], dtype=float)
-        since = np.array([last_report_before(histories[row["canyonId"]], row["day"]) for row in batch])
-        hydro_values = F.hydro_features(
+        hydro_inputs = (
             p, t,
             np.array([row["day"] for row in batch], dtype=np.int64),
             np.array([s.latitude for s in series_list]),
             np.array([s.elevation for s in series_list]),
             np.array([F.band_elevations(s) for s in statics]),
             np.array([float(s["hydroSoilCapacityMm"]) for s in statics]),
-            since, log_mean, log_std,
         )
+        since = np.array([last_report_before(histories[row["canyonId"]], row["day"]) for row in batch])
+        hydro_values = F.hydro_features(*hydro_inputs, since, log_mean, log_std)
         frame = pd.DataFrame({name: np.asarray(values, dtype=float) for name, values in hydro_values.items()})
+        # J+1 / J+2 rows: the canyon's last report known on the morning of today = J - lag.
+        for lag in LAGS:
+            lagged_since = np.array([last_report_before(histories[row["canyonId"]], row["day"] - lag) + lag for row in batch])
+            lagged_values = F.hydro_features(*hydro_inputs, lagged_since, log_mean, log_std)
+            lagged = pd.DataFrame({name: np.asarray(lagged_values[name], dtype=float) for name in F.SINCE_LAST_FEATURES})
+            lagged["observationId"] = [row["observationId"] for row in batch]
+            since_lagged[lag].append(lagged)
         frame["observationId"] = [row["observationId"] for row in batch]
         frame["canyonId"] = [row["canyonId"] for row in batch]
         frame["day"] = [row["day"] for row in batch]
@@ -212,7 +224,7 @@ def build_rows(observations, canyons, static_values, targets, store, histories, 
         frames.append(frame)
         print(f"rows {start + n}/{len(usable)} dropped={dropped}", flush=True)
     data = pd.concat(frames, ignore_index=True)
-    return data, dropped
+    return data, dropped, {lag: pd.concat(parts, ignore_index=True).set_index("observationId") for lag, parts in since_lagged.items()}
 
 
 def main() -> None:
@@ -253,7 +265,7 @@ def main() -> None:
 
     history_rows, _ = with_archived(load_observations(Path(args.history_observations)), load_observations(Path(args.archived_history)))
     histories = history_lists(history_rows)
-    data, dropped = build_rows(observations, canyons, static_values, targets, store, histories)
+    data, dropped, since_lagged = build_rows(observations, canyons, static_values, targets, store, histories)
     points = N.canyon_points(Path(args.geo_points), Path(args.targets))
     if not Path(args.meteofrance_cache).exists():
         import meteofrance as M0
@@ -277,6 +289,10 @@ def main() -> None:
             frame[name] = rain_values[name].to_numpy()
         for name in F.AUTO_RAIN_FEATURES:
             frame[name] = auto_values[name].astype(float).to_numpy()
+        if lag:
+            ids = frame["observationId"].to_numpy()
+            for name in F.SINCE_LAST_FEATURES:
+                frame[name] = since_lagged[lag].loc[ids, name].to_numpy()
         frame["infoLagDays"] = float(lag)
         return frame
 
@@ -284,7 +300,7 @@ def main() -> None:
     for name in F.REALTIME_FEATURES + F.INFO_FEATURES:
         data[name] = current[name].to_numpy()
     print(f"real-time features added ({time.time() - started:.0f}s)", flush=True)
-    for lag in (1, 2):
+    for lag in LAGS:
         realtime(lag).to_pickle(output_dir / f"realtime_lag{lag}.pkl")
         print(f"lag {lag} real-time features ({time.time() - started:.0f}s)", flush=True)
     data.to_pickle(output_dir / "base.pkl")

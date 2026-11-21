@@ -1,17 +1,28 @@
 package fr.descentecanyon.app.data.repository
 
+import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.domain.coroutines.IoDispatcher
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
+import fr.descentecanyon.app.domain.model.DebitPredictionBasis
 import fr.descentecanyon.app.domain.model.DebitPredictionInfoSummary
+import fr.descentecanyon.app.domain.model.ORDINAL_DEBIT_LEVELS
+import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionSupportRepository
+import java.time.Clock
+import java.time.Duration
 import java.time.LocalDate
 import java.time.ZoneId
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 
 @Singleton
@@ -21,8 +32,46 @@ class DebitPredictionRepositoryImpl @Inject constructor(
     private val featureBuilder: DebitFeatureBuilder,
     private val predictor: DebitModelPredictor,
     private val predictionCache: PredictionCache,
+    private val canyonRepository: CanyonRepository,
+    private val connectivityObserver: ConnectivityObserver,
+    private val clock: Clock,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : DebitPredictionRepository {
+
+    /** Spaces out the estimates that download a whole weather window (about 29 calls of the Open-Meteo quota each). */
+    private val fullDownloadMutex = Mutex()
+    private var lastFullDownloadAtMs = 0L
+
+    override fun observeEstimates(canyonIds: List<Int>): Flow<Map<Int, CanyonDebitPredictions>> = flow {
+        val ids = canyonIds.distinct()
+        val known = LinkedHashMap<Int, CanyonDebitPredictions>()
+        ids.forEach { id -> predictionCache.read(id)?.let { known[id] = it } }
+        emit(known.toMap())
+        for (id in ids) {
+            if (!connectivityObserver.isCurrentlyOnline()) break
+            if (known[id]?.isRecent() == true) continue
+            val detail = canyonRepository.getCanyonPreview(id).getOrNull()?.takeIf { it.isLocated } ?: continue
+            if (!supportRepository.hasWeatherHistory(id)) spaceOutFullDownload()
+            getPredictions(detail).onSuccess { predictions ->
+                known[id] = predictions
+                emit(known.toMap())
+            }
+        }
+    }
+
+    /** Computed today (in the canyon's time zone) less than [ESTIMATE_REFRESH] ago. */
+    private fun CanyonDebitPredictions.isRecent(): Boolean {
+        val now = clock.instant()
+        val zone = runCatching { ZoneId.of(timezone) }.getOrDefault(ZoneId.of("UTC"))
+        return Duration.between(computedAt, now) < ESTIMATE_REFRESH &&
+            computedAt.atZone(zone).toLocalDate() == now.atZone(zone).toLocalDate()
+    }
+
+    private suspend fun spaceOutFullDownload() = fullDownloadMutex.withLock {
+        val wait = lastFullDownloadAtMs + FULL_DOWNLOAD_SPACING_MS - clock.millis()
+        if (wait > 0) delay(wait)
+        lastFullDownloadAtMs = clock.millis()
+    }
 
     override suspend fun getCachedPredictions(canyonId: Int): CanyonDebitPredictions? = withContext(ioDispatcher) {
         predictionCache.read(canyonId)
@@ -44,17 +93,18 @@ class DebitPredictionRepositoryImpl @Inject constructor(
                 val horizonDates = (0..2).map { horizonDays ->
                     baseDate.plusDays(horizonDays.toLong())
                 }
-                val available = horizonDates.mapIndexedNotNull { horizonDays, targetDate ->
-                    featureBuilder.buildFeatureVector(
+                val features = horizonDates.mapIndexedNotNull { horizonDays, targetDate ->
+                    featureBuilder.buildFeatures(
                         detail = detail,
                         support = support,
                         featureSpec = featureSpec,
                         staticFeatureSet = staticFeatures,
                         targetDate = targetDate,
                         horizonDays = horizonDays,
-                    )?.let { vector -> Triple(horizonDays, targetDate, vector) }
+                    )?.let { built -> Triple(horizonDays, targetDate, built) }
                 }
-                check(available.isNotEmpty()) { "Historique météo insuffisant pour estimer le débit" }
+                check(features.isNotEmpty()) { "Historique météo insuffisant pour estimer le débit" }
+                val available = features.map { (horizonDays, targetDate, built) -> Triple(horizonDays, targetDate, built.vector) }
                 // Today: J0 model. Tomorrow and after: J+1/J+2 model (real-time info known up to today - 1).
                 val predictions = available.partition { it.first == 0 }.toList().flatMap { group ->
                     if (group.isEmpty()) return@flatMap emptyList()
@@ -75,8 +125,41 @@ class DebitPredictionRepositoryImpl @Inject constructor(
                     policy = thresholds.defaultPolicy,
                     ordinalCutpoints = thresholds.ordinalCutpoints,
                     predictions = predictions,
+                    basis = features.first().let { (_, targetDate, built) -> basisOf(built.values, targetDate) },
+                    reliability = modelStore.getReliability(detail.canyon.id),
                 ).also { predictionCache.save(detail.canyon.id, it) }
             }
+        }
+    }
+
+    internal companion object {
+        /** A list shows estimates computed in the last hours: the weather and reports change slowly. */
+        private val ESTIMATE_REFRESH: Duration = Duration.ofHours(3)
+
+        /**
+         * Open-Meteo counts 400 days of daily values as about 29 calls of its free quota (600 a
+         * minute): one whole window every 4 s stays well below it.
+         */
+        private const val FULL_DOWNLOAD_SPACING_MS = 4_000L
+
+        /** The inputs shown with the estimate of [date], read from its feature values (feature_spec.json names). */
+        fun basisOf(values: Map<String, Double?>, date: LocalDate): DebitPredictionBasis {
+            fun value(name: String): Double? = values[name]?.takeIf { it.isFinite() }
+            val daysSinceLast = value("histDaysSinceLast")?.toLong()
+            val lastLevel = value("histLastRank")?.toInt()?.let { ORDINAL_DEBIT_LEVELS.getOrNull(it) }
+            return DebitPredictionBasis(
+                lastReportDate = daysSinceLast?.takeIf { lastLevel != null }?.let { date.minusDays(it) },
+                lastReportLevel = lastLevel.takeIf { daysSinceLast != null },
+                reportsLast30Days = value("histCount30d")?.toInt() ?: 0,
+                neighborReports = value("nb7Count")?.toInt() ?: 0,
+                neighborAnomaly = value("nb7MeanAnom"),
+                rainLast3DaysMm = value("wPrecip3d"),
+                rainOnDayMm = value("wPrecipDay0"),
+                rainGaugeCount = value("mfCount")?.toInt() ?: 0,
+                yesterdayGaugeRainMm = value("mfAutoRain1"),
+                snowWaterMm = value("hSwe"),
+                snowMelt7DaysMm = value("hMelt7d"),
+            )
         }
     }
 }

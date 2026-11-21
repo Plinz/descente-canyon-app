@@ -6,6 +6,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.CanyonSummary
+import fr.descentecanyon.app.domain.model.DailyDebitPrediction
+import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
@@ -15,6 +17,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
@@ -56,6 +59,8 @@ data class FavoritesUiState(
     val error: UiText? = null,
     /** Favorite just removed by the user, offered for undo. */
     val removedFavorite: CanyonSummary? = null,
+    /** Today's flow estimate of the favorites, as they are computed. */
+    val estimates: Map<Int, DailyDebitPrediction> = emptyMap(),
 )
 
 @HiltViewModel
@@ -63,6 +68,7 @@ class FavoritesViewModel @Inject constructor(
     private val favoritesRepository: FavoritesRepository,
     private val debitRepository: DebitRepository,
     private val logbookRepository: LogbookRepository,
+    private val debitPredictionRepository: DebitPredictionRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FavoritesUiState())
@@ -71,6 +77,7 @@ class FavoritesViewModel @Inject constructor(
 
     init {
         loadFavorites()
+        observeEstimates()
         viewModelScope.launch {
             logbookRepository.observeDescendedCanyonIds().collect { ids ->
                 _uiState.update { it.copy(descendedIds = ids).withShownFavorites() }
@@ -95,6 +102,23 @@ class FavoritesViewModel @Inject constructor(
                 .collect { favorites ->
                     unsorted = favorites
                     _uiState.update { it.copy(isLoading = false, error = null).withShownFavorites() }
+                }
+        }
+    }
+
+    /** Today's estimate of each favorite: saved ones at once, the others computed one after the other. */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    private fun observeEstimates() {
+        viewModelScope.launch {
+            favoritesRepository.getFavorites()
+                .map { favorites -> favorites.map { it.id }.take(MAX_ESTIMATED_FAVORITES) }
+                .distinctUntilChanged()
+                .flatMapLatest { ids -> debitPredictionRepository.observeEstimates(ids) }
+                .collect { estimates ->
+                    val today = estimates.mapNotNull { (id, predictions) ->
+                        predictions.predictions.firstOrNull { it.horizonDays == 0 }?.let { id to it }
+                    }.toMap()
+                    _uiState.update { it.copy(estimates = today) }
                 }
         }
     }
@@ -132,5 +156,10 @@ class FavoritesViewModel @Inject constructor(
 
     fun clearError() {
         _uiState.update { it.copy(error = null) }
+    }
+
+    private companion object {
+        /** Estimating a canyon downloads its weather: the first favorites only, in the order they were added. */
+        const val MAX_ESTIMATED_FAVORITES = 40
     }
 }

@@ -163,6 +163,36 @@ def export_network(final_dir: Path, output_dir: Path, model_name: str, file_name
     return {"members": len(network.members), "widths": network.widths, "bytes": (output_dir / file_name).stat().st_size}
 
 
+RELIABILITY_MIN_REPORTS = 10
+
+
+def export_reliability(walkforward_dir: Path, output_dir: Path) -> dict:
+    """canyon_reliability.json: for each canyon with enough walk-forward test reports, how often
+    what the app shows (level, or range when it hesitates) held the reported level, with the
+    thresholds of each fold (each fold's model never saw its reports)."""
+    walk = json.loads((walkforward_dir / "report.json").read_text())
+    oof = pd.read_pickle(walkforward_dir / "oof_today.pkl")
+    right = np.zeros(len(oof), dtype=bool)
+    for fold, rows in oof.groupby("fold").groups.items():
+        index = oof.index.get_indexer(rows)
+        probabilities = oof.loc[rows, [f"p{k}" for k in range(6)]].to_numpy()
+        low, high = E.shown_range(probabilities, np.array(walk["folds"][fold]["thresholds"]))
+        rank = oof.loc[rows, "rank"].to_numpy()
+        right[index] = (rank >= low) & (rank <= high)
+    oof = oof.assign(right=right)
+    years = [F.from_epoch_day(int(day)).year for day in (oof["day"].min(), oof["day"].max())]
+    table = oof.groupby("canyonId")["right"].agg(["size", "sum"])
+    table = table[table["size"] >= RELIABILITY_MIN_REPORTS]
+    payload = {
+        "firstYear": years[0],
+        "lastYear": years[1],
+        "minReports": RELIABILITY_MIN_REPORTS,
+        "canyons": {str(int(canyon)): [int(row["size"]), int(row["sum"])] for canyon, row in table.iterrows()},
+    }
+    write_json(output_dir / "canyon_reliability.json", payload, minify=True)
+    return {"canyons": len(payload["canyons"]), "reports": int(table["size"].sum()), "shownRight": round(float(table["sum"].sum() / table["size"].sum()), 4)}
+
+
 def golden_vectors(
     dataset_dir: Path,
     weather_path: Path,
@@ -194,7 +224,7 @@ def golden_vectors(
     picks = pd.concat([snowy, others])
     vectors = []
     for pick_number, (_, row) in enumerate(picks.iterrows()):
-        horizon = 1 if pick_number % 3 == 2 else 0
+        horizon = (1 if pick_number % 3 == 2 else 0) + (1 if pick_number % 6 == 5 else 0)  # J0, J+1 and J+2
         canyon_id = int(row["canyonId"])
         series = store.get(targets[canyon_id])
         target = F.from_epoch_day(int(row["day"]))
@@ -212,13 +242,17 @@ def golden_vectors(
         canyon = canyons.get(canyon_id, {})
         static_values = static.get(str(canyon_id), {})
         lookup_values = resolve_lookup(lookups, canyon_id, canyon)
-        history = histories.get(canyon_id, [])
         neighbor_list, aggregates = neighbor_inputs(lookups, canyon_id)
         day0 = int(row["day"])
+        # The site's day grid: the neighbours' cells and the canyon's own ones.
         recent = [
-            (n, d, lv) for n, _ in neighbor_list for d, lv in (cells or {}).get(n, [])
+            (n, d, lv) for n in [canyon_id] + [n for n, _ in neighbor_list] for d, lv in (cells or {}).get(n, [])
             if day0 - 16 <= d <= day0
         ]
+        history = histories.get(canyon_id, [])
+        if pick_number % 4 == 3:
+            # Debit list saved weeks ago on the device: the grid completes it (with_grid_cells).
+            history = [(d, r) for d, r in history if d < day0 - 20]
         stations = rain_inputs(lookups, canyon_id)
         rain_values = {}
         for code, _ in stations:
@@ -328,6 +362,7 @@ def main() -> None:
     network_info = export_network(final_dir, output_dir, "today", "model.mlp")
     horizon_network_info = export_network(final_dir, output_dir, "horizon", "model_horizon.mlp")
     static = export_static(dataset_dir, output_dir)
+    reliability_info = export_reliability(Path(args.walkforward_dir), output_dir)
     points = N.canyon_points(Path("offline-data/full/room-import/geo_points.json"), Path(args.targets))
     neighbor_table = N.neighbor_table(points)
     cells = N.day_cells(N.load_raw_reports([Path(args.history_observations)]))
@@ -404,7 +439,7 @@ def main() -> None:
             "massifCount": len(lookups["massifs"]),
             "canyonCount": len(lookups["canyons"]),
         },
-        "files": {"model": "model.trees", "horizonModel": "model_horizon.trees", "network": "model.mlp", "horizonNetwork": "model_horizon.mlp", "featureSpec": "feature_spec.json", "canyonStaticFeatures": "canyon_static_features.json", "runtimeLookups": "runtime_feature_lookups.json", "thresholds": "thresholds.json"},
+        "files": {"model": "model.trees", "horizonModel": "model_horizon.trees", "network": "model.mlp", "horizonNetwork": "model_horizon.mlp", "featureSpec": "feature_spec.json", "canyonStaticFeatures": "canyon_static_features.json", "runtimeLookups": "runtime_feature_lookups.json", "thresholds": "thresholds.json", "reliability": "canyon_reliability.json"},
         "treeModel": {"format": "DCOT v1 (scripts/debit_model/tree_model.py)", "maxAbsDiffVsCatBoost": float(f"{max(model_info['treeMaxAbsDiff'], horizon_info['treeMaxAbsDiff']):.3g}")},
         "networkModel": {
             "format": "DCMN v1 (scripts/debit_model/network.py)",
@@ -426,7 +461,7 @@ def main() -> None:
         {code for codes in json.loads(Path(args.hourly_stations).read_text()).values() for code in codes},
     )
     quality = report_quality_cases(Path(args.history_observations), Path(args.golden_path))
-    print(json.dumps({"treeModel": max(model_info["treeMaxAbsDiff"], horizon_info["treeMaxAbsDiff"]), "network": [network_info, horizon_network_info], "goldenVectors": golden, "reportQualityCases": quality}, indent=1))
+    print(json.dumps({"treeModel": max(model_info["treeMaxAbsDiff"], horizon_info["treeMaxAbsDiff"]), "network": [network_info, horizon_network_info], "reliability": reliability_info, "goldenVectors": golden, "reportQualityCases": quality}, indent=1))
 
 
 if __name__ == "__main__":

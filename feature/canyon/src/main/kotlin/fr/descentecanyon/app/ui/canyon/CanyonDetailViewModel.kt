@@ -31,6 +31,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -133,6 +136,7 @@ class CanyonDetailViewModel @Inject constructor(
         observePersonalNote()
         observeNearbyCanyons()
         observeLogbook()
+        observeReports()
         loadCanyon(canyonId)
     }
 
@@ -169,7 +173,7 @@ class CanyonDetailViewModel @Inject constructor(
                         state.copy(canyonDetail = preview, isLoading = false, isRefreshingDetail = true, error = null)
                     }
                 }
-                conditions.loadFor(preview)
+                conditions.loadFor(withLatestReports(preview))
                 recordView(id)
                 if (wasEmpty) markPrimaryContentReady(id, "preview_ready")
             }
@@ -194,7 +198,7 @@ class CanyonDetailViewModel @Inject constructor(
                     )
                     markPrimaryContentReady(id, "detail_ready")
                     recordView(id)
-                    conditions.loadFor(detail)
+                    conditions.loadFor(withLatestReports(detail))
                 },
                 onFailure = { throwable ->
                     if (!hasLoggedPrimaryContentReady) {
@@ -205,7 +209,7 @@ class CanyonDetailViewModel @Inject constructor(
                     if (currentDetail != null) {
                         // The catalog content stays on screen; only a short message tells the refresh failed.
                         detailState.update { it.copy(isLoading = false, isRefreshingDetail = false, transientMessage = message) }
-                        conditions.loadFor(currentDetail)
+                        conditions.loadFor(withLatestReports(currentDetail))
                     } else {
                         detailState.update { it.copy(isLoading = false, isRefreshingDetail = false, error = message) }
                         media.onDetailUnavailable()
@@ -217,6 +221,23 @@ class CanyonDetailViewModel @Inject constructor(
     }
 
     fun refreshDebitsAfterSubmission() = media.refreshDebitsAfterSubmission()
+
+    /** Back on the page: an estimate computed before midnight is computed again for the new day. */
+    fun onResumed() {
+        detailState.value.canyonDetail?.let { conditions.loadFor(withLatestReports(it)) }
+    }
+
+    /** [detail] with the reports read since it was loaded (the debit list is refreshed on its own). */
+    private fun withLatestReports(detail: CanyonDetail): CanyonDetail = media.state.value.debits?.let { detail.copy(debits = it) } ?: detail
+
+    /** The estimate follows the canyon's reports: read again from the site, they may hold newer ones. */
+    private fun observeReports() {
+        viewModelScope.launch {
+            media.state.map { it.debits }.filterNotNull().distinctUntilChanged().collect { debits ->
+                detailState.value.canyonDetail?.let { conditions.onReportsChanged(it.copy(debits = debits)) }
+            }
+        }
+    }
 
     fun downloadPhoto(photoId: Long) = media.downloadPhoto(photoId)
 
@@ -283,7 +304,7 @@ class CanyonDetailViewModel @Inject constructor(
                 val wasOnline = detailState.value.isOnline
                 detailState.update { it.copy(isOnline = online) }
                 // Back in coverage: the weather and estimates that failed (or came from the cache) are reloaded.
-                if (online && !wasOnline) detailState.value.canyonDetail?.let(conditions::loadFor)
+                if (online && !wasOnline) detailState.value.canyonDetail?.let { conditions.loadFor(withLatestReports(it)) }
             }
         }
     }

@@ -8,6 +8,7 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.coroutines.DefaultDispatcher
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonSummary
+import fr.descentecanyon.app.domain.model.DailyDebitPrediction
 import fr.descentecanyon.app.domain.model.DriveTime
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.SearchCriteria
@@ -15,12 +16,14 @@ import fr.descentecanyon.app.domain.model.SearchResultSet
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
 import fr.descentecanyon.app.domain.model.ZoneCountry
+import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.ChooseStayCanyonUseCase
 import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
 import fr.descentecanyon.app.domain.usecase.driveTo
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.UiText
+import java.time.Clock
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
@@ -39,6 +42,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
@@ -81,6 +85,24 @@ data class SearchStayPick(
     fun driveTo(item: CanyonSearchItem): DriveTime? = driveTo(place, item, drives)
 }
 
+/**
+ * Flow estimates of the nearest canyons listed (sorted by distance, or around the place of a stay),
+ * for [date]: today, or the day of the stay when it is within the days estimated.
+ */
+data class SearchEstimates(
+    val date: LocalDate,
+    /** The canyons estimated, nearest first: the first ones of the results. */
+    val candidateIds: List<Int>,
+    val byCanyon: Map<Int, DailyDebitPrediction> = emptyMap(),
+    /** Only the canyons whose flow is likely normal are listed. */
+    val onlyLikelyNormal: Boolean = false,
+    /** Estimates are still being computed (online). */
+    val isComputing: Boolean = false,
+) {
+    fun listed(results: List<CanyonSearchItem>): List<CanyonSearchItem> =
+        if (onlyLikelyNormal) results.filter { byCanyon[it.id]?.isLikelyNormal() == true } else results
+}
+
 data class SearchUiState(
     val queryDraft: String = "",
     val criteria: SearchCriteria = SearchCriteria(),
@@ -114,6 +136,8 @@ class SearchViewModel @Inject constructor(
     @param:DefaultDispatcher private val searchDispatcher: CoroutineDispatcher,
     private val recentCanyonsRepository: RecentCanyonsRepository,
     private val chooseStayCanyonUseCase: ChooseStayCanyonUseCase,
+    private val debitPredictionRepository: DebitPredictionRepository,
+    private val clock: Clock,
 ) : ViewModel() {
 
     /** The day of a stay the search was opened for, if any (route arguments). */
@@ -293,6 +317,48 @@ class SearchViewModel @Inject constructor(
         return combine(choice, drives) { choice, drives ->
             choice?.let { SearchStayPick(stayId, date, stayOutingId, it.place, drives, it.plannedOn) }
         }
+    }
+
+    private val onlyLikelyNormalFlow = MutableStateFlow(false)
+
+    /** Estimates of the nearest canyons listed, null when the list is not about distance. */
+    val estimates: StateFlow<SearchEstimates?> = estimatesFlow()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), null)
+
+    private fun estimatesFlow(): Flow<SearchEstimates?> {
+        val candidates = uiState.map { state ->
+            val date = estimatedDate(state) ?: return@map null
+            date to state.results.take(ESTIMATED_RESULTS).map { it.id }
+        }.distinctUntilChanged()
+        val computed = candidates.flatMapLatest { candidate ->
+            val (date, ids) = candidate ?: return@flatMapLatest flowOf<SearchEstimates?>(null)
+            flow<SearchEstimates?> {
+                var last = SearchEstimates(date, ids, isComputing = ids.isNotEmpty())
+                emit(last)
+                debitPredictionRepository.observeEstimates(ids).collect { estimates ->
+                    val byCanyon = estimates.mapNotNull { (id, predictions) -> predictions.forDate(date)?.let { id to it } }.toMap()
+                    last = last.copy(byCanyon = byCanyon)
+                    emit(last)
+                }
+                emit(last.copy(isComputing = false))
+            }
+        }
+        return combine(computed, onlyLikelyNormalFlow) { estimates, onlyLikelyNormal ->
+            estimates?.copy(onlyLikelyNormal = onlyLikelyNormal)
+        }
+    }
+
+    /** The day to estimate: the stay's (when estimated, up to J+2) or today when the results are the nearest canyons. */
+    private fun estimatedDate(state: SearchUiState): LocalDate? {
+        if (state.isResultListDeferred || state.results.isEmpty()) return null
+        val today = LocalDate.now(clock)
+        if (isStayPick) return stayDate?.takeIf { !it.isBefore(today) && !it.isAfter(today.plusDays(LAST_ESTIMATED_DAY)) }
+        val byDistance = state.criteria.sortField == SearchSortField.DISTANCE && state.userLatitude != null && state.userLongitude != null
+        return today.takeIf { byDistance }
+    }
+
+    fun toggleOnlyLikelyNormal() {
+        onlyLikelyNormalFlow.update { !it }
     }
 
     fun clearRecentCanyons() {
@@ -479,6 +545,12 @@ class SearchViewModel @Inject constructor(
         private const val STAY_DATE_KEY = "date"
         private const val STAY_OUTING_ID_KEY = "outingId"
         private const val STOP_TIMEOUT_MS = 5_000L
+
+        /** The nearest canyons estimated: each one downloads its weather. */
+        const val ESTIMATED_RESULTS = 30
+
+        /** The model estimates today and the next two days. */
+        private const val LAST_ESTIMATED_DAY = 2L
         private const val SEARCH_CRITERIA_KEY = "search_criteria"
         private const val SEARCH_RESULT_VIEW_MODE_KEY = "search_result_view_mode"
         private const val SEARCH_INITIAL_TRACE_KEY = "screen.search.initial"

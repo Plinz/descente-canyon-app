@@ -56,7 +56,6 @@ class FakeDebitPredictionRepository @Inject constructor() : DebitPredictionRepos
             targetMode = "ordinal",
             featureCount = 0,
             trainRowCount = 0,
-            calibrationRowCount = 0,
             testRowCount = 0,
             canyonCount = 0,
             regionCount = 0,

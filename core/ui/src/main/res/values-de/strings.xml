@@ -353,9 +353,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="prediction_info_data_p2">Dieser Zustand wird mit den physischen Merkmalen des Einzugsgebiets, den in den letzten Tagen gemeldeten Abflüssen des Canyons und benachbarter Canyons (unter 30 km) sowie dem von nahen Regenmessern von Météo-France und MeteoSwiss gemessenen Niederschlag kombiniert. Für morgen und übermorgen wird ein zweites Modell verwendet, das mit den am Vortag verfügbaren Informationen trainiert wurde.</string>
     <string name="prediction_info_training_title">Trainingsdaten</string>
     <string name="prediction_info_stat_total_observations">%1$s frühere Beobachtungen insgesamt ausgewertet</string>
-    <string name="prediction_info_stat_train_rows">%1$s Beobachtungen fürs Training</string>
-    <string name="prediction_info_stat_calibration_rows">%1$s Beobachtungen für die abschließende Kalibrierung</string>
-    <string name="prediction_info_stat_test_rows">%1$s Beobachtungen für den Testsatz</string>
     <string name="prediction_info_stat_feature_count">%1$s vom Modell berücksichtigte Variablen</string>
     <string name="prediction_info_stat_canyon_count">%1$s Canyons in den eingebetteten Daten vertreten</string>
     <string name="prediction_info_stat_massif_count">%1$s Massive in den eingebetteten Daten vertreten</string>
@@ -1450,4 +1447,42 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="startup_preparing_catalog_hint">Nur einmal nach der Installation oder einem Update: Die Canyon-Seiten sind danach ohne Netz lesbar.</string>
     <string name="outing_conditions_off_season">Außerhalb der Saison: wenige Abflussmeldungen im %1$s (%2$d von %3$d). Übliche Saison: %4$s – %5$s. Topo, Verankerungen und Wasser können anders sein als in der Saison.</string>
     <string name="outing_conditions_cold">Kalter Tag (höchstens %1$s): dicker Neopren, Haube, Handschuhe und trockene Wechselkleidung.</string>
+    <string name="prediction_info_stat_checked_rows">davon %1$s, um die Schätzung an Saisons zu prüfen, die sie nicht kannte</string>
+    <string name="prediction_driver_neighbor_reports_title">Gemeldete Abflüsse benachbarter Canyons</string>
+    <string name="prediction_driver_neighbor_reports_description">Die in den letzten Tagen gemeldeten Abflüsse der Canyons im Umkreis von 30 km zeigen, verglichen mit ihrem üblichen Stand, ob die Gegend mehr oder weniger Wasser als sonst führt.</string>
+    <string name="prediction_driver_rain_gauges_title">Regenmesser in der Nähe</string>
+    <string name="prediction_driver_rain_gauges_description">Der von Météo-France- und MeteoSwiss-Regenmessern im Umkreis von 25 km gemessene Regen, am Vortag und in den letzten Wochen, ergänzt das Wettermodell.</string>
+    <string name="prediction_basis_title">Worauf die Schätzung beruht</string>
+    <string name="prediction_basis_no_report">Für diesen Canyon wurde kein Abfluss gemeldet: Die Schätzung stützt sich auf sein Gebirge und benachbarte Canyons.</string>
+    <string name="prediction_basis_neighbors_above">mehr Wasser als üblich</string>
+    <string name="prediction_basis_neighbors_below">weniger Wasser als üblich</string>
+    <string name="prediction_basis_neighbors_usual">wie üblich</string>
+    <string name="prediction_basis_neighbors_none">Benachbarte Canyons: kein Abfluss in den letzten 7 Tagen gemeldet</string>
+    <string name="prediction_basis_rain">Regen im Einzugsgebiet: %1$s mm in den letzten 3 Tagen, heute %2$s mm erwartet</string>
+    <string name="prediction_basis_rain_past">Regen im Einzugsgebiet: %1$s mm in den 3 Tagen davor</string>
+    <string name="prediction_basis_gauges">Regenmesser: %1$d im Umkreis von 25 km</string>
+    <string name="prediction_basis_gauges_yesterday">Regenmesser: %1$d im Umkreis von 25 km, gestern %2$s mm</string>
+    <string name="prediction_basis_gauges_yesterday_only">Regenmesser in der Nähe: gestern %1$s mm</string>
+    <string name="prediction_basis_gauges_none">Regenmesser in der Nähe: keine aktuelle Messung</string>
+    <string name="prediction_basis_snow">Simulierter Schnee im Einzugsgebiet: %1$s mm Wasser, %2$s mm in 7 Tagen geschmolzen</string>
+    <string name="prediction_basis_snow_no_melt">Simulierter Schnee im Einzugsgebiet: %1$s mm Wasser</string>
+    <string name="prediction_reliability">Bei diesem Canyon war das Angezeigte von %1$d bis %2$d in %3$d von %4$d Fällen richtig.</string>
+    <string name="search_estimate_filter">Wahrscheinlich normaler Abfluss</string>
+    <string name="search_estimate_progress">Abfluss wird geschätzt … %1$d von %2$d</string>
+    <string name="notification_outing_high_flow_title_today">Hoher Abfluss heute möglich</string>
+    <string name="notification_outing_high_flow_title_tomorrow">Hoher Abfluss morgen möglich</string>
+    <string name="notification_outing_high_flow_title_later">Hoher Abfluss übermorgen möglich</string>
+    <string name="notification_outing_high_flow_body">%1$s: geschätzter Abfluss %2$s, Risiko für hohen Abfluss oder mehr %3$d %%. Prüfe vor dem Aufbruch die zuletzt gemeldeten Abflüsse.</string>
+    <plurals name="prediction_basis_recent_reports">
+        <item quantity="one">%1$d Meldung in den letzten 30 Tagen</item>
+        <item quantity="other">%1$d Meldungen in den letzten 30 Tagen</item>
+    </plurals>
+    <plurals name="prediction_basis_neighbors">
+        <item quantity="one">Benachbarte Canyons: %1$d Meldung in den letzten 7 Tagen, %2$s</item>
+        <item quantity="other">Benachbarte Canyons: %1$d Meldungen in den letzten 7 Tagen, %2$s</item>
+    </plurals>
+    <plurals name="search_estimate_results">
+        <item quantity="one">%1$d von den %2$d nächsten</item>
+        <item quantity="other">%1$d von den %2$d nächsten</item>
+    </plurals>
 </resources>

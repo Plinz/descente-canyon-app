@@ -26,6 +26,23 @@ def decide(probabilities: np.ndarray, thresholds: np.ndarray) -> np.ndarray:
     return monotone
 
 
+UNCERTAIN_LEVEL_PROBABILITY = 0.6  # DailyDebitPrediction.UNCERTAIN_LEVEL_PROBABILITY
+
+
+def shown_range(probabilities: np.ndarray, thresholds: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    """(low, high) levels the app shows (DailyDebitPrediction.likelyRange): the decided level, or
+    with its most likely neighbour when the level has less than ``UNCERTAIN_LEVEL_PROBABILITY``."""
+    level = decide(probabilities, thresholds)
+    rows = np.arange(len(probabilities))
+    own = probabilities[rows, level]
+    below = np.where(level > 0, probabilities[rows, np.maximum(level - 1, 0)], 0.0)
+    above = np.where(level < LEVEL_COUNT - 1, probabilities[rows, np.minimum(level + 1, LEVEL_COUNT - 1)], 0.0)
+    uncertain = (own < UNCERTAIN_LEVEL_PROBABILITY) & ((below > 0) | (above > 0))
+    up = uncertain & (above >= below) & (level < LEVEL_COUNT - 1)
+    down = uncertain & ~up & (level > 0)
+    return np.where(down, level - 1, level), np.where(up, level + 1, level)
+
+
 def display_score(probabilities: np.ndarray, thresholds: np.ndarray) -> np.ndarray:
     """Continuous score in [level - 0.5, level + 0.5) used by the app gauge (cutpoints k + 0.5)."""
     c = np.concatenate([np.ones((len(probabilities), 1)), cumulative(probabilities), np.zeros((len(probabilities), 1))], axis=1)

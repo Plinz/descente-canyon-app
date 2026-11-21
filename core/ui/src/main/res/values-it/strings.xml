@@ -353,9 +353,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="prediction_info_data_p2">Combina questo stato con le caratteristiche fisiche del bacino, le portate segnalate negli ultimi giorni sul torrente e sui torrenti vicini (entro 30 km) e la pioggia misurata dai pluviometri vicini di Météo-France e MeteoSwiss. Domani e dopodomani usano un secondo modello, addestrato con le informazioni disponibili il giorno prima.</string>
     <string name="prediction_info_training_title">Dati di addestramento</string>
     <string name="prediction_info_stat_total_observations">%1$s osservazioni passate utilizzate in totale</string>
-    <string name="prediction_info_stat_train_rows">%1$s osservazioni per l\'addestramento</string>
-    <string name="prediction_info_stat_calibration_rows">%1$s osservazioni per la regolazione finale</string>
-    <string name="prediction_info_stat_test_rows">%1$s osservazioni per il set di test</string>
     <string name="prediction_info_stat_feature_count">%1$s variabili prese in considerazione dal modello</string>
     <string name="prediction_info_stat_canyon_count">%1$s canyon rappresentati nei dati integrati</string>
     <string name="prediction_info_stat_massif_count">%1$s massicci rappresentati nei dati integrati</string>
@@ -1486,4 +1483,45 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="startup_preparing_catalog_hint">Solo una volta dopo l\'installazione o un aggiornamento: poi le schede dei canyon si consultano senza rete.</string>
     <string name="outing_conditions_off_season">Fuori stagione: poche portate segnalate a %1$s (%2$d su %3$d). Stagione abituale: %4$s – %5$s. Topo, ancoraggi e acqua possono essere quelli di un\'altra stagione.</string>
     <string name="outing_conditions_cold">Giornata fredda (%1$s al massimo): muta spessa, cappuccio, guanti e vestiti asciutti di ricambio.</string>
+    <string name="prediction_info_stat_checked_rows">di cui %1$s per verificare la stima su stagioni che non conosceva</string>
+    <string name="prediction_driver_neighbor_reports_title">Portate segnalate nei canyon vicini</string>
+    <string name="prediction_driver_neighbor_reports_description">I livelli segnalati negli ultimi giorni nei canyon entro 30 km, confrontati con il loro livello abituale, dicono se la zona ha più o meno acqua del solito.</string>
+    <string name="prediction_driver_rain_gauges_title">Pluviometri vicini</string>
+    <string name="prediction_driver_rain_gauges_description">La pioggia misurata dai pluviometri di Météo-France e MeteoSwiss entro 25 km, il giorno prima e nelle ultime settimane, completa il modello meteo.</string>
+    <string name="prediction_basis_title">Su cosa si basa la stima</string>
+    <string name="prediction_basis_no_report">Nessuna portata segnalata in questo canyon: la stima si basa sul suo massiccio e sui canyon vicini.</string>
+    <string name="prediction_basis_neighbors_above">più acqua del solito</string>
+    <string name="prediction_basis_neighbors_below">meno acqua del solito</string>
+    <string name="prediction_basis_neighbors_usual">come al solito</string>
+    <string name="prediction_basis_neighbors_none">Canyon vicini: nessuna portata segnalata negli ultimi 7 giorni</string>
+    <string name="prediction_basis_rain">Pioggia sul bacino: %1$s mm negli ultimi 3 giorni, %2$s mm previsti oggi</string>
+    <string name="prediction_basis_rain_past">Pioggia sul bacino: %1$s mm nei 3 giorni precedenti</string>
+    <string name="prediction_basis_gauges">Pluviometri: %1$d entro 25 km</string>
+    <string name="prediction_basis_gauges_yesterday">Pluviometri: %1$d entro 25 km, %2$s mm ieri</string>
+    <string name="prediction_basis_gauges_yesterday_only">Pluviometri vicini: %1$s mm ieri</string>
+    <string name="prediction_basis_gauges_none">Pluviometri vicini: nessuna misura recente</string>
+    <string name="prediction_basis_snow">Neve simulata sul bacino: %1$s mm d\'acqua, %2$s mm sciolti in 7 giorni</string>
+    <string name="prediction_basis_snow_no_melt">Neve simulata sul bacino: %1$s mm d\'acqua</string>
+    <string name="prediction_reliability">In questo canyon, dal %1$d al %2$d, ciò che era mostrato si è rivelato giusto %3$d volte su %4$d.</string>
+    <string name="search_estimate_filter">Portata normale probabile</string>
+    <string name="search_estimate_progress">Stima della portata… %1$d su %2$d</string>
+    <string name="notification_outing_high_flow_title_today">Possibile portata alta oggi</string>
+    <string name="notification_outing_high_flow_title_tomorrow">Possibile portata alta domani</string>
+    <string name="notification_outing_high_flow_title_later">Possibile portata alta dopodomani</string>
+    <string name="notification_outing_high_flow_body">%1$s: portata stimata %2$s, rischio di portata alta o superiore %3$d%%. Controlla le ultime portate segnalate prima di partire.</string>
+    <plurals name="prediction_basis_recent_reports">
+        <item quantity="one">%1$d portata segnalata negli ultimi 30 giorni</item>
+        <item quantity="many">%1$d portate segnalate negli ultimi 30 giorni</item>
+        <item quantity="other">%1$d portate segnalate negli ultimi 30 giorni</item>
+    </plurals>
+    <plurals name="prediction_basis_neighbors">
+        <item quantity="one">Canyon vicini: %1$d portata segnalata negli ultimi 7 giorni, %2$s</item>
+        <item quantity="many">Canyon vicini: %1$d portate segnalate negli ultimi 7 giorni, %2$s</item>
+        <item quantity="other">Canyon vicini: %1$d portate segnalate negli ultimi 7 giorni, %2$s</item>
+    </plurals>
+    <plurals name="search_estimate_results">
+        <item quantity="one">%1$d dei %2$d più vicini</item>
+        <item quantity="many">%1$d dei %2$d più vicini</item>
+        <item quantity="other">%1$d dei %2$d più vicini</item>
+    </plurals>
 </resources>

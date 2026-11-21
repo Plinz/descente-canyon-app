@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.DirectionsCar
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.NearMe
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
@@ -121,6 +122,7 @@ fun SearchScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val stayPick by viewModel.stayPick.collectAsStateWithLifecycle()
+    val estimates by viewModel.estimates.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val listState = rememberLazyListState()
     var showFiltersSheet by rememberSaveable { mutableStateOf(false) }
@@ -352,19 +354,50 @@ fun SearchScreen(
 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                Row(
+                val shownEstimates = estimates?.takeIf { uiState.resultViewMode == SearchResultViewMode.LIST }
+                val listedResults = shownEstimates?.listed(uiState.results) ?: uiState.results
+                // The estimate filter goes under the count when the line is too short for both.
+                FlowRow(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically,
+                    itemVerticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         // Without query nor filter nothing is listed: the count is the catalog size, not results.
-                        text = if (uiState.isResultListDeferred) {
-                            pluralStringResource(R.plurals.search_catalog_count, uiState.totalResultsCount, uiState.totalResultsCount)
-                        } else {
-                            pluralStringResource(R.plurals.search_results_count, uiState.totalResultsCount, uiState.totalResultsCount)
+                        text = when {
+                            uiState.isResultListDeferred ->
+                                pluralStringResource(R.plurals.search_catalog_count, uiState.totalResultsCount, uiState.totalResultsCount)
+
+                            shownEstimates?.onlyLikelyNormal == true -> pluralStringResource(
+                                R.plurals.search_estimate_results,
+                                listedResults.size,
+                                listedResults.size,
+                                shownEstimates.candidateIds.size,
+                            )
+
+                            else -> pluralStringResource(
+                                R.plurals.search_results_count,
+                                uiState.totalResultsCount,
+                                uiState.totalResultsCount,
+                            )
                         },
                         style = MaterialTheme.typography.labelLarge,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(end = 8.dp),
+                    )
+                    shownEstimates?.let { current ->
+                        FilterChip(
+                            selected = current.onlyLikelyNormal,
+                            onClick = viewModel::toggleOnlyLikelyNormal,
+                            label = { Text(stringResource(R.string.search_estimate_filter), maxLines = 1) },
+                            leadingIcon = { Icon(Icons.Default.Insights, contentDescription = null, modifier = Modifier.size(16.dp)) },
+                        )
+                    }
+                }
+                shownEstimates?.takeIf { it.isComputing }?.let { current ->
+                    Text(
+                        text = stringResource(R.string.search_estimate_progress, current.byCanyon.size, current.candidateIds.size),
+                        style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
@@ -399,7 +432,7 @@ fun SearchScreen(
                         bottomPadding = contentPadding.calculateBottomPadding() + 96.dp,
                         modifier = Modifier.weight(1f),
                     )
-                } else if (!uiState.isLoading && uiState.results.isEmpty()) {
+                } else if (!uiState.isLoading && listedResults.isEmpty()) {
                     Box(modifier = Modifier.fillMaxWidth().padding(28.dp), contentAlignment = Alignment.Center) {
                         Text(
                             text = stringResource(R.string.no_results),
@@ -414,13 +447,14 @@ fun SearchScreen(
                         contentPadding = PaddingValues(bottom = contentPadding.calculateBottomPadding() + 96.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
-                        items(uiState.results, key = { it.id }) { canyon ->
+                        items(listedResults, key = { it.id }) { canyon ->
                             CanyonSummaryCard(
                                 canyon = canyon.toSummary(),
                                 onClick = { onCanyonClick(canyon.id) },
                                 isDescended = canyon.isDescended,
                                 info = stayPick?.let { pick -> driveInfo(pick, canyon) } ?: distanceInfo(uiState.criteria, canyon),
                                 plannedOn = stayPick?.plannedOn?.get(canyon.id),
+                                estimate = shownEstimates?.byCanyon?.get(canyon.id),
                             )
                         }
                         item { Spacer(modifier = Modifier.height(96.dp)) }

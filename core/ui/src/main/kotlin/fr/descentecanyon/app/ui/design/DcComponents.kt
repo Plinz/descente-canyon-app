@@ -201,16 +201,7 @@ fun DcMetricTile(label: String, value: String, modifier: Modifier = Modifier, un
 
 @Composable
 fun DcFlowBadge(niveau: NiveauDebit, modifier: Modifier = Modifier, compact: Boolean = true, label: String) {
-    val colors = LocalDcColors.current
-    val color = when (niveau) {
-        NiveauDebit.SEC -> colors.flowDry
-        NiveauDebit.FILET -> colors.flowTrickle
-        NiveauDebit.CORRECT -> colors.flowGood
-        NiveauDebit.GROS -> colors.flowHigh
-        NiveauDebit.TRES_GROS -> colors.flowVeryHigh
-        NiveauDebit.CRUE -> colors.flowFlood
-        NiveauDebit.INCONNU -> colors.flowUnknown
-    }
+    val color = dcFlowColor(niveau)
     val isFlood = niveau == NiveauDebit.CRUE
     Surface(
         modifier = modifier,
@@ -226,6 +217,21 @@ fun DcFlowBadge(niveau: NiveauDebit, modifier: Modifier = Modifier, compact: Boo
             maxLines = 1,
             modifier = Modifier.padding(horizontal = if (compact) 8.dp else 10.dp, vertical = if (compact) 4.dp else 6.dp),
         )
+    }
+}
+
+/** The theme colour of a flow level, as on the flow badges. */
+@Composable
+fun dcFlowColor(niveau: NiveauDebit): Color {
+    val colors = LocalDcColors.current
+    return when (niveau) {
+        NiveauDebit.SEC -> colors.flowDry
+        NiveauDebit.FILET -> colors.flowTrickle
+        NiveauDebit.CORRECT -> colors.flowGood
+        NiveauDebit.GROS -> colors.flowHigh
+        NiveauDebit.TRES_GROS -> colors.flowVeryHigh
+        NiveauDebit.CRUE -> colors.flowFlood
+        NiveauDebit.INCONNU -> colors.flowUnknown
     }
 }
 

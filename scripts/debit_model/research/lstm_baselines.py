@@ -70,7 +70,7 @@ def lstm_columns(frame: pd.DataFrame, tag: str, fold: str, kind: str) -> tuple[p
 def run(name: str, fold: str, seed: int, feature_names: list[str], cold: bool, frame: pd.DataFrame, threads: int = 8, prod: bool = False, horizon: bool = False) -> dict:
     train, validation, test = D.split(frame, fold)
     if horizon:
-        train, validation, test = D.horizon(train, validation, test)
+        train, validation, test = D.horizon(train, validation, test, D.day(D.FOLDS[fold][0]))
     if cold:
         sample = train.sample(frac=T.COLD_AUGMENT_FRACTION, random_state=13)
         train = pd.concat([train, H.cold_canyon(sample)], ignore_index=True)

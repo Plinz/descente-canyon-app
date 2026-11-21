@@ -2,7 +2,9 @@ package fr.descentecanyon.app.domain.model
 
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class DebitPredictionRangeTest {
@@ -72,6 +74,18 @@ class DebitPredictionRangeTest {
     @Test
     fun `no confidence without the level distribution`() {
         assertNull(prediction(NiveauDebit.CORRECT).copy(levelProbabilities = emptyMap()).confidence())
+    }
+
+    @Test
+    fun `a likely normal flow shows correct and no high-flow risk`() {
+        assertTrue(prediction(NiveauDebit.CORRECT, filet = 0.15, correct = 0.7, gros = 0.15).isLikelyNormal())
+        assertTrue(prediction(NiveauDebit.CORRECT, filet = 0.45, correct = 0.5, gros = 0.05).isLikelyNormal())
+        assertTrue(prediction(NiveauDebit.FILET, filet = 0.5, correct = 0.45, gros = 0.05).isLikelyNormal())
+        assertFalse(prediction(NiveauDebit.FILET, sec = 0.3, filet = 0.7).isLikelyNormal())
+        assertFalse(prediction(NiveauDebit.GROS, correct = 0.2, gros = 0.8).isLikelyNormal())
+        // Correct is the most likely, but the risk of a high flow is flagged.
+        val risky = prediction(NiveauDebit.CORRECT, correct = 0.5, gros = 0.4, filet = 0.1).copy(level = PredictedDebitLevel.HIGH)
+        assertFalse(risky.isLikelyNormal())
     }
 
     private fun prediction(

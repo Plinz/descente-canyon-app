@@ -3,22 +3,31 @@ package fr.descentecanyon.app.ui.search
 import androidx.lifecycle.SavedStateHandle
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.domain.model.Canyon
+import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.CotationRating
+import fr.descentecanyon.app.domain.model.DailyDebitPrediction
+import fr.descentecanyon.app.domain.model.DebitPredictionPolicy
 import fr.descentecanyon.app.domain.model.DriveTime
 import fr.descentecanyon.app.domain.model.DriveTimeSource
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointType
+import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.PredictedDebitLevel
+import fr.descentecanyon.app.domain.model.RuntimeLookupSource
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
 import fr.descentecanyon.app.domain.model.Stay
+import fr.descentecanyon.app.domain.model.WeatherLocationSource
+import fr.descentecanyon.app.domain.model.WeatherTarget
 import fr.descentecanyon.app.domain.repository.CanyonRepository
+import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.ChooseStayCanyonUseCase
@@ -61,6 +70,7 @@ class SearchViewModelTest {
     private val recentCanyonsRepository = mockk<RecentCanyonsRepository>(relaxUnitFun = true) {
         every { observeRecentCanyons(any()) } returns recentCanyons
     }
+    private val predictions = mockk<DebitPredictionRepository> { every { observeEstimates(any()) } returns flowOf(emptyMap()) }
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -69,7 +79,15 @@ class SearchViewModelTest {
         recentCanyons.value =
             listOf(CanyonSummary(id = 7, nom = "Riolan", pays = "France", cotation = "v4a4III", url = "https://example.test/7"))
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                predictions,
+                clock,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -90,7 +108,15 @@ class SearchViewModelTest {
             ),
         )
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                predictions,
+                clock,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -112,7 +138,15 @@ class SearchViewModelTest {
             ),
         )
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                predictions,
+                clock,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -142,7 +176,15 @@ class SearchViewModelTest {
             ),
         )
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                predictions,
+                clock,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -184,7 +226,15 @@ class SearchViewModelTest {
             ),
         )
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                predictions,
+                clock,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -214,7 +264,15 @@ class SearchViewModelTest {
             ),
         )
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                predictions,
+                clock,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -241,7 +299,15 @@ class SearchViewModelTest {
     fun `selecting a canyon does not request a list scroll reset`() = runTest {
         every { canyonRepository.observeSearchCatalog() } returns flowOf(listOf(canyon(id = 1)))
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                predictions,
+                clock,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -263,7 +329,15 @@ class SearchViewModelTest {
             ),
         )
         val viewModel =
-            SearchViewModel(searchCanyonsUseCase, SavedStateHandle(), mainDispatcherRule.dispatcher, recentCanyonsRepository, stayChoice())
+            SearchViewModel(
+                searchCanyonsUseCase,
+                SavedStateHandle(),
+                mainDispatcherRule.dispatcher,
+                recentCanyonsRepository,
+                stayChoice(),
+                predictions,
+                clock,
+            )
 
         advanceTimeBy(250)
         advanceUntilIdle()
@@ -297,6 +371,8 @@ class SearchViewModelTest {
             mainDispatcherRule.dispatcher,
             recentCanyonsRepository,
             stayChoice(),
+            predictions,
+            clock,
         )
 
         advanceTimeBy(250)
@@ -356,6 +432,49 @@ class SearchViewModelTest {
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
+    fun `for a day of a stay estimated, the nearest canyons get its flow estimate and can be kept to a likely normal flow`() = runTest {
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(stayCatalog)
+        val day = LocalDate.of(2026, 7, 15)
+        every { predictions.observeEstimates(listOf(2, 1)) } returns flowOf(
+            mapOf(2 to estimate(day, NiveauDebit.CORRECT), 1 to estimate(day, NiveauDebit.GROS)),
+        )
+        val viewModel = stayViewModel(stayChoice())
+        backgroundScope.launch { viewModel.estimates.collect {} }
+        advanceTimeBy(250)
+        advanceUntilIdle()
+
+        val estimates = viewModel.estimates.value!!
+        assertEquals(day, estimates.date)
+        assertEquals(listOf(2, 1), estimates.candidateIds)
+        assertEquals(NiveauDebit.CORRECT, estimates.byCanyon.getValue(2).ordinalLevel)
+        assertEquals(listOf(2, 1), estimates.listed(viewModel.uiState.value.results).map { it.id })
+
+        viewModel.toggleOnlyLikelyNormal()
+        advanceUntilIdle()
+        assertEquals(listOf(2), viewModel.estimates.value!!.listed(viewModel.uiState.value.results).map { it.id })
+    }
+
+    private fun estimate(day: LocalDate, level: NiveauDebit) = CanyonDebitPredictions(
+        target = WeatherTarget(44.0, 6.0, WeatherLocationSource.UNKNOWN),
+        timezone = "Europe/Paris",
+        fetchedAt = clock.instant(),
+        lookupSource = RuntimeLookupSource.CANYON,
+        usedWeatherCache = false,
+        policy = DebitPredictionPolicy.BALANCED,
+        predictions = listOf(
+            DailyDebitPrediction(
+                date = day,
+                horizonDays = 1,
+                level = if (level == NiveauDebit.GROS) PredictedDebitLevel.HIGH else PredictedDebitLevel.MEDIUM,
+                probabilities = emptyMap(),
+                highThreshold = 0.3,
+                ordinalLevel = level,
+            ),
+        ),
+    )
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun `online, the real drive to the nearest canyons of a stay replaces the estimate`() = runTest {
         every { canyonRepository.observeSearchCatalog() } returns flowOf(stayCatalog)
         coEvery { canyonRepository.getCanyonPreview(any()) } answers {
@@ -403,6 +522,8 @@ class SearchViewModelTest {
         mainDispatcherRule.dispatcher,
         recentCanyonsRepository,
         choice,
+        predictions,
+        clock,
     )
 
     /** A stay at a campsite from the 14th to the 16th of July. */

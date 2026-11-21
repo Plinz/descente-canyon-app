@@ -298,9 +298,6 @@ Suche einen Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="prediction_info_data_p2">Dieser Zustand wird mit den physischen Merkmalen des Einzugsgebiets, den in den letzten Tagen gemeldeten Abflüssen des Canyons und benachbarter Canyons (unter 30 km) sowie dem von nahen Regenmessern von Météo-France und MeteoSwiss gemessenen Niederschlag kombiniert. Für morgen und übermorgen wird ein zweites Modell verwendet, das mit den am Vortag verfügbaren Informationen trainiert wurde.</string>
     <string name="prediction_info_training_title">Trainingsdaten</string>
     <string name="prediction_info_stat_total_observations">Insgesamt %1$s frühere Beobachtungen ausgewertet</string>
-    <string name="prediction_info_stat_train_rows">%1$s Beobachtungen für das Training</string>
-    <string name="prediction_info_stat_calibration_rows">%1$s Beobachtungen für die finale Kalibrierung</string>
-    <string name="prediction_info_stat_test_rows">%1$s Beobachtungen für den Testsatz</string>
     <string name="prediction_info_stat_feature_count">%1$s vom Modell berücksichtigte Variablen</string>
     <string name="prediction_info_stat_canyon_count">%1$s Canyons in den mitgelieferten Daten vertreten</string>
     <string name="prediction_info_stat_massif_count">%1$s Gebirgsgruppen in den mitgelieferten Daten vertreten</string>

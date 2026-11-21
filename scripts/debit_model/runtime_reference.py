@@ -22,6 +22,17 @@ def aggregate_from_lookup(values: dict[str, float], prefix: str) -> F.MonthlyAgg
     return F.MonthlyAggregate.from_lookup({k[len(prefix) + 1:]: v for k, v in values.items() if k.startswith(prefix + ".")})
 
 
+def with_grid_cells(history: list[tuple[int, int]], recent_cells: list[tuple[int, int, int]], canyon_id: int) -> list[tuple[int, int]]:
+    """The canyon's reports completed by its own cells of the site's day grid on the days the list
+    has no report (the list saved by the app can be older than the grid)."""
+    reported = {d for d, _ in history}
+    added: dict[int, int] = {}
+    for cell_canyon, cell_day, cell_rank in recent_cells:
+        if cell_canyon == canyon_id and cell_day not in reported:
+            added[cell_day] = min(cell_rank, added.get(cell_day, cell_rank))
+    return list(history) + sorted(added.items())
+
+
 def compute_features(
     target: date,
     weather: dict[date, tuple[float | None, float | None]],
@@ -76,7 +87,9 @@ def compute_features(
         return None
 
     target_day = F.to_epoch_day(target)
-    past = [(d, r) for d, r in history if d < target_day]
+    history = with_grid_cells(history, recent_cells or [], canyon_id)
+    # The canyon's reports are known up to today - 1 = J - horizon - 1 (ages counted from J).
+    past = [(d, r) for d, r in history if d < target_day - horizon]
     last_day = max((d for d, _ in past), default=None)
     since = np.array([float(target_day - last_day) if last_day is not None else math.nan])
     log_mean = np.array([[static.get(f"hydroLog{n}Mean", math.nan) for n in F.RESERVOIR_NAMES]])

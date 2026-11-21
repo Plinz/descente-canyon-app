@@ -100,7 +100,7 @@ import fr.descentecanyon.app.ui.common.startActivitySafely
 import fr.descentecanyon.app.ui.components.EmergencyIconButton
 import fr.descentecanyon.app.ui.components.debitLevelLabel
 import fr.descentecanyon.app.ui.components.debitRangeLabel
-import fr.descentecanyon.app.ui.components.relativeDayLabel
+import fr.descentecanyon.app.ui.components.relativeDayPhrase
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
 import fr.descentecanyon.app.ui.design.DcDropdownMenu
@@ -698,7 +698,7 @@ private fun Signals(state: OutingPlanUiState, timeFormatter: DateTimeFormatter) 
                     stringResource(
                         R.string.outing_conditions_last_report,
                         debitLevelLabel(report.niveau),
-                        relativeDayLabel(report.date, state.today),
+                        relativeDayPhrase(report.date, state.today),
                     ),
                 )
             }

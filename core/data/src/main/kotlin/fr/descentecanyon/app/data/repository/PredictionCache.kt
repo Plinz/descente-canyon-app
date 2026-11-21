@@ -4,7 +4,9 @@ import fr.descentecanyon.app.data.local.user.dao.KeyValueDao
 import fr.descentecanyon.app.data.local.user.entity.KeyValueEntity
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.DailyDebitPrediction
+import fr.descentecanyon.app.domain.model.DebitPredictionBasis
 import fr.descentecanyon.app.domain.model.DebitPredictionPolicy
+import fr.descentecanyon.app.domain.model.DebitPredictionReliability
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.PredictedDebitLevel
 import fr.descentecanyon.app.domain.model.RuntimeLookupSource
@@ -62,6 +64,8 @@ class PredictionCache @Inject constructor(private val keyValueDao: KeyValueDao, 
         val policy: String,
         val ordinalCutpoints: List<Double> = emptyList(),
         val days: List<CachedDailyPrediction> = emptyList(),
+        val basis: CachedBasis? = null,
+        val reliability: CachedReliability? = null,
     ) {
         fun toDomain(clock: Clock): CanyonDebitPredictions? {
             val zoneId = runCatching { ZoneId.of(timezone) }.getOrDefault(ZoneId.of("UTC"))
@@ -79,6 +83,8 @@ class PredictionCache @Inject constructor(private val keyValueDao: KeyValueDao, 
                 predictions = predictions,
                 computedAt = Instant.ofEpochMilli(computedAtEpochMs),
                 isFromCache = true,
+                basis = basis?.toDomain(),
+                reliability = reliability?.let { DebitPredictionReliability(it.reportCount, it.shownRight, it.firstYear, it.lastYear) },
             )
         }
 
@@ -95,9 +101,59 @@ class PredictionCache @Inject constructor(private val keyValueDao: KeyValueDao, 
                 policy = predictions.policy.name,
                 ordinalCutpoints = predictions.ordinalCutpoints,
                 days = predictions.predictions.map(CachedDailyPrediction::from),
+                basis = predictions.basis?.let(CachedBasis::from),
+                reliability = predictions.reliability?.let { CachedReliability(it.reportCount, it.shownRight, it.firstYear, it.lastYear) },
             )
         }
     }
+
+    @Serializable
+    internal data class CachedBasis(
+        val lastReportDate: String? = null,
+        val lastReportLevel: String? = null,
+        val reportsLast30Days: Int = 0,
+        val neighborReports: Int = 0,
+        val neighborAnomaly: Double? = null,
+        val rainLast3DaysMm: Double? = null,
+        val rainOnDayMm: Double? = null,
+        val rainGaugeCount: Int = 0,
+        val yesterdayGaugeRainMm: Double? = null,
+        val snowWaterMm: Double? = null,
+        val snowMelt7DaysMm: Double? = null,
+    ) {
+        fun toDomain() = DebitPredictionBasis(
+            lastReportDate = lastReportDate?.let { runCatching { LocalDate.parse(it) }.getOrNull() },
+            lastReportLevel = lastReportLevel?.let { name -> NiveauDebit.entries.firstOrNull { it.name == name } },
+            reportsLast30Days = reportsLast30Days,
+            neighborReports = neighborReports,
+            neighborAnomaly = neighborAnomaly,
+            rainLast3DaysMm = rainLast3DaysMm,
+            rainOnDayMm = rainOnDayMm,
+            rainGaugeCount = rainGaugeCount,
+            yesterdayGaugeRainMm = yesterdayGaugeRainMm,
+            snowWaterMm = snowWaterMm,
+            snowMelt7DaysMm = snowMelt7DaysMm,
+        )
+
+        companion object {
+            fun from(basis: DebitPredictionBasis) = CachedBasis(
+                lastReportDate = basis.lastReportDate?.toString(),
+                lastReportLevel = basis.lastReportLevel?.name,
+                reportsLast30Days = basis.reportsLast30Days,
+                neighborReports = basis.neighborReports,
+                neighborAnomaly = basis.neighborAnomaly,
+                rainLast3DaysMm = basis.rainLast3DaysMm,
+                rainOnDayMm = basis.rainOnDayMm,
+                rainGaugeCount = basis.rainGaugeCount,
+                yesterdayGaugeRainMm = basis.yesterdayGaugeRainMm,
+                snowWaterMm = basis.snowWaterMm,
+                snowMelt7DaysMm = basis.snowMelt7DaysMm,
+            )
+        }
+    }
+
+    @Serializable
+    internal data class CachedReliability(val reportCount: Int, val shownRight: Int, val firstYear: Int, val lastYear: Int)
 
     @Serializable
     internal data class CachedDailyPrediction(

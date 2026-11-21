@@ -16,13 +16,16 @@ import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.data.repository.OutingFlowAlert
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.PredictedDebitLevel
 import fr.descentecanyon.app.domain.model.RejectedDebitSubmission
 import fr.descentecanyon.app.domain.model.SentDebitSubmission
 import fr.descentecanyon.app.domain.model.TrackedActivityEvent
 import fr.descentecanyon.app.ui.EmergencyActivity
 import fr.descentecanyon.app.ui.MainActivity
+import fr.descentecanyon.app.ui.components.debitRangeWordRes
 import fr.descentecanyon.app.ui.navigation.AppLaunchTarget
 import fr.descentecanyon.app.ui.navigation.LaunchSection
 import fr.descentecanyon.app.ui.navigation.putLaunchTarget
@@ -33,6 +36,7 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 import javax.inject.Inject
 import javax.inject.Singleton
+import kotlin.math.roundToInt
 
 @Singleton
 class AppNotificationPublisher @Inject constructor(@param:ApplicationContext private val context: Context) {
@@ -162,12 +166,58 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         return true
     }
 
+    /**
+     * The estimate of a planned outing's day became a high-flow risk: told the evening before or the
+     * morning of it, with what is shown on the canyon page. The notification opens the plan.
+     */
+    fun publishOutingFlowAlert(alert: OutingFlowAlert): Boolean {
+        if (!canPostNotifications(OUTINGS_CHANNEL_ID)) return false
+        val prediction = alert.prediction
+        val level = prediction.ordinalLevel ?: return false
+        val shown = prediction.likelyRange()?.let { range ->
+            context.getString(
+                R.string.prediction_range,
+                context.getString(debitRangeWordRes(range.low)),
+                context.getString(debitRangeWordRes(range.high)),
+            )
+        } ?: context.getString(debitRangeWordRes(level))
+        val risk = ((prediction.probabilities[PredictedDebitLevel.HIGH] ?: 0.0) * 100).roundToInt()
+        val title = context.getString(
+            when (alert.horizonDays) {
+                0 -> R.string.notification_outing_high_flow_title_today
+                1 -> R.string.notification_outing_high_flow_title_tomorrow
+                else -> R.string.notification_outing_high_flow_title_later
+            },
+        )
+        val body = context.getString(R.string.notification_outing_high_flow_body, alert.canyonName, shown, risk)
+        val intent = Intent(context, MainActivity::class.java)
+            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            .putLaunchTarget(AppLaunchTarget.OutingPlan(alert.outing.id, alert.outing.canyonId))
+        val planIntent = PendingIntent.getActivity(
+            context,
+            OUTING_FLOW_REQUEST_CODE_BASE + alert.outing.id.toInt() % OUTING_ID_RANGE,
+            intent,
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE,
+        )
+        val notification = NotificationCompat.Builder(context, OUTINGS_CHANNEL_ID)
+            .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+            .setContentTitle(title)
+            .setContentText(body)
+            .setStyle(NotificationCompat.BigTextStyle().bigText(body))
+            .setAutoCancel(true)
+            .setContentIntent(planIntent)
+            .build()
+        notifySafely(outingNotificationId(OUTING_FLOW_NOTIFICATION_BASE, alert.outing.id), notification)
+        return true
+    }
+
     /** The outing was ended or cancelled: nothing about it stays in the notification shade. */
     fun cancelOutingNotifications(outingId: Long) {
         NotificationManagerCompat.from(context).run {
             cancel(outingNotificationId(OUTING_ONGOING_NOTIFICATION_BASE, outingId))
             cancel(outingNotificationId(OUTING_END_NOTIFICATION_BASE, outingId))
             cancel(outingNotificationId(OUTING_ALERT_NOTIFICATION_BASE, outingId))
+            cancel(outingNotificationId(OUTING_FLOW_NOTIFICATION_BASE, outingId))
         }
     }
 
@@ -175,7 +225,12 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
     fun cancelOutingNotificationsExcept(outingIds: Set<Long>) {
         val manager = context.getSystemService(NotificationManager::class.java) ?: return
         val kept = outingIds.flatMap { id ->
-            listOf(OUTING_ONGOING_NOTIFICATION_BASE, OUTING_END_NOTIFICATION_BASE, OUTING_ALERT_NOTIFICATION_BASE).map {
+            listOf(
+                OUTING_ONGOING_NOTIFICATION_BASE,
+                OUTING_END_NOTIFICATION_BASE,
+                OUTING_ALERT_NOTIFICATION_BASE,
+                OUTING_FLOW_NOTIFICATION_BASE,
+            ).map {
                 outingNotificationId(it, id)
             }
         }.toSet()
@@ -483,13 +538,15 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         const val OUTING_ONGOING_NOTIFICATION_BASE = 3_000_000
         const val OUTING_END_NOTIFICATION_BASE = 3_100_000
         const val OUTING_ALERT_NOTIFICATION_BASE = 3_200_000
+        const val OUTING_FLOW_NOTIFICATION_BASE = 3_300_000
         const val OUTING_ID_RANGE = 100_000
         const val OUTING_PLAN_REQUEST_CODE_BASE = 50_000_000
+        const val OUTING_FLOW_REQUEST_CODE_BASE = 60_000_000
 
         fun outingNotificationId(base: Int, outingId: Long): Int = base + (outingId % OUTING_ID_RANGE).toInt()
 
         fun isOutingNotificationId(id: Int): Boolean =
-            id in OUTING_ONGOING_NOTIFICATION_BASE until OUTING_ALERT_NOTIFICATION_BASE + OUTING_ID_RANGE
+            id in OUTING_ONGOING_NOTIFICATION_BASE until OUTING_FLOW_NOTIFICATION_BASE + OUTING_ID_RANGE
         const val DEBIT_FORM_REQUEST_CODE_BASE = 20_000_000
         const val EMERGENCY_REQUEST_CODE_BASE = 30_000_000
         const val OUTING_BACK_REQUEST_CODE_BASE = 40_000_000

@@ -186,6 +186,16 @@ data class DailyDebitPrediction(
     }
 
     /**
+     * A flow fit for most groups is likely: what is shown is "correct" (alone, or with its
+     * neighbour when the model hesitates) and the high-flow risk is not flagged.
+     */
+    fun isLikelyNormal(): Boolean {
+        if (level == PredictedDebitLevel.HIGH) return false
+        val range = likelyRange()
+        return if (range != null) NiveauDebit.CORRECT in listOf(range.low, range.high) else ordinalLevel == NiveauDebit.CORRECT
+    }
+
+    /**
      * How often what is shown turns out right, from [shownProbability]. The model probabilities are
      * calibrated: in walk-forward evaluation (2023 → Oct. 2026) the shown level or range was right
      * 92 % of the time for HIGH, 77 % for MEDIUM and 64 % for LOW (docs/debit-prediction-model.md).
@@ -237,4 +247,45 @@ data class CanyonDebitPredictions(
     val computedAt: Instant = fetchedAt,
     /** True when the network was unavailable and the last estimate computed is shown. */
     val isFromCache: Boolean = false,
-)
+    /** What the estimate of the first day was computed from. */
+    val basis: DebitPredictionBasis? = null,
+    /** How often the estimate was right on this canyon over the test seasons, when it has enough reports. */
+    val reliability: DebitPredictionReliability? = null,
+) {
+    /** The estimate of [date], if it is one of the days computed. */
+    fun forDate(date: LocalDate): DailyDebitPrediction? = predictions.firstOrNull { it.date == date }
+}
+
+/**
+ * The main inputs of an estimate, as the model saw them (reports and gauges known up to yesterday),
+ * shown so that the user can judge it: an estimate without recent reports leans on the weather alone.
+ */
+data class DebitPredictionBasis(
+    /** Last report of the canyon taken into account, null when it has none. */
+    val lastReportDate: LocalDate? = null,
+    val lastReportLevel: NiveauDebit? = null,
+    /** Reports of the canyon in the last 30 days. */
+    val reportsLast30Days: Int = 0,
+    /** Reports of the canyons within 30 km in the last 7 days. */
+    val neighborReports: Int = 0,
+    /** How far above (positive) or below their usual level these reports are, in levels. */
+    val neighborAnomaly: Double? = null,
+    /** Rain of the 3 days before and forecast for the day (mm, weather model of the watershed). */
+    val rainLast3DaysMm: Double? = null,
+    val rainOnDayMm: Double? = null,
+    /** Rain gauges within 25 km read (daily network). */
+    val rainGaugeCount: Int = 0,
+    /** Yesterday's rain at the nearby automatic gauges (mm), when published. */
+    val yesterdayGaugeRainMm: Double? = null,
+    /** Simulated snowpack of the watershed (mm of water) and what melted in the last 7 days (mm). */
+    val snowWaterMm: Double? = null,
+    val snowMelt7DaysMm: Double? = null,
+) {
+    /** No report at all on the canyon: the estimate leans on its massif and neighbours. */
+    val usesAreaContext: Boolean get() = lastReportDate == null
+}
+
+/** Walk-forward check of the estimate on one canyon: of [reportCount] reports, what was shown was right [shownRight] times. */
+data class DebitPredictionReliability(val reportCount: Int, val shownRight: Int, val firstYear: Int, val lastYear: Int) {
+    val shownRightFraction: Double get() = if (reportCount == 0) 0.0 else shownRight.toDouble() / reportCount
+}

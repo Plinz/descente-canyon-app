@@ -15,6 +15,7 @@ import java.time.ZoneOffset
 import java.util.Collections
 import java.util.concurrent.ConcurrentHashMap
 import java.util.zip.GZIPOutputStream
+import kotlin.math.sqrt
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -75,7 +76,7 @@ class RainGaugeSourceTest {
     }
 
     @Test
-    fun `sums yesterday's hourly rain of every station with the daily convention`() {
+    fun `sums yesterday's hourly rain of every station with the daily convention and estimates the missing hours`() {
         val csv = hourlyCsv {
             // station A: hours ending 07 UTC yesterday .. 03 UTC today (21 hours of 0.5 mm) + one hour before the window
             add("38001001;A;45;5;800;2026101306;9.0;1")
@@ -94,13 +95,10 @@ class RainGaugeSourceTest {
             LocalDate.of(2026, 10, 14),
         )
 
-        assertEquals(
-            mapOf(
-                "38001001" to mapOf(LocalDate.of(2026, 10, 13) to 10.5),
-                "38999999" to mapOf(LocalDate.of(2026, 10, 13) to 19.0),
-            ),
-            table,
-        )
+        assertEquals(setOf("38001001", "38999999"), table.keys)
+        // 21 hours read: 10.5 mm + 3 missing hours x 0.125 x sqrt(10.5); 18 hours: 19 mm + 6 x 0.125 x sqrt(19).
+        assertEquals(10.5 + 3 * 0.125 * sqrt(10.5), table.getValue("38001001").getValue(LocalDate.of(2026, 10, 13)), 1e-9)
+        assertEquals(19.0 + 6 * 0.125 * sqrt(19.0), table.getValue("38999999").getValue(LocalDate.of(2026, 10, 13)), 1e-9)
     }
 
     @Test

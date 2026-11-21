@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.CloudDownload
 import androidx.compose.material.icons.filled.EventAvailable
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Insights
 import androidx.compose.material.icons.filled.Place
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
@@ -50,6 +51,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonSummary
+import fr.descentecanyon.app.domain.model.DailyDebitPrediction
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
@@ -57,6 +59,7 @@ import fr.descentecanyon.app.ui.design.DcFlowBadge
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
 import fr.descentecanyon.app.ui.design.LocalDcSpacing
+import fr.descentecanyon.app.ui.design.dcFlowColor
 import fr.descentecanyon.app.ui.test.TestTags
 import fr.descentecanyon.app.ui.theme.CotationDifficile
 import fr.descentecanyon.app.ui.theme.CotationFacile
@@ -88,6 +91,8 @@ fun CanyonSummaryCard(
     info: CanyonCardInfo? = null,
     /** The other day of a stay the canyon is planned for: the first of the badges. */
     plannedOn: LocalDate? = null,
+    /** The flow estimate of the day the list is about (today, or the day of the stay). */
+    estimate: DailyDebitPrediction? = null,
 ) {
     val colors = LocalDcColors.current
     val spacing = LocalDcSpacing.current
@@ -155,7 +160,7 @@ fun CanyonSummaryCard(
                 )
                 info?.let { InfoLabel(it) }
             }
-            val hasBadges = plannedOn != null || canyon.dernierDebit != null || isDescended
+            val hasBadges = plannedOn != null || estimate?.ordinalLevel != null || canyon.dernierDebit != null || isDescended
             if (canyon.interet != null || hasBadges || onFavoriteClick != null) {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = spacing.sm),
@@ -164,7 +169,7 @@ fun CanyonSummaryCard(
                     canyon.interet?.let { InterestStars(interest = it, showScale = false) }
                     Spacer(modifier = Modifier.weight(1f).widthIn(min = spacing.sm))
                     if (hasBadges) {
-                        CardBadges(canyon = canyon, plannedOn = plannedOn, isDescended = isDescended)
+                        CardBadges(canyon = canyon, plannedOn = plannedOn, isDescended = isDescended, estimate = estimate)
                     }
                     onFavoriteClick?.let { FavoriteButton(isFavorite = isFavorite, onClick = it, size = 36.dp) }
                 }
@@ -200,19 +205,20 @@ private fun InfoLabel(info: CanyonCardInfo) {
 
 /**
  * The badges at the end of the interest line, what helps to decide first: planned another day of
- * the stay, the last flow reported, then descended. Too wide, "Fait" keeps only its check, then the
- * flow its level.
+ * the stay, the flow estimate, the last flow reported, then descended. Too wide, "Fait" keeps only
+ * its check, the report its level, then the estimate its most likely level, then its mark alone.
  */
 @Composable
-private fun CardBadges(canyon: CanyonSummary, plannedOn: LocalDate?, isDescended: Boolean) {
+private fun CardBadges(canyon: CanyonSummary, plannedOn: LocalDate?, isDescended: Boolean, estimate: DailyDebitPrediction?) {
     val level = canyon.dernierDebit
     val levelWord = level?.let { capitalized(debitRangeWord(it)) }
     val reportDay = canyon.dernierDebitDate?.let { shortRelativeDayLabel(it) }
 
     @Composable
-    fun Badges(withDate: Boolean, fullDescended: Boolean) {
+    fun Badges(withDate: Boolean, fullDescended: Boolean, estimateText: EstimateText) {
         Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
             plannedOn?.let { PlannedBadge(it) }
+            estimate?.let { EstimateBadge(it, estimateText) }
             if (level != null && levelWord != null) {
                 DcFlowBadge(niveau = level, label = if (withDate && reportDay != null) "$levelWord · $reportDay" else levelWord)
             }
@@ -220,10 +226,47 @@ private fun CardBadges(canyon: CanyonSummary, plannedOn: LocalDate?, isDescended
         }
     }
     FirstThatFits(
-        { Badges(withDate = true, fullDescended = true) },
-        { Badges(withDate = true, fullDescended = false) },
-        { Badges(withDate = false, fullDescended = false) },
+        { Badges(withDate = true, fullDescended = true, estimateText = EstimateText.Shown) },
+        { Badges(withDate = true, fullDescended = false, estimateText = EstimateText.Shown) },
+        { Badges(withDate = false, fullDescended = false, estimateText = EstimateText.Shown) },
+        { Badges(withDate = false, fullDescended = false, estimateText = EstimateText.Level) },
+        { Badges(withDate = false, fullDescended = false, estimateText = EstimateText.None) },
     )
+}
+
+private enum class EstimateText { Shown, Level, None }
+
+/**
+ * The flow estimate of the day: what the canyon page shows (the level, or the range when the model
+ * hesitates) after a chart mark, lighter than a reported flow so that the two are not mixed up.
+ */
+@Composable
+private fun EstimateBadge(estimate: DailyDebitPrediction, text: EstimateText) {
+    val level = estimate.ordinalLevel ?: return
+    val color = dcFlowColor(level)
+    val shown = estimate.likelyRange()?.let { debitRangeLabel(it) } ?: debitLevelShortLabel(level)
+    val description = stringResource(R.string.outing_conditions_estimate, shown)
+    Surface(
+        modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = description },
+        shape = LocalDcShapes.current.pill,
+        color = color.copy(alpha = 0.07f),
+        contentColor = color,
+        border = BorderStroke(1.dp, color.copy(alpha = 0.55f)),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(3.dp),
+        ) {
+            Icon(Icons.Default.Insights, contentDescription = null, modifier = Modifier.size(13.dp))
+            val label = when (text) {
+                EstimateText.Shown -> shown
+                EstimateText.Level -> debitLevelShortLabel(level)
+                EstimateText.None -> null
+            }
+            label?.let { Text(it, style = MaterialTheme.typography.labelSmall, fontWeight = FontWeight.Bold, maxLines = 1) }
+        }
+    }
 }
 
 /** "jeu. 30 oct.": the other day of the stay the canyon is planned for. */

@@ -282,6 +282,29 @@ class CanyonDetailViewModelTest {
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
+    fun `the estimate is computed again once the reports read from the site bring new ones`() = runTest {
+        stubBaseState()
+        val saved = detail().debits
+        val reports = MutableStateFlow(Result.success(saved))
+        every { debitRepository.getDebitsForCanyon(42) } returns reports
+        coEvery { canyonRepository.getCanyonPreview(42) } returns Result.success(detail())
+        coEvery { canyonRepository.getCanyonDetail(42) } returns Result.success(detail())
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+        coVerify(exactly = 1) { debitPredictionRepository.getPredictions(any()) }
+
+        // The site had a report of yesterday the list saved on the phone did not have.
+        val fresh = saved + Debit(canyonId = 42, date = java.time.LocalDate.of(2026, 3, 27), niveau = NiveauDebit.GROS)
+        reports.value = Result.success(fresh)
+        advanceUntilIdle()
+
+        coVerify(exactly = 1) { debitPredictionRepository.getPredictions(match { it.debits == fresh }) }
+        assertEquals(fresh, viewModel.uiState.value.canyonDetail?.debits)
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun `prediction timeout shows friendly message instead of raw timeout`() = runTest {
         stubBaseState()
 

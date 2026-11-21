@@ -353,9 +353,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="prediction_info_data_p2">It combines this state with the physical characteristics of the watershed, the flows reported in recent days on the canyon and on nearby canyons (within 30 km), and the rain measured by nearby Météo-France and MeteoSwiss rain gauges. Tomorrow and the day after use a second model, trained with the information available the day before.</string>
     <string name="prediction_info_training_title">Training data</string>
     <string name="prediction_info_stat_total_observations">%1$s past observations used in total</string>
-    <string name="prediction_info_stat_train_rows">%1$s observations for training</string>
-    <string name="prediction_info_stat_calibration_rows">%1$s observations for final calibration</string>
-    <string name="prediction_info_stat_test_rows">%1$s observations for the test set</string>
     <string name="prediction_info_stat_feature_count">%1$s variables considered by the model</string>
     <string name="prediction_info_stat_canyon_count">%1$s canyons represented in the embedded data</string>
     <string name="prediction_info_stat_massif_count">%1$s massifs represented in the embedded data</string>
@@ -1450,4 +1447,42 @@ Search for a canyon and add it to your favorites.</string>
     <string name="startup_preparing_catalog_hint">Only once after installing or updating: the canyon sheets can then be read without a network.</string>
     <string name="outing_conditions_off_season">Off season: few flows reported in %1$s (%2$d of %3$d). Usual season: %4$s – %5$s. Topo, anchors and water may be those of another season.</string>
     <string name="outing_conditions_cold">Cold day (%1$s at most): thick wetsuit, hood, gloves and dry spare clothes.</string>
+    <string name="prediction_info_stat_checked_rows">of which %1$s to check the estimate on seasons it had not seen</string>
+    <string name="prediction_driver_neighbor_reports_title">Flows reported on nearby canyons</string>
+    <string name="prediction_driver_neighbor_reports_description">The levels reported in the last days on canyons within 30 km, compared with their usual level, tell whether the area has more or less water than usual.</string>
+    <string name="prediction_driver_rain_gauges_title">Nearby rain gauges</string>
+    <string name="prediction_driver_rain_gauges_description">The rain measured by Météo-France and MeteoSwiss gauges within 25 km, the day before and over the past weeks, completes the weather model.</string>
+    <string name="prediction_basis_title">What the estimate is based on</string>
+    <string name="prediction_basis_no_report">No flow reported on this canyon: the estimate leans on its massif and nearby canyons.</string>
+    <string name="prediction_basis_neighbors_above">more water than usual</string>
+    <string name="prediction_basis_neighbors_below">less water than usual</string>
+    <string name="prediction_basis_neighbors_usual">as usual</string>
+    <string name="prediction_basis_neighbors_none">Nearby canyons: no flow reported in the last 7 days</string>
+    <string name="prediction_basis_rain">Rain on the watershed: %1$s mm in the last 3 days, %2$s mm forecast today</string>
+    <string name="prediction_basis_rain_past">Rain on the watershed: %1$s mm in the 3 days before</string>
+    <string name="prediction_basis_gauges">Rain gauges: %1$d within 25 km</string>
+    <string name="prediction_basis_gauges_yesterday">Rain gauges: %1$d within 25 km, %2$s mm yesterday</string>
+    <string name="prediction_basis_gauges_yesterday_only">Nearby rain gauges: %1$s mm yesterday</string>
+    <string name="prediction_basis_gauges_none">Nearby rain gauges: no recent measurement</string>
+    <string name="prediction_basis_snow">Simulated snow on the watershed: %1$s mm of water, %2$s mm melted in 7 days</string>
+    <string name="prediction_basis_snow_no_melt">Simulated snow on the watershed: %1$s mm of water</string>
+    <string name="prediction_reliability">On this canyon, from %1$d to %2$d, what was shown turned out right %3$d times out of %4$d.</string>
+    <string name="search_estimate_filter">Likely normal flow</string>
+    <string name="search_estimate_progress">Estimating the flow… %1$d of %2$d</string>
+    <string name="notification_outing_high_flow_title_today">High flow possible today</string>
+    <string name="notification_outing_high_flow_title_tomorrow">High flow possible tomorrow</string>
+    <string name="notification_outing_high_flow_title_later">High flow possible the day after tomorrow</string>
+    <string name="notification_outing_high_flow_body">%1$s: estimated flow %2$s, risk of high flow or more %3$d%%. Check the latest reported flows before leaving.</string>
+    <plurals name="prediction_basis_recent_reports">
+        <item quantity="one">%1$d report in the last 30 days</item>
+        <item quantity="other">%1$d reports in the last 30 days</item>
+    </plurals>
+    <plurals name="prediction_basis_neighbors">
+        <item quantity="one">Nearby canyons: %1$d report in the last 7 days, %2$s</item>
+        <item quantity="other">Nearby canyons: %1$d reports in the last 7 days, %2$s</item>
+    </plurals>
+    <plurals name="search_estimate_results">
+        <item quantity="one">%1$d of the %2$d nearest</item>
+        <item quantity="other">%1$d of the %2$d nearest</item>
+    </plurals>
 </resources>

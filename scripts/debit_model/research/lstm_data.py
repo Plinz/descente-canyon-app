@@ -151,14 +151,15 @@ def fold(cutoff: int) -> pd.DataFrame:
     return frame
 
 
-def horizon(train: pd.DataFrame, validation: pd.DataFrame, test: pd.DataFrame) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    """J+1/J+2 rows as ``train.py``: real-time features lagged by 1 or 2 days at random on the
-    training and validation rows, by 1 day on the test rows (evaluated at J+1)."""
+def horizon(train: pd.DataFrame, validation: pd.DataFrame, test: pd.DataFrame, cutoff: int) -> tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame]:
+    """J+1/J+2 rows as ``train.py``: real-time and history features lagged by 1 or 2 days at random
+    on the training and validation rows, by 1 day on the test rows (evaluated at J+1)."""
     lagged = T.load_lagged(DATASET)
+    _, histories, observations = T.load(DATASET)
     return (
-        T.with_lag(train, lagged, T.random_lags(train, 41)),
-        T.with_lag(validation, lagged, T.random_lags(validation, 43)),
-        T.with_lag(test, lagged, np.ones(len(test), dtype=np.int64)),
+        T.with_lag(train, lagged, T.random_lags(train, 41), histories, observations, cutoff),
+        T.with_lag(validation, lagged, T.random_lags(validation, 43), histories, observations, cutoff),
+        T.with_lag(test, lagged, np.ones(len(test), dtype=np.int64), histories, observations, cutoff),
     )
 
 

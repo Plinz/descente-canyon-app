@@ -2,7 +2,9 @@ package fr.descentecanyon.app.data.repository
 
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.DailyDebitPrediction
+import fr.descentecanyon.app.domain.model.DebitPredictionBasis
 import fr.descentecanyon.app.domain.model.DebitPredictionPolicy
+import fr.descentecanyon.app.domain.model.DebitPredictionReliability
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.PredictedDebitLevel
 import fr.descentecanyon.app.domain.model.RuntimeLookupSource
@@ -61,6 +63,31 @@ class PredictionCacheTest {
 
         assertEquals(predictions().predictions, cached.predictions)
         assertFalse(predictions().isFromCache)
+    }
+
+    @Test
+    fun `what the estimate stands on and its record on the canyon are kept for offline`() = runTest {
+        val basis = DebitPredictionBasis(
+            lastReportDate = LocalDate.of(2026, 7, 11),
+            lastReportLevel = NiveauDebit.CORRECT,
+            reportsLast30Days = 4,
+            neighborReports = 6,
+            neighborAnomaly = 0.4,
+            rainLast3DaysMm = 18.0,
+            rainOnDayMm = 2.5,
+            rainGaugeCount = 3,
+            yesterdayGaugeRainMm = 12.0,
+            snowWaterMm = 120.0,
+            snowMelt7DaysMm = 35.0,
+        )
+        val reliability = DebitPredictionReliability(reportCount = 50, shownRight = 41, firstYear = 2023, lastYear = 2026)
+        val cache = PredictionCache(keyValueDao, clockAt(computedAt))
+        cache.save(42, predictions().copy(basis = basis, reliability = reliability))
+
+        val cached = cache.read(42)!!
+
+        assertEquals(basis, cached.basis)
+        assertEquals(reliability, cached.reliability)
     }
 
     private fun predictions() = CanyonDebitPredictions(

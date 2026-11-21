@@ -87,7 +87,7 @@ import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.debitLevelColor
 import fr.descentecanyon.app.ui.components.debitLevelLabel
 import fr.descentecanyon.app.ui.components.longDayLabel
-import fr.descentecanyon.app.ui.components.relativeDayLabel
+import fr.descentecanyon.app.ui.components.relativeDayPhrase
 import fr.descentecanyon.app.ui.components.shortDayLabel
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcDropdownMenu
@@ -611,7 +611,7 @@ private fun StayOutingRow(
                             stringResource(
                                 R.string.outing_conditions_last_report,
                                 debitLevelLabel(report.niveau),
-                                relativeDayLabel(report.date, today),
+                                relativeDayPhrase(report.date, today),
                             ),
                             style = MaterialTheme.typography.bodySmall,
                             color = colors.textSecondary,

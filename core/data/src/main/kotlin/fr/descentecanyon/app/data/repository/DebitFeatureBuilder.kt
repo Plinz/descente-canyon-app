@@ -35,14 +35,18 @@ class DebitFeatureBuilder @Inject constructor() {
         staticFeatureSet: CanyonStaticFeatureSet?,
         targetDate: LocalDate,
         horizonDays: Int = 0,
-    ): FloatArray? {
-        val history = detail.debits
-            .mapNotNull { debit ->
-                val rank = debit.niveau.ordinalRank() ?: return@mapNotNull null
-                if (DebitReportQuality.isMessageOnlyHighReport(rank, debit.isDescended, debit.commentaire)) return@mapNotNull null
-                debit.date.toEpochDay() to rank
-            }
-            .ifEmpty { decodeLookupHistory(support.runtimeLookup.featureValues) }
+    ): FloatArray? = buildFeatures(detail, support, featureSpec, staticFeatureSet, targetDate, horizonDays)?.vector
+
+    /** The model input of [targetDate] with the values it was made of; null when the weather window is too incomplete. */
+    fun buildFeatures(
+        detail: CanyonDetail,
+        support: DebitPredictionSupport,
+        featureSpec: DebitFeatureSpec,
+        staticFeatureSet: CanyonStaticFeatureSet?,
+        targetDate: LocalDate,
+        horizonDays: Int = 0,
+    ): DebitFeatures? {
+        val history = canyonHistory(detail, support)
         val input = DebitFeatureInput(
             targetDate = targetDate,
             weather = support.dailyWeather,
@@ -66,10 +70,31 @@ class DebitFeatureBuilder @Inject constructor() {
             horizonDays = horizonDays,
         )
         val values = computeFeatureValues(input) ?: return null
-        return featureSpec.features.map { feature ->
+        val vector = featureSpec.features.map { feature ->
             val value = values[feature.name]
             (if (value == null || value.isNaN() || value.isInfinite()) feature.defaultValue else value).toFloat()
         }.toFloatArray()
+        return DebitFeatures(vector = vector, values = values, history = history)
+    }
+
+    /** A feature vector, the named values it was built from and the canyon reports (epochDay, rank) it used. */
+    class DebitFeatures(val vector: FloatArray, val values: Map<String, Double?>, val history: List<Pair<Long, Int>>)
+
+    /**
+     * The canyon's reports: the debit list saved on the device (else the history shipped in the
+     * lookups), completed by the canyon's own cells of the site's day grid for the days the list does
+     * not have yet. The list on the device can be weeks old when the canyon was not opened since,
+     * while the grid (16 days, read for the neighbours anyway) always has the last reports.
+     */
+    internal fun canyonHistory(detail: CanyonDetail, support: DebitPredictionSupport): List<Pair<Long, Int>> {
+        val reports = detail.debits
+            .mapNotNull { debit ->
+                val rank = debit.niveau.ordinalRank() ?: return@mapNotNull null
+                if (DebitReportQuality.isMessageOnlyHighReport(rank, debit.isDescended, debit.commentaire)) return@mapNotNull null
+                debit.date.toEpochDay() to rank
+            }
+            .ifEmpty { decodeLookupHistory(support.runtimeLookup.featureValues) }
+        return withGridCells(reports, support.recentCells, detail.canyon.id)
     }
 
     data class DebitFeatureInput(
@@ -83,7 +108,10 @@ class DebitFeatureBuilder @Inject constructor() {
         val denivele: Double?,
         val longueur: Double?,
         val cascadeMax: Double?,
-        /** (epochDay, rank) of the canyon's reports, any order, may include the target day or later. */
+        /**
+         * (epochDay, rank) of the canyon's reports, any order, may include the target day or later;
+         * only those before J - [horizonDays] are used.
+         */
         val history: List<Pair<Long, Int>>,
         val massif: MonthlyAggregate,
         val region: MonthlyAggregate,
@@ -105,7 +133,8 @@ class DebitFeatureBuilder @Inject constructor() {
         val static = staticFeatures(input)
         val weather = weatherFeatures(input, static) ?: return null
         val targetDay = input.targetDate.toEpochDay()
-        val past = input.history.filter { (day, _) -> day < targetDay }
+        // The canyon's reports are known up to today - 1 = J - horizon - 1 (ages counted from J).
+        val past = input.history.filter { (day, _) -> day < targetDay - input.horizonDays }
         val priors = areaPriors(input.targetDate.monthValue, input.massif, input.region, input.global)
         return buildMap {
             putAll(timeFeatures(input.targetDate))
@@ -287,7 +316,7 @@ class DebitFeatureBuilder @Inject constructor() {
         val soilCapacity = static["hydroSoilCapacityMm"] ?: DEFAULT_SOIL_CAPACITY_MM
 
         val targetDay = input.targetDate.toEpochDay()
-        val lastDay = input.history.filter { it.first < targetDay }.maxOfOrNull { it.first }
+        val lastDay = input.history.filter { it.first < targetDay - input.horizonDays }.maxOfOrNull { it.first }
         val since = lastDay?.let { targetDay - it }?.takeIf { it in 1..DELTA_MAX_DAYS }
         val deltaOk = since != null
         val captureIndex = since?.let { (window - 1) - it.toInt() } ?: -1
@@ -512,6 +541,15 @@ class DebitFeatureBuilder @Inject constructor() {
                 if (filled[index] == null) filled[index] = filled[index + 1]
             }
             return DoubleArray(filled.size) { filled[it] ?: 10.0 }
+        }
+
+        /** [reports] completed by the grid cells of [canyonId] on the days it has no report (port of runtime_reference.with_grid_cells). */
+        internal fun withGridCells(reports: List<Pair<Long, Int>>, cells: List<RecentDebitCell>, canyonId: Int): List<Pair<Long, Int>> {
+            val reportedDays = reports.mapTo(HashSet()) { it.first }
+            val added = cells.filter { it.canyonId == canyonId && it.date.toEpochDay() !in reportedDays }
+                .groupBy { it.date.toEpochDay() }
+                .map { (day, sameDay) -> day to sameDay.minOf { it.rank } }
+            return if (added.isEmpty()) reports else reports + added
         }
 
         /**

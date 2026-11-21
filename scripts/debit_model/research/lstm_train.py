@@ -353,7 +353,7 @@ def main() -> None:
     frame = frame[frame["canyonId"].isin(data.target_of.keys())]
     train, validation, test = D.split(frame, args.fold)
     if args.horizon:
-        train, validation, test = D.horizon(train, validation, test)
+        train, validation, test = D.horizon(train, validation, test, D.day(D.FOLDS[args.fold][0]))
         names = names + F.INFO_FEATURES
     if args.max_train:
         train = train.sample(n=min(args.max_train, len(train)), random_state=args.seed)

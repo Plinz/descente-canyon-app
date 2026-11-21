@@ -353,9 +353,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="prediction_info_data_p2">Combina este estado con las características físicas de la cuenca, los caudales señalados en los últimos días en el barranco y en los barrancos cercanos (a menos de 30 km) y la lluvia medida por los pluviómetros cercanos de Météo-France y MeteoSwiss. Mañana y pasado mañana usan un segundo modelo, entrenado con la información disponible el día anterior.</string>
     <string name="prediction_info_training_title">Datos de entrenamiento</string>
     <string name="prediction_info_stat_total_observations">%1$s observaciones pasadas utilizadas en total</string>
-    <string name="prediction_info_stat_train_rows">%1$s observaciones para el entrenamiento</string>
-    <string name="prediction_info_stat_calibration_rows">%1$s observaciones para el ajuste final</string>
-    <string name="prediction_info_stat_test_rows">%1$s observaciones para el conjunto de prueba</string>
     <string name="prediction_info_stat_feature_count">%1$s variables tenidas en cuenta por el modelo</string>
     <string name="prediction_info_stat_canyon_count">%1$s barrancos representados en los datos incluidos</string>
     <string name="prediction_info_stat_massif_count">%1$s macizos representados en los datos incluidos</string>
@@ -1486,4 +1483,45 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="startup_preparing_catalog_hint">Solo una vez tras la instalación o una actualización: después las fichas de los barrancos se consultan sin conexión.</string>
     <string name="outing_conditions_off_season">Fuera de temporada: pocos caudales señalados en %1$s (%2$d de %3$d). Temporada habitual: %4$s – %5$s. Croquis, anclajes y agua pueden ser los de otra estación.</string>
     <string name="outing_conditions_cold">Día frío (%1$s como máximo): neopreno grueso, capucha, guantes y ropa seca de recambio.</string>
+    <string name="prediction_info_stat_checked_rows">de ellas, %1$s para comprobar la estimación en temporadas que no conocía</string>
+    <string name="prediction_driver_neighbor_reports_title">Caudales señalados en los barrancos vecinos</string>
+    <string name="prediction_driver_neighbor_reports_description">Los niveles señalados en los últimos días en los barrancos a menos de 30 km, comparados con su nivel habitual, indican si la zona lleva más o menos agua de lo habitual.</string>
+    <string name="prediction_driver_rain_gauges_title">Pluviómetros cercanos</string>
+    <string name="prediction_driver_rain_gauges_description">La lluvia medida por los pluviómetros de Météo-France y MeteoSwiss a menos de 25 km, la víspera y las últimas semanas, completa el modelo meteorológico.</string>
+    <string name="prediction_basis_title">En qué se basa la estimación</string>
+    <string name="prediction_basis_no_report">Ningún caudal señalado en este barranco: la estimación se apoya en su macizo y en los barrancos vecinos.</string>
+    <string name="prediction_basis_neighbors_above">más agua de lo habitual</string>
+    <string name="prediction_basis_neighbors_below">menos agua de lo habitual</string>
+    <string name="prediction_basis_neighbors_usual">como de costumbre</string>
+    <string name="prediction_basis_neighbors_none">Barrancos vecinos: ningún caudal señalado en los últimos 7 días</string>
+    <string name="prediction_basis_rain">Lluvia en la cuenca: %1$s mm en los últimos 3 días, %2$s mm previstos hoy</string>
+    <string name="prediction_basis_rain_past">Lluvia en la cuenca: %1$s mm en los 3 días anteriores</string>
+    <string name="prediction_basis_gauges">Pluviómetros: %1$d a menos de 25 km</string>
+    <string name="prediction_basis_gauges_yesterday">Pluviómetros: %1$d a menos de 25 km, %2$s mm ayer</string>
+    <string name="prediction_basis_gauges_yesterday_only">Pluviómetros cercanos: %1$s mm ayer</string>
+    <string name="prediction_basis_gauges_none">Pluviómetros cercanos: sin medición reciente</string>
+    <string name="prediction_basis_snow">Nieve simulada en la cuenca: %1$s mm de agua, %2$s mm fundidos en 7 días</string>
+    <string name="prediction_basis_snow_no_melt">Nieve simulada en la cuenca: %1$s mm de agua</string>
+    <string name="prediction_reliability">En este barranco, de %1$d a %2$d, lo que se mostraba resultó correcto %3$d veces de %4$d.</string>
+    <string name="search_estimate_filter">Caudal normal probable</string>
+    <string name="search_estimate_progress">Estimando el caudal… %1$d de %2$d</string>
+    <string name="notification_outing_high_flow_title_today">Posible caudal alto hoy</string>
+    <string name="notification_outing_high_flow_title_tomorrow">Posible caudal alto mañana</string>
+    <string name="notification_outing_high_flow_title_later">Posible caudal alto pasado mañana</string>
+    <string name="notification_outing_high_flow_body">%1$s: caudal estimado %2$s, riesgo de caudal alto o superior %3$d %%. Consulta los últimos caudales señalados antes de salir.</string>
+    <plurals name="prediction_basis_recent_reports">
+        <item quantity="one">%1$d caudal señalado en los últimos 30 días</item>
+        <item quantity="many">%1$d caudales señalados en los últimos 30 días</item>
+        <item quantity="other">%1$d caudales señalados en los últimos 30 días</item>
+    </plurals>
+    <plurals name="prediction_basis_neighbors">
+        <item quantity="one">Barrancos vecinos: %1$d caudal señalado en los últimos 7 días, %2$s</item>
+        <item quantity="many">Barrancos vecinos: %1$d caudales señalados en los últimos 7 días, %2$s</item>
+        <item quantity="other">Barrancos vecinos: %1$d caudales señalados en los últimos 7 días, %2$s</item>
+    </plurals>
+    <plurals name="search_estimate_results">
+        <item quantity="one">%1$d de los %2$d más cercanos</item>
+        <item quantity="many">%1$d de los %2$d más cercanos</item>
+        <item quantity="other">%1$d de los %2$d más cercanos</item>
+    </plurals>
 </resources>

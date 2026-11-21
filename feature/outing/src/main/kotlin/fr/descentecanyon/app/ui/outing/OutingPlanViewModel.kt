@@ -651,12 +651,17 @@ class OutingPlanViewModel @Inject constructor(
             val detail = getCanyonPreviewUseCase(canyonId).getOrNull()
             sources.update { it.copy(canyon = detail, zone = detail?.timeZone(), isLoading = false) }
             detail ?: return@launch
-            val weather = if (connectivityObserver.isCurrentlyOnline()) {
+            val online = connectivityObserver.isCurrentlyOnline()
+            val weather = if (online) {
                 getCanyonWeatherUseCase(detail).getOrNull() ?: getCanyonWeatherUseCase.cached(canyonId)
             } else {
                 getCanyonWeatherUseCase.cached(canyonId)
             }
             sources.update { it.copy(weather = weather, predictions = getCanyonDebitPredictionsUseCase.cached(canyonId)) }
+            // The estimate saved shows at once; online, it is computed again with the day's weather and reports.
+            if (online) {
+                getCanyonDebitPredictionsUseCase(detail).onSuccess { predictions -> sources.update { it.copy(predictions = predictions) } }
+            }
         }
     }
 

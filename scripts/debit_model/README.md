@@ -46,7 +46,8 @@ PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/build_static
 .venv/bin/python scripts/debit_model/fetch_meteofrance.py                      # RR-T-Vent, all departments
 .venv/bin/python scripts/debit_model/fetch_meteoswiss.py                       # stations within 25 km
 
-# 4. Dataset (time, static, weather/hydro, neighbour reports, rain gauges + lagged copies; ~3 min)
+# 4. Dataset (time, static, weather/hydro, neighbour reports, rain gauges + copies lagged by 1 and
+#    2 days for the J+1/J+2 model, including what is measured since the canyon's last report; ~4 min)
 PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/build_dataset.py
 
 # 5. Honest walk-forward evaluation (J0 and J+1/J+2 models per test period: CatBoost + 3 network
@@ -56,7 +57,8 @@ PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/train.py wal
 # 6. Final models on all rows + decision thresholds from out-of-fold predictions
 PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/train.py final --walkforward-dir build/debit-model/walkforward-v4 --output-dir build/debit-model/final-v4
 
-# 7. App assets (model.trees, model.mlp, model_horizon.*, lookups...), CatBoost parity check and golden vectors
+# 7. App assets (model.trees, model.mlp, model_horizon.*, lookups, canyon_reliability.json from the
+#    walk-forward predictions...), CatBoost parity check and golden vectors
 PYTHONPATH=scripts/debit_model .venv/bin/python scripts/debit_model/export_app_assets.py --final-dir build/debit-model/final-v4 --walkforward-dir build/debit-model/walkforward-v4
 bash gradlew :core:data:testDebugUnitTest --tests '*DebitFeatureBuilderGoldenTest*'
 ```
@@ -80,7 +82,7 @@ bash gradlew :core:data:testDebugUnitTest --tests '*DebitFeatureBuilderGoldenTes
 | `evaluation.py` | Cumulative ordinal decision rule, threshold tuning, metrics. |
 | `train.py` | Walk-forward evaluation and final fit. |
 | `runtime_reference.py` | Single-prediction replica of the app path (golden vectors). |
-| `export_app_assets.py` | Writes `modele_statistique/` and `core/data/src/test/resources/debit/golden_vectors.json`. |
+| `export_app_assets.py` | Writes `modele_statistique/` (with `canyon_reliability.json`: per-canyon walk-forward record of what the app shows) and `core/data/src/test/resources/debit/golden_vectors.json`. |
 | `tree_model.py` | Compact oblivious-tree format of the CatBoost models (`*.trees`, read by `ObliviousTreeModel.kt`); `export` converts final models alone. |
 | `network.py` | Network averaged with CatBoost: training (PyTorch), format `*.mlp` read by `NeuralNetworkModel.kt`, numpy reference. |
 
@@ -97,7 +99,10 @@ Rules that keep training and runtime identical:
 * weather is ERA5 (`models=era5`) for the past and ECMWF IFS 0.25° (`models=ecmwf_ifs025`) for the
   last days and the forecast — never Open-Meteo `best_match`, whose sharper convective peaks are
   outside the training distribution;
-* every feature only uses reports dated strictly before the target day; massif/region priors in
-  training are causal (never leave-one-out: it leaks the label);
+* every feature only uses reports dated strictly before the target day, and for J+1 / J+2 before
+  J - horizon (known on the morning of today); massif/region priors in training are causal (never
+  leave-one-out: it leaks the label);
+* the app completes the saved debit list with the canyon's own cells of the site's day grid on the
+  days it lacks (`runtime_reference.with_grid_cells`, `DebitFeatureBuilder.withGridCells`);
 * the hydrological model always runs on the 400-day window ending on the target day from the same
   initial state.

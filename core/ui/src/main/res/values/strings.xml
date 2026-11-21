@@ -355,9 +355,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="prediction_info_data_p2">Il combine cet état avec les caractéristiques physiques du bassin, les débits signalés ces derniers jours sur le canyon et sur les canyons voisins (moins de 30 km), et la pluie mesurée par les pluviomètres Météo-France et MeteoSwiss proches. Les prévisions de demain et après-demain utilisent un second modèle, entraîné avec l\'information disponible la veille.</string>
     <string name="prediction_info_training_title">Données d\'entraînement</string>
     <string name="prediction_info_stat_total_observations">%1$s observations passées exploitées au total</string>
-    <string name="prediction_info_stat_train_rows">%1$s observations pour l\'entraînement</string>
-    <string name="prediction_info_stat_calibration_rows">%1$s observations pour le réglage final</string>
-    <string name="prediction_info_stat_test_rows">%1$s observations pour le jeu de test</string>
     <string name="prediction_info_stat_feature_count">%1$s variables prises en compte par le modèle</string>
     <string name="prediction_info_stat_canyon_count">%1$s canyons représentés dans les données embarquées</string>
     <string name="prediction_info_stat_massif_count">%1$s massifs représentés dans les données embarquées</string>
@@ -370,7 +367,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="prediction_info_limits_p3">Une observation récente sur place, un retour de pratiquants ou une lecture terrain restent plus fiables que l\'estimation seule.</string>
     <string name="prediction_info_good_use_title">Bon usage</string>
     <string name="prediction_info_good_use_p1">Utilisez cette fonctionnalité pour préparer une sortie, comparer plusieurs jours ou comprendre si un canyon semble plutôt calme, moyen ou chargé.</string>
-    <string name="prediction_info_good_use_p2">Avant une descente, croise toujours cette estimation avec la météo, les derniers débits observés, l\'expérience du groupe et les conditions réelles sur place.</string>
+    <string name="prediction_info_good_use_p2">Avant une descente, croisez toujours cette estimation avec la météo, les derniers débits observés, l\'expérience du groupe et les conditions réelles sur place.</string>
     <string name="geology">Géologie</string>
     <string name="history">Historique</string>
     <string name="notes">Remarques</string>
@@ -1486,4 +1483,45 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="startup_preparing_catalog_hint">Une seule fois après l\'installation ou une mise à jour : les fiches des canyons se consultent ensuite sans réseau.</string>
     <string name="outing_conditions_off_season">Hors saison : peu de débits signalés en %1$s (%2$d sur %3$d). Saison habituelle : %4$s – %5$s. Topo, amarrages et eau peuvent être ceux d\'une autre saison.</string>
     <string name="outing_conditions_cold">Journée froide (%1$s au plus) : néoprène épais, cagoule, gants et vêtements secs de rechange.</string>
+    <string name="prediction_info_stat_checked_rows">dont %1$s pour vérifier l\'estimation sur des saisons qu\'elle ne connaissait pas</string>
+    <string name="prediction_driver_neighbor_reports_title">Débits signalés sur les canyons voisins</string>
+    <string name="prediction_driver_neighbor_reports_description">Les niveaux signalés ces derniers jours sur les canyons à moins de 30 km, comparés à leur niveau habituel, disent si le secteur a plus ou moins d\'eau que d\'habitude.</string>
+    <string name="prediction_driver_rain_gauges_title">Pluviomètres proches</string>
+    <string name="prediction_driver_rain_gauges_description">La pluie mesurée par les pluviomètres Météo-France et MeteoSwiss à moins de 25 km, la veille et les semaines passées, complète la météo du modèle.</string>
+    <string name="prediction_basis_title">Sur quoi repose l\'estimation</string>
+    <string name="prediction_basis_no_report">Aucun débit signalé sur ce canyon : l\'estimation s\'appuie sur son massif et les canyons voisins.</string>
+    <string name="prediction_basis_neighbors_above">plus d\'eau que d\'habitude</string>
+    <string name="prediction_basis_neighbors_below">moins d\'eau que d\'habitude</string>
+    <string name="prediction_basis_neighbors_usual">comme d\'habitude</string>
+    <string name="prediction_basis_neighbors_none">Canyons voisins : aucun débit signalé ces 7 derniers jours</string>
+    <string name="prediction_basis_rain">Pluie sur le bassin : %1$s mm ces 3 derniers jours, %2$s mm prévus aujourd\'hui</string>
+    <string name="prediction_basis_rain_past">Pluie sur le bassin : %1$s mm les 3 jours précédents</string>
+    <string name="prediction_basis_gauges">Pluviomètres : %1$d à moins de 25 km</string>
+    <string name="prediction_basis_gauges_yesterday">Pluviomètres : %1$d à moins de 25 km, %2$s mm hier</string>
+    <string name="prediction_basis_gauges_yesterday_only">Pluviomètres proches : %1$s mm hier</string>
+    <string name="prediction_basis_gauges_none">Pluviomètres proches : pas de mesure récente</string>
+    <string name="prediction_basis_snow">Neige simulée sur le bassin : %1$s mm d\'eau, %2$s mm fondus en 7 jours</string>
+    <string name="prediction_basis_snow_no_melt">Neige simulée sur le bassin : %1$s mm d\'eau</string>
+    <string name="prediction_reliability">Sur ce canyon, de %1$d à %2$d, ce qui était affiché s\'est révélé juste %3$d fois sur %4$d.</string>
+    <string name="search_estimate_filter">Débit correct probable</string>
+    <string name="search_estimate_progress">Estimation du débit… %1$d sur %2$d</string>
+    <string name="notification_outing_high_flow_title_today">Gros débit possible aujourd\'hui</string>
+    <string name="notification_outing_high_flow_title_tomorrow">Gros débit possible demain</string>
+    <string name="notification_outing_high_flow_title_later">Gros débit possible après-demain</string>
+    <string name="notification_outing_high_flow_body">%1$s : débit estimé %2$s, risque de gros débit ou plus %3$d %%. Regardez les derniers débits signalés avant de partir.</string>
+    <plurals name="prediction_basis_recent_reports">
+        <item quantity="one">%1$d débit signalé ces 30 derniers jours</item>
+        <item quantity="many">%1$d débits signalés ces 30 derniers jours</item>
+        <item quantity="other">%1$d débits signalés ces 30 derniers jours</item>
+    </plurals>
+    <plurals name="prediction_basis_neighbors">
+        <item quantity="one">Canyons voisins : %1$d débit signalé ces 7 derniers jours, %2$s</item>
+        <item quantity="many">Canyons voisins : %1$d débits signalés ces 7 derniers jours, %2$s</item>
+        <item quantity="other">Canyons voisins : %1$d débits signalés ces 7 derniers jours, %2$s</item>
+    </plurals>
+    <plurals name="search_estimate_results">
+        <item quantity="one">%1$d sur les %2$d plus proches</item>
+        <item quantity="many">%1$d sur les %2$d plus proches</item>
+        <item quantity="other">%1$d sur les %2$d plus proches</item>
+    </plurals>
 </resources>

@@ -34,6 +34,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -41,6 +42,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLocale
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -56,12 +58,15 @@ import fr.descentecanyon.app.domain.model.PredictedDebitLevel
 import fr.descentecanyon.app.domain.model.PredictionConfidence
 import fr.descentecanyon.app.ui.components.debitLevelShortLabel
 import fr.descentecanyon.app.ui.components.debitRangeLabel
+import fr.descentecanyon.app.ui.components.debitRangeWord
+import fr.descentecanyon.app.ui.components.relativeDayPhrase
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.theme.DebitCorrect
 import fr.descentecanyon.app.ui.theme.DebitFilet
 import fr.descentecanyon.app.ui.theme.DebitGros
 import fr.descentecanyon.app.ui.theme.DebitInconnu
 import fr.descentecanyon.app.ui.theme.DebitSec
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
@@ -156,6 +161,10 @@ fun CanyonDebitPredictionCard(
                                     showScaleLabels = index == 0,
                                 )
                             }
+                            if (predictions.basis != null || predictions.reliability != null) {
+                                HorizontalDivider()
+                                PredictionBasisSection(predictions)
+                            }
                         }
 
                         isLoading || error == null -> {
@@ -191,6 +200,123 @@ fun CanyonDebitPredictionCard(
         }
     }
 }
+
+/**
+ * What the estimate of the first day stands on, as the model saw it: the canyon's last report (or
+ * none), its neighbours, the rain and the snow, then how often the estimate was right on the canyon.
+ * An estimate without recent report leans on the weather alone: it is said, not hidden.
+ */
+@Composable
+private fun PredictionBasisSection(predictions: CanyonDebitPredictions) {
+    val zone = remember(predictions.timezone) { runCatching { ZoneId.of(predictions.timezone) }.getOrDefault(ZoneId.of("UTC")) }
+    val today = LocalDate.now(zone)
+    val firstDate = predictions.predictions.firstOrNull()?.date ?: today
+    val basis = predictions.basis
+    val lines = buildList {
+        if (basis != null) {
+            val lastDate = basis.lastReportDate
+            val lastLevel = basis.lastReportLevel
+            if (lastDate != null && lastLevel != null) {
+                add(stringResource(R.string.outing_conditions_last_report, debitRangeWord(lastLevel), relativeDayPhrase(lastDate, today)))
+                if (basis.reportsLast30Days > 1) {
+                    add(pluralStringResource(R.plurals.prediction_basis_recent_reports, basis.reportsLast30Days, basis.reportsLast30Days))
+                }
+            } else {
+                add(stringResource(R.string.prediction_basis_no_report))
+            }
+            add(
+                if (basis.neighborReports > 0) {
+                    val trend = when {
+                        (basis.neighborAnomaly ?: 0.0) >= NEIGHBOR_ANOMALY_LEVELS -> R.string.prediction_basis_neighbors_above
+                        (basis.neighborAnomaly ?: 0.0) <= -NEIGHBOR_ANOMALY_LEVELS -> R.string.prediction_basis_neighbors_below
+                        else -> R.string.prediction_basis_neighbors_usual
+                    }
+                    pluralStringResource(
+                        R.plurals.prediction_basis_neighbors,
+                        basis.neighborReports,
+                        basis.neighborReports,
+                        stringResource(trend),
+                    )
+                } else {
+                    stringResource(R.string.prediction_basis_neighbors_none)
+                },
+            )
+            basis.rainLast3DaysMm?.let { past ->
+                val onDay = basis.rainOnDayMm
+                add(
+                    if (onDay != null && firstDate == today) {
+                        stringResource(R.string.prediction_basis_rain, millimetres(past), millimetres(onDay))
+                    } else {
+                        stringResource(R.string.prediction_basis_rain_past, millimetres(past))
+                    },
+                )
+            }
+            val yesterday = basis.yesterdayGaugeRainMm
+            add(
+                when {
+                    basis.rainGaugeCount > 0 && yesterday != null ->
+                        stringResource(R.string.prediction_basis_gauges_yesterday, basis.rainGaugeCount, millimetres(yesterday))
+
+                    basis.rainGaugeCount > 0 -> stringResource(R.string.prediction_basis_gauges, basis.rainGaugeCount)
+
+                    yesterday != null -> stringResource(R.string.prediction_basis_gauges_yesterday_only, millimetres(yesterday))
+
+                    else -> stringResource(R.string.prediction_basis_gauges_none)
+                },
+            )
+            basis.snowWaterMm?.takeIf { it >= SNOW_SHOWN_MM }?.let { snow ->
+                val melt = basis.snowMelt7DaysMm?.takeIf { it >= 1.0 }
+                add(
+                    if (melt != null) {
+                        stringResource(R.string.prediction_basis_snow, millimetres(snow), millimetres(melt))
+                    } else {
+                        stringResource(R.string.prediction_basis_snow_no_melt, millimetres(snow))
+                    },
+                )
+            }
+        }
+    }
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        if (lines.isNotEmpty()) {
+            Text(
+                text = stringResource(R.string.prediction_basis_title),
+                style = MaterialTheme.typography.labelLarge,
+                fontWeight = FontWeight.SemiBold,
+            )
+            lines.forEach { line ->
+                Text(text = line, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
+        predictions.reliability?.let { reliability ->
+            Text(
+                text = stringResource(
+                    R.string.prediction_reliability,
+                    reliability.firstYear,
+                    reliability.lastYear,
+                    reliability.shownRight,
+                    reliability.reportCount,
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                fontWeight = FontWeight.SemiBold,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = if (lines.isEmpty()) 0.dp else 4.dp),
+            )
+        }
+    }
+}
+
+/** "12", "0.4": rain and snow as the gauges give them, without false precision. */
+@Composable
+private fun millimetres(value: Double): String {
+    val locale = LocalLocale.current.platformLocale
+    return if (value > 0.0 && value < 1.0) String.format(locale, "%.1f", value) else value.roundToInt().toString()
+}
+
+/** A neighbourhood above or below its usual level by a quarter of a level or more. */
+private const val NEIGHBOR_ANOMALY_LEVELS = 0.25
+
+/** Below 5 mm of water, the simulated snow is a dusting the model barely weighs. */
+private const val SNOW_SHOWN_MM = 5.0
 
 /** Shown when the network is unavailable and the last estimate computed is displayed. */
 @Composable

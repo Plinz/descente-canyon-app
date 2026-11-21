@@ -123,6 +123,14 @@ class DebitFeatureBuilderGoldenTest {
     private fun JsonObject.canyonId(): Int = getValue("canyonId").jsonPrimitive.int
 
     private fun JsonObject.toInput(): DebitFeatureBuilder.DebitFeatureInput {
+        val recentCells = get("recentCells")?.jsonArray.orEmpty().map { cell ->
+            val values = cell.jsonArray
+            RecentDebitCell(
+                canyonId = values[0].jsonPrimitive.int,
+                date = LocalDate.ofEpochDay(values[1].jsonPrimitive.long),
+                rank = values[2].jsonPrimitive.int,
+            )
+        }
         val grid = getValue("grid").jsonObject
         val canyon = getValue("canyon").jsonObject
         val lookup = getValue("lookup").jsonObject.mapValues { (_, value) -> value.jsonPrimitive.double }
@@ -147,9 +155,12 @@ class DebitFeatureBuilderGoldenTest {
             denivele = canyon["denivele"]?.doubleOrNullValue(),
             longueur = canyon["longueur"]?.doubleOrNullValue(),
             cascadeMax = canyon["cascadeMax"]?.doubleOrNullValue(),
-            history = getValue("history").jsonArray.map { pair ->
-                pair.jsonArray[0].jsonPrimitive.long to pair.jsonArray[1].jsonPrimitive.int
-            },
+            // The app completes the saved debit list with the canyon's own grid cells.
+            history = DebitFeatureBuilder.withGridCells(
+                getValue("history").jsonArray.map { pair -> pair.jsonArray[0].jsonPrimitive.long to pair.jsonArray[1].jsonPrimitive.int },
+                recentCells,
+                canyonId(),
+            ),
             massif = DebitFeatureBuilder.MonthlyAggregate.fromLookup(lookup, DebitFeatureBuilder.MASSIF_PREFIX),
             region = DebitFeatureBuilder.MonthlyAggregate.fromLookup(lookup, DebitFeatureBuilder.REGION_PREFIX),
             global = DebitFeatureBuilder.MonthlyAggregate.fromLookup(lookup, DebitFeatureBuilder.GLOBAL_PREFIX),
@@ -164,14 +175,7 @@ class DebitFeatureBuilderGoldenTest {
             },
             automaticRain = get("automaticRain")?.jsonObject.orEmpty().mapValues { (_, value) -> value.jsonPrimitive.double },
             horizonDays = get("horizon")?.jsonPrimitive?.int ?: 0,
-            recentCells = get("recentCells")?.jsonArray.orEmpty().map { cell ->
-                val values = cell.jsonArray
-                RecentDebitCell(
-                    canyonId = values[0].jsonPrimitive.int,
-                    date = LocalDate.ofEpochDay(values[1].jsonPrimitive.long),
-                    rank = values[2].jsonPrimitive.int,
-                )
-            },
+            recentCells = recentCells,
         )
     }
 

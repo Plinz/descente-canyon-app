@@ -56,9 +56,13 @@ def add_history(
     histories: dict[int, list[tuple[int, int]]],
     observations: pd.DataFrame,
     cutoff_day: int | None,
+    lags: np.ndarray | None = None,
 ) -> pd.DataFrame:
-    """Return ``data`` with history columns computed causally."""
+    """Return ``data`` with history columns computed causally. ``lags`` (per row, default 0): the
+    canyon's reports are those before ``day - lag`` (J+1 / J+2 rows: reports known up to today - 1),
+    their ages still counted from ``day``."""
     days = data["day"].to_numpy()
+    row_lags = np.zeros(len(data), dtype=np.int64) if lags is None else np.asarray(lags, dtype=np.int64)
     effective = days if cutoff_day is None else np.minimum(days, cutoff_day)
     order = np.argsort(effective, kind="stable")
 
@@ -95,7 +99,7 @@ def add_history(
             priors = F.area_priors(month, massifs[key[0]], regions[key[1]], global_)
             prior_cache[key] = priors
         history = histories.get(int(canyon_ids[index]), [])
-        past = history[:bisect.bisect_left(history, (day, -1))]
+        past = history[:bisect.bisect_left(history, (day - int(row_lags[index]), -1))]
         values = F.history_features(past, day, month, priors)
         for name in F.HISTORY_FEATURES:
             columns[name][index] = F.finalize_value(values[name])

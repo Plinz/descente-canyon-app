@@ -126,7 +126,9 @@ internal fun outingMessageData(state: OutingPlanUiState, resources: Resources, l
             } ?: estimate.ordinalLevel?.let { resources.getString(debitRangeWordRes(it)) }
         },
         lastReport = state.lastReport?.let { report ->
-            resources.getString(debitLevelLabelRes(report.niveau)) to relativeDayLabel(resources, report.date, state.today, locale)
+            // Inside the sentence: "il y a 3 jours", not "Il y a 3 jours".
+            resources.getString(debitLevelLabelRes(report.niveau)) to
+                relativeDayLabel(resources, report.date, state.today, locale).replaceFirstChar { it.lowercase(locale) }
         },
         // What the group carries: its gear and what the alert and the wait call for.
         sharedGear = gearOf(GearGroup.SHARED) + gearOf(GearGroup.SAFETY),

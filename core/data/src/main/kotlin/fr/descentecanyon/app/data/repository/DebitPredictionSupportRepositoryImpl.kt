@@ -24,6 +24,7 @@ import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZoneOffset
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CompletableDeferred
@@ -50,36 +51,57 @@ class DebitPredictionSupportRepositoryImpl @Inject constructor(
     @Volatile
     private var cachedRecentCells: Pair<Long, List<RecentDebitCell>>? = null
 
+    /** Support downloaded in the last [SUPPORT_TTL_MS] by canyon: an estimate computed again (fresher reports) costs no download. */
+    private val recentSupport = ConcurrentHashMap<Int, Pair<Long, DebitPredictionSupport>>()
+
     override suspend fun getPredictionSupport(detail: CanyonDetail): Result<DebitPredictionSupport> = withContext(ioDispatcher) {
         suspendRunCatching {
             val target = WeatherTargetResolver.resolve(detail)
                 ?: appError(AppError.DataUnavailable)
-            // The downloads run together: the rain gauges only wait for the canyon's time zone.
-            coroutineScope {
-                val timezone = CompletableDeferred<String>()
-                val dailyWeather = async {
-                    loadDailyWeather(detail.canyon.id, target) { timezone.complete(it) }.also { timezone.complete(it.timezone) }
+            val now = System.currentTimeMillis()
+            recentSupport.entries.removeIf { now - it.value.first >= SUPPORT_TTL_MS }
+            recentSupport[detail.canyon.id]?.second?.takeIf { it.target == target }
+                ?: downloadSupport(detail, target).also { support ->
+                    if (!support.usedWeatherCache) recentSupport[detail.canyon.id] = now to support
                 }
-                val recentCells = async { loadRecentCells() }
-                val runtimeLookup = runtimeLookupStore.resolve(detail.canyon)
-                val stationCodes = runtimeLookup.rainStations.map { it.code }
-                val stationRain = async { loadStationRain(stationCodes, timezone.await()) }
-                val automaticRain = async { loadAutomaticRain(stationCodes, timezone.await()) }
-                val weather = dailyWeather.await()
-                DebitPredictionSupport(
-                    target = target,
-                    timezone = weather.timezone,
-                    fetchedAt = weather.fetchedAt,
-                    dailyWeather = weather.dailyWeather,
-                    runtimeLookup = runtimeLookup,
-                    usedWeatherCache = weather.usedCache,
-                    weatherGrid = weather.grid,
-                    recentCells = recentCells.await(),
-                    stationRain = stationRain.await(),
-                    automaticRain = automaticRain.await(),
-                )
-            }
         }
+    }
+
+    private suspend fun downloadSupport(detail: CanyonDetail, target: WeatherTarget): DebitPredictionSupport =
+        // The downloads run together: the rain gauges only wait for the canyon's time zone.
+        coroutineScope {
+            val timezone = CompletableDeferred<String>()
+            val dailyWeather = async {
+                loadDailyWeather(detail.canyon.id, target) { timezone.complete(it) }.also { timezone.complete(it.timezone) }
+            }
+            val recentCells = async { loadRecentCells() }
+            val runtimeLookup = runtimeLookupStore.resolve(detail.canyon)
+            val stationCodes = runtimeLookup.rainStations.map { it.code }
+            val stationRain = async { loadStationRain(stationCodes, timezone.await()) }
+            val automaticRain = async { loadAutomaticRain(stationCodes, timezone.await()) }
+            val weather = dailyWeather.await()
+            DebitPredictionSupport(
+                target = target,
+                timezone = weather.timezone,
+                fetchedAt = weather.fetchedAt,
+                dailyWeather = weather.dailyWeather,
+                runtimeLookup = runtimeLookup,
+                usedWeatherCache = weather.usedCache,
+                weatherGrid = weather.grid,
+                recentCells = recentCells.await(),
+                stationRain = stationRain.await(),
+                automaticRain = automaticRain.await(),
+            )
+        }
+
+    override suspend fun hasWeatherHistory(canyonId: Int): Boolean = withContext(ioDispatcher) {
+        val today = LocalDate.now(ZoneOffset.UTC)
+        val windowStart = today.minusDays(WINDOW_DAYS)
+        val stableArchiveEnd = today.minusDays(ARCHIVE_REFRESH_DAYS + 1)
+        val archive = dailyWeatherDao.getByCanyonIdAndDateRange(canyonId, windowStart.toString(), stableArchiveEnd.toString())
+            .map { it.toDomain() }
+            .filter { it.source == DailyWeatherSource.ARCHIVE && it.isComplete() }
+        hasCompleteCoverage(archive, windowStart, stableArchiveEnd)
     }
 
     /** Rain gauge rainfall of the last days (Météo-France, MeteoSwiss; empty offline or when unavailable). */
@@ -306,6 +328,7 @@ class DebitPredictionSupportRepositoryImpl @Inject constructor(
     companion object {
         private const val WINDOW_DAYS = DebitHydroModel.WINDOW_DAYS.toLong()
         private const val RECENT_CELLS_TTL_MS = 30L * 60L * 1000L
+        private const val SUPPORT_TTL_MS = 10L * 60L * 1000L
         private const val FORECAST_DAYS = 3
         private const val FORECAST_PAST_DAYS = 14
         private const val ARCHIVE_REFRESH_DAYS = 12L

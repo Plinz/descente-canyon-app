@@ -6,12 +6,15 @@ import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.CanyonWeather
+import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.usecase.GetCanyonDebitPredictionsUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonEdfPracticabilityUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonWeatherUseCase
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.UiText
 import fr.descentecanyon.app.ui.common.toUiText
+import java.time.LocalDate
+import java.time.ZoneId
 import javax.inject.Inject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -52,6 +55,12 @@ class CanyonConditionsController @Inject constructor(
     private var canyonId: Int = 0
     private var predictionLoadJob: Job? = null
 
+    /** Reports (day, level) the estimate shown or being computed was made from. */
+    private var predictionReports: Set<Pair<LocalDate, NiveauDebit>>? = null
+
+    /** The user asked to refresh the page: the estimate is computed again too. */
+    private var predictionReloadRequested = false
+
     fun attach(canyonId: Int, scope: CoroutineScope) {
         this.canyonId = canyonId
         this.scope = scope
@@ -61,7 +70,16 @@ class CanyonConditionsController @Inject constructor(
     /** The canyon is being (re)loaded: pending loads are dropped and reloaded with the new detail. */
     fun onReloadStarted() {
         predictionLoadJob?.cancel()
+        predictionReloadRequested = true
         _state.update { it.copy(isLoadingWeather = false, isLoadingPredictions = false) }
+    }
+
+    /**
+     * The canyon's reports were read again from the site: the estimate shown was computed from
+     * older ones (the list saved on the device), it is computed again with the new ones.
+     */
+    fun onReportsChanged(detail: CanyonDetail) {
+        if (detail.isLocated && predictionReports != null && detail.reportKey() != predictionReports) maybeSchedulePredictions(detail)
     }
 
     /** The canyon could not be loaded at all. */
@@ -194,10 +212,17 @@ class CanyonConditionsController @Inject constructor(
 
     private fun maybeSchedulePredictions(detail: CanyonDetail) {
         val current = _state.value
+        val online = connectivityObserver.isCurrentlyOnline()
+        val reportsChanged = predictionReports != null && detail.reportKey() != predictionReports
+        // An estimate computed before midnight calls "today" what is now yesterday.
+        val pastDay = !current.isLoadingPredictions && current.predictions?.isForAnEarlierDay() == true
+        val mustRecompute = (reportsChanged || predictionReloadRequested || pastDay) && online
         val shouldLoad = current.predictions == null || current.predictionError != null ||
-            (current.predictions.isFromCache && connectivityObserver.isCurrentlyOnline())
-        if (!shouldLoad || current.isLoadingPredictions) return
+            (current.predictions.isFromCache && online) || mustRecompute
+        if (!shouldLoad || (current.isLoadingPredictions && !mustRecompute)) return
 
+        predictionReloadRequested = false
+        predictionReports = detail.reportKey()
         _state.update { it.copy(isLoadingPredictions = true, predictionError = null) }
         predictionLoadJob?.cancel()
         predictionLoadJob = scope.launch {
@@ -256,6 +281,13 @@ class CanyonConditionsController @Inject constructor(
                 it.copy(predictions = null, isLoadingPredictions = false, predictionError = error)
             }
         }
+    }
+
+    private fun CanyonDetail.reportKey(): Set<Pair<LocalDate, NiveauDebit>> = debits.mapTo(HashSet()) { it.date to it.niveau }
+
+    private fun CanyonDebitPredictions.isForAnEarlierDay(): Boolean {
+        val zone = runCatching { ZoneId.of(timezone) }.getOrDefault(ZoneId.of("UTC"))
+        return computedAt.atZone(zone).toLocalDate().isBefore(LocalDate.now(zone))
     }
 
     private companion object {

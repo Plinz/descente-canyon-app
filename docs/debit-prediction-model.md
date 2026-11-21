@@ -90,9 +90,14 @@ pluviomètres.
 Elle est récupérée autrement :
 
 * les **postes automatiques** Météo-France (fichier horaire du département, publié à 05:44 UTC avec
-  les heures jusqu'à 03 UTC du jour) donnent la pluie de la veille sur 21 des 24 heures. L'app lit
-  ce fichier (≈ 17 Mo) en flux et coupe le téléchargement dès que les stations utiles sont passées
-  (lignes triées par station) ;
+  les heures jusqu'à 03 ou 04 UTC du jour) donnent la pluie de la veille sur 21 ou 22 des
+  24 heures. L'app lit ce fichier en entier (7 à 33 Mo selon le département) une fois par jour, et
+  la table sert à tous les canyons du département. La pluie des heures manquantes est estimée par
+  sa moyenne sachant les heures lues, 0,125 × √(somme lue) mm par heure manquante : ajustée sur les
+  fichiers horaires 2025-2026 de l'Isère, des Alpes-Maritimes et des Hautes-Pyrénées, elle supprime
+  la sous-estimation des jours de pluie (0,9 à 1,6 mm en moyenne, sur les 24 h que le modèle a
+  appris) et réduit l'erreur quadratique de 5 à 11 % ; la règle de trois (× 24/21), sans biais,
+  augmente l'erreur absolue de 40 % ;
 * les stations **MeteoSwiss** publient la veille dans leur fichier quotidien.
 
 À l'entraînement, cette feature (`mfAuto*`) vient de la pluie quotidienne J-1 des seuls postes
@@ -103,6 +108,7 @@ d'entraînement, pour un coût négligeable.
 
 | Source (J = aujourd'hui + h) | Connue jusqu'à | Features calculées au |
 | --- | --- | --- |
+| Reports du canyon (liste du site, complétée par la grille) | aujourd'hui − 1 | J − h (depuis la v8) |
 | Reports des voisins (grille du site) | aujourd'hui − 1 | J − h |
 | Pluviomètres, fichiers quotidiens | aujourd'hui − 2 | J − h − 1 |
 | Postes automatiques (horaire FR, MeteoSwiss) | aujourd'hui − 1 | J − h |
@@ -117,9 +123,13 @@ réparait J+1/J+2, mais coûtait significativement à J0 (+0,00035 de RPS).
 L'app embarque donc deux modèles qui partagent le même contrat de features :
 
 * `model.trees` + `model.mlp` (J0) : information jusqu'à J-1 ;
-* `model_horizon.trees` + `model_horizon.mlp` (J+1, J+2) : reports et pluviomètres décalés de
-  l'horizon, feature `infoLagDays` (entraîné sur toutes les lignes avec un décalage aléatoire de 1
-  ou 2 jours).
+* `model_horizon.trees` + `model_horizon.mlp` (J+1, J+2) : reports (du canyon et des voisins) et
+  pluviomètres décalés de l'horizon, feature `infoLagDays` (entraîné sur toutes les lignes avec un
+  décalage aléatoire de 1 ou 2 jours). Jusqu'à la v7, seuls les voisins et les pluviomètres étaient
+  décalés : le modèle apprenait avec les reports du canyon jusqu'à J-1, c'est-à-dire, pour J+1,
+  ceux du jour même (rarement publiés le matin) et, pour J+2, ceux du lendemain. Un report de la
+  veille du jour cible est le cas de 15 % des reports de test, les mieux prédits (RPS 0,026 contre
+  0,042) : l'évaluation J+1/J+2 était optimiste.
 
 Depuis la v7, chacun est la moyenne à parts égales d'un CatBoost (`*.trees`) et d'un petit réseau
 de neurones (`*.mlp`, 3 graines) entraînés sur les mêmes lignes ; voir « LSTM pour l'état
@@ -153,6 +163,41 @@ moyenne avec les arbres, avec le poids donné par `thresholds.json` ; sans entr�
 n'utilise que les arbres. Les deux réseaux pèsent 0,96 Mo chacun et s'écartent de PyTorch de
 4·10⁻⁷ au plus.
 
+### Dans l'app : historique, listes, sorties prévues (v8, novembre 2026)
+
+* **Historique du canyon à jour.** L'estimation partait de la liste de débits enregistrée sur le
+  téléphone au moment d'ouvrir la page, et n'était pas recalculée quand la liste était relue sur
+  le site. Pour un canyon jamais ouvert, c'était l'historique embarqué, arrêté au 13/10/2026 :
+  l'estimation ignorait alors les reports des dernières semaines, son meilleur signal (exactitude
+  de 80 à 83 % quand le dernier report a moins de 7 jours, 67 à 71 % au-delà d'un mois). La liste
+  est maintenant complétée par les cases du canyon dans la grille « derniers débits » (16 jours,
+  déjà lue pour les voisins), et l'estimation est recalculée dès que la liste relue apporte de
+  nouveaux reports, au tirer-pour-rafraîchir et au changement de jour. Les téléchargements de
+  l'estimation sont gardés 10 minutes : le recalcul est immédiat.
+* **Listes.** Les favoris et la recherche triée par distance (« autour de moi », ou autour du
+  lieu d'un séjour) montrent l'estimation du jour, ou du jour du séjour s'il est dans les trois
+  jours estimés, dans un badge de la carte canyon. Le filtre « Débit correct probable » garde les
+  canyons dont l'estimation affiche « correct » (seul ou en fourchette) sans risque de gros débit
+  signalé, parmi les 30 plus proches. Les estimations enregistrées depuis moins de 3 heures
+  s'affichent tout de suite, les autres sont calculées l'une après l'autre : une fenêtre météo
+  complète compte pour 29 appels du quota gratuit d'Open-Meteo (600 par minute), elles sont
+  espacées de 4 s.
+* **Sorties prévues.** Le plan de sortie calcule l'estimation à l'ouverture (il ne montrait que la
+  dernière enregistrée). Tant qu'une sortie est prévue, une tâche de fond recalcule toutes les 3 h
+  l'estimation de chaque canyon des sorties des trois prochains jours, avec les reports relus sur
+  le site, et l'enregistre pour le plan hors connexion. Quand le jour d'une sortie devient à risque
+  de gros débit, une notification le dit une fois (pas entre 22 h et 7 h) ; si le risque retombe
+  puis revient, elle le redit.
+* **Sur quoi repose l'estimation.** La carte dépliée liste les entrées principales du premier
+  jour, telles que le modèle les a vues : dernier report du canyon (ou aucun : l'estimation
+  s'appuie sur le massif), reports des voisins sur 7 jours comparés à leur niveau habituel, pluie
+  des 3 derniers jours et du jour, pluviomètres proches, neige simulée et fonte.
+* **Fiabilité par canyon.** `canyon_reliability.json` donne, pour les canyons qui ont au moins 10
+  reports dans les périodes de test du walk-forward, combien de fois ce que l'app aurait affiché
+  (niveau, ou fourchette quand le modèle hésite) contenait le niveau signalé, avec le modèle et les
+  seuils de chaque période (qui n'avaient jamais vu ces reports). 743 canyons, 31 244 reports :
+  86 % de justes en moyenne, de 67 % (5e centile) à 100 % selon le canyon ; 11 Ko.
+
 ## Évaluation
 
 Voir la section générée ci-dessous (walk-forward : un modèle par période, qui ne connaît que les
@@ -160,6 +205,29 @@ observations antérieures à cette période, comme l'app le premier jour).
 
 Données : 166 802 observations Descente-Canyon (1988 → 07/10/2026), dont 8 canyons interdits
 restaurés depuis le scraping de juin. Météo ERA5 pour 3 330 cibles.
+
+### v8 (21/11/2026) : J+1/J+2 avec les reports vraiment connus
+
+Le modèle J+1/J+2 apprend maintenant avec les reports du canyon connus le matin d'aujourd'hui
+(avant J − h), comme l'app (voir « Deux modèles »), et son évaluation aussi. Le modèle J0 est
+inchangé (fichiers `model.trees` et `model.mlp` identiques octet pour octet).
+
+| J+1, 36 265 reports de test | v7 (évaluation optimiste) | v8 (évaluation honnête) |
+| --- | ---: | ---: |
+| Erreur de probabilité (RPS) | 0,0384 | 0,0389 |
+| AUC GROS+ | 0,910 | 0,907 |
+| Rappel GROS+ à précision de 60 % | 59,6 % | 56,8 % |
+| Exactitude (niveau exact) | 75,8 % | 75,7 % |
+| GROS+ sous-estimés de ≥ 2 niveaux | 9,5 % | 9,9 % |
+| Persistance, exactitude | 67,4 % | 66,2 % |
+
+Par période, le RPS honnête à J+1 vaut 0,04143 / 0,04203 / 0,03588 (v7 annonçait 0,04078 /
+0,04133 / 0,03556), et à J+2 0,04194 / 0,04261 / 0,03639. Le modèle J0 appliqué à J+1 fait moins
+bien (0,04162 / 0,04278 / 0,03632) : le modèle dédié reste utile. Ce qui change, c'est surtout
+l'évaluation : sur 2025-2026, le modèle J+1 de la v7 évalué honnêtement donne 0,03626 de RPS (arbres
+seuls) contre 0,03619 pour celui de la v8, à J+2 0,03673 contre 0,03669, des écarts dans le bruit
+d'une graine. La confiance affichée reste calibrée à J+1 : juste 92 % du temps en confiance élevée
+(59 % des cas), 78 % en moyenne (29 %) et 64 % en faible (12 %).
 
 ### v7 (21/11/2026) : moyenne CatBoost + réseau
 
@@ -189,7 +257,9 @@ Sur les 36 265 reports de test :
 | GROS+ sous-estimés de ≥ 2 niveaux | 8,4 → 8,2 % | 9,3 → 9,5 % |
 | GROS+ : précision / rappel / F1 (seuils réglés) | 0,57 / 0,65 / 0,607 → 0,58 / 0,64 / 0,611 | 0,55 / 0,63 / 0,592 → 0,58 / 0,62 / 0,601 |
 
-Le gain est celui prévu par l'étude : il porte sur toutes les périodes et les trois horizons. La
+Le gain est celui prévu par l'étude : il porte sur toutes les périodes et les trois horizons. Les
+chiffres J+1 et J+2 de ce tableau supposent les reports du canyon connus jusqu'à J-1 : voir la v8
+pour leur valeur honnête. La
 confiance affichée reste calibrée : ce qui est affiché est juste 92,5 % du temps en confiance
 élevée (60 % des cas), 77 % en moyenne (29 %) et 64,5 % en faible (11 %).
 
@@ -277,11 +347,11 @@ stationnement…), auxquels le modèle donnait à raison une probabilité quasi 
 
 ### Décision embarquée
 
-* modèle J0 (v7) : seuils cumulatifs τ = 0,58 / 0,51 / 0,27 / 0,27 / 0,25 (SEC→FILET … TRÈS
+* modèle J0 (v7, inchangé en v8) : seuils cumulatifs τ = 0,58 / 0,51 / 0,27 / 0,27 / 0,25 (SEC→FILET … TRÈS
   GROS→CRUE) ; risque « Fort » si P(≥ GROS) ≥ 0,27 (`balanced`), 0,62 (`prudent`), 0,07
   (`safety_first`) ;
-* modèle J+1/J+2 (v7) : τ = 0,53 / 0,52 / 0,30 / 0,21 / 0,27 ; risque « Fort » si
-  P(≥ GROS) ≥ 0,32 (`balanced`), 0,66 (`prudent`), 0,07 (`safety_first`) ;
+* modèle J+1/J+2 (v8) : τ = 0,54 / 0,55 / 0,30 / 0,26 / 0,28 ; risque « Fort » si
+  P(≥ GROS) ≥ 0,31 (`balanced`), 0,65 (`prudent`), 0,06 (`safety_first`) ;
 * confiance affichée : probabilité que le débit soit dans ce qui est affiché (le niveau, ou la
   fourchette quand le niveau a moins de 0,6), « élevée » à partir de 0,85, « moyenne » à partir de
   0,70. Cette probabilité est calibrée (±2 points par tranche ; canyons sans report depuis plus
@@ -488,6 +558,10 @@ mesures indépendantes des seuils ; sur l'exactitude, il reste dans le bruit des
   AEMET demande une clé API, et les réseaux italiens sont régionaux.
 * Avant 05:44 UTC, la pluie de la veille aux postes automatiques n'est pas publiée. Le modèle s'en
   passe, au prix de +0,0008 de RPS.
+* Avant la publication du fichier quotidien Météo-France (05:56 UTC, relu après 06:15 UTC, soit
+  vers 8 h en été), celui de la veille s'arrête à J-3 : l'app n'a alors aucun pluviomètre
+  quotidien (le modèle a appris à se passer des postes automatiques, pas de ceux-là). Laissé tel
+  quel (novembre 2026) : cela ne concerne que les estimations du petit matin.
 * Une clé API Open-Meteo payante permettrait de tester ECMWF IFS 9 km (historique depuis 2017,
   identique en prévision), aujourd'hui hors des quotas gratuits.
 * Les lâchers de barrages et les prises d'eau ne sont pas modélisés.

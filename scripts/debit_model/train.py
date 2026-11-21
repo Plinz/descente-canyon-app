@@ -4,8 +4,9 @@ Each model is a CatBoost classifier averaged with a small neural network (``netw
 the same rows. Two models share the feature contract:
 
 * ``today`` (J0): every real-time source is known up to J-1;
-* ``horizon`` (J+1, J+2): reports and gauges are only known up to today - 1, i.e. lagged by the
-  horizon (``infoLagDays``); trained on rows whose real-time features are lagged by 1 or 2 days.
+* ``horizon`` (J+1, J+2): reports (the canyon's own and its neighbours') and gauges are only known
+  up to today - 1, i.e. lagged by the horizon (``infoLagDays``); trained on rows whose real-time
+  and history features are lagged by 1 or 2 days.
 
 Walk-forward: for each test period, the models only know observations dated before the period
 (canyon history, massif/region priors and training rows), exactly like the app on the first day of
@@ -69,21 +70,28 @@ def load(dataset_dir: Path):
 
 
 def load_lagged(dataset_dir: Path) -> dict[int, pd.DataFrame]:
-    """Real-time features as known 1 and 2 days earlier, indexed by observationId."""
+    """Real-time and since-last-report features as known 1 and 2 days earlier, indexed by observationId."""
     return {lag: pd.read_pickle(dataset_dir / f"realtime_lag{lag}.pkl").set_index("observationId") for lag in (1, 2)}
 
 
-LAGGED_COLUMNS = F.REALTIME_FEATURES + F.INFO_FEATURES
+LAGGED_COLUMNS = F.REALTIME_FEATURES + F.SINCE_LAST_FEATURES + F.INFO_FEATURES
 
 
-def with_lag(frame: pd.DataFrame, lagged: dict[int, pd.DataFrame], lags: np.ndarray) -> pd.DataFrame:
-    """Copy of ``frame`` whose real-time features are those known ``lags`` days earlier (0 = as is)."""
+def with_lag(frame: pd.DataFrame, lagged: dict[int, pd.DataFrame], lags: np.ndarray, histories, observations, cutoff: int | None) -> pd.DataFrame:
+    """Copy of ``frame`` (history columns included) with what is known ``lags`` days earlier
+    (0 = as is): real-time features, the canyon's own reports and what is measured since the last
+    one. ``cutoff``: the fold cutoff of the massif/region priors, as in ``with_history``."""
     output = frame.copy()
     ids = output["observationId"].to_numpy()
     for lag in (1, 2):
         mask = lags == lag
         if mask.any():
             output.loc[output.index[mask], LAGGED_COLUMNS] = lagged[lag].loc[ids[mask], LAGGED_COLUMNS].to_numpy()
+    lagged_rows = lags > 0
+    if lagged_rows.any():
+        history = H.add_history(output[lagged_rows], histories, observations, cutoff, lags[lagged_rows])
+        columns = F.HISTORY_FEATURES + [H.MASSIF_FRAC_LOW]
+        output.loc[output.index[lagged_rows], columns] = history[columns].to_numpy()
     return output
 
 
@@ -264,8 +272,8 @@ def walkforward(args) -> None:
         block["topFeatures"] = sorted(zip(F.FEATURE_NAMES, importances.tolist()), key=lambda item: -item[1])[:30]
 
         # J+1 / J+2 model: real-time information lagged by the horizon
-        horizon_train = with_lag(train, lagged, random_lags(train, 41))
-        horizon_validation = with_lag(validation, lagged, random_lags(validation, 43))
+        horizon_train = with_lag(train, lagged, random_lags(train, 41), histories, observations, cutoff)
+        horizon_validation = with_lag(validation, lagged, random_lags(validation, 43), histories, observations, cutoff)
         horizon_model = fit(horizon_train, horizon_validation)
         horizon_network = fit_network(horizon_train)
         horizon_validation_trees, horizon_validation_probabilities = predict_both(horizon_model, horizon_network, horizon_validation)
@@ -277,7 +285,7 @@ def walkforward(args) -> None:
         }
         block["horizons"] = {}
         for horizon in (1, 2):
-            horizon_test = with_lag(test, lagged, np.full(len(test), horizon))
+            horizon_test = with_lag(test, lagged, np.full(len(test), horizon), histories, observations, cutoff)
             for model_name, current, current_network, current_thresholds in (
                 ("horizonModel", horizon_model, horizon_network, horizon_thresholds),
                 ("todayModel", model, network, thresholds),
@@ -290,7 +298,8 @@ def walkforward(args) -> None:
                 if model_name == "horizonModel":
                     block["horizons"][f"J+{horizon}/horizonTreesOnly"] = trees_only(labels(horizon_validation), horizon_validation_trees, labels(test), trees)
                 if horizon == 1 and model_name == "horizonModel":
-                    oof_horizon.append(oof_frame(probabilities, test, name, trees))
+                    # Baselines and segments from what is known at J+1 too (persistence of the lagged history).
+                    oof_horizon.append(oof_frame(probabilities, horizon_test, name, trees))
         block["seconds"] = round(time.time() - started)
         report["folds"][name] = block
         oof_today.append(oof_frame(test_probabilities, test, name, test_trees))
@@ -329,7 +338,7 @@ def final(args) -> None:
     summary = {"rowCount": int(len(data)), "firstDay": str(F.from_epoch_day(int(data["day"].min()))), "lastDay": str(F.from_epoch_day(int(data["day"].max())))}
     for model_name, oof_file, best_iterations, rows in (
         ("today", "oof_today.pkl", [b["bestIteration"] for b in walk["folds"].values()], data),
-        ("horizon", "oof_horizon.pkl", [b["horizonModel"]["bestIteration"] for b in walk["folds"].values()], with_lag(data, lagged, random_lags(data, 47))),
+        ("horizon", "oof_horizon.pkl", [b["horizonModel"]["bestIteration"] for b in walk["folds"].values()], with_lag(data, lagged, random_lags(data, 47), histories, observations, None)),
     ):
         iterations = int(np.mean(best_iterations) * 1.15) + 1
         print(f"final {model_name} fit on {len(rows)} rows, {iterations} iterations", flush=True)

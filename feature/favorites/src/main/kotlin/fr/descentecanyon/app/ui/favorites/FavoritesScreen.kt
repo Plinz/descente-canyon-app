@@ -211,6 +211,7 @@ fun FavoritesScreen(
                                     canyon = canyon,
                                     onClick = { onCanyonClick(canyon.id) },
                                     isDescended = canyon.id in uiState.descendedIds,
+                                    estimate = uiState.estimates[canyon.id],
                                 )
                             }
                         }

@@ -9,7 +9,9 @@ its Kotlin twin in ``DebitFeatureBuilder.kt``. Feature families:
 * weather/hydro: outputs of ``hydro.simulate`` over the ``WINDOW_DAYS`` window ending on the
   target day (target day included, as forecast at runtime);
 * history: the canyon's own past reports strictly before the target day (the app recomputes them
-  from the scraped debit list), smoothed towards massif/region monthly priors shipped as lookups.
+  from the scraped debit list, completed by the site's day grid), smoothed towards massif/region
+  monthly priors shipped as lookups; for J+1 / J+2, only the reports known on the morning of
+  today (before J - horizon).
 
 Missing values are encoded as ``MISSING`` (-9999), which CatBoost treats as a distinct small value.
 """
@@ -106,6 +108,9 @@ WEATHER_FEATURES = [
     "hSweChangeSinceLast",
 ]
 
+# Weather/hydro features measured since the canyon's last report: they move with the report lag.
+SINCE_LAST_FEATURES = ["hDeltaLogQ3", "hDeltaLogQ10", "hDeltaLogQ30", "hLiquidSinceLast", "hSweChangeSinceLast"]
+
 HISTORY_FEATURES = [
     "histCount",
     "histLastRank",
@@ -145,6 +150,8 @@ RAIN_FEATURES = [
 AUTO_RAIN_FEATURES = ["mfAutoRain1", "mfAutoMax1", "mfAutoCount", "mfAutoNearestKm"]
 
 # Age of the real-time information. What the app knows on the morning of today for J = today + h:
+# * the canyon's own reports up to today - 1 -> HISTORY_FEATURES and SINCE_LAST_FEATURES computed
+#   from the reports before J - h (ages still counted from J);
 # * neighbour reports up to today - 1 -> neighbour window lagged by h;
 # * daily gauge file up to today - 2 -> RAIN_FEATURES computed as of J - h - 1;
 # * automatic gauges up to today - 1 -> AUTO_RAIN_FEATURES computed as of J - h.

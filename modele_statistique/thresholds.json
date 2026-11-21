@@ -39,21 +39,21 @@
     },
     "policies": {
       "balanced": {
-        "highThreshold": 0.32
+        "highThreshold": 0.31
       },
       "prudent": {
-        "highThreshold": 0.66
+        "highThreshold": 0.65
       },
       "safety_first": {
-        "highThreshold": 0.07
+        "highThreshold": 0.06
       }
     },
     "cumulativeThresholds": [
-      0.53,
-      0.52,
+      0.54,
+      0.55,
       0.3,
-      0.21,
-      0.27
+      0.26,
+      0.28
     ]
   }
 }

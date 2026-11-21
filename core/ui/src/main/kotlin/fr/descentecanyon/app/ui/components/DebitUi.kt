@@ -64,6 +64,13 @@ fun relativeDayLabel(resources: Resources, date: LocalDate, today: LocalDate, lo
     }
 }
 
+/** [relativeDayLabel] inside a sentence: "il y a 3 jours", "hier" (lower case where the language allows it). */
+@Composable
+fun relativeDayPhrase(date: LocalDate, today: LocalDate = LocalDate.now()): String {
+    val locale = LocalLocale.current.platformLocale
+    return relativeDayLabel(date, today).replaceFirstChar { it.lowercase(locale) }
+}
+
 /** "auj.", "hier", "3 j", then the short date: [relativeDayLabel] where room is short, as in a badge. */
 @Composable
 fun shortRelativeDayLabel(date: LocalDate, today: LocalDate = LocalDate.now()): String {

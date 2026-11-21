@@ -163,10 +163,8 @@ private fun DebitPredictionInfoContent(summary: DebitPredictionInfoSummary, cont
             StatsCard(
                 title = stringResource(R.string.prediction_info_training_title),
                 stats = listOf(
-                    stringResource(R.string.prediction_info_stat_total_observations, numberFormat.format(summary.totalObservationCount)),
-                    stringResource(R.string.prediction_info_stat_train_rows, numberFormat.format(summary.trainRowCount)),
-                    stringResource(R.string.prediction_info_stat_calibration_rows, numberFormat.format(summary.calibrationRowCount)),
-                    stringResource(R.string.prediction_info_stat_test_rows, numberFormat.format(summary.testRowCount)),
+                    stringResource(R.string.prediction_info_stat_total_observations, numberFormat.format(summary.trainRowCount)),
+                    stringResource(R.string.prediction_info_stat_checked_rows, numberFormat.format(summary.testRowCount)),
                     stringResource(R.string.prediction_info_stat_feature_count, numberFormat.format(summary.featureCount)),
                     stringResource(R.string.prediction_info_stat_canyon_count, numberFormat.format(summary.canyonCount)),
                     stringResource(R.string.prediction_info_stat_massif_count, numberFormat.format(summary.massifCount)),
@@ -278,6 +276,8 @@ private fun DriverCard(title: String, description: String) {
 private val DebitPredictionDriver.titleRes: Int
     get() = when (this) {
         DebitPredictionDriver.CANYON_HISTORY -> R.string.prediction_driver_canyon_history_title
+        DebitPredictionDriver.NEIGHBOR_REPORTS -> R.string.prediction_driver_neighbor_reports_title
+        DebitPredictionDriver.RAIN_GAUGES -> R.string.prediction_driver_rain_gauges_title
         DebitPredictionDriver.AREA_CONTEXT -> R.string.prediction_driver_area_context_title
         DebitPredictionDriver.RECENT_RAIN -> R.string.prediction_driver_recent_rain_title
         DebitPredictionDriver.TEMPERATURE_SNOW -> R.string.prediction_driver_temperature_snow_title
@@ -288,6 +288,8 @@ private val DebitPredictionDriver.titleRes: Int
 private val DebitPredictionDriver.descriptionRes: Int
     get() = when (this) {
         DebitPredictionDriver.CANYON_HISTORY -> R.string.prediction_driver_canyon_history_description
+        DebitPredictionDriver.NEIGHBOR_REPORTS -> R.string.prediction_driver_neighbor_reports_description
+        DebitPredictionDriver.RAIN_GAUGES -> R.string.prediction_driver_rain_gauges_description
         DebitPredictionDriver.AREA_CONTEXT -> R.string.prediction_driver_area_context_description
         DebitPredictionDriver.RECENT_RAIN -> R.string.prediction_driver_recent_rain_description
         DebitPredictionDriver.TEMPERATURE_SNOW -> R.string.prediction_driver_temperature_snow_description
