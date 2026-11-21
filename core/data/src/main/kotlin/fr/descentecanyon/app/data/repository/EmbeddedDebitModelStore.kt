@@ -2,7 +2,6 @@ package fr.descentecanyon.app.data.repository
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.descentecanyon.app.data.AppBuildInfo
 import fr.descentecanyon.app.domain.coroutines.IoDispatcher
 import fr.descentecanyon.app.domain.model.CanyonStaticFeatureSet
 import fr.descentecanyon.app.domain.model.DebitFeatureDefinition
@@ -37,7 +36,7 @@ class EmbeddedDebitModelStore @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val json: Json,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val appBuildInfo: AppBuildInfo,
+    private val assetFileCache: DebitAssetFileCache,
 ) {
 
     private val specMutex = Mutex()
@@ -93,7 +92,7 @@ class EmbeddedDebitModelStore @Inject constructor(
             val index = loadStaticFeatureIndex()
             val entry = index[canyonId] ?: return@withLock null
             val assetFile = cachedStaticFeatureFile ?: withContext(ioDispatcher) {
-                ensureAssetFile(STATIC_FEATURES_ASSET_PATH, "static-features-v${appBuildInfo.versionCode}.json")
+                assetFileCache.file(STATIC_FEATURES_ASSET_PATH, "static-features")
             }.also { cachedStaticFeatureFile = it }
 
             withContext(ioDispatcher) {
@@ -155,22 +154,6 @@ class EmbeddedDebitModelStore @Inject constructor(
             context.assets.open(path).bufferedReader().use { it.readText() }
         }
         return json.decodeFromString(payload)
-    }
-
-    private fun ensureAssetFile(assetPath: String, targetFileName: String): File {
-        val targetDir = File(context.filesDir, "debit-model-cache")
-        if (!targetDir.exists()) {
-            targetDir.mkdirs()
-        }
-        val targetFile = File(targetDir, targetFileName)
-        // Copies left by older app versions (including their ONNX models, 60 MB) are dead weight.
-        targetDir.listFiles()?.filter { it.name != targetFileName }?.forEach { it.delete() }
-        if (!targetFile.exists() || targetFile.length() == 0L) {
-            context.assets.open(assetPath).use { input ->
-                targetFile.outputStream().use { output -> input.copyTo(output) }
-            }
-        }
-        return targetFile
     }
 
     private fun JsonObject.toNumericMap(): Map<String, Double> = entries.mapNotNull { (key, value) ->

@@ -2,7 +2,6 @@ package fr.descentecanyon.app.data.repository
 
 import android.content.Context
 import dagger.hilt.android.qualifiers.ApplicationContext
-import fr.descentecanyon.app.data.AppBuildInfo
 import fr.descentecanyon.app.domain.coroutines.IoDispatcher
 import fr.descentecanyon.app.domain.model.Canyon
 import fr.descentecanyon.app.domain.model.NeighborCanyon
@@ -31,7 +30,7 @@ class EmbeddedDebitRuntimeLookupStore @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val json: Json,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
-    private val appBuildInfo: AppBuildInfo,
+    private val assetFileCache: DebitAssetFileCache,
 ) {
 
     private val coreLoadMutex = Mutex()
@@ -130,10 +129,7 @@ class EmbeddedDebitRuntimeLookupStore @Inject constructor(
                 return@withLock null
             }
             val assetFile = cachedCanyonFile ?: withContext(ioDispatcher) {
-                ensureAssetFile(
-                    assetPath = RUNTIME_LOOKUPS_CANYONS_ASSET_PATH,
-                    targetFileName = "runtime-lookups-canyons-v${appBuildInfo.versionCode}.json",
-                )
+                assetFileCache.file(RUNTIME_LOOKUPS_CANYONS_ASSET_PATH, "runtime-lookups-canyons")
             }.also { cachedCanyonFile = it }
 
             withContext(ioDispatcher) {
@@ -167,20 +163,6 @@ class EmbeddedDebitRuntimeLookupStore @Inject constructor(
             context.assets.open(path).bufferedReader().use { it.readText() }
         }
         return json.decodeFromString(payload)
-    }
-
-    private fun ensureAssetFile(assetPath: String, targetFileName: String): File {
-        val targetDir = File(context.filesDir, "debit-model-cache")
-        if (!targetDir.exists()) {
-            targetDir.mkdirs()
-        }
-        val targetFile = File(targetDir, targetFileName)
-        if (!targetFile.exists() || targetFile.length() == 0L) {
-            context.assets.open(assetPath).use { input ->
-                targetFile.outputStream().use { output -> input.copyTo(output) }
-            }
-        }
-        return targetFile
     }
 
     private fun RuntimeLookupCoreDto.toDomain(): RuntimeLookupCore = RuntimeLookupCore(
