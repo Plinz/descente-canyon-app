@@ -77,7 +77,7 @@ restic ──► sauvegarde chiffrée chez un autre fournisseur        healthche
   est la trace de référence), **écartée** (≥ 3 contre et deux fois plus de contre que de pour : masquée par
   défaut), **contestée** (au moins un contre), sinon **nouvelle**. Les seuils sont dans
   `dcserver/tracks/standing.py`.
-- Quotas par jour : 20 essais et 5 traces par installation (60 et 15 par réseau), 150 votes par
+- Quotas par jour : 20 essais et 5 traces par installation (60 et 40 par réseau), 150 votes par
   installation (400 par réseau).
 - L'auteur supprime sa trace depuis l'app. Seule action manuelle prévue : le retrait d'un contenu
   illicite signalé (obligation d'hébergeur), avec `dcserver track delete <id>`.
