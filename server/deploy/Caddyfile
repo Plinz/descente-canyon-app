@@ -1,0 +1,58 @@
+{
+	email {$DC_ACME_EMAIL}
+}
+
+{$DC_DOMAIN} {
+	request_body {
+		max_size 3MB
+	}
+
+	header {
+		-Server
+		X-Content-Type-Options nosniff
+		Referrer-Policy no-referrer
+	}
+
+	# Access log kept 7 days, networks only (IPv4 /24, IPv6 /48), never the installation key.
+	log {
+		output file /data/logs/access.log {
+			roll_size 10MiB
+			roll_keep 7
+			roll_keep_for 168h
+		}
+		format filter {
+			wrap json
+			fields {
+				request>remote_ip ip_mask {
+					ipv4 24
+					ipv6 48
+				}
+				request>client_ip ip_mask {
+					ipv4 24
+					ipv6 48
+				}
+				request>headers>X-Install-Key delete
+				request>headers>X-Forwarded-For delete
+			}
+		}
+	}
+
+	@api path /v1/health /v1/canyons/* /v1/tracks/*
+	handle @api {
+		encode zstd gzip
+		reverse_proxy api:8080
+	}
+
+	handle /v1/* {
+		root * /srv/publish
+		@manifest path /v1/manifest.json
+		header @manifest Cache-Control "no-cache"
+		@files path /v1/files/*
+		header @files Cache-Control "public, max-age=31536000, immutable"
+		file_server
+	}
+
+	handle {
+		respond 404
+	}
+}

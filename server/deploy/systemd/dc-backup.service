@@ -1,0 +1,12 @@
+[Unit]
+Description=Descente-Canyon server: encrypted backup (restic)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=dc
+Group=dc
+ExecStart=/srv/dc/repo/server/deploy/backup.sh
+TimeoutStartSec=1h
+Nice=10

@@ -1,0 +1,48 @@
+# Run from this folder on the server: docker compose up -d --build
+# Values come from ./.env (copy .env.example) and /srv/dc/env (copy env.example).
+name: dcserver
+
+services:
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DC_DOMAIN: ${DC_DOMAIN:?set DC_DOMAIN in .env}
+      DC_ACME_EMAIL: ${DC_ACME_EMAIL:?set DC_ACME_EMAIL in .env}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - /srv/dc/publish:/srv/publish:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api
+
+  api:
+    build: ..
+    image: dcserver:local
+    restart: unless-stopped
+    user: "${DC_UID:-1000}:${DC_GID:-1000}"
+    env_file: /srv/dc/env
+    # The API never signs anything: the manifest key stays out of its container.
+    volumes:
+      - /srv/dc/data:/srv/dc/data
+    # No published port: only Caddy reaches the API, on the compose network.
+
+  jobs:
+    image: dcserver:local
+    profiles: ["jobs"]
+    user: "${DC_UID:-1000}:${DC_GID:-1000}"
+    env_file: /srv/dc/env
+    volumes:
+      - /srv/dc/data:/srv/dc/data
+      - /srv/dc/publish:/srv/dc/publish
+      - /srv/dc/secrets:/srv/dc/secrets:ro
+      - /srv/dc/repo:/srv/dc/repo:ro
+
+volumes:
+  caddy_data:
+  caddy_config:

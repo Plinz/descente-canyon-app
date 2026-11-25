@@ -1,0 +1,16 @@
+[Unit]
+Description=Descente-Canyon server: catalog job (one slice of the site's sheets)
+Wants=network-online.target
+After=network-online.target docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=dc
+Group=dc
+WorkingDirectory=/srv/dc/repo/server/deploy
+# Overlay, scraper and generator follow the app repository.
+ExecStartPre=/usr/bin/git -C /srv/dc/repo pull --ff-only --quiet
+ExecStart=/usr/bin/docker compose run --rm --no-deps jobs job catalog
+TimeoutStartSec=3h
+Nice=10

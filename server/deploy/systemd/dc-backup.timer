@@ -1,0 +1,10 @@
+[Unit]
+Description=Daily backup of the Descente-Canyon server
+
+[Timer]
+OnCalendar=*-*-* 04:40:00 UTC
+RandomizedDelaySec=10min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

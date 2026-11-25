@@ -1,0 +1,11 @@
+[Unit]
+Description=Nightly catalog job of the Descente-Canyon server
+
+[Timer]
+# 02:15 UTC: the site is quiet, the job ends long before the morning.
+OnCalendar=*-*-* 02:15:00 UTC
+RandomizedDelaySec=20min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

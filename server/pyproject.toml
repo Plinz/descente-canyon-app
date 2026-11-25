@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dcserver"
+version = "1.0.0"
+description = "Light backend of the Descente-Canyon Android app: signed data files and community GPX tracks"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "cryptography>=43",
+    "defusedxml>=0.7.1",
+    "beautifulsoup4>=4.12",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=8", "httpx>=0.27"]
+
+[project.scripts]
+dcserver = "dcserver.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["dcserver*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = ["slow: end-to-end runs on the real repository data (deselect with -m 'not slow')"]
