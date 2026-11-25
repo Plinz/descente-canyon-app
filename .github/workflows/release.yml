@@ -121,6 +121,11 @@ jobs:
           printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode > "$RELEASE_KEYSTORE_FILE"
 
       - name: Build signed release bundle and APK
+        env:
+          # The app's own server (server/README.md): repository variables, not secrets (the address and
+          # the public keys are public). Left empty, the app calls no server of its own.
+          DC_BACKEND_URL: ${{ vars.DC_BACKEND_URL }}
+          DC_BACKEND_PUBLIC_KEYS: ${{ vars.DC_BACKEND_PUBLIC_KEYS }}
         run: |
           ./gradlew :app:bundleRelease :app:assembleRelease :app:verifyReleaseSizeBudget
 

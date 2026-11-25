@@ -57,6 +57,7 @@ core/data                Bases Room, réseau (OkHttp + Jsoup), scraping, reposit
 core/domain              Modèles, interfaces des repositories, cas d'usage, erreurs typées (Kotlin pur)
 core/testing             Outils de test partagés
 build-logic              Plugins de convention Gradle (descente.android.*, descente.jvm.library)
+server                   Serveur léger de l'application (Python, hors build Android) : catalogue signé, traces GPS partagées
 ```
 
 Règles de dépendance : une fonctionnalité ne dépend que de `core:domain` et `core:ui`, jamais de `core:data` ni
@@ -66,7 +67,7 @@ d'une autre fonctionnalité ; seul `app` assemble le tout (Hilt).
 
 | Base | Contenu | Cycle de vie |
 | --- | --- | --- |
-| `catalog.db` (`CatalogDatabase`) | Référentiel des canyons, généré au build | Copiée depuis l'APK, **remplacée en bloc** à chaque installation ou mise à jour (`CatalogInstaller`) : aucune migration |
+| `catalog.db` (`CatalogDatabase`) | Référentiel des canyons, généré au build | Copiée depuis l'APK, **remplacée en bloc** à chaque installation ou mise à jour (`CatalogInstaller`), ou par un catalogue plus récent téléchargé du serveur de l'application (au démarrage suivant) : aucune migration |
 | `user.db` (`UserDatabase`) | Favoris, débits en attente d'envoi, canyons récents, notes personnelles, caches (débits, photos, météo) | Conservée ; toute évolution du schéma exige une migration testée (`UserDatabaseMigrationTest`) |
 
 Les installations antérieures (base unique `descente_canyon_db`, versions ≤ 2.2) sont migrées une fois au démarrage
@@ -81,6 +82,27 @@ Une fiche dont le contenu a plus de 30 jours est rafraîchie depuis le site quan
 - Les échecs sont des `AppError` typées (`Offline`, `SessionExpired`, `Rejected`, `SiteFormatChanged`…), traduites en
   messages par l'interface (`UiText`) ; aucun message d'exception brut n'est affiché.
 - Un envoi (débit, note) n'est considéré réussi que si le site le confirme ou si la donnée est relue sur le site.
+
+## Serveur de l'application (optionnel)
+
+Le dossier `server/` contient un backend léger ([server/README.md](server/README.md)) : chaque nuit, il relit
+une partie des fiches du site avec le scraper du dépôt, reconstruit le catalogue avec le même générateur que
+l'APK et le publie, signé, s'il a changé ; il héberge aussi les traces GPS partagées depuis l'app, classées par
+les votes, sans modération. Le site reste la seule destination des débits, topos et messages : le serveur ne
+voit jamais d'identifiant ni de cookie du site.
+
+L'app n'appelle ce serveur que si le build connaît son adresse HTTPS et sa clé publique de signature :
+
+```properties
+# ~/.gradle/gradle.properties ou local.properties (ou DC_BACKEND_URL / DC_BACKEND_PUBLIC_KEYS)
+dc.backendUrl=https://api.example.org
+dc.backendPublicKey=MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...
+```
+
+Sans ces valeurs (cas par défaut), rien ne change : catalogue de l'APK, aucune section de traces. Le workflow de
+release lit les variables de dépôt `DC_BACKEND_URL` et `DC_BACKEND_PUBLIC_KEYS`. Avec elles, l'app lit le
+manifeste signé deux fois par jour, télécharge un catalogue plus récent (Wi-Fi par défaut), vérifie empreinte,
+schéma Room et intégrité, et l'installe au démarrage suivant ; tout échec la laisse sur ses propres données.
 
 ## Prérequis
 

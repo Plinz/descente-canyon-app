@@ -72,8 +72,10 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     homeViewModel: HomeViewModel = hiltViewModel(),
+    serverNoticesViewModel: ServerNoticesViewModel = hiltViewModel(),
 ) {
     val homeState by homeViewModel.uiState.collectAsStateWithLifecycle()
+    val serverNotices by serverNoticesViewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val donationUrl = stringResource(R.string.support_donation_url)
     val contentWidth = rememberDcContentWidth()
@@ -198,6 +200,11 @@ fun HomeScreen(
                 if (homeState.pendingDebitCount > 0) {
                     item {
                         PendingDebitsBanner(count = homeState.pendingDebitCount, onClick = onPendingDebitsClick)
+                    }
+                }
+                if (!serverNotices.isEmpty) {
+                    item(key = "server_notices") {
+                        HomeServerNotices(state = serverNotices, onDismiss = serverNoticesViewModel::dismiss)
                     }
                 }
 

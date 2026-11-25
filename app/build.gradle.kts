@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+import java.time.OffsetDateTime
 import java.util.Properties
 import java.util.zip.ZipFile
 import org.gradle.api.tasks.Exec
@@ -172,6 +174,33 @@ val syncRuntimeAssets = tasks.register<Sync>("syncRuntimeAssets") {
     }
 }
 
+// The app's own server (server/README.md). Without an HTTPS address and a public key (gradle
+// property, local.properties or environment), the app calls no server of its own.
+fun backendSetting(propertyName: String, envName: String): String =
+    providers.gradleProperty(propertyName).orNull?.takeIf { it.isNotBlank() }
+        ?: localPropertyOrEnv(propertyName, envName)
+        ?: ""
+
+val backendUrl = backendSetting("dc.backendUrl", "DC_BACKEND_URL").trim().trimEnd('/')
+val backendPublicKeys = backendSetting("dc.backendPublicKey", "DC_BACKEND_PUBLIC_KEYS")
+    .split(',')
+    .map { it.trim() }
+    .filter { it.isNotEmpty() }
+require(backendUrl.isEmpty() || backendUrl.startsWith("https://")) { "dc.backendUrl must be an https:// address" }
+require(backendPublicKeys.all { key -> key.matches(Regex("^[A-Za-z0-9+/]+={0,2}$")) }) { "dc.backendPublicKey must be base64" }
+
+// Catalog identity checked before a downloaded catalog replaces the APK's one: the same Room
+// schema file as the generator, and the generation time of the embedded data.
+@Suppress("UNCHECKED_CAST")
+val catalogSchemaDatabase = (JsonSlurper().parse(prepackagedDatabaseSchemaFile) as Map<String, Any?>)["database"] as Map<String, Any?>
+val catalogSchemaVersion = (catalogSchemaDatabase["version"] as Number).toInt()
+val catalogIdentityHash = catalogSchemaDatabase["identityHash"] as String
+val embeddedCatalogVersion: String = run {
+    @Suppress("UNCHECKED_CAST")
+    val manifest = JsonSlurper().parse(File(prepackagedRoomImportDirectory, "manifest.json")) as Map<String, Any?>
+    OffsetDateTime.parse(manifest["generatedAt"] as String).toInstant().toString()
+}
+
 data class ReleasePackageEntry(val path: String, val bytes: Long)
 
 data class ReleasePackageInspection(
@@ -257,6 +286,12 @@ android {
         versionName = ciVersionName
 
         testInstrumentationRunner = "fr.descentecanyon.app.e2e.runner.HiltTestRunner"
+
+        buildConfigField("String", "BACKEND_URL", "\"$backendUrl\"")
+        buildConfigField("String", "BACKEND_PUBLIC_KEYS", "\"${backendPublicKeys.joinToString(",")}\"")
+        buildConfigField("int", "CATALOG_SCHEMA_VERSION", catalogSchemaVersion.toString())
+        buildConfigField("String", "CATALOG_IDENTITY_HASH", "\"$catalogIdentityHash\"")
+        buildConfigField("String", "EMBEDDED_CATALOG_VERSION", "\"$embeddedCatalogVersion\"")
     }
 
     buildTypes {

@@ -6,6 +6,7 @@
 -->
 <full-backup-content>
     <exclude domain="sharedpref" path="dc_auth_prefs.xml" />
+    <exclude domain="sharedpref" path="catalog_updates.xml" />
     <exclude domain="database" path="catalog.db" />
     <exclude domain="database" path="catalog.db-wal" />
     <exclude domain="database" path="catalog.db-shm" />

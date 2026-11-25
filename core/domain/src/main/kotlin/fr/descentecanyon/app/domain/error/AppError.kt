@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.domain.error
 
+import fr.descentecanyon.app.domain.model.TrackRejection
 import java.io.IOException
 import java.io.InterruptedIOException
 import java.net.ConnectException
@@ -57,6 +58,9 @@ sealed interface AppError {
 
     /** Writing to local storage (database, gallery, cache files) failed. */
     data object StorageFailure : AppError
+
+    /** The app's server refused a shared track or a vote, for [reason]. */
+    data class TrackRejected(val reason: TrackRejection) : AppError
 
     /** Unclassified failure; [cause] is kept for logs only. */
     data class Unknown(val cause: Throwable? = null) : AppError {

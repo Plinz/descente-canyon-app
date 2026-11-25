@@ -45,8 +45,9 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideCatalogDatabase(@ApplicationContext context: Context, installer: CatalogInstaller): CatalogDatabase {
-        // Reference data: replaced as a whole by each APK, never migrated.
-        installer.discardOutdatedCatalog()
+        // Reference data: replaced as a whole by each APK or by a newer catalog downloaded from the
+        // app's server, never migrated.
+        installer.prepareBeforeOpen()
         return Room.databaseBuilder(context, CatalogDatabase::class.java, CatalogDatabase.DATABASE_NAME)
             .createFromAsset(CatalogDatabase.ASSET_PATH)
             .fallbackToDestructiveMigration(dropAllTables = true)

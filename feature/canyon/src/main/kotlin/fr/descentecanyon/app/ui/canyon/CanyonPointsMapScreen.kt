@@ -96,7 +96,9 @@ import fr.descentecanyon.app.ui.location.hasLocationPermission
 import fr.descentecanyon.app.ui.location.observeDeviceLocation
 import fr.descentecanyon.app.ui.location.requestLocationSettings
 import fr.descentecanyon.app.ui.map.MapLibreView
+import fr.descentecanyon.app.ui.map.MapTrackLine
 import fr.descentecanyon.app.ui.map.UserTrackingMode
+import fr.descentecanyon.app.ui.map.toMapTrackLine
 import fr.descentecanyon.app.ui.test.TestTags
 import java.util.Locale
 import kotlin.math.abs
@@ -111,8 +113,11 @@ fun CanyonPointsMapScreen(
     onOpenEmergency: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: CanyonDetailViewModel = hiltViewModel(),
+    tracksViewModel: CommunityTracksViewModel = hiltViewModel(),
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    val tracksState = tracksViewModel.uiState.collectAsStateWithLifecycle().value
+    val trackLines = remember(tracksState.tracks) { tracksState.tracks?.visible.orEmpty().map { it.toMapTrackLine() } }
 
     LaunchedEffect(canyonId) {
         viewModel.ensureWatershedGeometryLoaded()
@@ -131,6 +136,7 @@ fun CanyonPointsMapScreen(
             uiState.canyonDetail != null -> CanyonPointsMapContent(
                 detail = uiState.canyonDetail,
                 watershedGeometryJson = uiState.watershedGeometryJson,
+                trackLines = trackLines,
                 onBackClick = onBackClick,
                 onOpenEmergency = onOpenEmergency,
                 modifier = Modifier.padding(contentPadding),
@@ -148,6 +154,7 @@ fun CanyonPointsMapScreen(
 private fun CanyonPointsMapContent(
     detail: CanyonDetail,
     watershedGeometryJson: String?,
+    trackLines: List<MapTrackLine>,
     onBackClick: () -> Unit,
     onOpenEmergency: () -> Unit,
     modifier: Modifier = Modifier,
@@ -331,6 +338,7 @@ private fun CanyonPointsMapContent(
             watershedGeometryJson = watershedGeometryJson,
             watershedBounds = detail.watershed?.bounds?.toLatLngBounds(),
             showWatershed = showWatershed,
+            trackLines = trackLines,
             onUserCameraMove = {
                 if (trackingModeName != UserTrackingMode.NONE.name) {
                     trackingModeName = UserTrackingMode.NONE.name

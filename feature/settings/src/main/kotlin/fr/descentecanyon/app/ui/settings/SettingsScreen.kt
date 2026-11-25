@@ -21,6 +21,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -44,6 +45,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -55,6 +57,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -64,6 +67,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.AppServerState
+import fr.descentecanyon.app.domain.model.CatalogSource
 import fr.descentecanyon.app.domain.model.ThemeMode
 import fr.descentecanyon.app.ui.common.openUrl
 import fr.descentecanyon.app.ui.common.startActivitySafely
@@ -74,6 +79,10 @@ import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 
 @Composable
 fun SettingsScreen(
@@ -94,7 +103,7 @@ fun SettingsScreen(
     val versionName = remember(context) { context.appVersionName() }
 
     openDialog?.let { dialog ->
-        SettingsTextDialog(dialog = dialog, onDismiss = { openDialog = null })
+        SettingsTextDialog(dialog = dialog, hasServer = uiState.server.isConfigured, onDismiss = { openDialog = null })
     }
 
     Scaffold(
@@ -191,6 +200,19 @@ fun SettingsScreen(
                             style = MaterialTheme.typography.bodySmall,
                             color = LocalDcColors.current.textSecondary,
                         )
+                    }
+                }
+                if (uiState.server.isConfigured) {
+                    item {
+                        SettingsSection(title = stringResource(R.string.settings_section_server)) {
+                            ServerSettings(
+                                state = uiState.server,
+                                isChecking = uiState.isCheckingServer,
+                                onEnabledChange = viewModel::setServerEnabled,
+                                onMobileDataChange = viewModel::setCatalogOnMobileData,
+                                onCheckNow = viewModel::checkServerNow,
+                            )
+                        }
                     }
                 }
                 item {
@@ -322,19 +344,21 @@ private fun SettingsLinkRow(
 }
 
 @Composable
-private fun SettingsTextDialog(dialog: SettingsDialog, onDismiss: () -> Unit) {
+private fun SettingsTextDialog(dialog: SettingsDialog, hasServer: Boolean, onDismiss: () -> Unit) {
     val title = when (dialog) {
         SettingsDialog.DATA_SOURCES -> stringResource(R.string.settings_data_sources)
         SettingsDialog.LICENSES -> stringResource(R.string.settings_licenses)
         SettingsDialog.PRIVACY -> stringResource(R.string.settings_privacy)
     }
     val body = when (dialog) {
-        SettingsDialog.DATA_SOURCES -> stringResource(R.string.settings_data_sources_body)
+        SettingsDialog.DATA_SOURCES -> stringResource(R.string.settings_data_sources_body) +
+            if (hasServer) "\n" + stringResource(R.string.settings_data_sources_tracks) else ""
 
         SettingsDialog.LICENSES -> stringResource(R.string.settings_licenses_intro) + "\n\n" +
             OPEN_SOURCE_LIBRARIES.joinToString("\n") { "• $it" }
 
-        SettingsDialog.PRIVACY -> stringResource(R.string.settings_privacy_body)
+        SettingsDialog.PRIVACY -> stringResource(R.string.settings_privacy_body) +
+            if (hasServer) "\n\n" + stringResource(R.string.settings_privacy_server) else ""
     }
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -384,3 +408,95 @@ private val OPEN_SOURCE_LIBRARIES = listOf(
     "MapLibre Native — BSD 2-Clause",
     "Google Play services Location — Android SDK License",
 )
+
+/** The app's server: switch, mobile data for catalogs, catalog in use, last check. */
+@Composable
+private fun ColumnScope.ServerSettings(
+    state: AppServerState,
+    isChecking: Boolean,
+    onEnabledChange: (Boolean) -> Unit,
+    onMobileDataChange: (Boolean) -> Unit,
+    onCheckNow: () -> Unit,
+) {
+    val locale = LocalConfiguration.current.locales[0]
+    val dateFormat = remember(locale) { DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG).withLocale(locale) }
+    val dateTimeFormat =
+        remember(locale) { DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT).withLocale(locale) }
+    fun Instant.date(): String = dateFormat.format(atZone(ZoneId.systemDefault()))
+    fun Instant.dateTime(): String = dateTimeFormat.format(atZone(ZoneId.systemDefault()))
+
+    SettingsSwitchRow(
+        title = stringResource(R.string.settings_server_enabled),
+        subtitle = stringResource(R.string.settings_server_enabled_hint),
+        checked = state.isEnabled,
+        onCheckedChange = onEnabledChange,
+    )
+    SettingsSwitchRow(
+        title = stringResource(R.string.settings_server_mobile_data),
+        subtitle = stringResource(R.string.settings_server_mobile_data_hint),
+        checked = state.catalogOnMobileData,
+        enabled = state.isEnabled,
+        onCheckedChange = onMobileDataChange,
+    )
+    val catalog = state.catalog
+    catalog.dataVersion?.let { version ->
+        Text(
+            text = if (catalog.source == CatalogSource.SERVER) {
+                stringResource(R.string.settings_server_catalog_server, version.date())
+            } else {
+                stringResource(R.string.settings_server_catalog_app, version.date())
+            },
+            style = MaterialTheme.typography.bodyMedium,
+        )
+    }
+    catalog.pendingDataVersion?.let { version ->
+        Text(
+            text = stringResource(R.string.settings_server_catalog_pending, version.date()),
+            style = MaterialTheme.typography.bodySmall,
+            color = LocalDcColors.current.textSecondary,
+        )
+    }
+    if (state.isEnabled) {
+        Text(
+            text = state.lastCheckedAt?.let { stringResource(R.string.settings_server_last_check, it.dateTime()) }
+                ?: stringResource(R.string.settings_server_never_checked),
+            style = MaterialTheme.typography.bodySmall,
+            color = LocalDcColors.current.textSecondary,
+        )
+        if (state.lastCheckFailed) {
+            Text(
+                text = stringResource(R.string.settings_server_check_failed),
+                style = MaterialTheme.typography.bodySmall,
+                color = LocalDcColors.current.textSecondary,
+            )
+        }
+        TextButton(onClick = onCheckNow, enabled = !isChecking) {
+            Text(stringResource(R.string.settings_server_check_now))
+        }
+    }
+}
+
+@Composable
+private fun SettingsSwitchRow(
+    title: String,
+    subtitle: String,
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+    enabled: Boolean = true,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .heightIn(min = 56.dp)
+            .toggleable(value = checked, enabled = enabled, role = Role.Switch, onValueChange = onCheckedChange)
+            .padding(vertical = 8.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+    ) {
+        Column(modifier = Modifier.weight(1f)) {
+            Text(text = title, style = MaterialTheme.typography.bodyLarge)
+            Text(text = subtitle, style = MaterialTheme.typography.bodySmall, color = LocalDcColors.current.textSecondary)
+        }
+        Switch(checked = checked, onCheckedChange = null, enabled = enabled)
+    }
+}

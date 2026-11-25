@@ -72,6 +72,8 @@ fun MapLibreView(
     watershedGeometryJson: String? = null,
     watershedBounds: LatLngBounds? = null,
     showWatershed: Boolean = false,
+    /** Shared GPS tracks drawn under the points. */
+    trackLines: List<MapTrackLine> = emptyList(),
     persistedCameraState: MapCameraState? = null,
     focusLocationRequestId: Int = 0,
     focusRequest: MapFocusRequest? = null,
@@ -177,6 +179,7 @@ fun MapLibreView(
                 watershedGeometryJson = watershedGeometryJson,
                 watershedBounds = watershedBounds,
                 showWatershed = showWatershed,
+                trackLines = trackLines,
                 persistedCameraState = persistedCameraState,
                 focusLocationRequestId = focusLocationRequestId,
                 focusRequest = focusRequest,
@@ -260,6 +263,7 @@ private class MapRenderState(private val context: android.content.Context) {
     private var onCameraBearingChanged: (Double) -> Unit = {}
     private var clusterMarkers: Boolean = true
     private var watershedGeometryJson: String? = null
+    private var trackLines: List<MapTrackLine> = emptyList()
     private var watershedBounds: LatLngBounds? = null
     private var showWatershed: Boolean = false
     private var persistedCameraState: MapCameraState? = null
@@ -334,6 +338,7 @@ private class MapRenderState(private val context: android.content.Context) {
         watershedGeometryJson: String?,
         watershedBounds: LatLngBounds?,
         showWatershed: Boolean,
+        trackLines: List<MapTrackLine>,
         persistedCameraState: MapCameraState?,
         focusLocationRequestId: Int,
         focusRequest: MapFocusRequest?,
@@ -360,6 +365,7 @@ private class MapRenderState(private val context: android.content.Context) {
         this.watershedGeometryJson = watershedGeometryJson
         this.watershedBounds = watershedBounds
         this.showWatershed = showWatershed
+        this.trackLines = trackLines
         this.persistedCameraState = persistedCameraState
         this.focusLocationRequestId = focusLocationRequestId
         this.focusRequest = focusRequest
@@ -549,11 +555,12 @@ private class MapRenderState(private val context: android.content.Context) {
             clusterMarkers = clusterMarkers,
             watershedGeometryJson = watershedGeometryJson,
             showWatershed = showWatershed,
-        )
+        ) * 31 + trackSignature(trackLines)
         if (!force && lastRenderSignature == signature) return
         lastRenderSignature = signature
 
         updateWatershed(style)
+        updateTracks(style)
 
         if (clusterMarkers) {
             renderVector(style, map)
@@ -819,6 +826,17 @@ private class MapRenderState(private val context: android.content.Context) {
             result = 31 * result + watershedGeometryJson.hashCode()
         }
         return result
+    }
+
+    private fun updateTracks(style: Style) {
+        ensureTrackStyle(style)
+        val source = style.getSource(TRACK_SOURCE_ID) as? GeoJsonSource ?: return
+        runCatching {
+            source.setGeoJson(buildTrackGeoJson(trackLines))
+        }.onFailure { throwable ->
+            Log.e(TAG, "Unable to update the tracks", throwable)
+            source.setGeoJson(EMPTY_GEOJSON)
+        }
     }
 
     private fun updateWatershed(style: Style) {

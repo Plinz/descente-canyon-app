@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.toAppError
+import fr.descentecanyon.app.domain.model.TrackRejection
 
 /**
  * User message for a typed error.
@@ -38,8 +39,26 @@ fun AppError.toUiText(@StringRes fallback: Int = R.string.error_generic, @String
 
     AppError.StorageFailure -> UiText.res(R.string.error_storage)
 
+    is AppError.TrackRejected -> UiText.res(reason.messageRes())
+
     AppError.DataUnavailable, is AppError.Unknown -> UiText.res(fallback)
 }
 
 fun Throwable.toUiText(@StringRes fallback: Int = R.string.error_generic, @StringRes connectivity: Int? = null): UiText =
     toAppError().toUiText(fallback, connectivity)
+
+@StringRes
+private fun TrackRejection.messageRes(): Int = when (this) {
+    TrackRejection.INVALID_GPX -> R.string.track_error_invalid_gpx
+    TrackRejection.TOO_FEW_POINTS -> R.string.track_error_too_few_points
+    TrackRejection.TOO_MANY_POINTS -> R.string.track_error_too_many_points
+    TrackRejection.TOO_SHORT -> R.string.track_error_too_short
+    TrackRejection.TOO_LONG -> R.string.track_error_too_long
+    TrackRejection.TOO_FAR -> R.string.track_error_too_far
+    TrackRejection.UNLOCATED_CANYON -> R.string.track_error_unlocated_canyon
+    TrackRejection.DUPLICATE -> R.string.track_error_duplicate
+    TrackRejection.TOO_LARGE -> R.string.track_error_too_large
+    TrackRejection.RATE_LIMITED -> R.string.track_error_rate_limited
+    TrackRejection.OWN_TRACK -> R.string.track_error_own_track
+    TrackRejection.NOT_AUTHOR -> R.string.track_error_not_author
+}

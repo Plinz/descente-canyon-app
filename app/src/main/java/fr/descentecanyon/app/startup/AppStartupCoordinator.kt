@@ -11,6 +11,7 @@ import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.outing.OutingEstimateScheduler
 import fr.descentecanyon.app.outing.OutingReminderScheduler
 import fr.descentecanyon.app.perf.PerformanceTrace
+import fr.descentecanyon.app.sync.AppServerSyncScheduler
 import fr.descentecanyon.app.sync.NotificationSyncScheduler
 import fr.descentecanyon.app.sync.PendingDebitSyncScheduler
 import fr.descentecanyon.app.sync.SiteReportsRefresher
@@ -38,6 +39,7 @@ class AppStartupCoordinator @Inject constructor(
     private val outingReminderScheduler: OutingReminderScheduler,
     private val connectivityObserver: ConnectivityObserver,
     private val accidentReportRepository: AccidentReportRepository,
+    private val appServerSyncScheduler: AppServerSyncScheduler,
 ) {
 
     private val backgroundScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
@@ -91,6 +93,7 @@ class AppStartupCoordinator @Inject constructor(
             siteReportsRefresher.start()
             outingReminderScheduler.start()
             outingEstimateScheduler.start()
+            appServerSyncScheduler.start()
             initialized = true
             PerformanceTrace.logEvent("startup_initialize_marked_ready")
             backgroundScope.launch {

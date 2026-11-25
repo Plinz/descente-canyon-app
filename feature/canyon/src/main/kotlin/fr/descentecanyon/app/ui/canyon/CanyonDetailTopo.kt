@@ -100,6 +100,10 @@ internal fun LazyListScope.topoItems(detail: CanyonDetail) {
             )
         }
     }
+    // Shared GPS tracks of the app's server, next to the approach and return they illustrate.
+    item(key = "community_tracks") {
+        CommunityTracksSection(canyonName = detail.canyon.nom, modifier = sectionModifier)
+    }
     detail.engagement?.let { text ->
         item {
             CollapsibleSection(
