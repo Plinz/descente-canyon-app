@@ -384,6 +384,7 @@ private class MapRenderState(private val context: android.content.Context) {
             return
         }
 
+        // Showing or hiding a track never moves the camera: only the points and the watershed refit it.
         val fitDataSignature = buildFitDataSignature(markers, watershedBounds, watershedGeometryJson, showWatershed)
         if (fitDataSignature != lastFitDataSignature) {
             lastFitDataSignature = fitDataSignature
@@ -573,7 +574,7 @@ private class MapRenderState(private val context: android.content.Context) {
             if (!restored) {
                 fitCamera(
                     map = map,
-                    coordinates = canyonCoordinates(),
+                    coordinates = canyonCoordinates() + trackCoordinates(),
                     watershedBounds = watershedBounds.takeIf { showWatershed && !watershedGeometryJson.isNullOrBlank() },
                 )
             }
@@ -853,6 +854,16 @@ private class MapRenderState(private val context: android.content.Context) {
             Log.e(TAG, "Unable to update watershed polygon", throwable)
             source.setGeoJson(EMPTY_GEOJSON)
         }
+    }
+
+    /** The two corners of the box of the tracks shown: the first view frames them with the points. */
+    private fun trackCoordinates(): List<LatLng> {
+        val points = trackLines.flatMap { line -> line.segments.flatten() }
+        if (points.isEmpty()) return emptyList()
+        return listOf(
+            LatLng(points.minOf { it.latitude }, points.minOf { it.longitude }),
+            LatLng(points.maxOf { it.latitude }, points.maxOf { it.longitude }),
+        )
     }
 
     private fun canyonCoordinates(): List<LatLng> {

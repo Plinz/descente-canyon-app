@@ -33,7 +33,7 @@ def test_publish_signs_and_bumps_the_sequence(settings, public_key):
     assert (first["sequence"], second["sequence"]) == (1, 2)
     payload = manifest.read_published_payload(settings.v1_dir, public_key)
     assert payload["sequence"] == 2
-    assert payload["features"] == {"communityTracks": True, "catalogUpdates": True}
+    assert payload["features"] == {"communityTracks": True, "catalogUpdates": True, "serverPredictions": True}
     envelope = json.loads((settings.v1_dir / "manifest.json").read_text())
     assert envelope["keyId"] == signing.key_id(public_key)
     assert base64.b64decode(envelope["payload"]) == manifest.encode_payload(payload)

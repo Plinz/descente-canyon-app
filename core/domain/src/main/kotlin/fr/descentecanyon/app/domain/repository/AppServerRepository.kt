@@ -13,6 +13,9 @@ interface AppServerRepository {
      */
     suspend fun refresh(): Result<Unit>
 
+    /** [refresh] when the last check is older than [maxAge] (the debit estimates change a few times a day). */
+    suspend fun refreshIfOlderThan(maxAge: java.time.Duration): Result<Unit> = refresh()
+
     suspend fun setEnabled(enabled: Boolean)
 
     suspend fun setCatalogOnMobileData(enabled: Boolean)

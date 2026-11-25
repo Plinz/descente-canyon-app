@@ -20,6 +20,7 @@ import sqlite3
 import subprocess
 import sys
 import tempfile
+import time
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass
 from datetime import date, datetime, timezone
@@ -40,6 +41,10 @@ ROOM_IMPORT = Path("offline-data/full/room-import")
 REPO_CANYONS = Path("offline-data/full/canyons")
 CHAINS = Path("data-overlay/canyon-chains.json")
 RECOVERED_POINTS = Path("data-overlay/recovered-geo-points.json")
+BUNDLES = Path("scripts/app/catalog_bundles.py")
+BUNDLE_PATH = "catalog/bundles/{hash}.json.gz"
+SHARED_PATH = "catalog/shared/{table}-{hash}.json.gz"
+BUNDLE_RETENTION_S = 7 * 24 * 3600
 
 MAX_FORMAT_FAILURE_SHARE = 0.05
 MAX_NETWORK_FAILURE_SHARE = 0.30
@@ -62,6 +67,48 @@ class ScrapeResult:
     changed: list[int]
     format_failures: list[int]
     network_failures: list[tuple[int, str]]
+
+
+def load_module(path: Path, name: str) -> ModuleType:
+    spec = importlib.util.spec_from_file_location(name, path)
+    if spec is None or spec.loader is None:
+        raise JobAborted("REPO_INCOMPLETE", f"{path} not found")
+    module = importlib.util.module_from_spec(spec)
+    # Registered first: dataclasses with postponed annotations look their module up there.
+    sys.modules[name] = module
+    spec.loader.exec_module(module)
+    return module
+
+
+def write_if_absent(path: Path, data: bytes, fsync: bool = True) -> bool:
+    if path.exists() and path.stat().st_size > 0:
+        return False
+    atomic_write_bytes(path, data, fsync=fsync)
+    return True
+
+
+def write_bundles(v1_dir: Path, bundles: list, gzip_bytes: Callable[[bytes], bytes]) -> int:
+    """Writes the bundles not published yet (their name is their content hash), then syncs once."""
+    written = sum(write_if_absent(v1_dir / BUNDLE_PATH.format(hash=b.hash), gzip_bytes(b.data), fsync=False) for b in bundles)
+    if written:
+        os.sync()
+    return written
+
+
+def prune_bundles(v1_dir: Path, hashes: set[str], forum_hash: str, now: float | None = None) -> int:
+    """Removes the bundles no index refers to any more, a week after: a phone reading the previous
+    index can still fetch them."""
+    now = time.time() if now is None else now
+    removed = 0
+    for folder, keep in ((v1_dir / "catalog" / "bundles", lambda name: name.split(".")[0] in hashes),
+                         (v1_dir / "catalog" / "shared", lambda name: forum_hash in name)):
+        if not folder.exists():
+            continue
+        for path in folder.iterdir():
+            if not keep(path.name) and now - path.stat().st_mtime > BUNDLE_RETENTION_S:
+                path.unlink()
+                removed += 1
+    return removed
 
 
 def load_scraper(repo: Path, user_agent: str, delay_s: float) -> ModuleType:
@@ -296,6 +343,17 @@ def _job_lock(path: Path):
             fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
 
 
+def _current_path(settings: Settings) -> Path:
+    return settings.data_dir / "catalog" / "current.db"
+
+
+def _keep_current(settings: Settings, db_path: Path) -> None:
+    """Copy of the last catalog built, read by the estimates job (canyons, weather points)."""
+    current = _current_path(settings)
+    shutil.copyfile(db_path, current.with_suffix(".db.part"))
+    os.replace(current.with_suffix(".db.part"), current)
+
+
 def _state_path(settings: Settings) -> Path:
     return settings.data_dir / "catalog" / "state.json"
 
@@ -334,7 +392,7 @@ def _run_locked(
     scraper_loader: Callable[[Path, str, float], ModuleType],
 ) -> dict[str, Any]:
     repo = settings.repo_dir
-    for required in (SCRAPER, GENERATOR, ROOM_IMPORT, CHAINS, RECOVERED_POINTS):
+    for required in (SCRAPER, GENERATOR, BUNDLES, ROOM_IMPORT, CHAINS, RECOVERED_POINTS):
         if not (repo / required).exists():
             raise JobAborted("REPO_INCOMPLETE", f"{required} is missing in {repo}")
     scraper = scraper_loader(repo, settings.user_agent, settings.request_delay_s)
@@ -366,48 +424,81 @@ def _run_locked(
         stats = catalog_stats(db_path, schema)
         same_schema = state.get("stats", {}).get("identityHash") == stats["identityHash"]
         check_against_previous(stats, state.get("stats") if same_schema else None)
-        fingerprint, per_canyon = content_fingerprints(db_path)
-        canyon_hashes = {str(k): v for k, v in per_canyon.items()}
-        previous_rows: dict[str, str] = state.get("canyonHashes", {})
-        if previous_rows:
-            touched = {k for k, v in canyon_hashes.items() if previous_rows.get(k) != v} | (previous_rows.keys() - canyon_hashes.keys())
+        fingerprint, _ = content_fingerprints(db_path)
+        bundles_module = load_module(repo / BUNDLES, "dc_catalog_bundles")
+        bundles = list(bundles_module.canyon_bundles(db_path))
+        bundle_hashes = {str(b.canyon_id): b.hash for b in bundles}
+        previous_hashes: dict[str, str] = state.get("bundleHashes", {})
+        if previous_hashes:
+            touched = {k for k, v in bundle_hashes.items() if previous_hashes.get(k) != v} | (previous_hashes.keys() - bundle_hashes.keys())
             report["catalogChanges"] = sorted(int(k) for k in touched)
         report["counts"] = stats["counts"]
-        if same_schema and state.get("fingerprint") == fingerprint:
+        content_changed = not same_schema or state.get("fingerprint") != fingerprint
+        forum_hash, forum_data = bundles_module.shared_table(db_path, "forum_users")
+        index_core = {
+            "bundleSchema": bundles_module.BUNDLE_SCHEMA,
+            "schemaVersion": stats["schemaVersion"],
+            "identityHash": stats["identityHash"],
+            "bundlePath": BUNDLE_PATH,
+            "canyons": {str(b.canyon_id): [b.hash, b.read_at_ms] for b in bundles},
+            "shared": {"forum_users": {"hash": forum_hash, "path": SHARED_PATH.format(table="forum_users", hash=forum_hash)}},
+        }
+        index_digest = hashlib.sha256(manifest.encode_payload(index_core)).hexdigest()
+        if not content_changed and state.get("indexDigest") == index_digest:
             report["unchanged"] = True
+            if not _current_path(settings).exists():
+                _keep_current(settings, db_path)
             return report
         if not publish:
             report["dryRun"] = True
             return report
 
-        packed = work / "catalog.db.gz"
-        _gzip(db_path, packed)
         data_version = manifest.utc_now_iso()
         with publication_lock(settings.lock_path):
-            published = publish_file(settings.v1_dir, packed, ".db.gz")
+            new_bundles = write_bundles(settings.v1_dir, bundles, bundles_module.gzip_bytes)
+            write_if_absent(settings.v1_dir / index_core["shared"]["forum_users"]["path"], bundles_module.gzip_bytes(forum_data))
+            index_file = work / "catalog-index.json.gz"
+            index_file.write_bytes(bundles_module.gzip_bytes(manifest.encode_payload({**index_core, "dataVersion": data_version})))
+            index_published = publish_file(settings.v1_dir, index_file, ".json.gz")
             manifest_state = manifest.load_state(settings)
-            manifest_state["catalogs"] = [
-                {
-                    "schemaVersion": stats["schemaVersion"],
-                    "identityHash": stats["identityHash"],
-                    "dataVersion": data_version,
-                    "path": published["path"],
-                    "sha256": published["sha256"],
-                    "size": published["size"],
-                    "uncompressedSize": db_path.stat().st_size,
-                    "canyonCount": stats["counts"].get("canyons", 0),
-                }
-            ]
+            published = None
+            if content_changed or not manifest_state.get("catalogs"):
+                packed = work / "catalog.db.gz"
+                _gzip(db_path, packed)
+                published = publish_file(settings.v1_dir, packed, ".db.gz")
+                manifest_state["catalogs"] = [
+                    {
+                        "schemaVersion": stats["schemaVersion"],
+                        "identityHash": stats["identityHash"],
+                        "dataVersion": data_version,
+                        "path": published["path"],
+                        "sha256": published["sha256"],
+                        "size": published["size"],
+                        "uncompressedSize": db_path.stat().st_size,
+                        "canyonCount": stats["counts"].get("canyons", 0),
+                    }
+                ]
+            manifest_state["catalogIndex"] = {
+                "schemaVersion": stats["schemaVersion"],
+                "identityHash": stats["identityHash"],
+                "dataVersion": data_version,
+                "path": index_published["path"],
+                "sha256": index_published["sha256"],
+                "size": index_published["size"],
+            }
             manifest.publish(settings, manifest_state)
             prune_files(settings.v1_dir, manifest.referenced_files(manifest_state))
+            prune_bundles(settings.v1_dir, set(bundle_hashes.values()), forum_hash)
         write_reference(settings.canyon_reference_path, build_reference_from_catalog(db_path))
+        _keep_current(settings, db_path)
         new_state = {
             "fingerprint": fingerprint,
             "stats": stats,
-            "dataVersion": data_version,
-            "file": published,
-            "canyonHashes": canyon_hashes,
+            "dataVersion": data_version if content_changed else state.get("dataVersion", data_version),
+            "file": published or state.get("file"),
+            "bundleHashes": bundle_hashes,
+            "indexDigest": index_digest,
         }
         atomic_write_bytes(state_path, json.dumps(new_state, ensure_ascii=False).encode("utf-8"))
-        report.update({"published": True, "dataVersion": data_version, "file": published})
+        report.update({"published": True, "dataVersion": data_version, "catalogFile": published is not None, "newBundles": new_bundles})
         return report

@@ -8,6 +8,7 @@ import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.DebitPredictionBasis
 import fr.descentecanyon.app.domain.model.DebitPredictionInfoSummary
 import fr.descentecanyon.app.domain.model.ORDINAL_DEBIT_LEVELS
+import fr.descentecanyon.app.domain.repository.AppServerRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionSupportRepository
@@ -18,12 +19,16 @@ import java.time.ZoneId
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 
 @Singleton
 class DebitPredictionRepositoryImpl @Inject constructor(
@@ -34,9 +39,13 @@ class DebitPredictionRepositoryImpl @Inject constructor(
     private val predictionCache: PredictionCache,
     private val canyonRepository: CanyonRepository,
     private val connectivityObserver: ConnectivityObserver,
+    private val serverPredictions: ServerPredictionStore,
+    private val appServer: AppServerRepository,
     private val clock: Clock,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
 ) : DebitPredictionRepository {
+
+    private val backgroundScope = CoroutineScope(SupervisorJob() + ioDispatcher)
 
     /** Spaces out the estimates that download a whole weather window (about 29 calls of the Open-Meteo quota each). */
     private val fullDownloadMutex = Mutex()
@@ -45,11 +54,18 @@ class DebitPredictionRepositoryImpl @Inject constructor(
     override fun observeEstimates(canyonIds: List<Int>): Flow<Map<Int, CanyonDebitPredictions>> = flow {
         val ids = canyonIds.distinct()
         val known = LinkedHashMap<Int, CanyonDebitPredictions>()
-        ids.forEach { id -> predictionCache.read(id)?.let { known[id] = it } }
+        ids.forEach { id -> (server(id) ?: predictionCache.read(id))?.let { known[id] = it } }
         emit(known.toMap())
+        // The server computes every canyon: a fresher file saves the phone the weather downloads.
+        if (ids.any { known[it]?.computedOnServer != true }) {
+            refreshServerEstimates()
+            val before = known.toMap()
+            ids.forEach { id -> server(id)?.let { known[id] = it } }
+            if (known != before) emit(known.toMap())
+        }
         for (id in ids) {
             if (!connectivityObserver.isCurrentlyOnline()) break
-            if (known[id]?.isRecent() == true) continue
+            if (known[id]?.let { it.computedOnServer || it.isRecent() } == true) continue
             val detail = canyonRepository.getCanyonPreview(id).getOrNull()?.takeIf { it.isLocated } ?: continue
             if (!supportRepository.hasWeatherHistory(id)) spaceOutFullDownload()
             getPredictions(detail).onSuccess { predictions ->
@@ -74,14 +90,52 @@ class DebitPredictionRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getCachedPredictions(canyonId: Int): CanyonDebitPredictions? = withContext(ioDispatcher) {
-        predictionCache.read(canyonId)
+        server(canyonId) ?: predictionCache.read(canyonId)
     }
 
     override suspend fun getModelSummary(): Result<DebitPredictionInfoSummary> = suspendRunCatching {
-        modelStore.getMetricsSummary()
+        modelStore.getMetricsSummary().copy(liveCheck = withContext(ioDispatcher) { serverPredictions.liveCheck() })
+    }
+
+    /** The server's estimate of today, when there is one (reliability from the APK's walk-forward check). */
+    private suspend fun server(canyonId: Int): CanyonDebitPredictions? = withContext(ioDispatcher) {
+        runCatching { serverPredictions.predictions(canyonId, modelStore.getReliability(canyonId)) }.getOrNull()
+    }
+
+    /**
+     * The server's estimate unless the canyon page shows a report it did not know: one of the days
+     * before today (a report of today is not an input of today's estimate, see DebitFeatureBuilder).
+     */
+    private suspend fun serverFor(detail: CanyonDetail): CanyonDebitPredictions? {
+        val predictions = server(detail.canyon.id) ?: return null
+        val zone = runCatching { ZoneId.of(predictions.timezone) }.getOrDefault(ZoneId.of("UTC"))
+        val today = LocalDate.now(clock.withZone(zone)).toEpochDay()
+        val newest = detail.debits.map { it.date.toEpochDay() }.filter { it < today }.maxOrNull() ?: return predictions
+        val known = withContext(ioDispatcher) { serverPredictions.lastReportDay(detail.canyon.id) }
+        return predictions.takeIf { known != null && known >= newest }
     }
 
     override suspend fun getPredictions(detail: CanyonDetail): Result<CanyonDebitPredictions> {
+        refreshServerEstimates()
+        serverFor(detail)?.let { return Result.success(it) }
+        val computed = computeOnPhone(detail)
+        if (computed.isSuccess) return computed
+        // The phone could not compute it (weather unreachable...): the server's, even without the newest report.
+        return server(detail.canyon.id)?.let { Result.success(it) } ?: computed
+    }
+
+    /**
+     * Reads the manifest again when it is old, waiting at most [SERVER_WAIT_MS]: an unreachable
+     * server only delays the phone's own computation by that much. The check goes on in the
+     * background and its estimates serve the next screens.
+     */
+    private suspend fun refreshServerEstimates() {
+        if (!connectivityObserver.isCurrentlyOnline()) return
+        val check = backgroundScope.async { appServer.refreshIfOlderThan(SERVER_CHECK_AFTER) }
+        withTimeoutOrNull(SERVER_WAIT_MS) { check.await() }
+    }
+
+    private suspend fun computeOnPhone(detail: CanyonDetail): Result<CanyonDebitPredictions> {
         return withContext(ioDispatcher) {
             suspendRunCatching {
                 val support = supportRepository.getPredictionSupport(detail).getOrThrow()
@@ -135,6 +189,11 @@ class DebitPredictionRepositoryImpl @Inject constructor(
     internal companion object {
         /** A list shows estimates computed in the last hours: the weather and reports change slowly. */
         private val ESTIMATE_REFRESH: Duration = Duration.ofHours(3)
+
+        /** The server publishes new estimates about every six hours: the manifest is read again after this. */
+        private val SERVER_CHECK_AFTER: Duration = Duration.ofMinutes(90)
+
+        private const val SERVER_WAIT_MS = 5_000L
 
         /**
          * Open-Meteo counts 400 days of daily values as about 29 calls of its free quota (600 a

@@ -1,0 +1,17 @@
+[Unit]
+Description=Descente-Canyon server: debit estimates of every canyon
+Wants=network-online.target
+# Started together with the catalog job (first run, update.sh), it waits for the catalog it reads.
+After=network-online.target docker.service dc-catalog.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=dc
+Group=dc
+WorkingDirectory=/srv/dc/repo/server/deploy
+# The model, its assets and the feature path follow the app repository.
+ExecStartPre=/usr/bin/git -C /srv/dc/repo pull --ff-only --quiet
+ExecStart=/usr/bin/docker compose run --rm --no-deps jobs job predictions
+TimeoutStartSec=4h
+Nice=10

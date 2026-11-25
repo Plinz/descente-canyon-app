@@ -30,6 +30,7 @@ class CatalogInstallerTest {
         embeddedCatalogVersion = EMBEDDED.toString(),
     )
     private val updates = CatalogUpdateStore(context)
+    private val hashes = CatalogHashStore(context, config, kotlinx.serialization.json.Json { ignoreUnknownKeys = true })
 
     @After
     fun tearDown() {
@@ -42,7 +43,7 @@ class CatalogInstallerTest {
     @Test
     fun `a catalog installed by another APK is discarded before opening`() {
         writeCatalog(catalogFile)
-        val installer = CatalogInstaller(context, config, updates)
+        val installer = CatalogInstaller(context, config, updates, hashes)
 
         assertTrue(installer.needsInstall())
         installer.prepareBeforeOpen()
@@ -53,7 +54,7 @@ class CatalogInstallerTest {
     @Test
     fun `the catalog of this APK is kept once marked installed`() {
         writeCatalog(catalogFile)
-        val installer = CatalogInstaller(context, config, updates)
+        val installer = CatalogInstaller(context, config, updates, hashes)
         installer.markInstalled()
 
         installer.prepareBeforeOpen()
@@ -64,7 +65,7 @@ class CatalogInstallerTest {
 
     @Test
     fun `a missing catalog file needs an install even when marked installed`() {
-        val installer = CatalogInstaller(context, config, updates)
+        val installer = CatalogInstaller(context, config, updates, hashes)
         installer.markInstalled()
 
         assertTrue(installer.needsInstall())
@@ -107,7 +108,7 @@ class CatalogInstallerTest {
         writeCatalog(catalogFile, canyons = 7)
         updates.setInstalledServerVersion(EMBEDDED.plusSeconds(86_400))
         simulateAppUpdate()
-        val installer = CatalogInstaller(context, config, updates)
+        val installer = CatalogInstaller(context, config, updates, hashes)
 
         assertEquals(CatalogInstaller.Plan.OPEN_EXISTING, installer.plan())
         installer.prepareBeforeOpen()
@@ -121,21 +122,21 @@ class CatalogInstallerTest {
         writeCatalog(catalogFile, identity = "old-schema")
         updates.setInstalledServerVersion(EMBEDDED.plusSeconds(86_400))
         simulateAppUpdate()
-        CatalogInstaller(context, config, updates).prepareBeforeOpen()
+        CatalogInstaller(context, config, updates, hashes).prepareBeforeOpen()
         assertFalse(catalogFile.exists())
         assertNull(updates.installedServerVersion())
 
         writeCatalog(catalogFile)
         updates.setInstalledServerVersion(EMBEDDED.minusSeconds(86_400))
         simulateAppUpdate()
-        CatalogInstaller(context, config, updates).prepareBeforeOpen()
+        CatalogInstaller(context, config, updates, hashes).prepareBeforeOpen()
         assertFalse(catalogFile.exists())
         assertNull(updates.installedServerVersion())
     }
 
     @Test
     fun `without a server built in, the catalog follows the APK only`() {
-        val installer = CatalogInstaller(context, BackendConfig.NONE, updates)
+        val installer = CatalogInstaller(context, BackendConfig.NONE, updates, hashes)
         writeCatalog(catalogFile)
         installer.markInstalled()
         stage(Instant.parse("2026-11-25T02:41:07Z"))
@@ -145,7 +146,7 @@ class CatalogInstallerTest {
 
     private fun installedApkCatalog(): CatalogInstaller {
         writeCatalog(catalogFile, canyons = 3)
-        return CatalogInstaller(context, config, updates).also { it.markInstalled() }
+        return CatalogInstaller(context, config, updates, hashes).also { it.markInstalled() }
     }
 
     private fun simulateAppUpdate() {

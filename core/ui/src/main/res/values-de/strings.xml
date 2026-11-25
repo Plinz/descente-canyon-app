@@ -1568,4 +1568,18 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
         <item quantity="one">%1$d durch Stimmen ausgeblendeter Track</item>
         <item quantity="other">%1$d durch Stimmen ausgeblendete Tracks</item>
     </plurals>
+    <string name="map_tracks_show_discredited">Ausgeblendete Tracks anzeigen</string>
+    <string name="map_tracks_close">Legende der Tracks schließen</string>
+    <plurals name="tracks_count">
+        <item quantity="one">%1$d Track</item>
+        <item quantity="other">%1$d Tracks</item>
+    </plurals>
+    <string name="prediction_info_live_title">Laufende Überprüfung</string>
+    <string name="prediction_info_live_intro">Jeden Tag wird die erste Schätzung jeder Schlucht mit den danach gemeldeten Abflüssen verglichen (letzte %1$d Tage, seit %2$s).</string>
+    <string name="prediction_info_live_same_day">Am selben Tag</string>
+    <string name="prediction_info_live_day_before">Am Vortag</string>
+    <string name="prediction_info_live_two_days_before">Zwei Tage vorher</string>
+    <string name="prediction_info_live_row">%1$s: %2$d gemeldete Abflüsse, genaue Stufe %3$d %%, höchstens eine Stufe daneben %4$d %%.</string>
+    <string name="prediction_info_live_high">Angekündigte hohe Abflüsse: %1$d von %2$d.</string>
+    <string name="prediction_info_live_empty">Seit der Inbetriebnahme noch kein gemeldeter Abfluss.</string>
 </resources>

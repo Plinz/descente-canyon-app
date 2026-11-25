@@ -2,10 +2,10 @@
  "canyonId": 21,
  "tracks": [
   {
-   "id": "tRwf8RHT0BRkb",
+   "id": "tK-ILAYioNgch",
    "canyonId": 21,
    "role": "APPROACH",
-   "createdAt": "2026-11-25T15:48:09Z",
+   "createdAt": "2026-11-25T20:54:27Z",
    "recordedMonth": "2026-06",
    "lengthM": 1557,
    "ascentM": 174,
@@ -178,10 +178,10 @@
    "isReference": true
   },
   {
-   "id": "tbEech5Jp_StC",
+   "id": "tR6DV9HtYsQmp",
    "canyonId": 21,
    "role": "RETURN",
-   "createdAt": "2026-11-25T15:48:09Z",
+   "createdAt": "2026-11-25T20:54:27Z",
    "recordedMonth": null,
    "lengthM": 554,
    "ascentM": 66,

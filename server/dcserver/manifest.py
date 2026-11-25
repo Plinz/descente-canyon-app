@@ -8,13 +8,20 @@ Payload (schema 1):
     {
       "schema": 1, "sequence": 12, "generatedAt": "2026-11-25T02:41:07Z",
       "minVersionCode": 0,                      # older apps are asked to update
-      "features": {"communityTracks": true, "catalogUpdates": true},
+      "features": {"communityTracks": true, "catalogUpdates": true, "serverPredictions": true},
       "messages": [{"id": "...", "level": "info|warning", "minVersionCode": 0,
                     "maxVersionCode": null, "until": null, "text": {"fr": "...", "en": "..."}}],
       "catalogs": [{"schemaVersion": 4, "identityHash": "...", "dataVersion": "...",
                     "path": "files/<sha256>.db.gz", "sha256": "...", "size": 0,
-                    "uncompressedSize": 0, "canyonCount": 0}]
+                    "uncompressedSize": 0, "canyonCount": 0}],
+      "catalogIndex": {"schemaVersion": 4, "identityHash": "...", "dataVersion": "...",
+                       "path": "files/<sha256>.json.gz", "sha256": "...", "size": 0},
+      "predictions": {"schemaVersion": 1, "dataVersion": "...", "path": "files/<sha256>.json.gz",
+                      "sha256": "...", "size": 0}
     }
+The catalog index (gzipped JSON) lists the hash and reading time of every canyon's bundle
+(catalog/bundles/<hash>.json.gz): the app downloads only the bundles it lacks and applies them at
+once. The whole catalog stays published for apps without per-canyon hashes or too far behind.
 """
 from __future__ import annotations
 
@@ -31,7 +38,7 @@ from .publish import atomic_write_bytes
 SCHEMA = 1
 ENVELOPE_FORMAT = 1
 MESSAGE_LEVELS = {"info", "warning"}
-DEFAULT_FEATURES = {"communityTracks": True, "catalogUpdates": True}
+DEFAULT_FEATURES = {"communityTracks": True, "catalogUpdates": True, "serverPredictions": True}
 
 
 def utc_now_iso() -> str:
@@ -131,4 +138,8 @@ def read_published_payload(v1_dir: Path, public_b64: str) -> dict[str, Any]:
 
 
 def referenced_files(state: dict[str, Any]) -> set[str]:
-    return {entry["path"] for entry in state.get("catalogs", [])}
+    paths = {entry["path"] for entry in state.get("catalogs", [])}
+    for key in ("catalogIndex", "predictions"):
+        if state.get(key):
+            paths.add(state[key]["path"])
+    return paths

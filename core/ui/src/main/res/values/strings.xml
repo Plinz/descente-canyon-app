@@ -1608,4 +1608,19 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
         <item quantity="many">%1$d traces écartées par les votes</item>
         <item quantity="other">%1$d traces écartées par les votes</item>
     </plurals>
+    <string name="map_tracks_show_discredited">Afficher les traces écartées</string>
+    <string name="map_tracks_close">Fermer la légende des traces</string>
+    <plurals name="tracks_count">
+        <item quantity="one">%1$d trace</item>
+        <item quantity="many">%1$d traces</item>
+        <item quantity="other">%1$d traces</item>
+    </plurals>
+    <string name="prediction_info_live_title">Vérification en direct</string>
+    <string name="prediction_info_live_intro">Chaque jour, la première estimation de chaque canyon est comparée aux débits signalés ensuite (%1$d derniers jours, depuis le %2$s).</string>
+    <string name="prediction_info_live_same_day">Le jour même</string>
+    <string name="prediction_info_live_day_before">La veille</string>
+    <string name="prediction_info_live_two_days_before">Deux jours avant</string>
+    <string name="prediction_info_live_row">%1$s : %2$d débits signalés, niveau exact %3$d %%, à un niveau près %4$d %%.</string>
+    <string name="prediction_info_live_high">Gros débits annoncés : %1$d sur %2$d.</string>
+    <string name="prediction_info_live_empty">Pas encore de débit signalé depuis la mise en service.</string>
 </resources>

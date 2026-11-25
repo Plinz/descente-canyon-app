@@ -30,7 +30,7 @@ import features as F  # noqa: E402
 import runtime_reference as R  # noqa: E402
 import network as N  # noqa: E402
 import tree_model as T  # noqa: E402
-from export_app_assets import resolve_lookup  # noqa: E402
+from runtime_inputs import resolve_lookup  # noqa: E402
 
 DEBIT_URL = "https://www.descente-canyon.com/canyoning/canyon-debit/{id}/observations.html"
 

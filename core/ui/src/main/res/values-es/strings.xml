@@ -1608,4 +1608,19 @@ Busca un barranco y añádelo a tus favoritos.</string>
         <item quantity="many">%1$d tracks descartados por los votos</item>
         <item quantity="other">%1$d tracks descartados por los votos</item>
     </plurals>
+    <string name="map_tracks_show_discredited">Mostrar los tracks descartados</string>
+    <string name="map_tracks_close">Cerrar la leyenda de los tracks</string>
+    <plurals name="tracks_count">
+        <item quantity="one">%1$d track</item>
+        <item quantity="many">%1$d tracks</item>
+        <item quantity="other">%1$d tracks</item>
+    </plurals>
+    <string name="prediction_info_live_title">Verificación en directo</string>
+    <string name="prediction_info_live_intro">Cada día, la primera estimación de cada barranco se compara con los caudales señalados después (últimos %1$d días, desde el %2$s).</string>
+    <string name="prediction_info_live_same_day">El mismo día</string>
+    <string name="prediction_info_live_day_before">La víspera</string>
+    <string name="prediction_info_live_two_days_before">Dos días antes</string>
+    <string name="prediction_info_live_row">%1$s: %2$d caudales señalados, nivel exacto %3$d %%, a un nivel %4$d %%.</string>
+    <string name="prediction_info_live_high">Caudales altos anunciados: %1$d de %2$d.</string>
+    <string name="prediction_info_live_empty">Todavía ningún caudal señalado desde la puesta en servicio.</string>
 </resources>

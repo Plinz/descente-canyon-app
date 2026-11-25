@@ -24,6 +24,8 @@ import fr.descentecanyon.app.data.repository.CatalogUpdateScheduler
 import fr.descentecanyon.app.domain.error.isTransient
 import fr.descentecanyon.app.domain.error.toAppError
 import fr.descentecanyon.app.domain.repository.AppServerRepository
+import java.time.Duration
+import java.time.Instant
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -31,6 +33,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 
@@ -53,6 +56,20 @@ class AppServerSyncScheduler @Inject constructor(
         if (started || !config.isConfigured) return
         started = true
         scope.launch {
+            // A forbidden canyon or a message should not wait for the twice-daily check.
+            val state = repository.observeState().first()
+            val checkedAt = state.lastCheckedAt
+            if (state.isActive && (checkedAt == null || Duration.between(checkedAt, Instant.now()) > STARTUP_CHECK_AFTER)) {
+                WorkManager.getInstance(context).enqueueUniqueWork(
+                    MANIFEST_NOW_WORK_NAME,
+                    ExistingWorkPolicy.KEEP,
+                    OneTimeWorkRequestBuilder<AppServerManifestWorker>()
+                        .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                        .build(),
+                )
+            }
+        }
+        scope.launch {
             repository.observeState().map { it.isEnabled }.distinctUntilChanged().collect { enabled ->
                 val workManager = WorkManager.getInstance(context)
                 if (enabled) {
@@ -73,6 +90,8 @@ class AppServerSyncScheduler @Inject constructor(
 
     internal companion object {
         const val MANIFEST_WORK_NAME = "app-server-manifest"
+        const val MANIFEST_NOW_WORK_NAME = "app-server-manifest-now"
+        val STARTUP_CHECK_AFTER: Duration = Duration.ofHours(3)
         const val CATALOG_WORK_NAME = "app-server-catalog-download"
         const val MANIFEST_PERIOD_HOURS = 12L
         const val BACKOFF_MINUTES = 30L

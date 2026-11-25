@@ -251,6 +251,8 @@ data class CanyonDebitPredictions(
     val basis: DebitPredictionBasis? = null,
     /** How often the estimate was right on this canyon over the test seasons, when it has enough reports. */
     val reliability: DebitPredictionReliability? = null,
+    /** Computed by the app's server (every canyon, a few times a day) rather than on the phone. */
+    val computedOnServer: Boolean = false,
 ) {
     /** The estimate of [date], if it is one of the days computed. */
     fun forDate(date: LocalDate): DailyDebitPrediction? = predictions.firstOrNull { it.date == date }

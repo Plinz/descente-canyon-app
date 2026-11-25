@@ -46,10 +46,14 @@ import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
 import fr.descentecanyon.app.ui.design.LocalDcColors
 
-internal fun LazyListScope.topoItems(detail: CanyonDetail) {
+internal fun LazyListScope.topoItems(detail: CanyonDetail, onShowMap: (() -> Unit)? = null) {
     val sectionModifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
     item {
         LocationCard(detail = detail, modifier = sectionModifier)
+    }
+    // Shared GPS tracks of the app's server, with the place, before the texts they illustrate.
+    item(key = "community_tracks") {
+        CommunityTracksSection(canyonName = detail.canyon.nom, onShowMap = onShowMap, modifier = sectionModifier)
     }
     detail.accesAval?.let { text ->
         item {
@@ -99,10 +103,6 @@ internal fun LazyListScope.topoItems(detail: CanyonDetail) {
                 modifier = sectionModifier,
             )
         }
-    }
-    // Shared GPS tracks of the app's server, next to the approach and return they illustrate.
-    item(key = "community_tracks") {
-        CommunityTracksSection(canyonName = detail.canyon.nom, modifier = sectionModifier)
     }
     detail.engagement?.let { text ->
         item {

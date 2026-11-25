@@ -1,0 +1,12 @@
+[Unit]
+Description=Debit estimates of the Descente-Canyon server, three times a day
+
+[Timer]
+# 06:40 UTC: after Météo-France's morning files (about 05:45-05:56 UTC) and ECMWF's 00 UTC run;
+# 12:40 and 18:40 UTC: the following IFS runs and the reports of the day.
+OnCalendar=*-*-* 06,12,18:40:00 UTC
+RandomizedDelaySec=10min
+Persistent=true
+
+[Install]
+WantedBy=timers.target

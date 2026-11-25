@@ -4,14 +4,20 @@ Backend léger de l'application Android. Il ne remplace pas descente-canyon.com 
 forum restent lus et publiés sur le site, depuis le téléphone, avec le compte de la personne. Le serveur
 ne voit jamais un identifiant ni un cookie du site.
 
-Il fait deux choses :
+Il fait trois choses :
 
 1. **Publier des fichiers signés** que l'app télécharge : un manifeste (`/v1/manifest.json`) et le
-   catalogue (`/v1/files/<sha256>.db.gz`). Chaque nuit, une tâche relit une partie des fiches du site
-   (chaque fiche une fois tous les `DC_ROTATION_DAYS` jours) avec le scraper du dépôt, reconstruit
-   `catalog.db` avec le même générateur que le build de l'APK, le vérifie et ne le publie que s'il a
-   changé. Sans serveur, ou si le serveur se tait, l'app garde le catalogue de son APK.
-2. **Héberger les traces GPS partagées** par les personnes qui utilisent l'app, classées par leurs votes,
+   catalogue. Chaque nuit, une tâche relit une partie des fiches du site (chaque fiche une fois tous les
+   `DC_ROTATION_DAYS` jours) avec le scraper du dépôt, reconstruit `catalog.db` avec le même générateur
+   que le build de l'APK, le vérifie et ne le publie que s'il a changé. Elle publie aussi un index
+   (empreinte de chaque canyon) et un petit paquet par canyon : l'app ne télécharge que les canyons
+   modifiés et les applique tout de suite dans sa base, sans redémarrer (un canyon interdit apparaît
+   aussitôt). Le catalogue entier reste publié pour une app trop en retard. Sans serveur, ou si le
+   serveur se tait, l'app garde le catalogue de son APK.
+2. **Calculer les estimations de débit de tous les canyons**, trois fois par jour, avec le modèle, les
+   données et le calcul de l'app (voir « Estimations de débit »). L'app les affiche d'emblée (listes,
+   carte, fiche) et ne calcule plus elle-même que ce que le fichier n'a pas.
+3. **Héberger les traces GPS partagées** par les personnes qui utilisent l'app, classées par leurs votes,
    sans modération : des contrôles automatiques refusent ce qui ne peut pas être une trace du canyon, et
    les votes mettent en avant ou écartent le reste (voir « Traces et votes »).
 
@@ -21,6 +27,8 @@ L'app reste entièrement utilisable sans le serveur.
 
 ```
 descente-canyon.com ──► tâche catalogue (timer systemd, 02:15 UTC) ──► /srv/dc/publish/v1 (fichiers signés)
+Open-Meteo, Météo-France,                                                 ▲
+MeteoSwiss, débits du site ──► tâche estimations (06:40, 12:40, 18:40 UTC)┘
                                                                          │
 App ◄── Caddy (HTTPS automatique, journaux masqués) ◄────────────────────┘
 App ──► Caddy ──► API (FastAPI) ──► SQLite (traces, votes, quotas)
@@ -42,6 +50,12 @@ restic ──► sauvegarde chiffrée chez un autre fournisseur        healthche
 - `GET /v1/files/<sha256>.db.gz` : catalogue compressé (gzip), immuable. L'app vérifie le SHA-256 du
   fichier, la version et l'empreinte Room du schéma, l'intégrité SQLite, puis l'installe au démarrage
   suivant.
+- `GET /v1/files/<sha256>.json.gz` (entrée `catalogIndex`) : index du catalogue, l'empreinte et la date
+  de lecture de chaque canyon ; `GET /v1/catalog/bundles/<empreinte>.json.gz` : les lignes d'un canyon
+  (`scripts/app/catalog_bundles.py`, l'empreinte est celle du contenu). L'app télécharge les paquets qui
+  diffèrent des siens (400 au plus, sinon le catalogue entier) et les applique en une transaction.
+- `GET /v1/files/<sha256>.json.gz` (entrée `predictions`) : estimations de débit de tous les canyons
+  (schéma 1, `dcserver/predictions/job.py`), vérifiées par leur SHA-256 comme le reste.
 - Traces : `GET /v1/canyons/{id}/tracks`, `POST /v1/canyons/{id}/tracks?role=APPROACH|RETURN|ESCAPE|FULL`
   (corps : le fichier GPX, 2 Mo au plus), `PUT /v1/tracks/{id}/vote` (`{"value": 1|0|-1}`),
   `DELETE /v1/tracks/{id}` (l'auteur seulement). Les écritures portent l'en-tête `X-Install-Key` : une clé
@@ -86,6 +100,35 @@ export DC_PEPPER=$(openssl rand -hex 32) DC_DATA_DIR=build/data DC_PUBLISH_DIR=b
 .venv/bin/dcserver api --host 0.0.0.0 --port 8080
 ```
 
+### Estimations de débit
+
+La tâche `predictions` reprend tel quel le calcul de l'app : `scripts/debit_model/runtime_reference.py`
+(la référence Python du calcul Kotlin, vérifiée par les vecteurs de test communs), les fichiers du
+modèle de `modele_statistique/` et les mêmes sources. Un modèle réentraîné et poussé sur le dépôt sert
+dès la tâche suivante, sans nouvelle version de l'app. À chaque passage :
+
+- **Débits signalés** : la grille « derniers débits » du site (une page), gardée jour par jour, et la
+  page de débits des canyons qui ont un nouveau signalement, plus 200 pages jamais lues
+  (`DC_DEBIT_PAGES_PER_RUN`) pour rattraper les débits signalés depuis la construction du modèle.
+- **Météo** : Open-Meteo répond pour un point avec les valeurs de sa maille de 0,25° (la même pour
+  ERA5 et IFS), la température corrigée de l'altitude du point (0,65 °C / 100 m). Chaque canyon est
+  donc situé une fois (maille, altitude, fuseau), puis l'historique de 400 jours et les prévisions sont
+  lus par maille : environ 630 mailles pour 4 100 canyons. Les appels sont comptés comme Open-Meteo
+  les compte, espacés sous la limite horaire et arrêtés au budget du jour (`DC_OPENMETEO_DAILY_CALLS`,
+  9 000 sur les 10 000 du plan gratuit) : environ 3 000 par jour en régime établi ; les premiers jours
+  remplissent les historiques (environ 3 jours pour tout couvrir, les canyons les plus signalés d'abord).
+- **Pluviomètres** : fichiers quotidiens et horaires de Météo-France (48 départements) et stations
+  MeteoSwiss, lus une fois par jour pour tous les canyons.
+- **Calcul** de J, J+1 et J+2 pour chaque canyon dont l'historique météo est complet (environ 7 min
+  pour 4 100 canyons, 150 Mo de mémoire), puis publication.
+- **Vérification en direct** : la première estimation de chaque canyon pour chaque jour est gardée et
+  comparée aux débits signalés ensuite (90 derniers jours) ; le résultat est publié avec les estimations
+  et l'app l'affiche dans « Comprendre l'estimation ».
+
+L'app prend l'estimation du serveur tant qu'elle est celle du jour (moins de 14 h) et qu'aucun débit
+signalé sur la fiche n'est plus récent que ceux que le serveur connaissait ; sinon, ou sans serveur,
+elle calcule comme avant. Interrupteur : `manifest feature serverPredictions off`.
+
 ## Mise en service
 
 À faire une fois, quand le VPS (Debian 13) et le nom de domaine sont pris.
@@ -109,11 +152,13 @@ export DC_PEPPER=$(openssl rand -hex 32) DC_DATA_DIR=build/data DC_PUBLISH_DIR=b
 5. **Démarrage** : `cd /srv/dc/repo/server/deploy && docker compose up -d --build`, puis une première
    tâche : `docker compose run --rm --no-deps jobs job catalog`. Vérifier
    `curl https://<domaine>/v1/health` et `curl https://<domaine>/v1/manifest.json`.
-6. **Timers** : `sudo systemctl enable --now dc-catalog.timer dc-backup.timer` (après l'étape 7 pour le second).
+6. **Timers** : `sudo systemctl enable --now dc-catalog.timer dc-predictions.timer dc-backup.timer` (après
+   l'étape 7 pour le dernier). La tâche des estimations attend le premier catalogue (`data/catalog/current.db`).
 7. **Sauvegarde** : créer un dépôt restic chez un autre fournisseur (Storage Box en SFTP, ou un bucket
    S3), `cp backup.env.example /srv/dc/backup.env`, le mot de passe restic dans
    `/srv/dc/secrets/restic-password` (et une copie ailleurs), puis `restic init`. Tester une restauration.
-8. **Supervision** : deux contrôles sur healthchecks.io (tâche catalogue, sauvegarde) et une sonde HTTP
+8. **Supervision** : trois contrôles sur healthchecks.io (tâche catalogue, `DC_HEALTHCHECKS_URL` ; tâche
+   des estimations, `DC_HEALTHCHECKS_PREDICTIONS_URL`, période 6 h ; sauvegarde) et une sonde HTTP
    externe sur `/v1/health`.
 9. **App** : dans `~/.gradle/gradle.properties` (ou les secrets du workflow de release),
    `dc.backendUrl=https://<domaine>` et `dc.backendPublicKey=<clé publique base64>`. Sans ces deux valeurs,
@@ -130,7 +175,20 @@ export DC_PEPPER=$(openssl rand -hex 32) DC_DATA_DIR=build/data DC_PUBLISH_DIR=b
   échecs). Elle ne publie rien si plus de 5 % des pages n'ont plus de nom de canyon (format du site
   changé), si plus de 30 % des fiches n'ont pas pu être lues, ou si le catalogue rétrécit (canyons
   −2 %, points −3 %, réglementations −5 %) ; healthchecks.io prévient alors par e-mail.
-- Mettre à jour le code du serveur : `git -C /srv/dc/repo pull` puis `docker compose up -d --build`.
+- Rapports de la tâche des estimations : `/srv/dc/data/reports/predictions-*.json` (canyons estimés,
+  appels Open-Meteo du jour, mailles complètes, pages de débits lues, pluviomètres, vérification en direct).
+  Lancer à la main : `docker compose run --rm --no-deps jobs job predictions` (`--dry-run` pour ne rien publier).
+- **Mettre à jour le serveur**, depuis votre PC, une seule commande :
+  ```bash
+  ssh -t dc@<domaine> /srv/dc/repo/server/deploy/update.sh
+  ```
+  Le script (`deploy/update.sh`) récupère la branche main, reconstruit l'image et redémarre l'API si le
+  code du serveur a changé, recharge Caddy si sa configuration a changé, installe les unités systemd
+  nouvelles ou modifiées, active les timers (la sauvegarde dès que `/srv/dc/backup.env` existe), lance
+  en arrière-plan les tâches qui n'ont jamais tourné, puis vérifie `/v1/health`. Le relancer ne change
+  rien. Le mot de passe sudo de `dc` n'est demandé que pour toucher à systemd. Options : `--rebuild`
+  (reconstruire l'image quand même), `--no-jobs` (laisser les tâches attendre leur timer). La toute
+  première fois, le script n'est pas encore sur le serveur : `git -C /srv/dc/repo pull` avant.
 - Journaux : Caddy garde 7 jours d'accès, adresses tronquées (IPv4 /24, IPv6 /48), sans la clé
   d'installation. L'API ne journalise pas les requêtes. La base garde, pour les traces et les votes, un
   HMAC de la clé d'installation et du réseau (avec `DC_PEPPER`, jamais stocké avec eux).

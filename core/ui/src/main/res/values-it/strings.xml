@@ -1608,4 +1608,19 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
         <item quantity="many">%1$d tracce scartate dai voti</item>
         <item quantity="other">%1$d tracce scartate dai voti</item>
     </plurals>
+    <string name="map_tracks_show_discredited">Mostra le tracce scartate</string>
+    <string name="map_tracks_close">Chiudi la legenda delle tracce</string>
+    <plurals name="tracks_count">
+        <item quantity="one">%1$d traccia</item>
+        <item quantity="many">%1$d tracce</item>
+        <item quantity="other">%1$d tracce</item>
+    </plurals>
+    <string name="prediction_info_live_title">Verifica in diretta</string>
+    <string name="prediction_info_live_intro">Ogni giorno, la prima stima di ogni forra viene confrontata con le portate segnalate dopo (ultimi %1$d giorni, dal %2$s).</string>
+    <string name="prediction_info_live_same_day">Lo stesso giorno</string>
+    <string name="prediction_info_live_day_before">Il giorno prima</string>
+    <string name="prediction_info_live_two_days_before">Due giorni prima</string>
+    <string name="prediction_info_live_row">%1$s: %2$d portate segnalate, livello esatto %3$d %%, entro un livello %4$d %%.</string>
+    <string name="prediction_info_live_high">Portate alte annunciate: %1$d su %2$d.</string>
+    <string name="prediction_info_live_empty">Ancora nessuna portata segnalata dall\'avvio del servizio.</string>
 </resources>

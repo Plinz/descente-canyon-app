@@ -33,7 +33,7 @@ class CatalogDownloaderTest {
     private val context = TestDatabases.context
     private val backend = BackendTestServer()
     private val updates = CatalogUpdateStore(context)
-    private val installer = CatalogInstaller(context, backend.config, updates)
+    private val installer = CatalogInstaller(context, backend.config, updates, CatalogHashStore(context, backend.config, backend.json))
     private val downloader = CatalogDownloader(backend.client, updates, installer, backend.config, Dispatchers.Unconfined)
 
     @After

@@ -26,15 +26,17 @@ def sha256_file(path: Path) -> str:
     return digest.hexdigest()
 
 
-def atomic_write_bytes(path: Path, data: bytes, mode: int = 0o644) -> None:
-    """Writes through a temporary file in the same folder, then renames it over the target."""
+def atomic_write_bytes(path: Path, data: bytes, mode: int = 0o644, fsync: bool = True) -> None:
+    """Writes through a temporary file in the same folder, then renames it over the target. Without
+    [fsync], the caller syncs once after a batch of files."""
     path.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp_name = tempfile.mkstemp(prefix=f".{path.name}.", dir=path.parent)
     try:
         with os.fdopen(fd, "wb") as handle:
             handle.write(data)
             handle.flush()
-            os.fsync(handle.fileno())
+            if fsync:
+                os.fsync(handle.fileno())
         os.chmod(tmp_name, mode)
         os.replace(tmp_name, path)
     except BaseException:

@@ -36,11 +36,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.DebitLiveCheck
 import fr.descentecanyon.app.domain.model.DebitPredictionDriver
 import fr.descentecanyon.app.domain.model.DebitPredictionInfoSummary
 import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import java.text.NumberFormat
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -159,6 +163,10 @@ private fun DebitPredictionInfoContent(summary: DebitPredictionInfoSummary, cont
             )
         }
 
+        summary.liveCheck?.let { check ->
+            item { LiveCheckCard(check) }
+        }
+
         item {
             StatsCard(
                 title = stringResource(R.string.prediction_info_training_title),
@@ -208,6 +216,40 @@ private fun DebitPredictionInfoContent(summary: DebitPredictionInfoSummary, cont
         }
     }
 }
+
+/** The server's estimates checked against the reports of the following days. */
+@Composable
+private fun LiveCheckCard(check: DebitLiveCheck) {
+    val locale = LocalLocale.current.platformLocale
+    val since = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale).format(check.since)
+    val rows = check.horizons.filter { it.reportCount > 0 }.map { horizon ->
+        val label = stringResource(
+            when (horizon.horizonDays) {
+                0 -> R.string.prediction_info_live_same_day
+                1 -> R.string.prediction_info_live_day_before
+                else -> R.string.prediction_info_live_two_days_before
+            },
+        )
+        stringResource(
+            R.string.prediction_info_live_row,
+            label,
+            horizon.reportCount,
+            percent(horizon.exactCount, horizon.reportCount),
+            percent(horizon.withinOneCount, horizon.reportCount),
+        ) + if (horizon.highReportCount > 0) {
+            " " + stringResource(R.string.prediction_info_live_high, horizon.highCaughtCount, horizon.highReportCount)
+        } else {
+            ""
+        }
+    }
+    StatsCard(
+        title = stringResource(R.string.prediction_info_live_title),
+        stats = listOf(stringResource(R.string.prediction_info_live_intro, check.days, since)) +
+            rows.ifEmpty { listOf(stringResource(R.string.prediction_info_live_empty)) },
+    )
+}
+
+private fun percent(part: Int, total: Int): Int = if (total == 0) 0 else (100.0 * part / total).roundToInt()
 
 @Composable
 private fun InfoIntroCard(title: String, body: String) {

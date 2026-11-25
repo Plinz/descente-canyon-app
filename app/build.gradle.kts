@@ -66,6 +66,8 @@ val runtimeLookupCanyonsAssetName = "runtime_feature_lookups.canyons.json"
 val runtimeLookupIndexAssetName = "runtime_feature_lookups.canyons.index.json"
 val generatedPrepackagedDatabaseFile = layout.buildDirectory.file("generated/catalog-db/$prepackagedDatabaseAssetName")
 val prepackagedDatabaseGeneratorScript = rootProject.file("scripts/app/generate_prepackaged_room_db.py")
+val catalogHashesScript = rootProject.file("scripts/app/catalog_bundles.py")
+val generatedCatalogHashesFile = layout.buildDirectory.file("generated/catalog-db/catalog_hashes.json")
 val staticFeatureIndexGeneratorScript = rootProject.file("scripts/app/generate_static_feature_index.py")
 val runtimeLookupAssetGeneratorScript = rootProject.file("scripts/app/generate_runtime_lookup_assets.py")
 val prepackagedDatabaseSchemaFile = rootProject.file("core/data/schemas/fr.descentecanyon.app.data.local.catalog.CatalogDatabase/4.json")
@@ -102,6 +104,25 @@ val generatePrepackagedRoomDatabase = tasks.register<Exec>("generatePrepackagedR
         canyonChainsFile.path,
         "--recovered-geo-points",
         recoveredGeoPointsFile.path,
+    )
+}
+
+// Per-canyon hashes of the APK's catalog: the app applies only the canyons the server changed.
+val generateCatalogHashes = tasks.register<Exec>("generateCatalogHashes") {
+    group = "build"
+    description = "Writes the per-canyon hashes of the generated catalog (catalog_bundles.py)."
+    dependsOn(generatePrepackagedRoomDatabase)
+    inputs.file(catalogHashesScript)
+    inputs.file(generatedPrepackagedDatabaseFile)
+    outputs.file(generatedCatalogHashesFile)
+
+    commandLine(
+        pythonBinary,
+        catalogHashesScript.path,
+        "--catalog-db",
+        generatedPrepackagedDatabaseFile.get().asFile.path,
+        "--output",
+        generatedCatalogHashesFile.get().asFile.path,
     )
 }
 
@@ -151,7 +172,7 @@ val syncRuntimeAssets = tasks.register<Sync>("syncRuntimeAssets") {
     group = "build"
     description = "Stages the exact runtime assets packaged into the Android app."
     into(runtimeAssetsDirectory)
-    dependsOn(generatePrepackagedRoomDatabase, generateStaticFeatureIndex, generateRuntimeLookupAssets)
+    dependsOn(generatePrepackagedRoomDatabase, generateCatalogHashes, generateStaticFeatureIndex, generateRuntimeLookupAssets)
 
     from("src/main/assets")
     from("../offline-data/full/room-import") {
@@ -160,6 +181,7 @@ val syncRuntimeAssets = tasks.register<Sync>("syncRuntimeAssets") {
     from(generatedPrepackagedDatabaseFile) {
         into("databases")
     }
+    from(generatedCatalogHashesFile)
     from(generatedStaticFeatureIndexFile)
     from(generatedRuntimeLookupCoreFile)
     from(generatedRuntimeLookupCanyonsFile)

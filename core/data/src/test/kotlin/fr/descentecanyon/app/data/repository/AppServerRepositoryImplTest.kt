@@ -2,8 +2,11 @@ package fr.descentecanyon.app.data.repository
 
 import android.app.Application
 import fr.descentecanyon.app.data.AppBuildInfo
+import fr.descentecanyon.app.data.local.catalog.CatalogBundleApplier
 import fr.descentecanyon.app.data.local.catalog.CatalogDownloader
+import fr.descentecanyon.app.data.local.catalog.CatalogHashStore
 import fr.descentecanyon.app.data.local.catalog.CatalogInstaller
+import fr.descentecanyon.app.data.local.catalog.CatalogSync
 import fr.descentecanyon.app.data.local.catalog.CatalogUpdateStore
 import fr.descentecanyon.app.data.remote.backend.BackendTestServer
 import fr.descentecanyon.app.domain.model.CatalogSource
@@ -42,7 +45,9 @@ class AppServerRepositoryImplTest {
     private val backend = BackendTestServer(publicKeys = listOf(fixtureKey, Base64.getEncoder().encodeToString(keyPair.public.encoded)))
     private val database = TestDatabases.user()
     private val updates = CatalogUpdateStore(context)
-    private val installer = CatalogInstaller(context, backend.config, updates)
+    private val hashStore = CatalogHashStore(context, backend.config, backend.json)
+    private val installer = CatalogInstaller(context, backend.config, updates, hashStore)
+    private val catalogDatabase = TestDatabases.catalog()
     private val scheduler = RecordingScheduler()
     private val clock = Clock.fixed(Instant.parse("2026-11-25T10:00:00Z"), ZoneOffset.UTC)
 
@@ -56,13 +61,27 @@ class AppServerRepositoryImplTest {
         catalogInstaller = installer,
         catalogUpdates = updates,
         catalogDownloader = CatalogDownloader(backend.client, updates, installer, backend.config, Dispatchers.Unconfined),
+        catalogSync = CatalogSync(
+            backend.client,
+            backend.config,
+            hashStore,
+            CatalogBundleApplier(catalogDatabase),
+            updates,
+            backend.json,
+            Dispatchers.Unconfined,
+        ),
         scheduler = scheduler,
+        predictionStore = predictionStore,
     )
+
+    private val predictionStore = ServerPredictionStore(java.io.File(context.cacheDir, "server-predictions-test"), backend.json, clock)
 
     @After
     fun tearDown() {
+        predictionStore.clear()
         backend.shutdown()
         database.close()
+        catalogDatabase.close()
         context.getSharedPreferences(CatalogUpdateStore.PREFS_NAME, 0).edit().clear().commit()
     }
 
@@ -144,6 +163,48 @@ class AppServerRepositoryImplTest {
 
         assertTrue(repository.observeState().first().catalogOnMobileData)
         assertEquals(listOf(true), scheduler.scheduled)
+    }
+
+    @Test
+    fun `the estimates the manifest announces are downloaded once, checked and kept`() = runTest {
+        val bytes = javaClass.classLoader!!.getResourceAsStream("backend/predictions.json.gz")!!.use { it.readBytes() }
+        val sha = AppServerRepositoryImpl.sha256Hex(bytes)
+        val manifest = signed(
+            """{"schema":1,"sequence":7,"predictions":{"path":"files/$sha.json.gz","sha256":"$sha","size":${bytes.size},"schemaVersion":1}}""",
+        )
+        backend.server.enqueue(MockResponse().setBody(manifest))
+        backend.server.enqueue(MockResponse().setBody(okio.Buffer().write(bytes)))
+        val repository = repository()
+
+        repository.refresh().getOrThrow()
+
+        assertEquals("/v1/manifest.json", backend.server.takeRequest().path)
+        assertEquals("/v1/files/$sha.json.gz", backend.server.takeRequest().path)
+        assertEquals(sha, predictionStore.installedSha256())
+        assertTrue(predictionStore.predictions(23222)?.computedOnServer == true)
+
+        // Checked again within the delay: nothing is read; after it, the same file is not downloaded again.
+        repository.refreshIfOlderThan(java.time.Duration.ofMinutes(90)).getOrThrow()
+        assertEquals(2, backend.server.requestCount)
+        backend.server.enqueue(MockResponse().setBody(manifest))
+        repository.refresh().getOrThrow()
+        assertEquals(3, backend.server.requestCount)
+    }
+
+    @Test
+    fun `an estimates file that does not match the manifest is not kept`() = runTest {
+        val bytes = javaClass.classLoader!!.getResourceAsStream("backend/predictions.json.gz")!!.use { it.readBytes() }
+        val manifest = signed(
+            """{"schema":1,"sequence":7,"predictions":{"path":"files/x.json.gz","sha256":"${"0".repeat(
+                64,
+            )}","size":${bytes.size},"schemaVersion":1}}""",
+        )
+        backend.server.enqueue(MockResponse().setBody(manifest))
+        backend.server.enqueue(MockResponse().setBody(okio.Buffer().write(bytes)))
+
+        repository().refresh().getOrThrow()
+
+        assertEquals(null, predictionStore.installedSha256())
     }
 
     private fun signed(payload: String): String {

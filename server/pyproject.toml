@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "dcserver"
 version = "1.0.0"
-description = "Light backend of the Descente-Canyon Android app: signed data files and community GPX tracks"
+description = "Light backend of the Descente-Canyon Android app: signed data files, debit estimates and community GPX tracks"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115",
@@ -13,6 +13,10 @@ dependencies = [
     "cryptography>=43",
     "defusedxml>=0.7.1",
     "beautifulsoup4>=4.12",
+    # The debit model of the app repository (scripts/debit_model) runs on numpy and pandas.
+    "numpy>=2.1",
+    "pandas>=2.2",
+    "tzdata",
 ]
 
 [project.optional-dependencies]

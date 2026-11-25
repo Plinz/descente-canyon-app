@@ -77,6 +77,16 @@ class BackendClient @Inject constructor(
         }
     }
 
+    /** A small published file, read whole (never cached: catalog bundles are applied once). */
+    suspend fun fetchFile(path: String, maxBytes: Long): ByteArray {
+        val request = Request.Builder()
+            .url(url("v1/$path"))
+            .cacheControl(CacheControl.Builder().noStore().build())
+            .get()
+            .build()
+        return execute(request) { response -> response.body.readBytesWithin(maxBytes) }
+    }
+
     suspend fun listTracks(canyonId: Int): TrackListDto = execute(get(url("v1/canyons/$canyonId/tracks"))) { response ->
         decode(response, TrackListDto.serializer())
     }

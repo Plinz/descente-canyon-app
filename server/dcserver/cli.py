@@ -14,11 +14,11 @@ from .publish import publication_lock
 from .tracks.canyons import CanyonReference, build_reference_from_catalog, write_reference
 
 
-def _ping(settings: Settings, suffix: str, body: bytes = b"") -> None:
+def _ping(base_url: str | None, suffix: str, body: bytes = b"") -> None:
     """Healthchecks.io-style ping (start, success, fail); a monitoring outage never fails a job."""
-    if not settings.healthchecks_url:
+    if not base_url:
         return
-    url = settings.healthchecks_url.rstrip("/") + suffix
+    url = base_url.rstrip("/") + suffix
     try:
         urlopen(Request(url, data=body[:10_000] or None, method="POST"), timeout=10).close()
     except Exception:  # noqa: BLE001
@@ -53,21 +53,29 @@ def cmd_api(settings: Settings, args: argparse.Namespace) -> int:
 
 
 def cmd_job(settings: Settings, args: argparse.Namespace) -> int:
-    from .jobs import catalog
-
     if args.pull:
         pulled = subprocess.run(["git", "-C", str(settings.repo_dir), "pull", "--ff-only", "--quiet"], capture_output=True, text=True, check=False)
         if pulled.returncode != 0:
             print(f"git pull failed, building from the current checkout: {pulled.stderr.strip()}", file=sys.stderr)
-    _ping(settings, "/start")
     ids = [int(part) for part in args.ids.split(",")] if args.ids else None
-    report = catalog.run(settings, ids=ids, limit=args.limit, publish=not args.dry_run)
+    if args.name == "predictions":
+        from .predictions import job as predictions
+
+        ping_url = settings.healthchecks_predictions_url
+        _ping(ping_url, "/start")
+        report = predictions.run(settings, ids=ids, publish=not args.dry_run)
+    else:
+        from .jobs import catalog
+
+        ping_url = settings.healthchecks_url
+        _ping(ping_url, "/start")
+        report = catalog.run(settings, ids=ids, limit=args.limit, publish=not args.dry_run)
     text = json.dumps(report, ensure_ascii=False, indent=2)
     print(text)
     if "aborted" in report:
-        _ping(settings, "/fail", text.encode("utf-8"))
+        _ping(ping_url, "/fail", text.encode("utf-8"))
         return 1
-    _ping(settings, "", text.encode("utf-8"))
+    _ping(ping_url, "", text.encode("utf-8"))
     return 0
 
 
@@ -134,8 +142,8 @@ def build_parser() -> argparse.ArgumentParser:
     api.add_argument("--port", type=int, default=8080)
 
     job = sub.add_parser("job", help="run a scheduled job")
-    job.add_argument("name", choices=["catalog"])
-    job.add_argument("--ids", help="comma-separated canyon ids instead of tonight's rotation slice")
+    job.add_argument("name", choices=["catalog", "predictions"])
+    job.add_argument("--ids", help="comma-separated canyon ids (catalog: instead of tonight's slice; predictions: only these)")
     job.add_argument("--limit", type=int)
     job.add_argument("--dry-run", action="store_true", help="build and check, publish nothing")
     job.add_argument("--pull", action="store_true", help="git pull the app repository first")

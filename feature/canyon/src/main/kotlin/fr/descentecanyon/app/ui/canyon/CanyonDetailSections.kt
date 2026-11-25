@@ -235,7 +235,7 @@ internal fun CanyonDetailContent(
         }
 
         when (selectedTab) {
-            0 -> topoItems(detail)
+            0 -> topoItems(detail, onShowMap)
 
             1 -> photosItems(
                 photos = detail.photos,

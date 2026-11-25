@@ -1568,4 +1568,18 @@ Search for a canyon and add it to your favorites.</string>
         <item quantity="one">%1$d track set aside by votes</item>
         <item quantity="other">%1$d tracks set aside by votes</item>
     </plurals>
+    <string name="map_tracks_show_discredited">Show the tracks set aside</string>
+    <string name="map_tracks_close">Close the track legend</string>
+    <plurals name="tracks_count">
+        <item quantity="one">%1$d track</item>
+        <item quantity="other">%1$d tracks</item>
+    </plurals>
+    <string name="prediction_info_live_title">Live check</string>
+    <string name="prediction_info_live_intro">Each day, the first estimate of each canyon is compared with the flows reported afterwards (last %1$d days, since %2$s).</string>
+    <string name="prediction_info_live_same_day">Same day</string>
+    <string name="prediction_info_live_day_before">Day before</string>
+    <string name="prediction_info_live_two_days_before">Two days before</string>
+    <string name="prediction_info_live_row">%1$s: %2$d reported flows, exact level %3$d %%, within one level %4$d %%.</string>
+    <string name="prediction_info_live_high">High flows announced: %1$d of %2$d.</string>
+    <string name="prediction_info_live_empty">No flow reported since the service started.</string>
 </resources>

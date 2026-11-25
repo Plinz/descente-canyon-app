@@ -34,23 +34,31 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Navigation
+import androidx.compose.material.icons.filled.Route
 import androidx.compose.material.icons.filled.Sos
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -58,6 +66,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -76,6 +85,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -87,18 +97,21 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDetail
+import fr.descentecanyon.app.domain.model.CommunityTrack
+import fr.descentecanyon.app.domain.model.CommunityTracks
 import fr.descentecanyon.app.domain.model.GeoBounds
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointType
+import fr.descentecanyon.app.domain.model.TrackStanding
 import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.design.excludeFromBackGesture
 import fr.descentecanyon.app.ui.location.hasLocationPermission
 import fr.descentecanyon.app.ui.location.observeDeviceLocation
 import fr.descentecanyon.app.ui.location.requestLocationSettings
 import fr.descentecanyon.app.ui.map.MapLibreView
-import fr.descentecanyon.app.ui.map.MapTrackLine
 import fr.descentecanyon.app.ui.map.UserTrackingMode
 import fr.descentecanyon.app.ui.map.toMapTrackLine
+import fr.descentecanyon.app.ui.map.trackColor
 import fr.descentecanyon.app.ui.test.TestTags
 import java.util.Locale
 import kotlin.math.abs
@@ -117,7 +130,6 @@ fun CanyonPointsMapScreen(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     val tracksState = tracksViewModel.uiState.collectAsStateWithLifecycle().value
-    val trackLines = remember(tracksState.tracks) { tracksState.tracks?.visible.orEmpty().map { it.toMapTrackLine() } }
 
     LaunchedEffect(canyonId) {
         viewModel.ensureWatershedGeometryLoaded()
@@ -136,7 +148,7 @@ fun CanyonPointsMapScreen(
             uiState.canyonDetail != null -> CanyonPointsMapContent(
                 detail = uiState.canyonDetail,
                 watershedGeometryJson = uiState.watershedGeometryJson,
-                trackLines = trackLines,
+                tracks = tracksState.tracks,
                 onBackClick = onBackClick,
                 onOpenEmergency = onOpenEmergency,
                 modifier = Modifier.padding(contentPadding),
@@ -154,7 +166,7 @@ fun CanyonPointsMapScreen(
 private fun CanyonPointsMapContent(
     detail: CanyonDetail,
     watershedGeometryJson: String?,
-    trackLines: List<MapTrackLine>,
+    tracks: CommunityTracks?,
     onBackClick: () -> Unit,
     onOpenEmergency: () -> Unit,
     modifier: Modifier = Modifier,
@@ -164,6 +176,17 @@ private fun CanyonPointsMapContent(
     val snackbarHostState = remember { SnackbarHostState() }
     val hasWatershedPolygon = !watershedGeometryJson.isNullOrBlank()
     var showWatershed by rememberSaveable(detail.canyon.id) { mutableStateOf(false) }
+    // Shared tracks: all drawn by default, each can be hidden from the legend; set-aside ones on demand.
+    var tracksPanelOpen by rememberSaveable(detail.canyon.id) { mutableStateOf(false) }
+    var hiddenTrackIds by rememberSaveable(detail.canyon.id) { mutableStateOf(listOf<String>()) }
+    var showDiscreditedTracks by rememberSaveable(detail.canyon.id) { mutableStateOf(false) }
+    val orderedTracks = tracks?.ordered.orEmpty()
+    val trackLines = remember(orderedTracks, hiddenTrackIds, showDiscreditedTracks) {
+        orderedTracks.mapIndexedNotNull { index, track ->
+            val shown = track.id !in hiddenTrackIds && (track.standing != TrackStanding.DISCREDITED || showDiscreditedTracks)
+            track.toMapTrackLine(index).takeIf { shown }
+        }
+    }
     var pointsExpanded by rememberSaveable(detail.canyon.id) { mutableStateOf(false) }
     var locationPermissionGranted by remember(detail.canyon.id) { mutableStateOf(context.hasLocationPermission()) }
     var trackingModeName by rememberSaveable(detail.canyon.id) { mutableStateOf(UserTrackingMode.NONE.name) }
@@ -411,18 +434,45 @@ private fun CanyonPointsMapContent(
             }
         }
 
-        MapControlButton(
+        Column(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .padding(end = 12.dp),
-            onClick = ::cycleLocationTracking,
-            contentDescription = stringResource(R.string.map_my_location),
-            selected = trackingMode != UserTrackingMode.NONE,
+            verticalArrangement = Arrangement.spacedBy(12.dp),
         ) {
-            Icon(
-                imageVector = if (trackingMode == UserTrackingMode.NONE) Icons.Default.MyLocation else Icons.Default.Navigation,
-                contentDescription = null,
-                modifier = if (trackingMode == UserTrackingMode.NONE) Modifier else Modifier.rotate((heading.degrees ?: 0.0).toFloat()),
+            if (orderedTracks.isNotEmpty()) {
+                MapControlButton(
+                    onClick = { tracksPanelOpen = !tracksPanelOpen },
+                    contentDescription = stringResource(R.string.tracks_title),
+                    selected = tracksPanelOpen,
+                ) {
+                    Icon(Icons.Default.Route, contentDescription = null)
+                }
+            }
+            MapControlButton(
+                onClick = ::cycleLocationTracking,
+                contentDescription = stringResource(R.string.map_my_location),
+                selected = trackingMode != UserTrackingMode.NONE,
+            ) {
+                Icon(
+                    imageVector = if (trackingMode == UserTrackingMode.NONE) Icons.Default.MyLocation else Icons.Default.Navigation,
+                    contentDescription = null,
+                    modifier = if (trackingMode == UserTrackingMode.NONE) Modifier else Modifier.rotate((heading.degrees ?: 0.0).toFloat()),
+                )
+            }
+        }
+
+        if (tracksPanelOpen && orderedTracks.isNotEmpty()) {
+            TracksLegend(
+                tracks = orderedTracks,
+                hiddenTrackIds = hiddenTrackIds,
+                showDiscredited = showDiscreditedTracks,
+                onToggleTrack = { id -> hiddenTrackIds = if (id in hiddenTrackIds) hiddenTrackIds - id else hiddenTrackIds + id },
+                onShowDiscreditedChange = { showDiscreditedTracks = it },
+                onClose = { tracksPanelOpen = false },
+                modifier = Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(top = 72.dp, end = 72.dp, start = 12.dp),
             )
         }
 
@@ -443,6 +493,96 @@ private fun CanyonPointsMapContent(
             expandedListMaxHeight = expandedPointsMaxHeight,
             modifier = Modifier.align(Alignment.BottomCenter),
         )
+    }
+}
+
+/** Legend of the shared tracks: the colour of each one, and a switch to draw it or not. */
+@Composable
+private fun TracksLegend(
+    tracks: List<CommunityTrack>,
+    hiddenTrackIds: List<String>,
+    showDiscredited: Boolean,
+    onToggleTrack: (String) -> Unit,
+    onShowDiscreditedChange: (Boolean) -> Unit,
+    onClose: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier.widthIn(max = 320.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.98f)),
+        elevation = CardDefaults.cardElevation(defaultElevation = 5.dp),
+    ) {
+        Column(modifier = Modifier.padding(vertical = 8.dp)) {
+            Row(modifier = Modifier.padding(start = 16.dp, end = 4.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    stringResource(R.string.tracks_title),
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.SemiBold,
+                    modifier = Modifier.weight(1f),
+                )
+                IconButton(onClick = onClose) {
+                    Icon(Icons.Default.Close, contentDescription = stringResource(R.string.map_tracks_close))
+                }
+            }
+            Column(modifier = Modifier.heightIn(max = 280.dp).verticalScroll(rememberScrollState())) {
+                tracks.forEachIndexed { index, track ->
+                    val discredited = track.standing == TrackStanding.DISCREDITED
+                    if (discredited && !showDiscredited) return@forEachIndexed
+                    val shown = track.id !in hiddenTrackIds
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .toggleable(value = shown, role = Role.Checkbox, onValueChange = { onToggleTrack(track.id) })
+                            .padding(horizontal = 16.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    ) {
+                        Box(
+                            Modifier
+                                .size(width = 22.dp, height = 5.dp)
+                                .background(Color(trackColor(index)), RoundedCornerShape(3.dp)),
+                        )
+                        Column(modifier = Modifier.weight(1f)) {
+                            Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                                Text(
+                                    trackRoleLabel(track.role),
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.SemiBold,
+                                )
+                                Text(
+                                    trackStandingLabel(track),
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = trackStandingColor(track.standing),
+                                )
+                            }
+                            Text(
+                                trackFacts(track),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            )
+                        }
+                        Checkbox(checked = shown, onCheckedChange = null)
+                    }
+                }
+            }
+            if (tracks.any { it.standing == TrackStanding.DISCREDITED }) {
+                HorizontalDivider()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .toggleable(value = showDiscredited, role = Role.Switch, onValueChange = onShowDiscreditedChange)
+                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        stringResource(R.string.map_tracks_show_discredited),
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.weight(1f),
+                    )
+                    Switch(checked = showDiscredited, onCheckedChange = null)
+                }
+            }
+        }
     }
 }
 

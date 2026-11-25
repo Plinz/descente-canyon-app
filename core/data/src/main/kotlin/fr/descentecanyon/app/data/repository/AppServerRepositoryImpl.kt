@@ -4,6 +4,7 @@ import fr.descentecanyon.app.data.AppBuildInfo
 import fr.descentecanyon.app.data.BackendConfig
 import fr.descentecanyon.app.data.local.catalog.CatalogDownloader
 import fr.descentecanyon.app.data.local.catalog.CatalogInstaller
+import fr.descentecanyon.app.data.local.catalog.CatalogSync
 import fr.descentecanyon.app.data.local.catalog.CatalogUpdateStore
 import fr.descentecanyon.app.data.local.catalog.toInstantOrNull
 import fr.descentecanyon.app.data.local.user.dao.KeyValueDao
@@ -21,6 +22,7 @@ import fr.descentecanyon.app.domain.model.ServerMessage
 import fr.descentecanyon.app.domain.model.ServerMessageLevel
 import fr.descentecanyon.app.domain.repository.AppServerRepository
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneOffset
@@ -30,6 +32,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -52,10 +56,15 @@ class AppServerRepositoryImpl @Inject constructor(
     private val catalogInstaller: CatalogInstaller,
     private val catalogUpdates: CatalogUpdateStore,
     private val catalogDownloader: CatalogDownloader,
+    private val catalogSync: CatalogSync,
     private val scheduler: CatalogUpdateScheduler,
+    private val predictionStore: ServerPredictionStore,
 ) : AppServerRepository {
 
     private val verifier by lazy { ManifestVerifier(config.publicKeys, json) }
+
+    /** One manifest check at a time: the lists and the canyon page may all ask for fresh estimates. */
+    private val refreshMutex = Mutex()
 
     override fun observeState(): Flow<AppServerState> = combine(
         observe(KEY_SETTINGS, StoredSettings.serializer()).map { it ?: StoredSettings() },
@@ -83,7 +92,17 @@ class AppServerRepositoryImpl @Inject constructor(
         )
     }.distinctUntilChanged()
 
-    override suspend fun refresh(): Result<Unit> {
+    override suspend fun refreshIfOlderThan(maxAge: Duration): Result<Unit> {
+        if (!config.isConfigured) return Result.success(Unit)
+        return refreshMutex.withLock {
+            val checkedAt = load(KEY_MANIFEST, StoredManifest.serializer())?.checkedAtMs
+            if (checkedAt != null && clock.millis() - checkedAt < maxAge.toMillis()) Result.success(Unit) else refreshNow()
+        }
+    }
+
+    override suspend fun refresh(): Result<Unit> = refreshMutex.withLock { refreshNow() }
+
+    private suspend fun refreshNow(): Result<Unit> {
         if (!config.isConfigured) return Result.success(Unit)
         val settings = load(KEY_SETTINGS, StoredSettings.serializer()) ?: StoredSettings()
         if (!settings.enabled) return Result.success(Unit)
@@ -93,9 +112,14 @@ class AppServerRepositoryImpl @Inject constructor(
             // A replayed older manifest is ignored: it could revive a message or a switch.
             val accepted = previous?.payload?.takeIf { it.sequence > received.sequence } ?: received
             save(KEY_MANIFEST, StoredManifest.serializer(), StoredManifest(accepted, clock.millis(), failed = false))
-            if ((accepted.features[FEATURE_CATALOG] ?: true) && catalogDownloader.pick(accepted.catalogs) != null) {
-                scheduler.scheduleDownload(allowMobileData = settings.catalogOnMobileData)
+            if (accepted.features[FEATURE_CATALOG] != false) updateCatalog(accepted, settings)
+            if (accepted.features[FEATURE_PREDICTIONS] != false) {
+                // The estimates are a bonus: a failed download keeps the previous ones.
+                suspendRunCatching { updatePredictions(accepted) }
+            } else {
+                predictionStore.clear()
             }
+            Unit
         }.onFailure {
             save(
                 KEY_MANIFEST,
@@ -105,6 +129,30 @@ class AppServerRepositoryImpl @Inject constructor(
         }
     }
 
+    /**
+     * Applies the changed canyons at once (small bundles, any network); the whole catalog is
+     * downloaded (Wi-Fi unless allowed) only when the app is too far behind or has no hashes. A
+     * failed attempt waits for the next check rather than falling back on the big download.
+     */
+    private suspend fun updateCatalog(payload: ManifestPayloadDto, settings: StoredSettings) {
+        val outcome =
+            payload.catalogIndex?.let { entry -> catalogSync.sync(entry).getOrNull() ?: return } ?: CatalogSync.Outcome.NotAvailable
+        val needsWhole = outcome == CatalogSync.Outcome.NeedsWholeCatalog || outcome == CatalogSync.Outcome.NotAvailable
+        if (needsWhole && catalogDownloader.pick(payload.catalogs) != null) {
+            scheduler.scheduleDownload(allowMobileData = settings.catalogOnMobileData)
+        }
+    }
+
+    /** Downloads the debit estimates the manifest announces when they differ from the ones kept (about 300 KB). */
+    private suspend fun updatePredictions(payload: ManifestPayloadDto) {
+        val entry = payload.predictions ?: return
+        if (entry.schemaVersion != ServerPredictionStore.SCHEMA || entry.sha256 == predictionStore.installedSha256()) return
+        require(entry.size in 1..MAX_PREDICTIONS_BYTES) { "Unexpected estimates size ${entry.size}" }
+        val bytes = client.fetchFile(entry.path, MAX_PREDICTIONS_BYTES)
+        check(bytes.size.toLong() == entry.size && sha256Hex(bytes) == entry.sha256) { "Estimates file does not match the manifest" }
+        predictionStore.install(bytes, entry.sha256)
+    }
+
     /** Downloads the catalog the last accepted manifest announces, when it is still newer (worker). */
     suspend fun downloadAnnouncedCatalog(): Result<Boolean> {
         if (!config.isConfigured) return Result.success(false)
@@ -112,7 +160,11 @@ class AppServerRepositoryImpl @Inject constructor(
         val payload = load(KEY_MANIFEST, StoredManifest.serializer())?.payload
         if (!settings.enabled || payload == null || payload.features[FEATURE_CATALOG] == false) return Result.success(false)
         val entry = catalogDownloader.pick(payload.catalogs) ?: return Result.success(false)
-        return catalogDownloader.download(entry).map { true }
+        return catalogDownloader.download(entry).map {
+            // Its hashes come with it, so the next updates are applied canyon by canyon.
+            payload.catalogIndex?.let { index -> suspendRunCatching { catalogSync.stageHashesFor(index) } }
+            true
+        }
     }
 
     override suspend fun setEnabled(enabled: Boolean) {
@@ -123,6 +175,7 @@ class AppServerRepositoryImpl @Inject constructor(
             scheduler.cancelDownload()
             catalogUpdates.clearStaged()
             catalogUpdates.deleteLeftovers()
+            predictionStore.clear()
         }
     }
 
@@ -178,10 +231,15 @@ class AppServerRepositoryImpl @Inject constructor(
     @Serializable
     private data class StoredManifest(val payload: ManifestPayloadDto? = null, val checkedAtMs: Long? = null, val failed: Boolean = false)
 
-    private companion object {
+    internal companion object {
         const val KEY_SETTINGS = "app_server_settings"
         const val KEY_MANIFEST = "app_server_manifest"
         const val FEATURE_TRACKS = "communityTracks"
         const val FEATURE_CATALOG = "catalogUpdates"
+        const val FEATURE_PREDICTIONS = "serverPredictions"
+        const val MAX_PREDICTIONS_BYTES = 16L * 1024 * 1024
+
+        fun sha256Hex(bytes: ByteArray): String =
+            java.security.MessageDigest.getInstance("SHA-256").digest(bytes).joinToString("") { "%02x".format(it) }
     }
 }

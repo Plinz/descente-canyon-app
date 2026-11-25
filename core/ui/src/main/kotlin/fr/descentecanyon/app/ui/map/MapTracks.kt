@@ -3,7 +3,6 @@ package fr.descentecanyon.app.ui.map
 import androidx.annotation.ColorInt
 import fr.descentecanyon.app.domain.model.CommunityTrack
 import fr.descentecanyon.app.domain.model.TrackPoint
-import fr.descentecanyon.app.domain.model.TrackRole
 import java.util.Locale
 import org.maplibre.android.maps.Style
 import org.maplibre.android.style.expressions.Expression
@@ -19,17 +18,26 @@ import org.maplibre.android.style.sources.GeoJsonSource
 /** A line drawn on the map: a shared GPS track, in the colour of its role. */
 data class MapTrackLine(val id: String, val segments: List<List<TrackPoint>>, @param:ColorInt val color: Int, val emphasized: Boolean)
 
-/** Colour of a track role, the same in the track list and on the map (the list is the legend). */
+/**
+ * Colour of the track at [index] in the canyon's list (reference tracks first): every track has its
+ * own colour, the same on the canyon page and on the map, so the list is the map's legend.
+ */
 @ColorInt
-fun trackRoleColor(role: TrackRole): Int = when (role) {
-    TrackRole.APPROACH -> 0xFF1E88E5.toInt()
-    TrackRole.RETURN -> 0xFF2E9D4B.toInt()
-    TrackRole.ESCAPE -> 0xFFF28C00.toInt()
-    TrackRole.FULL -> 0xFF8E44AD.toInt()
-}
+fun trackColor(index: Int): Int = TRACK_PALETTE[index.mod(TRACK_PALETTE.size)]
 
-fun CommunityTrack.toMapTrackLine(): MapTrackLine =
-    MapTrackLine(id = id, segments = segments, color = trackRoleColor(role), emphasized = isReference)
+private val TRACK_PALETTE = intArrayOf(
+    0xFF1E6FD9.toInt(), // blue
+    0xFFE8590C.toInt(), // orange
+    0xFF8E44AD.toInt(), // purple
+    0xFF2E9D4B.toInt(), // green
+    0xFFC2185B.toInt(), // magenta
+    0xFF00838F.toInt(), // teal
+    0xFF6D4C41.toInt(), // brown
+    0xFF455A64.toInt(), // slate
+)
+
+fun CommunityTrack.toMapTrackLine(index: Int): MapTrackLine =
+    MapTrackLine(id = id, segments = segments, color = trackColor(index), emphasized = isReference)
 
 internal const val TRACK_SOURCE_ID = "track-source"
 private const val TRACK_CASING_LAYER_ID = "track-casing-layer"

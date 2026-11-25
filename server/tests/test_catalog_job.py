@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import dataclasses
 import gzip
+import hashlib
 import json
+import os
 import sqlite3
 from datetime import date
 from pathlib import Path
@@ -94,6 +96,7 @@ def test_end_to_end_on_the_repository_data(settings, public_key):
     first = catalog.run(settings, ids=[21, 24212], scraper_loader=_fake_scraper({21: remark}))
     assert first["published"] is True, first
     assert first["changedCanyons"] == [21]
+    assert first["catalogFile"] is True and first["newBundles"] == first["counts"]["canyons"]
     payload = manifest.read_published_payload(settings.v1_dir, public_key)
     entry = payload["catalogs"][0]
     assert entry["schemaVersion"] == 4 and entry["canyonCount"] == first["counts"]["canyons"] >= 4000
@@ -111,6 +114,23 @@ def test_end_to_end_on_the_repository_data(settings, public_key):
     assert identity == entry["identityHash"]
     reference = json.loads(settings.canyon_reference_path.read_text())
     assert len(reference["canyons"]) == entry["canyonCount"]
+    assert (settings.data_dir / "catalog" / "current.db").exists()
+
+    # The index lists every canyon's bundle; the bundle of the changed canyon holds the new remark.
+    index_entry = payload["catalogIndex"]
+    index_bytes = (settings.v1_dir / index_entry["path"]).read_bytes()
+    assert sha256_file(settings.v1_dir / index_entry["path"]) == index_entry["sha256"]
+    index = json.loads(gzip.decompress(index_bytes))
+    assert index["identityHash"] == entry["identityHash"] and len(index["canyons"]) == entry["canyonCount"]
+    bundle_hash, read_at = index["canyons"]["21"]
+    assert read_at == 1795572000000
+    bundle_data = gzip.decompress((settings.v1_dir / index["bundlePath"].format(hash=bundle_hash)).read_bytes())
+    assert hashlib.sha256(bundle_data).hexdigest()[:32] == bundle_hash
+    bundle = json.loads(bundle_data)
+    assert bundle["tables"]["canyons"][0]["remarques"] == remark
+    assert "lastUpdated" not in bundle["tables"]["canyons"][0]
+    assert all("id" not in point for point in bundle["tables"]["geo_points"])
+    assert (settings.v1_dir / index["shared"]["forum_users"]["path"]).exists()
 
     second = catalog.run(settings, ids=[21, 24212], scraper_loader=_fake_scraper({21: remark}))
     assert second.get("unchanged") is True and second["published"] is False
@@ -119,3 +139,15 @@ def test_end_to_end_on_the_repository_data(settings, public_key):
     broken = catalog.run(settings, ids=[21, 24212, 22, 23], scraper_loader=_fake_scraper({}, blank={21, 24212, 22, 23}))
     assert broken["aborted"] == "SITE_FORMAT_CHANGED"
     assert manifest.read_published_payload(settings.v1_dir, public_key)["sequence"] == payload["sequence"]
+
+
+def test_unreferenced_bundles_go_after_a_week(tmp_path):
+    folder = tmp_path / "catalog" / "bundles"
+    folder.mkdir(parents=True)
+    (tmp_path / "catalog" / "shared").mkdir()
+    for name in ("keep.json.gz", "old.json.gz", "recent.json.gz"):
+        (folder / name).write_bytes(b"x")
+    old = folder / "old.json.gz"
+    os.utime(old, (1, 1))
+    assert catalog.prune_bundles(tmp_path, {"keep"}, "forum") == 1
+    assert sorted(p.name for p in folder.iterdir()) == ["keep.json.gz", "recent.json.gz"]

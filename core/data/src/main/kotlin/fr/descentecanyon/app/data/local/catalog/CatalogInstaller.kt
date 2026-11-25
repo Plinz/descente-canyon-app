@@ -28,6 +28,7 @@ class CatalogInstaller @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val config: BackendConfig,
     private val updates: CatalogUpdateStore,
+    private val hashes: CatalogHashStore,
 ) {
 
     enum class Plan {
@@ -79,9 +80,13 @@ class CatalogInstaller @Inject constructor(
                 context.deleteDatabase(CatalogDatabase.DATABASE_NAME)
                 updates.setInstalledServerVersion(null)
                 updates.clearStaged()
+                hashes.reset()
             }
 
-            Plan.OPEN_EXISTING -> if (updates.staged() != null) updates.clearStaged()
+            Plan.OPEN_EXISTING -> if (updates.staged() != null) {
+                updates.clearStaged()
+                hashes.discardStaged()
+            }
         }
         updates.deleteLeftovers()
     }
@@ -104,11 +109,13 @@ class CatalogInstaller @Inject constructor(
                 staged.file.delete()
             }
             updates.setInstalledServerVersion(staged.dataVersion)
+            hashes.adoptStaged()
         } catch (exception: Exception) {
             // The APK's catalog is always there to fall back on.
             Log.w(TAG, "Unable to install the downloaded catalog", exception)
             context.deleteDatabase(CatalogDatabase.DATABASE_NAME)
             updates.setInstalledServerVersion(null)
+            hashes.reset()
         }
         updates.clearStaged()
     }
