@@ -28,6 +28,9 @@ dcserver = "dcserver.cli:main"
 [tool.setuptools.packages.find]
 include = ["dcserver*"]
 
+[tool.setuptools.package-data]
+"dcserver.admin" = ["static/*.html"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 markers = ["slow: end-to-end runs on the real repository data (deselect with -m 'not slow')"]

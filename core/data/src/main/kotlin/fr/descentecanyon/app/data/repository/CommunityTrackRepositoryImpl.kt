@@ -22,11 +22,9 @@ import fr.descentecanyon.app.domain.model.TrackStanding
 import fr.descentecanyon.app.domain.model.TrackVote
 import fr.descentecanyon.app.domain.repository.CommunityTrackRepository
 import java.io.File
-import java.security.SecureRandom
 import java.time.Clock
 import java.time.Instant
 import java.time.YearMonth
-import java.util.Base64
 import javax.inject.Inject
 import javax.inject.Singleton
 import kotlinx.coroutines.CoroutineDispatcher
@@ -37,8 +35,6 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
@@ -56,6 +52,7 @@ class CommunityTrackRepositoryImpl @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val client: BackendClient,
     private val keyValueDao: KeyValueDao,
+    private val installKeys: InstallKeyStore,
     private val json: Json,
     private val clock: Clock,
     @param:IoDispatcher private val ioDispatcher: CoroutineDispatcher,
@@ -63,7 +60,6 @@ class CommunityTrackRepositoryImpl @Inject constructor(
 
     private val cacheDirectory: File get() = File(context.noBackupFilesDir, CACHE_DIRECTORY)
     private val cache = MutableStateFlow<Map<Int, CachedTracks>>(emptyMap())
-    private val keyMutex = Mutex()
 
     private val votesSerializer = MapSerializer(String.serializer(), Int.serializer())
     private val mineSerializer = SetSerializer(String.serializer())
@@ -105,15 +101,7 @@ class CommunityTrackRepositoryImpl @Inject constructor(
         store(track.canyonId, current.copy(list = current.list.copy(tracks = current.list.tracks.filterNot { it.id == track.id })))
     }
 
-    /** Random key of this installation, sent with contributions only (created at the first one). */
-    private suspend fun installKey(): String = keyMutex.withLock {
-        keyValueDao.get(KEY_INSTALL)?.takeIf { it.length == INSTALL_KEY_LENGTH } ?: run {
-            val bytes = ByteArray(32).also { SecureRandom().nextBytes(it) }
-            val key = Base64.getUrlEncoder().withoutPadding().encodeToString(bytes)
-            keyValueDao.put(KeyValueEntity(KEY_INSTALL, key))
-            key
-        }
-    }
+    private suspend fun installKey(): String = installKeys.get()
 
     private suspend fun replaceInCache(track: TrackDto) {
         val current = cache.value[track.canyonId] ?: CachedTracks(TrackListDto(track.canyonId), clock.millis())
@@ -167,10 +155,8 @@ class CommunityTrackRepositoryImpl @Inject constructor(
 
     companion object {
         private const val CACHE_DIRECTORY = "community-tracks"
-        private const val KEY_INSTALL = "community_install_key"
         private const val KEY_VOTES = "community_track_votes"
         private const val KEY_MINE = "community_tracks_mine"
-        private const val INSTALL_KEY_LENGTH = 43
         const val MAX_UPLOAD_BYTES = 2 * 1024 * 1024
 
         /** Reference tracks first, then by votes; set-aside tracks last (the server orders the same way). */

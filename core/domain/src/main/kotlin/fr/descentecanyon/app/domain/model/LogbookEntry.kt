@@ -35,8 +35,9 @@ data class LogbookEntry(
     /**
      * A recent outing with no flow report found: worth offering one. A flow seen weeks ago no longer
      * helps anyone decide, and an old outing may have been reported before the app kept track of it.
+     * Never for a canyon added in the app: the site, where flows are reported, does not know it.
      */
-    fun awaitsFlowReport(today: LocalDate): Boolean =
+    fun awaitsFlowReport(today: LocalDate): Boolean = !AppCanyons.isAppCanyon(canyonId) &&
         debit == LogbookDebit.None && !date.isAfter(today) && !date.isBefore(today.minusDays(FLOW_REPORT_DAYS))
 
     companion object {

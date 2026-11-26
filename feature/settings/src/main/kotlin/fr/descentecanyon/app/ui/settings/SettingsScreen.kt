@@ -352,7 +352,12 @@ private fun SettingsTextDialog(dialog: SettingsDialog, hasServer: Boolean, onDis
     }
     val body = when (dialog) {
         SettingsDialog.DATA_SOURCES -> stringResource(R.string.settings_data_sources_body) +
-            if (hasServer) "\n" + stringResource(R.string.settings_data_sources_tracks) else ""
+            if (hasServer) {
+                "\n" + stringResource(R.string.settings_data_sources_tracks) + "\n" +
+                    stringResource(R.string.settings_data_sources_app_canyons)
+            } else {
+                ""
+            }
 
         SettingsDialog.LICENSES -> stringResource(R.string.settings_licenses_intro) + "\n\n" +
             OPEN_SOURCE_LIBRARIES.joinToString("\n") { "• $it" }

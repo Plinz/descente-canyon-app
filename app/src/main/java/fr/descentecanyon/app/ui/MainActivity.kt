@@ -57,6 +57,7 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.error.suspendRunCatching
+import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.ThemeMode
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
@@ -409,12 +410,12 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
     }
 }
 
-/** The flow report form over the canyon page, from a notification. */
+/** The flow report form over the canyon page, from a notification (only the page for a canyon added in the app). */
 private fun NavHostController.openDebitForm(canyonId: Int) {
     navigate(Screen.CanyonDetail(canyonId)) {
         applyAppRootNavigation(graph.findStartDestination().id)
     }
-    navigate(Screen.DebitForm(canyonId))
+    if (!AppCanyons.isAppCanyon(canyonId)) navigate(Screen.DebitForm(canyonId))
 }
 
 internal fun BottomNavItem.launchSection(): LaunchSection? = when (this) {

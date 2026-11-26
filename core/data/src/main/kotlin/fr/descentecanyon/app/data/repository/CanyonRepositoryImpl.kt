@@ -18,6 +18,7 @@ import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.appError
 import fr.descentecanyon.app.domain.error.failure
 import fr.descentecanyon.app.domain.error.suspendRunCatching
+import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.CanyonChain
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
@@ -75,9 +76,11 @@ class CanyonRepositoryImpl @Inject constructor(
 
     override suspend fun getCanyonDetail(canyonId: Int): Result<CanyonDetail> {
         val localCanyon = canyonDao.getById(canyonId)
-            ?: return fetchAndCacheRemoteDetail(canyonId)
+            ?: return if (AppCanyons.isAppCanyon(canyonId)) failure(AppError.NotFound) else fetchAndCacheRemoteDetail(canyonId)
 
-        if (localCanyon.isStale() && connectivityObserver.isCurrentlyOnline()) {
+        // A canyon added in the app is not on the site: the catalog (updated by the app's server) is its only copy.
+        val isFromSite = !AppCanyons.isAppCanyon(canyonId)
+        if (isFromSite && localCanyon.isStale() && connectivityObserver.isCurrentlyOnline()) {
             // Stale-while-revalidate: on failure the catalog copy is still shown.
             fetchAndCacheRemoteDetail(canyonId).onSuccess { return Result.success(it) }
         }

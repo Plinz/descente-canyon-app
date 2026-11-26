@@ -13,6 +13,7 @@ import fr.descentecanyon.app.domain.model.NotificationCenterState
 import fr.descentecanyon.app.domain.model.SiteLogbookImport
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
+import fr.descentecanyon.app.domain.repository.CanyonProposalRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import fr.descentecanyon.app.domain.repository.ForumUserRepository
@@ -76,6 +77,11 @@ class MyAccountViewModelTest {
     }
     private val personalDataRepository = mockk<PersonalDataRepository>()
     private val importSiteLogbookUseCase = mockk<ImportSiteLogbookUseCase>()
+    private val proposalRepository = mockk<CanyonProposalRepository> {
+        every { observeAvailable() } returns flowOf(false)
+        every { observeMine() } returns flowOf(emptyList())
+        coEvery { refreshMine() } returns Result.success(emptyList())
+    }
 
     private fun viewModel() = MyAccountViewModel(
         authRepository = authRepository,
@@ -90,6 +96,7 @@ class MyAccountViewModelTest {
         personalDataRepository = personalDataRepository,
         importSiteLogbookUseCase = importSiteLogbookUseCase,
         clock = Clock.fixed(Instant.parse("2026-10-19T10:00:00Z"), ZoneOffset.UTC),
+        proposalRepository = proposalRepository,
     )
 
     @Test

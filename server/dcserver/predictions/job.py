@@ -36,6 +36,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from .. import manifest
+from ..canyons.content import FIRST_APP_CANYON_ID
 from ..config import Settings
 from ..publish import atomic_write_bytes, prune_files, publication_lock, publish_file
 from . import gauges as G
@@ -108,7 +109,9 @@ def load_catalog(path: Path) -> dict[int, CatalogCanyon]:
                 points.setdefault(canyon_id, []).append((kind, latitude, longitude))
         canyons = {}
         for canyon_id, region, massif, altitude, denivele, longueur, cascade in connection.execute(
-            "SELECT id, region, massif, altitudeDepart, denivele, longueur, cascadeMax FROM canyons"
+            # The canyons added in the app have no reports (the site does not know them): no estimate yet.
+            "SELECT id, region, massif, altitudeDepart, denivele, longueur, cascadeMax FROM canyons WHERE id < ?",
+            (FIRST_APP_CANYON_ID,),
         ):
             canyons[canyon_id] = CatalogCanyon(
                 canyon_id,

@@ -53,6 +53,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.MessageAudience
 import fr.descentecanyon.app.ui.common.needsExactAlarmPermission
 import fr.descentecanyon.app.ui.common.needsNotificationPermission
@@ -290,12 +291,15 @@ fun OutingPlanScreen(
                         val ended = state.savedOuting
                         viewModel.markBack()
                         if (ended?.relativeInformed == true) share(backMessage(context, state, locale))
-                        scope.launch {
-                            val result = snackbarHostState.showSnackbar(
-                                message = resources.getString(R.string.outing_back_report_prompt),
-                                actionLabel = resources.getString(R.string.outing_report_action),
-                            )
-                            if (result == SnackbarResult.ActionPerformed) state.canyon?.canyon?.id?.let(onReportFlow)
+                        // The site, where flows are reported, does not know a canyon added in the app.
+                        if (state.canyon?.canyon?.id?.let(AppCanyons::isAppCanyon) != true) {
+                            scope.launch {
+                                val result = snackbarHostState.showSnackbar(
+                                    message = resources.getString(R.string.outing_back_report_prompt),
+                                    actionLabel = resources.getString(R.string.outing_report_action),
+                                )
+                                if (result == SnackbarResult.ActionPerformed) state.canyon?.canyon?.id?.let(onReportFlow)
+                            }
                         }
                     },
                     onDelay = { minutes ->

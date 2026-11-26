@@ -52,12 +52,58 @@ def cmd_api(settings: Settings, args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_admin(settings: Settings, args: argparse.Namespace) -> int:
+    import uvicorn
+
+    from .admin.app import create_admin_app
+
+    if not settings.admin_token:
+        print("DC_ADMIN_TOKEN is not set: the review tool will refuse every request (openssl rand -hex 24).", file=sys.stderr)
+    uvicorn.run(create_admin_app(settings), host=args.host, port=args.port, access_log=False, proxy_headers=False, server_header=False)
+    return 0
+
+
+def cmd_canyons(settings: Settings, args: argparse.Namespace) -> int:
+    from .canyons import publication
+    from .canyons.service import CanyonService
+
+    service = CanyonService(settings.database_path, settings.pepper, id_floor=lambda: publication.repo_id_floor(settings.repo_dir))
+    try:
+        if args.action == "export":
+            export = service.export()
+            document = publication.merged_document(export, publication.load_repo_document(settings.repo_dir))
+            data = publication.to_bytes(document)
+            if args.output == "-":
+                sys.stdout.buffer.write(data)
+            else:
+                Path(args.output).write_bytes(data)
+                print(f"{len(document['canyons'])} canyons written to {args.output}", file=sys.stderr)
+            return 0
+        if args.action == "list":
+            for canyon in service.canyons():
+                print(f"{canyon['id']}  v{canyon['revision']}  {canyon['status']:<9}  {canyon['name']}")
+            pending = service.proposals("PENDING")
+            print(f"{len(pending)} proposal(s) waiting for review")
+            return 0
+    finally:
+        service.close()
+    return 2
+
+
 def cmd_job(settings: Settings, args: argparse.Namespace) -> int:
     if args.pull:
         pulled = subprocess.run(["git", "-C", str(settings.repo_dir), "pull", "--ff-only", "--quiet"], capture_output=True, text=True, check=False)
         if pulled.returncode != 0:
             print(f"git pull failed, building from the current checkout: {pulled.stderr.strip()}", file=sys.stderr)
     ids = [int(part) for part in args.ids.split(",")] if args.ids else None
+    if args.name == "app-canyons":
+        from .jobs import catalog
+
+        # Every ten minutes: no monitoring ping (the nightly job has its own check), and a catalog
+        # job already running is no failure (it takes the sheets as well).
+        report = catalog.run_app_canyons(settings)
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        return 1 if report.get("aborted") not in (None, "ALREADY_RUNNING") else 0
     if args.name == "predictions":
         from .predictions import job as predictions
 
@@ -141,8 +187,18 @@ def build_parser() -> argparse.ArgumentParser:
     api.add_argument("--host", default="127.0.0.1")
     api.add_argument("--port", type=int, default=8080)
 
+    admin = sub.add_parser("admin", help="run the review tool of the proposed canyons (loopback only, see README)")
+    admin.add_argument("--host", default="127.0.0.1")
+    admin.add_argument("--port", type=int, default=8090)
+
+    canyons = sub.add_parser("canyons", help="the canyons added in the app")
+    canyons_sub = canyons.add_subparsers(dest="action", required=True)
+    export = canyons_sub.add_parser("export", help="write the published sheets in the format of data-overlay/app-canyons.json")
+    export.add_argument("--output", default="-", help="file to write (default: standard output)")
+    canyons_sub.add_parser("list", help="list the canyons added and count the pending proposals")
+
     job = sub.add_parser("job", help="run a scheduled job")
-    job.add_argument("name", choices=["catalog", "predictions"])
+    job.add_argument("name", choices=["catalog", "predictions", "app-canyons"])
     job.add_argument("--ids", help="comma-separated canyon ids (catalog: instead of tonight's slice; predictions: only these)")
     job.add_argument("--limit", type=int)
     job.add_argument("--dry-run", action="store_true", help="build and check, publish nothing")
@@ -190,6 +246,10 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_public_key(settings)
     if args.command == "api":
         return cmd_api(settings, args)
+    if args.command == "admin":
+        return cmd_admin(settings, args)
+    if args.command == "canyons":
+        return cmd_canyons(settings, args)
     if args.command == "job":
         return cmd_job(settings, args)
     if args.command == "manifest":

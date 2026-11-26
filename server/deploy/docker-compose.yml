@@ -30,7 +30,25 @@ services:
     # The API never signs anything: the manifest key stays out of its container.
     volumes:
       - /srv/dc/data:/srv/dc/data
+      # Read only: the repository's copy of the canyons added in the app (their ids).
+      - /srv/dc/repo:/srv/dc/repo:ro
     # No published port: only Caddy reaches the API, on the compose network.
+
+  # Review tool of the proposed canyons: on the VPS's loopback only, reached through an SSH tunnel
+  # (server/README.md, « Relire les canyons proposés »). It signs nothing either.
+  admin:
+    image: dcserver:local
+    restart: unless-stopped
+    user: "${DC_UID:-1000}:${DC_GID:-1000}"
+    env_file: /srv/dc/env
+    command: ["admin", "--host", "0.0.0.0", "--port", "8090"]
+    ports:
+      - "127.0.0.1:8090:8090"
+    volumes:
+      - /srv/dc/data:/srv/dc/data
+      - /srv/dc/repo:/srv/dc/repo:ro
+    depends_on:
+      - api
 
   jobs:
     image: dcserver:local

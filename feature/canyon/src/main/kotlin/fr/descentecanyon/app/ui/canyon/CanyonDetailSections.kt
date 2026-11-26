@@ -54,6 +54,7 @@ import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.NearbyCanyon
+import fr.descentecanyon.app.domain.model.isAddedInApp
 import fr.descentecanyon.app.ui.components.longDayLabel
 import fr.descentecanyon.app.ui.design.DcOutdoorActionCard
 import fr.descentecanyon.app.ui.test.TestTags
@@ -106,20 +107,26 @@ internal fun CanyonDetailContent(
     bottomContentPadding: Dp = 0.dp,
     listState: LazyListState = rememberLazyListState(),
 ) {
+    // A canyon added in the app has neither photos nor flow reports: they live on the site, which does not know it.
+    val isAddedInApp = detail.canyon.isAddedInApp
     var selectedTab by rememberSaveable(openDebitsTabInitially) {
-        mutableIntStateOf(if (openDebitsTabInitially) 2 else 0)
+        mutableIntStateOf(if (openDebitsTabInitially && !isAddedInApp) 2 else 0)
     }
     val scope = rememberCoroutineScope()
     val tabs = listOf(
         stringResource(R.string.tab_topo),
-        if (photoError != null && detail.photos.isEmpty()) {
+        if (isAddedInApp) {
+            stringResource(R.string.tab_photos)
+        } else if (photoError != null && detail.photos.isEmpty()) {
             stringResource(R.string.tab_photos_unavailable)
         } else if (isLoadingPhotos && detail.photos.isEmpty()) {
             stringResource(R.string.tab_photos_loading)
         } else {
             stringResource(R.string.tab_photos_with_count, detail.photos.size)
         },
-        if (debitError != null && detail.debits.isEmpty()) {
+        if (isAddedInApp) {
+            stringResource(R.string.tab_debits)
+        } else if (debitError != null && detail.debits.isEmpty()) {
             stringResource(R.string.tab_debits_unavailable)
         } else if (isLoadingDebits && detail.debits.isEmpty()) {
             stringResource(R.string.tab_debits_loading)
@@ -174,6 +181,7 @@ internal fun CanyonDetailContent(
                 onDeleteEntry = onDeleteLogbookEntry,
                 onReportFlow = onReportFlow,
                 onOpenLogbook = onOpenLogbook,
+                canReportFlow = !isAddedInApp,
             )
         }
         if (edfStatusSourceUrl != null) {
@@ -194,14 +202,16 @@ internal fun CanyonDetailContent(
                     error = weatherError,
                 )
             }
-            item {
-                CanyonDebitPredictionCard(
-                    predictions = predictions,
-                    isLoading = isLoadingPredictions,
-                    error = predictionError,
-                    onInfoClick = onOpenPredictionInfo,
-                    weather = weather,
-                )
+            if (!isAddedInApp) {
+                item {
+                    CanyonDebitPredictionCard(
+                        predictions = predictions,
+                        isLoading = isLoadingPredictions,
+                        error = predictionError,
+                        onInfoClick = onOpenPredictionInfo,
+                        weather = weather,
+                    )
+                }
             }
         } else {
             item { UnlocatedConditionsCard() }
@@ -220,6 +230,7 @@ internal fun CanyonDetailContent(
                 tabs.forEachIndexed { index, title ->
                     Tab(
                         selected = selectedTab == index,
+                        enabled = index == 0 || !isAddedInApp,
                         onClick = {
                             selectedTab = index
                             // With the tab row pinned, the tab opens at its top, not where the previous one was scrolled to.

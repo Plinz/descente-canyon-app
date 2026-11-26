@@ -26,9 +26,12 @@ data class AppServerState(
     val isActive: Boolean get() = isConfigured && isEnabled
 
     val communityTracksAvailable: Boolean get() = isActive && features.communityTracks
+
+    /** New canyons and changes can be proposed (the operator can close proposals from the manifest). */
+    val canyonProposalsAvailable: Boolean get() = isActive && features.canyonProposals
 }
 
-data class ServerFeatures(val communityTracks: Boolean = true, val catalogUpdates: Boolean = true)
+data class ServerFeatures(val communityTracks: Boolean = true, val catalogUpdates: Boolean = true, val canyonProposals: Boolean = true)
 
 enum class ServerMessageLevel { INFO, WARNING }
 

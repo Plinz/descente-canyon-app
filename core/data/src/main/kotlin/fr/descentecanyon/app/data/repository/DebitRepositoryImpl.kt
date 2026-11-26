@@ -4,6 +4,7 @@ import fr.descentecanyon.app.data.local.user.dao.DebitDao
 import fr.descentecanyon.app.data.mapper.toDomain
 import fr.descentecanyon.app.data.mapper.toEntity
 import fr.descentecanyon.app.data.remote.scraper.CanyonScraper
+import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.CachedItems
 import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.repository.DebitRepository
@@ -54,6 +55,8 @@ class DebitRepositoryImpl @Inject constructor(
     }
 
     override suspend fun refreshDebits(canyonId: Int, maxAgeMs: Long): Result<List<Debit>> {
+        // The site does not know the canyons added in the app: no flow report for them yet.
+        if (AppCanyons.isAppCanyon(canyonId)) return Result.success(emptyList())
         val now = System.currentTimeMillis()
         if (refreshedAt[canyonId]?.let { now - it < maxAgeMs } == true) {
             return Result.success(debitDao.getByCanyonId(canyonId).first().map { it.toDomain() })

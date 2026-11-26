@@ -1,0 +1,48 @@
+{
+ "proposals": [
+  {
+   "id": "p3vNfGvhkP5ts",
+   "kind": "EDIT",
+   "canyonId": 1000000,
+   "name": "Clue du Test",
+   "status": "PENDING",
+   "createdAt": "2026-11-26T17:23:16Z",
+   "decidedAt": null,
+   "reason": null,
+   "note": null
+  },
+  {
+   "id": "pc5c_vfgPBi43",
+   "kind": "NEW",
+   "canyonId": null,
+   "name": "Ravin en double",
+   "status": "REJECTED",
+   "createdAt": "2026-11-26T17:23:16Z",
+   "decidedAt": "2026-11-26T17:23:16Z",
+   "reason": "DUPLICATE",
+   "note": "Déjà ajouté : Ravin des Essais"
+  },
+  {
+   "id": "pajeFQL195k78",
+   "kind": "NEW",
+   "canyonId": 1000000,
+   "name": "Clue du Test",
+   "status": "APPROVED",
+   "createdAt": "2026-11-26T17:23:16Z",
+   "decidedAt": "2026-11-26T17:23:16Z",
+   "reason": null,
+   "note": null
+  },
+  {
+   "id": "pz00C-Ooemv57",
+   "kind": "NEW",
+   "canyonId": null,
+   "name": "Ravin des Essais",
+   "status": "PENDING",
+   "createdAt": "2026-11-26T17:23:16Z",
+   "decidedAt": null,
+   "reason": null,
+   "note": null
+  }
+ ]
+}

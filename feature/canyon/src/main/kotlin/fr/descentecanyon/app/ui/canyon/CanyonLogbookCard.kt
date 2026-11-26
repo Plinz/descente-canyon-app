@@ -69,6 +69,8 @@ internal fun MyCanyonCard(
     onReportFlow: (LogbookEntry) -> Unit,
     onOpenLogbook: () -> Unit,
     modifier: Modifier = Modifier,
+    /** False for a canyon added in the app: the site, where flows are reported, does not know it. */
+    canReportFlow: Boolean = true,
 ) {
     val colors = LocalDcColors.current
     val formatter = rememberLogbookDateFormatter()
@@ -127,7 +129,7 @@ internal fun MyCanyonCard(
                 ) {
                     LogbookEntryLines(entry = last, title = last.date.format(formatter), modifier = Modifier.weight(1f))
                     // The flow lives on the site: a recent outing without a report offers to write one.
-                    if (last.awaitsFlowReport(LocalDate.now())) ReportFlowButton(onClick = { onReportFlow(last) })
+                    if (canReportFlow && last.awaitsFlowReport(LocalDate.now())) ReportFlowButton(onClick = { onReportFlow(last) })
                     Icon(
                         Icons.Default.Edit,
                         contentDescription = stringResource(R.string.logbook_edit_title),
@@ -187,7 +189,7 @@ internal fun MyCanyonCard(
                 onSaveEntry(entry)
                 addingEntry = false
                 // A flow seen weeks ago no longer helps anyone decide: only recent outings are worth a report.
-                if (entry.awaitsFlowReport(LocalDate.now())) reportPromptDate = entry.date.toString()
+                if (canReportFlow && entry.awaitsFlowReport(LocalDate.now())) reportPromptDate = entry.date.toString()
             },
         )
     }

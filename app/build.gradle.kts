@@ -73,6 +73,8 @@ val runtimeLookupAssetGeneratorScript = rootProject.file("scripts/app/generate_r
 val prepackagedDatabaseSchemaFile = rootProject.file("core/data/schemas/fr.descentecanyon.app.data.local.catalog.CatalogDatabase/4.json")
 val canyonChainsFile = rootProject.file("data-overlay/canyon-chains.json")
 val recoveredGeoPointsFile = rootProject.file("data-overlay/recovered-geo-points.json")
+// Canyons added in the app and approved on its server (`dcserver canyons export`).
+val appCanyonsFile = rootProject.file("data-overlay/app-canyons.json")
 val prepackagedRoomImportDirectory = rootProject.file("offline-data/full/room-import")
 val staticFeaturesAssetFile = rootProject.file("modele_statistique/canyon_static_features.json")
 val runtimeLookupsAssetFile = rootProject.file("modele_statistique/runtime_feature_lookups.json")
@@ -89,6 +91,7 @@ val generatePrepackagedRoomDatabase = tasks.register<Exec>("generatePrepackagedR
     inputs.dir(prepackagedRoomImportDirectory)
     inputs.file(canyonChainsFile)
     inputs.file(recoveredGeoPointsFile)
+    inputs.file(appCanyonsFile)
     outputs.file(generatedPrepackagedDatabaseFile)
 
     commandLine(
@@ -104,6 +107,8 @@ val generatePrepackagedRoomDatabase = tasks.register<Exec>("generatePrepackagedR
         canyonChainsFile.path,
         "--recovered-geo-points",
         recoveredGeoPointsFile.path,
+        "--app-canyons",
+        appCanyonsFile.path,
     )
 }
 

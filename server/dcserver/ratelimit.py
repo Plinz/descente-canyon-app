@@ -22,6 +22,8 @@ DEFAULT_QUOTAS: dict[str, Quota] = {
     "vote:key": Quota(150),
     "vote:net": Quota(400),
     "delete:key": Quota(30),
+    "proposal:key": Quota(10),
+    "proposal:net": Quota(30),
 }
 
 

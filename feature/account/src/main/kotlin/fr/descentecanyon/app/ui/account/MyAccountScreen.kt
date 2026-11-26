@@ -106,6 +106,8 @@ fun MyAccountScreen(
     onOpenOutings: () -> Unit,
     onOpenNotifications: () -> Unit,
     modifier: Modifier = Modifier,
+    onProposeCanyon: () -> Unit = {},
+    onOpenCanyon: (Int) -> Unit = {},
     viewModel: MyAccountViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
@@ -245,6 +247,18 @@ fun MyAccountScreen(
                 }
                 if (state.memoCount > 0) {
                     item(key = "memos") { MemosSummary(state = state, onOpen = { onOpenLogbook(LogbookTab.CANYONS) }) }
+                }
+                // Shown while proposals can be sent, and as long as earlier ones are listed.
+                if (state.canPropose || state.proposals.isNotEmpty()) {
+                    item(key = "proposals") {
+                        ProposalsSection(
+                            canPropose = state.canPropose,
+                            proposals = state.proposals,
+                            onPropose = onProposeCanyon,
+                            onOpenCanyon = onOpenCanyon,
+                            onWithdraw = viewModel::withdrawProposal,
+                        )
+                    }
                 }
                 if (state.follows.total > 0) {
                     item(key = "follows") {
@@ -577,7 +591,7 @@ private fun ContributorIdentityDialog(identity: ContributorIdentity?, onDismiss:
 }
 
 @Composable
-private fun AccountSection(title: String, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
+internal fun AccountSection(title: String, modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
         DcCard(modifier = Modifier.fillMaxWidth(), contentPadding = 8.dp) {
@@ -587,7 +601,7 @@ private fun AccountSection(title: String, modifier: Modifier = Modifier, content
 }
 
 @Composable
-private fun AccountRow(
+internal fun AccountRow(
     icon: ImageVector,
     title: String,
     onClick: (() -> Unit)?,

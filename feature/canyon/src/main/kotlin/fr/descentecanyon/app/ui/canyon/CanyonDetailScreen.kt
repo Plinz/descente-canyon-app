@@ -30,6 +30,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.LocationOn
@@ -59,6 +60,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -69,6 +71,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.Canyon
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.perf.PerformanceTrace
@@ -105,6 +108,8 @@ fun CanyonDetailScreen(
     /** A flow report for an outing already logged: only its day is prefilled. */
     onReportOuting: (LogbookEntry) -> Unit = {},
     onOpenLogbook: () -> Unit = {},
+    /** A change to a canyon added in the app (the site's sheets are changed on the site). */
+    onProposeEdit: () -> Unit = {},
     openDebitsTabInitially: Boolean = false,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
@@ -122,6 +127,8 @@ fun CanyonDetailScreen(
     // The map button would cover the content being read: it hides while scrolling down, and at the
     // top the header photo offers the map instead (the button covered the first cards there).
     val showMapButton = listState.isScrollingUpBelowTop()
+    // Flow reports, their follow-up and the interest votes live on the site, which does not know this canyon.
+    val isAddedInApp = AppCanyons.isAppCanyon(canyonId)
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { viewModel.toggleDebitNotifications() }
@@ -181,9 +188,13 @@ fun CanyonDetailScreen(
                 actions = {
                     IconButton(
                         onClick = onReportDebitClick,
+                        enabled = !isAddedInApp,
                         modifier = Modifier.testTag(TestTags.DETAIL_REPORT_DEBIT_BUTTON),
                     ) {
-                        AddDebitIcon(contentDescription = stringResource(R.string.debit_add_action))
+                        AddDebitIcon(
+                            contentDescription = stringResource(R.string.debit_add_action),
+                            modifier = Modifier.alpha(if (isAddedInApp) DISABLED_ALPHA else 1f),
+                        )
                     }
                     EmergencyIconButton(onClick = onOpenEmergency)
                     IconButton(
@@ -215,6 +226,8 @@ fun CanyonDetailScreen(
                             }
                         },
                         onRateInterestClick = onRateInterestClick,
+                        isAddedInApp = isAddedInApp,
+                        onProposeEdit = onProposeEdit,
                     )
                 },
             )
@@ -374,6 +387,8 @@ private fun CanyonMoreActions(
     isFollowingDebits: Boolean,
     onToggleFollowDebits: () -> Unit,
     onRateInterestClick: () -> Unit,
+    isAddedInApp: Boolean,
+    onProposeEdit: () -> Unit,
 ) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
@@ -386,27 +401,29 @@ private fun CanyonMoreActions(
             )
         }
         DcDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-            DcDropdownMenuItem(
-                text = stringResource(
-                    if (isFollowingDebits) R.string.notifications_canyon_unfollow_action else R.string.notifications_canyon_follow_action,
-                ),
-                icon = if (isFollowingDebits) Icons.Default.NotificationsActive else Icons.Default.NotificationsNone,
-                iconTint = if (isFollowingDebits) null else LocalDcColors.current.textSecondary,
-                onClick = {
-                    expanded = false
-                    onToggleFollowDebits()
-                },
-                modifier = Modifier.testTag(TestTags.DETAIL_DEBIT_NOTIFICATION_BUTTON),
-            )
-            DcDropdownMenuItem(
-                text = stringResource(R.string.interest_rating_add_action),
-                icon = Icons.Default.Star,
-                onClick = {
-                    expanded = false
-                    onRateInterestClick()
-                },
-                modifier = Modifier.testTag(TestTags.DETAIL_RATE_INTEREST_BUTTON),
-            )
+            if (isAddedInApp) {
+                DcDropdownMenuItem(
+                    text = stringResource(R.string.canyon_propose_edit),
+                    icon = Icons.Default.EditNote,
+                    onClick = {
+                        expanded = false
+                        onProposeEdit()
+                    },
+                    modifier = Modifier.testTag(TestTags.DETAIL_PROPOSE_EDIT),
+                )
+            } else {
+                SiteMenuItems(
+                    isFollowingDebits = isFollowingDebits,
+                    onToggleFollowDebits = {
+                        expanded = false
+                        onToggleFollowDebits()
+                    },
+                    onRateInterestClick = {
+                        expanded = false
+                        onRateInterestClick()
+                    },
+                )
+            }
             if (canyon != null) {
                 DcDropdownMenuItem(
                     text = stringResource(R.string.share_canyon),
@@ -431,6 +448,26 @@ private fun CanyonMoreActions(
     }
 }
 
+/** The follow-up of the flow reports and the interest vote, both on the site. */
+@Composable
+private fun SiteMenuItems(isFollowingDebits: Boolean, onToggleFollowDebits: () -> Unit, onRateInterestClick: () -> Unit) {
+    DcDropdownMenuItem(
+        text = stringResource(
+            if (isFollowingDebits) R.string.notifications_canyon_unfollow_action else R.string.notifications_canyon_follow_action,
+        ),
+        icon = if (isFollowingDebits) Icons.Default.NotificationsActive else Icons.Default.NotificationsNone,
+        iconTint = if (isFollowingDebits) null else LocalDcColors.current.textSecondary,
+        onClick = onToggleFollowDebits,
+        modifier = Modifier.testTag(TestTags.DETAIL_DEBIT_NOTIFICATION_BUTTON),
+    )
+    DcDropdownMenuItem(
+        text = stringResource(R.string.interest_rating_add_action),
+        icon = Icons.Default.Star,
+        onClick = onRateInterestClick,
+        modifier = Modifier.testTag(TestTags.DETAIL_RATE_INTEREST_BUTTON),
+    )
+}
+
 private fun Context.shareCanyon(canyon: Canyon) {
     val send = Intent(Intent.ACTION_SEND)
         .setType("text/plain")
@@ -449,6 +486,8 @@ internal fun canyonShareText(canyon: Canyon): String {
     ).distinct().joinToString(" · ")
     return listOf(title, place, canyon.url).filter { it.isNotBlank() }.joinToString("\n")
 }
+
+private const val DISABLED_ALPHA = 0.38f
 
 /** True at the top of the list and while it scrolls back up, false while it scrolls down. */
 @Composable

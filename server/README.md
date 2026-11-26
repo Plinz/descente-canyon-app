@@ -20,6 +20,10 @@ Il fait trois choses :
 3. **Héberger les traces GPS partagées** par les personnes qui utilisent l'app, classées par leurs votes,
    sans modération : des contrôles automatiques refusent ce qui ne peut pas être une trace du canyon, et
    les votes mettent en avant ou écartent le reste (voir « Traces et votes »).
+4. **Recevoir les canyons proposés** depuis l'app (le site n'accepte plus de nouveau canyon) et les
+   modifications de ces canyons. Rien n'est publié avant votre relecture dans l'outil d'admin ; une fiche
+   validée entre dans le catalogue comme les autres et arrive sur les téléphones sans mise à jour de
+   l'app (voir « Canyons proposés »).
 
 L'app reste entièrement utilisable sans le serveur.
 
@@ -31,7 +35,8 @@ Open-Meteo, Météo-France,                                                 ▲
 MeteoSwiss, débits du site ──► tâche estimations (06:40, 12:40, 18:40 UTC)┘
                                                                          │
 App ◄── Caddy (HTTPS automatique, journaux masqués) ◄────────────────────┘
-App ──► Caddy ──► API (FastAPI) ──► SQLite (traces, votes, quotas)
+App ──► Caddy ──► API (FastAPI) ──► SQLite (traces, votes, canyons proposés, quotas)
+Vous ──► tunnel SSH ──► outil d'admin (127.0.0.1:8090) ──► SQLite ──► tâche app-canyons (10 min) ──► catalogue
 restic ──► sauvegarde chiffrée chez un autre fournisseur        healthchecks.io ◄── fin de chaque tâche
 ```
 
@@ -61,6 +66,11 @@ restic ──► sauvegarde chiffrée chez un autre fournisseur        healthche
   `DELETE /v1/tracks/{id}` (l'auteur seulement). Les écritures portent l'en-tête `X-Install-Key` : une clé
   aléatoire de l'installation, envoyée uniquement avec les contributions, jamais avec les lectures.
   Erreurs : `{"error": CODE}` (`TOO_FAR`, `DUPLICATE`, `RATE_LIMITED`…, voir `dcserver/tracks/service.py`).
+- Canyons proposés : `POST /v1/canyon-proposals` (`{"kind": "NEW"|"EDIT", "canyonId", "content", "licence":
+  "CC0-1.0"}`, 256 Ko au plus), `GET /v1/canyon-proposals/mine` (les propositions de l'installation et la
+  décision prise), `DELETE /v1/canyon-proposals/{id}` (retirer une proposition en attente), avec
+  `X-Install-Key`. `content` reprend les champs d'une fiche du site (`dcserver/canyons/content.py`) ; une
+  fiche refusée par les contrôles renvoie `{"error": "INVALID_<CODE>", "field": "<champ>"}`.
 
 ### Traces et votes
 
@@ -81,6 +91,60 @@ restic ──► sauvegarde chiffrée chez un autre fournisseur        healthche
   installation (400 par réseau).
 - L'auteur supprime sa trace depuis l'app. Seule action manuelle prévue : le retrait d'un contenu
   illicite signalé (obligation d'hébergeur), avec `dcserver track delete <id>`.
+
+### Canyons proposés
+
+- **Qui propose quoi.** N'importe qui, depuis l'app (Mon espace › Proposer un canyon), propose un nouveau
+  canyon ; sur la page d'un canyon ajouté dans l'app, « Proposer une modification ». Les fiches du site ne
+  se modifient pas ici : le site reste leur source. Les propositions sont anonymes (HMAC de la clé
+  d'installation et du réseau, comme les traces) et placées sous CC0, comme les traces.
+- **Contrôles automatiques** (`dcserver/canyons/content.py`) : mêmes champs et mêmes formats que le site
+  (cotation `v4a3III`, durées `1h30` / `45min` / `néant` en 10 caractères, navette `néant` / `5.0km`).
+  Obligatoires : le nom, un point GPS de n'importe quel type (parking, entrée, sortie…) et au moins un
+  texte (descente, approche, remarques…). Points à moins de 30 km les uns des autres, textes bornés,
+  caractères de contrôle retirés. Quotas : 10 propositions par jour et par installation (30 par
+  réseau), 20 en attente au plus.
+- **Lieu déduit du point.** Pays, région, département, massif et bassin laissés vides sont repris du
+  canyon du catalogue le plus proche du point qui place le canyon (l'entrée, sinon le premier point), à
+  moins de 25 km (`canyon-reference.json`, réécrit par chaque catalogue). La commune ne l'est pas : le
+  canyon voisin est souvent dans la commune d'à côté. Une fiche ne se publie qu'avec son pays (les
+  filtres de zone de l'app en dépendent) : loin de tout canyon, vous l'écrivez avant de publier.
+- **Rien n'est publié sans vous.** L'outil d'admin liste les propositions, montre la fiche (corrigeable
+  avant publication), la carte avec les canyons du catalogue à moins de 5 km (en rouge les canyons
+  interdits, souvent des fiches vidées exprès par le site), les autres propositions proches, les
+  changements d'une modification champ par champ, et ce que l'auteur a déjà proposé. Vous publiez,
+  refusez (motif dans une liste et note facultative, que l'auteur voit dans l'app) ou bloquez l'auteur.
+- **Historique.** Chaque version publiée d'une fiche est gardée ; « Revenir à cette version » republie
+  une ancienne version comme nouvelle version. Une fiche se masque (elle quitte le catalogue et les
+  téléphones, son numéro reste pris) et se réaffiche. Vous pouvez aussi ajouter une fiche directement.
+- **Publication.** Les canyons ajoutés ont des numéros à partir de 1 000 000 (le site s'arrête vers
+  24 212). La tâche `app-canyons` (timer toutes les 10 min) reconstruit le catalogue sans relire le
+  site dès que les fiches publiées ont changé ; les téléphones les reçoivent à leur prochaine lecture du
+  manifeste (12 h au plus), comme une fiche du site modifiée. Dans l'app, rien ne les distingue d'une
+  fiche du site, sauf ce que le site seul fournit : photos, débits, suivi des débits, vote d'intérêt
+  (grisés ou absents), pas d'estimation de débit pour l'instant, pas de lien vers le site.
+- **Copie dans le dépôt.** `docker compose run -T --rm --no-deps jobs canyons export > app-canyons.json`
+  écrit les fiches publiées au format de `data-overlay/app-canyons.json` : la commiter de temps en temps
+  pour que l'APK les embarque (consultables hors ligne dès l'installation) et pour en garder une copie
+  hors du serveur. Le catalogue du serveur prend les deux sources (la base gagne, un canyon masqué reste
+  dehors) et numérote les nouveaux canyons au-dessus de la copie du dépôt.
+
+#### Relire les canyons proposés
+
+L'outil n'écoute que sur la boucle locale du VPS (`127.0.0.1:8090`, service `admin` du compose) : il n'est
+pas exposé sur Internet. Une fois : `openssl rand -hex 24`, la valeur dans `DC_ADMIN_TOKEN` de
+`/srv/dc/env`, puis `docker compose up -d admin` (ou `update.sh`). Ensuite, depuis votre PC :
+
+```bash
+ssh -N -L 8090:127.0.0.1:8090 dc@<domaine>
+```
+
+puis ouvrir http://localhost:8090 et coller le jeton (gardé par l'onglet seulement). Pour fermer les
+propositions sans mise à jour de l'app (vacances, afflux de spam) : `… manifest feature canyonProposals off`
+(l'app masque alors « Proposer un canyon » ; `on` pour rouvrir). La page vérifie le nom
+d'hôte (`DC_ADMIN_HOSTS`, par défaut `localhost`) pour qu'aucun autre site ouvert dans le navigateur ne
+puisse l'atteindre. `docker compose run --rm --no-deps jobs canyons list` liste les canyons ajoutés et
+compte les propositions en attente.
 
 ## Développement
 
@@ -152,8 +216,9 @@ elle calcule comme avant. Interrupteur : `manifest feature serverPredictions off
 5. **Démarrage** : `cd /srv/dc/repo/server/deploy && docker compose up -d --build`, puis une première
    tâche : `docker compose run --rm --no-deps jobs job catalog`. Vérifier
    `curl https://<domaine>/v1/health` et `curl https://<domaine>/v1/manifest.json`.
-6. **Timers** : `sudo systemctl enable --now dc-catalog.timer dc-predictions.timer dc-backup.timer` (après
-   l'étape 7 pour le dernier). La tâche des estimations attend le premier catalogue (`data/catalog/current.db`).
+6. **Timers** : `sudo systemctl enable --now dc-catalog.timer dc-predictions.timer dc-app-canyons.timer dc-backup.timer`
+   (après l'étape 7 pour le dernier). La tâche des estimations attend le premier catalogue
+   (`data/catalog/current.db`). Pour l'outil d'admin, voir « Relire les canyons proposés ».
 7. **Sauvegarde** : créer un dépôt restic chez un autre fournisseur (Storage Box en SFTP, ou un bucket
    S3), `cp backup.env.example /srv/dc/backup.env`, le mot de passe restic dans
    `/srv/dc/secrets/restic-password` (et une copie ailleurs), puis `restic init`. Tester une restauration.

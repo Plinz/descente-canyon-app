@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.toAppError
+import fr.descentecanyon.app.domain.model.ProposalRefusal
 import fr.descentecanyon.app.domain.model.TrackRejection
 
 /**
@@ -41,6 +42,8 @@ fun AppError.toUiText(@StringRes fallback: Int = R.string.error_generic, @String
 
     is AppError.TrackRejected -> UiText.res(reason.messageRes())
 
+    is AppError.ProposalRefused -> UiText.res(reason.messageRes())
+
     AppError.DataUnavailable, is AppError.Unknown -> UiText.res(fallback)
 }
 
@@ -61,4 +64,17 @@ private fun TrackRejection.messageRes(): Int = when (this) {
     TrackRejection.RATE_LIMITED -> R.string.track_error_rate_limited
     TrackRejection.OWN_TRACK -> R.string.track_error_own_track
     TrackRejection.NOT_AUTHOR -> R.string.track_error_not_author
+}
+
+@StringRes
+private fun ProposalRefusal.messageRes(): Int = when (this) {
+    ProposalRefusal.INVALID -> R.string.proposal_error_invalid
+    ProposalRefusal.RATE_LIMITED -> R.string.proposal_error_rate_limited
+    ProposalRefusal.TOO_MANY_PENDING -> R.string.proposal_error_too_many_pending
+    ProposalRefusal.BLOCKED -> R.string.proposal_error_blocked
+    ProposalRefusal.UNKNOWN_CANYON -> R.string.proposal_error_unknown_canyon
+    ProposalRefusal.NOT_EDITABLE -> R.string.proposal_error_not_editable
+    ProposalRefusal.NO_CHANGE -> R.string.proposal_error_no_change
+    ProposalRefusal.ALREADY_DECIDED -> R.string.proposal_error_already_decided
+    ProposalRefusal.TOO_LARGE -> R.string.proposal_error_too_large
 }

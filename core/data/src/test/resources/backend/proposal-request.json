@@ -1,0 +1,28 @@
+{
+ "kind": "NEW",
+ "content": {
+  "nom": "Ravin des Essais",
+  "pays": "France",
+  "departement": "Isère",
+  "cotation": "v4a2III",
+  "cordeMin": 35,
+  "tempsApproche": "45min",
+  "navette": "néant",
+  "descente": "Une C30 en entrée, puis des toboggans.",
+  "isForbidden": true,
+  "points": [
+   {
+    "type": "ENTREE",
+    "latitude": 45.1,
+    "longitude": 5.7
+   },
+   {
+    "type": "SORTIE",
+    "latitude": 45.105,
+    "longitude": 5.71,
+    "title": "Pont"
+   }
+  ]
+ },
+ "licence": "CC0-1.0"
+}

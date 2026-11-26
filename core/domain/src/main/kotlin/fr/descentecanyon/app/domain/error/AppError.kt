@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.domain.error
 
+import fr.descentecanyon.app.domain.model.ProposalRefusal
 import fr.descentecanyon.app.domain.model.TrackRejection
 import java.io.IOException
 import java.io.InterruptedIOException
@@ -61,6 +62,9 @@ sealed interface AppError {
 
     /** The app's server refused a shared track or a vote, for [reason]. */
     data class TrackRejected(val reason: TrackRejection) : AppError
+
+    /** The app's server refused a proposed canyon, for [reason]; [field] is the field of the sheet it objects to. */
+    data class ProposalRefused(val reason: ProposalRefusal, val field: String? = null) : AppError
 
     /** Unclassified failure; [cause] is kept for logs only. */
     data class Unknown(val cause: Throwable? = null) : AppError {

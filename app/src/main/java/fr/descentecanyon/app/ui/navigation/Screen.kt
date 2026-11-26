@@ -49,6 +49,10 @@ sealed interface Screen {
     @Serializable
     data class InterestRatingForm(val canyonId: Int) : Screen
 
+    /** A canyon proposed for review: new ([canyonId] 0) or a change to the app's canyon [canyonId]. */
+    @Serializable
+    data class CanyonProposal(val canyonId: Int = 0) : Screen
+
     @Serializable
     data class PhotoGallery(val canyonId: Int, val initialPhotoId: Long) : Screen
 

@@ -1,12 +1,12 @@
 ## Privacy Policy
 
-Effective date: 2026-11-25. This version replaces the one of 2026-11-19.
+Effective date: 2026-11-26. This version replaces the one of 2026-11-25.
 
 This policy applies to Descente Canyon App (the "Application"), a free and non-commercial Android application made by Antoine Duquennoy (the "developer"). The Application shows the canyons published on descente-canyon.com, works offline and helps prepare outings. It is an independent application: descente-canyon.com does not run it.
 
 ### In short
 
-- The developer runs a small server for the Application (the "app server"), which you can switch off in the settings. It publishes catalogue updates and the GPS tracks shared by the people using the Application. It receives your IP address and only what you choose to share with it: no account, no name, no e-mail address, no flow report, no descente-canyon.com credential.
+- The developer runs a small server for the Application (the "app server"), which you can switch off in the settings. It publishes catalogue updates, the GPS tracks shared by the people using the Application and the canyons they propose, once reviewed. It receives your IP address and only what you choose to share with it: no account, no name, no e-mail address, no flow report, no descente-canyon.com credential.
 - The Application shows no advertising and uses no audience measurement, analytics, crash reporting or tracking service.
 - What you enter in the Application stays on your phone. It also goes to your Android backup if you keep it on, and into the files you choose to export.
 - To work, the Application contacts the services listed below. Each one receives what its feature needs, and your IP address.
@@ -69,7 +69,8 @@ When the app server is on (default in the versions that use it; switch in Settin
 - the shared GPS tracks of a canyon are read when you open its page. These reads carry no identifier;
 - when you share a track or vote, the Application sends a random key created on the phone for this installation. On the server it is only kept as a keyed hash, with a keyed hash of your network (the first three parts of an IPv4 address, or the first 48 bits of an IPv6 one), to allow one vote per installation, to limit how much one network can weigh in the votes and how many tracks can be sent each day, and to let you delete your own tracks;
 - shared tracks are public, without any name, and placed in the public domain (CC0): you confirm you recorded them yourself or have the right to share them. You can delete a track you shared from the canyon page; it is then deleted from the server with its votes;
-- the server keeps its access log for 7 days, with truncated IP addresses and without the installation key. Tracks and votes are kept until the track is deleted. The developer deletes any track reported as unlawful at descente.canyon.app@proton.me.
+- when you propose a canyon or a change to a canyon added in the Application, the sheet (texts, figures, GPS points) is sent with the same random key, kept as the same keyed hashes, to limit how many proposals can be sent each day and to show you what became of yours in My space. The developer reviews each proposal before anything is published. A published sheet is public, without any name, and placed in the public domain (CC0): you confirm you wrote it yourself or have the right to share it. Every published version of a sheet is kept, so that an earlier version can be put back. You can withdraw a proposal not reviewed yet;
+- the server keeps its access log for 7 days, with truncated IP addresses and without the installation key. Tracks and votes are kept until the track is deleted; proposals are kept with the sheet they concern. The developer deletes any track or sheet reported as unlawful at descente.canyon.app@proton.me.
 
 The server is hosted in the European Union, by OVHcloud. Its backups, when made, are encrypted.
 
@@ -93,7 +94,7 @@ If Android backup is on, Android can save the Application's data (favourites, lo
 
 ### Keeping and deleting your data
 
-Your data stay on the phone until you delete them: in the Application (remove favourites and follows, clear the logbook and memos in My space, delete outings and places, log out), by clearing the Application's storage in the Android settings, or by uninstalling it. The developer holds no data about you, except the tracks you shared and your votes on the app server, tied to the random key of your installation: delete your tracks from the canyon page, or write to descente.canyon.app@proton.me with the canyon and the date of the track. The services listed above handle what they received, including what you published on descente-canyon.com: contact them to see or delete it.
+Your data stay on the phone until you delete them: in the Application (remove favourites and follows, clear the logbook and memos in My space, delete outings and places, log out), by clearing the Application's storage in the Android settings, or by uninstalling it. The developer holds no data about you, except the tracks you shared, your votes and the canyons you proposed on the app server, tied to the random key of your installation: delete your tracks from the canyon page, withdraw a pending proposal in My space, or write to descente.canyon.app@proton.me with the canyon and the date of the track or of the proposal. The services listed above handle what they received, including what you published on descente-canyon.com: contact them to see or delete it.
 
 ### Children
 

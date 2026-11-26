@@ -24,6 +24,7 @@ import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
+import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.ui.account.LogbookScreen
 import fr.descentecanyon.app.ui.account.LogbookTab
@@ -50,6 +51,7 @@ import fr.descentecanyon.app.ui.outing.StayDayRequest
 import fr.descentecanyon.app.ui.outing.StayEditScreen
 import fr.descentecanyon.app.ui.outing.StayScreen
 import fr.descentecanyon.app.ui.pending.PendingDebitsScreen
+import fr.descentecanyon.app.ui.proposal.CanyonProposalScreen
 import fr.descentecanyon.app.ui.search.SearchScreen
 import fr.descentecanyon.app.ui.settings.SettingsScreen
 import fr.descentecanyon.app.ui.users.UserProfileScreen
@@ -104,8 +106,10 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 },
                 onOutingsClick = dropUnlessResumed { navController.navigateSingleTop(Screen.Outings) },
                 onStayClick = dropUnlessResumedWith { stayId: Long -> navController.navigateSingleTop(Screen.Stay(stayId)) },
-                // Back from the outing: the flow seen is the most useful report.
-                onOutingEnded = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.DebitForm(canyonId)) },
+                // Back from the outing: the flow seen is the most useful report (the site knows no canyon added in the app).
+                onOutingEnded = dropUnlessResumedWith { canyonId: Int ->
+                    if (!AppCanyons.isAppCanyon(canyonId)) navController.navigateSingleTop(Screen.DebitForm(canyonId))
+                },
                 onEmergencyClick = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.Emergency(canyonId)) },
                 onSettingsClick = dropUnlessResumed {
                     navController.navigateSingleTop(Screen.Settings)
@@ -210,6 +214,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                     navController.navigateSingleTop(Screen.DebitForm(entry.canyonId, date = entry.date.toString()))
                 },
                 onOpenLogbook = dropUnlessResumed { navController.navigateSingleTop(Screen.Logbook()) },
+                onProposeEdit = dropUnlessResumed { navController.navigateSingleTop(Screen.CanyonProposal(detail.canyonId)) },
                 openDebitsTabInitially = detail.openDebitsTab,
                 contentPadding = topLevelContentPadding,
                 refreshDebitsAfterSubmission = refreshDebitsAfterSubmission,
@@ -305,7 +310,9 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
             OutingPlanScreen(
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
                 onOpenEmergency = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.Emergency(canyonId)) },
-                onReportFlow = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.DebitForm(canyonId)) },
+                onReportFlow = dropUnlessResumedWith { canyonId: Int ->
+                    if (!AppCanyons.isAppCanyon(canyonId)) navController.navigateSingleTop(Screen.DebitForm(canyonId))
+                },
                 // Over the plan, even when it was opened from that page: back is the plan as it was left.
                 onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
                 onManagePlaces = dropUnlessResumed { navController.navigateSingleTop(Screen.Places) },
@@ -388,6 +395,15 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 },
                 onOpenOutings = dropUnlessResumed { navController.navigateSingleTop(Screen.Outings) },
                 onOpenNotifications = dropUnlessResumed { navController.navigateSingleTop(Screen.Notifications) },
+                onProposeCanyon = dropUnlessResumed { navController.navigateSingleTop(Screen.CanyonProposal()) },
+                onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
+            )
+        }
+
+        composable<Screen.CanyonProposal> {
+            CanyonProposalScreen(
+                onClose = { navController.closeIfCurrent<Screen.CanyonProposal>() },
+                onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
             )
         }
 

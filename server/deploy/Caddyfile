@@ -37,7 +37,7 @@
 		}
 	}
 
-	@api path /v1/health /v1/canyons/* /v1/tracks/*
+	@api path /v1/health /v1/canyons/* /v1/tracks/* /v1/canyon-proposals /v1/canyon-proposals/*
 	handle @api {
 		encode zstd gzip
 		reverse_proxy api:8080

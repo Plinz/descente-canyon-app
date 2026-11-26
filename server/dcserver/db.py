@@ -1,4 +1,5 @@
-"""SQLite storage of the community tracks, their votes and the rate-limit events."""
+"""SQLite storage of the community tracks, their votes, the canyons added in the app and their
+proposals, and the rate-limit events."""
 from __future__ import annotations
 
 import sqlite3
@@ -42,6 +43,47 @@ MIGRATIONS: list[str] = [
         at REAL NOT NULL
     );
     CREATE INDEX rate_events_lookup ON rate_events(kind, subject, at);
+    """,
+    # 2: canyons added in the app, their revisions, the proposals waiting for the operator
+    """
+    CREATE TABLE app_canyons (
+        id INTEGER PRIMARY KEY,
+        status TEXT NOT NULL CHECK (status IN ('PUBLISHED', 'HIDDEN')),
+        current_revision INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL
+    );
+    CREATE TABLE app_canyon_revisions (
+        canyon_id INTEGER NOT NULL REFERENCES app_canyons(id),
+        revision INTEGER NOT NULL,
+        content TEXT NOT NULL,
+        created_at TEXT NOT NULL,
+        origin TEXT NOT NULL CHECK (origin IN ('PROPOSAL', 'ADMIN', 'RESTORE')),
+        proposal_id TEXT,
+        note TEXT,
+        PRIMARY KEY (canyon_id, revision)
+    );
+    CREATE TABLE canyon_proposals (
+        id TEXT PRIMARY KEY,
+        kind TEXT NOT NULL CHECK (kind IN ('NEW', 'EDIT')),
+        canyon_id INTEGER,
+        base_revision INTEGER,
+        content TEXT NOT NULL,
+        status TEXT NOT NULL CHECK (status IN ('PENDING', 'APPROVED', 'REJECTED', 'WITHDRAWN')),
+        created_at TEXT NOT NULL,
+        decided_at TEXT,
+        revision INTEGER,
+        reason TEXT,
+        note TEXT,
+        author_key TEXT NOT NULL,
+        author_net TEXT NOT NULL
+    );
+    CREATE INDEX canyon_proposals_by_status ON canyon_proposals(status, created_at);
+    CREATE INDEX canyon_proposals_by_author ON canyon_proposals(author_key, created_at);
+    CREATE TABLE blocked_authors (
+        author_key TEXT PRIMARY KEY,
+        created_at TEXT NOT NULL
+    );
     """,
 ]
 

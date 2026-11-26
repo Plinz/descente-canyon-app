@@ -1,0 +1,10 @@
+[Unit]
+Description=Publication of the canyons approved in the review tool (every ten minutes)
+
+[Timer]
+OnCalendar=*:0/10
+RandomizedDelaySec=60
+Persistent=false
+
+[Install]
+WantedBy=timers.target

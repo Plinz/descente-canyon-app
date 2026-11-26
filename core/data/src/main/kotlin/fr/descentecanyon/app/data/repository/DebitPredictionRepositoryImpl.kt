@@ -2,7 +2,10 @@ package fr.descentecanyon.app.data.repository
 
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
 import fr.descentecanyon.app.domain.coroutines.IoDispatcher
+import fr.descentecanyon.app.domain.error.AppError
+import fr.descentecanyon.app.domain.error.AppException
 import fr.descentecanyon.app.domain.error.suspendRunCatching
+import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.DebitPredictionBasis
@@ -52,7 +55,8 @@ class DebitPredictionRepositoryImpl @Inject constructor(
     private var lastFullDownloadAtMs = 0L
 
     override fun observeEstimates(canyonIds: List<Int>): Flow<Map<Int, CanyonDebitPredictions>> = flow {
-        val ids = canyonIds.distinct()
+        // No estimate for the canyons added in the app yet (no flow report, no checked watershed).
+        val ids = canyonIds.distinct().filterNot(AppCanyons::isAppCanyon)
         val known = LinkedHashMap<Int, CanyonDebitPredictions>()
         ids.forEach { id -> (server(id) ?: predictionCache.read(id))?.let { known[id] = it } }
         emit(known.toMap())
@@ -116,6 +120,7 @@ class DebitPredictionRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getPredictions(detail: CanyonDetail): Result<CanyonDebitPredictions> {
+        if (AppCanyons.isAppCanyon(detail.canyon.id)) return Result.failure(AppException(AppError.DataUnavailable))
         refreshServerEstimates()
         serverFor(detail)?.let { return Result.success(it) }
         val computed = computeOnPhone(detail)

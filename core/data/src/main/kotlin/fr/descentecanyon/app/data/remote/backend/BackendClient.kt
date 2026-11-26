@@ -7,6 +7,7 @@ import fr.descentecanyon.app.domain.coroutines.IoDispatcher
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.AppException
 import fr.descentecanyon.app.domain.error.appError
+import fr.descentecanyon.app.domain.model.ProposalRefusal
 import fr.descentecanyon.app.domain.model.TrackRejection
 import java.io.File
 import java.io.IOException
@@ -31,7 +32,8 @@ import okhttp3.Response
 
 /**
  * HTTP access to the app's server. Plain reads (manifest, tracks of a canyon) carry no identifier;
- * only contributions send the random key of the installation. The shared OkHttp cache revalidates
+ * only contributions (tracks, votes, proposed canyons) and the list of this installation's own
+ * proposals send the random key of the installation. The shared OkHttp cache revalidates
  * the manifest and the track lists with their ETag, so an unchanged file costs a 304.
  */
 @Singleton
@@ -120,6 +122,35 @@ class BackendClient @Inject constructor(
         execute(request) { }
     }
 
+    suspend fun submitProposal(request: ProposalRequestDto, installKey: String): ProposalDto {
+        val body = json.encodeToString(ProposalRequestDto.serializer(), request).toRequestBody(JSON_MEDIA_TYPE)
+        val call = Request.Builder()
+            .url(url("v1/canyon-proposals"))
+            .header(INSTALL_KEY_HEADER, installKey)
+            .post(body)
+            .build()
+        return execute(call, mapError = ::proposalErrorOf) { response -> decode(response, ProposalDto.serializer()) }
+    }
+
+    suspend fun myProposals(installKey: String): ProposalListDto {
+        val request = Request.Builder()
+            .url(url("v1/canyon-proposals/mine"))
+            .header(INSTALL_KEY_HEADER, installKey)
+            .cacheControl(CacheControl.Builder().noStore().build())
+            .get()
+            .build()
+        return execute(request, mapError = ::proposalErrorOf) { response -> decode(response, ProposalListDto.serializer()) }
+    }
+
+    suspend fun withdrawProposal(proposalId: String, installKey: String) {
+        val request = Request.Builder()
+            .url(url("v1/canyon-proposals").newBuilder().addPathSegment(proposalId).build())
+            .header(INSTALL_KEY_HEADER, installKey)
+            .delete()
+            .build()
+        execute(request, mapError = ::proposalErrorOf) { }
+    }
+
     private fun url(path: String): HttpUrl {
         val base = baseUrl ?: appError(AppError.DataUnavailable)
         return base.newBuilder().addPathSegments(path).build()
@@ -127,22 +158,49 @@ class BackendClient @Inject constructor(
 
     private fun get(url: HttpUrl): Request = Request.Builder().url(url).get().build()
 
-    private suspend fun <T> execute(request: Request, callTimeoutSeconds: Long = CALL_TIMEOUT_SECONDS, read: (Response) -> T): T {
+    private suspend fun <T> execute(
+        request: Request,
+        callTimeoutSeconds: Long = CALL_TIMEOUT_SECONDS,
+        mapError: (Response) -> AppError = ::errorOf,
+        read: (Response) -> T,
+    ): T {
         val call = httpClient.newCall(request).apply { timeout().timeout(callTimeoutSeconds, TimeUnit.SECONDS) }
         val response = call.await()
         return response.use {
             withContext(ioDispatcher) {
                 ensureActive()
-                if (!response.isSuccessful) throw AppException(errorOf(response))
+                if (!response.isSuccessful) throw AppException(mapError(response))
                 read(response)
             }
         }
     }
 
+    private fun errorBody(response: Response): BackendErrorDto? = runCatching {
+        response.body.readBytesWithin(MAX_ERROR_BYTES).decodeToString()
+    }
+        .mapCatching { json.decodeFromString(BackendErrorDto.serializer(), it) }
+        .getOrNull()
+
+    private fun proposalErrorOf(response: Response): AppError {
+        val error = errorBody(response)
+        val code = error?.error
+        val refusal = when {
+            code == null -> null
+            code.startsWith("INVALID_") || code == "LICENCE_REQUIRED" -> ProposalRefusal.INVALID
+            else -> ProposalRefusal.entries.firstOrNull { it.name == code }
+        }
+        return when {
+            refusal != null -> AppError.ProposalRefused(refusal, error?.field)
+            code == "NOT_FOUND" || response.code == 404 -> AppError.NotFound
+            response.code == 429 -> AppError.ProposalRefused(ProposalRefusal.RATE_LIMITED)
+            response.code == 413 -> AppError.ProposalRefused(ProposalRefusal.TOO_LARGE)
+            response.code in 400..499 -> AppError.UnexpectedResponse
+            else -> AppError.Http(response.code)
+        }
+    }
+
     private fun errorOf(response: Response): AppError {
-        val code = runCatching { response.body.readBytesWithin(MAX_ERROR_BYTES).decodeToString() }
-            .mapCatching { json.decodeFromString(BackendErrorDto.serializer(), it).error }
-            .getOrNull()
+        val code = errorBody(response)?.error
         TrackRejection.entries.firstOrNull { it.name == code }?.let { return AppError.TrackRejected(it) }
         return when {
             code == "NOT_FOUND" || code == "UNKNOWN_CANYON" || response.code == 404 -> AppError.NotFound

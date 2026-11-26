@@ -75,7 +75,7 @@ if ((${#units[@]})); then
     sudo install -m 644 "${units[@]}" "$UNITS_DIR/"
     sudo systemctl daemon-reload
 fi
-wanted=(dc-catalog.timer dc-predictions.timer)
+wanted=(dc-catalog.timer dc-predictions.timer dc-app-canyons.timer)
 # The backup runs once restic is configured (server/README.md, step 7).
 [[ -f "$SRV/backup.env" ]] && wanted+=(dc-backup.timer)
 to_enable=()
@@ -87,7 +87,14 @@ if ((${#to_enable[@]})); then
     sudo systemctl enable --now "${to_enable[@]}"
 fi
 
-# 4. Jobs that never ran: the estimates need the catalog copy the catalog job writes. Started in
+# 4. The GPS reference of the canyons carries their place (country, region...) since the proposed
+#    canyons take theirs from it: rebuilt once from the current catalog, not at the next catalog job.
+if [[ -f "$DATA/catalog/current.db" && -f "$DATA/canyon-reference.json" ]] && ! grep -q '"place"' "$DATA/canyon-reference.json"; then
+    echo "Reference: adding the place of each canyon"
+    docker compose run -T --rm --no-deps jobs canyon-reference --catalog-db "$DATA/catalog/current.db"
+fi
+
+#    Jobs that never ran: the estimates need the catalog copy the catalog job writes. Started in
 #    the background (dc-predictions.service waits for dc-catalog.service when both are queued).
 if [[ $START_JOBS == 1 ]]; then
     candidates=()
@@ -120,6 +127,9 @@ if [[ $healthy == 1 ]]; then
     echo "API: https://$domain/v1/health answers"
 else
     echo "API: https://$domain/v1/health does not answer (docker compose logs --tail 50 api caddy)" >&2
+fi
+if ! grep -q '^DC_ADMIN_TOKEN=.\+' "$SRV/env" 2>/dev/null; then
+    echo "Note: DC_ADMIN_TOKEN is empty in /srv/dc/env: the review tool of the proposed canyons refuses every request (openssl rand -hex 24, then docker compose up -d admin)."
 fi
 if ! grep -q '^DC_HEALTHCHECKS_PREDICTIONS_URL=.\+' "$SRV/env" 2>/dev/null; then
     echo "Note: DC_HEALTHCHECKS_PREDICTIONS_URL is empty in /srv/dc/env (optional alert when the estimates job fails)."

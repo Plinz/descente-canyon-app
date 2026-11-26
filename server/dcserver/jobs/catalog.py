@@ -30,6 +30,8 @@ from typing import Any
 from urllib.error import HTTPError
 
 from .. import manifest
+from ..canyons import publication as app_canyons
+from ..canyons.service import CanyonService
 from ..config import Settings
 from ..publish import atomic_write_bytes, prune_files, publication_lock, publish_file
 from ..tracks.canyons import build_reference_from_catalog, write_reference
@@ -231,7 +233,21 @@ def latest_schema(repo: Path) -> tuple[Path, dict[str, Any]]:
     return path, _read_json(path)
 
 
-def generate_catalog(repo: Path, room_import: Path, schema_path: Path, output: Path) -> None:
+def app_canyons_document(settings: Settings) -> dict[str, Any]:
+    """The sheets of the canyons added in the app that the catalog must hold (see canyons.publication)."""
+    service = CanyonService(settings.database_path, settings.pepper)
+    try:
+        export = service.export()
+    finally:
+        service.close()
+    try:
+        repo_document = app_canyons.load_repo_document(settings.repo_dir)
+    except ValueError as exc:
+        raise JobAborted("REPO_INCOMPLETE", str(exc)) from exc
+    return app_canyons.merged_document(export, repo_document)
+
+
+def generate_catalog(repo: Path, room_import: Path, schema_path: Path, output: Path, app_canyons_file: Path | None = None) -> None:
     command = [
         sys.executable,
         "-I",
@@ -247,6 +263,8 @@ def generate_catalog(repo: Path, room_import: Path, schema_path: Path, output: P
         "--recovered-geo-points",
         str(repo / RECOVERED_POINTS),
     ]
+    if app_canyons_file is not None:
+        command += ["--app-canyons", str(app_canyons_file)]
     completed = subprocess.run(command, capture_output=True, text=True, timeout=900, check=False)
     if completed.returncode != 0:
         tail = (completed.stderr or completed.stdout)[-1500:]
@@ -416,11 +434,16 @@ def _run_locked(
     schema_path, schema = latest_schema(repo)
     state_path = _state_path(settings)
     state = _read_json(state_path) if state_path.exists() else {}
+    added = app_canyons_document(settings)
+    added_digest = app_canyons.digest(added)
+    report["appCanyons"] = len(added["canyons"])
     with tempfile.TemporaryDirectory(prefix="dc-catalog-", dir=settings.data_dir) as tmp:
         work = Path(tmp)
         room_import = build_room_import(scraper, repo, files, work)
+        added_file = work / "app-canyons.json"
+        added_file.write_bytes(app_canyons.to_bytes(added))
         db_path = work / "catalog.db"
-        generate_catalog(repo, room_import, schema_path, db_path)
+        generate_catalog(repo, room_import, schema_path, db_path, added_file)
         stats = catalog_stats(db_path, schema)
         same_schema = state.get("stats", {}).get("identityHash") == stats["identityHash"]
         check_against_previous(stats, state.get("stats") if same_schema else None)
@@ -448,6 +471,8 @@ def _run_locked(
             report["unchanged"] = True
             if not _current_path(settings).exists():
                 _keep_current(settings, db_path)
+            if publish and state.get("appCanyonsDigest") != added_digest:
+                atomic_write_bytes(state_path, json.dumps({**state, "appCanyonsDigest": added_digest}, ensure_ascii=False).encode("utf-8"))
             return report
         if not publish:
             report["dryRun"] = True
@@ -498,7 +523,24 @@ def _run_locked(
             "file": published or state.get("file"),
             "bundleHashes": bundle_hashes,
             "indexDigest": index_digest,
+            "appCanyonsDigest": added_digest,
         }
         atomic_write_bytes(state_path, json.dumps(new_state, ensure_ascii=False).encode("utf-8"))
         report.update({"published": True, "dataVersion": data_version, "catalogFile": published is not None, "newBundles": new_bundles})
         return report
+
+
+def run_app_canyons(settings: Settings) -> dict[str, Any]:
+    """Frequent light job: when the published sheets of the canyons added in the app changed since
+    the last catalog, builds and publishes the catalog again without reading the site."""
+    state_path = _state_path(settings)
+    state = _read_json(state_path) if state_path.exists() else {}
+    try:
+        added = app_canyons_document(settings)
+    except JobAborted as exc:
+        return {"job": "app-canyons", "aborted": exc.reason, "detail": exc.detail}
+    if state.get("appCanyonsDigest") == app_canyons.digest(added):
+        return {"job": "app-canyons", "unchanged": True, "appCanyons": len(added["canyons"])}
+    report = run(settings, ids=[])
+    report["job"] = "app-canyons"
+    return report

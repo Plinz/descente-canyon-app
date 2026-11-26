@@ -69,6 +69,11 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         help="Reviewed points of canyons the site gives none for (data-overlay/recovered-geo-points.json).",
     )
+    parser.add_argument(
+        "--app-canyons",
+        type=Path,
+        help="Canyons added in the app and approved on its server (data-overlay/app-canyons.json).",
+    )
     return parser.parse_args()
 
 
@@ -360,19 +365,93 @@ def load_recovered_geo_points(path: Path | None, canyon_ids: set[int], site_poin
     return rows
 
 
+FIRST_APP_CANYON_ID = 1_000_000
+APP_CANYON_TEXT_FIELDS = (
+    "nomComplet", "region", "departement", "commune", "massif", "bassin", "coursEau", "tempsApproche",
+    "tempsDescente", "tempsRetour", "navette", "accesAval", "accesAmont", "approche", "descente", "retour",
+    "engagement", "periode", "geologie", "historique", "remarques",
+)
+APP_CANYON_NUMBER_FIELDS = ("altitudeDepart", "denivele", "longueur", "cascadeMax", "cordeMin")
+
+
+def _iso_to_ms(value: str) -> int:
+    from datetime import datetime
+
+    return int(datetime.fromisoformat(value.replace("Z", "+00:00")).timestamp() * 1000)
+
+
+def load_app_canyons(path: Path | None, site_ids: set[int]) -> tuple[list[dict], list[dict]]:
+    """Canyon rows and points of the canyons added in the app (sheets approved on the app's server,
+    checked there): the same columns as a sheet of the site, with no link to the site."""
+    if path is None or not path.exists():
+        return [], []
+    document = load_json(path)
+    if document.get("format") != 1:
+        raise RuntimeError(f"{path}: unknown format {document.get('format')!r}")
+    rows, points = [], []
+    seen: set[int] = set()
+    for entry in document.get("canyons", []):
+        canyon_id = int(entry["id"])
+        sheet = entry["content"]
+        if canyon_id < FIRST_APP_CANYON_ID or canyon_id in site_ids or canyon_id in seen:
+            raise RuntimeError(f"App canyon id {canyon_id} is not free")
+        if not sheet.get("nom") or not sheet.get("pays") or not sheet.get("points"):
+            raise RuntimeError(f"App canyon {canyon_id} has no name, country or point")
+        seen.add(canyon_id)
+        commune = sheet.get("commune") or ""
+        row = {field: sheet.get(field) for field in APP_CANYON_TEXT_FIELDS}
+        row.update({field: sheet.get(field) for field in APP_CANYON_NUMBER_FIELDS})
+        row.update(
+            {
+                "id": canyon_id,
+                "nom": sheet["nom"],
+                "nomComplet": sheet.get("nomComplet") or sheet["nom"],
+                "pays": sheet["pays"],
+                "commune": commune,
+                "communes": [commune] if commune else [],
+                "cotation": sheet.get("cotation") or "??",
+                "interet": None,
+                "nbVotes": 0,
+                "url": "",
+                "hasSpecificRegulation": False,
+                "isForbidden": bool(sheet.get("isForbidden")),
+                "lastUpdated": _iso_to_ms(entry["updatedAt"]),
+                "sourceType": "APP",
+                "sourceKey": f"app:{canyon_id}",
+            }
+        )
+        rows.append(row)
+        for point in sheet["points"]:
+            if point["type"] not in GEO_POINT_TYPES:
+                raise RuntimeError(f"Invalid point of app canyon {canyon_id}: {point!r}")
+            points.append(
+                {
+                    "canyonId": canyon_id,
+                    "type": point["type"],
+                    "latitude": point["latitude"],
+                    "longitude": point["longitude"],
+                    "label": point.get("title"),
+                }
+            )
+    return rows, points
+
+
 def insert_rows(
     connection: sqlite3.Connection,
     room_import_dir: Path,
     manifest: dict,
     canyon_chains_path: Path | None = None,
     recovered_geo_points_path: Path | None = None,
+    app_canyons_path: Path | None = None,
 ):
-    canyons = load_json(room_import_dir / "canyons.json")
+    site_canyons = load_json(room_import_dir / "canyons.json")
     site_geo_points = load_json(room_import_dir / "geo_points.json")
     recovered_geo_points = load_recovered_geo_points(
-        recovered_geo_points_path, {int(row["id"]) for row in canyons}, site_geo_points
+        recovered_geo_points_path, {int(row["id"]) for row in site_canyons}, site_geo_points
     )
-    geo_points = [*site_geo_points, *recovered_geo_points]
+    app_canyons, app_geo_points = load_app_canyons(app_canyons_path, {int(row["id"]) for row in site_canyons})
+    canyons = [*site_canyons, *app_canyons]
+    geo_points = [*site_geo_points, *recovered_geo_points, *app_geo_points]
     bibliography_entries = load_json(room_import_dir / "bibliography_entries.json")
     canyon_bibliography = load_json(room_import_dir / "canyon_bibliography.json")
     regulation_texts = load_json(room_import_dir / "regulation_texts.json")
@@ -611,9 +690,11 @@ def insert_rows(
 
     expected_counts = manifest.get("counts", {})
     actual_counts = {
-        "canyons": len(canyons),
+        "canyons": len(site_canyons),
         "geo_points": len(site_geo_points),
         "recovered_geo_points": len(recovered_geo_points),
+        "app_canyons": len(app_canyons),
+        "app_geo_points": len(app_geo_points),
         "bibliography_entries": len(bibliography_entries),
         "canyon_bibliography": len(canyon_bibliography),
         "regulation_texts": len(regulation_texts),
@@ -631,7 +712,7 @@ def insert_rows(
         if actual_value != expected_value:
             raise RuntimeError(f"Count mismatch for {table_name}: expected {expected_value}, got {actual_value}")
 
-    if actual_counts["search_index"] != actual_counts["canyons"]:
+    if actual_counts["search_index"] != len(canyons):
         raise RuntimeError("Search index row count does not match canyon row count.")
 
     return actual_counts
@@ -659,7 +740,9 @@ def main() -> int:
         connection.execute("PRAGMA temp_store = MEMORY")
 
         create_schema(connection, schema)
-        actual_counts = insert_rows(connection, room_import_dir, manifest, args.canyon_chains, args.recovered_geo_points)
+        actual_counts = insert_rows(
+            connection, room_import_dir, manifest, args.canyon_chains, args.recovered_geo_points, args.app_canyons
+        )
         connection.commit()
         connection.execute("PRAGMA optimize")
         connection.execute("VACUUM")

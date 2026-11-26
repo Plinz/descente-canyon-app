@@ -42,8 +42,15 @@ class CommunityTrackRepositoryImplTest {
     private val clock = Clock.fixed(Instant.parse("2026-11-25T10:00:00Z"), ZoneOffset.UTC)
     private val listing = backend.json.decodeFromString(TrackListDto.serializer(), BackendTestServer.resource("backend/tracks.json"))
 
-    private fun repository() =
-        CommunityTrackRepositoryImpl(context, backend.client, database.keyValueDao(), backend.json, clock, Dispatchers.Unconfined)
+    private fun repository() = CommunityTrackRepositoryImpl(
+        context,
+        backend.client,
+        database.keyValueDao(),
+        InstallKeyStore(database.keyValueDao()),
+        backend.json,
+        clock,
+        Dispatchers.Unconfined,
+    )
 
     @After
     fun tearDown() {

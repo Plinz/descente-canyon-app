@@ -83,6 +83,7 @@ class AppServerRepositoryImpl @Inject constructor(
             features = ServerFeatures(
                 communityTracks = payload?.features?.get(FEATURE_TRACKS) ?: true,
                 catalogUpdates = payload?.features?.get(FEATURE_CATALOG) ?: true,
+                canyonProposals = payload?.features?.get(FEATURE_PROPOSALS) ?: true,
             ),
             catalog = CatalogStatus(
                 source = if (snapshot.installedServerVersion != null) CatalogSource.SERVER else CatalogSource.APP,
@@ -236,6 +237,7 @@ class AppServerRepositoryImpl @Inject constructor(
         const val KEY_MANIFEST = "app_server_manifest"
         const val FEATURE_TRACKS = "communityTracks"
         const val FEATURE_CATALOG = "catalogUpdates"
+        const val FEATURE_PROPOSALS = "canyonProposals"
         const val FEATURE_PREDICTIONS = "serverPredictions"
         const val MAX_PREDICTIONS_BYTES = 16L * 1024 * 1024
 

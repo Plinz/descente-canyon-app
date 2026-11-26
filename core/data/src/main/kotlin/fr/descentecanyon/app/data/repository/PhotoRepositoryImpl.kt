@@ -15,6 +15,7 @@ import fr.descentecanyon.app.data.remote.scraper.CanyonScraper
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.appError
 import fr.descentecanyon.app.domain.error.suspendRunCatching
+import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.CanyonPhoto
 import fr.descentecanyon.app.domain.repository.PhotoRepository
 import java.io.File
@@ -40,6 +41,8 @@ class PhotoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun refreshPhotos(canyonId: Int, maxAgeMs: Long): Result<List<CanyonPhoto>> = suspendRunCatching {
+        // The photos are the site's: a canyon added in the app has none.
+        if (AppCanyons.isAppCanyon(canyonId)) return@suspendRunCatching emptyList()
         withContext(Dispatchers.IO) {
             val now = System.currentTimeMillis()
             if (refreshedAt[canyonId]?.let { now - it < maxAgeMs } == true) {

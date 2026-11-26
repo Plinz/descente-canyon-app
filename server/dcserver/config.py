@@ -43,6 +43,10 @@ class Settings:
     """Key of a paid Open-Meteo plan (customer endpoints), if any."""
     debit_pages_per_run: int = 200
     forecast_max_age_h: float = 5.0
+    admin_token: str | None = None
+    """Token of the review tool (`dcserver admin`); without it the tool refuses every request."""
+    admin_hosts: tuple[str, ...] = ("localhost", "127.0.0.1", "::1")
+    """Host names the review tool answers to (it is reached through an SSH tunnel)."""
 
     @property
     def database_path(self) -> Path:
@@ -93,6 +97,15 @@ def _flag(raw: str | None, default: bool) -> bool:
     return raw.strip().lower() in {"1", "true", "yes", "on"}
 
 
+def _admin_token(raw: str | None) -> str | None:
+    token = (raw or "").strip()
+    if not token:
+        return None
+    if len(token) < 24:
+        raise ConfigError("DC_ADMIN_TOKEN must hold at least 24 characters (generate it with: openssl rand -hex 24)")
+    return token
+
+
 def load_settings(env: Mapping[str, str] = os.environ) -> Settings:
     """Reads the settings; DC_PEPPER is required, everything else has a default."""
     pepper_raw = env.get("DC_PEPPER")
@@ -120,4 +133,6 @@ def load_settings(env: Mapping[str, str] = os.environ) -> Settings:
         openmeteo_api_key=env.get("DC_OPENMETEO_API_KEY") or None,
         debit_pages_per_run=int(env.get("DC_DEBIT_PAGES_PER_RUN", "200")),
         forecast_max_age_h=float(env.get("DC_FORECAST_MAX_AGE_H", "5")),
+        admin_token=_admin_token(env.get("DC_ADMIN_TOKEN")),
+        admin_hosts=tuple(h.strip().lower() for h in env.get("DC_ADMIN_HOSTS", "localhost,127.0.0.1,::1").split(",") if h.strip()),
     )

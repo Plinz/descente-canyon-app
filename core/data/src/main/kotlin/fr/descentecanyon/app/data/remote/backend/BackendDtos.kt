@@ -94,7 +94,66 @@ data class TrackDto(
 )
 
 @Serializable
-data class BackendErrorDto(val error: String)
+data class BackendErrorDto(val error: String, val field: String? = null)
+
+/** A sheet proposed to the server: the fields of a sheet of the site, blank ones left out. */
+@Serializable
+data class CanyonSheetDto(
+    val nom: String? = null,
+    val nomComplet: String? = null,
+    val pays: String? = null,
+    val region: String? = null,
+    val departement: String? = null,
+    val commune: String? = null,
+    val massif: String? = null,
+    val bassin: String? = null,
+    val coursEau: String? = null,
+    val cotation: String? = null,
+    val altitudeDepart: Int? = null,
+    val denivele: Int? = null,
+    val longueur: Int? = null,
+    val cascadeMax: Int? = null,
+    val cordeMin: Int? = null,
+    val tempsApproche: String? = null,
+    val tempsDescente: String? = null,
+    val tempsRetour: String? = null,
+    val navette: String? = null,
+    val accesAval: String? = null,
+    val accesAmont: String? = null,
+    val approche: String? = null,
+    val descente: String? = null,
+    val retour: String? = null,
+    val engagement: String? = null,
+    val periode: String? = null,
+    val geologie: String? = null,
+    val historique: String? = null,
+    val remarques: String? = null,
+    val isForbidden: Boolean? = null,
+    val points: List<SheetPointDto> = emptyList(),
+)
+
+@Serializable
+data class SheetPointDto(val type: String, val latitude: Double, val longitude: Double, val title: String? = null)
+
+/** No default on [kind] nor [licence]: the shared Json leaves default values out of what it writes. */
+@Serializable
+data class ProposalRequestDto(val kind: String, val canyonId: Int? = null, val content: CanyonSheetDto, val licence: String)
+
+@Serializable
+data class ProposalDto(
+    val id: String,
+    val kind: String,
+    val canyonId: Int? = null,
+    val name: String = "",
+    val status: String,
+    val createdAt: String,
+    val decidedAt: String? = null,
+    val reason: String? = null,
+    val note: String? = null,
+)
+
+@Serializable
+data class ProposalListDto(val proposals: List<ProposalDto> = emptyList())
 
 @Serializable
 data class VoteRequestDto(val value: Int)

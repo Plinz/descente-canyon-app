@@ -1,0 +1,15 @@
+[Unit]
+Description=Descente-Canyon server: publishes the canyons approved in the review tool
+Wants=network-online.target
+After=network-online.target docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+User=dc
+Group=dc
+WorkingDirectory=/srv/dc/repo/server/deploy
+# Builds the catalog again (without reading the site) only when the approved sheets changed.
+ExecStart=/usr/bin/docker compose run --rm --no-deps jobs job app-canyons
+TimeoutStartSec=30min
+Nice=10

@@ -8,6 +8,7 @@ import fr.descentecanyon.app.domain.error.requiresLogin
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.error.toAppError
 import fr.descentecanyon.app.domain.model.AuthState
+import fr.descentecanyon.app.domain.model.CanyonProposal
 import fr.descentecanyon.app.domain.model.ContributorIdentity
 import fr.descentecanyon.app.domain.model.ForumUser
 import fr.descentecanyon.app.domain.model.LogbookEntry
@@ -17,6 +18,7 @@ import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.agenda
 import fr.descentecanyon.app.domain.repository.AuthRepository
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
+import fr.descentecanyon.app.domain.repository.CanyonProposalRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
 import fr.descentecanyon.app.domain.repository.ForumUserRepository
@@ -61,6 +63,10 @@ data class MyAccountUiState(
     val recentMemos: List<MemoPreview> = emptyList(),
     val pendingDebitCount: Int = 0,
     val follows: FollowCounts = FollowCounts(),
+    /** Canyons can be proposed (the app has its server). */
+    val canPropose: Boolean = false,
+    /** The canyons and changes proposed from this phone, newest first. */
+    val proposals: List<CanyonProposal> = emptyList(),
     val isImportingFromSite: Boolean = false,
     /** Set when an action needs a login first (import from the site with an expired session). */
     val loginRequest: UiText? = null,
@@ -85,6 +91,7 @@ class MyAccountViewModel @Inject constructor(
     private val personalDataRepository: PersonalDataRepository,
     private val importSiteLogbookUseCase: ImportSiteLogbookUseCase,
     private val clock: Clock,
+    private val proposalRepository: CanyonProposalRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MyAccountUiState())
@@ -110,6 +117,26 @@ class MyAccountViewModel @Inject constructor(
         viewModelScope.launch {
             val identity = suspendRunCatching { preferencesRepository.getContributorIdentity() }.getOrNull()
             _uiState.update { it.copy(contributorIdentity = identity) }
+        }
+        viewModelScope.launch {
+            proposalRepository.observeMine().collect { proposals -> _uiState.update { it.copy(proposals = proposals) } }
+        }
+        viewModelScope.launch {
+            proposalRepository.observeAvailable().collect { available -> _uiState.update { it.copy(canPropose = available) } }
+        }
+        refreshProposals()
+    }
+
+    /** Reads again what became of the proposals (the operator reviews them on the app's server). */
+    fun refreshProposals() {
+        viewModelScope.launch { proposalRepository.refreshMine() }
+    }
+
+    fun withdrawProposal(proposal: CanyonProposal) {
+        viewModelScope.launch {
+            proposalRepository.withdraw(proposal).onFailure { error ->
+                _uiState.update { it.copy(message = error.toUiText(fallback = R.string.proposal_withdraw_failed)) }
+            }
         }
     }
 

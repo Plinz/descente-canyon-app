@@ -1,0 +1,452 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Relecture des canyons</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<style>
+:root {
+  --bg: #f4f6f8; --panel: #ffffff; --text: #1d2733; --muted: #5f6b7a; --border: #d9dee5;
+  --accent: #1f6feb; --accent-soft: #e3edfd; --danger: #b42318; --danger-soft: #fdecea;
+  --warn: #8a5300; --warn-soft: #fff4dc; --ok: #146c43; --ok-soft: #e1f3ea;
+  --add: #e6f4ea; --del: #fde7e7;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #12161b; --panel: #1b2128; --text: #e6ebf0; --muted: #9aa6b2; --border: #2d3640;
+    --accent: #5b9dff; --accent-soft: #1f2d42; --danger: #ff7b72; --danger-soft: #3a1d1d;
+    --warn: #f0b44c; --warn-soft: #3a2e17; --ok: #56d364; --ok-soft: #17301f; --add: #17301f; --del: #3a1d1d;
+  }
+}
+* { box-sizing: border-box; }
+body { margin: 0; font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: var(--bg); color: var(--text); }
+header { position: sticky; top: 0; z-index: 1000; background: var(--panel); border-bottom: 1px solid var(--border); padding: 10px 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+header h1 { font-size: 17px; margin: 0 12px 0 0; }
+nav { display: flex; gap: 6px; flex-wrap: wrap; }
+nav button { border: 1px solid var(--border); background: transparent; color: var(--text); padding: 6px 12px; border-radius: 999px; cursor: pointer; }
+nav button.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+.status { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; font-size: 13px; color: var(--muted); }
+.chip { padding: 3px 9px; border-radius: 999px; background: var(--bg); border: 1px solid var(--border); }
+.chip.ok { color: var(--ok); background: var(--ok-soft); border-color: transparent; }
+.chip.warn { color: var(--warn); background: var(--warn-soft); border-color: transparent; }
+main { display: grid; grid-template-columns: minmax(260px, 340px) 1fr; gap: 16px; padding: 16px; max-width: 1600px; margin: 0 auto; }
+@media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+.panel { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+.list { display: flex; flex-direction: column; gap: 6px; max-height: calc(100vh - 120px); overflow: auto; }
+.item { text-align: left; border: 1px solid var(--border); background: var(--panel); color: var(--text); border-radius: 10px; padding: 9px 11px; cursor: pointer; }
+.item:hover, .item.active { border-color: var(--accent); }
+.item small { display: block; color: var(--muted); }
+.empty { color: var(--muted); padding: 20px 4px; }
+h2 { font-size: 19px; margin: 0 0 4px; }
+h3 { font-size: 15px; margin: 18px 0 8px; }
+.meta { color: var(--muted); font-size: 13px; }
+.notice { border-radius: 10px; padding: 9px 12px; margin: 8px 0; font-size: 14px; }
+.notice.warn { background: var(--warn-soft); color: var(--warn); }
+.notice.danger { background: var(--danger-soft); color: var(--danger); }
+.notice.ok { background: var(--ok-soft); color: var(--ok); }
+.notice.info { background: var(--accent-soft); color: var(--accent); }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+@media (max-width: 1200px) { .detail-grid { grid-template-columns: 1fr; } }
+#map { height: 460px; border-radius: 10px; border: 1px solid var(--border); }
+.form { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 12px; }
+.form label { display: flex; flex-direction: column; gap: 3px; font-size: 13px; color: var(--muted); }
+.form label.wide { grid-column: 1 / -1; }
+.form label.changed span::after { content: " • modifié"; color: var(--warn); }
+input, select, textarea { font: inherit; color: var(--text); background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px 8px; }
+textarea { min-height: 70px; resize: vertical; }
+.checkbox { flex-direction: row !important; align-items: center; gap: 8px !important; }
+table { border-collapse: collapse; width: 100%; font-size: 13px; }
+th, td { border-bottom: 1px solid var(--border); padding: 5px 6px; text-align: left; vertical-align: top; }
+td.before { background: var(--del); white-space: pre-wrap; }
+td.after { background: var(--add); white-space: pre-wrap; }
+.points input { width: 100%; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; align-items: center; }
+button.primary, button.danger, button.secondary { border: 0; border-radius: 8px; padding: 8px 14px; font-weight: 600; cursor: pointer; }
+button.primary { background: var(--accent); color: #fff; }
+button.danger { background: var(--danger); color: #fff; }
+button.secondary { background: var(--bg); color: var(--text); border: 1px solid var(--border); }
+button:disabled { opacity: .5; cursor: default; }
+.login { max-width: 460px; margin: 60px auto; }
+.toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%); background: var(--text); color: var(--bg); padding: 10px 16px; border-radius: 10px; z-index: 2000; max-width: 90vw; }
+.legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 6px; }
+.dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
+.revisions td button { padding: 3px 8px; font-size: 12px; }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+"use strict";
+
+const TOKEN_KEY = "dc-admin-token";
+const FIELDS = [
+  ["nom", "Nom", "short"], ["nomComplet", "Nom complet / autres noms", "short"],
+  ["pays", "Pays", "short"], ["region", "Région", "short"], ["departement", "Département / province", "short"],
+  ["commune", "Commune", "short"], ["massif", "Massif", "short"], ["bassin", "Bassin", "short"], ["coursEau", "Cours d'eau", "short"],
+  ["cotation", "Cotation (v4a3III)", "short"], ["altitudeDepart", "Altitude de départ (m)", "int"], ["denivele", "Dénivelé (m)", "int"],
+  ["longueur", "Longueur (m)", "int"], ["cascadeMax", "Plus grande cascade (m)", "int"], ["cordeMin", "Corde minimale (m)", "int"],
+  ["tempsApproche", "Approche (1h30, 45min, néant)", "short"], ["tempsDescente", "Descente (durée)", "short"],
+  ["tempsRetour", "Retour (durée)", "short"], ["navette", "Navette (néant, 5.0km)", "short"],
+  ["accesAval", "Accès aval", "text"], ["accesAmont", "Accès amont", "text"], ["approche", "Approche", "text"],
+  ["descente", "Descente", "text"], ["retour", "Retour", "text"], ["engagement", "Engagement / échappatoires", "text"],
+  ["periode", "Période", "text"], ["geologie", "Géologie", "text"], ["historique", "Historique", "text"],
+  ["remarques", "Remarques", "text"], ["isForbidden", "Canyon interdit", "bool"],
+];
+const LABELS = Object.fromEntries(FIELDS.map(([k, l]) => [k, l]));
+LABELS.points = "Points GPS";
+const ERRORS = {
+  INVALID_REQUIRED: "Champ obligatoire",
+  INVALID_TEXT_REQUIRED: "Il faut au moins un texte (descente, approche, remarques…)",
+  INVALID_POINT_REQUIRED: "Il faut au moins un point GPS",
+  INVALID_POINTS_TOO_FAR_APART: "Des points sont à plus de 30 km les uns des autres",
+  INVALID_TOO_MANY_POINTS: "Trop de points (30 au plus)",
+  INVALID_BAD_FORMAT: "Format refusé",
+  INVALID_TOO_LONG: "Texte trop long",
+  INVALID_OUT_OF_RANGE: "Valeur hors limites",
+  INVALID_BAD_COORDINATES: "Coordonnées refusées",
+};
+const POINT_TYPES = { ENTREE: "Entrée", SORTIE: "Sortie", PARKING_AVAL: "Parking aval", PARKING_AMONT: "Parking amont", POINT_REMARQUABLE: "Point remarquable", ECHAPPATOIRE: "Échappatoire" };
+const POINT_COLORS = { ENTREE: "#2e7d32", SORTIE: "#c62828", PARKING_AVAL: "#1565c0", PARKING_AMONT: "#6a1b9a", POINT_REMARQUABLE: "#ef6c00", ECHAPPATOIRE: "#795548" };
+const REASONS = {
+  DUPLICATE: "Doublon (déjà proposé ou déjà ajouté)", EXISTS_ON_SITE: "Existe déjà sur descente-canyon.com",
+  FORBIDDEN: "Canyon interdit / fiche retirée", INCOMPLETE: "Fiche trop incomplète", INCORRECT: "Informations fausses ou douteuses",
+  NOT_A_CANYON: "Pas un canyon", OTHER: "Autre (préciser dans la note)", BLOCKED: "Auteur bloqué",
+};
+const STATUS = { PENDING: "En attente", APPROVED: "Publiée", REJECTED: "Refusée", WITHDRAWN: "Retirée par l'auteur" };
+const ORIGINS = { PROPOSAL: "Proposition", ADMIN: "Modification admin", RESTORE: "Retour arrière" };
+
+const state = { tab: "pending", selected: null, status: null, map: null, layers: null };
+
+function h(tag, attrs, ...children) {
+  const el = document.createElement(tag);
+  for (const [key, value] of Object.entries(attrs || {})) {
+    if (value === undefined || value === null || value === false) continue;
+    if (key === "class") el.className = value;
+    else if (key.startsWith("on")) el.addEventListener(key.slice(2), value);
+    else if (key === "value") el.value = value;
+    else el.setAttribute(key, value === true ? "" : value);
+  }
+  for (const child of children.flat()) {
+    if (child === null || child === undefined || child === false) continue;
+    el.append(child instanceof Node ? child : document.createTextNode(String(child)));
+  }
+  return el;
+}
+
+/** Appends the children that are not null/false (Element.append would write "null"). */
+function add(parent, ...children) {
+  for (const child of children.flat()) if (child !== null && child !== undefined && child !== false) parent.append(child);
+}
+
+function toast(text) {
+  const el = h("div", { class: "toast" }, text);
+  document.body.append(el);
+  setTimeout(() => el.remove(), 4000);
+}
+
+function token() { try { return sessionStorage.getItem(TOKEN_KEY) || ""; } catch (e) { return state.token || ""; } }
+function setToken(value) { state.token = value; try { sessionStorage.setItem(TOKEN_KEY, value); } catch (e) { /* kept in memory */ } }
+
+async function api(method, path, body) {
+  const response = await fetch(path, {
+    method,
+    headers: { "X-Admin-Token": token(), ...(body ? { "Content-Type": "application/json" } : {}) },
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  const data = await response.json().catch(() => ({}));
+  if (response.status === 401) { setToken(""); render(); throw new Error("Jeton refusé"); }
+  if (!response.ok) {
+    const field = data.field ? " (" + (LABELS[data.field] || data.field) + ")" : "";
+    const hint = data.error === "INVALID_REQUIRED" && data.field === "pays" ? " : aucun canyon à moins de 25 km pour le déduire du point" : "";
+    throw new Error((ERRORS[data.error] || data.error || ("HTTP " + response.status)) + field + hint);
+  }
+  return data;
+}
+
+function date(value) { return value ? new Date(value).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" }) : ""; }
+function display(field, value) {
+  if (value === undefined || value === null || value === "") return "—";
+  if (field === "points") return value.map(p => `${POINT_TYPES[p.type] || p.type} ${p.latitude.toFixed(5)}, ${p.longitude.toFixed(5)}${p.title ? " (" + p.title + ")" : ""}`).join("\n");
+  if (value === true) return "oui";
+  return String(value);
+}
+
+// Login
+
+function renderLogin(root) {
+  const input = h("input", { type: "password", placeholder: "DC_ADMIN_TOKEN", autocomplete: "off" });
+  root.append(h("div", { class: "panel login" },
+    h("h2", {}, "Relecture des canyons"),
+    h("p", { class: "meta" }, "Collez le jeton DC_ADMIN_TOKEN de /srv/dc/env. Il reste dans cet onglet uniquement."),
+    h("form", { onsubmit: event => { event.preventDefault(); setToken(input.value.trim()); render(); } },
+      input, " ", h("button", { class: "primary", type: "submit" }, "Entrer"))));
+}
+
+// Layout
+
+async function render() {
+  const root = document.getElementById("app");
+  root.replaceChildren();
+  state.map = null;
+  if (!token()) return renderLogin(root);
+  try { state.status = await api("GET", "/api/status"); } catch (e) { if (!token()) return; toast(e.message); }
+  const s = state.status || {};
+  const tabs = [["pending", `À relire (${s.pendingProposals ?? "?"})`], ["decided", "Décisions"], ["canyons", "Canyons ajoutés"], ["create", "+ Ajouter un canyon"]];
+  const last = s.lastCatalogJob;
+  root.append(h("header", {},
+    h("h1", {}, "Relecture des canyons"),
+    h("nav", {}, tabs.map(([id, label]) => h("button", { class: state.tab === id ? "active" : "", onclick: () => { state.tab = id; state.selected = null; render(); } }, label))),
+    h("div", { class: "status" },
+      h("span", { class: "chip " + (s.publicationUpToDate ? "ok" : "warn") }, s.publicationUpToDate ? "Catalogue à jour" : "Publication dans ≤ 10 min"),
+      h("span", { class: "chip" }, `${s.publishedCanyons ?? 0} publiés · ${s.hiddenCanyons ?? 0} masqués · ${s.repoCanyons ?? 0} dans le dépôt`),
+      last ? h("span", { class: "chip" + (last.aborted ? " warn" : "") }, `Dernier catalogue : ${date(last.finishedAt)}${last.aborted ? " (arrêté : " + last.aborted + ")" : ""}`) : null,
+      h("button", { class: "secondary", onclick: () => { setToken(""); render(); } }, "Quitter"))));
+  const list = h("div", { class: "panel list" });
+  const detail = h("div", { class: "panel" });
+  root.append(h("main", {}, list, detail));
+  if (state.tab === "create") { list.append(h("p", { class: "meta" }, "Fiche ajoutée directement par l'admin, publiée sans relecture.")); return renderCreate(detail); }
+  await renderList(list, detail);
+}
+
+async function renderList(list, detail) {
+  try {
+    if (state.tab === "canyons") {
+      const canyons = await api("GET", "/api/canyons");
+      if (!canyons.length) list.append(h("div", { class: "empty" }, "Aucun canyon ajouté pour l'instant."));
+      for (const c of canyons) {
+        list.append(h("button", { class: "item" + (state.selected === c.id ? " active" : ""), onclick: () => { state.selected = c.id; render(); } },
+          `${c.name} `, h("small", {}, `#${c.id} · v${c.revision} · ${c.status === "HIDDEN" ? "masqué" : "publié"} · ${[c.departement, c.pays].filter(Boolean).join(", ")}${c.pendingProposals ? " · " + c.pendingProposals + " proposition(s)" : ""}`)));
+      }
+      if (state.selected) await renderCanyon(detail, state.selected);
+      else add(detail, h("div", { class: "empty" }, "Choisissez un canyon."));
+      return;
+    }
+    const proposals = await api("GET", "/api/proposals?status=" + (state.tab === "pending" ? "PENDING" : "DECIDED"));
+    if (!proposals.length) list.append(h("div", { class: "empty" }, state.tab === "pending" ? "Rien à relire." : "Aucune décision."));
+    for (const p of proposals) {
+      list.append(h("button", { class: "item" + (state.selected === p.id ? " active" : ""), onclick: () => { state.selected = p.id; render(); } },
+        p.name || "(sans nom)", h("small", {}, `${p.kind === "NEW" ? "Nouveau canyon" : "Modification de #" + p.canyonId} · ${date(p.createdAt)}${state.tab === "decided" ? " · " + STATUS[p.status] : ""}`)));
+    }
+    if (state.selected) await renderProposal(detail, state.selected);
+    else add(detail, h("div", { class: "empty" }, proposals.length ? "Choisissez une proposition." : ""));
+  } catch (e) { toast(e.message); }
+}
+
+// Sheet form
+
+function sheetForm(content, changed) {
+  const inputs = {};
+  const form = h("div", { class: "form" });
+  for (const [key, label, kind] of FIELDS) {
+    const value = content[key];
+    let input;
+    if (kind === "text") input = h("textarea", { rows: key === "descente" ? 8 : 3 }, value || "");
+    else if (kind === "bool") input = h("input", { type: "checkbox" });
+    else input = h("input", { type: kind === "int" ? "number" : "text", value: value ?? "" });
+    if (kind === "bool") input.checked = !!value;
+    inputs[key] = input;
+    form.append(h("label", { class: [kind === "text" ? "wide" : "", kind === "bool" ? "checkbox wide" : "", changed && changed.has(key) ? "changed" : ""].join(" ") }, h("span", {}, label), input));
+  }
+  const points = (content.points || []).map(p => ({ ...p }));
+  const pointsBox = h("div", { class: "points" });
+  const sheet = { form: h("div", {}, form, h("h3", {}, "Points GPS" + (changed && changed.has("points") ? " • modifiés" : "")), pointsBox), points, onPointsChanged: () => {} };
+  function renderPoints() {
+    const rows = points.map((p, index) => h("tr", {},
+      h("td", {}, (() => { const select = h("select", { onchange: e => { p.type = e.target.value; sheet.onPointsChanged(); } }, Object.entries(POINT_TYPES).map(([k, l]) => h("option", { value: k }, l))); select.value = p.type; return select; })()),
+      h("td", {}, h("input", { value: p.latitude, onchange: e => { p.latitude = parseFloat(e.target.value); sheet.onPointsChanged(); } })),
+      h("td", {}, h("input", { value: p.longitude, onchange: e => { p.longitude = parseFloat(e.target.value); sheet.onPointsChanged(); } })),
+      h("td", {}, h("input", { value: p.title || "", placeholder: "titre", onchange: e => { p.title = e.target.value; } })),
+      h("td", {}, h("button", { class: "secondary", onclick: () => { points.splice(index, 1); renderPoints(); sheet.onPointsChanged(); } }, "✕"))));
+    pointsBox.replaceChildren(h("table", {}, h("tr", {}, h("th", {}, "Type"), h("th", {}, "Latitude"), h("th", {}, "Longitude"), h("th", {}, "Titre"), h("th", {})), rows),
+      h("button", { class: "secondary", onclick: () => { const c = state.map ? state.map.getCenter() : { lat: 45, lng: 6 }; points.push({ type: "ENTREE", latitude: +c.lat.toFixed(6), longitude: +c.lng.toFixed(6) }); renderPoints(); sheet.onPointsChanged(); } }, "+ Point au centre de la carte"));
+  }
+  sheet.renderPoints = renderPoints;
+  renderPoints();
+  sheet.value = () => {
+    const result = {};
+    for (const [key, , kind] of FIELDS) {
+      const input = inputs[key];
+      if (kind === "bool") { if (input.checked) result[key] = true; continue; }
+      const raw = input.value.trim();
+      if (raw === "") continue;
+      result[key] = kind === "int" ? Number(raw) : input.value;
+    }
+    result.points = points.map(p => { const point = { type: p.type, latitude: Number(p.latitude), longitude: Number(p.longitude) }; if (p.title && p.title.trim()) point.title = p.title.trim(); return point; });
+    return result;
+  };
+  return sheet;
+}
+
+// Map
+
+function buildMap(container, sheet, nearby) {
+  const map = L.map(container);
+  state.map = map;
+  const topo = L.tileLayer("https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png", { maxZoom: 17, attribution: "© OpenTopoMap (CC-BY-SA), © OpenStreetMap" });
+  const ign = L.tileLayer("https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&TILEMATRIXSET=PM&FORMAT=image/png&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}", { maxZoom: 19, attribution: "© IGN" });
+  const osm = L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", { maxZoom: 19, attribution: "© OpenStreetMap" });
+  topo.addTo(map);
+  L.control.layers({ "OpenTopoMap": topo, "IGN Plan": ign, "OpenStreetMap": osm }).addTo(map);
+  const nearbyLayer = L.layerGroup().addTo(map);
+  const pointLayer = L.layerGroup().addTo(map);
+  function tip(text) { return h("span", {}, text); }
+  for (const c of nearby || []) {
+    const color = c.forbidden ? "#d32f2f" : c.app ? "#2e7d32" : "#1f6feb";
+    for (const [lat, lon] of c.points) {
+      L.circleMarker([lat, lon], { radius: 6, color, weight: 2, fillOpacity: .35 }).bindTooltip(tip(`${c.name} (#${c.id})${c.forbidden ? " — INTERDIT" : ""}`)).addTo(nearbyLayer);
+    }
+  }
+  function drawPoints() {
+    pointLayer.clearLayers();
+    sheet.points.forEach(p => {
+      if (!isFinite(p.latitude) || !isFinite(p.longitude)) return;
+      const marker = L.marker([p.latitude, p.longitude], { draggable: !!sheet.editable, icon: L.divIcon({ className: "", html: `<span class="dot" style="width:16px;height:16px;border:2px solid #fff;background:${POINT_COLORS[p.type] || "#555"}"></span>`, iconSize: [16, 16], iconAnchor: [8, 8] }) });
+      marker.bindTooltip(tip(POINT_TYPES[p.type] || p.type));
+      marker.on("dragend", () => { const ll = marker.getLatLng(); p.latitude = +ll.lat.toFixed(6); p.longitude = +ll.lng.toFixed(6); sheet.renderPoints(); });
+      marker.addTo(pointLayer);
+    });
+  }
+  sheet.onPointsChanged = drawPoints;
+  drawPoints();
+  const all = [...sheet.points.map(p => [p.latitude, p.longitude]), ...(nearby || []).flatMap(c => c.points)].filter(([a, b]) => isFinite(a) && isFinite(b));
+  if (sheet.points.length) map.fitBounds(L.latLngBounds(sheet.points.map(p => [p.latitude, p.longitude])).pad(0.6), { maxZoom: 15 });
+  else if (all.length) map.fitBounds(L.latLngBounds(all).pad(0.2));
+  else map.setView([44.5, 5.5], 7);
+  return map;
+}
+
+function legend() {
+  return h("div", { class: "legend" },
+    ...Object.entries(POINT_TYPES).map(([k, l]) => h("span", {}, h("span", { class: "dot", style: `background:${POINT_COLORS[k]}` }), l)),
+    h("span", {}, h("span", { class: "dot", style: "background:#1f6feb" }), "canyon du site"),
+    h("span", {}, h("span", { class: "dot", style: "background:#2e7d32" }), "canyon ajouté"),
+    h("span", {}, h("span", { class: "dot", style: "background:#d32f2f" }), "interdit"));
+}
+
+function nearbyNotices(nearby) {
+  const notices = [];
+  const forbidden = nearby.filter(c => c.forbidden && c.distanceM < 3000);
+  for (const c of forbidden) notices.push(h("div", { class: "notice danger" }, `Canyon interdit à ${c.distanceM} m : ${c.name} (#${c.id}). Vérifiez qu'il ne s'agit pas de lui.`));
+  const close = nearby.filter(c => !c.forbidden && c.distanceM < 800);
+  for (const c of close) notices.push(h("div", { class: "notice warn" }, `Existe peut-être déjà : ${c.name} (#${c.id}${c.app ? ", ajouté dans l'app" : ""}) à ${c.distanceM} m.`));
+  return notices;
+}
+
+function nearbyTable(nearby) {
+  if (!nearby.length) return h("p", { class: "meta" }, "Aucun canyon du catalogue à moins de 5 km.");
+  return h("table", {}, h("tr", {}, h("th", {}, "Canyon proche"), h("th", {}, "Distance"), h("th", {})),
+    nearby.slice(0, 12).map(c => h("tr", {}, h("td", {}, `${c.name} (#${c.id})`), h("td", {}, `${c.distanceM} m`), h("td", {}, c.forbidden ? "interdit" : c.app ? "ajouté" : "site"))));
+}
+
+function diffTable(changes) {
+  if (!changes || !changes.length) return h("p", { class: "meta" }, "Aucune différence.");
+  return h("table", {}, h("tr", {}, h("th", {}, "Champ"), h("th", {}, "Avant"), h("th", {}, "Après")),
+    changes.map(c => h("tr", {}, h("td", {}, LABELS[c.field] || c.field), h("td", { class: "before" }, display(c.field, c.before)), h("td", { class: "after" }, display(c.field, c.after)))));
+}
+
+// Proposal
+
+async function renderProposal(detail, id) {
+  const p = await api("GET", "/api/proposals/" + encodeURIComponent(id));
+  const pending = p.status === "PENDING";
+  const changed = new Set((p.changes || []).map(c => c.field));
+  const sheet = sheetForm(p.content, p.kind === "EDIT" ? changed : null);
+  sheet.editable = pending;
+  const counts = p.authorStats.counts || {};
+  const mapBox = h("div", { id: "map" });
+  const note = h("input", { placeholder: "Note (visible par l'auteur)", style: "flex:1;min-width:220px" });
+  const reason = h("select", {}, (state.status?.rejectionReasons || Object.keys(REASONS)).map(r => h("option", { value: r }, REASONS[r] || r)));
+  add(detail, 
+    h("h2", {}, p.name || "(sans nom)"),
+    h("div", { class: "meta" }, `${p.kind === "NEW" ? "Nouveau canyon" : "Modification du canyon #" + p.canyonId} · envoyée le ${date(p.createdAt)} · auteur ${p.author}… : ${counts.APPROVED || 0} publiée(s), ${counts.REJECTED || 0} refusée(s), ${counts.PENDING || 0} en attente${p.authorStats.blocked ? " · BLOQUÉ" : ""}${p.authorStats.authorsOnSameNetwork > 2 ? " · " + p.authorStats.authorsOnSameNetwork + " auteurs sur ce réseau" : ""}`),
+    !pending ? h("div", { class: "notice info" }, `${STATUS[p.status]} le ${date(p.decidedAt)}${p.reason ? " — " + (REASONS[p.reason] || p.reason) : ""}${p.note ? " — « " + p.note + " »" : ""}`) : null,
+    ...nearbyNotices(p.nearby || []),
+    ...(p.nearbyProposals || []).map(o => h("div", { class: "notice warn" }, `Autre proposition à ${o.distanceM} m : ${o.name} (${STATUS[o.status]}, ${date(o.createdAt)})`)),
+    p.kind === "EDIT" && p.baseRevision !== p.currentRevision ? h("div", { class: "notice warn" }, `Écrite sur la version ${p.baseRevision} ; la version ${p.currentRevision} a été publiée depuis. Publier remplace la version actuelle par cette fiche (comparaison ci-dessous).`) : null,
+    p.kind === "EDIT" && p.canyonStatus === "HIDDEN" ? h("div", { class: "notice warn" }, "Ce canyon est masqué de l'application.") : null,
+  );
+  if (p.kind === "EDIT") {
+    add(detail, h("h3", {}, "Changements proposés"), diffTable(p.changes));
+    if (p.baseRevision !== p.currentRevision) add(detail, h("h3", {}, "Différences avec la version actuelle"), diffTable(p.diffWithCurrent));
+  }
+  add(detail, h("div", { class: "detail-grid" },
+    h("div", {}, h("h3", {}, pending ? "Fiche (corrigeable avant publication)" : "Fiche proposée"), sheet.form),
+    h("div", {}, h("h3", {}, "Carte"), mapBox, legend(), h("h3", {}, "Canyons proches"), nearbyTable(p.nearby || []))));
+  if (pending) {
+    add(detail, h("div", { class: "actions" },
+      note,
+      h("button", { class: "primary", onclick: async () => {
+        try { const c = await api("POST", `/api/proposals/${encodeURIComponent(id)}/approve`, { content: sheet.value(), note: note.value || null }); toast(`Publié : #${c.id} v${c.revision}. Dans l'app sous 10 min (+ mise à jour du manifeste).`); state.selected = null; render(); } catch (e) { toast(e.message); }
+      } }, "Publier"),
+      reason,
+      h("button", { class: "danger", onclick: async () => {
+        try { await api("POST", `/api/proposals/${encodeURIComponent(id)}/reject`, { reason: reason.value, note: note.value || null }); toast("Refusée."); state.selected = null; render(); } catch (e) { toast(e.message); }
+      } }, "Refuser"),
+      h("button", { class: "secondary", onclick: async () => {
+        if (!confirm("Bloquer cet auteur ? Ses propositions en attente sont refusées et les suivantes le seront aussi.")) return;
+        try { const r = await api("POST", `/api/proposals/${encodeURIComponent(id)}/block`); toast(`Auteur bloqué (${r.rejected} proposition(s) refusée(s)).`); state.selected = null; render(); } catch (e) { toast(e.message); }
+      } }, "Bloquer l'auteur")));
+  } else if (p.authorStats.blocked) {
+    add(detail, h("div", { class: "actions" }, h("button", { class: "secondary", onclick: async () => { try { await api("POST", `/api/proposals/${encodeURIComponent(id)}/unblock`); toast("Auteur débloqué."); render(); } catch (e) { toast(e.message); } } }, "Débloquer l'auteur")));
+  }
+  if (p.canyonId && p.status === "APPROVED") add(detail, h("p", {}, h("a", { href: "#", onclick: e => { e.preventDefault(); state.tab = "canyons"; state.selected = p.canyonId; render(); } }, `Voir le canyon #${p.canyonId}`)));
+  buildMap(mapBox, sheet, p.nearby || []);
+}
+
+// Canyon
+
+async function renderCanyon(detail, id) {
+  const c = await api("GET", "/api/canyons/" + id);
+  const sheet = sheetForm(c.content, null);
+  sheet.editable = true;
+  const mapBox = h("div", { id: "map" });
+  const note = h("input", { placeholder: "Note de version (privée)", style: "flex:1;min-width:220px" });
+  const compare = h("div", {});
+  add(detail, 
+    h("h2", {}, c.content.nom),
+    h("div", { class: "meta" }, `#${c.id} · version ${c.revision} · ${c.status === "HIDDEN" ? "masqué de l'application" : "publié"} · créé le ${date(c.createdAt)} · modifié le ${date(c.updatedAt)}`),
+    ...(c.pendingProposals || []).map(p => h("div", { class: "notice info" }, `Proposition en attente du ${date(p.createdAt)} : `, h("a", { href: "#", onclick: e => { e.preventDefault(); state.tab = "pending"; state.selected = p.id; render(); } }, "relire"))),
+    ...nearbyNotices(c.nearby || []),
+    h("h3", {}, "Versions"),
+    h("table", { class: "revisions" }, h("tr", {}, h("th", {}, "Version"), h("th", {}, "Date"), h("th", {}, "Origine"), h("th", {}, "Note"), h("th", {})),
+      c.revisions.map(r => h("tr", {},
+        h("td", {}, `v${r.revision}${r.revision === c.revision ? " (actuelle)" : ""}`), h("td", {}, date(r.createdAt)), h("td", {}, ORIGINS[r.origin] || r.origin), h("td", {}, r.note || ""),
+        h("td", {}, r.revision === c.revision ? null : [
+          h("button", { class: "secondary", onclick: async () => { try { const rev = await api("GET", `/api/canyons/${id}/revisions/${r.revision}`); compare.replaceChildren(h("h3", {}, `Version actuelle → v${r.revision}`), diffTable(rev.diffWithCurrent)); } catch (e) { toast(e.message); } } }, "Comparer"), " ",
+          h("button", { class: "secondary", onclick: async () => { if (!confirm(`Republier la version ${r.revision} ?`)) return; try { await api("POST", `/api/canyons/${id}/restore`, { revision: r.revision }); toast("Version republiée."); render(); } catch (e) { toast(e.message); } } }, "Revenir à cette version"),
+        ])))),
+    compare,
+    h("div", { class: "detail-grid" },
+      h("div", {}, h("h3", {}, "Fiche actuelle"), sheet.form),
+      h("div", {}, h("h3", {}, "Carte"), mapBox, legend(), h("h3", {}, "Canyons proches"), nearbyTable(c.nearby || []))),
+    h("div", { class: "actions" },
+      note,
+      h("button", { class: "primary", onclick: async () => { try { const r = await api("PUT", `/api/canyons/${id}`, { content: sheet.value(), note: note.value || null }); toast(`Version ${r.revision} publiée.`); render(); } catch (e) { toast(e.message); } } }, "Enregistrer une nouvelle version"),
+      h("button", { class: c.status === "HIDDEN" ? "secondary" : "danger", onclick: async () => {
+        const hide = c.status !== "HIDDEN";
+        if (hide && !confirm("Masquer ce canyon ? Il disparaît de l'application à la prochaine mise à jour du catalogue (l'historique est gardé).")) return;
+        try { await api("POST", `/api/canyons/${id}/hidden`, { hidden: hide }); toast(hide ? "Masqué." : "Réaffiché."); render(); } catch (e) { toast(e.message); }
+      } }, c.status === "HIDDEN" ? "Réafficher dans l'application" : "Masquer de l'application")));
+  buildMap(mapBox, sheet, c.nearby || []);
+}
+
+function renderCreate(detail) {
+  const sheet = sheetForm({ points: [] }, null);
+  sheet.editable = true;
+  const mapBox = h("div", { id: "map" });
+  const note = h("input", { placeholder: "Note de version (privée)", style: "flex:1;min-width:220px" });
+  add(detail, h("h2", {}, "Ajouter un canyon"),
+    h("p", { class: "meta" }, "Déplacez la carte puis « + Point au centre de la carte » ; les points se déplacent à la souris. Obligatoires : le nom, un point (de n'importe quel type) et un texte. Pays, région, département, massif et bassin laissés vides sont repris du canyon le plus proche du point (l'entrée, sinon le premier point)."),
+    h("div", { class: "detail-grid" }, h("div", {}, sheet.form), h("div", {}, mapBox, legend())),
+    h("div", { class: "actions" }, note, h("button", { class: "primary", onclick: async () => {
+      try { const c = await api("POST", "/api/canyons", { content: sheet.value(), note: note.value || null }); toast(`Canyon #${c.id} publié.`); state.tab = "canyons"; state.selected = c.id; render(); } catch (e) { toast(e.message); }
+    } }, "Publier")));
+  buildMap(mapBox, sheet, []);
+}
+
+render();
+</script>
+</body>
+</html>
