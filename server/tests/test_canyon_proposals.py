@@ -370,6 +370,84 @@ def test_the_generator_turns_sheets_into_catalog_rows(tmp_path, service):
         _generator().load_app_canyons(path, {canyon["id"]})
 
 
+# Sheets taken from another database
+
+SOURCE = {
+    "name": "OpenCanyon",
+    "url": "https://www.opencanyon.org/fr/canyon/0e1f",
+    "licence": "CC-BY-NC-SA-4.0",
+    "authors": ["Une personne", "Une autre"],
+    "changes": "Traduit de l'allemand, recoupé avec CWiki",
+}
+SHARE_ALIKE = "CC-BY-NC-SA-4.0"
+
+
+def test_a_sheet_from_a_share_alike_database_carries_its_licence_and_sources():
+    result = sheets.normalize(sheet(licence=SHARE_ALIKE, sources=[SOURCE]))
+    assert result["licence"] == SHARE_ALIKE and result["sources"] == [SOURCE]
+    assert list(result)[-2:] == ["licence", "sources"]
+    # CC0 is the default and is left out of the sheet.
+    assert "licence" not in sheets.normalize(sheet(licence="CC0-1.0"))
+    with pytest.raises(ContentError) as error:
+        sheets.normalize(sheet(licence=SHARE_ALIKE))
+    assert error.value.code == "SOURCE_REQUIRED"
+    with pytest.raises(ContentError) as error:
+        sheets.normalize(sheet(sources=[SOURCE]))  # a share-alike source cannot be given to the public domain
+    assert error.value.code == "BAD_LICENCE"
+    assert sheets.normalize(sheet(sources=[{**SOURCE, "licence": "CC-BY-4.0"}]))["sources"][0]["licence"] == "CC-BY-4.0"
+    for bad in ({**SOURCE, "url": "http://example.org"}, {**SOURCE, "licence": "CC-BY-ND-4.0"}, {**SOURCE, "extra": 1}, {"name": "X"}):
+        with pytest.raises(ContentError) as error:
+            sheets.normalize(sheet(licence=SHARE_ALIKE, sources=[bad]))
+        assert error.value.code == "BAD_SOURCES"
+    with pytest.raises(ContentError):
+        sheets.normalize(sheet(licence="CC-BY-ND-4.0", sources=[SOURCE]))
+
+
+def test_a_proposal_declares_the_licence_of_its_sheet(client, service):
+    key = new_install_key()
+    content = sheet(sources=[SOURCE])
+    response = propose(client, key, content=content, licence=SHARE_ALIKE)
+    assert response.status_code == 201, response.text
+    assert service.proposal(response.json()["id"])["content"]["licence"] == SHARE_ALIKE
+    assert propose(client, key, content=content).json() == {"error": "INVALID_BAD_LICENCE", "field": "licence"}
+    assert propose(client, key, content=sheet(licence=SHARE_ALIKE, sources=[SOURCE])).json() == {"error": "LICENCE_MISMATCH"}
+    assert propose(client, key, licence="CC-BY-SA-4.0").json() == {"error": "LICENCE_REQUIRED"}
+
+
+def test_changes_never_drop_the_licence_and_the_sources(client, service, admin):
+    key = new_install_key()
+    proposal = propose(client, key, content=sheet(sources=[SOURCE]), licence=SHARE_ALIKE).json()
+    # The review tool sends the sheet without them.
+    canyon = service.approve(proposal["id"], sheet(nom="Ravin corrigé"))
+    assert canyon["content"]["licence"] == SHARE_ALIKE and canyon["content"]["sources"] == [SOURCE]
+    # The app neither.
+    edit = propose(client, new_install_key(), content=sheet(nom="Ravin corrigé", cordeMin=40), kind="EDIT", canyon_id=canyon["id"]).json()
+    detail = service.proposal(edit["id"])
+    assert detail["content"]["sources"] == [SOURCE]
+    assert detail["changes"] == [{"field": "cordeMin", "before": 35, "after": 40}]
+    assert service.approve(edit["id"])["content"]["licence"] == SHARE_ALIKE
+    edited = service.edit(canyon["id"], sheet(nom="Ravin corrigé", cordeMin=45))
+    assert edited["content"]["sources"] == [SOURCE]
+    assert service.export()["canyons"][0]["content"]["sources"] == [SOURCE]
+
+
+def test_the_generator_credits_the_sources(tmp_path, service):
+    canyon = service.create(sheet(licence=SHARE_ALIKE, sources=[SOURCE, {"name": "CWiki", "url": "https://canyon.carto.net/x", "licence": "CC-BY-NC-SA-2.0-AT"}]))
+    service.create(sheet(nom="Sans source"))
+    path = tmp_path / "app-canyons.json"
+    path.write_bytes(publication.to_bytes(publication.merged_document(service.export(), None)))
+    entries, links = _generator().load_app_canyon_sources(path)
+    assert links == [
+        {"canyonId": canyon["id"], "bibliographyId": f"app_source_{canyon['id']}_0"},
+        {"canyonId": canyon["id"], "bibliographyId": f"app_source_{canyon['id']}_1"},
+    ]
+    first, second = entries
+    assert first["kind"] == "RESOURCE" and first["resourceType"] == "WEBSITE" and first["url"] == SOURCE["url"]
+    assert first["title"] == "Source : OpenCanyon" and first["authors"] == SOURCE["authors"]
+    assert first["status"] == "Traduit de l'allemand, recoupé avec CWiki. Licence de la source : CC BY-NC-SA 4.0. Cette fiche : CC BY-NC-SA 4.0."
+    assert second["authors"] is None and "CC BY-NC-SA 2.0 AT" in second["status"]
+
+
 # Review tool
 
 def test_the_review_tool_needs_its_token_and_a_local_host(settings, service):

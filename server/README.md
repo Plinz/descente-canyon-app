@@ -73,6 +73,10 @@ restic ──► sauvegarde chiffrée chez un autre fournisseur        healthche
   décision prise), `DELETE /v1/canyon-proposals/{id}` (retirer une proposition en attente), avec
   `X-Install-Key`. `content` reprend les champs d'une fiche du site (`dcserver/canyons/content.py`) ; une
   fiche refusée par les contrôles renvoie `{"error": "INVALID_<CODE>", "field": "<champ>"}`.
+  Une fiche reprise d'une base sous CC BY-NC-SA (OpenCanyon, CWiki, RopeWiki) part avec `"licence":
+  "CC-BY-NC-SA-4.0"` et, dans `content`, ses `sources` (`[{"name", "url", "licence", "authors"?,
+  "changes"?}]`, 5 au plus) : le catalogue les affiche comme ressources web du canyon. Une modification
+  faite depuis l'app ou l'outil de relecture, qui ne les portent pas, les garde.
 
 ### Traces et votes
 

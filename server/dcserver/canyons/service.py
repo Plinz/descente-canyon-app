@@ -24,8 +24,10 @@ from ..ratelimit import RateLimiter
 from . import content as sheets
 from .content import FIRST_APP_CANYON_ID, ContentError
 
-LICENCE = "CC0-1.0"
-"""Texts and points are given to the public domain, like the shared tracks."""
+LICENCE = sheets.DEFAULT_LICENCE
+"""Texts and points written in the app are given to the public domain, like the shared tracks."""
+LICENCES = sheets.LICENCES
+"""Or, for a sheet taken from a CC BY-NC-SA database, that licence (its sources in the sheet)."""
 MAX_PENDING_PER_AUTHOR = 20
 MINE_LIMIT = 100
 REJECTION_REASONS = ("DUPLICATE", "EXISTS_ON_SITE", "FORBIDDEN", "INCOMPLETE", "INCORRECT", "NOT_A_CANYON", "OTHER", "BLOCKED")
@@ -102,7 +104,8 @@ class CanyonService:
             raise ProposalError("MISSING_KEY", 401)
         if not isinstance(body, dict):
             raise ProposalError("BAD_REQUEST", 400)
-        if body.get("licence") != LICENCE:
+        licence = body.get("licence")
+        if licence not in LICENCES:
             raise ProposalError("LICENCE_REQUIRED", 400)
         kind = body.get("kind")
         canyon_id = body.get("canyonId")
@@ -112,7 +115,14 @@ class CanyonService:
             raise ProposalError("BAD_REQUEST", 400)
         if kind == "EDIT" and (isinstance(canyon_id, bool) or not isinstance(canyon_id, int)):
             raise ProposalError("BAD_REQUEST", 400)
-        sheet = self._checked(body.get("content"), publishing=False)
+        content = body.get("content")
+        if isinstance(content, dict):
+            declared = content.get(sheets.LICENCE_FIELD)
+            if declared is not None and declared != licence:
+                raise ProposalError("LICENCE_MISMATCH", 400)
+            if licence != LICENCE:
+                content = {**content, sheets.LICENCE_FIELD: licence}
+        sheet = self._checked(content, publishing=False)
         net_hash = netid.hash_network(self._pepper, ip)
         now = self._clock()
         with self._transaction() as connection:
@@ -126,7 +136,10 @@ class CanyonService:
                 if row is None or row["status"] != "PUBLISHED":
                     raise ProposalError("UNKNOWN_CANYON", 404)
                 base_revision = row["current_revision"]
-                if self._content(connection, canyon_id, base_revision) == sheet:
+                base = self._content(connection, canyon_id, base_revision)
+                # The app does not carry the licence and the sources of a sheet taken from elsewhere.
+                sheet = sheets.with_attribution(sheet, base)
+                if base == sheet:
                     raise ProposalError("NO_CHANGE", 422)
             pending = connection.execute(
                 "SELECT COUNT(*) FROM canyon_proposals WHERE author_key = ? AND status = 'PENDING'", (key_hash,)
@@ -270,7 +283,10 @@ class CanyonService:
                 raise ProposalError("NOT_FOUND", 404)
             if row["status"] != "PENDING":
                 raise ProposalError("ALREADY_DECIDED", 409)
-            sheet = self._checked(content if content is not None else json.loads(row["content"]))
+            proposed = json.loads(row["content"])
+            sheet = self._checked(content) if content is not None else self._checked(proposed)
+            # The review tool does not carry them either.
+            sheet = sheets.with_attribution(sheet, proposed)
             if row["kind"] == "NEW":
                 canyon_id = self._new_canyon(connection, sheet, now, "PROPOSAL", proposal_id, note_text)
                 revision = 1
@@ -407,6 +423,9 @@ class CanyonService:
     def edit(self, canyon_id: int, content: Any, note: Any = None) -> dict:
         sheet = self._checked(content)
         with self._transaction() as connection:
+            current = connection.execute("SELECT current_revision FROM app_canyons WHERE id = ?", (canyon_id,)).fetchone()
+            if current is not None:
+                sheet = sheets.with_attribution(sheet, self._content(connection, canyon_id, current["current_revision"]))
             self._new_revision(connection, canyon_id, sheet, self._clock(), "ADMIN", None, _note(note))
             return self._canyon(connection, canyon_id)
 
@@ -433,7 +452,8 @@ class CanyonService:
     # Publication
 
     def export(self) -> dict:
-        """The published sheets, as the catalog generator reads them (--app-canyons)."""
+        """The published sheets, as the catalog generator reads them (--app-canyons). [LICENCE] is
+        the licence of a sheet that does not give its own."""
         with self._read() as connection:
             canyons = [
                 {

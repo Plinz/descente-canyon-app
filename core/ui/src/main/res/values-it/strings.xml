@@ -1558,7 +1558,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="settings_server_check_now">Controlla ora</string>
     <string name="settings_privacy_server">Server dell\'app, se attivato nelle impostazioni: riceve l\'indirizzo IP del telefono, conservato troncato per 7 giorni nei suoi registri, e le tracce GPS che scegli di condividere (il percorso e il mese dell\'uscita, senza nome né orari), con una chiave casuale di questa installazione, che permette di eliminare le tue tracce e di votare una sola volta.</string>
     <string name="settings_data_sources_tracks">• Tracce GPS condivise: persone che usano l\'app, pubblico dominio (CC0).</string>
-    <string name="settings_data_sources_app_canyons">• Canyon aggiunti nell\'app: proposti dalle persone che la usano, rivisti prima della pubblicazione, pubblico dominio (CC0).</string>
+    <string name="settings_data_sources_app_canyons">• Canyon aggiunti nell\'app: proposti dalle persone che la usano, rivisti prima della pubblicazione, pubblico dominio (CC0). Quelli ripresi da altre banche dati (OpenCanyon, CWiki…) vengono tradotti e verificati e mantengono la loro licenza CC BY-NC-SA: la fonte è citata nella bibliografia della scheda.</string>
     <string name="server_update_required">È disponibile una nuova versione dell\'app: installala per continuare a ricevere gli aggiornamenti del server.</string>
     <string name="server_update_open">Aggiorna</string>
     <string name="server_message_hide">Nascondi</string>

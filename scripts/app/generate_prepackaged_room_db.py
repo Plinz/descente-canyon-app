@@ -436,6 +436,45 @@ def load_app_canyons(path: Path | None, site_ids: set[int]) -> tuple[list[dict],
     return rows, points
 
 
+LICENCE_LABELS = {
+    "CC0-1.0": "CC0 (domaine public)",
+    "CC-BY-4.0": "CC BY 4.0",
+    "CC-BY-NC-SA-2.0-AT": "CC BY-NC-SA 2.0 AT",
+    "CC-BY-NC-SA-3.0": "CC BY-NC-SA 3.0",
+    "CC-BY-NC-SA-4.0": "CC BY-NC-SA 4.0",
+}
+
+
+def load_app_canyon_sources(path: Path | None) -> tuple[list[dict], list[dict]]:
+    """Web resources crediting where a canyon added in the app was taken from (its "sources"), as its
+    licence asks: the source, its authors, its licence and the changes made, with the link to it."""
+    if path is None or not path.exists():
+        return [], []
+    entries, links = [], []
+    for entry in load_json(path).get("canyons", []):
+        canyon_id = int(entry["id"])
+        sheet = entry["content"]
+        licence = LICENCE_LABELS.get(sheet.get("licence") or "CC0-1.0", sheet.get("licence"))
+        for index, source in enumerate(sheet.get("sources") or []):
+            entry_id = f"app_source_{canyon_id}_{index}"
+            status = f"Licence de la source : {LICENCE_LABELS.get(source['licence'], source['licence'])}. Cette fiche : {licence}."
+            if source.get("changes"):
+                status = f"{source['changes']}. {status}"
+            entries.append(
+                {
+                    "id": entry_id,
+                    "kind": "RESOURCE",
+                    "resourceType": "WEBSITE",
+                    "title": f"Source : {source['name']}",
+                    "authors": source.get("authors") or None,
+                    "status": status,
+                    "url": source["url"],
+                }
+            )
+            links.append({"canyonId": canyon_id, "bibliographyId": entry_id})
+    return entries, links
+
+
 def insert_rows(
     connection: sqlite3.Connection,
     room_import_dir: Path,
@@ -452,8 +491,11 @@ def insert_rows(
     app_canyons, app_geo_points = load_app_canyons(app_canyons_path, {int(row["id"]) for row in site_canyons})
     canyons = [*site_canyons, *app_canyons]
     geo_points = [*site_geo_points, *recovered_geo_points, *app_geo_points]
-    bibliography_entries = load_json(room_import_dir / "bibliography_entries.json")
-    canyon_bibliography = load_json(room_import_dir / "canyon_bibliography.json")
+    site_bibliography_entries = load_json(room_import_dir / "bibliography_entries.json")
+    site_canyon_bibliography = load_json(room_import_dir / "canyon_bibliography.json")
+    app_sources, app_source_links = load_app_canyon_sources(app_canyons_path)
+    bibliography_entries = [*site_bibliography_entries, *app_sources]
+    canyon_bibliography = [*site_canyon_bibliography, *app_source_links]
     regulation_texts = load_json(room_import_dir / "regulation_texts.json")
     canyon_regulations = load_json(room_import_dir / "canyon_regulations.json")
     watersheds = load_json(room_import_dir / "watersheds.json")
@@ -695,8 +737,9 @@ def insert_rows(
         "recovered_geo_points": len(recovered_geo_points),
         "app_canyons": len(app_canyons),
         "app_geo_points": len(app_geo_points),
-        "bibliography_entries": len(bibliography_entries),
-        "canyon_bibliography": len(canyon_bibliography),
+        "bibliography_entries": len(site_bibliography_entries),
+        "canyon_bibliography": len(site_canyon_bibliography),
+        "app_sources": len(app_sources),
         "regulation_texts": len(regulation_texts),
         "canyon_regulations": len(canyon_regulations),
         "watersheds": connection.execute("SELECT COUNT(*) FROM watersheds").fetchone()[0],

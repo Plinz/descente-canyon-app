@@ -1558,7 +1558,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="settings_server_check_now">Comprobar ahora</string>
     <string name="settings_privacy_server">Servidor de la aplicación, si está activado en los ajustes: recibe la dirección IP del teléfono, guardada recortada 7 días en sus registros, y los tracks GPS que decides compartir (su trazado y el mes de la salida, sin nombre ni horas), con una clave aleatoria propia de esta instalación, que permite eliminar tus tracks y votar una sola vez.</string>
     <string name="settings_data_sources_tracks">• Tracks GPS compartidos: personas que usan la aplicación, dominio público (CC0).</string>
-    <string name="settings_data_sources_app_canyons">• Barrancos añadidos en la aplicación: propuestos por las personas que la usan, revisados antes de publicarse, dominio público (CC0).</string>
+    <string name="settings_data_sources_app_canyons">• Barrancos añadidos en la aplicación: propuestos por las personas que la usan, revisados antes de publicarse, dominio público (CC0). Los tomados de otras bases (OpenCanyon, CWiki…) se traducen y contrastan, y mantienen su licencia CC BY-NC-SA: la fuente se cita en la bibliografía de la ficha.</string>
     <string name="server_update_required">Hay una nueva versión de la aplicación: instálala para seguir recibiendo las actualizaciones del servidor.</string>
     <string name="server_update_open">Actualizar</string>
     <string name="server_message_hide">Ocultar</string>

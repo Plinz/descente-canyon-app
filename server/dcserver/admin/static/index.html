@@ -96,6 +96,10 @@ const FIELDS = [
 ];
 const LABELS = Object.fromEntries(FIELDS.map(([k, l]) => [k, l]));
 LABELS.points = "Points GPS";
+LABELS.licence = "Licence";
+LABELS.sources = "Sources";
+const LICENCES = { "CC0-1.0": "CC0 (domaine public)", "CC-BY-4.0": "CC BY 4.0", "CC-BY-NC-SA-2.0-AT": "CC BY-NC-SA 2.0 AT", "CC-BY-NC-SA-3.0": "CC BY-NC-SA 3.0", "CC-BY-NC-SA-4.0": "CC BY-NC-SA 4.0" };
+function sourceLine(s) { return `${s.name} (${LICENCES[s.licence] || s.licence}) ${s.url}${s.authors ? " · auteurs : " + s.authors.join(", ") : ""}${s.changes ? " · " + s.changes : ""}`; }
 const ERRORS = {
   INVALID_REQUIRED: "Champ obligatoire",
   INVALID_TEXT_REQUIRED: "Il faut au moins un texte (descente, approche, remarques…)",
@@ -169,6 +173,8 @@ function date(value) { return value ? new Date(value).toLocaleString("fr-FR", { 
 function display(field, value) {
   if (value === undefined || value === null || value === "") return "—";
   if (field === "points") return value.map(p => `${POINT_TYPES[p.type] || p.type} ${p.latitude.toFixed(5)}, ${p.longitude.toFixed(5)}${p.title ? " (" + p.title + ")" : ""}`).join("\n");
+  if (field === "sources") return value.map(sourceLine).join("\n");
+  if (field === "licence") return LICENCES[value] || value;
   if (value === true) return "oui";
   return String(value);
 }
@@ -251,7 +257,13 @@ function sheetForm(content, changed) {
   }
   const points = (content.points || []).map(p => ({ ...p }));
   const pointsBox = h("div", { class: "points" });
-  const sheet = { form: h("div", {}, form, h("h3", {}, "Points GPS" + (changed && changed.has("points") ? " • modifiés" : "")), pointsBox), points, onPointsChanged: () => {} };
+  // Licence and sources of a sheet taken from another database: shown, kept as they are.
+  const attribution = content.sources && content.sources.length
+    ? h("div", { class: "meta" }, h("h3", {}, "Licence et sources"),
+        h("p", {}, "Licence de la fiche : " + (LICENCES[content.licence || "CC0-1.0"] || content.licence)),
+        ...content.sources.map(src => h("p", {}, h("a", { href: src.url, target: "_blank", rel: "noopener" }, src.name), " — " + sourceLine(src).slice(src.name.length + 1))))
+    : null;
+  const sheet = { form: h("div", {}, form, attribution, h("h3", {}, "Points GPS" + (changed && changed.has("points") ? " • modifiés" : "")), pointsBox), points, onPointsChanged: () => {} };
   function renderPoints() {
     const rows = points.map((p, index) => h("tr", {},
       h("td", {}, (() => { const select = h("select", { onchange: e => { p.type = e.target.value; sheet.onPointsChanged(); } }, Object.entries(POINT_TYPES).map(([k, l]) => h("option", { value: k }, l))); select.value = p.type; return select; })()),
@@ -274,6 +286,8 @@ function sheetForm(content, changed) {
       result[key] = kind === "int" ? Number(raw) : input.value;
     }
     result.points = points.map(p => { const point = { type: p.type, latitude: Number(p.latitude), longitude: Number(p.longitude) }; if (p.title && p.title.trim()) point.title = p.title.trim(); return point; });
+    if (content.licence) result.licence = content.licence;
+    if (content.sources) result.sources = content.sources;
     return result;
   };
   return sheet;

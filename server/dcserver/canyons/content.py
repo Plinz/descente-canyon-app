@@ -4,6 +4,10 @@ The site takes no new canyon, so the app lets its users propose them; once the o
 proposal, the sheet goes into the catalog as a canyon like the others. A sheet is stored as the
 canonical JSON of [normalize]: only the fields that hold a value, trimmed, in the site's formats
 (cotation "v4a3III", durations "1h30" / "45min" / "néant", shuttle "néant" / "5.0km").
+
+A sheet written in the app is in the public domain (CC0). A sheet taken from another database (its
+texts translated, its facts checked against other sources) keeps that database's terms: its
+[LICENCE_FIELD] says so and its [SOURCES_FIELD] give the attribution the licence asks for.
 """
 from __future__ import annotations
 
@@ -63,6 +67,27 @@ PLACE_FIELDS = ("pays", "region", "departement", "massif", "bassin")
 """Where the canyon is: when left blank, taken from the catalog canyon nearest to its [anchor]. The
 commune is not, the nearest canyon is often in the next one."""
 
+DEFAULT_LICENCE = "CC0-1.0"
+LICENCES = (DEFAULT_LICENCE, "CC-BY-NC-SA-4.0")
+"""The licence of a sheet: CC0 (left out of the sheet) or, for one taken from a CC BY-NC-SA database, that licence."""
+SHARE_ALIKE_LICENCE = "CC-BY-NC-SA-4.0"
+SOURCE_LICENCES = {
+    # Licence of a source -> whether the sheet must then be CC BY-NC-SA 4.0 (share-alike; the 2.0 and
+    # 3.0 versions allow a later version with the same elements).
+    "CC0-1.0": False,
+    "CC-BY-4.0": False,
+    "CC-BY-NC-SA-2.0-AT": True,
+    "CC-BY-NC-SA-3.0": True,
+    "CC-BY-NC-SA-4.0": True,
+}
+LICENCE_FIELD = "licence"
+SOURCES_FIELD = "sources"
+MAX_SOURCES = 5
+SOURCE_NAME_MAX = 80
+SOURCE_URL_MAX = 300
+SOURCE_AUTHORS_MAX = 20
+SOURCE_CHANGES_MAX = 300
+
 FIELD_ORDER = (
     *SHORT_FIELDS,
     "cotation",
@@ -72,7 +97,10 @@ FIELD_ORDER = (
     *TEXT_FIELDS,
     *BOOL_FIELDS,
     "points",
+    LICENCE_FIELD,
+    SOURCES_FIELD,
 )
+ATTRIBUTION_FIELDS = (LICENCE_FIELD, SOURCES_FIELD)
 ALL_FIELDS = frozenset(FIELD_ORDER)
 
 COTATION = re.compile(r"^v[1-7]a[1-7](I|II|III|IV|V|VI)$")
@@ -209,6 +237,36 @@ def _points(value: Any) -> list[dict[str, Any]]:
     return points
 
 
+def _sources(value: Any) -> list[dict[str, Any]]:
+    """Where the sheet was taken from: each source with its name, address, licence, authors and the
+    changes made to it (translated, completed...), as its licence asks to be credited."""
+    if not isinstance(value, list) or len(value) > MAX_SOURCES:
+        raise ContentError("BAD_SOURCES", SOURCES_FIELD)
+    sources = []
+    for item in value:
+        if not isinstance(item, dict) or set(item) - {"name", "url", "licence", "authors", "changes"}:
+            raise ContentError("BAD_SOURCES", SOURCES_FIELD)
+        name = _clean_line(item.get("name") or "", SOURCES_FIELD, SOURCE_NAME_MAX)
+        url = _clean_line(item.get("url") or "", SOURCES_FIELD, SOURCE_URL_MAX)
+        licence = item.get("licence")
+        if not name or not re.match(r"^https://[^\s/]+\.[^\s]+$", url) or licence not in SOURCE_LICENCES:
+            raise ContentError("BAD_SOURCES", SOURCES_FIELD)
+        source: dict[str, Any] = {"name": name, "url": url, "licence": licence}
+        authors = item.get("authors") or []
+        if not isinstance(authors, list) or len(authors) > SOURCE_AUTHORS_MAX:
+            raise ContentError("BAD_SOURCES", SOURCES_FIELD)
+        names = [_clean_line(author, SOURCES_FIELD, SOURCE_NAME_MAX) for author in authors]
+        if any(not author for author in names):
+            raise ContentError("BAD_SOURCES", SOURCES_FIELD)
+        if names:
+            source["authors"] = names
+        changes = _clean_line(item.get("changes") or "", SOURCES_FIELD, SOURCE_CHANGES_MAX)
+        if changes:
+            source["changes"] = changes
+        sources.append(source)
+    return sources
+
+
 def normalize(content: Any) -> dict[str, Any]:
     """The canonical sheet of [content], or a ContentError."""
     if not isinstance(content, dict):
@@ -255,12 +313,40 @@ def normalize(content: Any) -> dict[str, Any]:
         if value:
             sheet[field] = True
     sheet["points"] = _points(content.get("points", []))
+    licence = content.get(LICENCE_FIELD) or DEFAULT_LICENCE
+    if licence not in LICENCES:
+        raise ContentError("BAD_LICENCE", LICENCE_FIELD)
+    sources = _sources(content.get(SOURCES_FIELD) or [])
+    if licence == SHARE_ALIKE_LICENCE and not sources:
+        raise ContentError("SOURCE_REQUIRED", SOURCES_FIELD)
+    if any(SOURCE_LICENCES[source["licence"]] for source in sources) and licence != SHARE_ALIKE_LICENCE:
+        raise ContentError("BAD_LICENCE", LICENCE_FIELD)
+    if licence != DEFAULT_LICENCE:
+        sheet[LICENCE_FIELD] = licence
+    if sources:
+        sheet[SOURCES_FIELD] = sources
     for field in REQUIRED:
         if not sheet.get(field):
             raise ContentError("REQUIRED", field)
     if not any(sheet.get(field) for field in TEXT_FIELDS):
         raise ContentError("TEXT_REQUIRED")
     return {field: sheet[field] for field in FIELD_ORDER if field in sheet}
+
+
+def licence_of(sheet: dict[str, Any] | None) -> str:
+    return (sheet or {}).get(LICENCE_FIELD) or DEFAULT_LICENCE
+
+
+def with_attribution(sheet: dict[str, Any], earlier: dict[str, Any] | None) -> dict[str, Any]:
+    """[sheet] keeping the licence and the sources of [earlier] (the sheet it changes): a change made
+    in the app or in the review tool, which do not carry them, never drops what the licence asks."""
+    if not earlier or any(sheet.get(field) for field in ATTRIBUTION_FIELDS):
+        return sheet
+    kept = dict(sheet)
+    for field in ATTRIBUTION_FIELDS:
+        if earlier.get(field):
+            kept[field] = earlier[field]
+    return {field: kept[field] for field in FIELD_ORDER if field in kept}
 
 
 def anchor(sheet: dict[str, Any]) -> dict[str, Any] | None:
