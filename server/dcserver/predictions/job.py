@@ -1,16 +1,18 @@
-"""Debit estimates job: every canyon, three times a day, published as one signed file.
+"""Debit estimates job: every canyon, four times a day, published as one signed file.
 
 Each run:
 1. reads the site's "derniers débits" grid (one page) and the debit pages of the canyons with a new
    report, plus a slice of the pages never read (the reports since the lookups were built);
-2. brings the weather of every grid cell up to date within the Open-Meteo budget (canyons located
-   once, ERA5 window filled cell by cell, forecasts refreshed at each run);
+2. refreshes the forecasts (and the recent archive) of the grid cells already usable;
 3. reads the rain gauges near the canyons (Météo-France daily and hourly files, MeteoSwiss), once a
    day for all of them;
 4. estimates J0, J+1 and J+2 of every canyon whose window is complete, with the app's model and
    feature path, and keeps the first estimate of each day to check it against the reports that
    come in (live check, published with the estimates);
-5. publishes the estimates (gzipped JSON, referenced by the signed manifest).
+5. publishes the estimates (gzipped JSON, referenced by the signed manifest);
+6. then locates the new canyons and fills the windows of the new cells within the Open-Meteo budget
+   (which can take an hour or two the first days), and estimates and publishes again when cells
+   became usable.
 
 The app shows these estimates first (lists, map, canyon page) and computes on the phone only what the
 file lacks: a canyon not estimated yet, or with a report newer than the estimate.
@@ -236,19 +238,20 @@ def _run_locked(settings: Settings, *, publish: bool, ids: list[int] | None, sou
         report = context.report
         report["modelVersion"] = runner.version
         _read_reports(context, today_utc)
-        _update_weather(context, today_utc)
-        entries = _estimate(context, live, today_utc)
+        weather = _WeatherUpdate(context, today_utc)
+        weather.refresh()
+        # The estimates of the canyons already usable go out first: filling the new cells can take
+        # an hour or two of the Open-Meteo budget, and the morning estimates must not wait for it.
+        entries = _estimate_and_publish(context, live, today_utc, publish)
+        if weather.fill():
+            entries = _estimate_and_publish(context, live, today_utc, publish)
+        weather.write_report()
         report["estimated"] = len(entries)
-        live_check = live.score(lambda canyon_id: context.reports.history(canyon_id, []), today_utc)
-        report["liveCheck"] = live_check
         store.prune(today_utc)
         if not entries:
             report["unpublished"] = "NO_ESTIMATE"
-            return report
-        if not publish:
+        elif not publish:
             report["dryRun"] = True
-            return report
-        _publish(settings, runner, entries, live_check, now, report)
         return report
     finally:
         live.close()
@@ -323,78 +326,106 @@ def _priority(context: _Context, today_utc: date) -> list[int]:
     return sorted(context.catalog, key=lambda c: (-activity.get(c, 0), shipped.get(c, len(shipped)), c))
 
 
-def _update_weather(context: _Context, today_utc: date) -> None:
-    store, meteo, settings, report = context.store, context.meteo, context.settings, context.report
-    now = context.sources.clock()
-    order = _priority(context, today_utc)
-    to_locate = []
-    for canyon_id in order:
-        target = context.catalog[canyon_id].target
-        if target is not None and store.set_target(canyon_id, target[0], target[1]):
-            to_locate.append(canyon_id)
-    store.forget_canyons({c for c in context.catalog if context.catalog[c].target is not None})
-    store.drop_unused_cells()
-    cell_order = _cells_in_order(store, order)
-    stats = {"locate": 0, "forecast": 0, "archiveRefresh": 0, "archiveFill": 0, "mismatches": [], "errors": []}
-    reserve = settings.openmeteo_reserve
-    max_age = settings.forecast_max_age_h * 3600
+class _WeatherUpdate:
+    """The weather of the cells: [refresh] keeps the usable cells current (their forecasts first),
+    [fill] then adds the new canyons and cells within what the later runs of the day keep."""
 
-    def attempt(step: str, action: Callable[[], None]) -> bool:
+    def __init__(self, context: _Context, today_utc: date) -> None:
+        self.context = context
+        self.today_utc = today_utc
+        self.stats: dict[str, Any] = {"locate": 0, "forecast": 0, "archiveRefresh": 0, "archiveFill": 0, "mismatches": [], "errors": []}
+        self.order: list[int] = []
+        self.to_locate: list[int] = []
+        self.complete: list[str] = []
+
+    def _attempt(self, step: str, action: Callable[[], None]) -> bool:
+        """Runs one call; False when the budget of the day is spent (the caller stops)."""
         try:
             action()
-            stats[step] += 1
+            self.stats[step] += 1
         except W.BudgetExhausted:
             return False
         except W.CellMismatch as error:
-            stats["mismatches"].append(str(error)[:200])
+            self.stats["mismatches"].append(str(error)[:200])
         except Exception as error:  # noqa: BLE001 - a cell never stops the run
-            stats["errors"].append(f"{step}: {error!r}"[:200])
+            self.stats["errors"].append(f"{step}: {error!r}"[:200])
         return True
 
-    complete = [cell for cell in cell_order if store.archive_complete(cell, today_utc)]
-    # Forecasts of the cells already usable first: they keep every published estimate fresh.
-    for cell in complete:
-        age = store.forecast_age(cell, now)
-        if age is None or age >= max_age:
+    def _save(self, cell: str, source: str, point: W.Located, fetch: Callable[[], dict]) -> None:
+        self.context.store.save_daily(cell, source, fetch(), point.elevation, self.context.sources.clock())
+
+    def refresh(self) -> None:
+        context, store, meteo = self.context, self.context.store, self.context.meteo
+        now = context.sources.clock()
+        self.order = _priority(context, self.today_utc)
+        for canyon_id in self.order:
+            target = context.catalog[canyon_id].target
+            if target is not None and store.set_target(canyon_id, target[0], target[1]):
+                self.to_locate.append(canyon_id)
+        store.forget_canyons({c for c in context.catalog if context.catalog[c].target is not None})
+        store.drop_unused_cells()
+        max_age = context.settings.forecast_max_age_h * 3600
+        self.complete = [cell for cell in _cells_in_order(store, self.order) if store.archive_complete(cell, self.today_utc)]
+        # Forecasts of the cells already usable first: they keep every published estimate fresh.
+        for cell in self.complete:
+            age = store.forecast_age(cell, now)
+            if age is None or age >= max_age:
+                point = store.representative(cell)
+                if point and not self._attempt("forecast", lambda c=cell, p=point: self._save(c, "F", p, lambda: meteo.forecast(p))):
+                    return
+        for cell in self.complete:
+            span = store.archive_range(cell, self.today_utc, now)
             point = store.representative(cell)
-            if point and not attempt("forecast", lambda p=point: store.save_daily(cell, "F", meteo.forecast(p), p.elevation, context.sources.clock())):
+            if span and point and not self._attempt(
+                "archiveRefresh", lambda c=cell, p=point, s=span: self._save(c, "A", p, lambda: meteo.archive(p, *s))
+            ):
+                return
+
+    def fill(self) -> int:
+        """Locates the new canyons and fills the cells not usable yet; returns how many became usable."""
+        context, store, meteo = self.context, self.context.store, self.context.meteo
+        now = context.sources.clock()
+        reserve = context.settings.openmeteo_reserve
+        max_age = context.settings.forecast_max_age_h * 3600
+        for canyon_id in self.to_locate:
+            located = store.located(canyon_id)
+            if not self._attempt(
+                "locate", lambda c=located: store.save_location(c.canyon_id, meteo.locate(c.latitude, c.longitude, reserve), context.sources.clock())
+            ):
                 break
-    for cell in complete:
-        span = store.archive_range(cell, today_utc, now)
-        point = store.representative(cell)
-        if span and point and not attempt(
-            "archiveRefresh", lambda p=point, s=span: store.save_daily(cell, "A", meteo.archive(p, *s), p.elevation, context.sources.clock())
-        ):
-            break
-    # Then the new canyons and cells, within what the later runs of the day keep.
-    for canyon_id in to_locate:
-        located = store.located(canyon_id)
-        if not attempt("locate", lambda c=located: store.save_location(c.canyon_id, meteo.locate(c.latitude, c.longitude, reserve), context.sources.clock())):
-            break
-    for cell in [c for c in _cells_in_order(store, order) if c not in complete]:
-        point = store.representative(cell)
-        if point is None:
-            continue
-        span = store.archive_range(cell, today_utc, now)
-        if span and not attempt(
-            "archiveFill", lambda p=point, s=span: store.save_daily(cell, "A", meteo.archive(p, *s, reserve), p.elevation, context.sources.clock())
-        ):
-            break
-        age = store.forecast_age(cell, now)
-        if store.archive_complete(cell, today_utc) and (age is None or age >= max_age):
-            if not attempt("forecast", lambda p=point: store.save_daily(cell, "F", meteo.forecast(p, reserve), p.elevation, context.sources.clock())):
+        completed = 0
+        for cell in [c for c in _cells_in_order(store, self.order) if c not in self.complete]:
+            point = store.representative(cell)
+            if point is None:
+                continue
+            span = store.archive_range(cell, self.today_utc, now)
+            if span and not self._attempt(
+                "archiveFill", lambda c=cell, p=point, s=span: self._save(c, "A", p, lambda: meteo.archive(p, *s, reserve))
+            ):
                 break
-    cells = store.cells()
-    stats["mismatches"] = stats["mismatches"][:20]
-    stats["errors"] = stats["errors"][:20]
-    report["weather"] = {
-        **stats,
-        "calls": round(meteo.calls, 1),
-        "callsToday": round(store.calls_today(today_utc), 1),
-        "cells": len(cells),
-        "cellsComplete": sum(1 for cell in cells if store.archive_complete(cell, today_utc)),
-        "canyonsLocated": sum(1 for c in context.catalog if (located := store.located(c)) is not None and located.cell),
-    }
+            if not store.archive_complete(cell, self.today_utc):
+                continue
+            completed += 1
+            age = store.forecast_age(cell, now)
+            if (age is None or age >= max_age) and not self._attempt(
+                "forecast", lambda c=cell, p=point: self._save(c, "F", p, lambda: meteo.forecast(p, reserve))
+            ):
+                break
+        return completed
+
+    def write_report(self) -> None:
+        store, catalog = self.context.store, self.context.catalog
+        cells = store.cells()
+        self.context.report["weather"] = {
+            **self.stats,
+            "mismatches": self.stats["mismatches"][:20],
+            "errors": self.stats["errors"][:20],
+            "calls": round(self.context.meteo.calls, 1),
+            "callsToday": round(store.calls_today(self.today_utc), 1),
+            "cells": len(cells),
+            "cellsComplete": sum(1 for cell in cells if store.archive_complete(cell, self.today_utc)),
+            "canyonsLocated": sum(1 for c in catalog if (located := store.located(c)) is not None and located.cell),
+        }
 
 
 def _cells_in_order(store: W.WeatherStore, order: list[int]) -> list[str]:
@@ -411,9 +442,20 @@ def _cells_in_order(store: W.WeatherStore, order: list[int]) -> list[str]:
 # 3-4. Gauges and estimates
 
 
-def _estimate(context: _Context, live: LiveCheck, today_utc: date) -> dict[str, Any]:
-    runner, store, report = context.runner, context.store, context.report
+def _estimate_and_publish(context: _Context, live: LiveCheck, today_utc: date, publish: bool) -> dict[str, Any]:
+    """Estimates every usable canyon and publishes the file (dated by the estimate time: its J0 is
+    the day of that time in each canyon's zone). Returns the entries."""
     now = context.sources.clock()
+    entries = _estimate(context, live, today_utc, now)
+    live_check = live.score(lambda canyon_id: context.reports.history(canyon_id, []), today_utc)
+    context.report["liveCheck"] = live_check
+    if entries and publish:
+        _publish(context.settings, context.runner, entries, live_check, now, context.report)
+    return entries
+
+
+def _estimate(context: _Context, live: LiveCheck, today_utc: date, now: float) -> dict[str, Any]:
+    runner, store, report = context.runner, context.store, context.report
     ready: list[tuple[int, W.Located]] = []
     for canyon_id in sorted(context.catalog):
         located = store.located(canyon_id)
@@ -547,6 +589,7 @@ def _publish(settings: Settings, runner: ModelRunner, entries: dict[str, Any], l
             manifest.publish(settings, state)
             prune_files(settings.v1_dir, manifest.referenced_files(state))
     report.update({"published": True, "file": published["path"], "size": published["size"]})
+    report["publications"] = report.get("publications", 0) + 1
 
 
 def payload_bytes(runner: ModelRunner, entries: dict[str, Any], live_check: dict, now: float) -> bytes:

@@ -155,6 +155,39 @@ def test_estimates_every_canyon_and_publishes_them(job_settings, public_key):
     assert again["weather"]["forecast"] == 0 and again["weather"]["archiveRefresh"] == 0
 
 
+@pytest.mark.slow
+def test_the_usable_canyons_are_published_before_the_new_cells_are_filled(job_settings, public_key, monkeypatch):
+    """Filling new cells can take an hour or two of the Open-Meteo budget: the estimates of the
+    canyons already usable go out first, then again with the new ones."""
+    first = J.run(job_settings, ids=[23222, 23223], sources=sources(FakeOpenMeteo(), []))
+    assert first["published"] is True and first["estimated"] == 2
+
+    events: list[tuple[str, object]] = []
+    original_publish = J._publish
+
+    def recording_publish(settings, runner, entries, live_check, now, report):
+        events.append(("publish", sorted(entries)))
+        original_publish(settings, runner, entries, live_check, now, report)
+
+    class RecordingOpenMeteo(FakeOpenMeteo):
+        def __call__(self, url: str, params: dict) -> dict:
+            events.append(("call", url))
+            return super().__call__(url, params)
+
+    monkeypatch.setattr(J, "_publish", recording_publish)
+    later = NOW + 600
+    report = J.run(job_settings, sources=sources(RecordingOpenMeteo(), [], clock=lambda: later))
+
+    assert report["publications"] == 2 and report["estimated"] == 3
+    assert events[0] == ("publish", ["23222", "23223"])
+    assert ("call", W.ARCHIVE_URL) in events[1:-1]
+    assert events[-1] == ("publish", ["2268", "23222", "23223"])
+    entry = manifest.read_published_payload(job_settings.v1_dir, public_key)["predictions"]
+    published = json.loads(gzip.decompress((job_settings.v1_dir / entry["path"]).read_bytes()))
+    # Dated by the estimate, not by the start of the run.
+    assert published["computedAt"] == int(later)
+
+
 def test_the_budget_stops_the_filling_and_keeps_the_reserve(job_settings):
     fake = FakeOpenMeteo()
     tight = replace(job_settings, openmeteo_daily_calls=20.0, openmeteo_reserve=0.0)

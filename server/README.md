@@ -14,7 +14,7 @@ Il fait trois choses :
    modifiés et les applique tout de suite dans sa base, sans redémarrer (un canyon interdit apparaît
    aussitôt). Le catalogue entier reste publié pour une app trop en retard. Sans serveur, ou si le
    serveur se tait, l'app garde le catalogue de son APK.
-2. **Calculer les estimations de débit de tous les canyons**, trois fois par jour, avec le modèle, les
+2. **Calculer les estimations de débit de tous les canyons**, quatre fois par jour, avec le modèle, les
    données et le calcul de l'app (voir « Estimations de débit »). L'app les affiche d'emblée (listes,
    carte, fiche) et ne calcule plus elle-même que ce que le fichier n'a pas.
 3. **Héberger les traces GPS partagées** par les personnes qui utilisent l'app, classées par leurs votes,
@@ -32,7 +32,7 @@ L'app reste entièrement utilisable sans le serveur.
 ```
 descente-canyon.com ──► tâche catalogue (timer systemd, 02:15 UTC) ──► /srv/dc/publish/v1 (fichiers signés)
 Open-Meteo, Météo-France,                                                 ▲
-MeteoSwiss, débits du site ──► tâche estimations (06:40, 12:40, 18:40 UTC)┘
+MeteoSwiss, débits du site ──► tâche estimations (00:20, 06:40, 12:40, 18:40)┘
                                                                          │
 App ◄── Caddy (HTTPS automatique, journaux masqués) ◄────────────────────┘
 App ──► Caddy ──► API (FastAPI) ──► SQLite (traces, votes, canyons proposés, quotas)
@@ -51,7 +51,9 @@ restic ──► sauvegarde chiffrée chez un autre fournisseur        healthche
 
 - `GET /v1/manifest.json` : enveloppe `{format, keyId, payload, signature}`. `payload` est le JSON du
   manifeste en base64 (schéma dans `dcserver/manifest.py`), `signature` sa signature ECDSA P-256
-  (SHA256withECDSA, DER, base64). L'app refuse un manifeste mal signé ou dont la `sequence` recule.
+  (SHA256withECDSA, DER, base64). L'app refuse un manifeste mal signé ou dont la `sequence` recule ;
+  le serveur la prend donc au moins égale à l'heure de publication en secondes Unix, pour qu'un état
+  perdu ou restauré d'une sauvegarde plus ancienne publie encore un manifeste que les téléphones acceptent.
 - `GET /v1/files/<sha256>.db.gz` : catalogue compressé (gzip), immuable. L'app vérifie le SHA-256 du
   fichier, la version et l'empreinte Room du schéma, l'intégrité SQLite, puis l'installe au démarrage
   suivant.
@@ -179,19 +181,26 @@ dès la tâche suivante, sans nouvelle version de l'app. À chaque passage :
   donc situé une fois (maille, altitude, fuseau), puis l'historique de 400 jours et les prévisions sont
   lus par maille : environ 630 mailles pour 4 100 canyons. Les appels sont comptés comme Open-Meteo
   les compte, espacés sous la limite horaire et arrêtés au budget du jour (`DC_OPENMETEO_DAILY_CALLS`,
-  9 000 sur les 10 000 du plan gratuit) : environ 3 000 par jour en régime établi ; les premiers jours
-  remplissent les historiques (environ 3 jours pour tout couvrir, les canyons les plus signalés d'abord).
+  9 000 sur les 10 000 du plan gratuit) : environ 3 100 par jour en régime établi (une prévision par
+  maille et par passage) ; les premiers jours remplissent les historiques (environ 3 jours pour tout
+  couvrir, les canyons les plus signalés d'abord), dans ce que les passages suivants de la journée
+  laissent (`DC_OPENMETEO_RESERVE`, 2 500).
 - **Pluviomètres** : fichiers quotidiens et horaires de Météo-France (48 départements) et stations
   MeteoSwiss, lus une fois par jour pour tous les canyons.
 - **Calcul** de J, J+1 et J+2 pour chaque canyon dont l'historique météo est complet (environ 7 min
-  pour 4 100 canyons, 150 Mo de mémoire), puis publication.
+  pour 4 100 canyons, 150 Mo de mémoire), puis publication. Les mailles déjà complètes sont mises à
+  jour et publiées d'abord ; le remplissage des nouvelles mailles (jusqu'à 1 h 30 les premiers jours)
+  vient ensuite, suivi d'une seconde publication qui ajoute leurs canyons. Le J du fichier est le jour
+  du calcul dans le fuseau de chaque canyon.
 - **Vérification en direct** : la première estimation de chaque canyon pour chaque jour est gardée et
   comparée aux débits signalés ensuite (90 derniers jours) ; le résultat est publié avec les estimations
   et l'app l'affiche dans « Comprendre l'estimation ».
 
 L'app prend l'estimation du serveur tant qu'elle est celle du jour (moins de 14 h) et qu'aucun débit
 signalé sur la fiche n'est plus récent que ceux que le serveur connaissait ; sinon, ou sans serveur,
-elle calcule comme avant. Interrupteur : `manifest feature serverPredictions off`.
+elle calcule comme avant. Le passage de 00:20 UTC (01:20 ou 02:20 à Paris) donne l'estimation du
+nouveau jour : sans lui, avant le passage de 06:40 (07:40 ou 08:40 à Paris), chaque téléphone qui
+prépare sa sortie du matin la calculerait lui-même. Interrupteur : `manifest feature serverPredictions off`.
 
 ## Mise en service
 

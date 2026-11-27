@@ -277,7 +277,3 @@ class TrackService:
         """Removal by the operator after a legal notice (the only manual action there is)."""
         with self._transaction() as connection:
             return connection.execute("DELETE FROM tracks WHERE id = ?", (track_id,)).rowcount > 0
-
-    def prune(self) -> int:
-        with self._transaction() as connection:
-            return self._limiter.prune(connection, now=self._clock())

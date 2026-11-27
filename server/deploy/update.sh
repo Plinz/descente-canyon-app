@@ -74,6 +74,16 @@ if ((${#units[@]})); then
     echo "systemd: installing ${units[*]##*/}"
     sudo install -m 644 "${units[@]}" "$UNITS_DIR/"
     sudo systemctl daemon-reload
+    # A timer already running keeps its old schedule until restarted.
+    changed_timers=()
+    for unit in "${units[@]}"; do
+        name=$(basename "$unit")
+        [[ "$name" == *.timer ]] && systemctl is-active --quiet "$name" && changed_timers+=("$name")
+    done
+    if ((${#changed_timers[@]})); then
+        echo "systemd: restarting ${changed_timers[*]}"
+        sudo systemctl restart "${changed_timers[@]}"
+    fi
 fi
 wanted=(dc-catalog.timer dc-predictions.timer dc-app-canyons.timer)
 # The backup runs once restic is configured (server/README.md, step 7).

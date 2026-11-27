@@ -27,14 +27,24 @@ DEFAULT_QUOTAS: dict[str, Quota] = {
 }
 
 
+PRUNE_EVERY_S = 6 * 3600.0
+"""How often the events past every window are deleted, along the way of a contribution."""
+
+
 class RateLimiter:
-    def __init__(self, quotas: dict[str, Quota] | None = None) -> None:
+    def __init__(self, quotas: dict[str, Quota] | None = None, prune_every_s: float = PRUNE_EVERY_S) -> None:
         self.quotas = quotas or DEFAULT_QUOTAS
+        self._prune_every_s = prune_every_s
+        self._pruned_at: float | None = None
 
     def allow(self, connection: sqlite3.Connection, checks: list[tuple[str, str]], now: float | None = None) -> bool:
         """Records one event for every (kind, subject) when all of them are under their quota.
-        Must run inside the caller's transaction."""
+        Must run inside the caller's transaction, which also deletes the old events now and then
+        (best effort: a transaction rolled back keeps them until the next time)."""
         now = time.time() if now is None else now
+        if self._pruned_at is None or now - self._pruned_at >= self._prune_every_s:
+            self._pruned_at = now
+            self.prune(connection, now=now)
         for kind, subject in checks:
             quota = self.quotas[kind]
             count = connection.execute(

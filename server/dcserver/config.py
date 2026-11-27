@@ -37,8 +37,9 @@ class Settings:
     """Open-Meteo calls a day (weighted as Open-Meteo counts them); the free plan allows 10,000."""
     openmeteo_seconds_per_call: float = 0.75
     """Pause per weighted call: 4,800 an hour at most, under the free plan's 5,000."""
-    openmeteo_reserve: float = 2000.0
-    """Calls the filling of new cells leaves for the forecasts of the later runs of the day."""
+    openmeteo_reserve: float = 2500.0
+    """Calls the filling of new cells leaves for the forecasts of the later runs of the day (three
+    runs after the first one of the UTC day, about 765 weighted calls each)."""
     openmeteo_api_key: str | None = None
     """Key of a paid Open-Meteo plan (customer endpoints), if any."""
     debit_pages_per_run: int = 200
@@ -129,7 +130,7 @@ def load_settings(env: Mapping[str, str] = os.environ) -> Settings:
         trusted_proxy=_flag(env.get("DC_TRUSTED_PROXY"), default=True),
         openmeteo_daily_calls=float(env.get("DC_OPENMETEO_DAILY_CALLS", "9000")),
         openmeteo_seconds_per_call=float(env.get("DC_OPENMETEO_SECONDS_PER_CALL", "0.75")),
-        openmeteo_reserve=float(env.get("DC_OPENMETEO_RESERVE", "2000")),
+        openmeteo_reserve=float(env.get("DC_OPENMETEO_RESERVE", "2500")),
         openmeteo_api_key=env.get("DC_OPENMETEO_API_KEY") or None,
         debit_pages_per_run=int(env.get("DC_DEBIT_PAGES_PER_RUN", "200")),
         forecast_max_age_h=float(env.get("DC_FORECAST_MAX_AGE_H", "5")),

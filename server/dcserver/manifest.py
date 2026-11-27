@@ -2,11 +2,12 @@
 
 `v1/manifest.json` is an envelope `{format, keyId, payload, signature}` where `payload` is the base64
 of the UTF-8 JSON below and `signature` its ECDSA P-256 signature. The app ignores a manifest whose
-signature fails or whose `sequence` is lower than the last one it accepted.
+signature fails or whose `sequence` is lower than the last one it accepted, so the sequence is at
+least the publication time in epoch seconds (see [next_sequence]).
 
 Payload (schema 1):
     {
-      "schema": 1, "sequence": 12, "generatedAt": "2026-11-25T02:41:07Z",
+      "schema": 1, "sequence": 1795745000, "generatedAt": "2026-11-25T02:41:07Z",
       "minVersionCode": 0,                      # older apps are asked to update
       "features": {"communityTracks": true, "catalogUpdates": true, "serverPredictions": true, "canyonProposals": true},
       "messages": [{"id": "...", "level": "info|warning", "minVersionCode": 0,
@@ -27,6 +28,7 @@ from __future__ import annotations
 
 import base64
 import json
+import time
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -109,14 +111,22 @@ def build_envelope(state: dict[str, Any], key_path: Path) -> dict[str, Any]:
     }
 
 
-def publish(settings: Settings, state: dict[str, Any]) -> dict[str, Any]:
+def next_sequence(previous: int, now: float | None = None) -> int:
+    """The sequence of the next manifest: above the previous one, and never below the current time
+    in epoch seconds. A state lost or restored from an older backup then still publishes a manifest
+    the phones accept (they ignore any sequence lower than the last one they saw, forever)."""
+    now = time.time() if now is None else now
+    return max(int(previous) + 1, int(now))
+
+
+def publish(settings: Settings, state: dict[str, Any], now: float | None = None) -> dict[str, Any]:
     """Bumps the sequence, signs and writes the manifest, then saves the state. Call under the
     publication lock."""
     if settings.signing_key_path is None:
         raise RuntimeError("DC_SIGNING_KEY is not set: the manifest cannot be signed")
     validate_state(state)
     state = dict(state)
-    state["sequence"] = int(state.get("sequence", 0)) + 1
+    state["sequence"] = next_sequence(int(state.get("sequence", 0)), now)
     state["generatedAt"] = utc_now_iso()
     envelope = build_envelope(state, settings.signing_key_path)
     atomic_write_bytes(settings.v1_dir / "manifest.json", json.dumps(envelope).encode("utf-8"))

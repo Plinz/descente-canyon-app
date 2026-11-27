@@ -28,11 +28,12 @@ def test_key_file_is_private_and_never_overwritten(settings):
 
 def test_publish_signs_and_bumps_the_sequence(settings, public_key):
     state = manifest.load_state(settings)
-    first = manifest.publish(settings, state)
-    second = manifest.publish(settings, manifest.load_state(settings))
-    assert (first["sequence"], second["sequence"]) == (1, 2)
+    first = manifest.publish(settings, state, now=1_795_745_000.4)
+    # Twice in the same second: still one more.
+    second = manifest.publish(settings, manifest.load_state(settings), now=1_795_745_000.9)
+    assert (first["sequence"], second["sequence"]) == (1_795_745_000, 1_795_745_001)
     payload = manifest.read_published_payload(settings.v1_dir, public_key)
-    assert payload["sequence"] == 2
+    assert payload["sequence"] == 1_795_745_001
     assert payload["features"] == {"communityTracks": True, "catalogUpdates": True, "serverPredictions": True, "canyonProposals": True}
     envelope = json.loads((settings.v1_dir / "manifest.json").read_text())
     assert envelope["keyId"] == signing.key_id(public_key)
@@ -61,3 +62,16 @@ def test_files_are_content_addressed_and_pruned(settings, tmp_path):
     assert prune_files(settings.v1_dir, {entry["path"]}, min_age_s=3600) == []
     assert prune_files(settings.v1_dir, {entry["path"]}, min_age_s=0) == [old["path"]]
     assert (settings.v1_dir / entry["path"]).exists()
+
+
+def test_a_lost_state_still_publishes_a_sequence_the_phones_accept(settings, public_key):
+    """Phones ignore a lower sequence forever: after a state lost or restored from an older backup,
+    the next manifest must still be above everything published before."""
+    published = manifest.publish(settings, manifest.load_state(settings), now=1_795_745_000)
+    for _ in range(3):
+        published = manifest.publish(settings, manifest.load_state(settings), now=1_795_745_000)
+    settings.manifest_state_path.unlink()
+    restored = manifest.publish(settings, manifest.load_state(settings), now=1_795_745_060)
+    assert restored["sequence"] > published["sequence"]
+    # A clock set back does not make the sequence go down either.
+    assert manifest.publish(settings, manifest.load_state(settings), now=1_000)["sequence"] == restored["sequence"] + 1
