@@ -133,6 +133,17 @@ object TestTags {
 
     fun bottomNavItem(name: String): String = "bottom_nav_$name"
 
+    fun hint(name: String): String = "hint_$name"
+
+    fun firstStep(name: String): String = "first_step_$name"
+
+    const val HOME_FIRST_STEPS = "home_first_steps"
+    const val HOME_WHATS_NEW = "home_whats_new"
+    const val WELCOME_START = "welcome_start"
+    const val WELCOME_SKIP = "welcome_skip"
+    const val SETTINGS_REPLAY_HINTS = "settings_replay_hints"
+    const val OUTING_PERMISSIONS_CONTINUE = "outing_permissions_continue"
+
     fun pendingDebitDelete(id: Long): String = "pending_debit_delete_$id"
 
     fun pendingDebitResend(id: Long) = "pending_debit_resend_$id"

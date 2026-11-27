@@ -89,6 +89,7 @@ import fr.descentecanyon.app.domain.model.DaylightCheck
 import fr.descentecanyon.app.domain.model.DriveTime
 import fr.descentecanyon.app.domain.model.DriveTimeSource
 import fr.descentecanyon.app.domain.model.GroupLevel
+import fr.descentecanyon.app.domain.model.Hint
 import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingSettings
@@ -107,6 +108,7 @@ import fr.descentecanyon.app.ui.design.DcDropdownMenu
 import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.design.DcTimePickerDialog
 import fr.descentecanyon.app.ui.design.LocalDcColors
+import fr.descentecanyon.app.ui.onboarding.DcHint
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.LocalDateTime
 import java.time.Month
@@ -538,38 +540,44 @@ internal fun SummaryCard(state: OutingPlanUiState, timeFormatter: DateTimeFormat
             }
             KeyTimeRow(stringResource(R.string.outing_step_back), schedule.backAtCar, timeFormatter, emphasized = true)
             state.alertAt?.let { alertAt ->
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable(onClick = onAlertClick)
-                        .testTag(TestTags.OUTING_ALERT_ROW),
-                    verticalAlignment = Alignment.CenterVertically,
+                DcHint(
+                    hint = Hint.PLAN_ALERT,
+                    title = stringResource(R.string.outing_summary_alert),
+                    text = stringResource(R.string.hint_plan_alert_body),
                 ) {
-                    Text(
-                        alertAt.toLocalTime().format(timeFormatter),
-                        style = MaterialTheme.typography.bodyMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.error,
-                        modifier = Modifier.width(TIME_COLUMN),
-                    )
-                    Column(modifier = Modifier.weight(1f)) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(onClick = onAlertClick)
+                            .testTag(TestTags.OUTING_ALERT_ROW),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
                         Text(
-                            stringResource(R.string.outing_summary_alert),
+                            alertAt.toLocalTime().format(timeFormatter),
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.width(TIME_COLUMN),
                         )
-                        Text(
-                            alertDetail(state),
-                            style = MaterialTheme.typography.bodySmall,
-                            color = colors.textSecondary,
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                stringResource(R.string.outing_summary_alert),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Bold,
+                            )
+                            Text(
+                                alertDetail(state),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = colors.textSecondary,
+                            )
+                        }
+                        Icon(
+                            Icons.Default.Edit,
+                            contentDescription = stringResource(R.string.outing_alert_margin),
+                            tint = colors.textMuted,
+                            modifier = Modifier.size(18.dp),
                         )
                     }
-                    Icon(
-                        Icons.Default.Edit,
-                        contentDescription = stringResource(R.string.outing_alert_margin),
-                        tint = colors.textMuted,
-                        modifier = Modifier.size(18.dp),
-                    )
                 }
             }
             HorizontalDivider(color = colors.borderSubtle)

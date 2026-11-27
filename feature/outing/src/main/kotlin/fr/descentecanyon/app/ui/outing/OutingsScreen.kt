@@ -59,6 +59,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.Hint
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.LogbookStats
 import fr.descentecanyon.app.domain.model.Place
@@ -81,6 +82,7 @@ import fr.descentecanyon.app.ui.design.DcSectionHeader
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
+import fr.descentecanyon.app.ui.onboarding.DcHint
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.Clock
 import java.time.LocalDate
@@ -223,9 +225,16 @@ fun OutingsScreen(
                         Icon(Icons.Default.Hiking, contentDescription = null, modifier = Modifier.size(18.dp))
                         Text(stringResource(R.string.outings_new_outing), modifier = Modifier.padding(start = 8.dp))
                     }
-                    OutlinedButton(onClick = onNewStay, modifier = Modifier.testTag(TestTags.OUTINGS_NEW_STAY)) {
-                        Icon(Icons.Default.CalendarMonth, contentDescription = null, modifier = Modifier.size(18.dp))
-                        Text(stringResource(R.string.outings_stay_action), modifier = Modifier.padding(start = 8.dp))
+                    DcHint(
+                        hint = Hint.OUTINGS_STAY,
+                        title = stringResource(R.string.outings_stay_action),
+                        text = stringResource(R.string.hint_outings_stay_body),
+                        below = true,
+                    ) {
+                        OutlinedButton(onClick = onNewStay, modifier = Modifier.testTag(TestTags.OUTINGS_NEW_STAY)) {
+                            Icon(Icons.Default.CalendarMonth, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Text(stringResource(R.string.outings_stay_action), modifier = Modifier.padding(start = 8.dp))
+                        }
                     }
                 }
             }

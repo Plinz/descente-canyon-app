@@ -515,6 +515,8 @@ dependencies {
 
     // Hilt (dependency injection)
     implementation(libs.hilt.android)
+    // The activity holds the onboarding view model.
+    implementation(libs.androidx.hilt.lifecycle.viewmodel.compose)
     ksp(libs.hilt.android.compiler)
 
     // OkHttp (single HTTP stack: site, JSON APIs, images, map tiles)

@@ -20,6 +20,7 @@ import fr.descentecanyon.app.data.repository.ForumUserRepositoryImpl
 import fr.descentecanyon.app.data.repository.InterestRatingRepositoryImpl
 import fr.descentecanyon.app.data.repository.LogbookRepositoryImpl
 import fr.descentecanyon.app.data.repository.NotificationCenterRepositoryImpl
+import fr.descentecanyon.app.data.repository.OnboardingRepositoryImpl
 import fr.descentecanyon.app.data.repository.OutingPreferencesRepositoryImpl
 import fr.descentecanyon.app.data.repository.OutingRepositoryImpl
 import fr.descentecanyon.app.data.repository.PersonalDataRepositoryImpl
@@ -47,6 +48,7 @@ import fr.descentecanyon.app.domain.repository.ForumUserRepository
 import fr.descentecanyon.app.domain.repository.InterestRatingRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
+import fr.descentecanyon.app.domain.repository.OnboardingRepository
 import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PersonalDataRepository
@@ -131,6 +133,10 @@ abstract class RepositoryModule {
     @Binds
     @Singleton
     abstract fun bindPreferencesRepository(impl: PreferencesRepositoryImpl): PreferencesRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindOnboardingRepository(impl: OnboardingRepositoryImpl): OnboardingRepository
 
     @Binds
     @Singleton

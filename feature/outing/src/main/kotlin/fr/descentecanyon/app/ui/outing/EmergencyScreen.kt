@@ -80,6 +80,7 @@ import fr.descentecanyon.app.domain.model.CompassDirection
 import fr.descentecanyon.app.domain.model.EmergencyNumber
 import fr.descentecanyon.app.domain.model.EmergencyNumbers
 import fr.descentecanyon.app.domain.model.EmergencyService
+import fr.descentecanyon.app.domain.model.FirstStep
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointSource
 import fr.descentecanyon.app.domain.model.GeoPointType
@@ -95,6 +96,7 @@ import fr.descentecanyon.app.ui.location.hasLocationPermission
 import fr.descentecanyon.app.ui.location.hasPreciseLocationPermission
 import fr.descentecanyon.app.ui.location.observeDeviceFixes
 import fr.descentecanyon.app.ui.location.requestLocationSettings
+import fr.descentecanyon.app.ui.onboarding.LocalOnboarding
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.Instant
 import java.time.ZoneId
@@ -111,6 +113,8 @@ import kotlin.math.roundToInt
 @Composable
 fun EmergencyScreen(onBackClick: () -> Unit, modifier: Modifier = Modifier, viewModel: EmergencyViewModel = hiltViewModel()) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val onboarding = LocalOnboarding.current
+    LaunchedEffect(Unit) { onboarding.markStepDone(FirstStep.SEE_EMERGENCY) }
     val context = LocalContext.current
     val resources = LocalResources.current
     val locale = LocalLocale.current.platformLocale

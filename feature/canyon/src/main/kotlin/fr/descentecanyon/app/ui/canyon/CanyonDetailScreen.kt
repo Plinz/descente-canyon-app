@@ -85,6 +85,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.Canyon
+import fr.descentecanyon.app.domain.model.FirstStep
+import fr.descentecanyon.app.domain.model.Hint
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.perf.PerformanceTrace
@@ -100,6 +102,8 @@ import fr.descentecanyon.app.ui.design.DcDropdownMenu
 import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
+import fr.descentecanyon.app.ui.onboarding.DcHint
+import fr.descentecanyon.app.ui.onboarding.LocalOnboarding
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.LocalDate
 import java.time.ZoneId
@@ -147,8 +151,10 @@ fun CanyonDetailScreen(
         contract = ActivityResultContracts.RequestPermission(),
     ) { viewModel.toggleDebitNotifications() }
 
+    val onboarding = LocalOnboarding.current
     LaunchedEffect(canyonId) {
         PerformanceTrace.logEvent("canyon_detail_screen_visible", "canyonId" to canyonId)
+        onboarding.markStepDone(FirstStep.OPEN_CANYON)
     }
 
     LaunchedEffect(refreshDebitsAfterSubmission) {
@@ -366,36 +372,53 @@ private fun CanyonActionBar(planLabel: String, onPlan: () -> Unit, onReportDebit
             val labelStyle = MaterialTheme.typography.labelLarge
             // Narrow phones: less padding than a default button, and the labels shrink before they are cut.
             val padding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
-            Button(
-                onClick = onPlan,
-                contentPadding = padding,
-                modifier = Modifier.weight(1f).testTag(TestTags.DETAIL_PLAN_OUTING),
-            ) {
-                Icon(Icons.Default.Hiking, contentDescription = null, modifier = Modifier.size(18.dp))
-                Text(
-                    text = planLabel,
-                    style = labelStyle,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = labelStyle.fontSize),
-                    modifier = Modifier.padding(start = 6.dp),
-                )
+            // Each weight on a box of its own: the hint around a button does not pass it to the row.
+            Box(modifier = Modifier.weight(1f)) {
+                DcHint(
+                    hint = Hint.CANYON_PLAN,
+                    title = stringResource(R.string.outing_plan_action),
+                    text = stringResource(R.string.hint_canyon_plan_body),
+                ) {
+                    Button(
+                        onClick = onPlan,
+                        contentPadding = padding,
+                        modifier = Modifier.fillMaxWidth().testTag(TestTags.DETAIL_PLAN_OUTING),
+                    ) {
+                        Icon(Icons.Default.Hiking, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Text(
+                            text = planLabel,
+                            style = labelStyle,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = labelStyle.fontSize),
+                            modifier = Modifier.padding(start = 6.dp),
+                        )
+                    }
+                }
             }
             onReportDebit?.let { report ->
-                OutlinedButton(
-                    onClick = report,
-                    contentPadding = padding,
-                    modifier = Modifier.weight(1f).testTag(TestTags.DETAIL_REPORT_DEBIT_BUTTON),
-                ) {
-                    Icon(Icons.Default.WaterDrop, contentDescription = null, modifier = Modifier.size(18.dp))
-                    Text(
-                        text = stringResource(R.string.canyon_action_report_debit),
-                        style = labelStyle,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = labelStyle.fontSize),
-                        modifier = Modifier.padding(start = 6.dp),
-                    )
+                Box(modifier = Modifier.weight(1f)) {
+                    DcHint(
+                        hint = Hint.CANYON_REPORT,
+                        title = stringResource(R.string.canyon_action_report_debit),
+                        text = stringResource(R.string.hint_canyon_report_body),
+                    ) {
+                        OutlinedButton(
+                            onClick = report,
+                            contentPadding = padding,
+                            modifier = Modifier.fillMaxWidth().testTag(TestTags.DETAIL_REPORT_DEBIT_BUTTON),
+                        ) {
+                            Icon(Icons.Default.WaterDrop, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Text(
+                                text = stringResource(R.string.canyon_action_report_debit),
+                                style = labelStyle,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = labelStyle.fontSize),
+                                modifier = Modifier.padding(start = 6.dp),
+                            )
+                        }
+                    }
                 }
             }
         }

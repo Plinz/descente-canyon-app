@@ -117,17 +117,62 @@ fun OutingPlanScreen(
         }
         scope.launch { snackbarHostState.showSnackbar(message) }
     }
+    // Explained once before Android asks: the notifications, then the exact alarms (its settings page).
+    var showPermissionPrimer by rememberSaveable { mutableStateOf(false) }
+    var exactAlarmsAfterNotifications by rememberSaveable { mutableStateOf(false) }
+    var exactAlarmsExplained by rememberSaveable { mutableStateOf(false) }
     val activationPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
         confirmTracking()
+        if (exactAlarmsAfterNotifications) {
+            exactAlarmsAfterNotifications = false
+            if (context.needsExactAlarmPermission()) context.openExactAlarmSettings()
+        }
     }
 
     fun activate() {
-        viewModel.confirm()
-        if (context.needsNotificationPermission()) {
-            activationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        } else {
-            confirmTracking()
+        if (context.needsNotificationPermission() || context.needsExactAlarmPermission()) {
+            showPermissionPrimer = true
+            return
         }
+        viewModel.confirm()
+        confirmTracking()
+    }
+
+    fun activateAfterPrimer(withPermissions: Boolean) {
+        showPermissionPrimer = false
+        exactAlarmsExplained = true
+        viewModel.confirm()
+        when {
+            !withPermissions -> confirmTracking()
+
+            context.needsNotificationPermission() -> {
+                exactAlarmsAfterNotifications = context.needsExactAlarmPermission()
+                activationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+
+            else -> {
+                confirmTracking()
+                if (context.needsExactAlarmPermission()) context.openExactAlarmSettings()
+            }
+        }
+    }
+    if (showPermissionPrimer) {
+        AlertDialog(
+            onDismissRequest = { showPermissionPrimer = false },
+            title = { Text(stringResource(R.string.outing_permissions_title)) },
+            text = { Text(stringResource(R.string.outing_permissions_body)) },
+            confirmButton = {
+                TextButton(
+                    onClick = { activateAfterPrimer(withPermissions = true) },
+                    modifier = Modifier.testTag(TestTags.OUTING_PERMISSIONS_CONTINUE),
+                ) { Text(stringResource(R.string.outing_permissions_continue)) }
+            },
+            dismissButton = {
+                TextButton(onClick = { activateAfterPrimer(withPermissions = false) }) {
+                    Text(stringResource(R.string.outing_permissions_later))
+                }
+            },
+        )
     }
 
     val shareTitle = stringResource(R.string.outing_message_share_title)
@@ -148,7 +193,7 @@ fun OutingPlanScreen(
     val isPlanned = state.savedOuting != null
     LaunchedEffect(isPlanned, state.isLoading) {
         if (state.isLoading) return@LaunchedEffect
-        if (wasPlanned == false && isPlanned && context.needsExactAlarmPermission()) askExactAlarms = true
+        if (wasPlanned == false && isPlanned && context.needsExactAlarmPermission() && !exactAlarmsExplained) askExactAlarms = true
         wasPlanned = isPlanned
     }
     if (askExactAlarms) {

@@ -79,6 +79,7 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.AuthState
 import fr.descentecanyon.app.domain.model.ContributorIdentity
 import fr.descentecanyon.app.domain.model.ForumUser
+import fr.descentecanyon.app.domain.model.Hint
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.ui.auth.AuthViewModel
 import fr.descentecanyon.app.ui.auth.LoginDialog
@@ -90,6 +91,7 @@ import fr.descentecanyon.app.ui.design.DcSectionHeader
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
+import fr.descentecanyon.app.ui.onboarding.DcHint
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.LocalDate
 import java.time.ZoneId
@@ -242,22 +244,29 @@ fun MyAccountScreen(
                         modifier = Modifier.testTag(TestTags.MY_ACCOUNT_FOLLOWS),
                     ) {
                         val follows = state.follows
-                        AccountRow(
-                            icon = Icons.Default.Notifications,
-                            title = stringResource(R.string.notifications_screen_title),
-                            subtitle = if (follows.total > 0) {
-                                stringResource(
-                                    R.string.account_follows_summary,
-                                    follows.canyons,
-                                    follows.forumCategories,
-                                    follows.forumThreads,
-                                    follows.members,
-                                )
-                            } else {
-                                stringResource(R.string.account_follows_none)
-                            },
-                            onClick = onOpenNotifications,
-                        )
+                        DcHint(
+                            hint = Hint.ME_FOLLOWS,
+                            title = stringResource(R.string.account_section_follows),
+                            text = stringResource(R.string.hint_me_follows_body),
+                            below = true,
+                        ) {
+                            AccountRow(
+                                icon = Icons.Default.Notifications,
+                                title = stringResource(R.string.notifications_screen_title),
+                                subtitle = if (follows.total > 0) {
+                                    stringResource(
+                                        R.string.account_follows_summary,
+                                        follows.canyons,
+                                        follows.forumCategories,
+                                        follows.forumThreads,
+                                        follows.members,
+                                    )
+                                } else {
+                                    stringResource(R.string.account_follows_none)
+                                },
+                                onClick = onOpenNotifications,
+                            )
+                        }
                     }
                 }
                 // Shown while proposals can be sent, as long as earlier ones are listed, and while reports wait.

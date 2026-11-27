@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.provider.Settings
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
+import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Palette
@@ -59,6 +61,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -79,6 +82,8 @@ import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
+import fr.descentecanyon.app.ui.onboarding.LocalOnboarding
+import fr.descentecanyon.app.ui.test.TestTags
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -185,6 +190,23 @@ fun SettingsScreen(
                                 onEnabledChange = viewModel::setServerEnabled,
                                 onMobileDataChange = viewModel::setCatalogOnMobileData,
                                 onCheckNow = viewModel::checkServerNow,
+                            )
+                        }
+                    }
+                }
+                item {
+                    SettingsSection(title = stringResource(R.string.settings_section_help)) {
+                        val onboarding = LocalOnboarding.current
+                        val replayed = stringResource(R.string.settings_replay_hints_done)
+                        Box(modifier = Modifier.testTag(TestTags.SETTINGS_REPLAY_HINTS)) {
+                            SettingsLinkRow(
+                                icon = Icons.Default.Lightbulb,
+                                title = stringResource(R.string.settings_replay_hints),
+                                subtitle = stringResource(R.string.settings_replay_hints_hint),
+                                onClick = {
+                                    onboarding.replay()
+                                    Toast.makeText(context, replayed, Toast.LENGTH_SHORT).show()
+                                },
                             )
                         }
                     }

@@ -111,6 +111,11 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                     if (!AppCanyons.isAppCanyon(canyonId)) navController.navigateSingleTop(Screen.DebitForm(canyonId))
                 },
                 onEmergencyClick = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.Emergency(canyonId)) },
+                onPrepareOuting = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingCanyonPicker()) },
+                // Another tab: navigated to like from the bottom bar, so "back" returns home.
+                onOpenMe = dropUnlessResumed {
+                    navController.navigate(Screen.MyAccount) { applyAppRootNavigation(navController.graph.findStartDestination().id) }
+                },
                 contentPadding = topLevelContentPadding,
             )
         }

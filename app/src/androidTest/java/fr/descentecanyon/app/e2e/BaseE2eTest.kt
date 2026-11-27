@@ -12,6 +12,7 @@ import fr.descentecanyon.app.domain.model.GearListSettings
 import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.OutingSettings
 import fr.descentecanyon.app.domain.repository.AccidentReportRepository
+import fr.descentecanyon.app.domain.repository.OnboardingRepository
 import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PlaceRepository
@@ -56,6 +57,9 @@ abstract class BaseE2eTest {
     @Inject
     lateinit var accidentReportRepository: AccidentReportRepository
 
+    @Inject
+    lateinit var onboardingRepository: OnboardingRepository
+
     private var scenario: ActivityScenario<MainActivity>? = null
 
     @Before
@@ -67,6 +71,8 @@ abstract class BaseE2eTest {
             preferencesRepository.setLatestReportsZone(null)
             preferencesRepository.setExploreMapMode(false)
             preferencesRepository.setSelectedHomeFeed(HomeFeedType.DEBITS)
+            // No welcome, first steps, news nor hint over the screens the tests drive.
+            onboardingRepository.skipAll()
             outingRepository.clear()
             placeRepository.observeAll().first().forEach { placeRepository.delete(it.id) }
             stayRepository.observeAll().first().forEach { stayRepository.delete(it.id) }

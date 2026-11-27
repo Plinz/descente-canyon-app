@@ -40,6 +40,7 @@ import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.Debit
+import fr.descentecanyon.app.domain.model.FirstStep
 import fr.descentecanyon.app.domain.model.ForumActiveTopic
 import fr.descentecanyon.app.domain.model.ForumCategory
 import fr.descentecanyon.app.domain.model.HomeFeedType
@@ -51,6 +52,7 @@ import fr.descentecanyon.app.ui.components.EmergencyIconButton
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
+import fr.descentecanyon.app.ui.onboarding.LocalOnboarding
 import fr.descentecanyon.app.ui.test.TestTags
 import kotlinx.coroutines.flow.distinctUntilChanged
 
@@ -67,12 +69,16 @@ fun HomeScreen(
     onStayClick: (stayId: Long) -> Unit = {},
     onOutingEnded: (Int) -> Unit = {},
     onEmergencyClick: (Int) -> Unit = {},
+    /** The search, to choose the canyon of a new outing (first steps). */
+    onPrepareOuting: () -> Unit = {},
+    onOpenMe: () -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     homeViewModel: HomeViewModel = hiltViewModel(),
     serverNoticesViewModel: ServerNoticesViewModel = hiltViewModel(),
 ) {
     val homeState by homeViewModel.uiState.collectAsStateWithLifecycle()
+    val onboarding = LocalOnboarding.current
     val serverNotices by serverNoticesViewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val donationUrl = stringResource(R.string.support_donation_url)
@@ -179,6 +185,32 @@ fun HomeScreen(
                             outings = homeState.upcomingOutings,
                             onOpen = { outing -> onOutingClick(outing.canyonId, outing.id) },
                             onSeeAll = onOutingsClick,
+                        )
+                    }
+                }
+                // A new install: the first things to try; an update: what changed.
+                if (onboarding.state.showFirstSteps) {
+                    item(key = "first_steps") {
+                        FirstStepsCard(
+                            stepsDone = onboarding.state.stepsDone,
+                            onStep = { step ->
+                                when (step) {
+                                    FirstStep.OPEN_CANYON, FirstStep.ADD_FAVORITE -> onQuickSearchClick()
+                                    FirstStep.PLAN_OUTING -> onPrepareOuting()
+                                    FirstStep.SEE_EMERGENCY -> onEmergencyClick(0)
+                                }
+                            },
+                            onDismiss = onboarding::dismissFirstSteps,
+                        )
+                    }
+                }
+                if (onboarding.state.showWhatsNew) {
+                    item(key = "whats_new") {
+                        WhatsNewCard(
+                            onOpenExplorer = onQuickSearchClick,
+                            onOpenOutings = onOutingsClick,
+                            onOpenMe = onOpenMe,
+                            onDismiss = onboarding::dismissWhatsNew,
                         )
                     }
                 }

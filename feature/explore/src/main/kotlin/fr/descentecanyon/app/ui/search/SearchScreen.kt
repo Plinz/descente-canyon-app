@@ -88,6 +88,7 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonSearchItem
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.DriveTimeSource
+import fr.descentecanyon.app.domain.model.Hint
 import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
@@ -117,6 +118,7 @@ import fr.descentecanyon.app.ui.location.loadCurrentDeviceLocation
 import fr.descentecanyon.app.ui.location.requestLocationSettings
 import fr.descentecanyon.app.ui.map.ExploreMap
 import fr.descentecanyon.app.ui.map.MapLibreView
+import fr.descentecanyon.app.ui.onboarding.DcHint
 import fr.descentecanyon.app.ui.test.TestTags
 import kotlin.math.roundToInt
 
@@ -261,7 +263,17 @@ fun SearchScreen(
     val screenHorizontalPadding = rememberDcScreenHorizontalPadding()
 
     val modeToggle: @Composable () -> Unit = {
-        ExploreModeToggle(mode = uiState.resultViewMode, onModeSelected = viewModel::onResultViewModeChanged)
+        val toggle = @Composable { ExploreModeToggle(mode = uiState.resultViewMode, onModeSelected = viewModel::onResultViewModeChanged) }
+        if (viewModel.isPick) {
+            toggle()
+        } else {
+            DcHint(
+                hint = Hint.EXPLORE_MODE,
+                title = stringResource(R.string.hint_explore_mode_title),
+                text = stringResource(R.string.hint_explore_mode_body),
+                below = true,
+            ) { toggle() }
+        }
     }
 
     Column(modifier = modifier.fillMaxSize().background(dcColors.backgroundBase)) {
