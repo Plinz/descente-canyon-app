@@ -4,6 +4,7 @@ package fr.descentecanyon.app.domain.model
 enum class Hint {
     CANYON_PLAN,
     CANYON_REPORT,
+    CANYON_MAP_LAYERS,
     EXPLORE_MODE,
     OUTINGS_STAY,
     PLAN_ALERT,

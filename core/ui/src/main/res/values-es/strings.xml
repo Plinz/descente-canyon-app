@@ -404,13 +404,10 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="favorite_remove_error">No se pudo eliminar este favorito.</string>
     <string name="map_user_position_title">Tu posición</string>
     <string name="map_watershed">Cuenca hidrográfica</string>
-    <string name="map_hide_watershed">Ocultar la cuenca</string>
     <string name="map_my_location">Mi ubicación</string>
     <string name="map_heading_unavailable">La brújula no está disponible en este dispositivo.</string>
     <string name="map_location_permission_denied">El mapa sigue disponible sin tu ubicación.</string>
     <string name="map_location_settings_unavailable">Activa la ubicación para usar esta función.</string>
-    <string name="map_points_panel_title">Puntos del barranco</string>
-    <string name="map_points_panel_count">%1$d punto(s) GPS</string>
     <string name="navigate_chooser_title">Elegir una aplicación de navegación</string>
     <string name="map_navigation_unavailable">No hay ninguna aplicación de navegación disponible.</string>
     <string name="startup_initialization_error">No se pudo inicializar</string>
@@ -1617,7 +1614,13 @@ Busca un barranco y añádelo a tus favoritos.</string>
         <item quantity="other">%1$d tracks descartados por los votos</item>
     </plurals>
     <string name="map_tracks_show_discredited">Mostrar los tracks descartados</string>
-    <string name="map_tracks_close">Cerrar la leyenda de los tracks</string>
+    <string name="map_layers">Capas</string>
+    <string name="map_layers_close">Cerrar las capas</string>
+    <string name="map_recenter_canyon">Volver al barranco</string>
+    <string name="map_point_distance">A %1$s de ti</string>
+    <string name="map_point_copy">Copiar</string>
+    <string name="map_watershed_area">Superficie: %1$s</string>
+    <string name="hint_canyon_map_layers_body">Tracks GPS compartidos y cuenca: muéstralos u ocúltalos aquí.</string>
     <plurals name="tracks_count">
         <item quantity="one">%1$d track</item>
         <item quantity="many">%1$d tracks</item>

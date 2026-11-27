@@ -55,6 +55,8 @@ import fr.descentecanyon.app.ui.location.loadCurrentDeviceLocation
 import fr.descentecanyon.app.ui.map.MapCameraState
 import fr.descentecanyon.app.ui.map.MapFocusRequest
 import fr.descentecanyon.app.ui.map.MapLibreView
+import fr.descentecanyon.app.ui.map.MapPoint
+import fr.descentecanyon.app.ui.map.PointMarker
 import fr.descentecanyon.app.ui.test.TestTags
 import java.util.Locale
 
@@ -123,6 +125,13 @@ internal fun SheetPointPicker(
         )
     }
     var center by remember { mutableStateOf(initialCamera) }
+    val otherPoints = remember(otherMarkers) {
+        otherMarkers.mapNotNull { marker ->
+            val latitude = marker.latitude ?: return@mapNotNull null
+            val longitude = marker.longitude ?: return@mapNotNull null
+            MapPoint(marker.id, latitude, longitude, marker.markerType ?: GeoPointType.UNKNOWN, marker.nom)
+        }
+    }
     var coordinates by rememberSaveable { mutableStateOf("") }
     var position by remember { mutableStateOf<Pair<Double, Double>?>(null) }
     var locationRequest by remember { mutableIntStateOf(0) }
@@ -171,12 +180,19 @@ internal fun SheetPointPicker(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     SHEET_POINT_TYPES.forEach { option ->
-                        FilterChip(selected = option == type, onClick = { type = option }, label = { Text(pointTypeLabel(option)) })
+                        FilterChip(
+                            selected = option == type,
+                            onClick = { type = option },
+                            label = { Text(pointTypeLabel(option)) },
+                            leadingIcon = { PointMarker(type = option, size = 20.dp) },
+                        )
                     }
                 }
                 Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
                     MapLibreView(
-                        markers = otherMarkers,
+                        markers = emptyList(),
+                        // The other points of the sheet, drawn as on the canyon map.
+                        points = otherPoints,
                         userLatitude = position?.first,
                         userLongitude = position?.second,
                         onMarkerClick = {},

@@ -404,13 +404,10 @@ Search for a canyon and add it to your favorites.</string>
     <string name="favorite_remove_error">Could not remove this favorite.</string>
     <string name="map_user_position_title">Your position</string>
     <string name="map_watershed">Watershed</string>
-    <string name="map_hide_watershed">Hide watershed</string>
     <string name="map_my_location">My location</string>
     <string name="map_heading_unavailable">The compass is not available on this device.</string>
     <string name="map_location_permission_denied">The map remains available without your position.</string>
     <string name="map_location_settings_unavailable">Enable location to use this feature.</string>
-    <string name="map_points_panel_title">Canyon points</string>
-    <string name="map_points_panel_count">%1$d GPS point(s)</string>
     <string name="navigate_chooser_title">Choose a navigation app</string>
     <string name="map_navigation_unavailable">No navigation app is available.</string>
     <string name="startup_initialization_error">Initialization failed</string>
@@ -1577,7 +1574,13 @@ Search for a canyon and add it to your favorites.</string>
         <item quantity="other">%1$d tracks set aside by votes</item>
     </plurals>
     <string name="map_tracks_show_discredited">Show the tracks set aside</string>
-    <string name="map_tracks_close">Close the track legend</string>
+    <string name="map_layers">Layers</string>
+    <string name="map_layers_close">Close the layers</string>
+    <string name="map_recenter_canyon">Back to the canyon</string>
+    <string name="map_point_distance">%1$s from you</string>
+    <string name="map_point_copy">Copy</string>
+    <string name="map_watershed_area">Area: %1$s</string>
+    <string name="hint_canyon_map_layers_body">Shared GPS tracks and watershed: show or hide them here.</string>
     <plurals name="tracks_count">
         <item quantity="one">%1$d track</item>
         <item quantity="other">%1$d tracks</item>

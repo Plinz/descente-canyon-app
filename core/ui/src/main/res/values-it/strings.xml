@@ -404,13 +404,10 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="favorite_remove_error">Impossibile rimuovere questo preferito.</string>
     <string name="map_user_position_title">La tua posizione</string>
     <string name="map_watershed">Bacino idrografico</string>
-    <string name="map_hide_watershed">Nascondi il bacino</string>
     <string name="map_my_location">La mia posizione</string>
     <string name="map_heading_unavailable">La bussola non è disponibile su questo dispositivo.</string>
     <string name="map_location_permission_denied">La mappa resta disponibile senza la tua posizione.</string>
     <string name="map_location_settings_unavailable">Attiva la localizzazione per usare questa funzione.</string>
-    <string name="map_points_panel_title">Punti del canyon</string>
-    <string name="map_points_panel_count">%1$d punto/i GPS</string>
     <string name="navigate_chooser_title">Scegli un’app di navigazione</string>
     <string name="map_navigation_unavailable">Nessuna app di navigazione disponibile.</string>
     <string name="startup_initialization_error">Inizializzazione impossibile</string>
@@ -1617,7 +1614,13 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
         <item quantity="other">%1$d tracce scartate dai voti</item>
     </plurals>
     <string name="map_tracks_show_discredited">Mostra le tracce scartate</string>
-    <string name="map_tracks_close">Chiudi la legenda delle tracce</string>
+    <string name="map_layers">Livelli</string>
+    <string name="map_layers_close">Chiudi i livelli</string>
+    <string name="map_recenter_canyon">Torna al canyon</string>
+    <string name="map_point_distance">A %1$s da te</string>
+    <string name="map_point_copy">Copia</string>
+    <string name="map_watershed_area">Superficie: %1$s</string>
+    <string name="hint_canyon_map_layers_body">Tracce GPS condivise e bacino: mostrale o nascondile qui.</string>
     <plurals name="tracks_count">
         <item quantity="one">%1$d traccia</item>
         <item quantity="many">%1$d tracce</item>

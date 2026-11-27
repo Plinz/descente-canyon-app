@@ -404,13 +404,10 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="favorite_remove_error">Dieser Favorit konnte nicht entfernt werden.</string>
     <string name="map_user_position_title">Deine Position</string>
     <string name="map_watershed">Einzugsgebiet</string>
-    <string name="map_hide_watershed">Einzugsgebiet ausblenden</string>
     <string name="map_my_location">Mein Standort</string>
     <string name="map_heading_unavailable">Der Kompass ist auf diesem Gerät nicht verfügbar.</string>
     <string name="map_location_permission_denied">Die Karte bleibt auch ohne deinen Standort verfügbar.</string>
     <string name="map_location_settings_unavailable">Aktiviere die Standortbestimmung, um diese Funktion zu verwenden.</string>
-    <string name="map_points_panel_title">Canyon-Punkte</string>
-    <string name="map_points_panel_count">%1$d GPS-Punkt(e)</string>
     <string name="navigate_chooser_title">Navigations-App auswählen</string>
     <string name="map_navigation_unavailable">Keine Navigations-App verfügbar.</string>
     <string name="startup_initialization_error">Initialisierung nicht möglich</string>
@@ -1577,7 +1574,13 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
         <item quantity="other">%1$d durch Stimmen ausgeblendete Tracks</item>
     </plurals>
     <string name="map_tracks_show_discredited">Ausgeblendete Tracks anzeigen</string>
-    <string name="map_tracks_close">Legende der Tracks schließen</string>
+    <string name="map_layers">Ebenen</string>
+    <string name="map_layers_close">Ebenen schließen</string>
+    <string name="map_recenter_canyon">Zurück zum Canyon</string>
+    <string name="map_point_distance">%1$s von dir entfernt</string>
+    <string name="map_point_copy">Kopieren</string>
+    <string name="map_watershed_area">Fläche: %1$s</string>
+    <string name="hint_canyon_map_layers_body">Geteilte GPS-Tracks und Einzugsgebiet: hier ein- oder ausblenden.</string>
     <plurals name="tracks_count">
         <item quantity="one">%1$d Track</item>
         <item quantity="other">%1$d Tracks</item>

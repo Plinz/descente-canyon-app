@@ -309,7 +309,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="basin">Bassin</string>
     <string name="watershed_area">Bassin versant</string>
     <string name="map_watershed">Bassin versant</string>
-    <string name="map_hide_watershed">Masquer le bassin</string>
     <string name="watercourse">Cours d\'eau</string>
     <string name="weather_title">Météo</string>
     <string name="weather_loading">Chargement de la météo…</string>
@@ -409,8 +408,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="map_heading_unavailable">La boussole n’est pas disponible sur cet appareil.</string>
     <string name="map_location_permission_denied">La carte reste disponible sans votre position.</string>
     <string name="map_location_settings_unavailable">Activez la localisation pour utiliser cette fonction.</string>
-    <string name="map_points_panel_title">Points du canyon</string>
-    <string name="map_points_panel_count">%1$d point(s) GPS</string>
     <string name="navigate_chooser_title">Choisir une application de navigation</string>
     <string name="map_navigation_unavailable">Aucune application de navigation n’est disponible.</string>
     <string name="startup_initialization_error">Initialisation impossible</string>
@@ -1617,7 +1614,13 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
         <item quantity="other">%1$d traces écartées par les votes</item>
     </plurals>
     <string name="map_tracks_show_discredited">Afficher les traces écartées</string>
-    <string name="map_tracks_close">Fermer la légende des traces</string>
+    <string name="map_layers">Calques</string>
+    <string name="map_layers_close">Fermer les calques</string>
+    <string name="map_recenter_canyon">Recentrer sur le canyon</string>
+    <string name="map_point_distance">À %1$s de vous</string>
+    <string name="map_point_copy">Copier</string>
+    <string name="map_watershed_area">Surface : %1$s</string>
+    <string name="hint_canyon_map_layers_body">Traces GPS partagées et bassin versant : affichez-les ou masquez-les ici.</string>
     <plurals name="tracks_count">
         <item quantity="one">%1$d trace</item>
         <item quantity="many">%1$d traces</item>

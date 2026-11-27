@@ -21,3 +21,9 @@ data class MapBoundsRequest(
     val paddingBottom: Int = 0,
     val paddingSides: Int = 0,
 )
+
+/**
+ * Room kept clear around what a map frames by itself (its points, tracks and watershed), under the
+ * controls drawn over its edges, in dp. A map given one frames tightly, up to a street-level zoom.
+ */
+data class MapFitPadding(val start: Float, val top: Float, val end: Float, val bottom: Float)

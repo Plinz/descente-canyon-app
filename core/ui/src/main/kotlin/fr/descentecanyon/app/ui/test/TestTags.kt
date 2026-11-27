@@ -50,6 +50,8 @@ object TestTags {
     const val EMERGENCY_CANYON = "emergency_canyon"
     const val EMERGENCY_OTHER_CANYON = "emergency_other_canyon"
     const val EMERGENCY_BUTTON = "emergency_button"
+    const val MAP_POINTS_STRIP = "map_points_strip"
+    const val MAP_POINT_CARD = "map_point_card"
     const val EMERGENCY_REPORT = "emergency_report"
     const val EMERGENCY_REPORT_OPEN = "emergency_report_open"
     const val EMERGENCY_FOLLOW_UP = "emergency_follow_up"

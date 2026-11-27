@@ -364,7 +364,7 @@ private fun listedPlaces(text: String): List<String> = text.split(',').map { it.
 
 private data class SummaryStat(val label: String, val value: String?)
 
-private fun formatAreaKm2(areaKm2: Double): String {
+internal fun formatAreaKm2(areaKm2: Double): String {
     val precision = if (areaKm2 >= 100.0) {
         "%.0f"
     } else if (areaKm2 >= 10.0) {

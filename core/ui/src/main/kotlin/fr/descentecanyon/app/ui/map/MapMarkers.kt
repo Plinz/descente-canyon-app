@@ -81,7 +81,11 @@ private fun drawableToBitmap(context: android.content.Context, resId: Int): Bitm
 
 private fun AnnotationMarker.toMarkerBitmap(context: android.content.Context): Bitmap = when (this) {
     is AnnotationMarker.Canyon -> drawableToBitmap(context, canyon.markerIconRes())
-    is AnnotationMarker.User -> createUserMarkerBitmap(bearingDegrees)
+
+    is AnnotationMarker.User -> createUserMarkerBitmap(
+        bearingDegrees,
+        context.resources.displayMetrics.density / USER_MARKER_DESIGN_DENSITY,
+    )
 }
 
 private fun MarkerOptions.applyMarkerBitmap(
@@ -134,13 +138,15 @@ private fun createMarkerBitmap(label: String, colorInt: Int): Bitmap {
     return bitmap
 }
 
-private fun createUserMarkerBitmap(bearingDegrees: Double?): Bitmap {
-    val width = 120
-    val height = 144
-    val centerX = width / 2f
+/** The user marker was drawn in pixels for this screen density; other screens scale it to keep its size in dp. */
+private const val USER_MARKER_DESIGN_DENSITY = 2.75f
+
+private fun createUserMarkerBitmap(bearingDegrees: Double?, scale: Float): Bitmap {
+    val centerX = 60f
     val anchorY = 117f
-    val bitmap = createBitmap(width, height)
+    val bitmap = createBitmap((120 * scale).toInt().coerceAtLeast(1), (144 * scale).toInt().coerceAtLeast(1))
     val canvas = Canvas(bitmap)
+    canvas.scale(scale, scale)
     val haloPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = USER_HALO_COLOR }
     val whitePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = USER_STROKE_COLOR }
     val bluePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply { color = USER_POINT_COLOR }

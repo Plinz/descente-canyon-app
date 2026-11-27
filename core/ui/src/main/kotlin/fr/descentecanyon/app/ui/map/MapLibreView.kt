@@ -23,6 +23,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.map.MAP_STYLE_URI
+import kotlin.math.cos
 import kotlin.math.roundToInt
 import org.maplibre.android.MapLibre
 import org.maplibre.android.annotations.IconFactory
@@ -46,6 +47,13 @@ internal const val TAG = "MapLibreView"
 private const val MIN_BOUNDS_SPAN_DEGREES = 0.02
 private const val SINGLE_PLACE_ZOOM = 11.5
 private const val BOUNDS_ANIMATION_MS = 600
+
+/** Closest zoom when framing with a [MapFitPadding]: a few points close together, or a single one. */
+private const val FIT_MAX_ZOOM = 15.5
+private const val FIT_SINGLE_POINT_ZOOM = 14.5
+
+/** How far from a point's centre a tap still picks it. */
+private const val POINT_TAP_RADIUS_DP = 22f
 
 enum class UserTrackingMode {
     NONE,
@@ -79,6 +87,15 @@ fun MapLibreView(
     showWatershed: Boolean = false,
     /** Shared GPS tracks drawn under the points. */
     trackLines: List<MapTrackLine> = emptyList(),
+    /** Points of a canyon, drawn with their pictogram and name above the tracks; a tap on one gives its id. */
+    points: List<MapPoint> = emptyList(),
+    selectedPointId: Int? = null,
+    onPointClick: (Int) -> Unit = {},
+    /** Frames the points, tracks and watershed tightly, clear of the controls; a new [fitRequestId] frames them again. */
+    fitPadding: MapFitPadding? = null,
+    fitRequestId: Int = 0,
+    /** Closest zoom of the camera that follows the user. */
+    locationFocusZoom: Double = USER_LOCATION_FOCUS_ZOOM,
     persistedCameraState: MapCameraState? = null,
     focusLocationRequestId: Int = 0,
     focusRequest: MapFocusRequest? = null,
@@ -187,6 +204,12 @@ fun MapLibreView(
                 watershedBounds = watershedBounds,
                 showWatershed = showWatershed,
                 trackLines = trackLines,
+                points = points,
+                selectedPointId = selectedPointId,
+                onPointClick = onPointClick,
+                fitPadding = fitPadding,
+                fitRequestId = fitRequestId,
+                locationFocusZoom = locationFocusZoom,
                 persistedCameraState = persistedCameraState,
                 focusLocationRequestId = focusLocationRequestId,
                 focusRequest = focusRequest,
@@ -272,6 +295,14 @@ private class MapRenderState(private val context: android.content.Context) {
     private var clusterMarkers: Boolean = true
     private var watershedGeometryJson: String? = null
     private var trackLines: List<MapTrackLine> = emptyList()
+    private var points: List<MapPoint> = emptyList()
+    private var selectedPointId: Int? = null
+    private var onPointClick: (Int) -> Unit = {}
+    private var fitPadding: MapFitPadding? = null
+    private var fitRequestId: Int = 0
+    private var lastFitRequestId: Int = 0
+    private var locationFocusZoom: Double = USER_LOCATION_FOCUS_ZOOM
+    private var lastPointLabels: List<Pair<Int, String>>? = null
     private var watershedBounds: LatLngBounds? = null
     private var showWatershed: Boolean = false
     private var persistedCameraState: MapCameraState? = null
@@ -324,6 +355,8 @@ private class MapRenderState(private val context: android.content.Context) {
             }.onFailure { throwable ->
                 Log.e(TAG, "Unable to render map after style load", throwable)
             }
+            // Requests made while the style was loading.
+            maybeFocusOnRequest()
         }
     }
 
@@ -349,6 +382,12 @@ private class MapRenderState(private val context: android.content.Context) {
         watershedBounds: LatLngBounds?,
         showWatershed: Boolean,
         trackLines: List<MapTrackLine>,
+        points: List<MapPoint>,
+        selectedPointId: Int?,
+        onPointClick: (Int) -> Unit,
+        fitPadding: MapFitPadding?,
+        fitRequestId: Int,
+        locationFocusZoom: Double,
         persistedCameraState: MapCameraState?,
         focusLocationRequestId: Int,
         focusRequest: MapFocusRequest?,
@@ -377,6 +416,12 @@ private class MapRenderState(private val context: android.content.Context) {
         this.watershedBounds = watershedBounds
         this.showWatershed = showWatershed
         this.trackLines = trackLines
+        this.points = points
+        this.selectedPointId = selectedPointId
+        this.onPointClick = onPointClick
+        this.fitPadding = fitPadding
+        this.fitRequestId = fitRequestId
+        this.locationFocusZoom = locationFocusZoom
         this.persistedCameraState = persistedCameraState
         this.focusLocationRequestId = focusLocationRequestId
         this.focusRequest = focusRequest
@@ -397,7 +442,8 @@ private class MapRenderState(private val context: android.content.Context) {
         }
 
         // Showing or hiding a track never moves the camera: only the points and the watershed refit it.
-        val fitDataSignature = buildFitDataSignature(markers, watershedBounds, watershedGeometryJson, showWatershed)
+        val fitDataSignature = buildFitDataSignature(markers, watershedBounds, watershedGeometryJson, showWatershed) * 31 +
+            pointSignature(points, selectedId = null)
         if (fitDataSignature != lastFitDataSignature) {
             lastFitDataSignature = fitDataSignature
             didFitCamera = false
@@ -410,6 +456,7 @@ private class MapRenderState(private val context: android.content.Context) {
         }
 
         maybeResetNorth()
+        maybeRefit()
         maybeFocusOnLocation()
         maybeFocusOnRequest()
         maybeShowBoundsRequest()
@@ -478,6 +525,10 @@ private class MapRenderState(private val context: android.content.Context) {
         }
         map.addOnMapClickListener { latLng ->
             if (!clusterMarkers) {
+                pointAt(map, latLng)?.let { pointId ->
+                    onPointClick(pointId)
+                    return@addOnMapClickListener true
+                }
                 onMapInteraction()
                 return@addOnMapClickListener false
             }
@@ -596,12 +647,13 @@ private class MapRenderState(private val context: android.content.Context) {
             clusterMarkers = clusterMarkers,
             watershedGeometryJson = watershedGeometryJson,
             showWatershed = showWatershed,
-        ) * 31 + trackSignature(trackLines)
+        ) * 31 + trackSignature(trackLines) * 17 + pointSignature(points, selectedPointId)
         if (!force && lastRenderSignature == signature) return
         lastRenderSignature = signature
 
         updateWatershed(style)
         updateTracks(style)
+        updatePoints(style, force)
 
         if (clusterMarkers) {
             renderVector(style, map)
@@ -614,7 +666,7 @@ private class MapRenderState(private val context: android.content.Context) {
             if (!restored) {
                 fitCamera(
                     map = map,
-                    coordinates = canyonCoordinates() + trackCoordinates(),
+                    coordinates = canyonCoordinates() + pointCoordinates() + trackCoordinates(),
                     watershedBounds = watershedBounds.takeIf { showWatershed && !watershedGeometryJson.isNullOrBlank() },
                 )
             }
@@ -665,8 +717,12 @@ private class MapRenderState(private val context: android.content.Context) {
         }
     }
 
-    private fun fitCamera(map: MapLibreMap, coordinates: List<LatLng>, watershedBounds: LatLngBounds?) {
+    private fun fitCamera(map: MapLibreMap, coordinates: List<LatLng>, watershedBounds: LatLngBounds?, animate: Boolean = false) {
         if (coordinates.isEmpty() && watershedBounds == null) return
+        fitPadding?.let { padding ->
+            fitCameraClear(map, coordinates, watershedBounds, padding, animate)
+            return
+        }
 
         if (coordinates.size == 1 && watershedBounds == null) {
             map.moveCamera(
@@ -706,6 +762,59 @@ private class MapRenderState(private val context: android.content.Context) {
                 ),
             )
         }
+    }
+
+    /**
+     * Frames everything inside the room left by the controls, as close as [FIT_MAX_ZOOM]. MapLibre
+     * fits the zoom to that room but centres the camera on the area, so the centre is moved here by
+     * half the difference of the opposite margins.
+     */
+    private fun fitCameraClear(
+        map: MapLibreMap,
+        coordinates: List<LatLng>,
+        watershedBounds: LatLngBounds?,
+        padding: MapFitPadding,
+        animate: Boolean,
+    ) {
+        val density = context.resources.displayMetrics.density
+        val all = coordinates + listOfNotNull(watershedBounds?.northEast, watershedBounds?.southWest)
+        val bounds = if (all.distinct().size > 1) LatLngBounds.Builder().apply { all.forEach(::include) }.build() else null
+        val center = bounds?.center ?: all.first()
+        val zoom = bounds?.let {
+            map.getCameraForLatLngBounds(
+                it,
+                intArrayOf(
+                    (padding.start * density).roundToInt(),
+                    (padding.top * density).roundToInt(),
+                    (padding.end * density).roundToInt(),
+                    (padding.bottom * density).roundToInt(),
+                ),
+            )?.zoom
+        }?.let { minOf(it, FIT_MAX_ZOOM) } ?: FIT_SINGLE_POINT_ZOOM
+        val update = CameraUpdateFactory.newCameraPosition(
+            CameraPosition.Builder()
+                .target(clearCenter(center, zoom, padding))
+                .zoom(zoom)
+                .bearing(0.0)
+                .build(),
+        )
+        runCatching {
+            if (animate) map.animateCamera(update, BOUNDS_ANIMATION_MS) else map.moveCamera(update)
+        }.onFailure { throwable -> Log.e(TAG, "Unable to frame the map", throwable) }
+    }
+
+    /** Frames the points, tracks and watershed again (the "back to the canyon" button). */
+    private fun maybeRefit() {
+        val map = map ?: return
+        if (fitRequestId == 0 || fitRequestId == lastFitRequestId) return
+        lastFitRequestId = fitRequestId
+        didFitCamera = true
+        fitCamera(
+            map = map,
+            coordinates = canyonCoordinates() + pointCoordinates() + trackCoordinates(),
+            watershedBounds = watershedBounds.takeIf { showWatershed && !watershedGeometryJson.isNullOrBlank() },
+            animate = true,
+        )
     }
 
     private fun preferredZoom(coordinates: List<LatLng>): Double {
@@ -773,7 +882,7 @@ private class MapRenderState(private val context: android.content.Context) {
                 CameraUpdateFactory.newCameraPosition(
                     CameraPosition.Builder()
                         .target(LatLng(latitude, longitude))
-                        .zoom(maxOf(map.cameraPosition.zoom, USER_LOCATION_FOCUS_ZOOM))
+                        .zoom(maxOf(map.cameraPosition.zoom, locationFocusZoom))
                         .bearing(bearing)
                         .build(),
                 ),
@@ -787,7 +896,7 @@ private class MapRenderState(private val context: android.content.Context) {
         lastFocusedLocationRequestId = focusLocationRequestId
         didFitCamera = true
         map.animateCamera(
-            CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), USER_LOCATION_FOCUS_ZOOM),
+            CameraUpdateFactory.newLatLngZoom(LatLng(latitude, longitude), locationFocusZoom),
             500,
         )
     }
@@ -880,6 +989,40 @@ private class MapRenderState(private val context: android.content.Context) {
         }
     }
 
+    private fun updatePoints(style: Style, force: Boolean) {
+        if (points.isEmpty() && style.getSource(POINT_SOURCE_ID) == null) return
+        val density = context.resources.displayMetrics.density
+        ensurePointStyle(style, density)
+        val labels = points.map { it.id to it.label }
+        if (force || labels != lastPointLabels) {
+            addPointLabelImages(style, points, density)
+            lastPointLabels = labels
+        }
+        val source = style.getSource(POINT_SOURCE_ID) as? GeoJsonSource ?: return
+        runCatching {
+            source.setGeoJson(buildPointGeoJson(points, selectedPointId))
+        }.onFailure { throwable ->
+            Log.e(TAG, "Unable to update the points", throwable)
+        }
+    }
+
+    /** The point under a tap, the closest one when several are within reach. */
+    private fun pointAt(map: MapLibreMap, latLng: LatLng): Int? {
+        if (points.isEmpty()) return null
+        val screen = map.projection.toScreenLocation(latLng)
+        val reach = POINT_TAP_RADIUS_DP * context.resources.displayMetrics.density
+        val box = android.graphics.RectF(screen.x - reach, screen.y - reach, screen.x + reach, screen.y + reach)
+        val ids = runCatching { map.queryRenderedFeatures(box, POINT_MARKER_LAYER_ID) }.getOrDefault(emptyList())
+            .mapNotNull { feature -> feature.getNumberProperty(PROPERTY_POINT_ID)?.toInt() }
+            .toSet()
+        return points.filter { it.id in ids }.minByOrNull { point ->
+            val at = map.projection.toScreenLocation(LatLng(point.latitude, point.longitude))
+            (at.x - screen.x) * (at.x - screen.x) + (at.y - screen.y) * (at.y - screen.y)
+        }?.id
+    }
+
+    private fun pointCoordinates(): List<LatLng> = points.map { LatLng(it.latitude, it.longitude) }
+
     private fun updateWatershed(style: Style) {
         ensureWatershedStyle(style)
         val source = style.getSource(WATERSHED_SOURCE_ID) as? GeoJsonSource ?: return
@@ -955,6 +1098,23 @@ private fun MapView.excludeMapControlsFromBackGesture() {
         ViewCompat.setSystemGestureExclusionRects(this, controls)
     }
 }
+
+/**
+ * The camera centre that shows [center] in the middle of the room left by [padding] (north up):
+ * metres per dp at [zoom], then degrees, one ground metre being the same on screen both ways.
+ */
+internal fun clearCenter(center: LatLng, zoom: Double, padding: MapFitPadding): LatLng {
+    val meters = metersPerDp(center.latitude, zoom)
+    val rightDp = (padding.start - padding.end) / 2.0
+    val downDp = (padding.top - padding.bottom) / 2.0
+    return LatLng(
+        center.latitude + downDp * meters / METERS_PER_DEGREE_LATITUDE,
+        center.longitude - rightDp * meters / (METERS_PER_DEGREE_LONGITUDE * cos(Math.toRadians(center.latitude))),
+    )
+}
+
+private const val METERS_PER_DEGREE_LATITUDE = 110_574.0
+private const val METERS_PER_DEGREE_LONGITUDE = 111_320.0
 
 /** Left, top, right, bottom margins in pixels for an attribution placed at the top start. */
 private fun attributionMargins(topMargin: Dp, density: Float): IntArray = intArrayOf(

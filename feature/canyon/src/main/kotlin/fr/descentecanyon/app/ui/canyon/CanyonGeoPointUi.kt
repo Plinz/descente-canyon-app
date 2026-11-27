@@ -3,18 +3,11 @@ package fr.descentecanyon.app.ui.canyon
 import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointSource
 import fr.descentecanyon.app.domain.model.GeoPointType
-import fr.descentecanyon.app.ui.theme.CanyonBlue
-import fr.descentecanyon.app.ui.theme.CanyonBlueDark
-import fr.descentecanyon.app.ui.theme.CotationDifficile
-import fr.descentecanyon.app.ui.theme.CotationFacile
-import fr.descentecanyon.app.ui.theme.DebitInconnu
-import fr.descentecanyon.app.ui.theme.RockBrownLight
 import java.util.Locale
 
 @Composable
@@ -86,12 +79,6 @@ fun GeoPointType.navigationPriority(): Int = when (this) {
     GeoPointType.UNKNOWN -> 6
 }
 
-fun GeoPointType.mapColor(): Color = when (this) {
-    GeoPointType.PARKING_AMONT -> CanyonBlue
-    GeoPointType.PARKING_AVAL -> Color(0xFF7C3AED)
-    GeoPointType.ENTREE -> CotationFacile
-    GeoPointType.SORTIE -> CotationDifficile
-    GeoPointType.POINT_REMARQUABLE -> RockBrownLight
-    GeoPointType.ECHAPPATOIRE -> CanyonBlueDark
-    GeoPointType.UNKNOWN -> DebitInconnu
-}
+/** The name of a kind of point ("Parking aval"), under a point that has a name of its own. */
+@Composable
+fun GeoPointType.label(): String = stringResource(defaultTitleResource())
