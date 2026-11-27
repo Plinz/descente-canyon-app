@@ -29,6 +29,8 @@ data class CommunityTrack(
     /** Sent from this installation of the app (it can delete it, it cannot vote for it). */
     val isMine: Boolean,
     val myVote: TrackVote,
+    /** The server's rank of the votes (lower bound of the share of up votes): few votes rank below many. */
+    val score: Double = 0.0,
 )
 
 data class TrackPoint(val latitude: Double, val longitude: Double, val elevation: Double? = null)

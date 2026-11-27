@@ -1732,4 +1732,15 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="proposal_reason_incomplete">Scheda troppo incompleta</string>
     <string name="proposal_reason_incorrect">Informazioni da verificare</string>
     <string name="proposal_reason_not_a_canyon">Non è un canyon</string>
+    <string name="notification_proposal_approved_title">Canyon pubblicato</string>
+    <string name="notification_proposal_approved_body">«%1$s» è ora nel catalogo dell\'app.</string>
+    <string name="notification_proposal_edit_approved_title">Modifica pubblicata</string>
+    <string name="notification_proposal_edit_approved_body">La tua modifica di «%1$s» è pubblicata.</string>
+    <string name="notification_proposal_rejected_title">Proposta rifiutata</string>
+    <string name="notification_proposal_rejected_body">«%1$s» non è stato pubblicato.</string>
+    <plurals name="notification_proposals_decided_title">
+        <item quantity="one">%1$d proposta esaminata</item>
+        <item quantity="other">%1$d proposte esaminate</item>
+        <item quantity="many">%1$d proposte esaminate</item>
+    </plurals>
 </resources>

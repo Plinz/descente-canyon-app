@@ -1691,4 +1691,14 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="proposal_reason_incomplete">Datenblatt zu unvollständig</string>
     <string name="proposal_reason_incorrect">Angaben zu prüfen</string>
     <string name="proposal_reason_not_a_canyon">Kein Canyon</string>
+    <string name="notification_proposal_approved_title">Canyon veröffentlicht</string>
+    <string name="notification_proposal_approved_body">„%1$s“ ist jetzt im Katalog der App.</string>
+    <string name="notification_proposal_edit_approved_title">Änderung veröffentlicht</string>
+    <string name="notification_proposal_edit_approved_body">Deine Änderung an „%1$s“ ist veröffentlicht.</string>
+    <string name="notification_proposal_rejected_title">Vorschlag abgelehnt</string>
+    <string name="notification_proposal_rejected_body">„%1$s“ wurde nicht veröffentlicht.</string>
+    <plurals name="notification_proposals_decided_title">
+        <item quantity="one">%1$d Vorschlag geprüft</item>
+        <item quantity="other">%1$d Vorschläge geprüft</item>
+    </plurals>
 </resources>

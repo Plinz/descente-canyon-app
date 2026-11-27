@@ -21,8 +21,8 @@ import androidx.compose.ui.res.stringResource
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonProposal
 import fr.descentecanyon.app.domain.model.ProposalKind
-import fr.descentecanyon.app.domain.model.ProposalRejectionReason
 import fr.descentecanyon.app.domain.model.ProposalStatus
+import fr.descentecanyon.app.ui.common.labelRes
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -91,24 +91,6 @@ internal fun ProposalsSection(
             )
         }
     }
-}
-
-private fun ProposalStatus.labelRes(): Int = when (this) {
-    ProposalStatus.PENDING -> R.string.proposal_status_pending
-    ProposalStatus.APPROVED -> R.string.proposal_status_approved
-    ProposalStatus.REJECTED -> R.string.proposal_status_rejected
-    ProposalStatus.WITHDRAWN -> R.string.proposal_status_withdrawn
-}
-
-/** Null when the operator's note says it all. */
-private fun ProposalRejectionReason.labelRes(): Int? = when (this) {
-    ProposalRejectionReason.DUPLICATE -> R.string.proposal_reason_duplicate
-    ProposalRejectionReason.EXISTS_ON_SITE -> R.string.proposal_reason_exists_on_site
-    ProposalRejectionReason.FORBIDDEN -> R.string.proposal_reason_forbidden
-    ProposalRejectionReason.INCOMPLETE -> R.string.proposal_reason_incomplete
-    ProposalRejectionReason.INCORRECT -> R.string.proposal_reason_incorrect
-    ProposalRejectionReason.NOT_A_CANYON -> R.string.proposal_reason_not_a_canyon
-    ProposalRejectionReason.OTHER, ProposalRejectionReason.BLOCKED -> null
 }
 
 private const val MAX_SHOWN = 10

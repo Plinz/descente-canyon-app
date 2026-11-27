@@ -22,6 +22,7 @@ import fr.descentecanyon.app.data.BackendConfig
 import fr.descentecanyon.app.data.repository.AppServerRepositoryImpl
 import fr.descentecanyon.app.data.repository.CatalogUpdateScheduler
 import fr.descentecanyon.app.domain.error.isTransient
+import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.error.toAppError
 import fr.descentecanyon.app.domain.repository.AppServerRepository
 import java.time.Duration
@@ -123,15 +124,17 @@ class WorkManagerCatalogUpdateScheduler @Inject constructor(@param:ApplicationCo
 @InstallIn(SingletonComponent::class)
 interface AppServerWorkerEntryPoint {
     fun appServerRepository(): AppServerRepositoryImpl
+
+    fun proposalDecisionCheck(): ProposalDecisionCheck
 }
 
 class AppServerManifestWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result {
-        val repository = EntryPointAccessors.fromApplication(
-            applicationContext,
-            AppServerWorkerEntryPoint::class.java,
-        ).appServerRepository()
-        return repository.refresh().fold(
+        val entryPoint = EntryPointAccessors.fromApplication(applicationContext, AppServerWorkerEntryPoint::class.java)
+        val result = entryPoint.appServerRepository().refresh()
+        // What became of the proposed canyons: a bonus that never fails the check.
+        suspendRunCatching { entryPoint.proposalDecisionCheck().run() }
+        return result.fold(
             onSuccess = { Result.success() },
             onFailure = { if (it.toAppError().isTransient() && runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.success() },
         )

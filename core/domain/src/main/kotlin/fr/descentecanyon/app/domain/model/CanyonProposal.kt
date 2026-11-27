@@ -189,6 +189,15 @@ data class CanyonProposal(
     val note: String? = null,
 )
 
+/**
+ * The proposals waiting for review in [before] that [after] shows reviewed (published or declined):
+ * what to tell the author once. A proposal unknown to [before], or withdrawn, is left out.
+ */
+fun decidedSince(before: List<CanyonProposal>, after: List<CanyonProposal>): List<CanyonProposal> {
+    val waiting = before.filter { it.status == ProposalStatus.PENDING }.mapTo(HashSet()) { it.id }
+    return after.filter { it.id in waiting && (it.status == ProposalStatus.APPROVED || it.status == ProposalStatus.REJECTED) }
+}
+
 /** Why the app's server refused to take a proposal. */
 enum class ProposalRefusal {
     INVALID,

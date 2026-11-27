@@ -47,7 +47,8 @@ object AppShortcuts {
 
     /** Tells the launcher the user went to this section, shortcut or not, to rank the shortcuts. */
     fun reportUsed(context: Context, section: LaunchSection) {
-        if (section == LaunchSection.PENDING_DEBITS) return
+        // Opened from notifications only: no launcher shortcut to report.
+        if (section == LaunchSection.PENDING_DEBITS || section == LaunchSection.MY_ACCOUNT) return
         runCatching { ShortcutManagerCompat.reportShortcutUsed(context, section.name.lowercase()) }
     }
 

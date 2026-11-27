@@ -26,6 +26,9 @@ enum class LaunchSection {
     MAP,
     FAVORITES,
     PENDING_DEBITS,
+
+    /** The user space (proposed canyons, logbook), from a notification about a proposal. */
+    MY_ACCOUNT,
 }
 
 fun Intent.putLaunchTarget(target: AppLaunchTarget): Intent = when (target) {

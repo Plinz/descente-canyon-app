@@ -1732,4 +1732,15 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="proposal_reason_incomplete">Ficha demasiado incompleta</string>
     <string name="proposal_reason_incorrect">Información por comprobar</string>
     <string name="proposal_reason_not_a_canyon">No es un barranco</string>
+    <string name="notification_proposal_approved_title">Barranco publicado</string>
+    <string name="notification_proposal_approved_body">«%1$s» ya está en el catálogo de la aplicación.</string>
+    <string name="notification_proposal_edit_approved_title">Cambio publicado</string>
+    <string name="notification_proposal_edit_approved_body">Tu cambio en «%1$s» está publicado.</string>
+    <string name="notification_proposal_rejected_title">Propuesta rechazada</string>
+    <string name="notification_proposal_rejected_body">«%1$s» no se ha publicado.</string>
+    <plurals name="notification_proposals_decided_title">
+        <item quantity="one">%1$d propuesta revisada</item>
+        <item quantity="other">%1$d propuestas revisadas</item>
+        <item quantity="many">%1$d propuestas revisadas</item>
+    </plurals>
 </resources>

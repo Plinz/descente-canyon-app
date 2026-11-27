@@ -70,6 +70,7 @@ class CommunityTrackRepositoryImplTest {
         assertTrue(reference.isReference)
         assertEquals(TrackStanding.ENDORSED, reference.standing)
         assertEquals(3, reference.upVotes)
+        assertEquals(0.4385, reference.score, 1e-6)
         assertEquals(YearMonth.of(2026, 6), reference.recordedMonth)
         assertEquals(44.868481, reference.segments.first().first().latitude, 1e-6)
         assertEquals(5.5616, reference.segments.first().first().longitude, 1e-6)

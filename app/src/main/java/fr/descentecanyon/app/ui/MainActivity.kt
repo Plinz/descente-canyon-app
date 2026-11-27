@@ -430,6 +430,7 @@ internal fun LaunchSection.toScreen(): Screen = when (this) {
     LaunchSection.MAP -> Screen.Map
     LaunchSection.FAVORITES -> Screen.Favorites
     LaunchSection.PENDING_DEBITS -> Screen.PendingDebits
+    LaunchSection.MY_ACCOUNT -> Screen.MyAccount
 }
 
 internal fun resolveSelectedBottomNavItem(backStackEntry: NavBackStackEntry?): BottomNavItem? {

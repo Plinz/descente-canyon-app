@@ -159,11 +159,15 @@ class CommunityTrackRepositoryImpl @Inject constructor(
         private const val KEY_MINE = "community_tracks_mine"
         const val MAX_UPLOAD_BYTES = 2 * 1024 * 1024
 
-        /** Reference tracks first, then by votes; set-aside tracks last (the server orders the same way). */
+        /**
+         * Reference tracks first, then by the server's score of the votes, newest first among equals;
+         * set-aside tracks last (TrackService.list_for_canyon orders the same way).
+         */
         private val DISPLAY_ORDER = compareBy<CommunityTrack>(
             { it.standing == TrackStanding.DISCREDITED },
             { !it.isReference },
-            { -(it.upVotes - it.downVotes) },
+            { -it.score },
+            { -it.upVotes },
         ).thenByDescending { it.createdAt }
     }
 }
@@ -202,5 +206,6 @@ internal fun TrackDto.toDomainOrNull(votes: Map<String, Int>, mine: Set<String>)
         isReference = isReference,
         isMine = id in mine,
         myVote = TrackVote.of(votes[id] ?: 0),
+        score = score,
     )
 }

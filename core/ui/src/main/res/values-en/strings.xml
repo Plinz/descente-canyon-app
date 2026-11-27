@@ -1691,4 +1691,14 @@ Search for a canyon and add it to your favorites.</string>
     <string name="proposal_reason_incomplete">Sheet too incomplete</string>
     <string name="proposal_reason_incorrect">Information to check</string>
     <string name="proposal_reason_not_a_canyon">Not a canyon</string>
+    <string name="notification_proposal_approved_title">Canyon published</string>
+    <string name="notification_proposal_approved_body">“%1$s” is now in the app\'s catalogue.</string>
+    <string name="notification_proposal_edit_approved_title">Change published</string>
+    <string name="notification_proposal_edit_approved_body">Your change to “%1$s” is published.</string>
+    <string name="notification_proposal_rejected_title">Suggestion declined</string>
+    <string name="notification_proposal_rejected_body">“%1$s” was not published.</string>
+    <plurals name="notification_proposals_decided_title">
+        <item quantity="one">%1$d suggestion reviewed</item>
+        <item quantity="other">%1$d suggestions reviewed</item>
+    </plurals>
 </resources>

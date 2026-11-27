@@ -18,13 +18,17 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.data.repository.OutingFlowAlert
 import fr.descentecanyon.app.domain.error.AppError
+import fr.descentecanyon.app.domain.model.CanyonProposal
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.PredictedDebitLevel
+import fr.descentecanyon.app.domain.model.ProposalKind
+import fr.descentecanyon.app.domain.model.ProposalStatus
 import fr.descentecanyon.app.domain.model.RejectedDebitSubmission
 import fr.descentecanyon.app.domain.model.SentDebitSubmission
 import fr.descentecanyon.app.domain.model.TrackedActivityEvent
 import fr.descentecanyon.app.ui.EmergencyActivity
 import fr.descentecanyon.app.ui.MainActivity
+import fr.descentecanyon.app.ui.common.labelRes
 import fr.descentecanyon.app.ui.components.debitRangeWordRes
 import fr.descentecanyon.app.ui.navigation.AppLaunchTarget
 import fr.descentecanyon.app.ui.navigation.LaunchSection
@@ -339,6 +343,46 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         return true
     }
 
+    /** Tells the author what became of the canyons proposed from this phone; opens the user space. */
+    fun publishDecidedProposals(decided: List<CanyonProposal>): Boolean {
+        if (decided.isEmpty()) return true
+        if (!canPostNotifications(CONTRIBUTIONS_CHANNEL_ID)) return false
+        val builder = NotificationCompat.Builder(context, CONTRIBUTIONS_CHANNEL_ID)
+            .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+            .setAutoCancel(true)
+            .setContentIntent(sectionPendingIntent(LaunchSection.MY_ACCOUNT))
+        val notification = if (decided.size == 1) {
+            val proposal = decided.single()
+            val (title, body) = when {
+                proposal.status == ProposalStatus.REJECTED ->
+                    R.string.notification_proposal_rejected_title to R.string.notification_proposal_rejected_body
+
+                proposal.kind == ProposalKind.EDIT ->
+                    R.string.notification_proposal_edit_approved_title to R.string.notification_proposal_edit_approved_body
+
+                else -> R.string.notification_proposal_approved_title to R.string.notification_proposal_approved_body
+            }
+            val reason = proposal.reason?.labelRes()?.let(context::getString)
+            val text = listOfNotNull(context.getString(body, proposal.name), reason, proposal.note?.let { "« $it »" }).joinToString("\n")
+            builder
+                .setContentTitle(context.getString(title))
+                .setContentText(text)
+                .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+                .build()
+        } else {
+            val lines = decided.map { "${it.name} · ${context.getString(it.status.labelRes())}" }
+            builder
+                .setContentTitle(
+                    context.resources.getQuantityString(R.plurals.notification_proposals_decided_title, decided.size, decided.size),
+                )
+                .setContentText(lines.joinToString(separator = " • "))
+                .setStyle(NotificationCompat.InboxStyle().also { style -> lines.take(5).forEach(style::addLine) })
+                .build()
+        }
+        notifySafely(PROPOSALS_DECIDED_NOTIFICATION_ID, notification)
+        return true
+    }
+
     fun cancelPendingDebitsLoginReminder() {
         NotificationManagerCompat.from(context).cancel(PENDING_LOGIN_NOTIFICATION_ID)
     }
@@ -530,6 +574,7 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         const val DEBIT_REJECTED_NOTIFICATION_ID = 2003
         const val DEBIT_SENT_NOTIFICATION_ID = 2004
         const val PENDING_LOGIN_NOTIFICATION_ID = 2005
+        const val PROPOSALS_DECIDED_NOTIFICATION_ID = 2008
 
         /** The single outing notifications of the versions before several outings. */
         val LEGACY_OUTING_NOTIFICATION_IDS = setOf(2006, 2007)
