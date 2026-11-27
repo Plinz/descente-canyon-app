@@ -30,6 +30,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -75,87 +76,90 @@ fun WelcomeScreen(onDone: () -> Unit, modifier: Modifier = Modifier, viewModel: 
         hasLocation = granted.values.any { it }
     }
 
-    Box(
-        modifier = modifier.fillMaxSize().background(colors.backgroundBase).statusBarsPadding().navigationBarsPadding(),
-        contentAlignment = Alignment.TopCenter,
-    ) {
-        Column(modifier = Modifier.width(contentWidth).fillMaxSize().padding(horizontal = horizontalPadding)) {
-            Column(
-                modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(vertical = 24.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                Text(
-                    stringResource(R.string.welcome_title),
-                    style = MaterialTheme.typography.headlineMedium,
-                    fontWeight = FontWeight.Bold,
-                )
-                WelcomeLine(Icons.Default.Search, stringResource(R.string.welcome_line_find))
-                WelcomeLine(Icons.Default.Hiking, stringResource(R.string.welcome_line_plan))
-                WelcomeLine(Icons.Default.Sos, stringResource(R.string.welcome_line_sos))
+    // A surface, not a bare background: its text takes the theme's colour (dark text on dark otherwise).
+    Surface(modifier = modifier.fillMaxSize(), color = colors.backgroundBase, contentColor = colors.textPrimary) {
+        Box(
+            modifier = Modifier.fillMaxSize().statusBarsPadding().navigationBarsPadding(),
+            contentAlignment = Alignment.TopCenter,
+        ) {
+            Column(modifier = Modifier.width(contentWidth).fillMaxSize().padding(horizontal = horizontalPadding)) {
+                Column(
+                    modifier = Modifier.weight(1f).verticalScroll(rememberScrollState()).padding(vertical = 24.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    Text(
+                        stringResource(R.string.welcome_title),
+                        style = MaterialTheme.typography.headlineMedium,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    WelcomeLine(Icons.Default.Search, stringResource(R.string.welcome_line_find))
+                    WelcomeLine(Icons.Default.Hiking, stringResource(R.string.welcome_line_plan))
+                    WelcomeLine(Icons.Default.Sos, stringResource(R.string.welcome_line_sos))
 
-                Spacer(modifier = Modifier.height(4.dp))
-                DcCard(modifier = Modifier.fillMaxWidth(), contentPadding = 16.dp) {
-                    Text(
-                        stringResource(R.string.welcome_zone_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                    Text(
-                        stringResource(R.string.welcome_zone_hint),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = colors.textSecondary,
-                        modifier = Modifier.padding(bottom = 8.dp),
-                    )
-                    DcSelectField(
-                        icon = Icons.Default.Place,
-                        label = stringResource(R.string.zone_filter_title),
-                        value = zoneFieldValue(state.selectedCountry, state.selectedSubdivision),
-                        isActive = state.selectedCountry != null,
-                        enabled = state.zones.isNotEmpty(),
-                        onClick = { showZones = true },
-                    )
-                }
-                DcCard(modifier = Modifier.fillMaxWidth(), contentPadding = 16.dp) {
-                    Text(
-                        stringResource(R.string.welcome_location_title),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold,
-                    )
-                    Text(
-                        stringResource(R.string.welcome_location_hint),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = colors.textSecondary,
-                        modifier = Modifier.padding(bottom = 8.dp),
-                    )
-                    if (hasLocation) {
-                        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                            Icon(Icons.Default.CheckCircle, contentDescription = null, tint = colors.primaryAction)
-                            Text(stringResource(R.string.welcome_location_allowed), style = MaterialTheme.typography.bodyMedium)
-                        }
-                    } else {
-                        OutlinedButton(
-                            onClick = {
-                                locationLauncher.launch(
-                                    arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-                                )
-                            },
-                        ) {
-                            Icon(Icons.Default.MyLocation, contentDescription = null, modifier = Modifier.size(18.dp))
-                            Text(stringResource(R.string.welcome_location_allow), modifier = Modifier.padding(start = 8.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
+                    DcCard(modifier = Modifier.fillMaxWidth(), contentPadding = 16.dp) {
+                        Text(
+                            stringResource(R.string.welcome_zone_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Text(
+                            stringResource(R.string.welcome_zone_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = colors.textSecondary,
+                            modifier = Modifier.padding(bottom = 8.dp),
+                        )
+                        DcSelectField(
+                            icon = Icons.Default.Place,
+                            label = stringResource(R.string.zone_filter_title),
+                            value = zoneFieldValue(state.selectedCountry, state.selectedSubdivision),
+                            isActive = state.selectedCountry != null,
+                            enabled = state.zones.isNotEmpty(),
+                            onClick = { showZones = true },
+                        )
+                    }
+                    DcCard(modifier = Modifier.fillMaxWidth(), contentPadding = 16.dp) {
+                        Text(
+                            stringResource(R.string.welcome_location_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.SemiBold,
+                        )
+                        Text(
+                            stringResource(R.string.welcome_location_hint),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = colors.textSecondary,
+                            modifier = Modifier.padding(bottom = 8.dp),
+                        )
+                        if (hasLocation) {
+                            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                                Icon(Icons.Default.CheckCircle, contentDescription = null, tint = colors.primaryAction)
+                                Text(stringResource(R.string.welcome_location_allowed), style = MaterialTheme.typography.bodyMedium)
+                            }
+                        } else {
+                            OutlinedButton(
+                                onClick = {
+                                    locationLauncher.launch(
+                                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
+                                    )
+                                },
+                            ) {
+                                Icon(Icons.Default.MyLocation, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Text(stringResource(R.string.welcome_location_allow), modifier = Modifier.padding(start = 8.dp))
+                            }
                         }
                     }
                 }
-            }
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                TextButton(onClick = onDone, modifier = Modifier.testTag(TestTags.WELCOME_SKIP)) {
-                    Text(stringResource(R.string.welcome_skip))
-                }
-                Button(onClick = { viewModel.finish(onDone) }, modifier = Modifier.testTag(TestTags.WELCOME_START)) {
-                    Text(stringResource(R.string.welcome_start))
+                Row(
+                    modifier = Modifier.fillMaxWidth().padding(vertical = 12.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.End),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    TextButton(onClick = onDone, modifier = Modifier.testTag(TestTags.WELCOME_SKIP)) {
+                        Text(stringResource(R.string.welcome_skip))
+                    }
+                    Button(onClick = { viewModel.finish(onDone) }, modifier = Modifier.testTag(TestTags.WELCOME_START)) {
+                        Text(stringResource(R.string.welcome_start))
+                    }
                 }
             }
         }

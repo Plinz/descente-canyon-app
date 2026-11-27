@@ -41,17 +41,17 @@ estimer le débit probable d'un canyon pour les trois prochains jours.
 Projet Gradle multi-modules, en couches :
 
 ```
-app                      Activity, navigation, démarrage, synchronisations (WorkManager), alarmes de sortie, notifications
-feature/home             Accueil : derniers débits, forum
-feature/explore          Recherche et carte
-feature/canyon           Fiche canyon, galerie, prédiction de débit
+app                      Activity, navigation (5 onglets), onboarding, démarrage, synchronisations (WorkManager), alarmes de sortie, notifications
+feature/home             Accueil : derniers débits, forum, premiers pas et nouveautés ; écran de bienvenue
+feature/explore          Explorer : recherche et carte réunies (mêmes critères), aussi pour choisir le canyon d'une sortie ou d'un jour de séjour
+feature/canyon           Fiche canyon (onglets Conditions, Topo, Photos, Débits ; barre d'actions), galerie, prédiction de débit
 feature/contribute       Formulaires de débit et de note d'intérêt, débits en attente d'envoi
 feature/favorites        Favoris
 feature/notifications    Centre de notifications (suivis)
 feature/users            Membres du site : recherche, profil, suivi de leurs messages du forum
 feature/settings         Réglages (thème, langue, notifications), sources des données, licences, confidentialité
-feature/outing           Préparation de sortie, sortie en cours, écran d'urgence
-feature/account          Mon espace (compte, identité de contribution, données) et carnet : sorties, mémos, bilan, import de la liste de courses du site
+feature/outing           Onglet Sorties (sorties, séjours, carnet en bref), préparation de sortie, sortie en cours, écran d'urgence
+feature/account          Onglet Moi (compte, suivis, contributions, mémos, données, accès aux réglages) et carnet : sorties, canyons, bilan, import de la liste de courses du site
 core/ui                  Design system, composants partagés, widget carte, ressources (chaînes en 6 langues)
 core/data                Bases Room, réseau (OkHttp + Jsoup), scraping, repositories, modèle de débit
 core/domain              Modèles, interfaces des repositories, cas d'usage, erreurs typées (Kotlin pur)

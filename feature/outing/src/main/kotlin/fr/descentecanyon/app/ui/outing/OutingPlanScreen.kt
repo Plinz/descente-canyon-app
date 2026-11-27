@@ -119,6 +119,9 @@ fun OutingPlanScreen(
     }
     // Explained once before Android asks: the notifications, then the exact alarms (its settings page).
     var showPermissionPrimer by rememberSaveable { mutableStateOf(false) }
+
+    /** The primer comes for an outing planned already (a day of a stay): Continue only asks for the permissions. */
+    var primerForPlanned by rememberSaveable { mutableStateOf(false) }
     var exactAlarmsAfterNotifications by rememberSaveable { mutableStateOf(false) }
     var exactAlarmsExplained by rememberSaveable { mutableStateOf(false) }
     val activationPermissionLauncher = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) {
@@ -141,7 +144,8 @@ fun OutingPlanScreen(
     fun activateAfterPrimer(withPermissions: Boolean) {
         showPermissionPrimer = false
         exactAlarmsExplained = true
-        viewModel.confirm()
+        if (!primerForPlanned) viewModel.confirm()
+        primerForPlanned = false
         when {
             !withPermissions -> confirmTracking()
 
@@ -240,12 +244,15 @@ fun OutingPlanScreen(
         )
     }
 
-    // A canyon given to a day of a stay is planned: as a confirmed outing, notifications are asked for.
+    // A canyon given to a day of a stay is planned: as for a confirmed outing, the permissions are
+    // explained, then asked for.
     LaunchedEffect(state.addedToStay) {
         if (!state.addedToStay) return@LaunchedEffect
         viewModel.addedToStayShown()
-        if (context.needsNotificationPermission()) {
-            activationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        if (context.needsNotificationPermission() || context.needsExactAlarmPermission()) {
+            exactAlarmsExplained = true
+            primerForPlanned = true
+            showPermissionPrimer = true
         } else {
             confirmTracking()
         }
