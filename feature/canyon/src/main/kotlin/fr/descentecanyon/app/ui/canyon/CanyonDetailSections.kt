@@ -97,15 +97,13 @@ internal fun CanyonDetailContent(
     openDebitsTabInitially: Boolean,
     modifier: Modifier = Modifier,
     personalNote: String? = null,
-    onSavePersonalNote: (String) -> Unit = {},
     nearbyCanyons: List<NearbyCanyon> = emptyList(),
     onNearbyCanyonClick: (Int) -> Unit = {},
     /** The map of the points, offered on the header photo and at the head of the topo. */
     onShowMap: (() -> Unit)? = null,
     logbook: List<LogbookEntry> = emptyList(),
-    knownCompanions: List<String> = emptyList(),
-    onSaveLogbookEntry: (LogbookEntry) -> Unit = {},
-    onDeleteLogbookEntry: (Long) -> Unit = {},
+    /** Opened by the "My canyon" card, shown here above the tabs, and by the ⋮ menu of the page. */
+    myCanyonDialogs: MyCanyonDialogs = rememberMyCanyonDialogs(),
     onReportFlow: (LogbookEntry) -> Unit = {},
     onOpenLogbook: () -> Unit = {},
     bottomContentPadding: Dp = 0.dp,
@@ -114,12 +112,13 @@ internal fun CanyonDetailContent(
     // A canyon added in the app has neither photos nor flow reports: they live on the site, which does not know it.
     val isAddedInApp = detail.canyon.isAddedInApp
     var selectedTab by rememberSaveable(openDebitsTabInitially) {
-        mutableIntStateOf(if (openDebitsTabInitially && !isAddedInApp) TAB_DEBITS else TAB_CONDITIONS)
+        // The topo first: what people open a canyon sheet for.
+        mutableIntStateOf(if (openDebitsTabInitially && !isAddedInApp) TAB_DEBITS else TAB_TOPO)
     }
     val scope = rememberCoroutineScope()
     val tabs = listOf(
-        stringResource(R.string.tab_conditions),
         stringResource(R.string.tab_topo),
+        stringResource(R.string.tab_conditions),
         if (isAddedInApp) {
             stringResource(R.string.tab_photos)
         } else if (photoError != null && detail.photos.isEmpty()) {
@@ -159,6 +158,20 @@ internal fun CanyonDetailContent(
                 onPersistedPhotoMissing = onPersistedPhotoMissing,
                 onShowMap = onShowMap,
             )
+        }
+        // The user's own memo and descents, whatever the tab; nothing yet, the ⋮ menu offers to add them.
+        if (hasMyCanyon(personalNote, logbook)) {
+            item(key = "my_canyon") {
+                MyCanyonCard(
+                    memo = personalNote,
+                    entries = logbook,
+                    dialogs = myCanyonDialogs,
+                    onReportFlow = onReportFlow,
+                    onOpenLogbook = onOpenLogbook,
+                    canReportFlow = !isAddedInApp,
+                    modifier = Modifier.animateItem(),
+                )
+            }
         }
         stickyHeader(key = TABS_HEADER_KEY) {
             PrimaryTabRow(
@@ -209,14 +222,6 @@ internal fun CanyonDetailContent(
                 predictionError = predictionError,
                 onOpenPredictionInfo = onOpenPredictionInfo,
                 onOpenDebits = { selectedTab = TAB_DEBITS },
-                personalNote = personalNote,
-                onSavePersonalNote = onSavePersonalNote,
-                logbook = logbook,
-                knownCompanions = knownCompanions,
-                onSaveLogbookEntry = onSaveLogbookEntry,
-                onDeleteLogbookEntry = onDeleteLogbookEntry,
-                onReportFlow = onReportFlow,
-                onOpenLogbook = onOpenLogbook,
                 nearbyCanyons = nearbyCanyons,
                 onNearbyCanyonClick = onNearbyCanyonClick,
             )
@@ -261,7 +266,7 @@ internal fun CanyonDetailContent(
 
 /**
  * The Conditions tab: can it be done now. The flow estimated and the last one reported, the weather,
- * the dam releases, the user's own notes and outings here, and the canyons around.
+ * the dam releases and the canyons around.
  */
 private fun LazyListScope.conditionsItems(
     detail: CanyonDetail,
@@ -278,14 +283,6 @@ private fun LazyListScope.conditionsItems(
     predictionError: String?,
     onOpenPredictionInfo: () -> Unit,
     onOpenDebits: () -> Unit,
-    personalNote: String?,
-    onSavePersonalNote: (String) -> Unit,
-    logbook: List<LogbookEntry>,
-    knownCompanions: List<String>,
-    onSaveLogbookEntry: (LogbookEntry) -> Unit,
-    onDeleteLogbookEntry: (Long) -> Unit,
-    onReportFlow: (LogbookEntry) -> Unit,
-    onOpenLogbook: () -> Unit,
     nearbyCanyons: List<NearbyCanyon>,
     onNearbyCanyonClick: (Int) -> Unit,
 ) {
@@ -323,22 +320,6 @@ private fun LazyListScope.conditionsItems(
                 sourceUrl = edfStatusSourceUrl,
             )
         }
-    }
-    item(key = "my_canyon") {
-        val canyon = detail.canyon
-        MyCanyonCard(
-            canyonId = canyon.id,
-            canyonName = canyon.nom,
-            memo = personalNote,
-            entries = logbook,
-            knownCompanions = knownCompanions,
-            onSaveMemo = onSavePersonalNote,
-            onSaveEntry = onSaveLogbookEntry,
-            onDeleteEntry = onDeleteLogbookEntry,
-            onReportFlow = onReportFlow,
-            onOpenLogbook = onOpenLogbook,
-            canReportFlow = !isAddedInApp,
-        )
     }
     if (nearbyCanyons.isNotEmpty()) {
         item(key = "nearby") {
@@ -531,7 +512,7 @@ internal fun InlineLoadingBanner(text: String, modifier: Modifier = Modifier) {
 }
 
 private const val TABS_HEADER_KEY = "canyon_tabs"
-private const val TAB_CONDITIONS = 0
-private const val TAB_TOPO = 1
+private const val TAB_TOPO = 0
+private const val TAB_CONDITIONS = 1
 private const val TAB_PHOTOS = 2
 private const val TAB_DEBITS = 3

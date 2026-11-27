@@ -866,6 +866,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="my_canyon_title">La mia forra</string>
     <string name="my_canyon_memo">Nota</string>
     <string name="my_canyon_descended">L\'ho già fatto</string>
+    <string name="my_canyon_add_memo">Aggiungi una nota</string>
     <string name="my_canyon_add_descent">Discesa</string>
     <plurals name="my_canyon_times">
         <item quantity="one">%1$d volta</item>

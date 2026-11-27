@@ -34,8 +34,10 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.NoteAdd
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -151,6 +153,24 @@ fun CanyonDetailScreen(
         contract = ActivityResultContracts.RequestPermission(),
     ) { viewModel.toggleDebitNotifications() }
 
+    // Opened from the "My canyon" card or from the ⋮ menu: shown over the page whichever opened them.
+    val myCanyonDialogs = rememberMyCanyonDialogs()
+    uiState.canyonDetail?.canyon?.let { canyon ->
+        MyCanyonDialogsHost(
+            dialogs = myCanyonDialogs,
+            canyonId = canyon.id,
+            canyonName = canyon.nom,
+            memo = uiState.personalNote,
+            entries = uiState.logbook,
+            knownCompanions = uiState.knownCompanions,
+            onSaveMemo = viewModel::savePersonalNote,
+            onSaveEntry = viewModel::saveLogbookEntry,
+            onDeleteEntry = viewModel::deleteLogbookEntry,
+            onReportFlow = onReportOuting,
+            canReportFlow = !isAddedInApp,
+        )
+    }
+
     val onboarding = LocalOnboarding.current
     LaunchedEffect(canyonId) {
         PerformanceTrace.logEvent("canyon_detail_screen_visible", "canyonId" to canyonId)
@@ -238,6 +258,10 @@ fun CanyonDetailScreen(
                         onRateInterestClick = onRateInterestClick,
                         isAddedInApp = isAddedInApp,
                         onProposeEdit = onProposeEdit,
+                        // Nothing of the user's here yet: no card above the tabs, its two actions are in the menu.
+                        myCanyonDialogs = myCanyonDialogs.takeIf {
+                            uiState.canyonDetail != null && !hasMyCanyon(uiState.personalNote, uiState.logbook)
+                        },
                     )
                 },
             )
@@ -328,13 +352,10 @@ fun CanyonDetailScreen(
                             onPersistedPhotoMissing = viewModel::onPersistedPhotoMissing,
                             openDebitsTabInitially = openDebitsTabInitially,
                             personalNote = uiState.personalNote,
-                            onSavePersonalNote = viewModel::savePersonalNote,
                             nearbyCanyons = uiState.nearbyCanyons,
                             onShowMap = onShowMapClick,
                             logbook = uiState.logbook,
-                            knownCompanions = uiState.knownCompanions,
-                            onSaveLogbookEntry = viewModel::saveLogbookEntry,
-                            onDeleteLogbookEntry = viewModel::deleteLogbookEntry,
+                            myCanyonDialogs = myCanyonDialogs,
                             onReportFlow = onReportOuting,
                             onOpenLogbook = onOpenLogbook,
                             onNearbyCanyonClick = onOpenCanyon,
@@ -441,6 +462,8 @@ private fun CanyonMoreActions(
     onRateInterestClick: () -> Unit,
     isAddedInApp: Boolean,
     onProposeEdit: () -> Unit,
+    /** Set while the "My canyon" card is not shown: its actions are offered here. */
+    myCanyonDialogs: MyCanyonDialogs?,
 ) {
     val context = LocalContext.current
     var expanded by remember { mutableStateOf(false) }
@@ -474,6 +497,26 @@ private fun CanyonMoreActions(
                         expanded = false
                         onRateInterestClick()
                     },
+                )
+            }
+            myCanyonDialogs?.let { dialogs ->
+                DcDropdownMenuItem(
+                    text = stringResource(R.string.my_canyon_add_memo),
+                    icon = Icons.AutoMirrored.Filled.NoteAdd,
+                    onClick = {
+                        expanded = false
+                        dialogs.editingMemo = true
+                    },
+                    modifier = Modifier.testTag(TestTags.DETAIL_MEMO),
+                )
+                DcDropdownMenuItem(
+                    text = stringResource(R.string.my_canyon_descended),
+                    icon = Icons.Default.CheckCircle,
+                    onClick = {
+                        expanded = false
+                        dialogs.addingEntry = true
+                    },
+                    modifier = Modifier.testTag(TestTags.DETAIL_LOGBOOK_ADD),
                 )
             }
             if (canyon != null) {

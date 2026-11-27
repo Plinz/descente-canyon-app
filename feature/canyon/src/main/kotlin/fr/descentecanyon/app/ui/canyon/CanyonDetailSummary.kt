@@ -19,9 +19,6 @@ import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Gavel
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Map
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -295,33 +292,75 @@ private fun SummaryStatsGrid(detail: CanyonDetail, modifier: Modifier = Modifier
     }
 }
 
-/** Where the canyon is: reference information, shown at the top of the topo. */
+/**
+ * Where the canyon is, at the top of the topo: like the cards below it (title, then text), the
+ * places two by two, each its small label over its value, so that a long name wraps in its column.
+ */
 @Composable
 internal fun LocationCard(detail: CanyonDetail, modifier: Modifier = Modifier) {
     val canyon = detail.canyon
     val locationStats = listOf(
         SummaryStat(
             stringResource(R.string.communes),
-            canyon.communes.takeIf { it.isNotEmpty() }?.joinToString(),
+            locationCommunes(canyon.communes, canyon.departement, canyon.region).takeIf { it.isNotEmpty() }?.joinToString(),
         ),
+        SummaryStat(stringResource(R.string.department), canyon.departement?.let(::listedPlaces)?.joinToString()),
         SummaryStat(stringResource(R.string.region), canyon.region),
-        SummaryStat(stringResource(R.string.department), canyon.departement),
         SummaryStat(stringResource(R.string.massif), canyon.massif),
-        SummaryStat(stringResource(R.string.basin), canyon.bassin),
         SummaryStat(stringResource(R.string.watercourse), canyon.coursEau),
+        SummaryStat(stringResource(R.string.basin), canyon.bassin),
     ).filter { !it.value.isNullOrBlank() }
     if (locationStats.isEmpty()) return
+    val colors = LocalDcColors.current
 
     DcCard(
         modifier = modifier.fillMaxWidth(),
-        contentPadding = 16.dp,
+        contentPadding = 12.dp,
     ) {
-        SummarySection(
-            title = stringResource(R.string.location),
-            stats = locationStats,
-        )
+        Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+            Text(
+                text = stringResource(R.string.location),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.SemiBold,
+            )
+            locationStats.chunked(2).forEach { pair ->
+                Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    pair.forEach { stat ->
+                        Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                            Text(
+                                text = stat.label.uppercase(),
+                                style = LocalDcTypography.current.metricLabel,
+                                color = colors.textMuted,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                            )
+                            Text(
+                                text = stat.value.orEmpty(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = FontWeight.Medium,
+                                color = colors.textPrimary,
+                            )
+                        }
+                    }
+                    // A lone last place keeps the width of a column.
+                    if (pair.size == 1) Spacer(modifier = Modifier.weight(1f))
+                }
+            }
+        }
     }
 }
+
+/**
+ * The communes of the sheet without the subdivisions and region the site lists among them
+ * ("Isère, Savoie, Saint-Béron" for a canyon in Isère and Savoie): they have their own line.
+ */
+internal fun locationCommunes(communes: List<String>, subdivision: String?, region: String?): List<String> {
+    val above = listOfNotNull(subdivision, region).flatMap(::listedPlaces).map { it.lowercase() }.toSet()
+    return communes.map { it.trim() }.filter { it.isNotEmpty() && it.lowercase() !in above }.distinct()
+}
+
+/** "Isère , Savoie" as the site writes several places in one field: each place, trimmed. */
+private fun listedPlaces(text: String): List<String> = text.split(',').map { it.trim() }.filter { it.isNotEmpty() }
 
 private data class SummaryStat(val label: String, val value: String?)
 
@@ -334,52 +373,6 @@ private fun formatAreaKm2(areaKm2: Double): String {
         "%.2f"
     }
     return String.format(Locale.getDefault(), "$precision km²", areaKm2)
-}
-
-@Composable
-private fun SummarySection(title: String, stats: List<SummaryStat>, modifier: Modifier = Modifier) {
-    Column(modifier = modifier, verticalArrangement = Arrangement.spacedBy(8.dp)) {
-        Text(
-            text = title,
-            style = MaterialTheme.typography.labelLarge,
-            fontWeight = FontWeight.SemiBold,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Card(
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
-            ),
-            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
-        ) {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                stats.forEachIndexed { index, stat ->
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 14.dp, vertical = 10.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Text(
-                            text = stat.label,
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        )
-                        Text(
-                            text = stat.value ?: "-",
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                    if (index != stats.lastIndex) {
-                        HorizontalDivider(
-                            color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.35f),
-                        )
-                    }
-                }
-            }
-        }
-    }
 }
 
 @Composable

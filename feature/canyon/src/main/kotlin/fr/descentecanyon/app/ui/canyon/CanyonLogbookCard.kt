@@ -25,8 +25,11 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -51,21 +54,48 @@ import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.LocalDate
 
+/** "My canyon" has something to show: a memo or a descent. Empty, the card is not shown and the ⋮ menu offers its actions. */
+internal fun hasMyCanyon(memo: String?, entries: List<LogbookEntry>): Boolean = memo != null || entries.isNotEmpty()
+
+/**
+ * What "My canyon" opens: the memo, a new descent, a descent to edit, then the offer to report the
+ * flow. Kept by the page, above the card and the ⋮ menu: the menu opens them while the card is hidden.
+ */
+@Stable
+internal class MyCanyonDialogs(
+    editingMemo: Boolean = false,
+    addingEntry: Boolean = false,
+    editedEntryId: Long? = null,
+    reportPromptDate: String? = null,
+) {
+    var editingMemo by mutableStateOf(editingMemo)
+    var addingEntry by mutableStateOf(addingEntry)
+    var editedEntryId by mutableStateOf(editedEntryId)
+
+    /** The day of the descent just added, whose flow could be reported (ISO date). */
+    var reportPromptDate by mutableStateOf(reportPromptDate)
+
+    companion object {
+        val Saver: Saver<MyCanyonDialogs, Any> = listSaver(
+            save = { listOf(it.editingMemo, it.addingEntry, it.editedEntryId, it.reportPromptDate) },
+            restore = { MyCanyonDialogs(it[0] as Boolean, it[1] as Boolean, it[2] as Long?, it[3] as String?) },
+        )
+    }
+}
+
+@Composable
+internal fun rememberMyCanyonDialogs(): MyCanyonDialogs = rememberSaveable(saver = MyCanyonDialogs.Saver) { MyCanyonDialogs() }
+
 /**
  * "My canyon": the memo (what stays true from one outing to the next) and the outings of the
- * logbook in this canyon, in one card. Nothing in it is sent to the site.
+ * logbook in this canyon, in one card above the tabs. Nothing in it is sent to the site.
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 internal fun MyCanyonCard(
-    canyonId: Int,
-    canyonName: String,
     memo: String?,
     entries: List<LogbookEntry>,
-    knownCompanions: List<String>,
-    onSaveMemo: (String) -> Unit,
-    onSaveEntry: (LogbookEntry) -> Unit,
-    onDeleteEntry: (Long) -> Unit,
+    dialogs: MyCanyonDialogs,
     onReportFlow: (LogbookEntry) -> Unit,
     onOpenLogbook: () -> Unit,
     modifier: Modifier = Modifier,
@@ -74,11 +104,7 @@ internal fun MyCanyonCard(
 ) {
     val colors = LocalDcColors.current
     val formatter = rememberLogbookDateFormatter()
-    var editingMemo by rememberSaveable { mutableStateOf(false) }
     var memoExpanded by rememberSaveable { mutableStateOf(false) }
-    var addingEntry by rememberSaveable { mutableStateOf(false) }
-    var editedEntryId by rememberSaveable { mutableStateOf<Long?>(null) }
-    var reportPromptDate by rememberSaveable { mutableStateOf<String?>(null) }
 
     DcCard(
         modifier = modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp).testTag(TestTags.DETAIL_LOGBOOK),
@@ -117,14 +143,14 @@ internal fun MyCanyonCard(
                         overflow = TextOverflow.Ellipsis,
                         modifier = Modifier.weight(1f),
                     )
-                    MemoEditButton(onClick = { editingMemo = true })
+                    MemoEditButton(onClick = { dialogs.editingMemo = true })
                 }
             }
 
             // The last descent; the others are in the logbook.
             entries.firstOrNull()?.let { last ->
                 Row(
-                    modifier = Modifier.fillMaxWidth().clickable { editedEntryId = last.id },
+                    modifier = Modifier.fillMaxWidth().clickable { dialogs.editedEntryId = last.id },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     LogbookEntryLines(entry = last, title = last.date.format(formatter), modifier = Modifier.weight(1f))
@@ -148,14 +174,14 @@ internal fun MyCanyonCard(
                     CardAction(
                         icon = Icons.AutoMirrored.Filled.NoteAdd,
                         label = stringResource(R.string.my_canyon_memo),
-                        onClick = { editingMemo = true },
+                        onClick = { dialogs.editingMemo = true },
                         modifier = Modifier.testTag(TestTags.DETAIL_MEMO),
                     )
                 }
                 CardAction(
                     icon = if (entries.isEmpty()) Icons.Default.CheckCircle else Icons.Default.Add,
                     label = stringResource(if (entries.isEmpty()) R.string.my_canyon_descended else R.string.my_canyon_add_descent),
-                    onClick = { addingEntry = true },
+                    onClick = { dialogs.addingEntry = true },
                     modifier = Modifier.testTag(TestTags.DETAIL_LOGBOOK_ADD),
                 )
                 if (entries.size > 1) {
@@ -166,62 +192,79 @@ internal fun MyCanyonCard(
             }
         }
     }
+}
 
-    if (editingMemo) {
+/** The dialogs of "My canyon" ([MyCanyonDialogs]), opened from the card or from the ⋮ menu. */
+@Composable
+internal fun MyCanyonDialogsHost(
+    dialogs: MyCanyonDialogs,
+    canyonId: Int,
+    canyonName: String,
+    memo: String?,
+    entries: List<LogbookEntry>,
+    knownCompanions: List<String>,
+    onSaveMemo: (String) -> Unit,
+    onSaveEntry: (LogbookEntry) -> Unit,
+    onDeleteEntry: (Long) -> Unit,
+    onReportFlow: (LogbookEntry) -> Unit,
+    /** False for a canyon added in the app: the site, where flows are reported, does not know it. */
+    canReportFlow: Boolean = true,
+) {
+    if (dialogs.editingMemo) {
         CanyonMemoDialog(
             canyonName = null,
             initialText = memo.orEmpty(),
-            onDismiss = { editingMemo = false },
+            onDismiss = { dialogs.editingMemo = false },
             onSave = { text ->
                 onSaveMemo(text)
-                editingMemo = false
+                dialogs.editingMemo = false
             },
         )
     }
-    if (addingEntry) {
+    if (dialogs.addingEntry) {
         LogbookEntryDialog(
             canyonId = canyonId,
             canyonName = canyonName,
             initial = null,
             knownCompanions = knownCompanions,
-            onDismiss = { addingEntry = false },
+            onDismiss = { dialogs.addingEntry = false },
             onSave = { entry ->
                 onSaveEntry(entry)
-                addingEntry = false
+                dialogs.addingEntry = false
                 // A flow seen weeks ago no longer helps anyone decide: only recent outings are worth a report.
-                if (canReportFlow && entry.awaitsFlowReport(LocalDate.now())) reportPromptDate = entry.date.toString()
+                if (canReportFlow && entry.awaitsFlowReport(LocalDate.now())) dialogs.reportPromptDate = entry.date.toString()
             },
         )
     }
-    editedEntryId?.let { id ->
+    dialogs.editedEntryId?.let { id ->
         val entry = entries.firstOrNull { it.id == id }
         if (entry == null) {
-            editedEntryId = null
+            dialogs.editedEntryId = null
         } else {
             LogbookEntryDialog(
                 canyonId = canyonId,
                 canyonName = canyonName,
                 initial = entry,
                 knownCompanions = knownCompanions,
-                onDismiss = { editedEntryId = null },
+                onDismiss = { dialogs.editedEntryId = null },
                 onSave = { edited ->
                     onSaveEntry(edited)
-                    editedEntryId = null
+                    dialogs.editedEntryId = null
                 },
                 onDelete = {
                     onDeleteEntry(entry.id)
-                    editedEntryId = null
+                    dialogs.editedEntryId = null
                 },
             )
         }
     }
-    reportPromptDate?.let { date ->
+    dialogs.reportPromptDate?.let { date ->
         AlertDialog(
-            onDismissRequest = { reportPromptDate = null },
+            onDismissRequest = { dialogs.reportPromptDate = null },
             text = { Text(stringResource(R.string.logbook_added_report_prompt)) },
             confirmButton = {
                 TextButton(onClick = {
-                    reportPromptDate = null
+                    dialogs.reportPromptDate = null
                     onReportFlow(
                         LogbookEntry(
                             canyonId = canyonId,
@@ -231,7 +274,7 @@ internal fun MyCanyonCard(
                     )
                 }) { Text(stringResource(R.string.outing_report_action)) }
             },
-            dismissButton = { TextButton(onClick = { reportPromptDate = null }) { Text(stringResource(R.string.cancel)) } },
+            dismissButton = { TextButton(onClick = { dialogs.reportPromptDate = null }) { Text(stringResource(R.string.cancel)) } },
         )
     }
 }

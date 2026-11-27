@@ -849,6 +849,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="my_canyon_title">My canyon</string>
     <string name="my_canyon_memo">Memo</string>
     <string name="my_canyon_descended">I\'ve done it</string>
+    <string name="my_canyon_add_memo">Add a memo</string>
     <string name="my_canyon_add_descent">Descent</string>
     <plurals name="my_canyon_times">
         <item quantity="one">%1$d time</item>
