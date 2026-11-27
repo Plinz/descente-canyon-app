@@ -234,10 +234,13 @@ class OutingPlanTest {
         assertEquals(8, updated.groupSize)
         assertEquals(setOf("gear:HELMET"), updated.choices?.checkedGear)
 
+        assertEquals(false, reopened.uiState.value.deleted)
         reopened.deleteOuting()
         advanceUntilIdle()
         assertEquals(emptyList<Any>(), outingRepository.outings.value)
         assertEquals(OutingStage.NEW, reopened.uiState.value.stage)
+        // Out of the database first, then the screen closes.
+        assertEquals(true, reopened.uiState.value.deleted)
     }
 
     @Test

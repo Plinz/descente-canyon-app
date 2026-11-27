@@ -187,6 +187,8 @@ data class OutingPlanUiState(
     val addedToStay: Boolean = false,
     /** The canyons after the first one, in their order. */
     val nextCanyons: List<NextCanyonState> = emptyList(),
+    /** The person deleted the outing from this screen: it closes. */
+    val deleted: Boolean = false,
 ) {
     /** "Pissarde (partie amont) + Pissarde (partie aval)". */
     val title: String?
@@ -461,17 +463,20 @@ class OutingPlanViewModel @Inject constructor(
     /** Back from the outing: it goes to the logbook and its notifications are cancelled; the plan stays on screen. */
     fun markBack() = forget { id -> endOutingUseCase(id) }
 
-    /** The outing will not happen: it is forgotten, the plan stays on screen. */
-    fun deleteOuting() = forget { id -> outingRepository.delete(id) }
+    /** The outing will not happen: it is forgotten, then the screen closes ([OutingPlanUiState.deleted]). */
+    fun deleteOuting() = forget(deleted = true) { id -> outingRepository.delete(id) }
 
-    private fun forget(remove: suspend (Long) -> Unit) {
+    private fun forget(deleted: Boolean = false, remove: suspend (Long) -> Unit) {
         planned = false
         viewModelScope.launch {
             saving.withLock {
-                val id = sources.value.saved?.id ?: return@withLock
-                remove(id)
-                sources.update { it.copy(saved = null) }
-                choices.update { it?.copy(alertDelayMinutes = 0, checkedGear = emptySet()) }
+                // Gone already (ended or deleted elsewhere): nothing to remove, the screen still closes when asked.
+                sources.value.saved?.id?.let { id ->
+                    remove(id)
+                    choices.update { it?.copy(alertDelayMinutes = 0, checkedGear = emptySet()) }
+                }
+                // Only once it is out of the database: closed earlier, the screen would cancel the removal with its scope.
+                sources.update { it.copy(saved = null, deleted = it.deleted || deleted) }
             }
         }
     }
@@ -805,6 +810,7 @@ class OutingPlanViewModel @Inject constructor(
             alertChangedSinceInformed = informedAlertAt != null && alertAt != null && informedAlertAt != alertAt.toInstant(zone),
             addedToStay = sources.addedToStay,
             nextCanyons = nextCanyons,
+            deleted = sources.deleted,
         )
     }
 
@@ -908,6 +914,7 @@ class OutingPlanViewModel @Inject constructor(
         val gearList: GearListSettings = GearListSettings(),
         val messageSections: Map<MessageAudience, Set<MessageSection>> = MessageAudience.entries.associateWith { it.defaultSections },
         val addedToStay: Boolean = false,
+        val deleted: Boolean = false,
     )
 
     companion object {

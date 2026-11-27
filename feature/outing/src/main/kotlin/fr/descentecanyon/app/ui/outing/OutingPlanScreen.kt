@@ -86,6 +86,7 @@ fun OutingPlanScreen(
     onOpenCanyon: (canyonId: Int) -> Unit,
     onManagePlaces: () -> Unit,
     onOpenOutingSettings: () -> Unit,
+    onOutingDeleted: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: OutingPlanViewModel = hiltViewModel(),
 ) {
@@ -256,6 +257,11 @@ fun OutingPlanScreen(
         } else {
             confirmTracking()
         }
+    }
+
+    // A deleted outing has nothing left to show: back to the list of the outings.
+    LaunchedEffect(state.deleted) {
+        if (state.deleted) onOutingDeleted()
     }
 
     Scaffold(

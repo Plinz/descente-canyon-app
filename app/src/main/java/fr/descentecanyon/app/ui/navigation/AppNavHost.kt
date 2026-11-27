@@ -310,6 +310,10 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
                 onManagePlaces = dropUnlessResumed { navController.navigateSingleTop(Screen.Places) },
                 onOpenOutingSettings = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingSettings) },
+                // Wherever the plan was opened from (canyon page, stay, notification): the Sorties tab, as its tab opens it.
+                onOutingDeleted = {
+                    navController.navigate(Screen.Outings) { applyAppRootNavigation(navController.graph.findStartDestination().id) }
+                },
             )
         }
 
