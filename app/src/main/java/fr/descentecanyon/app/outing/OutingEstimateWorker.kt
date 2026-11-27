@@ -8,18 +8,23 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.EntryPointAccessors
 import dagger.hilt.components.SingletonComponent
 import fr.descentecanyon.app.data.repository.OutingEstimateMonitor
+import fr.descentecanyon.app.data.repository.OutingTracksPrefetcher
+import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.notifications.AppNotificationPublisher
 import java.time.LocalTime
 
 /**
  * Computes again the flow estimates of the outings planned in the next days (see
  * [OutingEstimateMonitor]) and tells the user when the day of one becomes a high-flow risk. At
- * night the alert waits for the next run, after [QUIET_UNTIL].
+ * night the alert waits for the next run, after [QUIET_UNTIL]. The shared tracks of their canyons
+ * are read again along the way when they are old ([OutingTracksPrefetcher]).
  */
 class OutingEstimateWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result {
         val entryPoint = EntryPointAccessors.fromApplication(applicationContext, OutingEstimateEntryPoint::class.java)
+        // A bonus that never fails the estimates.
+        suspendRunCatching { entryPoint.outingTracksPrefetcher().refresh() }
         val monitor = entryPoint.outingEstimateMonitor()
         val alerts = runCatching { monitor.refresh() }.getOrElse { return Result.retry() }
         val now = LocalTime.now()
@@ -40,4 +45,5 @@ class OutingEstimateWorker(appContext: Context, params: WorkerParameters) : Coro
 interface OutingEstimateEntryPoint {
     fun outingEstimateMonitor(): OutingEstimateMonitor
     fun appNotificationPublisher(): AppNotificationPublisher
+    fun outingTracksPrefetcher(): OutingTracksPrefetcher
 }

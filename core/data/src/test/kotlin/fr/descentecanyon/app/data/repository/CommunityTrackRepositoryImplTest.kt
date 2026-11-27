@@ -13,6 +13,7 @@ import fr.descentecanyon.app.domain.model.TrackVote
 import fr.descentecanyon.app.testutil.TestDatabases
 import java.io.File
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
 import java.time.YearMonth
 import java.time.ZoneOffset
@@ -42,7 +43,7 @@ class CommunityTrackRepositoryImplTest {
     private val clock = Clock.fixed(Instant.parse("2026-11-25T10:00:00Z"), ZoneOffset.UTC)
     private val listing = backend.json.decodeFromString(TrackListDto.serializer(), BackendTestServer.resource("backend/tracks.json"))
 
-    private fun repository() = CommunityTrackRepositoryImpl(
+    private fun repository(clock: Clock = this.clock) = CommunityTrackRepositoryImpl(
         context,
         backend.client,
         database.keyValueDao(),
@@ -146,6 +147,41 @@ class CommunityTrackRepositoryImplTest {
         assertEquals(AppError.TrackRejected(TrackRejection.INVALID_GPX), invalid)
         assertEquals(AppError.TrackRejected(TrackRejection.RATE_LIMITED), limited)
         assertEquals(AppError.NotFound, missing)
+    }
+
+    @Test
+    fun `prefetch reads the canyons never read or read long ago, the ones the server does not know are skipped`() = runTest {
+        backend.server.enqueue(json(BackendTestServer.resource("backend/tracks.json")))
+        repository().refresh(21).getOrThrow()
+        backend.server.takeRequest()
+        backend.server.enqueue(json("""{"canyonId":22,"tracks":[]}"""))
+        backend.server.enqueue(json("""{"error":"UNKNOWN_CANYON"}""", code = 404))
+
+        // 21 was just read: only 22 and 23, each once.
+        val read = repository().prefetch(listOf(21, 22, 23, 22), Duration.ofHours(12)).getOrThrow()
+
+        assertEquals(1, read)
+        assertEquals("/v1/canyons/22/tracks", backend.server.takeRequest().path)
+        assertEquals("/v1/canyons/23/tracks", backend.server.takeRequest().path)
+        assertEquals(3, backend.server.requestCount)
+        // Kept for the canyon, out of network.
+        assertEquals(listing.tracks.size, repository().observeTracks(21).first()?.tracks?.size)
+        assertEquals(emptyList<String>(), repository().observeTracks(22).first()?.tracks?.map { it.id })
+
+        // Thirteen hours later, 21 and 22 are read again.
+        backend.server.enqueue(json(BackendTestServer.resource("backend/tracks.json")))
+        backend.server.enqueue(json("""{"canyonId":22,"tracks":[]}"""))
+        assertEquals(2, repository(Clock.offset(clock, Duration.ofHours(13))).prefetch(listOf(21, 22), Duration.ofHours(12)).getOrThrow())
+    }
+
+    @Test
+    fun `prefetch stops at a failure of the network`() = runTest {
+        backend.server.enqueue(MockResponse().setResponseCode(503))
+
+        val error = repository().prefetch(listOf(21, 22), Duration.ofHours(12)).exceptionOrNull()?.toAppError()
+
+        assertEquals(AppError.Http(503), error)
+        assertEquals(1, backend.server.requestCount)
     }
 
     @Test

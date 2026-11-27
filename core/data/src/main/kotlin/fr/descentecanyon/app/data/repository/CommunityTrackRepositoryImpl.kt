@@ -12,6 +12,7 @@ import fr.descentecanyon.app.domain.coroutines.IoDispatcher
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.appError
 import fr.descentecanyon.app.domain.error.suspendRunCatching
+import fr.descentecanyon.app.domain.error.toAppError
 import fr.descentecanyon.app.domain.model.CommunityTrack
 import fr.descentecanyon.app.domain.model.CommunityTracks
 import fr.descentecanyon.app.domain.model.GeoBounds
@@ -23,6 +24,7 @@ import fr.descentecanyon.app.domain.model.TrackVote
 import fr.descentecanyon.app.domain.repository.CommunityTrackRepository
 import java.io.File
 import java.time.Clock
+import java.time.Duration
 import java.time.Instant
 import java.time.YearMonth
 import javax.inject.Inject
@@ -75,6 +77,20 @@ class CommunityTrackRepositoryImpl @Inject constructor(
         val cached = CachedTracks(list, clock.millis())
         store(canyonId, cached)
         cached.toDomain(loadVotes(), loadMine())
+    }
+
+    override suspend fun prefetch(canyonIds: Collection<Int>, maxAge: Duration): Result<Int> = suspendRunCatching {
+        var read = 0
+        for (canyonId in canyonIds.distinct()) {
+            loadFromDisk(canyonId)
+            val fetchedAt = cache.value[canyonId]?.fetchedAtMs
+            if (fetchedAt != null && clock.millis() - fetchedAt < maxAge.toMillis()) continue
+            refresh(canyonId).onSuccess { read++ }.onFailure { error ->
+                // A canyon the server does not know (added in the app since its last catalog) has no track yet.
+                if (error.toAppError() != AppError.NotFound) throw error
+            }
+        }
+        read
     }
 
     override suspend fun upload(canyonId: Int, role: TrackRole, gpx: ByteArray): Result<CommunityTrack> = suspendRunCatching {

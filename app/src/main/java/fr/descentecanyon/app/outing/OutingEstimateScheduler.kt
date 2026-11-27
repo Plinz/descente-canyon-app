@@ -11,7 +11,9 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import dagger.hilt.android.qualifiers.ApplicationContext
 import fr.descentecanyon.app.data.repository.OutingEstimateMonitor
+import fr.descentecanyon.app.data.repository.OutingTracksPrefetcher
 import fr.descentecanyon.app.domain.repository.OutingRepository
+import java.time.Clock
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
@@ -26,13 +28,16 @@ import kotlinx.coroutines.launch
 /**
  * Runs [OutingEstimateWorker] every few hours while an outing is planned (the worker only computes
  * the outings of the days estimated, so the evening before and the morning of each), and once right
- * away when the outings change: the estimate is then saved on the phone before leaving.
+ * away when the outings change: the estimate is then saved on the phone before leaving. The shared
+ * tracks of the canyons of the outings not over yet are read once the network is there
+ * ([OutingTracksWorker]), whenever those canyons change, then again with the estimates.
  */
 @Singleton
 class OutingEstimateScheduler @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val outingRepository: OutingRepository,
     private val monitor: OutingEstimateMonitor,
+    private val clock: Clock,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
     private val started = AtomicBoolean(false)
@@ -45,6 +50,23 @@ class OutingEstimateScheduler @Inject constructor(
                 .distinctUntilChanged()
                 .collect { upcoming -> schedule(hasUpcoming = upcoming != null) }
         }
+        scope.launch {
+            outingRepository.observeAll()
+                .map { outings -> OutingTracksPrefetcher.canyonsToKeep(outings, clock.instant()).toSet() }
+                .distinctUntilChanged()
+                .collect { canyonIds -> if (canyonIds.isNotEmpty()) scheduleTracks() }
+        }
+    }
+
+    private fun scheduleTracks() {
+        WorkManager.getInstance(context).enqueueUniqueWork(
+            TRACKS_WORK_NAME,
+            ExistingWorkPolicy.REPLACE,
+            OneTimeWorkRequestBuilder<OutingTracksWorker>()
+                .setConstraints(Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build())
+                .setBackoffCriteria(BackoffPolicy.EXPONENTIAL, BACKOFF_MINUTES, TimeUnit.MINUTES)
+                .build(),
+        )
     }
 
     private fun schedule(hasUpcoming: Boolean) {
@@ -79,5 +101,6 @@ class OutingEstimateScheduler @Inject constructor(
         const val BACKOFF_MINUTES = 15L
         const val PERIODIC_WORK_NAME = "outing-estimate-refresh"
         const val IMMEDIATE_WORK_NAME = "outing-estimate-refresh-now"
+        const val TRACKS_WORK_NAME = "outing-tracks-prefetch"
     }
 }
