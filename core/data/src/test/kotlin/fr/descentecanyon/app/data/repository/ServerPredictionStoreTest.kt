@@ -73,6 +73,25 @@ class ServerPredictionStoreTest {
     }
 
     @Test
+    fun `the estimates of one day are read at once for a list, only from today's file`() {
+        store(MORNING).install(fixture, SHA)
+        val ids = listOf(23222, 2257, 1)
+
+        val today = store(MORNING).dailyFor(ids, LocalDate.of(2026, 11, 25))
+        assertEquals(setOf(23222, 2257), today.keys)
+        val whole = checkNotNull(store(MORNING).predictions(23222))
+        assertEquals(whole.predictions.first(), today.getValue(23222))
+        val dayAfter = store(MORNING).dailyFor(ids, LocalDate.of(2026, 11, 27))
+        assertEquals(whole.predictions[2], dayAfter.getValue(23222))
+        assertEquals(2, dayAfter.getValue(23222).horizonDays)
+
+        assertTrue(store(MORNING).dailyFor(ids, LocalDate.of(2026, 11, 28)).isEmpty())
+        // The next day (in Paris) or fourteen hours later, the file is not today's any more.
+        assertTrue(store("2026-11-25T23:30:00Z").dailyFor(ids, LocalDate.of(2026, 11, 26)).isEmpty())
+        assertTrue(store("2026-11-25T21:30:00Z").dailyFor(ids, LocalDate.of(2026, 11, 25)).isEmpty())
+    }
+
+    @Test
     fun `a file of another schema is refused and the kept one stays, clear removes it`() {
         val store = store(MORNING)
         store.install(fixture, SHA)

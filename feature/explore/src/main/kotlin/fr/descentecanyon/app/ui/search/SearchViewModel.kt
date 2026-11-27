@@ -86,14 +86,20 @@ data class SearchStayPick(
 }
 
 /**
- * Flow estimates of the nearest canyons listed (sorted by distance, or around the place of a stay),
- * for [date]: today, or the day of the stay when it is within the days estimated.
+ * Flow estimates of the canyons listed for [date]: today or one of the next two days (chosen in the
+ * list), or the day of the stay when it is within the days estimated. The server's estimates cover
+ * every result at once; without them, the phone computes the nearest ones (sorted by distance, or
+ * around the place of a stay).
  */
 data class SearchEstimates(
     val date: LocalDate,
-    /** The canyons estimated, nearest first: the first ones of the results. */
+    /** Days after today of [date]; null for the day of a stay (not chosen in the list). */
+    val dayOffset: Int? = 0,
+    /** The canyons estimated or being estimated, in the order of the results. */
     val candidateIds: List<Int>,
     val byCanyon: Map<Int, DailyDebitPrediction> = emptyMap(),
+    /** The nearest canyons the phone computes itself, the server having no estimate of them. */
+    val computedIds: List<Int> = emptyList(),
     /** Only the canyons whose flow is likely normal are listed. */
     val onlyLikelyNormal: Boolean = false,
     /** Estimates are still being computed (online). */
@@ -101,7 +107,13 @@ data class SearchEstimates(
 ) {
     fun listed(results: List<CanyonSearchItem>): List<CanyonSearchItem> =
         if (onlyLikelyNormal) results.filter { byCanyon[it.id]?.isLikelyNormal() == true } else results
+
+    /** How many of [computedIds] have their estimate. */
+    val computedCount: Int get() = computedIds.count { it in byCanyon }
 }
+
+/** The canyons to estimate for one day: all the results from the server, the nearest ones on the phone. */
+private data class EstimateRequest(val date: LocalDate, val dayOffset: Int?, val ids: List<Int>, val nearestIds: List<Int>)
 
 data class SearchUiState(
     val queryDraft: String = "",
@@ -321,26 +333,49 @@ class SearchViewModel @Inject constructor(
 
     private val onlyLikelyNormalFlow = MutableStateFlow(false)
 
-    /** Estimates of the nearest canyons listed, null when the list is not about distance. */
+    /** Days after today of the estimates shown (0 to 2); a stay has its own day. */
+    private val estimateDayFlow = savedStateHandle.getStateFlow(ESTIMATE_DAY_KEY, 0)
+
+    /** Estimates of the canyons listed, null when none can be shown. */
     val estimates: StateFlow<SearchEstimates?> = estimatesFlow()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), null)
 
     private fun estimatesFlow(): Flow<SearchEstimates?> {
-        val candidates = uiState.map { state ->
-            val date = estimatedDate(state) ?: return@map null
-            date to state.results.take(ESTIMATED_RESULTS).map { it.id }
-        }.distinctUntilChanged()
-        val computed = candidates.flatMapLatest { candidate ->
-            val (date, ids) = candidate ?: return@flatMapLatest flowOf<SearchEstimates?>(null)
+        val requests = combine(uiState, estimateDayFlow) { state, dayOffset -> estimateRequest(state, dayOffset) }.distinctUntilChanged()
+        val computed = requests.flatMapLatest { request ->
+            request ?: return@flatMapLatest flowOf<SearchEstimates?>(null)
             flow<SearchEstimates?> {
-                var last = SearchEstimates(date, ids, isComputing = ids.isNotEmpty())
-                emit(last)
-                debitPredictionRepository.observeEstimates(ids).collect { estimates ->
-                    val byCanyon = estimates.mapNotNull { (id, predictions) -> predictions.forDate(date)?.let { id to it } }.toMap()
-                    last = last.copy(byCanyon = byCanyon)
-                    emit(last)
+                var fromServer = emptyMap<Int, DailyDebitPrediction>()
+                var fromPhone = emptyMap<Int, DailyDebitPrediction>()
+                var computedIds = emptyList<Int>()
+                fun current(computing: Boolean): SearchEstimates? {
+                    val estimated = fromServer.keys + computedIds
+                    val candidates = request.ids.filter { it in estimated }
+                    // Nothing estimated and nothing to compute: no estimate in this list (the server has none for it).
+                    if (candidates.isEmpty() && !computing) return null
+                    return SearchEstimates(
+                        date = request.date,
+                        dayOffset = request.dayOffset,
+                        candidateIds = candidates,
+                        byCanyon = fromServer + fromPhone,
+                        computedIds = computedIds,
+                        isComputing = computing,
+                    )
                 }
-                emit(last.copy(isComputing = false))
+                debitPredictionRepository.observeServerEstimates(request.ids, request.date).collect { estimates ->
+                    fromServer = estimates
+                    emit(current(computing = false))
+                }
+                computedIds = request.nearestIds.filterNot { it in fromServer }
+                if (computedIds.isNotEmpty()) {
+                    emit(current(computing = true))
+                    debitPredictionRepository.observeEstimates(computedIds).collect { estimates ->
+                        fromPhone =
+                            estimates.mapNotNull { (id, predictions) -> predictions.forDate(request.date)?.let { id to it } }.toMap()
+                        emit(current(computing = true))
+                    }
+                    emit(current(computing = false))
+                }
             }
         }
         return combine(computed, onlyLikelyNormalFlow) { estimates, onlyLikelyNormal ->
@@ -348,13 +383,32 @@ class SearchViewModel @Inject constructor(
         }
     }
 
-    /** The day to estimate: the stay's (when estimated, up to J+2) or today when the results are the nearest canyons. */
-    private fun estimatedDate(state: SearchUiState): LocalDate? {
+    /**
+     * The day to estimate: the stay's (when estimated, up to J+2), else today plus the day chosen.
+     * The phone computes the nearest canyons only (each one downloads its weather): those of a stay,
+     * or the first results sorted by distance.
+     */
+    private fun estimateRequest(state: SearchUiState, dayOffset: Int): EstimateRequest? {
         if (state.isResultListDeferred || state.results.isEmpty()) return null
         val today = LocalDate.now(clock)
-        if (isStayPick) return stayDate?.takeIf { !it.isBefore(today) && !it.isAfter(today.plusDays(LAST_ESTIMATED_DAY)) }
+        val ids = state.results.map { it.id }
+        if (isStayPick) {
+            val date = stayDate?.takeIf { !it.isBefore(today) && !it.isAfter(today.plusDays(LAST_ESTIMATED_DAY)) } ?: return null
+            return EstimateRequest(date, dayOffset = null, ids = ids, nearestIds = ids.take(ESTIMATED_RESULTS))
+        }
+        val offset = dayOffset.coerceIn(0, LAST_ESTIMATED_DAY.toInt())
         val byDistance = state.criteria.sortField == SearchSortField.DISTANCE && state.userLatitude != null && state.userLongitude != null
-        return today.takeIf { byDistance }
+        return EstimateRequest(
+            date = today.plusDays(offset.toLong()),
+            dayOffset = offset,
+            ids = ids,
+            nearestIds = if (byDistance) ids.take(ESTIMATED_RESULTS) else emptyList(),
+        )
+    }
+
+    /** Shows the estimates of today plus [dayOffset] days (0 to 2). */
+    fun selectEstimateDay(dayOffset: Int) {
+        savedStateHandle[ESTIMATE_DAY_KEY] = dayOffset.coerceIn(0, LAST_ESTIMATED_DAY.toInt())
     }
 
     fun toggleOnlyLikelyNormal() {
@@ -546,8 +600,9 @@ class SearchViewModel @Inject constructor(
         private const val STAY_OUTING_ID_KEY = "outingId"
         private const val STOP_TIMEOUT_MS = 5_000L
 
-        /** The nearest canyons estimated: each one downloads its weather. */
+        /** The nearest canyons the phone estimates itself without the server's: each one downloads its weather. */
         const val ESTIMATED_RESULTS = 30
+        private const val ESTIMATE_DAY_KEY = "search_estimate_day"
 
         /** The model estimates today and the next two days. */
         private const val LAST_ESTIMATED_DAY = 2L

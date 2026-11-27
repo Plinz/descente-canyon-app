@@ -70,7 +70,10 @@ class SearchViewModelTest {
     private val recentCanyonsRepository = mockk<RecentCanyonsRepository>(relaxUnitFun = true) {
         every { observeRecentCanyons(any()) } returns recentCanyons
     }
-    private val predictions = mockk<DebitPredictionRepository> { every { observeEstimates(any()) } returns flowOf(emptyMap()) }
+    private val predictions = mockk<DebitPredictionRepository> {
+        every { observeEstimates(any()) } returns flowOf(emptyMap())
+        every { observeServerEstimates(any(), any()) } returns flowOf(emptyMap())
+    }
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -453,6 +456,78 @@ class SearchViewModelTest {
         advanceUntilIdle()
         assertEquals(listOf(2), viewModel.estimates.value!!.listed(viewModel.uiState.value.results).map { it.id })
     }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `the server's estimates cover every result whatever the order, for the day chosen`() = runTest {
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(
+            listOf(canyon(id = 1, nom = "Alpha"), canyon(id = 2, nom = "Alpine"), canyon(id = 3, nom = "Beta")),
+        )
+        val today = LocalDate.of(2026, 7, 14)
+        val tomorrow = today.plusDays(1)
+        every { predictions.observeServerEstimates(any(), today) } returns flowOf(
+            mapOf(1 to daily(today, NiveauDebit.CORRECT), 2 to daily(today, NiveauDebit.GROS)),
+        )
+        every { predictions.observeServerEstimates(any(), tomorrow) } returns flowOf(mapOf(2 to daily(tomorrow, NiveauDebit.CORRECT)))
+        val viewModel = SearchViewModel(
+            searchCanyonsUseCase,
+            SavedStateHandle(),
+            mainDispatcherRule.dispatcher,
+            recentCanyonsRepository,
+            stayChoice(),
+            predictions,
+            clock,
+        )
+        backgroundScope.launch { viewModel.estimates.collect {} }
+        advanceTimeBy(250)
+        advanceUntilIdle()
+        viewModel.onQueryChanged("alp")
+        viewModel.onSortSelected(SearchSortField.NAME)
+        advanceTimeBy(250)
+        advanceUntilIdle()
+
+        val estimates = viewModel.estimates.value!!
+        assertEquals(today, estimates.date)
+        assertEquals(0, estimates.dayOffset)
+        assertEquals(viewModel.uiState.value.results.map { it.id }, estimates.candidateIds)
+        assertEquals(setOf(1, 2), estimates.byCanyon.keys)
+        // Not sorted by distance: nothing computed on the phone.
+        assertTrue(estimates.computedIds.isEmpty())
+        coVerify(exactly = 0) { predictions.observeEstimates(any()) }
+
+        viewModel.selectEstimateDay(1)
+        viewModel.toggleOnlyLikelyNormal()
+        advanceUntilIdle()
+        val later = viewModel.estimates.value!!
+        assertEquals(tomorrow, later.date)
+        assertEquals(1, later.dayOffset)
+        assertEquals(listOf(2), later.candidateIds)
+        assertEquals(listOf(2), later.listed(viewModel.uiState.value.results).map { it.id })
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `for a stay, the phone computes only the nearest canyons the server did not estimate`() = runTest {
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(stayCatalog)
+        val day = LocalDate.of(2026, 7, 15)
+        every { predictions.observeServerEstimates(any(), day) } returns flowOf(mapOf(2 to daily(day, NiveauDebit.CORRECT)))
+        every { predictions.observeEstimates(listOf(1)) } returns flowOf(mapOf(1 to estimate(day, NiveauDebit.GROS)))
+        val viewModel = stayViewModel(stayChoice())
+        backgroundScope.launch { viewModel.estimates.collect {} }
+        advanceTimeBy(250)
+        advanceUntilIdle()
+
+        val estimates = viewModel.estimates.value!!
+        assertNull(estimates.dayOffset)
+        assertEquals(listOf(2, 1), estimates.candidateIds)
+        assertEquals(listOf(1), estimates.computedIds)
+        assertEquals(1, estimates.computedCount)
+        assertEquals(NiveauDebit.GROS, estimates.byCanyon.getValue(1).ordinalLevel)
+        assertEquals(NiveauDebit.CORRECT, estimates.byCanyon.getValue(2).ordinalLevel)
+        coVerify(exactly = 0) { predictions.observeEstimates(listOf(2, 1)) }
+    }
+
+    private fun daily(day: LocalDate, level: NiveauDebit): DailyDebitPrediction = estimate(day, level).predictions.single()
 
     private fun estimate(day: LocalDate, level: NiveauDebit) = CanyonDebitPredictions(
         target = WeatherTarget(44.0, 6.0, WeatherLocationSource.UNKNOWN),

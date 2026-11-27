@@ -1520,9 +1520,9 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
         <item quantity="other">Canyon vicini: %1$d portate segnalate negli ultimi 7 giorni, %2$s</item>
     </plurals>
     <plurals name="search_estimate_results">
-        <item quantity="one">%1$d dei %2$d più vicini</item>
-        <item quantity="many">%1$d dei %2$d più vicini</item>
-        <item quantity="other">%1$d dei %2$d più vicini</item>
+        <item quantity="one">%1$d su %2$d stimati</item>
+        <item quantity="many">%1$d su %2$d stimati</item>
+        <item quantity="other">%1$d su %2$d stimati</item>
     </plurals>
 
     <!-- App server: catalogue updates, messages, shared GPS tracks -->

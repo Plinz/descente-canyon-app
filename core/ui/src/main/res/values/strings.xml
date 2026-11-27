@@ -1520,9 +1520,9 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
         <item quantity="other">Canyons voisins : %1$d débits signalés ces 7 derniers jours, %2$s</item>
     </plurals>
     <plurals name="search_estimate_results">
-        <item quantity="one">%1$d sur les %2$d plus proches</item>
-        <item quantity="many">%1$d sur les %2$d plus proches</item>
-        <item quantity="other">%1$d sur les %2$d plus proches</item>
+        <item quantity="one">%1$d sur %2$d estimés</item>
+        <item quantity="many">%1$d sur %2$d estimés</item>
+        <item quantity="other">%1$d sur %2$d estimés</item>
     </plurals>
 
     <!-- App server: catalogue updates, messages, shared GPS tracks -->

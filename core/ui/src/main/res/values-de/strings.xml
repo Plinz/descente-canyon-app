@@ -1482,8 +1482,8 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
         <item quantity="other">Benachbarte Canyons: %1$d Meldungen in den letzten 7 Tagen, %2$s</item>
     </plurals>
     <plurals name="search_estimate_results">
-        <item quantity="one">%1$d von den %2$d nächsten</item>
-        <item quantity="other">%1$d von den %2$d nächsten</item>
+        <item quantity="one">%1$d von %2$d geschätzten</item>
+        <item quantity="other">%1$d von %2$d geschätzten</item>
     </plurals>
 
     <!-- App server: catalogue updates, messages, shared GPS tracks -->

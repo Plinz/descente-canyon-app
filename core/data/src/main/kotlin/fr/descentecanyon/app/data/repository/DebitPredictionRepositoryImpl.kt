@@ -8,6 +8,7 @@ import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
+import fr.descentecanyon.app.domain.model.DailyDebitPrediction
 import fr.descentecanyon.app.domain.model.DebitPredictionBasis
 import fr.descentecanyon.app.domain.model.DebitPredictionInfoSummary
 import fr.descentecanyon.app.domain.model.ORDINAL_DEBIT_LEVELS
@@ -77,6 +78,16 @@ class DebitPredictionRepositoryImpl @Inject constructor(
                 emit(known.toMap())
             }
         }
+    }
+
+    override fun observeServerEstimates(canyonIds: List<Int>, date: LocalDate): Flow<Map<Int, DailyDebitPrediction>> = flow {
+        val ids = canyonIds.distinct().filterNot(AppCanyons::isAppCanyon)
+        suspend fun read() = withContext(ioDispatcher) { runCatching { serverPredictions.dailyFor(ids, date) }.getOrDefault(emptyMap()) }
+        val kept = read()
+        emit(kept)
+        refreshServerEstimates()
+        val fresh = read()
+        if (fresh != kept) emit(fresh)
     }
 
     /** Computed today (in the canyon's time zone) less than [ESTIMATE_REFRESH] ago. */

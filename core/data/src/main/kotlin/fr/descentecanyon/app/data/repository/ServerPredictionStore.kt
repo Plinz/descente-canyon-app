@@ -82,6 +82,32 @@ class ServerPredictionStore internal constructor(private val directory: File, pr
         return predictions.takeIf { isCurrent(it) }
     }
 
+    /**
+     * The server's estimates of [date] for [canyonIds], by canyon id: only today's file (see
+     * [predictions]), and only the day asked, read without building the whole estimate of each
+     * canyon, so a list of thousands of canyons costs a few milliseconds.
+     */
+    fun dailyFor(canyonIds: Collection<Int>, date: LocalDate): Map<Int, DailyDebitPrediction> {
+        val estimates = estimates() ?: return emptyMap()
+        val now = clock.instant()
+        if (Duration.between(Instant.ofEpochSecond(estimates.computedAt), now) >= MAX_AGE) return emptyMap()
+        val wanted = date.toString()
+        val todayByZone = HashMap<String, String>()
+        val result = HashMap<Int, DailyDebitPrediction>()
+        for (canyonId in canyonIds) {
+            val canyon = estimates.canyons[canyonId.toString()] ?: continue
+            val first = canyon.days.firstOrNull() ?: continue
+            val today = todayByZone.getOrPut(canyon.tz) {
+                now.atZone(runCatching { ZoneId.of(canyon.tz) }.getOrDefault(ZoneId.of("UTC"))).toLocalDate().toString()
+            }
+            // The file of an earlier day: the phone computes these again.
+            if (first.firstOrNull()?.jsonPrimitive?.content != today) continue
+            val day = canyon.days.firstOrNull { it.firstOrNull()?.jsonPrimitive?.content == wanted } ?: continue
+            runCatching { dailyPrediction(day) }.getOrNull()?.let { result[canyonId] = it }
+        }
+        return result
+    }
+
     /** Epoch day of the last report the server knew for [canyonId] when it computed its estimate. */
     fun lastReportDay(canyonId: Int): Long? = estimates()?.canyons?.get(canyonId.toString())?.last
 

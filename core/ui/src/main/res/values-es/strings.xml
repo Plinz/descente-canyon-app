@@ -1520,9 +1520,9 @@ Busca un barranco y añádelo a tus favoritos.</string>
         <item quantity="other">Barrancos vecinos: %1$d caudales señalados en los últimos 7 días, %2$s</item>
     </plurals>
     <plurals name="search_estimate_results">
-        <item quantity="one">%1$d de los %2$d más cercanos</item>
-        <item quantity="many">%1$d de los %2$d más cercanos</item>
-        <item quantity="other">%1$d de los %2$d más cercanos</item>
+        <item quantity="one">%1$d de %2$d estimados</item>
+        <item quantity="many">%1$d de %2$d estimados</item>
+        <item quantity="other">%1$d de %2$d estimados</item>
     </plurals>
 
     <!-- App server: catalogue updates, messages, shared GPS tracks -->

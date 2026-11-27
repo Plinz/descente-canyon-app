@@ -1482,8 +1482,8 @@ Search for a canyon and add it to your favorites.</string>
         <item quantity="other">Nearby canyons: %1$d reports in the last 7 days, %2$s</item>
     </plurals>
     <plurals name="search_estimate_results">
-        <item quantity="one">%1$d of the %2$d nearest</item>
-        <item quantity="other">%1$d of the %2$d nearest</item>
+        <item quantity="one">%1$d of %2$d estimated</item>
+        <item quantity="other">%1$d of %2$d estimated</item>
     </plurals>
 
     <!-- App server: catalogue updates, messages, shared GPS tracks -->

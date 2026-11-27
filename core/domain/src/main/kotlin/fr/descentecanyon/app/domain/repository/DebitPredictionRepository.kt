@@ -2,7 +2,9 @@ package fr.descentecanyon.app.domain.repository
 
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
+import fr.descentecanyon.app.domain.model.DailyDebitPrediction
 import fr.descentecanyon.app.domain.model.DebitPredictionInfoSummary
+import java.time.LocalDate
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
 
@@ -23,4 +25,11 @@ interface DebitPredictionRepository {
      * the free quota of the weather service.
      */
     fun observeEstimates(canyonIds: List<Int>): Flow<Map<Int, CanyonDebitPredictions>> = flowOf(emptyMap())
+
+    /**
+     * The estimates of [date] that the app's server computed for [canyonIds], by canyon id: read at
+     * once from its file, so any number of canyons, nothing computed on the phone. The kept file
+     * first, then a fresher one when the check of the server brings it; empty without one for today.
+     */
+    fun observeServerEstimates(canyonIds: List<Int>, date: LocalDate): Flow<Map<Int, DailyDebitPrediction>> = flowOf(emptyMap())
 }

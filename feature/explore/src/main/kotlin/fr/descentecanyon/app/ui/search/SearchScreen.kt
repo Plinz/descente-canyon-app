@@ -96,6 +96,8 @@ import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.SelectedCanyonSheetContent
 import fr.descentecanyon.app.ui.components.formatDurationMinutes
 import fr.descentecanyon.app.ui.components.longDayLabel
+import fr.descentecanyon.app.ui.design.DcDropdownMenu
+import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.design.DcSectionHeader
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.LocalDcShapes
@@ -386,17 +388,22 @@ fun SearchScreen(
                         modifier = Modifier.padding(end = 8.dp),
                     )
                     shownEstimates?.let { current ->
-                        FilterChip(
-                            selected = current.onlyLikelyNormal,
-                            onClick = viewModel::toggleOnlyLikelyNormal,
-                            label = { Text(stringResource(R.string.search_estimate_filter), maxLines = 1) },
-                            leadingIcon = { Icon(Icons.Default.Insights, contentDescription = null, modifier = Modifier.size(16.dp)) },
-                        )
+                        Row(horizontalArrangement = Arrangement.spacedBy(6.dp), verticalAlignment = Alignment.CenterVertically) {
+                            current.dayOffset?.let { offset ->
+                                EstimateDayChip(dayOffset = offset, onSelect = viewModel::selectEstimateDay)
+                            }
+                            FilterChip(
+                                selected = current.onlyLikelyNormal,
+                                onClick = viewModel::toggleOnlyLikelyNormal,
+                                label = { Text(stringResource(R.string.search_estimate_filter), maxLines = 1) },
+                                leadingIcon = { Icon(Icons.Default.Insights, contentDescription = null, modifier = Modifier.size(16.dp)) },
+                            )
+                        }
                     }
                 }
                 shownEstimates?.takeIf { it.isComputing }?.let { current ->
                     Text(
-                        text = stringResource(R.string.search_estimate_progress, current.byCanyon.size, current.candidateIds.size),
+                        text = stringResource(R.string.search_estimate_progress, current.computedCount, current.computedIds.size),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
@@ -759,4 +766,32 @@ private fun distanceInfo(criteria: SearchCriteria, canyon: CanyonSearchItem): Ca
     // A tenth below ten kilometres, whole kilometres above.
     val text = if (km < 10) String.format(locale, "%.1f km", km) else "${km.roundToInt()} km"
     return CanyonCardInfo(icon = Icons.Default.NearMe, text = text, description = stringResource(R.string.search_distance_away, text))
+}
+
+/** The day of the estimates shown in the list: today, tomorrow or the day after. */
+@Composable
+private fun EstimateDayChip(dayOffset: Int, onSelect: (Int) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+    val labels = listOf(R.string.prediction_today, R.string.prediction_tomorrow, R.string.prediction_day_after_tomorrow)
+    Box {
+        FilterChip(
+            selected = dayOffset > 0,
+            onClick = { expanded = true },
+            label = { Text(stringResource(labels[dayOffset.coerceIn(0, labels.lastIndex)]), maxLines = 1) },
+            trailingIcon = { Icon(Icons.Default.ExpandMore, contentDescription = null, modifier = Modifier.size(16.dp)) },
+            modifier = Modifier.testTag(TestTags.SEARCH_ESTIMATE_DAY),
+        )
+        DcDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            labels.forEachIndexed { index, label ->
+                DcDropdownMenuItem(
+                    text = stringResource(label),
+                    isSelected = index == dayOffset,
+                    onClick = {
+                        expanded = false
+                        onSelect(index)
+                    },
+                )
+            }
+        }
+    }
 }
