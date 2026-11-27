@@ -24,6 +24,7 @@ import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.e2e.BaseE2eTest
 import fr.descentecanyon.app.e2e.fakes.FakePlaceSearchRepository
+import fr.descentecanyon.app.ui.navigation.BottomNavItem
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.Duration
 import java.time.Instant
@@ -133,13 +134,28 @@ class OutingPlanE2ETest : BaseE2eTest() {
     }
 
     @Test
+    fun anOutingIsPreparedFromTheOutingsTabWithoutTheCanyonPage() {
+        openOutingsTab()
+        composeRule.onNodeWithTag(TestTags.OUTINGS_NEW_OUTING, useUnmergedTree = true).performClick()
+
+        // The search, to choose the canyon: it opens the plan in place of the search.
+        waitForTag(TestTags.SEARCH_QUERY_FIELD)
+        composeRule.onNodeWithTag(TestTags.SEARCH_QUERY_FIELD, useUnmergedTree = true).performTextInput("Riolan")
+        waitForTag(TestTags.canyonCard(101))
+        composeRule.onNodeWithTag(TestTags.canyonCard(101), useUnmergedTree = true).performSemanticsAction(SemanticsActions.OnClick)
+        waitForTag(TestTags.OUTING_SUMMARY)
+        assertTrue(runBlocking { outingRepository.observeAll().first().isEmpty() })
+
+        // Back from the plan: the Sorties tab, not the search.
+        composeRule.onNodeWithContentDescription(string(R.string.back), useUnmergedTree = true).performClick()
+        waitForTag(TestTags.OUTINGS_LIST)
+        composeRule.onNodeWithTag(TestTags.OUTINGS_NEW_OUTING, useUnmergedTree = true).assertExists()
+    }
+
+    @Test
     fun aStayIsMadeAtACampsiteFoundByItsName() {
         val dayBefore = LocalDate.now()
-        waitForTag(TestTags.HOME_ACCOUNT_BUTTON)
-        composeRule.onNodeWithTag(TestTags.HOME_ACCOUNT_BUTTON, useUnmergedTree = true).performClick()
-        waitForTag(TestTags.MY_ACCOUNT_LIST)
-        composeRule.onNodeWithTag(TestTags.MY_ACCOUNT_LIST).performScrollToNode(hasText(string(R.string.account_outings_all)))
-        composeRule.onNodeWithText(string(R.string.account_outings_all)).performClick()
+        openOutingsTab()
         waitForTag(TestTags.OUTINGS_LIST)
         composeRule.onNodeWithTag(TestTags.OUTINGS_LIST).performScrollToNode(hasTestTag(TestTags.OUTINGS_NEW_STAY))
         composeRule.onNodeWithTag(TestTags.OUTINGS_NEW_STAY).performClick()
@@ -234,11 +250,7 @@ class OutingPlanE2ETest : BaseE2eTest() {
         // A day still to come in the canyon's hours too, whatever the phone's zone and time: planned, not under way.
         val day = today.plusDays(2)
 
-        waitForTag(TestTags.HOME_ACCOUNT_BUTTON)
-        composeRule.onNodeWithTag(TestTags.HOME_ACCOUNT_BUTTON, useUnmergedTree = true).performClick()
-        waitForTag(TestTags.MY_ACCOUNT_LIST)
-        composeRule.onNodeWithTag(TestTags.MY_ACCOUNT_LIST).performScrollToNode(hasText(string(R.string.account_outings_all)))
-        composeRule.onNodeWithText(string(R.string.account_outings_all)).performClick()
+        openOutingsTab()
 
         waitForTag(TestTags.stayRow(stayId))
         composeRule.onNodeWithTag(TestTags.stayRow(stayId), useUnmergedTree = true).performClick()
@@ -326,5 +338,13 @@ class OutingPlanE2ETest : BaseE2eTest() {
     private companion object {
         /** The Riolan's hours: an outing is planned in its canyon's zone, whatever the phone's (UTC on the emulators). */
         val RIOLAN_ZONE: ZoneId = ZoneId.of("Europe/Paris")
+    }
+
+    /** The Sorties tab, from the bottom bar. */
+    private fun openOutingsTab() {
+        waitForTag(TestTags.bottomNavItem(BottomNavItem.OUTINGS.name))
+        composeRule.onNodeWithTag(TestTags.bottomNavItem(BottomNavItem.OUTINGS.name), useUnmergedTree = true)
+            .performSemanticsAction(SemanticsActions.OnClick)
+        waitForTag(TestTags.OUTINGS_LIST)
     }
 }

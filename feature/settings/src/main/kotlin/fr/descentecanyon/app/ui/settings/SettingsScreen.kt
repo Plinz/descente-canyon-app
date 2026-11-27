@@ -87,10 +87,6 @@ import java.time.format.FormatStyle
 @Composable
 fun SettingsScreen(
     onBackClick: () -> Unit,
-    /** What the app follows for the user and what it found: canyons, forum topics, members. */
-    onOpenNotifications: () -> Unit,
-    onOpenOutingSettings: () -> Unit,
-    onOpenPlaces: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: SettingsViewModel = hiltViewModel(),
@@ -158,32 +154,10 @@ fun SettingsScreen(
                 item {
                     SettingsSection(title = stringResource(R.string.settings_section_notifications)) {
                         SettingsLinkRow(
-                            icon = Icons.Default.NotificationsActive,
-                            title = stringResource(R.string.notifications_screen_title),
-                            subtitle = stringResource(R.string.settings_notifications_center_hint),
-                            onClick = onOpenNotifications,
-                        )
-                        SettingsLinkRow(
                             icon = Icons.Default.Notifications,
                             title = stringResource(R.string.settings_notifications_system),
                             subtitle = stringResource(R.string.settings_notifications_system_hint),
                             onClick = { context.openAppNotificationSettings() },
-                        )
-                    }
-                }
-                item {
-                    SettingsSection(title = stringResource(R.string.settings_section_outings)) {
-                        SettingsLinkRow(
-                            icon = Icons.Default.Tune,
-                            title = stringResource(R.string.outing_settings_title),
-                            subtitle = stringResource(R.string.settings_outings_hint),
-                            onClick = onOpenOutingSettings,
-                        )
-                        SettingsLinkRow(
-                            icon = Icons.Default.Place,
-                            title = stringResource(R.string.places_title),
-                            subtitle = stringResource(R.string.settings_places_hint),
-                            onClick = onOpenPlaces,
                         )
                     }
                 }

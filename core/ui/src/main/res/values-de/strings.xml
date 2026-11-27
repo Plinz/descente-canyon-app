@@ -5,6 +5,14 @@
     <string name="tab_search">Suchen</string>
     <string name="tab_map">Karte</string>
     <string name="tab_explore">Entdecken</string>
+    <string name="tab_outings">Touren</string>
+    <string name="tab_me">Profil</string>
+    <string name="outings_tab_subtitle">Ihre geplanten Touren und Aufenthalte und Ihr Tourenbuch.</string>
+    <string name="outings_new_outing">Tour planen</string>
+    <string name="outing_pick_subtitle">Wählen Sie den Canyon: einen Favoriten, einen in der Nähe oder nach Namen.</string>
+    <string name="search_favorites_title">Ihre Favoriten</string>
+    <string name="account_settings_hint">Darstellung, Sprache, Benachrichtigungen, Offline, Info</string>
+    <string name="account_section_contributions">Meine Beiträge</string>
     <string name="explore_mode_list">Liste</string>
     <string name="explore_mode_map">Karte</string>
     <string name="search_nearby_title">In der Nähe</string>
@@ -573,7 +581,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="settings_section_notifications">Benachrichtigungen</string>
     <string name="settings_notifications_system">Benachrichtigungseinstellungen</string>
     <string name="settings_notifications_system_hint">Berechtigung, Töne und Kategorien in den Android-Einstellungen</string>
-    <string name="settings_notifications_center_hint">Verfolgte Canyons, Forenbereiche und Mitglieder und ihre Aktivität</string>
     <string name="settings_theme_title">Design</string>
     <string name="settings_section_offline">Offline</string>
     <string name="settings_offline_refresh">Beschreibungen, die älter als ein Monat sind, werden beim Öffnen mit Netz von der Website aktualisiert. Bereits angesehene Wasserstände und Wetterdaten bleiben offline sichtbar.</string>
@@ -677,7 +684,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="outing_plan_action">Tour planen</string>
     <string name="outing_plan_for_day">Für %1$s planen</string>
     <string name="outing_plan_action_hint">Tagesablauf, Ausrüstung, Nachrichten an die Gruppe</string>
-    <string name="outing_active_summary">Tour geplant %1$s · zurück gegen %2$s</string>
     <string name="outing_underway_summary">Unterwegs · zurück gegen %1$s</string>
     <string name="outing_plan_title">Tour planen</string>
     <string name="outing_date_label">Tag</string>
@@ -756,7 +762,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="logbook_delete">Aus dem Tourenbuch entfernen</string>
     <string name="logbook_empty_title">Ihr Tourenbuch ist leer</string>
     <string name="logbook_empty_body">Tragen Sie Touren und eine Notiz auf der Canyonseite ein, mit „Ich bin zurück“ nach einer geplanten Tour, oder importieren Sie Ihre Tourenliste der Website unter Mein Bereich. Nichts wird an die Website gesendet.</string>
-    <string name="logbook_open_action">Tourenbuch</string>
     <plurals name="logbook_card_count">
         <item quantity="one">%1$d-mal begangen</item>
         <item quantity="other">%1$d-mal begangen</item>
@@ -935,8 +940,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
         <item quantity="one">%1$d Canyon mit Notiz</item>
         <item quantity="other">%1$d Canyons mit Notiz</item>
     </plurals>
-
-    <string name="account_outings_all">Geplante Touren und Aufenthalte</string>
     <string name="gear_progress">Abgehakt: %1$d von %2$d</string>
     <string name="gear_headlamps_advice">Wenig Puffer bis zur Dunkelheit: prüfen Sie die Stirnlampen.</string>
     <string name="gear_restore">Vorschläge wiederherstellen</string>
@@ -1112,7 +1115,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="outings_underway">Läuft</string>
     <string name="outings_upcoming">Geplant</string>
     <string name="outings_empty_title">Keine Tour geplant</string>
-    <string name="outings_empty_body">Planen Sie eine Tour über den Steckbrief eines Canyons oder oben einen Aufenthalt.</string>
+    <string name="outings_empty_body">Eine Tour: ein Canyon, ein Tag, die Zeiten und die Alarmzeit für eine nahestehende Person. Ein Aufenthalt: ein Ort und Daten, ein Canyon pro Tag.</string>
     <string name="outings_row_times">Abfahrt %1$s · Rückkehr gegen %2$s</string>
     <string name="outings_row_alert">Alarm %1$s</string>
     <string name="places_title">Meine Orte</string>
@@ -1129,9 +1132,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="places_name_hint">Campingplatz an der Schlucht, Zuhause…</string>
     <string name="places_position_unavailable">Standort nicht verfügbar: setzen Sie die Markierung von Hand.</string>
     <string name="places_stay_range">Aufenthalt vom %1$s bis %2$s</string>
-    <string name="settings_section_outings">Touren</string>
-    <string name="settings_outings_hint">Übliche Gruppe, Zeit am Parkplatz, Faktoren</string>
-    <string name="settings_places_hint">Campingplatz, Unterkunft, Zuhause: die Fahrt wird mitgerechnet</string>
     <string name="stay_title">Aufenthalt</string>
     <string name="stay_intro">Das angezeigte Wetter gilt für den Ort des Aufenthalts; das Wetter jedes Canyons steht in seiner Tour.</string>
     <string name="stay_drive">%1$s Fahrt</string>
@@ -1191,7 +1191,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="outing_summary_alert_margin">späteste Rückkehr + %1$d h</string>
     <string name="outing_summary_title">Ihr Tag</string>
     <string name="outings_stay_action">Aufenthalt planen</string>
-    <string name="outings_stay_action_hint">Ein Ort und Daten: ein Canyon pro Tag, mit dem Wetter am Ort.</string>
     <string name="outings_stays">Aufenthalte</string>
     <string name="stay_choose_canyon">Canyon wählen</string>
     <string name="stay_dates_label">Zeitraum</string>
@@ -1679,7 +1678,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="proposal_error_no_change">Keine Änderung zu senden.</string>
     <string name="proposal_error_already_decided">Dieser Vorschlag wurde bereits geprüft.</string>
     <string name="proposal_error_too_large">Das Datenblatt ist zu lang.</string>
-    <string name="account_section_proposals">Vorgeschlagene Canyons</string>
     <string name="account_propose_canyon">Canyon vorschlagen</string>
     <string name="account_propose_canyon_hint">Fehlt ein Canyon in der App? Beschreibe ihn.</string>
     <string name="proposal_status_pending">Wartet auf Prüfung</string>

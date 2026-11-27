@@ -5,6 +5,14 @@
     <string name="tab_search">Buscar</string>
     <string name="tab_map">Mapa</string>
     <string name="tab_explore">Explorar</string>
+    <string name="tab_outings">Salidas</string>
+    <string name="tab_me">Perfil</string>
+    <string name="outings_tab_subtitle">Sus salidas y estancias previstas, y su cuaderno.</string>
+    <string name="outings_new_outing">Preparar una salida</string>
+    <string name="outing_pick_subtitle">Elija el barranco: un favorito, uno cercano o por su nombre.</string>
+    <string name="search_favorites_title">Sus favoritos</string>
+    <string name="account_settings_hint">Apariencia, idioma, notificaciones, sin conexión, acerca de</string>
+    <string name="account_section_contributions">Mis contribuciones</string>
     <string name="explore_mode_list">Lista</string>
     <string name="explore_mode_map">Mapa</string>
     <string name="search_nearby_title">Cerca</string>
@@ -581,7 +589,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="settings_section_notifications">Notificaciones</string>
     <string name="settings_notifications_system">Ajustes de notificaciones</string>
     <string name="settings_notifications_system_hint">Permiso, sonidos y categorías, en los ajustes de Android</string>
-    <string name="settings_notifications_center_hint">Barrancos, secciones y miembros seguidos, y su actividad</string>
     <string name="settings_theme_title">Tema</string>
     <string name="settings_section_offline">Sin conexión</string>
     <string name="settings_offline_refresh">Las fichas de más de un mes se actualizan desde el sitio al abrirlas con conexión. Los caudales y la meteorología ya consultados siguen visibles sin conexión.</string>
@@ -691,7 +698,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="outing_plan_action">Preparar la salida</string>
     <string name="outing_plan_for_day">Prever para %1$s</string>
     <string name="outing_plan_action_hint">Horarios del día, material, mensajes para el grupo</string>
-    <string name="outing_active_summary">Salida prevista %1$s · vuelta hacia las %2$s</string>
     <string name="outing_underway_summary">En curso · vuelta hacia las %1$s</string>
     <string name="outing_plan_title">Preparar la salida</string>
     <string name="outing_date_label">Día</string>
@@ -770,7 +776,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="logbook_delete">Quitar del cuaderno</string>
     <string name="logbook_empty_title">Su cuaderno está vacío</string>
     <string name="logbook_empty_body">Anote sus salidas y una nota desde la ficha de un barranco, con «He vuelto» tras una salida preparada, o importe su lista de descensos del sitio desde Mi espacio. Nada se envía al sitio.</string>
-    <string name="logbook_open_action">Mi cuaderno</string>
     <plurals name="logbook_card_count">
         <item quantity="one">Descendido %1$d vez</item>
         <item quantity="many">Descendido %1$d veces</item>
@@ -959,8 +964,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
         <item quantity="many">%1$d barrancos con nota</item>
         <item quantity="other">%1$d barrancos con nota</item>
     </plurals>
-
-    <string name="account_outings_all">Salidas previstas y estancias</string>
     <string name="gear_progress">Marcados: %1$d de %2$d</string>
     <string name="gear_headlamps_advice">Poco margen antes de la noche: revise los frontales.</string>
     <string name="gear_restore">Restablecer las sugerencias</string>
@@ -1136,7 +1139,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="outings_underway">En curso</string>
     <string name="outings_upcoming">Previstas</string>
     <string name="outings_empty_title">Ninguna salida prevista</string>
-    <string name="outings_empty_body">Prepare una salida desde la ficha de un barranco, o una estancia arriba.</string>
+    <string name="outings_empty_body">Una salida: un barranco, un día, sus horarios y la hora de alerta para un allegado. Una estancia: un lugar y unas fechas, un barranco por día.</string>
     <string name="outings_row_times">Salida %1$s · vuelta estimada %2$s</string>
     <string name="outings_row_alert">Alerta %1$s</string>
     <string name="places_title">Mis lugares</string>
@@ -1153,9 +1156,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="places_name_hint">Camping del cañón, Casa…</string>
     <string name="places_position_unavailable">Posición no disponible: coloque el marcador a mano.</string>
     <string name="places_stay_range">Estancia del %1$s al %2$s</string>
-    <string name="settings_section_outings">Salidas</string>
-    <string name="settings_outings_hint">Grupo habitual, tiempo en el aparcamiento, coeficientes</string>
-    <string name="settings_places_hint">Camping, alojamiento, casa: se cuenta el trayecto</string>
     <string name="stay_title">Estancia</string>
     <string name="stay_intro">El tiempo mostrado es el del lugar de la estancia; el de cada barranco está en su salida.</string>
     <string name="stay_drive">%1$s de trayecto</string>
@@ -1221,7 +1221,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="outing_summary_alert_margin">vuelta más tardía + %1$d h</string>
     <string name="outing_summary_title">Su día</string>
     <string name="outings_stay_action">Preparar una estancia</string>
-    <string name="outings_stay_action_hint">Un lugar y fechas: un barranco por día, con el tiempo del lugar.</string>
     <string name="outings_stays">Estancias</string>
     <string name="stay_choose_canyon">Elegir un barranco</string>
     <string name="stay_dates_label">Fechas</string>
@@ -1720,7 +1719,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="proposal_error_no_change">Ningún cambio que enviar.</string>
     <string name="proposal_error_already_decided">Esta propuesta ya se revisó.</string>
     <string name="proposal_error_too_large">La ficha es demasiado larga.</string>
-    <string name="account_section_proposals">Barrancos propuestos</string>
     <string name="account_propose_canyon">Proponer un barranco</string>
     <string name="account_propose_canyon_hint">¿Falta un barranco en la aplicación? Descríbelo.</string>
     <string name="proposal_status_pending">Pendiente de revisión</string>

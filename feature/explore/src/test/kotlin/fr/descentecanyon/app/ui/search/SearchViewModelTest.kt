@@ -388,6 +388,45 @@ class SearchViewModelTest {
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
+    fun `to prepare an outing, the favorites come first, on the list, Explorer's view left as it was`() = runTest {
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(
+            listOf(
+                canyon(id = 1, nom = "riolan", isFavorite = true),
+                canyon(id = 2, nom = "aiglun"),
+                canyon(id = 3, nom = "bendola", isFavorite = true),
+            ),
+        )
+        preferences.exploreOnMap = true
+        val viewModel = SearchViewModel(
+            searchCanyonsUseCase,
+            SavedStateHandle(mapOf("outingPick" to true)),
+            mainDispatcherRule.dispatcher,
+            recentCanyonsRepository,
+            stayChoice(),
+            predictions,
+            clock,
+            preferences,
+        )
+        advanceTimeBy(250)
+        advanceUntilIdle()
+
+        assertTrue(viewModel.isOutingPick)
+        assertEquals(SearchResultViewMode.LIST, viewModel.uiState.value.resultViewMode)
+        assertEquals(listOf(3, 1), viewModel.uiState.value.favorites.map { it.id })
+        viewModel.onResultViewModeChanged(SearchResultViewMode.MAP)
+        viewModel.onResultViewModeChanged(SearchResultViewMode.LIST)
+        assertTrue(preferences.exploreOnMap)
+
+        // A name searched: the results, no longer the favorites apart.
+        viewModel.onQueryChanged("riolan")
+        advanceTimeBy(250)
+        advanceUntilIdle()
+        assertEquals(emptyList<Int>(), viewModel.uiState.value.favorites.map { it.id })
+        assertEquals(listOf(1), viewModel.uiState.value.results.map { it.id })
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun `without a name nor a filter, the nearest canyons are offered once the position is known`() = runTest {
         every { canyonRepository.observeSearchCatalog() } returns flowOf(
             (1..8).map { id -> canyon(id = id, nom = "Canyon $id", latitude = 43.0 + id / 10.0, longitude = 7.0) },

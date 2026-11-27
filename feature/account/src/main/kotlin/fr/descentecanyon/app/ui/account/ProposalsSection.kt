@@ -5,6 +5,7 @@ import androidx.compose.material.icons.automirrored.filled.Undo
 import androidx.compose.material.icons.filled.AddLocationAlt
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -17,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonProposal
@@ -28,7 +30,10 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
-/** The canyons proposed from this phone and what became of them; a new one starts here. */
+/**
+ * What the user gives the community: the flow reports still to send, the canyons proposed from this
+ * phone and what became of them; a new one starts here.
+ */
 @Composable
 internal fun ProposalsSection(
     canPropose: Boolean,
@@ -36,6 +41,8 @@ internal fun ProposalsSection(
     onPropose: () -> Unit,
     onOpenCanyon: (Int) -> Unit,
     onWithdraw: (CanyonProposal) -> Unit,
+    pendingDebitCount: Int = 0,
+    onOpenPendingDebits: () -> Unit = {},
 ) {
     var withdrawing by remember { mutableStateOf<CanyonProposal?>(null) }
     withdrawing?.let { proposal ->
@@ -51,7 +58,16 @@ internal fun ProposalsSection(
             dismissButton = { TextButton(onClick = { withdrawing = null }) { Text(stringResource(R.string.cancel)) } },
         )
     }
-    AccountSection(stringResource(R.string.account_section_proposals), modifier = Modifier.testTag(TestTags.MY_ACCOUNT_PROPOSALS)) {
+    AccountSection(stringResource(R.string.account_section_contributions), modifier = Modifier.testTag(TestTags.MY_ACCOUNT_PROPOSALS)) {
+        if (pendingDebitCount > 0) {
+            AccountRow(
+                icon = Icons.Default.CloudUpload,
+                title = stringResource(R.string.pending_debits_title),
+                subtitle = pluralStringResource(R.plurals.debit_pending_count, pendingDebitCount, pendingDebitCount),
+                onClick = onOpenPendingDebits,
+                modifier = Modifier.testTag(TestTags.MY_ACCOUNT_PENDING_DEBITS),
+            )
+        }
         if (canPropose) {
             AccountRow(
                 icon = Icons.Default.AddLocationAlt,

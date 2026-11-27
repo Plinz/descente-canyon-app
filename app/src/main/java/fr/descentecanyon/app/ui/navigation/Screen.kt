@@ -83,9 +83,13 @@ sealed interface Screen {
         val stayId: Long = 0,
     ) : Screen
 
-    /** The outings planned and the stays. */
+    /** The Sorties tab: the outings planned, the stays and the logbook. */
     @Serializable
     data object Outings : Screen
+
+    /** The search, to choose the canyon of a new outing ([outingPick] is read by the search). */
+    @Serializable
+    data class OutingCanyonPicker(val outingPick: Boolean = true) : Screen
 
     @Serializable
     data object Places : Screen

@@ -68,7 +68,6 @@ import fr.descentecanyon.app.ui.test.TestTags
 fun FavoritesScreen(
     onCanyonClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    onLogbookClick: () -> Unit = {},
     onSearchClick: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: FavoritesViewModel = hiltViewModel(),
@@ -105,12 +104,6 @@ fun FavoritesScreen(
                 title = stringResource(R.string.tab_favorites),
                 subtitle = stringResource(R.string.favorites_screen_subtitle),
                 modifier = Modifier.padding(bottom = 12.dp),
-                action = {
-                    TextButton(onClick = onLogbookClick, modifier = Modifier.testTag(TestTags.FAVORITES_LOGBOOK_BUTTON)) {
-                        Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null)
-                        Text(stringResource(R.string.logbook_open_action), modifier = Modifier.padding(start = 6.dp))
-                    }
-                },
             )
 
             if (uiState.totalCount > 1) {

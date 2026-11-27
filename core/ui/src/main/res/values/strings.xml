@@ -5,6 +5,14 @@
     <string name="tab_search">Rechercher</string>
     <string name="tab_map">Carte</string>
     <string name="tab_explore">Explorer</string>
+    <string name="tab_outings">Sorties</string>
+    <string name="tab_me">Moi</string>
+    <string name="outings_tab_subtitle">Vos sorties et séjours prévus, et votre carnet.</string>
+    <string name="outings_new_outing">Préparer une sortie</string>
+    <string name="outing_pick_subtitle">Choisissez le canyon : un favori, un canyon proche ou par son nom.</string>
+    <string name="search_favorites_title">Vos favoris</string>
+    <string name="account_settings_hint">Apparence, langue, notifications, hors ligne, à propos</string>
+    <string name="account_section_contributions">Mes contributions</string>
     <string name="explore_mode_list">Liste</string>
     <string name="explore_mode_map">Carte</string>
     <string name="search_nearby_title">Autour de vous</string>
@@ -581,7 +589,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="settings_section_notifications">Notifications</string>
     <string name="settings_notifications_system">Réglages des notifications</string>
     <string name="settings_notifications_system_hint">Autorisation, sons et catégories, dans les réglages d\'Android</string>
-    <string name="settings_notifications_center_hint">Canyons, rubriques et membres suivis, et leur activité</string>
     <string name="settings_theme_title">Thème</string>
     <string name="settings_section_offline">Hors ligne</string>
     <string name="settings_offline_refresh">Les fiches de plus d\'un mois sont actualisées depuis le site à leur ouverture, quand le réseau est disponible. Les débits et la météo déjà consultés restent visibles hors ligne.</string>
@@ -691,7 +698,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="outing_plan_action">Préparer la sortie</string>
     <string name="outing_plan_for_day">Prévoir pour %1$s</string>
     <string name="outing_plan_action_hint">Horaires de la journée, matériel, messages pour le groupe</string>
-    <string name="outing_active_summary">Sortie prévue %1$s · retour vers %2$s</string>
     <string name="outing_underway_summary">En cours · retour vers %1$s</string>
     <string name="outing_plan_title">Préparer la sortie</string>
     <string name="outing_date_label">Jour</string>
@@ -770,7 +776,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="logbook_delete">Retirer du carnet</string>
     <string name="logbook_empty_title">Votre carnet est vide</string>
     <string name="logbook_empty_body">Notez vos sorties et un mémo depuis la fiche d\'un canyon, avec « Je suis de retour » après une sortie préparée, ou importez votre liste de courses du site depuis Mon espace. Rien n\'est envoyé au site.</string>
-    <string name="logbook_open_action">Mon carnet</string>
     <plurals name="logbook_card_count">
         <item quantity="one">Descendu %1$d fois</item>
         <item quantity="many">Descendu %1$d fois</item>
@@ -959,8 +964,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
         <item quantity="many">%1$d canyons avec un mémo</item>
         <item quantity="other">%1$d canyons avec un mémo</item>
     </plurals>
-
-    <string name="account_outings_all">Sorties prévues et séjours</string>
     <string name="gear_progress">Cochés : %1$d sur %2$d</string>
     <string name="gear_headlamps_advice">Peu de marge avant la nuit : vérifiez les frontales.</string>
     <string name="gear_restore">Rétablir les suggestions</string>
@@ -1136,7 +1139,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="outings_underway">En cours</string>
     <string name="outings_upcoming">Prévues</string>
     <string name="outings_empty_title">Aucune sortie prévue</string>
-    <string name="outings_empty_body">Préparez une sortie depuis la fiche d\'un canyon, ou un séjour ci-dessus.</string>
+    <string name="outings_empty_body">Une sortie : un canyon, un jour, ses horaires et l\'heure d\'alerte pour un proche. Un séjour : un lieu et des dates, un canyon par jour.</string>
     <string name="outings_row_times">Départ %1$s · retour estimé %2$s</string>
     <string name="outings_row_alert">Alerte %1$s</string>
     <string name="places_title">Mes lieux</string>
@@ -1153,9 +1156,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="places_name_hint">Camping des Gorges, Maison…</string>
     <string name="places_position_unavailable">Position indisponible : placez le repère à la main.</string>
     <string name="places_stay_range">Séjour du %1$s au %2$s</string>
-    <string name="settings_section_outings">Sorties</string>
-    <string name="settings_outings_hint">Groupe habituel, temps au parking, coefficients</string>
-    <string name="settings_places_hint">Camping, gîte, domicile : la route est comptée</string>
     <string name="stay_title">Séjour</string>
     <string name="stay_intro">La météo affichée est celle du lieu du séjour ; celle de chaque canyon est dans sa sortie.</string>
     <string name="stay_drive">%1$s de route</string>
@@ -1221,7 +1221,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="outing_summary_alert_margin">retour au plus tard + %1$d h</string>
     <string name="outing_summary_title">Votre journée</string>
     <string name="outings_stay_action">Préparer un séjour</string>
-    <string name="outings_stay_action_hint">Un lieu, des dates : un canyon par jour, avec la météo du lieu.</string>
     <string name="outings_stays">Séjours</string>
     <string name="stay_choose_canyon">Choisir un canyon</string>
     <string name="stay_dates_label">Dates</string>
@@ -1720,7 +1719,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="proposal_error_no_change">Aucune modification à envoyer.</string>
     <string name="proposal_error_already_decided">Cette proposition a déjà été relue.</string>
     <string name="proposal_error_too_large">La fiche est trop longue.</string>
-    <string name="account_section_proposals">Canyons proposés</string>
     <string name="account_propose_canyon">Proposer un canyon</string>
     <string name="account_propose_canyon_hint">Un canyon absent de l\'application ? Décrivez-le.</string>
     <string name="proposal_status_pending">En attente de relecture</string>

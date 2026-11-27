@@ -265,10 +265,16 @@ fun SearchScreen(
     }
 
     Column(modifier = modifier.fillMaxSize().background(dcColors.backgroundBase)) {
-        // For a day of a stay: a screen of its own, back to the stay; else the tab, under the status bar.
-        if (viewModel.isStayPick) {
+        // A canyon chosen (a day of a stay, an outing): a screen of its own, with a way back; else the tab, under the status bar.
+        if (viewModel.isPick) {
             CompactAppBar(
-                title = stringResource(if ((stayPick?.outingId ?: 0) > 0) R.string.stay_outing_change else R.string.stay_choose_canyon),
+                title = stringResource(
+                    when {
+                        viewModel.isOutingPick -> R.string.outings_new_outing
+                        (stayPick?.outingId ?: 0) > 0 -> R.string.stay_outing_change
+                        else -> R.string.stay_choose_canyon
+                    },
+                ),
                 navigation = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
@@ -285,7 +291,7 @@ fun SearchScreen(
                 onCanyonClick = onCanyonClick,
                 modeToggle = modeToggle,
                 contentPadding = contentPadding,
-                asTab = !viewModel.isStayPick,
+                asTab = !viewModel.isPick,
                 withoutForbidden = viewModel.isStayPick,
                 // For a stay, the map shows and centres on its place; else the position found by the list.
                 knownLatitude = uiState.userLatitude,
@@ -300,7 +306,7 @@ fun SearchScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
-                    .then(if (viewModel.isStayPick) Modifier else Modifier.statusBarsPadding()),
+                    .then(if (viewModel.isPick) Modifier else Modifier.statusBarsPadding()),
             ) {
                 Column(
                     modifier = Modifier
@@ -314,6 +320,15 @@ fun SearchScreen(
                     modeToggle()
 
                     Spacer(modifier = Modifier.height(spacing.sm))
+
+                    if (viewModel.isOutingPick) {
+                        Text(
+                            stringResource(R.string.outing_pick_subtitle),
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold,
+                            modifier = Modifier.padding(bottom = spacing.sm),
+                        )
+                    }
 
                     stayPick?.let { pick ->
                         Text(
@@ -497,6 +512,7 @@ fun SearchScreen(
                     if (!uiState.isLoading && uiState.isResultListDeferred) {
                         SearchIdleContent(
                             recentCanyons = uiState.recentCanyons,
+                            favorites = uiState.favorites,
                             nearby = uiState.nearby,
                             criteria = uiState.criteria,
                             descendedIds = uiState.descendedIds,
@@ -693,6 +709,7 @@ private fun SearchCatalogLoadingHint(hasTypedQuery: Boolean, modifier: Modifier 
 @Composable
 private fun SearchIdleContent(
     recentCanyons: List<CanyonSummary>,
+    favorites: List<CanyonSearchItem>,
     nearby: List<CanyonSearchItem>,
     criteria: SearchCriteria,
     descendedIds: Set<Int>,
@@ -716,6 +733,23 @@ private fun SearchIdleContent(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
                 modifier = Modifier.padding(vertical = 8.dp),
             )
+        }
+        // An outing to prepare: most often one of the user's favorites.
+        if (favorites.isNotEmpty()) {
+            item(key = "favorites-title") {
+                DcSectionHeader(
+                    title = stringResource(R.string.search_favorites_title),
+                    modifier = Modifier.testTag(TestTags.SEARCH_FAVORITES),
+                )
+            }
+            items(favorites, key = { "favorite-${it.id}" }) { canyon ->
+                CanyonSummaryCard(
+                    canyon = canyon.toSummary(),
+                    onClick = { onCanyonClick(canyon.id) },
+                    isDescended = canyon.isDescended,
+                    info = distanceInfo(criteria, canyon),
+                )
+            }
         }
         // Without a name in mind, the nearest canyons are the usual start: shown at once when the
         // position is known, then all of them by distance in one tap, offline.

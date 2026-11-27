@@ -55,12 +55,6 @@ data class MyAccountUiState(
     val member: ForumUser? = null,
     /** Name and e-mail kept for reports sent without an account. */
     val contributorIdentity: ContributorIdentity? = null,
-    /** The outing under way first, then those to come. */
-    val outings: List<PlannedOuting> = emptyList(),
-    /** The outing under way, first of [outings]. */
-    val underwayOutingId: Long? = null,
-    val stats: LogbookStats = LogbookStats(0, 0, 0),
-    val recentEntries: List<LogbookEntry> = emptyList(),
     val memoCount: Int = 0,
     val recentMemos: List<MemoPreview> = emptyList(),
     val pendingDebitCount: Int = 0,
@@ -76,23 +70,20 @@ data class MyAccountUiState(
 )
 
 /**
- * The user space: the account of the site, the identity of reports sent without one, the outing
- * under way, the logbook and memos, the contributions, the follows and the user's data as files.
+ * The user space: the account of the site, the identity of reports sent without one, the follows,
+ * the contributions, the memos and the user's data as files (outings and logbook: the Sorties tab).
  */
 @HiltViewModel
 class MyAccountViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val forumUserRepository: ForumUserRepository,
     private val preferencesRepository: PreferencesRepository,
-    private val logbookRepository: LogbookRepository,
     private val canyonNotesRepository: CanyonNotesRepository,
     private val canyonRepository: CanyonRepository,
-    private val outingRepository: OutingRepository,
     private val debitSubmissionRepository: DebitSubmissionRepository,
     private val notificationCenterRepository: NotificationCenterRepository,
     private val personalDataRepository: PersonalDataRepository,
     private val importSiteLogbookUseCase: ImportSiteLogbookUseCase,
-    private val clock: Clock,
     private val proposalRepository: CanyonProposalRepository,
 ) : ViewModel() {
 
@@ -101,15 +92,7 @@ class MyAccountViewModel @Inject constructor(
 
     init {
         observeAccount()
-        observeLogbook()
         observeMemos()
-        viewModelScope.launch {
-            outingRepository.observeAll().agenda(clock).collect { agenda ->
-                _uiState.update {
-                    it.copy(outings = listOfNotNull(agenda.underway) + agenda.upcoming, underwayOutingId = agenda.underway?.id)
-                }
-            }
-        }
         viewModelScope.launch {
             debitSubmissionRepository.observePendingCount().collect { count -> _uiState.update { it.copy(pendingDebitCount = count) } }
         }
@@ -245,20 +228,6 @@ class MyAccountViewModel @Inject constructor(
         }
     }
 
-    private fun observeLogbook() {
-        viewModelScope.launch {
-            logbookRepository.observeAll().collect { entries ->
-                _uiState.update {
-                    // The canyons descended last, each once with its last descent.
-                    it.copy(
-                        stats = LogbookStats.of(entries, LocalDate.now(clock)),
-                        recentEntries = entries.distinctBy { entry -> entry.canyonId }.take(RECENT_ENTRIES),
-                    )
-                }
-            }
-        }
-    }
-
     private fun observeMemos() {
         viewModelScope.launch {
             canyonNotesRepository.observeAll().collect { notes ->
@@ -280,7 +249,6 @@ class MyAccountViewModel @Inject constructor(
     )
 
     private companion object {
-        const val RECENT_ENTRIES = 3
         const val RECENT_MEMOS = 2
     }
 }

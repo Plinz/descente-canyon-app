@@ -5,6 +5,14 @@
     <string name="tab_search">Search</string>
     <string name="tab_map">Map</string>
     <string name="tab_explore">Explore</string>
+    <string name="tab_outings">Outings</string>
+    <string name="tab_me">Me</string>
+    <string name="outings_tab_subtitle">Your planned outings and stays, and your logbook.</string>
+    <string name="outings_new_outing">Plan an outing</string>
+    <string name="outing_pick_subtitle">Choose the canyon: a favorite, one nearby or by its name.</string>
+    <string name="search_favorites_title">Your favorites</string>
+    <string name="account_settings_hint">Appearance, language, notifications, offline, about</string>
+    <string name="account_section_contributions">My contributions</string>
     <string name="explore_mode_list">List</string>
     <string name="explore_mode_map">Map</string>
     <string name="search_nearby_title">Around you</string>
@@ -573,7 +581,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="settings_section_notifications">Notifications</string>
     <string name="settings_notifications_system">Notification settings</string>
     <string name="settings_notifications_system_hint">Permission, sounds and categories, in Android settings</string>
-    <string name="settings_notifications_center_hint">Followed canyons, forum topics and members, and their activity</string>
     <string name="settings_theme_title">Theme</string>
     <string name="settings_section_offline">Offline</string>
     <string name="settings_offline_refresh">Topos older than a month are refreshed from the site when opened online. Flow reports and weather already viewed stay visible offline.</string>
@@ -677,7 +684,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="outing_plan_action">Plan the outing</string>
     <string name="outing_plan_for_day">Plan for %1$s</string>
     <string name="outing_plan_action_hint">Times of the day, gear, messages for the group</string>
-    <string name="outing_active_summary">Outing planned %1$s · back around %2$s</string>
     <string name="outing_underway_summary">Under way · back around %1$s</string>
     <string name="outing_plan_title">Plan the outing</string>
     <string name="outing_date_label">Day</string>
@@ -756,7 +762,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="logbook_delete">Remove from the logbook</string>
     <string name="logbook_empty_title">Your logbook is empty</string>
     <string name="logbook_empty_body">Log your outings and a memo from a canyon page, with “I\'m back” after a planned outing, or import your list of descents from the site in My space. Nothing is sent to the site.</string>
-    <string name="logbook_open_action">My logbook</string>
     <plurals name="logbook_card_count">
         <item quantity="one">Descended once</item>
         <item quantity="other">Descended %1$d times</item>
@@ -935,8 +940,6 @@ Search for a canyon and add it to your favorites.</string>
         <item quantity="one">%1$d canyon with a memo</item>
         <item quantity="other">%1$d canyons with a memo</item>
     </plurals>
-
-    <string name="account_outings_all">Planned outings and stays</string>
     <string name="gear_progress">Checked: %1$d of %2$d</string>
     <string name="gear_headlamps_advice">Little daylight to spare: check the headlamps.</string>
     <string name="gear_restore">Restore the suggestions</string>
@@ -1112,7 +1115,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="outings_underway">Under way</string>
     <string name="outings_upcoming">Planned</string>
     <string name="outings_empty_title">No outing planned</string>
-    <string name="outings_empty_body">Plan an outing from a canyon sheet, or a stay above.</string>
+    <string name="outings_empty_body">An outing: a canyon, a day, its times and the alert time for a relative. A stay: a place and dates, a canyon a day.</string>
     <string name="outings_row_times">Leaving %1$s · estimated back %2$s</string>
     <string name="outings_row_alert">Alert %1$s</string>
     <string name="places_title">My places</string>
@@ -1129,9 +1132,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="places_name_hint">Gorge campsite, Home…</string>
     <string name="places_position_unavailable">Position unavailable: place the pin by hand.</string>
     <string name="places_stay_range">Stay from %1$s to %2$s</string>
-    <string name="settings_section_outings">Outings</string>
-    <string name="settings_outings_hint">Usual group, time at the car park, coefficients</string>
-    <string name="settings_places_hint">Campsite, holiday home, home: the drive is counted</string>
     <string name="stay_title">Stay</string>
     <string name="stay_intro">The weather shown is at the place of the stay; each canyon\'s own is in its outing.</string>
     <string name="stay_drive">%1$s drive</string>
@@ -1191,7 +1191,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="outing_summary_alert_margin">latest return + %1$d h</string>
     <string name="outing_summary_title">Your day</string>
     <string name="outings_stay_action">Plan a stay</string>
-    <string name="outings_stay_action_hint">A place and dates: one canyon a day, with the weather at the place.</string>
     <string name="outings_stays">Stays</string>
     <string name="stay_choose_canyon">Choose a canyon</string>
     <string name="stay_dates_label">Dates</string>
@@ -1679,7 +1678,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="proposal_error_no_change">No change to send.</string>
     <string name="proposal_error_already_decided">This suggestion has already been reviewed.</string>
     <string name="proposal_error_too_large">The sheet is too long.</string>
-    <string name="account_section_proposals">Suggested canyons</string>
     <string name="account_propose_canyon">Suggest a canyon</string>
     <string name="account_propose_canyon_hint">A canyon missing from the app? Describe it.</string>
     <string name="proposal_status_pending">Waiting for review</string>

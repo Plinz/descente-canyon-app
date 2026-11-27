@@ -111,10 +111,6 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                     if (!AppCanyons.isAppCanyon(canyonId)) navController.navigateSingleTop(Screen.DebitForm(canyonId))
                 },
                 onEmergencyClick = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.Emergency(canyonId)) },
-                onSettingsClick = dropUnlessResumed {
-                    navController.navigateSingleTop(Screen.Settings)
-                },
-                onAccountClick = dropUnlessResumed { navController.navigateSingleTop(Screen.MyAccount) },
                 contentPadding = topLevelContentPadding,
             )
         }
@@ -151,7 +147,6 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onCanyonClick = dropUnlessResumedWith { canyonId: Int ->
                     navController.navigateSingleTop(Screen.CanyonDetail(canyonId))
                 },
-                onLogbookClick = dropUnlessResumed { navController.navigateSingleTop(Screen.Logbook()) },
                 // Another tab: navigated to like from the bottom bar, so "back" returns home.
                 onSearchClick = dropUnlessResumed {
                     navController.navigate(Screen.Search) { applyAppRootNavigation(navController.graph.findStartDestination().id) }
@@ -293,9 +288,6 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
         composable<Screen.Settings> {
             SettingsScreen(
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
-                onOpenNotifications = dropUnlessResumed { navController.navigateSingleTop(Screen.Notifications) },
-                onOpenOutingSettings = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingSettings) },
-                onOpenPlaces = dropUnlessResumed { navController.navigateSingleTop(Screen.Places) },
                 contentPadding = topLevelContentPadding,
             )
         }
@@ -314,13 +306,34 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
             )
         }
 
-        composable<Screen.Outings> {
+        composable<Screen.Outings>(
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None },
+        ) {
             OutingsScreen(
-                onBackClick = dropUnlessResumed { navController.popBackStack() },
+                onNewOuting = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingCanyonPicker()) },
                 onOpenOuting = dropUnlessResumedWith { request: OutingPlanRequest -> navController.openOutingPlan(request) },
                 onOpenStay = dropUnlessResumedWith { stayId: Long -> navController.navigateSingleTop(Screen.Stay(stayId)) },
                 onNewStay = dropUnlessResumed { navController.navigateSingleTop(Screen.StayEdit()) },
                 onManagePlaces = dropUnlessResumed { navController.navigateSingleTop(Screen.Places) },
+                onOpenOutingSettings = dropUnlessResumed { navController.navigateSingleTop(Screen.OutingSettings) },
+                onOpenLogbook = dropUnlessResumed { navController.navigateSingleTop(Screen.Logbook()) },
+                onOpenLogbookFigures = dropUnlessResumed { navController.navigateSingleTop(Screen.Logbook(LogbookTab.BILAN.ordinal)) },
+                contentPadding = topLevelContentPadding,
+            )
+        }
+
+        composable<Screen.OutingCanyonPicker> {
+            // The search the user knows, the favorites first: a canyon opens the plan of the outing, in place of the search.
+            SearchScreen(
+                onCanyonClick = dropUnlessResumedWith { canyonId: Int ->
+                    navController.navigate(Screen.OutingPlan(canyonId)) {
+                        popUpTo<Screen.OutingCanyonPicker> { inclusive = true }
+                    }
+                },
+                onBackClick = dropUnlessResumed { navController.popBackStack() },
             )
         }
 
@@ -377,20 +390,23 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
             )
         }
 
-        composable<Screen.MyAccount> {
+        composable<Screen.MyAccount>(
+            enterTransition = { EnterTransition.None },
+            exitTransition = { ExitTransition.None },
+            popEnterTransition = { EnterTransition.None },
+            popExitTransition = { ExitTransition.None },
+        ) {
             MyAccountScreen(
-                onBackClick = dropUnlessResumed { navController.popBackStack() },
                 onOpenLogbook = dropUnlessResumedWith { tab: LogbookTab -> navController.navigateSingleTop(Screen.Logbook(tab.ordinal)) },
                 onOpenMemberProfile = dropUnlessResumedWith { username: String ->
                     navController.navigateSingleTop(Screen.UserProfile(username))
                 },
-                onOpenOuting = dropUnlessResumedWith { canyonId: Int, outingId: Long ->
-                    navController.navigateSingleTop(Screen.OutingPlan(canyonId, outingId))
-                },
-                onOpenOutings = dropUnlessResumed { navController.navigateSingleTop(Screen.Outings) },
                 onOpenNotifications = dropUnlessResumed { navController.navigateSingleTop(Screen.Notifications) },
+                onOpenSettings = dropUnlessResumed { navController.navigateSingleTop(Screen.Settings) },
+                onOpenPendingDebits = dropUnlessResumed { navController.navigateSingleTop(Screen.PendingDebits) },
                 onProposeCanyon = dropUnlessResumed { navController.navigateSingleTop(Screen.CanyonProposal()) },
                 onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
+                contentPadding = topLevelContentPadding,
             )
         }
 

@@ -87,31 +87,23 @@ class MyAccountViewModelTest {
         authRepository = authRepository,
         forumUserRepository = forumUserRepository,
         preferencesRepository = preferences,
-        logbookRepository = logbookRepository,
         canyonNotesRepository = canyonNotesRepository,
         canyonRepository = canyonRepository,
-        outingRepository = outingRepository,
         debitSubmissionRepository = debitSubmissionRepository,
         notificationCenterRepository = notificationCenterRepository,
         personalDataRepository = personalDataRepository,
         importSiteLogbookUseCase = importSiteLogbookUseCase,
-        clock = Clock.fixed(Instant.parse("2026-10-19T10:00:00Z"), ZoneOffset.UTC),
         proposalRepository = proposalRepository,
     )
 
     @Test
-    fun `sums up the account, logbook, memos and contributions`() = runTest {
+    fun `sums up the account, memos and contributions`() = runTest {
         val viewModel = viewModel()
         authState.value = AuthState.Connected("Membre")
         advanceUntilIdle()
 
         val state = viewModel.uiState.value
         assertEquals(30, state.member?.debitReportCount)
-        assertEquals(3, state.stats.outings)
-        assertEquals(2, state.stats.canyons)
-        assertEquals(1, state.stats.outingsThisYear)
-        // Each canyon once, with its last descent.
-        assertEquals(listOf(2L, 1L), state.recentEntries.map { it.id })
         assertEquals(listOf(MemoPreview(26, "Furon", "Parking après le pont")), state.recentMemos)
         assertEquals(1, state.pendingDebitCount)
         assertEquals(ContributorIdentity("Antoine", "a@example.com"), state.contributorIdentity)

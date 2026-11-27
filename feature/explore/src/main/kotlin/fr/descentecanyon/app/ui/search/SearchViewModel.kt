@@ -138,6 +138,8 @@ data class SearchUiState(
     val recentCanyons: List<CanyonSummary> = emptyList(),
     /** The nearest canyons, nearest first, shown while no query or filter narrows the catalog and the position is known. */
     val nearby: List<CanyonSearchItem> = emptyList(),
+    /** The user's favorites, by name, shown first while no query or filter narrows the catalog (an outing to prepare). */
+    val favorites: List<CanyonSearchItem> = emptyList(),
     /** Canyons of the user's logbook. */
     val descendedIds: Set<Int> = emptySet(),
 )
@@ -162,6 +164,12 @@ class SearchViewModel @Inject constructor(
 
     /** Opened for a day of a stay: distances from its place, not from the user. */
     val isStayPick: Boolean = stayId > 0 && stayDate != null
+
+    /** Opened to prepare an outing: the user's favorites come first, a canyon opens its plan. */
+    val isOutingPick: Boolean = savedStateHandle[OUTING_PICK_KEY] ?: false
+
+    /** A canyon is chosen for something (a day of a stay, an outing), not explored. */
+    val isPick: Boolean get() = isStayPick || isOutingPick
 
     private val initialCriteria = loadCriteria()
     private val initialResultViewMode = loadResultViewMode()
@@ -226,6 +234,11 @@ class SearchViewModel @Inject constructor(
                     } else {
                         emptyList()
                     }
+                    val favorites = if (resultSet.isResultListDeferred && isOutingPick) {
+                        input.catalog.filter { it.isFavorite }.sortedBy { it.normalizedNom }
+                    } else {
+                        emptyList()
+                    }
                     PerformanceTrace.logEvent(
                         event = "search_compute",
                         "catalogSize" to input.catalog.size,
@@ -243,6 +256,7 @@ class SearchViewModel @Inject constructor(
                         scrollResetRequestId = input.scrollResetRequestId,
                         descendedIds = input.catalog.mapNotNullTo(mutableSetOf()) { item -> item.id.takeIf { item.isDescended } },
                         nearby = nearby,
+                        favorites = favorites,
                     )
                 }
                 .combine(resultViewModeFlow) { computed, resultViewMode ->
@@ -270,6 +284,7 @@ class SearchViewModel @Inject constructor(
                         recentCanyons = recentCanyons,
                         descendedIds = computed.descendedIds,
                         nearby = computed.nearby,
+                        favorites = computed.favorites,
                     )
                 }
                 .flowOn(searchDispatcher)
@@ -579,12 +594,12 @@ class SearchViewModel @Inject constructor(
         val raw = savedStateHandle.get<String>(SEARCH_RESULT_VIEW_MODE_KEY).orEmpty()
         return raw.takeIf { it.isNotBlank() }
             ?.let { value -> SearchResultViewMode.entries.firstOrNull { it.name == value } }
-            ?: if (!isStayPick && preferencesRepository.isExploreMapMode()) SearchResultViewMode.MAP else SearchResultViewMode.LIST
+            ?: if (!isPick && preferencesRepository.isExploreMapMode()) SearchResultViewMode.MAP else SearchResultViewMode.LIST
     }
 
     private fun persistResultViewMode(mode: SearchResultViewMode) {
         savedStateHandle[SEARCH_RESULT_VIEW_MODE_KEY] = mode.name
-        if (!isStayPick) preferencesRepository.setExploreMapMode(mode == SearchResultViewMode.MAP)
+        if (!isPick) preferencesRepository.setExploreMapMode(mode == SearchResultViewMode.MAP)
     }
 
     private fun SearchSortField.defaultDirection(): SortDirection = when (this) {
@@ -597,6 +612,9 @@ class SearchViewModel @Inject constructor(
         private const val STAY_ID_KEY = "stayId"
         private const val STAY_DATE_KEY = "date"
         private const val STAY_OUTING_ID_KEY = "outingId"
+
+        /** Route argument of the search opened to prepare an outing. */
+        private const val OUTING_PICK_KEY = "outingPick"
         private const val STOP_TIMEOUT_MS = 5_000L
 
         /** The nearest canyons the phone estimates itself without the server's: each one downloads its weather. */
@@ -631,6 +649,7 @@ private data class SearchComputedState(
     val scrollResetRequestId: Int,
     val descendedIds: Set<Int>,
     val nearby: List<CanyonSearchItem>,
+    val favorites: List<CanyonSearchItem>,
 )
 
 /** A forbidden canyon cannot be planned for a day. */

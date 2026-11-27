@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
@@ -45,6 +46,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavBackStackEntry
@@ -375,7 +377,17 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
                             NavigationBarItem(
                                 modifier = Modifier.testTag(TestTags.bottomNavItem(item.name)),
                                 icon = { Icon(item.icon, contentDescription = itemLabel) },
-                                label = { Text(itemLabel) },
+                                label = {
+                                    // Five tabs on a narrow phone with large text: a long name ("Favoriten") shrinks, never splits.
+                                    val labelStyle = MaterialTheme.typography.labelMedium
+                                    Text(
+                                        text = itemLabel,
+                                        style = labelStyle,
+                                        maxLines = 1,
+                                        textAlign = TextAlign.Center,
+                                        autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = labelStyle.fontSize),
+                                    )
+                                },
                                 colors = NavigationBarItemDefaults.colors(
                                     selectedIconColor = dcColors.primaryActionContent,
                                     selectedTextColor = dcColors.textPrimary,
@@ -424,7 +436,9 @@ private fun NavHostController.openDebitForm(canyonId: Int) {
 internal fun BottomNavItem.launchSection(): LaunchSection? = when (this) {
     BottomNavItem.HOME -> null
     BottomNavItem.EXPLORE -> LaunchSection.SEARCH
+    BottomNavItem.OUTINGS -> null
     BottomNavItem.FAVORITES -> LaunchSection.FAVORITES
+    BottomNavItem.ACCOUNT -> null
 }
 
 internal fun LaunchSection.toScreen(): Screen = when (this) {
@@ -445,7 +459,9 @@ internal fun resolveSelectedBottomNavItem(backStackEntry: NavBackStackEntry?): B
     return when {
         destination.hasRoute(Screen.Home::class) -> BottomNavItem.HOME
         destination.hasRoute(Screen.Search::class) -> BottomNavItem.EXPLORE
+        destination.hasRoute(Screen.Outings::class) -> BottomNavItem.OUTINGS
         destination.hasRoute(Screen.Favorites::class) -> BottomNavItem.FAVORITES
+        destination.hasRoute(Screen.MyAccount::class) -> BottomNavItem.ACCOUNT
         else -> null
     }
 }
@@ -453,7 +469,9 @@ internal fun resolveSelectedBottomNavItem(backStackEntry: NavBackStackEntry?): B
 internal fun selectedBottomNavItemForScreen(screen: Screen): BottomNavItem? = when (screen) {
     Screen.Home -> BottomNavItem.HOME
     Screen.Search -> BottomNavItem.EXPLORE
+    Screen.Outings -> BottomNavItem.OUTINGS
     Screen.Favorites -> BottomNavItem.FAVORITES
+    Screen.MyAccount -> BottomNavItem.ACCOUNT
     else -> null
 }
 
@@ -461,7 +479,9 @@ internal fun shouldShowBottomBar(backStackEntry: NavBackStackEntry?): Boolean {
     val destination = backStackEntry?.destination ?: return false
     return destination.hasRoute(Screen.Home::class) ||
         destination.hasRoute(Screen.Search::class) ||
+        destination.hasRoute(Screen.Outings::class) ||
         destination.hasRoute(Screen.Favorites::class) ||
+        destination.hasRoute(Screen.MyAccount::class) ||
         // Not for a canyon chosen for a day of a stay: a tab would leave the stay without notice.
         (destination.hasRoute(Screen.CanyonDetail::class) && backStackEntry.toRoute<Screen.CanyonDetail>().stayId == 0L)
 }

@@ -12,11 +12,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -84,6 +86,7 @@ import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.rememberLogbookDateFormatter
 import fr.descentecanyon.app.ui.design.DcCard
+import fr.descentecanyon.app.ui.design.DcSectionHeader
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
@@ -96,18 +99,21 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-/** "Mon espace": the account, the logbook and memos, contributions, follows and the user's data. */
+/**
+ * The "Moi" tab ("Mon espace"): the account, what is followed, the user's contributions, memos and
+ * data, and the settings of the app. Outings and the logbook are in the Sorties tab.
+ */
 @Composable
 fun MyAccountScreen(
-    onBackClick: () -> Unit,
     onOpenLogbook: (LogbookTab) -> Unit,
     onOpenMemberProfile: (String) -> Unit,
-    onOpenOuting: (canyonId: Int, outingId: Long) -> Unit,
-    onOpenOutings: () -> Unit,
     onOpenNotifications: () -> Unit,
+    onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
+    onOpenPendingDebits: () -> Unit = {},
     onProposeCanyon: () -> Unit = {},
     onOpenCanyon: (Int) -> Unit = {},
+    contentPadding: PaddingValues = PaddingValues(),
     viewModel: MyAccountViewModel = hiltViewModel(),
     authViewModel: AuthViewModel = hiltViewModel(),
 ) {
@@ -189,27 +195,21 @@ fun MyAccountScreen(
         )
     }
 
+    // A tab: above the bottom bar (the snackbar too), under the status bar.
     Scaffold(
-        modifier = modifier,
-        topBar = {
-            CompactAppBar(
-                title = stringResource(R.string.account_title),
-                navigation = {
-                    IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = stringResource(R.string.back))
-                    }
-                },
-            )
-        },
+        modifier = modifier.padding(bottom = contentPadding.calculateBottomPadding()),
         snackbarHost = { SnackbarHost(snackbarHostState) },
         containerColor = LocalDcColors.current.backgroundBase,
+        contentWindowInsets = WindowInsets.statusBars,
     ) { innerPadding ->
         Box(Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.TopCenter) {
             LazyColumn(
                 modifier = Modifier.width(contentWidth).fillMaxSize().testTag(TestTags.MY_ACCOUNT_LIST),
-                contentPadding = PaddingValues(start = horizontalPadding, end = horizontalPadding, top = 16.dp, bottom = 32.dp),
+                contentPadding = PaddingValues(start = horizontalPadding, end = horizontalPadding, top = 8.dp, bottom = 24.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
+                item(key = "header") { DcSectionHeader(title = stringResource(R.string.account_title)) }
+                val isConnected = state.authState is AuthState.Connected
                 item(key = "account") {
                     AccountCard(
                         authState = state.authState,
@@ -217,6 +217,16 @@ fun MyAccountScreen(
                         onLogin = { showLogin = true },
                         onLogout = authViewModel::logout,
                         onOpenProfile = onOpenMemberProfile,
+                        // The user's list of the site fills the logbook (in the Sorties tab).
+                        siteImport = if (isConnected) {
+                            (
+                                {
+                                    SiteImportRow(state = state, onImportFromSite = viewModel::importFromSite)
+                                }
+                                )
+                        } else {
+                            null
+                        },
                     )
                 }
                 state.contributorIdentity?.let { identity ->
@@ -226,31 +236,32 @@ fun MyAccountScreen(
                         }, onForget = viewModel::clearContributorIdentity)
                     }
                 }
-                item(key = "outings") {
-                    OutingsSummary(
-                        outings = state.outings,
-                        underwayId = state.underwayOutingId,
-                        onOpen = { outing -> onOpenOuting(outing.canyonId, outing.id) },
-                        onOpenAll = onOpenOutings,
-                    )
-                }
-                // What is empty is not shown: the logbook only to fill it from the site, once connected.
-                val isConnected = state.authState is AuthState.Connected
-                if (state.stats.outings > 0 || isConnected) {
-                    item(key = "logbook") {
-                        LogbookSummary(
-                            state = state,
-                            isConnected = isConnected,
-                            onOpenLogbook = onOpenLogbook,
-                            onImportFromSite = viewModel::importFromSite,
+                item(key = "follows") {
+                    AccountSection(
+                        stringResource(R.string.account_section_follows),
+                        modifier = Modifier.testTag(TestTags.MY_ACCOUNT_FOLLOWS),
+                    ) {
+                        val follows = state.follows
+                        AccountRow(
+                            icon = Icons.Default.Notifications,
+                            title = stringResource(R.string.notifications_screen_title),
+                            subtitle = if (follows.total > 0) {
+                                stringResource(
+                                    R.string.account_follows_summary,
+                                    follows.canyons,
+                                    follows.forumCategories,
+                                    follows.forumThreads,
+                                    follows.members,
+                                )
+                            } else {
+                                stringResource(R.string.account_follows_none)
+                            },
+                            onClick = onOpenNotifications,
                         )
                     }
                 }
-                if (state.memoCount > 0) {
-                    item(key = "memos") { MemosSummary(state = state, onOpen = { onOpenLogbook(LogbookTab.CANYONS) }) }
-                }
-                // Shown while proposals can be sent, and as long as earlier ones are listed.
-                if (state.canPropose || state.proposals.isNotEmpty()) {
+                // Shown while proposals can be sent, as long as earlier ones are listed, and while reports wait.
+                if (state.canPropose || state.proposals.isNotEmpty() || state.pendingDebitCount > 0) {
                     item(key = "proposals") {
                         ProposalsSection(
                             canPropose = state.canPropose,
@@ -258,27 +269,13 @@ fun MyAccountScreen(
                             onPropose = onProposeCanyon,
                             onOpenCanyon = onOpenCanyon,
                             onWithdraw = viewModel::withdrawProposal,
+                            pendingDebitCount = state.pendingDebitCount,
+                            onOpenPendingDebits = onOpenPendingDebits,
                         )
                     }
                 }
-                if (state.follows.total > 0) {
-                    item(key = "follows") {
-                        AccountSection(stringResource(R.string.account_section_follows)) {
-                            val follows = state.follows
-                            AccountRow(
-                                icon = Icons.Default.Notifications,
-                                title = stringResource(R.string.notifications_screen_title),
-                                subtitle = stringResource(
-                                    R.string.account_follows_summary,
-                                    follows.canyons,
-                                    follows.forumCategories,
-                                    follows.forumThreads,
-                                    follows.members,
-                                ),
-                                onClick = onOpenNotifications,
-                            )
-                        }
-                    }
+                if (state.memoCount > 0) {
+                    item(key = "memos") { MemosSummary(state = state, onOpen = { onOpenLogbook(LogbookTab.CANYONS) }) }
                 }
                 item(key = "data") {
                     AccountSection(stringResource(R.string.account_section_data)) {
@@ -313,6 +310,17 @@ fun MyAccountScreen(
                         )
                     }
                 }
+                item(key = "settings") {
+                    AccountSection(stringResource(R.string.settings_title)) {
+                        AccountRow(
+                            icon = Icons.Default.Settings,
+                            title = stringResource(R.string.settings_title),
+                            subtitle = stringResource(R.string.account_settings_hint),
+                            onClick = onOpenSettings,
+                            modifier = Modifier.testTag(TestTags.MY_ACCOUNT_SETTINGS),
+                        )
+                    }
+                }
             }
         }
     }
@@ -325,6 +333,7 @@ private fun AccountCard(
     onLogin: () -> Unit,
     onLogout: () -> Unit,
     onOpenProfile: (String) -> Unit,
+    siteImport: (@Composable () -> Unit)? = null,
 ) {
     val colors = LocalDcColors.current
     DcCard(modifier = Modifier.fillMaxWidth(), contentPadding = 16.dp) {
@@ -400,6 +409,10 @@ private fun AccountCard(
                 else -> Button(onClick = onLogin) { Text(stringResource(R.string.debit_login_prompt_button)) }
             }
         }
+        siteImport?.let { row ->
+            HorizontalDivider(color = colors.borderSubtle, modifier = Modifier.padding(top = 8.dp))
+            row()
+        }
     }
 }
 
@@ -421,106 +434,6 @@ private fun ContributorIdentityCard(identity: ContributorIdentity, onEdit: () ->
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
             TextButton(onClick = onForget) { Text(stringResource(R.string.account_identity_forget)) }
             TextButton(onClick = onEdit) { Text(stringResource(R.string.account_identity_edit)) }
-        }
-    }
-}
-
-/** The outings planned (the one under way first) and the way to all of them, the starting places and the stays. */
-@Composable
-private fun OutingsSummary(outings: List<PlannedOuting>, underwayId: Long?, onOpen: (PlannedOuting) -> Unit, onOpenAll: () -> Unit) {
-    val locale = LocalLocale.current.platformLocale
-    val zone = ZoneId.systemDefault()
-    AccountSection(stringResource(R.string.outings_title), modifier = Modifier.testTag(TestTags.MY_ACCOUNT_OUTINGS)) {
-        // Nothing planned: only the way to the outings and stays, to prepare one.
-        if (outings.isEmpty()) {
-            AccountRow(icon = Icons.Default.EventAvailable, title = stringResource(R.string.account_outings_all), onClick = onOpenAll)
-            return@AccountSection
-        }
-        outings.take(SHOWN_OUTINGS).forEach { outing ->
-            val start = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(locale)
-                .format((outing.departure ?: outing.start).atZone(zone))
-            val back = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale).format(outing.expectedBack.atZone(zone))
-            Row(
-                modifier = Modifier.fillMaxWidth().clickable { onOpen(outing) }.padding(vertical = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-            ) {
-                Icon(Icons.Default.Hiking, contentDescription = null, tint = LocalDcColors.current.primaryAction)
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(outing.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
-                    val summary = if (outing.id == underwayId) {
-                        stringResource(R.string.outing_underway_summary, back)
-                    } else {
-                        stringResource(R.string.outing_active_summary, start, back)
-                    }
-                    Text(summary, style = MaterialTheme.typography.bodySmall)
-                }
-                Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = LocalDcColors.current.textMuted)
-            }
-        }
-        TextButton(onClick = onOpenAll) { Text(stringResource(R.string.account_outings_all)) }
-    }
-}
-
-private const val SHOWN_OUTINGS = 3
-
-@Composable
-private fun LogbookSummary(
-    state: MyAccountUiState,
-    isConnected: Boolean,
-    onOpenLogbook: (LogbookTab) -> Unit,
-    onImportFromSite: () -> Unit,
-) {
-    val colors = LocalDcColors.current
-    val formatter = rememberLogbookDateFormatter()
-    AccountSection(stringResource(R.string.logbook_card_title), modifier = Modifier.testTag(TestTags.MY_ACCOUNT_LOGBOOK)) {
-        if (state.stats.outings == 0) {
-            if (isConnected) SiteImportRow(state = state, onImportFromSite = onImportFromSite)
-            return@AccountSection
-        }
-        Row(
-            modifier = Modifier.fillMaxWidth().clickable { onOpenLogbook(LogbookTab.CANYONS) }.padding(vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            Icon(Icons.AutoMirrored.Filled.MenuBook, contentDescription = null, tint = colors.textSecondary)
-            Text(
-                // On one line: the outings of the year are in the Bilan.
-                listOf(
-                    pluralStringResource(R.plurals.logbook_stats, state.stats.outings, state.stats.outings),
-                    pluralStringResource(R.plurals.logbook_stats_canyons, state.stats.canyons, state.stats.canyons),
-                ).joinToString(" · "),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.weight(1f),
-            )
-            Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = colors.textMuted)
-        }
-        state.recentEntries.forEach { entry ->
-            Row(
-                modifier = Modifier.fillMaxWidth().clickable { onOpenLogbook(LogbookTab.CANYONS) }.padding(vertical = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    entry.canyonName,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f),
-                )
-                Text(entry.date.format(formatter), style = MaterialTheme.typography.bodySmall, color = colors.textSecondary)
-            }
-        }
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-            TextButton(onClick = { onOpenLogbook(LogbookTab.BILAN) }) {
-                Icon(Icons.Default.BarChart, contentDescription = null, modifier = Modifier.size(18.dp))
-                Text(stringResource(R.string.logbook_tab_bilan), modifier = Modifier.padding(start = 6.dp))
-            }
-            TextButton(onClick = { onOpenLogbook(LogbookTab.CANYONS) }) { Text(stringResource(R.string.account_see_all)) }
-        }
-        if (isConnected) {
-            HorizontalDivider(color = colors.borderSubtle)
-            SiteImportRow(state = state, onImportFromSite = onImportFromSite)
         }
     }
 }

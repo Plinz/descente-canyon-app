@@ -62,8 +62,6 @@ fun HomeScreen(
     onMapClick: () -> Unit,
     onUsersClick: () -> Unit,
     onPendingDebitsClick: () -> Unit = {},
-    onSettingsClick: () -> Unit = {},
-    onAccountClick: () -> Unit = {},
     onOutingClick: (canyonId: Int, outingId: Long) -> Unit = { _, _ -> },
     onOutingsClick: () -> Unit = {},
     onStayClick: (stayId: Long) -> Unit = {},
@@ -130,22 +128,9 @@ fun HomeScreen(
             CompactAppBar(
                 title = stringResource(R.string.app_name),
                 actions = {
-                    // The canyon is found from the outing under way or the position.
+                    // The canyon is found from the outing under way or the position. The account and
+                    // the settings are in the Moi tab.
                     EmergencyIconButton(onClick = { onEmergencyClick(0) })
-                    IconButton(onClick = onAccountClick, modifier = Modifier.testTag(TestTags.HOME_ACCOUNT_BUTTON)) {
-                        Icon(
-                            imageVector = Icons.Default.AccountCircle,
-                            contentDescription = stringResource(R.string.account_title),
-                            modifier = Modifier.size(28.dp),
-                        )
-                    }
-                    IconButton(onClick = onSettingsClick) {
-                        Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = stringResource(R.string.settings_title),
-                            modifier = Modifier.size(24.dp),
-                        )
-                    }
                 },
             )
         },

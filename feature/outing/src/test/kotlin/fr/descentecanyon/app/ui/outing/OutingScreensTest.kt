@@ -319,6 +319,32 @@ class OutingScreensTest {
         assertEquals(listOf(4L to 1), state.pastStays.map { it.stay.id to it.done })
     }
 
+    @Test
+    fun `the outings tab sums up the logbook, the canyons descended last each once`() = runTest {
+        val logbook = listOf(
+            LogbookEntry(canyonId = 50, canyonName = "Riolan", date = LocalDate.of(2026, 7, 3)),
+            LogbookEntry(canyonId = 51, canyonName = "Aiglun", date = LocalDate.of(2026, 7, 10)),
+            LogbookEntry(canyonId = 50, canyonName = "Riolan", date = LocalDate.of(2026, 7, 12)),
+            LogbookEntry(canyonId = 52, canyonName = "Maglia", date = LocalDate.of(2025, 8, 1)),
+            LogbookEntry(canyonId = 53, canyonName = "Bendola", date = LocalDate.of(2024, 8, 1)),
+        )
+        val viewModel = outingsViewModel(FakeOutingRepository(), FakeStayRepository(), FakePlaceRepository(), logbook)
+        backgroundScope.launch { viewModel.uiState.collect {} }
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertEquals(5, state.logbookStats.outings)
+        assertEquals(4, state.logbookStats.canyons)
+        assertEquals(
+            listOf(
+                "Riolan" to LocalDate.of(2026, 7, 12),
+                "Aiglun" to LocalDate.of(2026, 7, 10),
+                "Maglia" to LocalDate.of(2025, 8, 1),
+            ),
+            state.recentEntries.map { it.canyonName to it.date },
+        )
+    }
+
     private fun stayEditViewModel(
         handle: SavedStateHandle,
         stays: FakeStayRepository,
