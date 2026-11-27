@@ -188,6 +188,10 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="map_visible_empty_description">Mueve el mapa o aleja el zoom para mostrar barrancos.</string>
     <string name="connected_as">Cuenta conectada: %1$s</string>
     <string name="tab_topo">Topo</string>
+    <string name="tab_conditions">Condiciones</string>
+    <string name="canyon_action_report_debit">Informar del caudal</string>
+    <string name="outing_open_planned">Mi salida del %1$s</string>
+    <string name="canyon_latest_debit">Último caudal informado: %1$s, %2$s</string>
     <string name="tab_photos_with_count">Fotos (%1$d)</string>
     <string name="tab_photos_loading">Fotos (…)</string>
     <string name="tab_photos_unavailable">Fotos (no disp.)</string>
@@ -195,7 +199,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="tab_debits_loading">Caudales (…)</string>
     <string name="tab_debits_unavailable">Caudales (no disp.)</string>
     <string name="refreshing_canyon_details">Actualizando la ficha del barranco…</string>
-    <string name="debit_add_action">Añadir un caudal</string>
     <string name="debit_form_title">Añadir un nuevo caudal</string>
     <string name="debit_login_prompt_title">Inicia sesión en tu cuenta Descente-Canyon</string>
     <string name="debit_login_prompt_body">Tras iniciar sesión, la observación se vincula a tu cuenta y los campos nombre/e-mail dejan de ser necesarios.</string>
@@ -697,7 +700,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="prediction_offline_cached">Sin conexión: estimación calculada el %1$s</string>
     <string name="outing_plan_action">Preparar la salida</string>
     <string name="outing_plan_for_day">Prever para %1$s</string>
-    <string name="outing_plan_action_hint">Horarios del día, material, mensajes para el grupo</string>
     <string name="outing_underway_summary">En curso · vuelta hacia las %1$s</string>
     <string name="outing_plan_title">Preparar la salida</string>
     <string name="outing_date_label">Día</string>

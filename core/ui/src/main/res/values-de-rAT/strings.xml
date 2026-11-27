@@ -133,7 +133,6 @@ Suche einen Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="tab_debits_loading">Wasserstände (…)</string>
     <string name="tab_debits_unavailable">Wasserstände (nicht verfügbar)</string>
     <string name="refreshing_canyon_details">Canyon-Eintrag wird aktualisiert…</string>
-    <string name="debit_add_action">Wasserstand hinzufügen</string>
     <string name="debit_form_title">Neuen Wasserstand hinzufügen</string>
     <string name="debit_login_prompt_title">Melde dich bei deinem Descente-Canyon-Konto an</string>
     <string name="debit_login_prompt_body">Sobald du angemeldet bist, wird die Beobachtung deinem Konto zugeordnet und die Felder Name/E-Mail sind nicht mehr erforderlich.</string>

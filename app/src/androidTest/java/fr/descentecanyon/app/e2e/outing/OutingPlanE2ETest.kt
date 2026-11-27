@@ -65,8 +65,8 @@ class OutingPlanE2ETest : BaseE2eTest() {
     @Test
     fun theCanyonPagePlansAnOutingWithItsGroupOnceConfirmed() {
         openRiolan()
-        composeRule.onNodeWithTag(TestTags.DETAIL_LIST).performScrollToNode(hasTestTag(TestTags.DETAIL_PLAN_OUTING))
-        // The page runs under the bottom bar: on a small screen (CI) the scroll leaves the card behind it, a tap would hit the bar.
+        waitForTag(TestTags.DETAIL_PLAN_OUTING)
+        // In the action bar of the page.
         composeRule.onNodeWithTag(TestTags.DETAIL_PLAN_OUTING).performSemanticsAction(SemanticsActions.OnClick)
 
         // The answer first: the key times are there before anything is chosen.
@@ -107,7 +107,7 @@ class OutingPlanE2ETest : BaseE2eTest() {
     @Test
     fun aSecondCanyonIsChainedToTheOutingFromTheCanyonsAround() {
         openRiolan()
-        composeRule.onNodeWithTag(TestTags.DETAIL_LIST).performScrollToNode(hasTestTag(TestTags.DETAIL_PLAN_OUTING))
+        waitForTag(TestTags.DETAIL_PLAN_OUTING)
         composeRule.onNodeWithTag(TestTags.DETAIL_PLAN_OUTING).performSemanticsAction(SemanticsActions.OnClick)
 
         waitForTag(TestTags.OUTING_CANYONS_ROW)
@@ -190,7 +190,7 @@ class OutingPlanE2ETest : BaseE2eTest() {
     @Test
     fun leavingNowIsTheTimeOfNowInTheDepartureOfThePlan() {
         openRiolan()
-        composeRule.onNodeWithTag(TestTags.DETAIL_LIST).performScrollToNode(hasTestTag(TestTags.DETAIL_PLAN_OUTING))
+        waitForTag(TestTags.DETAIL_PLAN_OUTING)
         composeRule.onNodeWithTag(TestTags.DETAIL_PLAN_OUTING).performSemanticsAction(SemanticsActions.OnClick)
         waitForTag(TestTags.OUTING_DEPARTURE_ROW)
         composeRule.onNodeWithTag(TestTags.OUTING_DEPARTURE_ROW).performClick()
@@ -317,7 +317,7 @@ class OutingPlanE2ETest : BaseE2eTest() {
 
     /** "Prévoir pour …" on the canyon page opened from the search of a day of a stay. */
     private fun planFromTheSheet() {
-        composeRule.onNodeWithTag(TestTags.DETAIL_LIST).performScrollToNode(hasTestTag(TestTags.DETAIL_PLAN_OUTING))
+        waitForTag(TestTags.DETAIL_PLAN_OUTING)
         // The page runs under the bottom bar: on a small screen (CI) a tap could hit the bar.
         composeRule.onNodeWithTag(TestTags.DETAIL_PLAN_OUTING).performSemanticsAction(SemanticsActions.OnClick)
     }

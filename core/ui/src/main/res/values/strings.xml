@@ -188,6 +188,10 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="map_visible_empty_description">Déplacez ou dézoomez la carte pour afficher des canyons.</string>
     <string name="connected_as">Compte connecté : %1$s</string>
     <string name="tab_topo">Topo</string>
+    <string name="tab_conditions">Conditions</string>
+    <string name="canyon_action_report_debit">Signaler un débit</string>
+    <string name="outing_open_planned">Ma sortie du %1$s</string>
+    <string name="canyon_latest_debit">Dernier débit signalé : %1$s, %2$s</string>
     <string name="tab_photos_with_count">Photos (%1$d)</string>
     <string name="tab_photos_loading">Photos (…)</string>
     <string name="tab_photos_unavailable">Photos (indisp.)</string>
@@ -195,7 +199,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="tab_debits_loading">Débits (…)</string>
     <string name="tab_debits_unavailable">Débits (indisp.)</string>
     <string name="refreshing_canyon_details">Actualisation de la fiche canyon…</string>
-    <string name="debit_add_action">Ajouter un débit</string>
     <string name="debit_form_title">Ajout d\'un nouveau débit</string>
     <string name="debit_login_prompt_title">Connectez-vous à votre compte Descente-Canyon</string>
     <string name="debit_login_prompt_body">Après connexion, l\'observation est rattachée à votre compte et les champs nom/e-mail ne sont plus nécessaires.</string>
@@ -697,7 +700,6 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="prediction_offline_cached">Hors connexion : estimation calculée le %1$s</string>
     <string name="outing_plan_action">Préparer la sortie</string>
     <string name="outing_plan_for_day">Prévoir pour %1$s</string>
-    <string name="outing_plan_action_hint">Horaires de la journée, matériel, messages pour le groupe</string>
     <string name="outing_underway_summary">En cours · retour vers %1$s</string>
     <string name="outing_plan_title">Préparer la sortie</string>
     <string name="outing_date_label">Jour</string>

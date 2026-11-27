@@ -188,6 +188,10 @@ Search for a canyon and add it to your favorites.</string>
     <string name="map_visible_empty_description">Move or zoom out on the map to show canyons.</string>
     <string name="connected_as">Connected: %1$s</string>
     <string name="tab_topo">Topo</string>
+    <string name="tab_conditions">Conditions</string>
+    <string name="canyon_action_report_debit">Report the flow</string>
+    <string name="outing_open_planned">My outing on %1$s</string>
+    <string name="canyon_latest_debit">Last flow reported: %1$s, %2$s</string>
     <string name="tab_photos_with_count">Photos (%1$d)</string>
     <string name="tab_photos_loading">Photos (…)</string>
     <string name="tab_photos_unavailable">Photos (unavailable)</string>
@@ -195,7 +199,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="tab_debits_loading">Flow reports (…)</string>
     <string name="tab_debits_unavailable">Flow reports (unavailable)</string>
     <string name="refreshing_canyon_details">Refreshing canyon route page…</string>
-    <string name="debit_add_action">Add a flow report</string>
     <string name="debit_form_title">Add a new flow report</string>
     <string name="debit_login_prompt_title">Log in to your Descente-Canyon account</string>
     <string name="debit_login_prompt_body">Once logged in, the observation is linked to your account and the name/email fields are no longer required.</string>
@@ -683,7 +686,6 @@ Search for a canyon and add it to your favorites.</string>
     <string name="prediction_offline_cached">Offline: estimate computed on %1$s</string>
     <string name="outing_plan_action">Plan the outing</string>
     <string name="outing_plan_for_day">Plan for %1$s</string>
-    <string name="outing_plan_action_hint">Times of the day, gear, messages for the group</string>
     <string name="outing_underway_summary">Under way · back around %1$s</string>
     <string name="outing_plan_title">Plan the outing</string>
     <string name="outing_date_label">Day</string>

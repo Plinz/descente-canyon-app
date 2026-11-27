@@ -13,11 +13,13 @@ import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
 import fr.descentecanyon.app.domain.model.CanyonWeather
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.NearbyCanyon
+import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
+import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.GetCanyonDetailUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonPreviewUseCase
@@ -26,6 +28,7 @@ import fr.descentecanyon.app.domain.usecase.ToggleFavoriteUseCase
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.UiText
 import fr.descentecanyon.app.ui.common.toUiText
+import java.time.Clock
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -73,6 +76,8 @@ data class CanyonDetailUiState(
     val logbook: List<LogbookEntry> = emptyList(),
     /** Companions of earlier outings, offered when logging one. */
     val knownCompanions: List<String> = emptyList(),
+    /** The outing planned or under way that goes down this canyon, the soonest. */
+    val plannedOuting: PlannedOuting? = null,
 )
 
 /** State owned by the view model itself: the canyon detail and the user's choices about it. */
@@ -90,6 +95,7 @@ private data class CanyonDetailState(
     val nearbyCanyons: List<NearbyCanyon> = emptyList(),
     val logbook: List<LogbookEntry> = emptyList(),
     val knownCompanions: List<String> = emptyList(),
+    val plannedOuting: PlannedOuting? = null,
 )
 
 /**
@@ -113,6 +119,8 @@ class CanyonDetailViewModel @Inject constructor(
     private val canyonNotesRepository: CanyonNotesRepository,
     private val getNearbyCanyonsUseCase: GetNearbyCanyonsUseCase,
     private val logbookRepository: LogbookRepository,
+    private val outingRepository: OutingRepository,
+    private val clock: Clock,
 ) : ViewModel() {
 
     private val canyonId: Int = savedStateHandle["canyonId"]
@@ -136,6 +144,7 @@ class CanyonDetailViewModel @Inject constructor(
         observePersonalNote()
         observeNearbyCanyons()
         observeLogbook()
+        observePlannedOuting()
         observeReports()
         loadCanyon(canyonId)
     }
@@ -318,6 +327,17 @@ class CanyonDetailViewModel @Inject constructor(
         viewModelScope.launch { logbookRepository.delete(id) }
     }
 
+    /** The outing of this canyon still to come or under way: the page opens it rather than a new one. */
+    private fun observePlannedOuting() {
+        viewModelScope.launch {
+            outingRepository.observeAll().collect { outings ->
+                val now = clock.instant()
+                val outing = outings.filter { canyonId in it.canyonIds && !it.isStale(now) }.minByOrNull { it.start }
+                detailState.update { it.copy(plannedOuting = outing) }
+            }
+        }
+    }
+
     private fun observeLogbook() {
         viewModelScope.launch {
             logbookRepository.observeForCanyon(canyonId).collect { entries ->
@@ -373,6 +393,7 @@ private fun toUiState(detail: CanyonDetailState, media: CanyonMediaState, condit
         nearbyCanyons = detail.nearbyCanyons,
         logbook = detail.logbook,
         knownCompanions = detail.knownCompanions,
+        plannedOuting = detail.plannedOuting,
         transientMessage = detail.transientMessage,
         personalNote = detail.personalNote,
     )

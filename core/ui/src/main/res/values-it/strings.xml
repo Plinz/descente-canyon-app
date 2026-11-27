@@ -188,6 +188,10 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="map_visible_empty_description">Sposta o riduci lo zoom della mappa per visualizzare dei canyon.</string>
     <string name="connected_as">Account connesso: %1$s</string>
     <string name="tab_topo">Topo</string>
+    <string name="tab_conditions">Condizioni</string>
+    <string name="canyon_action_report_debit">Segnala la portata</string>
+    <string name="outing_open_planned">La mia uscita del %1$s</string>
+    <string name="canyon_latest_debit">Ultima portata segnalata: %1$s, %2$s</string>
     <string name="tab_photos_with_count">Foto (%1$d)</string>
     <string name="tab_photos_loading">Foto (…)</string>
     <string name="tab_photos_unavailable">Foto (non disp.)</string>
@@ -195,7 +199,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="tab_debits_loading">Portate (…)</string>
     <string name="tab_debits_unavailable">Portate (non disp.)</string>
     <string name="refreshing_canyon_details">Aggiornamento della scheda canyon…</string>
-    <string name="debit_add_action">Aggiungi una portata</string>
     <string name="debit_form_title">Aggiunta di una nuova portata</string>
     <string name="debit_login_prompt_title">Accedi al tuo account Descente-Canyon</string>
     <string name="debit_login_prompt_body">Dopo l\'accesso, l\'osservazione viene associata al tuo account e i campi nome/e-mail non sono più necessari.</string>
@@ -697,7 +700,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="prediction_offline_cached">Offline: stima calcolata il %1$s</string>
     <string name="outing_plan_action">Preparare l\'uscita</string>
     <string name="outing_plan_for_day">Prevedere per %1$s</string>
-    <string name="outing_plan_action_hint">Orari della giornata, materiale, messaggi per il gruppo</string>
     <string name="outing_underway_summary">In corso · rientro verso le %1$s</string>
     <string name="outing_plan_title">Preparare l\'uscita</string>
     <string name="outing_date_label">Giorno</string>

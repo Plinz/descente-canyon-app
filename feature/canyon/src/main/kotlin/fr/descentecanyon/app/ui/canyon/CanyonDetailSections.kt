@@ -19,16 +19,21 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.DirectionsRun
+import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.CloudOff
 import androidx.compose.material.icons.filled.Hiking
+import androidx.compose.material.icons.filled.Map
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
@@ -46,6 +51,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
@@ -55,8 +61,9 @@ import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.NearbyCanyon
 import fr.descentecanyon.app.domain.model.isAddedInApp
-import fr.descentecanyon.app.ui.components.longDayLabel
-import fr.descentecanyon.app.ui.design.DcOutdoorActionCard
+import fr.descentecanyon.app.ui.components.debitLevelColor
+import fr.descentecanyon.app.ui.components.debitLevelLabel
+import fr.descentecanyon.app.ui.components.relativeDayPhrase
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.LocalDate
 import kotlinx.coroutines.launch
@@ -93,11 +100,8 @@ internal fun CanyonDetailContent(
     onSavePersonalNote: (String) -> Unit = {},
     nearbyCanyons: List<NearbyCanyon> = emptyList(),
     onNearbyCanyonClick: (Int) -> Unit = {},
-    onPlanOuting: () -> Unit = {},
-    /** The map of the points, offered on the header photo (the floating button only shows once scrolled). */
+    /** The map of the points, offered on the header photo and at the head of the topo. */
     onShowMap: (() -> Unit)? = null,
-    /** Opened for a day of a stay: the outing is planned for it. */
-    planForDay: LocalDate? = null,
     logbook: List<LogbookEntry> = emptyList(),
     knownCompanions: List<String> = emptyList(),
     onSaveLogbookEntry: (LogbookEntry) -> Unit = {},
@@ -110,10 +114,11 @@ internal fun CanyonDetailContent(
     // A canyon added in the app has neither photos nor flow reports: they live on the site, which does not know it.
     val isAddedInApp = detail.canyon.isAddedInApp
     var selectedTab by rememberSaveable(openDebitsTabInitially) {
-        mutableIntStateOf(if (openDebitsTabInitially && !isAddedInApp) 2 else 0)
+        mutableIntStateOf(if (openDebitsTabInitially && !isAddedInApp) TAB_DEBITS else TAB_CONDITIONS)
     }
     val scope = rememberCoroutineScope()
     val tabs = listOf(
+        stringResource(R.string.tab_conditions),
         stringResource(R.string.tab_topo),
         if (isAddedInApp) {
             stringResource(R.string.tab_photos)
@@ -155,82 +160,17 @@ internal fun CanyonDetailContent(
                 onShowMap = onShowMap,
             )
         }
-        item {
-            DcOutdoorActionCard(
-                title = planForDay?.let { stringResource(R.string.outing_plan_for_day, longDayLabel(it, capitalized = false)) }
-                    ?: stringResource(R.string.outing_plan_action),
-                hint = stringResource(R.string.outing_plan_action_hint),
-                icon = Icons.Default.Hiking,
-                onClick = onPlanOuting,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 4.dp)
-                    .testTag(TestTags.DETAIL_PLAN_OUTING),
-            )
-        }
-        item {
-            val canyon = detail.canyon
-            MyCanyonCard(
-                canyonId = canyon.id,
-                canyonName = canyon.nom,
-                memo = personalNote,
-                entries = logbook,
-                knownCompanions = knownCompanions,
-                onSaveMemo = onSavePersonalNote,
-                onSaveEntry = onSaveLogbookEntry,
-                onDeleteEntry = onDeleteLogbookEntry,
-                onReportFlow = onReportFlow,
-                onOpenLogbook = onOpenLogbook,
-                canReportFlow = !isAddedInApp,
-            )
-        }
-        if (edfStatusSourceUrl != null) {
-            item {
-                CanyonEdfStatusCard(
-                    status = edfStatus,
-                    isLoading = isLoadingEdfStatus,
-                    error = edfStatusError,
-                    sourceUrl = edfStatusSourceUrl,
-                )
-            }
-        }
-        if (detail.isLocated) {
-            item {
-                CanyonWeatherCard(
-                    weather = weather,
-                    isLoading = isLoadingWeather,
-                    error = weatherError,
-                )
-            }
-            if (!isAddedInApp) {
-                item {
-                    CanyonDebitPredictionCard(
-                        predictions = predictions,
-                        isLoading = isLoadingPredictions,
-                        error = predictionError,
-                        onInfoClick = onOpenPredictionInfo,
-                        weather = weather,
-                    )
-                }
-            }
-        } else {
-            item { UnlocatedConditionsCard() }
-        }
-        if (nearbyCanyons.isNotEmpty()) {
-            item {
-                NearbyCanyonsSection(nearby = nearbyCanyons, onCanyonClick = onNearbyCanyonClick)
-            }
-        }
-
         stickyHeader(key = TABS_HEADER_KEY) {
             PrimaryTabRow(
                 selectedTabIndex = selectedTab,
                 containerColor = MaterialTheme.colorScheme.background,
             ) {
                 tabs.forEachIndexed { index, title ->
+                    // Its own content, without the 16 dp the text tab keeps on each side: four tabs and
+                    // their counts fit a narrow phone, a long one ("Débits (253)") shrinks rather than wraps.
                     Tab(
                         selected = selectedTab == index,
-                        enabled = index == 0 || !isAddedInApp,
+                        enabled = (index != TAB_PHOTOS && index != TAB_DEBITS) || !isAddedInApp,
                         onClick = {
                             selectedTab = index
                             // With the tab row pinned, the tab opens at its top, not where the previous one was scrolled to.
@@ -239,16 +179,67 @@ internal fun CanyonDetailContent(
                                 scope.launch { listState.scrollToItem(header.index) }
                             }
                         },
-                        text = { Text(title) },
-                    )
+                    ) {
+                        val style = MaterialTheme.typography.titleSmall
+                        Text(
+                            text = title,
+                            style = style,
+                            maxLines = 1,
+                            autoSize = TextAutoSize.StepBased(minFontSize = 9.sp, maxFontSize = style.fontSize),
+                            modifier = Modifier.padding(horizontal = 4.dp, vertical = 14.dp),
+                        )
+                    }
                 }
             }
         }
 
         when (selectedTab) {
-            0 -> topoItems(detail, onShowMap)
+            TAB_CONDITIONS -> conditionsItems(
+                detail = detail,
+                isAddedInApp = isAddedInApp,
+                edfStatus = edfStatus,
+                isLoadingEdfStatus = isLoadingEdfStatus,
+                edfStatusError = edfStatusError,
+                edfStatusSourceUrl = edfStatusSourceUrl,
+                weather = weather,
+                isLoadingWeather = isLoadingWeather,
+                weatherError = weatherError,
+                predictions = predictions,
+                isLoadingPredictions = isLoadingPredictions,
+                predictionError = predictionError,
+                onOpenPredictionInfo = onOpenPredictionInfo,
+                onOpenDebits = { selectedTab = TAB_DEBITS },
+                personalNote = personalNote,
+                onSavePersonalNote = onSavePersonalNote,
+                logbook = logbook,
+                knownCompanions = knownCompanions,
+                onSaveLogbookEntry = onSaveLogbookEntry,
+                onDeleteLogbookEntry = onDeleteLogbookEntry,
+                onReportFlow = onReportFlow,
+                onOpenLogbook = onOpenLogbook,
+                nearbyCanyons = nearbyCanyons,
+                onNearbyCanyonClick = onNearbyCanyonClick,
+            )
 
-            1 -> photosItems(
+            TAB_TOPO -> {
+                onShowMap?.let { showMap ->
+                    item(key = "topo_map") {
+                        OutlinedButton(
+                            onClick = showMap,
+                            modifier = Modifier.fillMaxWidth().padding(
+                                horizontal = 16.dp,
+                                vertical = 8.dp,
+                            ).testTag(TestTags.DETAIL_TOPO_MAP),
+                        ) {
+                            Icon(Icons.Default.Map, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Text(stringResource(R.string.show_map_points), modifier = Modifier.padding(start = 8.dp))
+                        }
+                    }
+                }
+                topoItems(detail, onShowMap)
+            }
+
+            TAB_PHOTOS -> photosItems(
                 photos = detail.photos,
                 isOnline = isOnline,
                 isLoadingPhotos = isLoadingPhotos,
@@ -258,12 +249,128 @@ internal fun CanyonDetailContent(
                 onPersistedPhotoMissing = onPersistedPhotoMissing,
             )
 
-            2 -> {
+            TAB_DEBITS -> {
                 if (detail.debits.isNotEmpty()) {
                     item { DebitSeasonalityCard(debits = detail.debits) }
                 }
                 debitItems(detail.debits, isLoadingDebits, debitError, memberAuthors, onUserClick)
             }
+        }
+    }
+}
+
+/**
+ * The Conditions tab: can it be done now. The flow estimated and the last one reported, the weather,
+ * the dam releases, the user's own notes and outings here, and the canyons around.
+ */
+private fun LazyListScope.conditionsItems(
+    detail: CanyonDetail,
+    isAddedInApp: Boolean,
+    edfStatus: CanyonEdfPracticability?,
+    isLoadingEdfStatus: Boolean,
+    edfStatusError: String?,
+    edfStatusSourceUrl: String?,
+    weather: fr.descentecanyon.app.domain.model.CanyonWeather?,
+    isLoadingWeather: Boolean,
+    weatherError: String?,
+    predictions: CanyonDebitPredictions?,
+    isLoadingPredictions: Boolean,
+    predictionError: String?,
+    onOpenPredictionInfo: () -> Unit,
+    onOpenDebits: () -> Unit,
+    personalNote: String?,
+    onSavePersonalNote: (String) -> Unit,
+    logbook: List<LogbookEntry>,
+    knownCompanions: List<String>,
+    onSaveLogbookEntry: (LogbookEntry) -> Unit,
+    onDeleteLogbookEntry: (Long) -> Unit,
+    onReportFlow: (LogbookEntry) -> Unit,
+    onOpenLogbook: () -> Unit,
+    nearbyCanyons: List<NearbyCanyon>,
+    onNearbyCanyonClick: (Int) -> Unit,
+) {
+    if (detail.isLocated && !isAddedInApp) {
+        item(key = "prediction") {
+            CanyonDebitPredictionCard(
+                predictions = predictions,
+                isLoading = isLoadingPredictions,
+                error = predictionError,
+                onInfoClick = onOpenPredictionInfo,
+                weather = weather,
+            )
+        }
+    }
+    detail.debits.firstOrNull()?.takeIf { !isAddedInApp }?.let { latest ->
+        item(key = "latest_debit") { LatestDebitRow(debit = latest, onClick = onOpenDebits) }
+    }
+    if (detail.isLocated) {
+        item(key = "weather") {
+            CanyonWeatherCard(
+                weather = weather,
+                isLoading = isLoadingWeather,
+                error = weatherError,
+            )
+        }
+    } else {
+        item(key = "unlocated") { UnlocatedConditionsCard() }
+    }
+    if (edfStatusSourceUrl != null) {
+        item(key = "edf") {
+            CanyonEdfStatusCard(
+                status = edfStatus,
+                isLoading = isLoadingEdfStatus,
+                error = edfStatusError,
+                sourceUrl = edfStatusSourceUrl,
+            )
+        }
+    }
+    item(key = "my_canyon") {
+        val canyon = detail.canyon
+        MyCanyonCard(
+            canyonId = canyon.id,
+            canyonName = canyon.nom,
+            memo = personalNote,
+            entries = logbook,
+            knownCompanions = knownCompanions,
+            onSaveMemo = onSavePersonalNote,
+            onSaveEntry = onSaveLogbookEntry,
+            onDeleteEntry = onDeleteLogbookEntry,
+            onReportFlow = onReportFlow,
+            onOpenLogbook = onOpenLogbook,
+            canReportFlow = !isAddedInApp,
+        )
+    }
+    if (nearbyCanyons.isNotEmpty()) {
+        item(key = "nearby") {
+            NearbyCanyonsSection(nearby = nearbyCanyons, onCanyonClick = onNearbyCanyonClick)
+        }
+    }
+}
+
+/** The last flow reported, in one line; the reports are in the Débits tab. */
+@Composable
+private fun LatestDebitRow(debit: Debit, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .testTag(TestTags.DETAIL_LATEST_DEBIT),
+        shape = MaterialTheme.shapes.medium,
+        color = MaterialTheme.colorScheme.surfaceVariant,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 12.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+        ) {
+            Box(modifier = Modifier.size(12.dp).background(debitLevelColor(debit.niveau), CircleShape))
+            Text(
+                text = stringResource(R.string.canyon_latest_debit, debitLevelLabel(debit.niveau), relativeDayPhrase(debit.date)),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.weight(1f),
+            )
+            Icon(Icons.Default.ChevronRight, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant)
         }
     }
 }
@@ -424,3 +531,7 @@ internal fun InlineLoadingBanner(text: String, modifier: Modifier = Modifier) {
 }
 
 private const val TABS_HEADER_KEY = "canyon_tabs"
+private const val TAB_CONDITIONS = 0
+private const val TAB_TOPO = 1
+private const val TAB_PHOTOS = 2
+private const val TAB_DEBITS = 3

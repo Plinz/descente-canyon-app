@@ -27,6 +27,8 @@ object TestTags {
     const val DETAIL_SEASONALITY = "detail_seasonality"
     const val DETAIL_PLAN_OUTING = "detail_plan_outing"
     const val DETAIL_HERO_MAP = "detail_hero_map"
+    const val DETAIL_TOPO_MAP = "detail_topo_map"
+    const val DETAIL_LATEST_DEBIT = "detail_latest_debit"
     const val OUTING_ALERT_SENT_CONFIRM = "outing_alert_sent_confirm"
     const val SEARCH_AROUND_ME = "search_around_me"
     const val SEARCH_NEARBY = "search_nearby"

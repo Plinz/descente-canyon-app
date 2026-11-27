@@ -56,7 +56,6 @@ import androidx.navigation.NavHostController
 import androidx.navigation.NavOptionsBuilder
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
 import dagger.hilt.android.AndroidEntryPoint
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.error.suspendRunCatching
@@ -481,9 +480,8 @@ internal fun shouldShowBottomBar(backStackEntry: NavBackStackEntry?): Boolean {
         destination.hasRoute(Screen.Search::class) ||
         destination.hasRoute(Screen.Outings::class) ||
         destination.hasRoute(Screen.Favorites::class) ||
-        destination.hasRoute(Screen.MyAccount::class) ||
-        // Not for a canyon chosen for a day of a stay: a tab would leave the stay without notice.
-        (destination.hasRoute(Screen.CanyonDetail::class) && backStackEntry.toRoute<Screen.CanyonDetail>().stayId == 0L)
+        destination.hasRoute(Screen.MyAccount::class)
+    // Not on a canyon page: its own bar has its actions (and, for a day of a stay, a tab would leave it).
 }
 
 internal fun handleBottomNavClick(item: BottomNavItem, popToHome: () -> Boolean, navigate: (Screen) -> Unit) {

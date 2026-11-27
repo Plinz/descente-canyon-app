@@ -198,6 +198,9 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                         )
                     }
                 },
+                onOpenOuting = dropUnlessResumedWith { canyonId: Int, outingId: Long ->
+                    navController.navigateSingleTop(Screen.OutingPlan(canyonId, outingId))
+                },
                 onOpenEmergency = dropUnlessResumed { navController.navigateSingleTop(Screen.Emergency(detail.canyonId)) },
                 onReportOuting = dropUnlessResumedWith { entry: LogbookEntry ->
                     navController.navigateSingleTop(Screen.DebitForm(entry.canyonId, date = entry.date.toString()))
@@ -205,7 +208,6 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onOpenLogbook = dropUnlessResumed { navController.navigateSingleTop(Screen.Logbook()) },
                 onProposeEdit = dropUnlessResumed { navController.navigateSingleTop(Screen.CanyonProposal(detail.canyonId)) },
                 openDebitsTabInitially = detail.openDebitsTab,
-                contentPadding = topLevelContentPadding,
                 refreshDebitsAfterSubmission = refreshDebitsAfterSubmission,
                 onRefreshDebitsAfterSubmissionHandled = {
                     backStackEntry.savedStateHandle[DEBIT_SUBMISSION_REFRESH_KEY] = false

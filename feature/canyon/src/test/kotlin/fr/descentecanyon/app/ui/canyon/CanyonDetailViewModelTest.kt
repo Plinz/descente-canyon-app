@@ -24,8 +24,11 @@ import fr.descentecanyon.app.domain.model.GeoBounds
 import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.LogbookEntry
+import fr.descentecanyon.app.domain.model.NextCanyon
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.NotificationCenterState
+import fr.descentecanyon.app.domain.model.OutingChoices
+import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.PredictedDebitLevel
 import fr.descentecanyon.app.domain.model.Regulation
 import fr.descentecanyon.app.domain.model.RuntimeLookupSource
@@ -50,6 +53,7 @@ import fr.descentecanyon.app.domain.usecase.GetCanyonPreviewUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonWeatherUseCase
 import fr.descentecanyon.app.domain.usecase.GetNearbyCanyonsUseCase
 import fr.descentecanyon.app.domain.usecase.ToggleFavoriteUseCase
+import fr.descentecanyon.app.testutil.FakeOutingRepository
 import fr.descentecanyon.app.testutil.MainDispatcherRule
 import fr.descentecanyon.app.ui.common.UiText
 import io.mockk.coEvery
@@ -57,8 +61,12 @@ import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import java.net.SocketTimeoutException
+import java.time.Clock
+import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneOffset
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.flowOf
@@ -94,6 +102,7 @@ class CanyonDetailViewModelTest {
         every { observeNote(42) } returns personalNote
     }
     private val logbook = MutableStateFlow<List<LogbookEntry>>(emptyList())
+    private val outingRepository = FakeOutingRepository()
     private val logbookRepository = mockk<fr.descentecanyon.app.domain.repository.LogbookRepository>(relaxUnitFun = true) {
         every { observeForCanyon(42) } returns logbook
         coEvery { knownCompanions() } returns listOf("Paul", "Léa")
@@ -409,6 +418,32 @@ class CanyonDetailViewModelTest {
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
+    fun `the outing planned in the canyon, even as the second of the day, is the one the page opens`() = runTest {
+        stubBaseState()
+        coEvery { canyonRepository.getCanyonPreview(42) } returns Result.success(detail())
+        coEvery { canyonRepository.getCanyonDetail(42) } returns Result.success(detail())
+        fun at(hour: Int) = Instant.parse("2026-07-14T00:00:00Z").plus(Duration.ofHours(hour.toLong()))
+        // Long past: forgotten. Then an outing elsewhere, and one going down this canyon after another.
+        outingRepository.save(PlannedOuting(42, "Riolan", at(-40), at(-36), at(-34)))
+        outingRepository.save(PlannedOuting(7, "Aiglun", at(9), at(12), at(14)))
+        val chained = PlannedOuting(
+            7,
+            "Aiglun",
+            at(33),
+            at(38),
+            at(40),
+            choices = OutingChoices(LocalDate.of(2026, 7, 15), LocalTime.of(9, 0), nextCanyons = listOf(NextCanyon(42, "Riolan"))),
+        )
+        val chainedId = outingRepository.save(chained)
+
+        val viewModel = createViewModel()
+        advanceUntilIdle()
+
+        assertEquals(chainedId, viewModel.uiState.value.plannedOuting?.id)
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
     fun `outings of the canyon are shown, saved for it and deleted`() = runTest {
         stubBaseState()
         coEvery { canyonRepository.getCanyonPreview(42) } returns Result.success(detail())
@@ -454,6 +489,8 @@ class CanyonDetailViewModelTest {
         canyonNotesRepository = canyonNotesRepository,
         getNearbyCanyonsUseCase = GetNearbyCanyonsUseCase(canyonRepository, debitRepository),
         logbookRepository = logbookRepository,
+        outingRepository = outingRepository,
+        clock = Clock.fixed(Instant.parse("2026-07-14T06:00:00Z"), ZoneOffset.UTC),
     )
 
     private fun stubBaseState() {

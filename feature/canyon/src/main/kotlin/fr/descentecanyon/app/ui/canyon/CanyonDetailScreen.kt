@@ -11,21 +11,27 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.OpenInNew
@@ -33,6 +39,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.EditNote
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.NotificationsActive
@@ -40,11 +47,13 @@ import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.WaterDrop
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -62,9 +71,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -74,6 +86,7 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.Canyon
 import fr.descentecanyon.app.domain.model.LogbookEntry
+import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.common.needsNotificationPermission
@@ -82,12 +95,15 @@ import fr.descentecanyon.app.ui.common.startActivitySafely
 import fr.descentecanyon.app.ui.components.AppFloatingActionButton
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.EmergencyIconButton
+import fr.descentecanyon.app.ui.components.longDayLabel
 import fr.descentecanyon.app.ui.design.DcDropdownMenu
 import fr.descentecanyon.app.ui.design.DcDropdownMenuItem
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.design.rememberDcContentWidth
 import fr.descentecanyon.app.ui.test.TestTags
 import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -102,6 +118,8 @@ fun CanyonDetailScreen(
     onUserClick: (String) -> Unit = {},
     onOpenCanyon: (Int) -> Unit = {},
     onPlanOuting: () -> Unit = {},
+    /** The outing already planned in this canyon (its first canyon, its id): opened rather than a new one. */
+    onOpenOuting: (canyonId: Int, outingId: Long) -> Unit = { _, _ -> },
     /** Opened from the search of a day of a stay: the outing is planned for that day. */
     planForDay: LocalDate? = null,
     onOpenEmergency: () -> Unit = {},
@@ -112,7 +130,6 @@ fun CanyonDetailScreen(
     onProposeEdit: () -> Unit = {},
     openDebitsTabInitially: Boolean = false,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(),
     refreshDebitsAfterSubmission: Boolean = false,
     onRefreshDebitsAfterSubmissionHandled: () -> Unit = {},
     refreshDetailAfterInterestRating: Boolean = false,
@@ -124,9 +141,6 @@ fun CanyonDetailScreen(
     val lifecycleOwner = LocalLifecycleOwner.current
     val contentWidth = rememberDcContentWidth(maxWidth = 940.dp)
     val listState = rememberLazyListState()
-    // The map button would cover the content being read: it hides while scrolling down, and at the
-    // top the header photo offers the map instead (the button covered the first cards there).
-    val showMapButton = listState.isScrollingUpBelowTop()
     // Flow reports, their follow-up and the interest votes live on the site, which does not know this canyon.
     val isAddedInApp = AppCanyons.isAppCanyon(canyonId)
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
@@ -187,17 +201,6 @@ fun CanyonDetailScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = onReportDebitClick,
-                        enabled = !isAddedInApp,
-                        modifier = Modifier.testTag(TestTags.DETAIL_REPORT_DEBIT_BUTTON),
-                    ) {
-                        AddDebitIcon(
-                            contentDescription = stringResource(R.string.debit_add_action),
-                            modifier = Modifier.alpha(if (isAddedInApp) DISABLED_ALPHA else 1f),
-                        )
-                    }
-                    EmergencyIconButton(onClick = onOpenEmergency)
-                    IconButton(
                         onClick = viewModel::toggleFavorite,
                         modifier = Modifier.testTag(TestTags.DETAIL_FAVORITE_BUTTON),
                     ) {
@@ -215,6 +218,7 @@ fun CanyonDetailScreen(
                             },
                         )
                     }
+                    EmergencyIconButton(onClick = onOpenEmergency)
                     CanyonMoreActions(
                         canyon = uiState.canyonDetail?.canyon,
                         isFollowingDebits = uiState.isDebitNotificationsEnabled,
@@ -231,6 +235,23 @@ fun CanyonDetailScreen(
                     )
                 },
             )
+        },
+        // The two actions people come for, under the thumb: plan the outing (for the day of a stay,
+        // or the one already planned) and report the flow seen. The app's tabs are not shown here.
+        bottomBar = {
+            if (uiState.canyonDetail != null && !uiState.isLoading && uiState.error == null) {
+                val planned = uiState.plannedOuting.takeIf { planForDay == null }
+                CanyonActionBar(
+                    planLabel = when {
+                        planForDay != null -> stringResource(R.string.outing_plan_for_day, longDayLabel(planForDay, capitalized = false))
+                        planned != null -> stringResource(R.string.outing_open_planned, shortDayLabel(planned))
+                        else -> stringResource(R.string.outing_plan_action)
+                    },
+                    onPlan = { if (planned != null) onOpenOuting(planned.canyonId, planned.id) else onPlanOuting() },
+                    // Planning a day of a stay, the flow seen today is beside the point: one button, its day in full.
+                    onReportDebit = onReportDebitClick.takeUnless { isAddedInApp || planForDay != null },
+                )
+            }
         },
         modifier = modifier,
     ) { innerPadding ->
@@ -303,9 +324,7 @@ fun CanyonDetailScreen(
                             personalNote = uiState.personalNote,
                             onSavePersonalNote = viewModel::savePersonalNote,
                             nearbyCanyons = uiState.nearbyCanyons,
-                            onPlanOuting = onPlanOuting,
                             onShowMap = onShowMapClick,
-                            planForDay = planForDay,
                             logbook = uiState.logbook,
                             knownCompanions = uiState.knownCompanions,
                             onSaveLogbookEntry = viewModel::saveLogbookEntry,
@@ -313,7 +332,7 @@ fun CanyonDetailScreen(
                             onReportFlow = onReportOuting,
                             onOpenLogbook = onOpenLogbook,
                             onNearbyCanyonClick = onOpenCanyon,
-                            bottomContentPadding = contentPadding.calculateBottomPadding() + 96.dp,
+                            bottomContentPadding = 24.dp,
                             listState = listState,
                             modifier = Modifier
                                 .fillMaxHeight()
@@ -322,62 +341,72 @@ fun CanyonDetailScreen(
                     }
                 }
             }
+        }
+    }
+}
 
-            if (uiState.canyonDetail != null && !uiState.isLoading && uiState.error == null) {
-                Box(
-                    modifier = Modifier.fillMaxSize(),
-                    contentAlignment = Alignment.BottomEnd,
+/** Plan the outing (or open the one planned), and report the flow: labelled buttons above the navigation bar. */
+@Composable
+private fun CanyonActionBar(planLabel: String, onPlan: () -> Unit, onReportDebit: (() -> Unit)?) {
+    val colors = LocalDcColors.current
+    Surface(
+        color = colors.backgroundElevated,
+        contentColor = colors.textPrimary,
+        border = BorderStroke(1.dp, colors.borderSubtle),
+        shadowElevation = 4.dp,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .padding(horizontal = 16.dp, vertical = 10.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            val labelStyle = MaterialTheme.typography.labelLarge
+            // Narrow phones: less padding than a default button, and the labels shrink before they are cut.
+            val padding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+            Button(
+                onClick = onPlan,
+                contentPadding = padding,
+                modifier = Modifier.weight(1f).testTag(TestTags.DETAIL_PLAN_OUTING),
+            ) {
+                Icon(Icons.Default.Hiking, contentDescription = null, modifier = Modifier.size(18.dp))
+                Text(
+                    text = planLabel,
+                    style = labelStyle,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = labelStyle.fontSize),
+                    modifier = Modifier.padding(start = 6.dp),
+                )
+            }
+            onReportDebit?.let { report ->
+                OutlinedButton(
+                    onClick = report,
+                    contentPadding = padding,
+                    modifier = Modifier.weight(1f).testTag(TestTags.DETAIL_REPORT_DEBIT_BUTTON),
                 ) {
-                    AnimatedVisibility(visible = showMapButton, enter = scaleIn() + fadeIn(), exit = scaleOut() + fadeOut()) {
-                        AppFloatingActionButton(
-                            onClick = onShowMapClick,
-                            modifier = Modifier.padding(
-                                end = 20.dp,
-                                bottom = contentPadding.calculateBottomPadding() + 20.dp,
-                            ),
-                            icon = { iconModifier ->
-                                Icon(
-                                    imageVector = Icons.Default.LocationOn,
-                                    contentDescription = stringResource(R.string.show_map_points),
-                                    modifier = iconModifier,
-                                )
-                            },
-                        )
-                    }
+                    Icon(Icons.Default.WaterDrop, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Text(
+                        text = stringResource(R.string.canyon_action_report_debit),
+                        style = labelStyle,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = labelStyle.fontSize),
+                        modifier = Modifier.padding(start = 6.dp),
+                    )
                 }
             }
         }
     }
 }
 
+/** "28 nov.": the day of the outing, in the canyon's zone when it has one. */
 @Composable
-private fun AddDebitIcon(contentDescription: String, modifier: Modifier = Modifier) {
-    Box(modifier = modifier.size(30.dp)) {
-        Icon(
-            imageVector = Icons.Default.WaterDrop,
-            contentDescription = contentDescription,
-            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-            modifier = Modifier
-                .size(26.dp)
-                .align(Alignment.CenterStart),
-        )
-        Surface(
-            modifier = Modifier
-                .size(15.dp)
-                .align(Alignment.BottomEnd),
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary,
-        ) {
-            Box(contentAlignment = Alignment.Center) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = null,
-                    modifier = Modifier.size(11.dp),
-                )
-            }
-        }
-    }
+private fun shortDayLabel(outing: PlannedOuting): String {
+    val locale = LocalLocale.current.platformLocale
+    return DateTimeFormatter.ofPattern("d MMM", locale).format(outing.dayIn(ZoneId.systemDefault()))
 }
 
 /** Less frequent actions, kept in a menu so the canyon name stays readable in the top bar. */
@@ -485,25 +514,4 @@ internal fun canyonShareText(canyon: Canyon): String {
         canyon.pays.takeIf { it.isNotBlank() },
     ).distinct().joinToString(" · ")
     return listOf(title, place, canyon.url).filter { it.isNotBlank() }.joinToString("\n")
-}
-
-private const val DISABLED_ALPHA = 0.38f
-
-/** True at the top of the list and while it scrolls back up, false while it scrolls down. */
-@Composable
-private fun LazyListState.isScrollingUpBelowTop(): Boolean {
-    var previousIndex by remember(this) { mutableIntStateOf(firstVisibleItemIndex) }
-    var previousOffset by remember(this) { mutableIntStateOf(firstVisibleItemScrollOffset) }
-    return remember(this) {
-        derivedStateOf {
-            val isUp = when {
-                !canScrollBackward -> false
-                previousIndex != firstVisibleItemIndex -> previousIndex > firstVisibleItemIndex
-                else -> previousOffset >= firstVisibleItemScrollOffset
-            }
-            previousIndex = firstVisibleItemIndex
-            previousOffset = firstVisibleItemScrollOffset
-            isUp
-        }
-    }.value
 }

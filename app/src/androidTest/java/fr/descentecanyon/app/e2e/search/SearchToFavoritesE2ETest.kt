@@ -1,11 +1,13 @@
 package fr.descentecanyon.app.e2e.search
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextInput
 import dagger.hilt.android.testing.HiltAndroidTest
+import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.e2e.BaseE2eTest
 import fr.descentecanyon.app.ui.navigation.BottomNavItem
 import fr.descentecanyon.app.ui.test.TestTags
@@ -32,6 +34,9 @@ class SearchToFavoritesE2ETest : BaseE2eTest() {
         composeRule.onNodeWithTag(TestTags.DETAIL_FAVORITE_BUTTON, useUnmergedTree = true)
             .performClick()
 
+        // The canyon page has its own action bar, not the tabs: back to Explorer first.
+        composeRule.onNodeWithContentDescription(string(R.string.back), useUnmergedTree = true).performClick()
+        waitForTag(TestTags.bottomNavItem(BottomNavItem.FAVORITES.name))
         composeRule.onNodeWithTag(TestTags.bottomNavItem(BottomNavItem.FAVORITES.name))
             .performClick()
 

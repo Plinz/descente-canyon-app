@@ -25,7 +25,7 @@ class CanyonLinkE2ETest : BaseE2eTest() {
             data = "https://www.descente-canyon.com/canyoning/canyon/101/".toUri()
         }
         waitForTag(TestTags.DETAIL_LIST)
-        composeRule.onNodeWithTag(TestTags.DETAIL_LIST).performScrollToNode(hasTestTag(TestTags.DETAIL_PLAN_OUTING))
+        waitForTag(TestTags.DETAIL_PLAN_OUTING)
         // The page runs under the bottom bar: on a small screen (CI) a tap could hit the bar.
         composeRule.onNodeWithTag(TestTags.DETAIL_PLAN_OUTING).performSemanticsAction(SemanticsActions.OnClick)
         waitForTag(TestTags.OUTING_SUMMARY)

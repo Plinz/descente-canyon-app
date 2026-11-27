@@ -188,6 +188,10 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="map_visible_empty_description">Verschiebe die Karte oder zoome heraus, um Canyons anzuzeigen.</string>
     <string name="connected_as">Angemeldet: %1$s</string>
     <string name="tab_topo">Topo</string>
+    <string name="tab_conditions">Bedingungen</string>
+    <string name="canyon_action_report_debit">Wasserstand melden</string>
+    <string name="outing_open_planned">Meine Tour am %1$s</string>
+    <string name="canyon_latest_debit">Zuletzt gemeldet: %1$s, %2$s</string>
     <string name="tab_photos_with_count">Fotos (%1$d)</string>
     <string name="tab_photos_loading">Fotos (…)</string>
     <string name="tab_photos_unavailable">Fotos (nicht verfügbar)</string>
@@ -195,7 +199,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="tab_debits_loading">Wasserstände (…)</string>
     <string name="tab_debits_unavailable">Wasserstände (nicht verfügbar)</string>
     <string name="refreshing_canyon_details">Canyon-Beschreibung wird aktualisiert…</string>
-    <string name="debit_add_action">Wasserstand hinzufügen</string>
     <string name="debit_form_title">Neuen Wasserstand hinzufügen</string>
     <string name="debit_login_prompt_title">Melde dich bei deinem Descente-Canyon-Konto an</string>
     <string name="debit_login_prompt_body">Nach der Anmeldung wird die Beobachtung deinem Konto zugeordnet und die Felder Name/E-Mail sind nicht mehr erforderlich.</string>
@@ -683,7 +686,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="prediction_offline_cached">Offline: Schätzung vom %1$s</string>
     <string name="outing_plan_action">Tour planen</string>
     <string name="outing_plan_for_day">Für %1$s planen</string>
-    <string name="outing_plan_action_hint">Tagesablauf, Ausrüstung, Nachrichten an die Gruppe</string>
     <string name="outing_underway_summary">Unterwegs · zurück gegen %1$s</string>
     <string name="outing_plan_title">Tour planen</string>
     <string name="outing_date_label">Tag</string>
