@@ -9,6 +9,7 @@ import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider
 import dagger.hilt.android.testing.HiltAndroidRule
 import fr.descentecanyon.app.domain.model.GearListSettings
+import fr.descentecanyon.app.domain.model.HomeFeedType
 import fr.descentecanyon.app.domain.model.OutingSettings
 import fr.descentecanyon.app.domain.repository.AccidentReportRepository
 import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
@@ -64,6 +65,8 @@ abstract class BaseE2eTest {
         // Local repositories are real and share the app's data: state left by a manual run must not leak in.
         runBlocking {
             preferencesRepository.setLatestReportsZone(null)
+            preferencesRepository.setExploreMapMode(false)
+            preferencesRepository.setSelectedHomeFeed(HomeFeedType.DEBITS)
             outingRepository.clear()
             placeRepository.observeAll().first().forEach { placeRepository.delete(it.id) }
             stayRepository.observeAll().first().forEach { stayRepository.delete(it.id) }

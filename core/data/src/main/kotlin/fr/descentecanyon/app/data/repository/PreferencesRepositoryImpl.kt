@@ -98,8 +98,15 @@ class PreferencesRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun isExploreMapMode(): Boolean = settings.getBoolean(KEY_EXPLORE_MAP_MODE, false)
+
+    override fun setExploreMapMode(map: Boolean) {
+        settings.edit { putBoolean(KEY_EXPLORE_MAP_MODE, map) }
+    }
+
     private companion object {
         const val SETTINGS_PREFS = "app_settings"
+        const val KEY_EXPLORE_MAP_MODE = "explore.map_mode"
         const val KEY_THEME_MODE = "theme_mode"
         const val KEY_MAP_LATITUDE = "map.latitude"
         const val KEY_MAP_LONGITUDE = "map.longitude"

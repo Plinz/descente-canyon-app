@@ -37,4 +37,9 @@ interface PreferencesRepository {
     fun getLastMapPosition(): MapPosition?
 
     fun setLastMapPosition(position: MapPosition)
+
+    /** Explorer was last left on its map rather than its list: it opens there again. */
+    fun isExploreMapMode(): Boolean
+
+    fun setExploreMapMode(map: Boolean)
 }

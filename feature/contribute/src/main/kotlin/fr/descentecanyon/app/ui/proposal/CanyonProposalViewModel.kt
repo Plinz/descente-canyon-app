@@ -192,7 +192,15 @@ class CanyonProposalViewModel @Inject constructor(savedStateHandle: SavedStateHa
     ViewModel() {
 
     private val canyonId: Int? = savedStateHandle.get<Int>("canyonId")?.takeIf { AppCanyons.isAppCanyon(it) }
-    private val _uiState = MutableStateFlow(CanyonProposalUiState(canyonId = canyonId))
+
+    /** A new canyon searched for by this name in vain: its name is written already. */
+    private val searchedName: String? = savedStateHandle.get<String>("name")?.trim()?.takeIf { it.isNotEmpty() && canyonId == null }
+    private val _uiState = MutableStateFlow(
+        CanyonProposalUiState(
+            canyonId = canyonId,
+            draft = searchedName?.let { SheetDraft().with(SheetField.NOM, it) } ?: SheetDraft(),
+        ),
+    )
     val uiState: StateFlow<CanyonProposalUiState> = _uiState.asStateFlow()
     private var placeJob: Job? = null
 

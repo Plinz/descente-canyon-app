@@ -23,10 +23,9 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 
 data class MapUiState(
     val mapCanyons: List<CanyonSummary> = emptyList(),
@@ -60,8 +59,8 @@ class MapViewModel @Inject constructor(
     private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
 
-    private val initialCriteria = loadCriteria()
-    private val criteriaFlow = MutableStateFlow(initialCriteria)
+    /** The criteria of the search the map shows (Explorer's list and map share them); none until given. */
+    private val criteriaFlow = MutableStateFlow<MapCriteria?>(null)
 
     // Back where the map was left, even after the app was closed, rather than on the whole world.
     private val savedCamera = loadCameraState(savedStateHandle) ?: preferencesRepository.getLastMapPosition()?.let {
@@ -77,7 +76,6 @@ class MapViewModel @Inject constructor(
             cameraState = savedCamera ?: FIRST_OPEN_CAMERA,
             isFirstOpen = savedCamera == null,
             focusLocationRequestId = savedStateHandle[MAP_FOCUS_LOCATION_REQUEST_ID_KEY] ?: 0,
-            criteria = initialCriteria,
         ),
     )
     val uiState: StateFlow<MapUiState> = _uiState.asStateFlow()
@@ -97,9 +95,10 @@ class MapViewModel @Inject constructor(
         }
         viewModelScope.launch {
             searchCanyonsUseCase.observeCatalog()
-                .combine(criteriaFlow) { catalog, criteria ->
+                .combine(criteriaFlow.filterNotNull()) { catalog, (criteria, withoutForbidden) ->
                     val resultSet = searchCanyonsUseCase(catalog, criteria)
-                    val matchingCanyons = if (resultSet.isResultListDeferred) catalog else resultSet.results
+                    val matchingCanyons = (if (resultSet.isResultListDeferred) catalog else resultSet.results)
+                        .filterNot { withoutForbidden && it.isForbidden }
                     MapCatalogState(
                         mapCanyons = matchingCanyons.mapNotNull { item ->
                             item.takeIf { it.representativeLat != null && it.representativeLng != null }?.toSummary()
@@ -257,22 +256,22 @@ class MapViewModel @Inject constructor(
         _uiState.update { it.copy(transientMessage = null) }
     }
 
-    fun onCriteriaChanged(criteria: SearchCriteria) {
-        val current = criteriaFlow.value
-        val sanitized = criteria.sanitizedForMap()
-        val updated = if (!current.selectedCountry.equals(sanitized.selectedCountry, ignoreCase = true) &&
-            current.selectedDepartment == sanitized.selectedDepartment
-        ) {
-            sanitized.copy(selectedDepartment = null)
-        } else {
-            sanitized
-        }
-        criteriaFlow.value = updated
-        persistCriteria(updated)
-        _uiState.update { it.copy(criteria = updated, error = null) }
+    /**
+     * Shows the canyons of the search [criteria] (its name, filters and the position its distances
+     * start from); [withoutForbidden] leaves out the canyons that cannot be planned (a day of a stay).
+     */
+    fun setCriteria(criteria: SearchCriteria, withoutForbidden: Boolean = false) {
+        criteriaFlow.value = MapCriteria(criteria, withoutForbidden)
+        _uiState.update { it.copy(criteria = criteria, error = null) }
     }
 
-    fun clearAllFilters() = onCriteriaChanged(criteriaFlow.value.clearAllFilters())
+    /** A position found elsewhere (the list): shown on the map, which does not move to it. */
+    fun onKnownUserLocation(latitude: Double, longitude: Double) {
+        if (_uiState.value.userLatitude == latitude && _uiState.value.userLongitude == longitude) return
+        _uiState.update { it.copy(userLatitude = latitude, userLongitude = longitude) }
+        savedStateHandle[MAP_USER_LATITUDE_KEY] = latitude
+        savedStateHandle[MAP_USER_LONGITUDE_KEY] = longitude
+    }
 
     private fun persistCameraState(cameraState: MapCameraState) {
         savedStateHandle[MAP_CAMERA_LATITUDE_KEY] = cameraState.latitude
@@ -280,18 +279,9 @@ class MapViewModel @Inject constructor(
         savedStateHandle[MAP_CAMERA_ZOOM_KEY] = cameraState.zoom
         preferencesRepository.setLastMapPosition(MapPosition(cameraState.latitude, cameraState.longitude, cameraState.zoom))
     }
-
-    private fun loadCriteria(): SearchCriteria {
-        val raw = savedStateHandle.get<String>(MAP_CRITERIA_KEY).orEmpty()
-        return runCatching { json.decodeFromString<SearchCriteria>(raw) }
-            .getOrDefault(SearchCriteria())
-            .sanitizedForMap()
-    }
-
-    private fun persistCriteria(criteria: SearchCriteria) {
-        savedStateHandle[MAP_CRITERIA_KEY] = json.encodeToString(criteria.sanitizedForMap())
-    }
 }
+
+private data class MapCriteria(val criteria: SearchCriteria, val withoutForbidden: Boolean)
 
 private data class MapCatalogState(
     val mapCanyons: List<CanyonSummary>,
@@ -312,8 +302,6 @@ private const val MAP_CAMERA_LONGITUDE_KEY = "map_camera_longitude"
 private const val MAP_CAMERA_ZOOM_KEY = "map_camera_zoom"
 private const val MAP_SELECTED_CANYON_ID_KEY = "map_selected_canyon_id"
 private const val MAP_FOCUS_LOCATION_REQUEST_ID_KEY = "map_focus_location_request_id"
-private const val MAP_CRITERIA_KEY = "map_criteria"
-private val json = Json { ignoreUnknownKeys = true }
 
 private fun monotonicNowMs(): Long = System.nanoTime() / 1_000_000
 
@@ -330,13 +318,6 @@ private fun MapCameraState?.isSameAs(other: MapCameraState): Boolean {
         abs(longitude - other.longitude) < 0.000001 &&
         abs(zoom - other.zoom) < 0.01
 }
-
-private fun SearchCriteria.sanitizedForMap(): SearchCriteria = copy(
-    query = "",
-    userLatitude = null,
-    userLongitude = null,
-    selectedDepartment = selectedDepartment.takeIf { selectedCountry != null },
-)
 
 /** First view of a map never moved: from the Pyrenees to the Alps, where most canyons of the catalogue are. */
 internal val FIRST_OPEN_CAMERA = MapCameraState(latitude = 44.5, longitude = 3.5, zoom = 4.6)

@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.MyLocation
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.CircularProgressIndicator
@@ -52,21 +54,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonSummary
+import fr.descentecanyon.app.domain.model.SearchCriteria
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.components.CanyonSummaryCard
@@ -80,22 +87,53 @@ import fr.descentecanyon.app.ui.design.rememberDcScreenHorizontalPadding
 import fr.descentecanyon.app.ui.location.hasLocationPermission
 import fr.descentecanyon.app.ui.location.loadCurrentDeviceLocation
 import fr.descentecanyon.app.ui.location.requestLocationSettings
-import fr.descentecanyon.app.ui.search.SearchFiltersSheet
-import fr.descentecanyon.app.ui.search.SearchFiltersSheetState
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import org.maplibre.android.geometry.LatLngBounds
 
 private val MAP_RESULTS_SHEET_PEEK_HEIGHT = 72.dp
 private const val MAP_RESULTS_SHEET_COMPACT_ITEM_LIMIT = 2
 private val MAP_BOTTOM_NAVIGATION_CONTENT_HEIGHT = 80.dp
 
+/** Height of the controls over the map: the list/map switch, then the filters and the position. */
+private val MAP_CONTROLS_HEIGHT = 128.dp
+
+/**
+ * The map of Explorer: the canyons of the search [criteria] (shared with the list), the canyons
+ * visible listed in a sheet, the canyon tapped shown in a card. [modeToggle] goes back to the list.
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MapScreen(
+fun ExploreMap(
+    criteria: SearchCriteria,
+    onOpenFilters: () -> Unit,
+    onClearFilters: () -> Unit,
+    onClearQuery: () -> Unit,
     onCanyonClick: (Int) -> Unit,
+    modeToggle: @Composable () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(),
+    /** The Explorer tab: under the status bar, over the bottom bar. Else under an app bar (a day of a stay). */
+    asTab: Boolean = true,
+    /** Leaves out the canyons that cannot be planned (a day of a stay). */
+    withoutForbidden: Boolean = false,
+    /** A position known from the list, shown on the map; with [focusKnownLocation], the map moves to it (the place of a stay). */
+    knownLatitude: Double? = null,
+    knownLongitude: Double? = null,
+    focusKnownLocation: Boolean = false,
+    /** The user's position found from the map, for the distances of the list. */
+    onUserLocated: (Double, Double) -> Unit = { _, _ -> },
     viewModel: MapViewModel = hiltViewModel(),
 ) {
+    LaunchedEffect(criteria, withoutForbidden) { viewModel.setCriteria(criteria, withoutForbidden) }
+    LaunchedEffect(knownLatitude, knownLongitude, focusKnownLocation) {
+        if (knownLatitude == null || knownLongitude == null) return@LaunchedEffect
+        if (focusKnownLocation) {
+            viewModel.focusAroundUser(knownLatitude, knownLongitude)
+        } else {
+            viewModel.onKnownUserLocation(knownLatitude, knownLongitude)
+        }
+    }
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val snackbarHostState = remember { SnackbarHostState() }
@@ -109,13 +147,15 @@ fun MapScreen(
     val bottomSheetScaffoldState = rememberBottomSheetScaffoldState(
         bottomSheetState = bottomSheetState,
     )
-    val bottomNavigationInset = maxOf(
-        contentPadding.calculateBottomPadding(),
-        MAP_BOTTOM_NAVIGATION_CONTENT_HEIGHT +
-            WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding(),
-    )
+    val navigationBarBottom = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val bottomNavigationInset = if (asTab) {
+        maxOf(contentPadding.calculateBottomPadding(), MAP_BOTTOM_NAVIGATION_CONTENT_HEIGHT + navigationBarBottom)
+    } else {
+        navigationBarBottom
+    }
     val statusBarPadding = WindowInsets.statusBars.asPaddingValues().calculateTopPadding()
-    val compassTopMargin = statusBarPadding + 72.dp
+    val topInset = if (asTab) statusBarPadding else 0.dp
+    val compassTopMargin = topInset + MAP_CONTROLS_HEIGHT + if (criteria.query.isNotBlank()) 44.dp else 0.dp
     val navigationBarPadding = WindowInsets.navigationBars.asPaddingValues()
     val navigationBarEndPadding = navigationBarPadding.calculateRightPadding(layoutDirection)
     val mapControlsEndPadding = screenHorizontalPadding + navigationBarEndPadding
@@ -123,7 +163,29 @@ fun MapScreen(
     // MapLibre must receive system insets before its native compass is created.
     val areMapInsetsReady = statusBarPadding > 0.dp && (!isLandscape || navigationBarEndPadding > 0.dp)
     var visibleBounds by remember { mutableStateOf<LatLngBounds?>(null) }
-    var showFiltersSheet by rememberSaveable { mutableStateOf(false) }
+    // A name or a filter whose canyons are all out of sight: the map moves to show them (once per search).
+    val density = LocalDensity.current
+    var boundsRequest by remember { mutableStateOf<MapBoundsRequest?>(null) }
+    val isNarrowed = criteria.query.isNotBlank() || criteria.activeFilterCount() > 0
+    LaunchedEffect(uiState.mapCanyons, isNarrowed) {
+        if (!isNarrowed || uiState.isLoading || uiState.mapCanyons.isEmpty()) return@LaunchedEffect
+        val bounds = snapshotFlow { visibleBounds }.filterNotNull().first()
+        if (uiState.mapCanyons.any { it.isWithin(bounds) }) return@LaunchedEffect
+        val points = uiState.mapCanyons.mapNotNull { canyon -> canyon.latitude?.let { lat -> canyon.longitude?.let { lat to it } } }
+        if (points.isEmpty()) return@LaunchedEffect
+        with(density) {
+            boundsRequest = MapBoundsRequest(
+                id = (boundsRequest?.id ?: 0) + 1,
+                south = points.minOf { it.first },
+                west = points.minOf { it.second },
+                north = points.maxOf { it.first },
+                east = points.maxOf { it.second },
+                paddingTop = (topInset + MAP_CONTROLS_HEIGHT + 16.dp).roundToPx(),
+                paddingBottom = (MAP_RESULTS_SHEET_PEEK_HEIGHT + bottomNavigationInset + 16.dp).roundToPx(),
+                paddingSides = 32.dp.roundToPx(),
+            )
+        }
+    }
     val visibleCanyons = remember(uiState.mapCanyons, visibleBounds) {
         visibleBounds?.let { bounds ->
             uiState.mapCanyons.filter { canyon -> canyon.isWithin(bounds) }
@@ -133,7 +195,7 @@ fun MapScreen(
         contract = ActivityResultContracts.StartIntentSenderForResult(),
     ) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
-            focusAroundUserFromDevice(context, viewModel)
+            focusAroundUserFromDevice(context, viewModel, onUserLocated)
         } else {
             viewModel.onLocationUnavailable()
         }
@@ -142,7 +204,7 @@ fun MapScreen(
     fun focusAroundUserWithSettingsCheck() {
         requestLocationSettings(
             context = context,
-            onEnabled = { focusAroundUserFromDevice(context, viewModel) },
+            onEnabled = { focusAroundUserFromDevice(context, viewModel, onUserLocated) },
             onResolutionRequired = { request -> locationSettingsLauncher.launch(request) },
             onUnavailable = viewModel::onLocationUnavailable,
         )
@@ -168,14 +230,17 @@ fun MapScreen(
             viewModel.onLocationPermissionResult(true)
         }
         // A map never moved centres on the user when the position is already allowed and on: no
-        // permission or "turn on location" prompt nobody asked for.
-        if (uiState.isFirstOpen) {
+        // permission or "turn on location" prompt nobody asked for. A stay centres on its place.
+        if (uiState.isFirstOpen && !focusKnownLocation) {
             viewModel.onFirstOpenHandled()
             if (context.hasLocationPermission()) {
                 viewModel.onLocationLookupStarted()
                 loadCurrentDeviceLocation(
                     context = context,
-                    onLocation = { latitude, longitude -> viewModel.focusAroundUser(latitude, longitude) },
+                    onLocation = { latitude, longitude ->
+                        viewModel.focusAroundUser(latitude, longitude)
+                        onUserLocated(latitude, longitude)
+                    },
                     onUnavailable = viewModel::onFirstPositionUnavailable,
                 )
             }
@@ -217,7 +282,7 @@ fun MapScreen(
                 isExpanded = bottomSheetState.currentValue == SheetValue.Expanded,
                 hasActiveFilters = uiState.criteria.activeFilterCount() > 0,
                 bottomContentPadding = bottomNavigationInset,
-                onClearFilters = viewModel::clearAllFilters,
+                onClearFilters = onClearFilters,
                 onCanyonClick = onCanyonClick,
             )
         },
@@ -247,6 +312,7 @@ fun MapScreen(
                     // The results sheet covers the bottom of the map.
                     attributionTopMargin = compassTopMargin,
                     persistedCameraState = uiState.cameraState,
+                    boundsRequest = boundsRequest,
                     focusLocationRequestId = uiState.focusLocationRequestId.takeUnless {
                         it == initialFocusLocationRequestId
                     } ?: 0,
@@ -254,10 +320,10 @@ fun MapScreen(
                 )
             }
 
-            Row(
+            Column(
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .statusBarsPadding()
+                    .padding(top = topInset)
                     .width(contentWidth)
                     .padding(
                         start = screenHorizontalPadding,
@@ -265,19 +331,29 @@ fun MapScreen(
                         end = mapControlsEndPadding,
                         bottom = 12.dp,
                     ),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
-                MapFilterControl(
-                    activeFilterCount = uiState.criteria.activeFilterCount(),
-                    totalResultsCount = uiState.totalResultsCount,
-                    onClick = { showFiltersSheet = true },
-                    onClear = viewModel::clearAllFilters,
-                )
-                MapLocationControl(
-                    isLocating = uiState.isLocating,
-                    onClick = ::focusAroundUser,
-                )
+                modeToggle()
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    MapFilterControl(
+                        activeFilterCount = criteria.activeFilterCount(),
+                        totalResultsCount = uiState.totalResultsCount,
+                        onClick = onOpenFilters,
+                        onClear = onClearFilters,
+                    )
+                    MapLocationControl(
+                        isLocating = uiState.isLocating,
+                        onClick = ::focusAroundUser,
+                    )
+                }
+                // The name searched in the list narrows the map too: shown, and removable here.
+                if (criteria.query.isNotBlank()) {
+                    MapQueryChip(query = criteria.query, onClear = onClearQuery)
+                }
             }
 
             uiState.selectedCanyon?.let { canyon ->
@@ -304,28 +380,42 @@ fun MapScreen(
                 hostState = snackbarHostState,
                 modifier = Modifier
                     .align(Alignment.TopCenter)
-                    .statusBarsPadding()
+                    .padding(top = topInset)
                     .width(contentWidth)
                     .padding(
                         start = screenHorizontalPadding,
-                        top = 72.dp,
+                        top = MAP_CONTROLS_HEIGHT,
                         end = screenHorizontalPadding,
                     ),
             )
         }
     }
+}
 
-    if (showFiltersSheet) {
-        SearchFiltersSheet(
-            uiState = SearchFiltersSheetState(
-                criteria = uiState.criteria,
-                zones = uiState.zones,
-                totalResultsCount = uiState.totalResultsCount,
-            ),
-            onDismiss = { showFiltersSheet = false },
-            onCriteriaChanged = viewModel::onCriteriaChanged,
-            onClearAll = viewModel::clearAllFilters,
-        )
+/** The name searched, over the map, with a button to search no name. */
+@Composable
+private fun MapQueryChip(query: String, onClear: () -> Unit, modifier: Modifier = Modifier) {
+    val colors = LocalDcColors.current
+    Surface(
+        modifier = modifier.height(36.dp),
+        shape = RoundedCornerShape(18.dp),
+        color = colors.surfaceRaised,
+        contentColor = colors.textPrimary,
+        shadowElevation = 4.dp,
+    ) {
+        Row(modifier = Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(Icons.Default.Search, contentDescription = null, tint = colors.textMuted, modifier = Modifier.size(18.dp))
+            Text(
+                text = query,
+                style = MaterialTheme.typography.labelLarge,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(start = 6.dp).widthIn(max = 200.dp),
+            )
+            IconButton(onClick = onClear, modifier = Modifier.size(36.dp)) {
+                Icon(Icons.Default.Clear, contentDescription = stringResource(R.string.search_clear_query), modifier = Modifier.size(18.dp))
+            }
+        }
     }
 }
 
@@ -339,14 +429,16 @@ private fun MapFilterControl(
 ) {
     val colors = LocalDcColors.current
     val hasActiveFilters = activeFilterCount > 0
+    // Opaque over the map; active, it reads like the filters button of the list.
     Surface(
         onClick = onClick,
         modifier = modifier
             .height(48.dp)
             .widthIn(max = 280.dp),
         shape = RoundedCornerShape(24.dp),
-        color = if (hasActiveFilters) colors.water.copy(alpha = 0.92f) else colors.surfaceRaised,
+        color = if (hasActiveFilters) colors.water.copy(alpha = 0.16f).compositeOver(colors.surfaceRaised) else colors.surfaceRaised,
         contentColor = colors.textPrimary,
+        border = if (hasActiveFilters) BorderStroke(1.dp, colors.primaryAction.copy(alpha = 0.5f)) else null,
         shadowElevation = 4.dp,
     ) {
         Row(
@@ -361,7 +453,8 @@ private fun MapFilterControl(
             )
             Text(
                 text = if (hasActiveFilters) {
-                    pluralStringResource(R.plurals.search_filters_active_count, activeFilterCount, activeFilterCount)
+                    stringResource(R.string.search_filters) + " · " +
+                        pluralStringResource(R.plurals.search_filters_active_count, activeFilterCount, activeFilterCount)
                 } else {
                     stringResource(R.string.search_filters)
                 },
@@ -374,7 +467,7 @@ private fun MapFilterControl(
                 text = pluralStringResource(R.plurals.search_results_count, totalResultsCount, totalResultsCount),
                 style = MaterialTheme.typography.labelMedium,
                 maxLines = 1,
-                color = if (hasActiveFilters) colors.primaryAction else colors.textSecondary,
+                color = colors.textSecondary,
             )
             if (hasActiveFilters) {
                 IconButton(onClick = onClear, modifier = Modifier.size(40.dp)) {
@@ -570,11 +663,14 @@ private fun EmptyVisibleCard(hasActiveFilters: Boolean, onClearFilters: () -> Un
     }
 }
 
-private fun focusAroundUserFromDevice(context: Context, viewModel: MapViewModel) {
+private fun focusAroundUserFromDevice(context: Context, viewModel: MapViewModel, onUserLocated: (Double, Double) -> Unit) {
     viewModel.onLocationLookupStarted()
     loadCurrentDeviceLocation(
         context = context,
-        onLocation = { latitude, longitude -> viewModel.focusAroundUser(latitude, longitude) },
+        onLocation = { latitude, longitude ->
+            viewModel.focusAroundUser(latitude, longitude)
+            onUserLocated(latitude, longitude)
+        },
         onUnavailable = viewModel::onLocationUnavailable,
     )
 }

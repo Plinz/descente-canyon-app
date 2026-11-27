@@ -16,6 +16,7 @@ class FakePreferencesRepository(
     themeMode: ThemeMode = ThemeMode.SYSTEM,
     var latestReportsZone: ReportZone? = null,
     var mapPosition: MapPosition? = null,
+    var exploreOnMap: Boolean = false,
 ) : PreferencesRepository {
 
     private val themeModeState = MutableStateFlow(themeMode)
@@ -54,5 +55,11 @@ class FakePreferencesRepository(
 
     override fun setLastMapPosition(position: MapPosition) {
         mapPosition = position
+    }
+
+    override fun isExploreMapMode(): Boolean = exploreOnMap
+
+    override fun setExploreMapMode(map: Boolean) {
+        exploreOnMap = map
     }
 }

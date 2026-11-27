@@ -169,18 +169,65 @@ class MapViewModelTest {
         val viewModel = mapViewModel()
 
         advanceUntilIdle()
-        viewModel.onCriteriaChanged(SearchCriteria(selectedCountry = "France"))
+        viewModel.setCriteria(SearchCriteria(selectedCountry = "France"))
         advanceUntilIdle()
 
         assertEquals(listOf(1), viewModel.uiState.value.mapCanyons.map(CanyonSummary::id))
         assertEquals(1, viewModel.uiState.value.totalResultsCount)
         assertEquals("France", viewModel.uiState.value.criteria.selectedCountry)
 
-        viewModel.clearAllFilters()
+        viewModel.setCriteria(SearchCriteria())
         advanceUntilIdle()
 
         assertEquals(listOf(1, 2), viewModel.uiState.value.mapCanyons.map(CanyonSummary::id))
         assertEquals(2, viewModel.uiState.value.totalResultsCount)
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `the map shows the canyons of the search, its name included, and none to plan when forbidden`() = runTest {
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(
+            listOf(
+                // Searched by their normalized text, as the catalog keeps it.
+                catalogItem(id = 1, nom = "riolan"),
+                catalogItem(id = 2, nom = "rioulan").copy(isForbidden = true),
+                catalogItem(id = 3, nom = "aiglun"),
+            ),
+        )
+        val viewModel = MapViewModel(
+            savedStateHandle = SavedStateHandle(),
+            searchCanyonsUseCase = searchCanyonsUseCase,
+            favoritesRepository = favoritesRepository.also { every { it.getFavorites() } returns flowOf(emptyList()) },
+            toggleFavoriteUseCase = toggleFavoriteUseCase,
+            preferencesRepository = preferences,
+        )
+
+        // Nothing is drawn before the search gives its criteria.
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.isLoading)
+
+        viewModel.setCriteria(SearchCriteria(query = "rio"))
+        advanceUntilIdle()
+        assertEquals(setOf(1, 2), viewModel.uiState.value.mapCanyons.map(CanyonSummary::id).toSet())
+
+        viewModel.setCriteria(SearchCriteria(query = "rio"), withoutForbidden = true)
+        advanceUntilIdle()
+        assertEquals(listOf(1), viewModel.uiState.value.mapCanyons.map(CanyonSummary::id))
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `a position found by the list is shown without moving the map`() = runTest {
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(listOf(catalogItem(id = 1)))
+        val viewModel = mapViewModel()
+        advanceUntilIdle()
+        val focus = viewModel.uiState.value.focusLocationRequestId
+
+        viewModel.onKnownUserLocation(43.9, 7.2)
+
+        assertEquals(43.9, viewModel.uiState.value.userLatitude)
+        assertEquals(7.2, viewModel.uiState.value.userLongitude)
+        assertEquals(focus, viewModel.uiState.value.focusLocationRequestId)
     }
 
     private fun catalogItem(
@@ -205,6 +252,7 @@ class MapViewModelTest {
         representativeLng = longitude,
     )
 
+    /** The map as Explorer shows it: with the criteria of its search, none to start with. */
     private fun mapViewModel(savedStateHandle: SavedStateHandle = SavedStateHandle()): MapViewModel {
         every { favoritesRepository.getFavorites() } returns flowOf(emptyList())
         return MapViewModel(
@@ -213,7 +261,7 @@ class MapViewModelTest {
             favoritesRepository = favoritesRepository,
             toggleFavoriteUseCase = toggleFavoriteUseCase,
             preferencesRepository = preferences,
-        )
+        ).also { it.setCriteria(SearchCriteria()) }
     }
 }
 

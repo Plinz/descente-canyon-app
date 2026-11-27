@@ -10,11 +10,9 @@ sealed interface Screen {
     @Serializable
     data object Home : Screen
 
+    /** Explorer: the search of the catalog, as a list or on a map. */
     @Serializable
     data object Search : Screen
-
-    @Serializable
-    data object Map : Screen
 
     @Serializable
     data object Favorites : Screen
@@ -49,9 +47,12 @@ sealed interface Screen {
     @Serializable
     data class InterestRatingForm(val canyonId: Int) : Screen
 
-    /** A canyon proposed for review: new ([canyonId] 0) or a change to the app's canyon [canyonId]. */
+    /**
+     * A canyon proposed for review: new ([canyonId] 0), named [name] when it was searched for in vain,
+     * or a change to the app's canyon [canyonId].
+     */
     @Serializable
-    data class CanyonProposal(val canyonId: Int = 0) : Screen
+    data class CanyonProposal(val canyonId: Int = 0, val name: String? = null) : Screen
 
     @Serializable
     data class PhotoGallery(val canyonId: Int, val initialPhotoId: Long) : Screen

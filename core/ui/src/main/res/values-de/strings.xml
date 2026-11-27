@@ -4,6 +4,13 @@
     <string name="tab_home">Start</string>
     <string name="tab_search">Suchen</string>
     <string name="tab_map">Karte</string>
+    <string name="tab_explore">Entdecken</string>
+    <string name="explore_mode_list">Liste</string>
+    <string name="explore_mode_map">Karte</string>
+    <string name="search_nearby_title">In der Nähe</string>
+    <string name="search_nearby_all">Alle Canyons nach Entfernung</string>
+    <string name="search_propose_hint">Nicht in der App?</string>
+    <string name="search_propose_action">Diesen Canyon vorschlagen</string>
     <string name="offline_available">Offline verfügbar</string>
     <string name="show_map_points">Karte anzeigen</string>
     <string name="canyon_summary_expand">Anzeigen</string>
@@ -135,9 +142,6 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="search_broad_results_hint">Gib mindestens 2 Zeichen ein oder wende einen Filter an, um Canyons anzuzeigen.</string>
     <string name="search_catalog_loading_idle">Der lokale Katalog wird vorbereitet. Du kannst bereits einen Canyon eingeben.</string>
     <string name="search_catalog_loading_with_query">Die Suche ist bereit. Ergebnisse erscheinen, sobald der lokale Katalog geladen ist.</string>
-    <string name="search_show_list">Liste anzeigen</string>
-    <string name="search_show_map">Karte anzeigen</string>
-    <string name="search_map_no_coordinates">Kein Canyon dieser Suche hat für die Karte nutzbare Koordinaten.</string>
     <string name="search_filter_cotation">Schwierigkeit</string>
     <string name="search_filter_vertical">Vertikalität</string>
     <string name="search_filter_aquatic">Wassercharakter</string>

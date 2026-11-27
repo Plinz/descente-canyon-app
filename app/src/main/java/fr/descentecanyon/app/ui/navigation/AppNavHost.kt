@@ -39,7 +39,6 @@ import fr.descentecanyon.app.ui.design.LocalDcMotion
 import fr.descentecanyon.app.ui.favorites.FavoritesScreen
 import fr.descentecanyon.app.ui.home.HomeScreen
 import fr.descentecanyon.app.ui.interest.InterestRatingFormScreen
-import fr.descentecanyon.app.ui.map.MapScreen
 import fr.descentecanyon.app.ui.notifications.NotificationCenterScreen
 import fr.descentecanyon.app.ui.outing.EmergencyScreen
 import fr.descentecanyon.app.ui.outing.OutingPlanRequest
@@ -93,7 +92,8 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                     navController.navigateSingleTop(Screen.Search)
                 },
                 onMapClick = dropUnlessResumed {
-                    navController.navigateSingleTop(Screen.Map)
+                    navController.navigateSingleTop(Screen.Search)
+                    navController.requestExplorerMap()
                 },
                 onUsersClick = dropUnlessResumed {
                     navController.navigateSingleTop(Screen.UserSearch)
@@ -124,25 +124,19 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
             exitTransition = { ExitTransition.None },
             popEnterTransition = { EnterTransition.None },
             popExitTransition = { ExitTransition.None },
-        ) {
+        ) { backStackEntry ->
+            val openMapRequested by backStackEntry.savedStateHandle
+                .getStateFlow(EXPLORER_OPEN_MAP_KEY, false)
+                .collectAsStateWithLifecycle()
             SearchScreen(
                 onCanyonClick = dropUnlessResumedWith { canyonId: Int ->
                     navController.navigateSingleTop(Screen.CanyonDetail(canyonId))
                 },
-                contentPadding = topLevelContentPadding,
-            )
-        }
-
-        composable<Screen.Map>(
-            enterTransition = { EnterTransition.None },
-            exitTransition = { ExitTransition.None },
-            popEnterTransition = { EnterTransition.None },
-            popExitTransition = { ExitTransition.None },
-        ) {
-            MapScreen(
-                onCanyonClick = dropUnlessResumedWith { canyonId: Int ->
-                    navController.navigateSingleTop(Screen.CanyonDetail(canyonId))
+                onProposeCanyon = dropUnlessResumedWith { name: String ->
+                    navController.navigateSingleTop(Screen.CanyonProposal(name = name))
                 },
+                openMapRequested = openMapRequested,
+                onOpenMapHandled = { backStackEntry.savedStateHandle[EXPLORER_OPEN_MAP_KEY] = false },
                 contentPadding = topLevelContentPadding,
             )
         }
@@ -469,6 +463,12 @@ private fun NavHostController.openOutingPlan(request: OutingPlanRequest) = navig
 )
 
 private const val DEBIT_SUBMISSION_REFRESH_KEY = "debit_submission_refresh"
+private const val EXPLORER_OPEN_MAP_KEY = "explorer_open_map"
+
+/** Explorer, just opened (the current screen), shows its map rather than its list. */
+internal fun NavHostController.requestExplorerMap() {
+    currentBackStackEntry?.takeIf { it.destination.hasRoute(Screen.Search::class) }?.savedStateHandle?.set(EXPLORER_OPEN_MAP_KEY, true)
+}
 private const val INTEREST_RATING_REFRESH_KEY = "interest_rating_refresh"
 
 internal fun NavHostController.navigateSingleTop(screen: Screen) {

@@ -48,7 +48,7 @@ class MainActivityNavigationTest {
         var navigatedTo: Screen? = null
 
         handleBottomNavClick(
-            item = BottomNavItem.SEARCH,
+            item = BottomNavItem.EXPLORE,
             popToHome = {
                 popCalled = true
                 true

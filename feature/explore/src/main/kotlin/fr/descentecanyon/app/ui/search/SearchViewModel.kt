@@ -17,6 +17,7 @@ import fr.descentecanyon.app.domain.model.SearchSortField
 import fr.descentecanyon.app.domain.model.SortDirection
 import fr.descentecanyon.app.domain.model.ZoneCountry
 import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
+import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.repository.RecentCanyonsRepository
 import fr.descentecanyon.app.domain.usecase.ChooseStayCanyonUseCase
 import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
@@ -132,10 +133,11 @@ data class SearchUiState(
     val userLatitude: Double? = null,
     val userLongitude: Double? = null,
     val isLocating: Boolean = false,
-    val selectedCanyon: CanyonSearchItem? = null,
     val scrollResetRequestId: Int = 0,
     /** Shown while no query or filter narrows the catalog. */
     val recentCanyons: List<CanyonSummary> = emptyList(),
+    /** The nearest canyons, nearest first, shown while no query or filter narrows the catalog and the position is known. */
+    val nearby: List<CanyonSearchItem> = emptyList(),
     /** Canyons of the user's logbook. */
     val descendedIds: Set<Int> = emptySet(),
 )
@@ -150,6 +152,7 @@ class SearchViewModel @Inject constructor(
     private val chooseStayCanyonUseCase: ChooseStayCanyonUseCase,
     private val debitPredictionRepository: DebitPredictionRepository,
     private val clock: Clock,
+    private val preferencesRepository: PreferencesRepository,
 ) : ViewModel() {
 
     /** The day of a stay the search was opened for, if any (route arguments). */
@@ -171,7 +174,6 @@ class SearchViewModel @Inject constructor(
     private val queryDraftFlow = MutableStateFlow(initialCriteria.query)
     private val locationFlow = MutableStateFlow(SearchLocationUiState())
     private val resultViewModeFlow = MutableStateFlow(initialResultViewMode)
-    private val selectedCanyonIdFlow = MutableStateFlow<Int?>(null)
     private var queryDebounceJob: Job? = null
     private var hasLoggedInitialResults = false
 
@@ -217,6 +219,13 @@ class SearchViewModel @Inject constructor(
                     val resultSet = searchCanyonsUseCase(input.catalog, input.criteria).let {
                         if (isStayPick) it.withoutForbidden() else it
                     }
+                    // Without a name or a filter, the canyons around the user are the usual start.
+                    val nearby = if (resultSet.isResultListDeferred && !isStayPick && input.criteria.userLatitude != null) {
+                        val byDistance = input.criteria.copy(sortField = SearchSortField.DISTANCE, sortDirection = SortDirection.ASC)
+                        searchCanyonsUseCase(input.catalog, byDistance).results.take(NEARBY_SHOWN)
+                    } else {
+                        emptyList()
+                    }
                     PerformanceTrace.logEvent(
                         event = "search_compute",
                         "catalogSize" to input.catalog.size,
@@ -233,18 +242,13 @@ class SearchViewModel @Inject constructor(
                         resultSet = resultSet,
                         scrollResetRequestId = input.scrollResetRequestId,
                         descendedIds = input.catalog.mapNotNullTo(mutableSetOf()) { item -> item.id.takeIf { item.isDescended } },
+                        nearby = nearby,
                     )
                 }
                 .combine(resultViewModeFlow) { computed, resultViewMode ->
                     computed to resultViewMode
                 }
-                .combine(selectedCanyonIdFlow) { (computed, resultViewMode), selectedCanyonId ->
-                    Triple(computed, resultViewMode, selectedCanyonId)
-                }
-                .combine(recentCanyonsRepository.observeRecentCanyons(RECENT_CANYONS_SHOWN)) {
-                        (computed, resultViewMode, selectedCanyonId),
-                        recentCanyons,
-                    ->
+                .combine(recentCanyonsRepository.observeRecentCanyons(RECENT_CANYONS_SHOWN)) { (computed, resultViewMode), recentCanyons ->
                     SearchUiState(
                         queryDraft = queryDraftFlow.value,
                         criteria = computed.criteria,
@@ -262,10 +266,10 @@ class SearchViewModel @Inject constructor(
                         userLatitude = computed.location.userLatitude,
                         userLongitude = computed.location.userLongitude,
                         isLocating = computed.location.isLocating,
-                        selectedCanyon = computed.resultSet.results.firstOrNull { it.id == selectedCanyonId },
                         scrollResetRequestId = computed.scrollResetRequestId,
                         recentCanyons = recentCanyons,
                         descendedIds = computed.descendedIds,
+                        nearby = computed.nearby,
                     )
                 }
                 .flowOn(searchDispatcher)
@@ -423,7 +427,6 @@ class SearchViewModel @Inject constructor(
         val previousDraft = queryDraftFlow.value
         queryDraftFlow.value = query
         applyQuery(query = query, immediate = query.length <= previousDraft.length)
-        selectedCanyonIdFlow.value = null
         _uiState.update {
             it.copy(queryDraft = query, isSearching = query != criteriaInputFlow.value.appliedQuery)
         }
@@ -445,7 +448,6 @@ class SearchViewModel @Inject constructor(
                 scrollResetRequestId = it.scrollResetRequestId + 1,
             )
         }
-        selectedCanyonIdFlow.value = null
         persistCriteria(updated)
         _uiState.update {
             it.copy(
@@ -478,7 +480,6 @@ class SearchViewModel @Inject constructor(
     fun onResultViewModeChanged(mode: SearchResultViewMode) {
         resultViewModeFlow.value = mode
         persistResultViewMode(mode)
-        if (mode == SearchResultViewMode.LIST) selectedCanyonIdFlow.value = null
     }
 
     fun onLocationPermissionResult(granted: Boolean) {
@@ -505,19 +506,16 @@ class SearchViewModel @Inject constructor(
         _uiState.update { it.copy(error = null) }
     }
 
+    /** The position read at the opening, without being asked for: no message when there is none. */
+    fun onLocationLookupEnded() {
+        locationFlow.update { it.copy(isLocating = false) }
+    }
+
     fun onLocationUnavailable() {
         locationFlow.update { it.copy(isLocating = false) }
         _uiState.update {
             it.copy(error = UiText.res(R.string.location_recent_unavailable))
         }
-    }
-
-    fun selectCanyon(canyonId: Int) {
-        selectedCanyonIdFlow.value = canyonId
-    }
-
-    fun clearSelectedCanyon() {
-        selectedCanyonIdFlow.value = null
     }
 
     fun clearAllFilters() = onCriteriaChanged(criteriaInputFlow.value.filters.clearAllFilters())
@@ -527,7 +525,6 @@ class SearchViewModel @Inject constructor(
     fun clearQuery() {
         queryDraftFlow.value = ""
         applyQuery(query = "", immediate = true)
-        selectedCanyonIdFlow.value = null
         _uiState.update { it.copy(queryDraft = "", isSearching = false) }
     }
 
@@ -577,15 +574,17 @@ class SearchViewModel @Inject constructor(
         savedStateHandle[SEARCH_CRITERIA_KEY] = json.encodeToString(criteria.sanitizedForPersistence())
     }
 
+    /** As left on this screen; else Explorer opens on the list or the map as it was last left, a stay on its list. */
     private fun loadResultViewMode(): SearchResultViewMode {
         val raw = savedStateHandle.get<String>(SEARCH_RESULT_VIEW_MODE_KEY).orEmpty()
         return raw.takeIf { it.isNotBlank() }
             ?.let { value -> SearchResultViewMode.entries.firstOrNull { it.name == value } }
-            ?: SearchResultViewMode.LIST
+            ?: if (!isStayPick && preferencesRepository.isExploreMapMode()) SearchResultViewMode.MAP else SearchResultViewMode.LIST
     }
 
     private fun persistResultViewMode(mode: SearchResultViewMode) {
         savedStateHandle[SEARCH_RESULT_VIEW_MODE_KEY] = mode.name
+        if (!isStayPick) preferencesRepository.setExploreMapMode(mode == SearchResultViewMode.MAP)
     }
 
     private fun SearchSortField.defaultDirection(): SortDirection = when (this) {
@@ -602,6 +601,9 @@ class SearchViewModel @Inject constructor(
 
         /** The nearest canyons the phone estimates itself without the server's: each one downloads its weather. */
         const val ESTIMATED_RESULTS = 30
+
+        /** The nearest canyons shown before any query or filter. */
+        const val NEARBY_SHOWN = 5
         private const val ESTIMATE_DAY_KEY = "search_estimate_day"
 
         /** The model estimates today and the next two days. */
@@ -628,6 +630,7 @@ private data class SearchComputedState(
     val resultSet: SearchResultSet,
     val scrollResetRequestId: Int,
     val descendedIds: Set<Int>,
+    val nearby: List<CanyonSearchItem>,
 )
 
 /** A forbidden canyon cannot be planned for a day. */

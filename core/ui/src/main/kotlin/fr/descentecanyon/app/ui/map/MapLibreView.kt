@@ -42,6 +42,11 @@ import org.maplibre.geojson.Point
 
 internal const val TAG = "MapLibreView"
 
+/** An area smaller than this (in degrees) is shown around its centre at [SINGLE_PLACE_ZOOM]. */
+private const val MIN_BOUNDS_SPAN_DEGREES = 0.02
+private const val SINGLE_PLACE_ZOOM = 11.5
+private const val BOUNDS_ANIMATION_MS = 600
+
 enum class UserTrackingMode {
     NONE,
     LOCATION,
@@ -77,6 +82,8 @@ fun MapLibreView(
     persistedCameraState: MapCameraState? = null,
     focusLocationRequestId: Int = 0,
     focusRequest: MapFocusRequest? = null,
+    /** Shows an area (the canyons found), once per new request. */
+    boundsRequest: MapBoundsRequest? = null,
     resetNorthRequestId: Int = 0,
     styleUri: String = MAP_STYLE_URI,
     modifier: Modifier = Modifier,
@@ -183,6 +190,7 @@ fun MapLibreView(
                 persistedCameraState = persistedCameraState,
                 focusLocationRequestId = focusLocationRequestId,
                 focusRequest = focusRequest,
+                boundsRequest = boundsRequest,
                 resetNorthRequestId = resetNorthRequestId,
                 styleUri = styleUri,
             )
@@ -271,6 +279,8 @@ private class MapRenderState(private val context: android.content.Context) {
     private var lastFocusedLocationRequestId: Int = 0
     private var focusRequest: MapFocusRequest? = null
     private var lastFocusRequestId: Int = 0
+    private var boundsRequest: MapBoundsRequest? = null
+    private var lastBoundsRequestId: Int = 0
     private var resetNorthRequestId: Int = 0
     private var lastResetNorthRequestId: Int = 0
     private var lastFollowSignature: Int? = null
@@ -342,6 +352,7 @@ private class MapRenderState(private val context: android.content.Context) {
         persistedCameraState: MapCameraState?,
         focusLocationRequestId: Int,
         focusRequest: MapFocusRequest?,
+        boundsRequest: MapBoundsRequest?,
         resetNorthRequestId: Int,
         styleUri: String,
     ) {
@@ -369,6 +380,7 @@ private class MapRenderState(private val context: android.content.Context) {
         this.persistedCameraState = persistedCameraState
         this.focusLocationRequestId = focusLocationRequestId
         this.focusRequest = focusRequest
+        this.boundsRequest = boundsRequest
         this.resetNorthRequestId = resetNorthRequestId
         map?.let(::configureCompass)
 
@@ -400,6 +412,34 @@ private class MapRenderState(private val context: android.content.Context) {
         maybeResetNorth()
         maybeFocusOnLocation()
         maybeFocusOnRequest()
+        maybeShowBoundsRequest()
+    }
+
+    private fun maybeShowBoundsRequest() {
+        val map = map ?: return
+        val request = boundsRequest ?: return
+        if (request.id == lastBoundsRequestId) return
+
+        lastBoundsRequestId = request.id
+        didFitCamera = true
+        // One canyon (or a few at the same place) is shown at a readable zoom, not at the deepest one.
+        val update = if (request.north - request.south < MIN_BOUNDS_SPAN_DEGREES && request.east - request.west < MIN_BOUNDS_SPAN_DEGREES) {
+            CameraUpdateFactory.newLatLngZoom(
+                LatLng((request.north + request.south) / 2, (request.east + request.west) / 2),
+                SINGLE_PLACE_ZOOM,
+            )
+        } else {
+            CameraUpdateFactory.newLatLngBounds(
+                LatLngBounds.from(request.north, request.east, request.south, request.west),
+                request.paddingSides,
+                request.paddingTop,
+                request.paddingSides,
+                request.paddingBottom,
+            )
+        }
+        runCatching { map.animateCamera(update, BOUNDS_ANIMATION_MS) }.onFailure { throwable ->
+            Log.e(TAG, "Unable to show the requested area", throwable)
+        }
     }
 
     private fun maybeFocusOnRequest() {

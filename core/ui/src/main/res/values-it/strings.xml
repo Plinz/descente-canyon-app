@@ -4,6 +4,13 @@
     <string name="tab_home">Home</string>
     <string name="tab_search">Cerca</string>
     <string name="tab_map">Mappa</string>
+    <string name="tab_explore">Esplora</string>
+    <string name="explore_mode_list">Elenco</string>
+    <string name="explore_mode_map">Mappa</string>
+    <string name="search_nearby_title">Nelle vicinanze</string>
+    <string name="search_nearby_all">Tutti i canyon per distanza</string>
+    <string name="search_propose_hint">Non è nell\'app?</string>
+    <string name="search_propose_action">Proponi questo canyon</string>
     <string name="offline_available">Disponibile offline</string>
     <string name="show_map_points">Vedi la mappa</string>
     <string name="canyon_summary_expand">Mostra</string>
@@ -135,9 +142,6 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="search_broad_results_hint">Inserisci almeno 2 caratteri o applica un filtro per visualizzare i canyon.</string>
     <string name="search_catalog_loading_idle">Il catalogo locale si sta preparando. Puoi già inserire un canyon.</string>
     <string name="search_catalog_loading_with_query">La ricerca è pronta. I risultati appariranno appena il catalogo locale sarà caricato.</string>
-    <string name="search_show_list">Vedi la lista</string>
-    <string name="search_show_map">Vedi la mappa</string>
-    <string name="search_map_no_coordinates">Nessun canyon di questa ricerca ha coordinate utilizzabili per la mappa.</string>
     <string name="search_filter_cotation">Scala</string>
     <string name="search_filter_vertical">Verticalità</string>
     <string name="search_filter_aquatic">Acquaticità</string>

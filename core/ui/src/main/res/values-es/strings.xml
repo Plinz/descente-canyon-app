@@ -4,6 +4,13 @@
     <string name="tab_home">Inicio</string>
     <string name="tab_search">Buscar</string>
     <string name="tab_map">Mapa</string>
+    <string name="tab_explore">Explorar</string>
+    <string name="explore_mode_list">Lista</string>
+    <string name="explore_mode_map">Mapa</string>
+    <string name="search_nearby_title">Cerca</string>
+    <string name="search_nearby_all">Todos los barrancos por distancia</string>
+    <string name="search_propose_hint">¿No está en la aplicación?</string>
+    <string name="search_propose_action">Proponer este barranco</string>
     <string name="offline_available">Disponible sin conexión</string>
     <string name="show_map_points">Ver el mapa</string>
     <string name="canyon_summary_expand">Mostrar</string>
@@ -135,9 +142,6 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="search_broad_results_hint">Introduce al menos 2 caracteres o aplica un filtro para mostrar los barrancos.</string>
     <string name="search_catalog_loading_idle">El catálogo local se está preparando. Ya puedes introducir un barranco.</string>
     <string name="search_catalog_loading_with_query">La búsqueda está lista. Los resultados aparecerán en cuanto se cargue el catálogo local.</string>
-    <string name="search_show_list">Ver la lista</string>
-    <string name="search_show_map">Ver el mapa</string>
-    <string name="search_map_no_coordinates">Ningún barranco de esta búsqueda tiene coordenadas utilizables para el mapa.</string>
     <string name="search_filter_cotation">Graduación</string>
     <string name="search_filter_vertical">Verticalidad</string>
     <string name="search_filter_aquatic">Acuático</string>

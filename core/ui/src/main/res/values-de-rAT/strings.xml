@@ -95,9 +95,6 @@ Suche einen Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="search_broad_results_hint">Gib mindestens 2 Zeichen ein oder wende einen Filter an, um Canyons anzuzeigen.</string>
     <string name="search_catalog_loading_idle">Der lokale Katalog wird vorbereitet. Du kannst schon einen Canyon eingeben.</string>
     <string name="search_catalog_loading_with_query">Die Suche ist bereit. Die Ergebnisse erscheinen, sobald der lokale Katalog geladen ist.</string>
-    <string name="search_show_list">Liste anzeigen</string>
-    <string name="search_show_map">Karte anzeigen</string>
-    <string name="search_map_no_coordinates">Kein Canyon dieser Suche hat für die Karte nutzbare Koordinaten.</string>
     <string name="search_filter_cotation">Schwierigkeit</string>
     <string name="search_filter_vertical">Vertikalität</string>
     <string name="search_filter_aquatic">Aquatik</string>

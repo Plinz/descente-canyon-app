@@ -74,6 +74,7 @@ import fr.descentecanyon.app.ui.navigation.LaunchSection
 import fr.descentecanyon.app.ui.navigation.Screen
 import fr.descentecanyon.app.ui.navigation.consumeLaunchTarget
 import fr.descentecanyon.app.ui.navigation.navigateSingleTop
+import fr.descentecanyon.app.ui.navigation.requestExplorerMap
 import fr.descentecanyon.app.ui.test.TestTags
 import fr.descentecanyon.app.ui.theme.DescenteCanyonTheme
 import javax.inject.Inject
@@ -311,6 +312,7 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
                     } else {
                         navController.navigateSingleTop(screen)
                     }
+                    if (target.section == LaunchSection.MAP) navController.requestExplorerMap()
                 }
 
                 is AppLaunchTarget.DebitForm -> navController.openDebitForm(target.canyonId)
@@ -421,16 +423,20 @@ private fun NavHostController.openDebitForm(canyonId: Int) {
 
 internal fun BottomNavItem.launchSection(): LaunchSection? = when (this) {
     BottomNavItem.HOME -> null
-    BottomNavItem.SEARCH -> LaunchSection.SEARCH
-    BottomNavItem.MAP -> LaunchSection.MAP
+    BottomNavItem.EXPLORE -> LaunchSection.SEARCH
     BottomNavItem.FAVORITES -> LaunchSection.FAVORITES
 }
 
 internal fun LaunchSection.toScreen(): Screen = when (this) {
     LaunchSection.SEARCH -> Screen.Search
-    LaunchSection.MAP -> Screen.Map
+
+    // Explorer, opened on its map (see openExplorerMap).
+    LaunchSection.MAP -> Screen.Search
+
     LaunchSection.FAVORITES -> Screen.Favorites
+
     LaunchSection.PENDING_DEBITS -> Screen.PendingDebits
+
     LaunchSection.MY_ACCOUNT -> Screen.MyAccount
 }
 
@@ -438,8 +444,7 @@ internal fun resolveSelectedBottomNavItem(backStackEntry: NavBackStackEntry?): B
     val destination = backStackEntry?.destination ?: return null
     return when {
         destination.hasRoute(Screen.Home::class) -> BottomNavItem.HOME
-        destination.hasRoute(Screen.Search::class) -> BottomNavItem.SEARCH
-        destination.hasRoute(Screen.Map::class) -> BottomNavItem.MAP
+        destination.hasRoute(Screen.Search::class) -> BottomNavItem.EXPLORE
         destination.hasRoute(Screen.Favorites::class) -> BottomNavItem.FAVORITES
         else -> null
     }
@@ -447,8 +452,7 @@ internal fun resolveSelectedBottomNavItem(backStackEntry: NavBackStackEntry?): B
 
 internal fun selectedBottomNavItemForScreen(screen: Screen): BottomNavItem? = when (screen) {
     Screen.Home -> BottomNavItem.HOME
-    Screen.Search -> BottomNavItem.SEARCH
-    Screen.Map -> BottomNavItem.MAP
+    Screen.Search -> BottomNavItem.EXPLORE
     Screen.Favorites -> BottomNavItem.FAVORITES
     else -> null
 }
@@ -457,7 +461,6 @@ internal fun shouldShowBottomBar(backStackEntry: NavBackStackEntry?): Boolean {
     val destination = backStackEntry?.destination ?: return false
     return destination.hasRoute(Screen.Home::class) ||
         destination.hasRoute(Screen.Search::class) ||
-        destination.hasRoute(Screen.Map::class) ||
         destination.hasRoute(Screen.Favorites::class) ||
         // Not for a canyon chosen for a day of a stay: a tab would leave the stay without notice.
         (destination.hasRoute(Screen.CanyonDetail::class) && backStackEntry.toRoute<Screen.CanyonDetail>().stayId == 0L)

@@ -35,6 +35,7 @@ import fr.descentecanyon.app.domain.usecase.SearchCanyonsUseCase
 import fr.descentecanyon.app.testutil.FakeDriveTimeRepository
 import fr.descentecanyon.app.testutil.FakeOutingRepository
 import fr.descentecanyon.app.testutil.FakePlaceRepository
+import fr.descentecanyon.app.testutil.FakePreferencesRepository
 import fr.descentecanyon.app.testutil.FakeStayRepository
 import fr.descentecanyon.app.testutil.MainDispatcherRule
 import io.mockk.coEvery
@@ -54,6 +55,7 @@ import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Rule
@@ -70,6 +72,7 @@ class SearchViewModelTest {
     private val recentCanyonsRepository = mockk<RecentCanyonsRepository>(relaxUnitFun = true) {
         every { observeRecentCanyons(any()) } returns recentCanyons
     }
+    private val preferences = FakePreferencesRepository()
     private val predictions = mockk<DebitPredictionRepository> {
         every { observeEstimates(any()) } returns flowOf(emptyMap())
         every { observeServerEstimates(any(), any()) } returns flowOf(emptyMap())
@@ -90,6 +93,7 @@ class SearchViewModelTest {
                 stayChoice(),
                 predictions,
                 clock,
+                preferences,
             )
 
         advanceTimeBy(250)
@@ -119,6 +123,7 @@ class SearchViewModelTest {
                 stayChoice(),
                 predictions,
                 clock,
+                preferences,
             )
 
         advanceTimeBy(250)
@@ -149,6 +154,7 @@ class SearchViewModelTest {
                 stayChoice(),
                 predictions,
                 clock,
+                preferences,
             )
 
         advanceTimeBy(250)
@@ -187,6 +193,7 @@ class SearchViewModelTest {
                 stayChoice(),
                 predictions,
                 clock,
+                preferences,
             )
 
         advanceTimeBy(250)
@@ -237,6 +244,7 @@ class SearchViewModelTest {
                 stayChoice(),
                 predictions,
                 clock,
+                preferences,
             )
 
         advanceTimeBy(250)
@@ -275,6 +283,7 @@ class SearchViewModelTest {
                 stayChoice(),
                 predictions,
                 clock,
+                preferences,
             )
 
         advanceTimeBy(250)
@@ -299,32 +308,7 @@ class SearchViewModelTest {
 
     @Test
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun `selecting a canyon does not request a list scroll reset`() = runTest {
-        every { canyonRepository.observeSearchCatalog() } returns flowOf(listOf(canyon(id = 1)))
-        val viewModel =
-            SearchViewModel(
-                searchCanyonsUseCase,
-                SavedStateHandle(),
-                mainDispatcherRule.dispatcher,
-                recentCanyonsRepository,
-                stayChoice(),
-                predictions,
-                clock,
-            )
-
-        advanceTimeBy(250)
-        advanceUntilIdle()
-        assertEquals(0, viewModel.uiState.value.scrollResetRequestId)
-
-        viewModel.selectCanyon(1)
-        advanceUntilIdle()
-
-        assertEquals(0, viewModel.uiState.value.scrollResetRequestId)
-    }
-
-    @Test
-    @OptIn(ExperimentalCoroutinesApi::class)
-    fun `location update enables distance sort and map selection`() = runTest {
+    fun `location update enables distance sort and the map`() = runTest {
         every { canyonRepository.observeSearchCatalog() } returns flowOf(
             listOf(
                 canyon(id = 1, nom = "Alpha", latitude = 43.70, longitude = 6.90),
@@ -340,6 +324,7 @@ class SearchViewModelTest {
                 stayChoice(),
                 predictions,
                 clock,
+                preferences,
             )
 
         advanceTimeBy(250)
@@ -349,7 +334,6 @@ class SearchViewModelTest {
         viewModel.onUserLocationUpdated(43.705, 6.905)
         viewModel.onSortSelected(SearchSortField.DISTANCE)
         viewModel.onResultViewModeChanged(SearchResultViewMode.MAP)
-        viewModel.selectCanyon(1)
         advanceTimeBy(250)
         advanceUntilIdle()
 
@@ -357,11 +341,84 @@ class SearchViewModelTest {
         assertEquals(SearchSortField.DISTANCE, viewModel.uiState.value.criteria.sortField)
         assertEquals(listOf(1, 2), viewModel.uiState.value.results.map { it.id })
         assertEquals(SearchResultViewMode.MAP, viewModel.uiState.value.resultViewMode)
-        assertEquals(1, viewModel.uiState.value.selectedCanyon?.id)
+    }
 
-        viewModel.clearSelectedCanyon()
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `explorer opens on the list or the map as last left, a stay always on its list`() = runTest {
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(listOf(canyon(id = 1)))
+        preferences.exploreOnMap = true
+        fun explorer() = SearchViewModel(
+            searchCanyonsUseCase,
+            SavedStateHandle(),
+            mainDispatcherRule.dispatcher,
+            recentCanyonsRepository,
+            stayChoice(),
+            predictions,
+            clock,
+            preferences,
+        )
+
+        val first = explorer()
         advanceUntilIdle()
-        assertNull(viewModel.uiState.value.selectedCanyon)
+        assertEquals(SearchResultViewMode.MAP, first.uiState.value.resultViewMode)
+
+        first.onResultViewModeChanged(SearchResultViewMode.LIST)
+        advanceUntilIdle()
+        assertFalse(preferences.exploreOnMap)
+        assertEquals(SearchResultViewMode.LIST, explorer().uiState.value.resultViewMode)
+
+        preferences.exploreOnMap = true
+        val stay = SearchViewModel(
+            searchCanyonsUseCase,
+            SavedStateHandle(mapOf("stayId" to 3L, "date" to "2026-07-15")),
+            mainDispatcherRule.dispatcher,
+            recentCanyonsRepository,
+            stayChoice(),
+            predictions,
+            clock,
+            preferences,
+        )
+        assertEquals(SearchResultViewMode.LIST, stay.uiState.value.resultViewMode)
+        // Changing the view of a stay leaves Explorer's as it was.
+        stay.onResultViewModeChanged(SearchResultViewMode.MAP)
+        stay.onResultViewModeChanged(SearchResultViewMode.LIST)
+        assertTrue(preferences.exploreOnMap)
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `without a name nor a filter, the nearest canyons are offered once the position is known`() = runTest {
+        every { canyonRepository.observeSearchCatalog() } returns flowOf(
+            (1..8).map { id -> canyon(id = id, nom = "Canyon $id", latitude = 43.0 + id / 10.0, longitude = 7.0) },
+        )
+        val viewModel = SearchViewModel(
+            searchCanyonsUseCase,
+            SavedStateHandle(),
+            mainDispatcherRule.dispatcher,
+            recentCanyonsRepository,
+            stayChoice(),
+            predictions,
+            clock,
+            preferences,
+        )
+        advanceTimeBy(250)
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.isResultListDeferred)
+        assertEquals(emptyList<Int>(), viewModel.uiState.value.nearby.map { it.id })
+
+        viewModel.onUserLocationUpdated(43.65, 7.0)
+        advanceTimeBy(250)
+        advanceUntilIdle()
+
+        // Still no list (no name, no filter, no sort by distance): the five nearest come first.
+        assertTrue(viewModel.uiState.value.isResultListDeferred)
+        assertEquals(listOf(6, 7, 5, 8, 4), viewModel.uiState.value.nearby.map { it.id })
+
+        viewModel.onQueryChanged("canyon 2")
+        advanceTimeBy(250)
+        advanceUntilIdle()
+        assertEquals(emptyList<Int>(), viewModel.uiState.value.nearby.map { it.id })
     }
 
     @Test
@@ -376,6 +433,7 @@ class SearchViewModelTest {
             stayChoice(),
             predictions,
             clock,
+            preferences,
         )
 
         advanceTimeBy(250)
@@ -477,6 +535,7 @@ class SearchViewModelTest {
             stayChoice(),
             predictions,
             clock,
+            preferences,
         )
         backgroundScope.launch { viewModel.estimates.collect {} }
         advanceTimeBy(250)
@@ -599,6 +658,7 @@ class SearchViewModelTest {
         choice,
         predictions,
         clock,
+        preferences,
     )
 
     /** A stay at a campsite from the 14th to the 16th of July. */

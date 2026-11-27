@@ -52,6 +52,14 @@ class CanyonProposalViewModelTest {
     )
 
     @Test
+    fun `a canyon searched for in vain is proposed under the name searched`() = runTest {
+        val viewModel = CanyonProposalViewModel(SavedStateHandle(mapOf("canyonId" to 0, "name" to " Gorgette amont ")), repository)
+
+        assertEquals("Gorgette amont", viewModel.uiState.value.draft[SheetField.NOM])
+        assertEquals(null, viewModel.uiState.value.original)
+    }
+
+    @Test
     fun `the first point of any type fills the place of a new canyon, the commune excepted`() = runTest {
         val viewModel = viewModel()
         val parking = SheetPoint(GeoPointType.PARKING_AVAL, 45.1, 5.7)
