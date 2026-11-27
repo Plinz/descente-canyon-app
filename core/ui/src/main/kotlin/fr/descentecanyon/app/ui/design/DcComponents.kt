@@ -220,6 +220,13 @@ fun DcFlowBadge(niveau: NiveauDebit, modifier: Modifier = Modifier, compact: Boo
     }
 }
 
+/**
+ * A flow level written in its colour on a card: [dcFlowColor], but the flood black, unreadable on
+ * the dark theme's cards, takes the colour of the text (near black on the light theme anyway).
+ */
+@Composable
+fun dcFlowTextColor(niveau: NiveauDebit): Color = if (niveau == NiveauDebit.CRUE) LocalDcColors.current.textPrimary else dcFlowColor(niveau)
+
 /** The theme colour of a flow level, as on the flow badges. */
 @Composable
 fun dcFlowColor(niveau: NiveauDebit): Color {

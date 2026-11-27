@@ -239,19 +239,22 @@ private enum class EstimateText { Shown, Level, None }
 /**
  * The flow estimate of the day: what the canyon page shows (the level, or the range when the model
  * hesitates) after a chart mark, lighter than a reported flow so that the two are not mixed up.
+ * A flood is the solid black pill of a reported one, its mark aside: black on black, the dark
+ * theme would not show it.
  */
 @Composable
 private fun EstimateBadge(estimate: DailyDebitPrediction, text: EstimateText) {
     val level = estimate.ordinalLevel ?: return
     val color = dcFlowColor(level)
+    val isFlood = level == NiveauDebit.CRUE
     val shown = estimate.likelyRange()?.let { debitRangeLabel(it) } ?: debitLevelShortLabel(level)
     val description = stringResource(R.string.outing_conditions_estimate, shown)
     Surface(
         modifier = Modifier.semantics(mergeDescendants = true) { contentDescription = description },
         shape = LocalDcShapes.current.pill,
-        color = color.copy(alpha = 0.07f),
-        contentColor = color,
-        border = BorderStroke(1.dp, color.copy(alpha = 0.55f)),
+        color = if (isFlood) color else color.copy(alpha = 0.07f),
+        contentColor = if (isFlood) Color.White else color,
+        border = BorderStroke(1.dp, if (isFlood) Color.White.copy(alpha = 0.55f) else color.copy(alpha = 0.55f)),
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 7.dp, vertical = 3.dp),

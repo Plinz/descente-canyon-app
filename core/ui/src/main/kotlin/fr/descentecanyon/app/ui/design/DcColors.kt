@@ -77,13 +77,15 @@ val DcDarkColors = DcColors(
     warning = Color(0xFFFFC857),
     offline = Color(0xFF9AA7AD),
     stale = Color(0xFFC48B57),
+    // The flow levels are written in their colour on the cards (surfaceBase and surfaceRaised, under
+    // a light tint of the same colour): each one keeps 4.5:1 there. The flood is a solid black pill.
     flowDry = Color(0xFFB8B0A3),
     flowTrickle = Color(0xFF64CF84),
-    flowGood = Color(0xFF3B8DFF),
+    flowGood = Color(0xFF6EABFF),
     flowHigh = Color(0xFFFF8A35),
-    flowVeryHigh = Color(0xFFFF4F5E),
+    flowVeryHigh = Color(0xFFFF7A7A),
     flowFlood = Color(0xFF0B0B0D),
-    flowUnknown = Color(0xFF8F9BA1),
+    flowUnknown = Color(0xFFA0AAAF),
 )
 
 val DcLightColors = DcColors(
@@ -117,13 +119,14 @@ val DcLightColors = DcColors(
     warning = Color(0xFF9F6B00),
     offline = Color(0xFF687A81),
     stale = Color(0xFF8A5D2E),
-    flowDry = Color(0xFF77716A),
-    flowTrickle = Color(0xFF16883B),
-    flowGood = Color(0xFF005FD1),
-    flowHigh = Color(0xFFD75D00),
-    flowVeryHigh = Color(0xFFD9001B),
+    // 4.5:1 on the cards, as in the dark theme.
+    flowDry = Color(0xFF5D5953),
+    flowTrickle = Color(0xFF11672D),
+    flowGood = Color(0xFF0053B7),
+    flowHigh = Color(0xFF954000),
+    flowVeryHigh = Color(0xFFB00016),
     flowFlood = Color(0xFF111111),
-    flowUnknown = Color(0xFF777F84),
+    flowUnknown = Color(0xFF555B5E),
 )
 
 /**

@@ -61,6 +61,7 @@ import fr.descentecanyon.app.ui.components.debitRangeLabel
 import fr.descentecanyon.app.ui.components.debitRangeWord
 import fr.descentecanyon.app.ui.components.relativeDayPhrase
 import fr.descentecanyon.app.ui.design.LocalDcColors
+import fr.descentecanyon.app.ui.design.dcFlowTextColor
 import fr.descentecanyon.app.ui.theme.DebitCorrect
 import fr.descentecanyon.app.ui.theme.DebitFilet
 import fr.descentecanyon.app.ui.theme.DebitGros
@@ -430,9 +431,10 @@ private fun predictionSummaryValue(prediction: DailyDebitPrediction): String = p
     ?: prediction.ordinalLevel?.let { debitLevelShortLabel(it) }
     ?: levelLabel(prediction.level)
 
+/** The level in its theme colour, readable on the card in both themes (the gauge keeps the site's colours). */
 @Composable
 private fun predictionSummaryColor(prediction: DailyDebitPrediction): Color =
-    prediction.ordinalLevel?.let { ordinalColor(it) } ?: levelColor(prediction.level)
+    prediction.ordinalLevel?.let { dcFlowTextColor(it) } ?: levelColor(prediction.level)
 
 /** One day: the shown level or range, the gauge, then its confidence and the high-flow risk. */
 @Composable
@@ -611,8 +613,8 @@ private fun levelLabel(level: PredictedDebitLevel): String = when (level) {
 @Composable
 private fun levelColor(level: PredictedDebitLevel): Color = when (level) {
     PredictedDebitLevel.LOW -> MaterialTheme.colorScheme.primary
-    PredictedDebitLevel.MEDIUM -> DebitCorrect
-    PredictedDebitLevel.HIGH -> DebitVeryHighRed
+    PredictedDebitLevel.MEDIUM -> dcFlowTextColor(NiveauDebit.CORRECT)
+    PredictedDebitLevel.HIGH -> dcFlowTextColor(NiveauDebit.TRES_GROS)
 }
 
 private fun ordinalColor(level: NiveauDebit): Color = when (level) {
