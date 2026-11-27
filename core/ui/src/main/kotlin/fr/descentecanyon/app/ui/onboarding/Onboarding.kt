@@ -1,26 +1,19 @@
 package fr.descentecanyon.app.ui.onboarding
 
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.RichTooltip
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TooltipAnchorPosition
-import androidx.compose.material3.TooltipBox
-import androidx.compose.material3.TooltipDefaults
-import androidx.compose.material3.rememberTooltipState
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.res.stringResource
-import fr.descentecanyon.app.core.ui.R
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.boundsInRoot
+import androidx.compose.ui.layout.onGloballyPositioned
 import fr.descentecanyon.app.domain.model.FirstStep
 import fr.descentecanyon.app.domain.model.Hint
 import fr.descentecanyon.app.domain.model.OnboardingState
-import fr.descentecanyon.app.ui.test.TestTags
-import kotlinx.coroutines.delay
 
 /**
  * What the screens ask of the onboarding (the activity holds it): the state to show the first steps
@@ -75,54 +68,32 @@ object NoOnboarding : OnboardingHost {
 val LocalOnboarding = staticCompositionLocalOf<OnboardingHost> { NoOnboarding }
 
 /**
- * [content] with its hint: [title] and [text] over it (or under it, [below]) the first time its
- * screen is visited, one hint at a time. "Compris" or a tap elsewhere closes it for good.
+ * [content] with its hint: [title] and [text], shown by [HintOverlay] over a dimmed screen with
+ * [content] lit, the first time its screen is visited, one hint at a time. Tapping [content] uses it
+ * as usual and closes the hint for good.
  */
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DcHint(
-    hint: Hint,
-    title: String,
-    text: String,
-    modifier: Modifier = Modifier,
-    below: Boolean = false,
-    content: @Composable () -> Unit,
-) {
+fun DcHint(hint: Hint, title: String, text: String, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     val host = LocalOnboarding.current
-    DisposableEffect(host, hint) {
+    val overlay = LocalHintOverlay.current
+    DisposableEffect(host, overlay, hint) {
         host.requestHint(hint)
-        onDispose { host.releaseHint(hint) }
-    }
-    val isShown = host.currentHint == hint
-    val tooltipState = rememberTooltipState(isPersistent = true)
-    LaunchedEffect(isShown) {
-        if (isShown) {
-            // Once the screen has settled: a hint over a screen still sliding in is missed.
-            delay(HINT_DELAY_MS)
-            tooltipState.show()
-        } else {
-            tooltipState.dismiss()
+        onDispose {
+            host.releaseHint(hint)
+            overlay?.remove(hint)
         }
     }
-    TooltipBox(
-        positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
-            if (below) TooltipAnchorPosition.Below else TooltipAnchorPosition.Above,
-        ),
-        tooltip = {
-            RichTooltip(
-                modifier = Modifier.testTag(TestTags.hint(hint.name)),
-                title = { Text(title) },
-                action = {
-                    TextButton(onClick = { host.dismissHint(hint) }) { Text(stringResource(R.string.hint_got_it)) }
-                },
-            ) { Text(text) }
-        },
-        state = tooltipState,
-        onDismissRequest = { if (isShown) host.dismissHint(hint) },
-        enableUserInput = false,
-        modifier = modifier,
-        content = content,
-    )
+    val isCurrent = host.currentHint == hint
+    Box(
+        modifier = modifier
+            .onGloballyPositioned { coordinates -> overlay?.place(hint, HintAnchor(coordinates.boundsInRoot(), title, text)) }
+            // Seen, not consumed: the element still gets its tap.
+            .pointerInput(isCurrent) {
+                if (!isCurrent) return@pointerInput
+                awaitEachGesture {
+                    awaitFirstDown(requireUnconsumed = false, pass = PointerEventPass.Initial)
+                    host.dismissHint(hint)
+                }
+            },
+    ) { content() }
 }
-
-private const val HINT_DELAY_MS = 700L

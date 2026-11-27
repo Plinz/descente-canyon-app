@@ -248,7 +248,6 @@ fun MyAccountScreen(
                             hint = Hint.ME_FOLLOWS,
                             title = stringResource(R.string.account_section_follows),
                             text = stringResource(R.string.hint_me_follows_body),
-                            below = true,
                         ) {
                             AccountRow(
                                 icon = Icons.Default.Notifications,

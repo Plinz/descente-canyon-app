@@ -229,7 +229,6 @@ fun OutingsScreen(
                         hint = Hint.OUTINGS_STAY,
                         title = stringResource(R.string.outings_stay_action),
                         text = stringResource(R.string.hint_outings_stay_body),
-                        below = true,
                     ) {
                         OutlinedButton(onClick = onNewStay, modifier = Modifier.testTag(TestTags.OUTINGS_NEW_STAY)) {
                             Icon(Icons.Default.CalendarMonth, contentDescription = null, modifier = Modifier.size(18.dp))

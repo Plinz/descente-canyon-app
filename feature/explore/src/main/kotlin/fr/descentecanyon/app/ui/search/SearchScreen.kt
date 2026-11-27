@@ -271,7 +271,6 @@ fun SearchScreen(
                 hint = Hint.EXPLORE_MODE,
                 title = stringResource(R.string.hint_explore_mode_title),
                 text = stringResource(R.string.hint_explore_mode_body),
-                below = true,
             ) { toggle() }
         }
     }

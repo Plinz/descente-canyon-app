@@ -78,6 +78,9 @@ import fr.descentecanyon.app.ui.navigation.Screen
 import fr.descentecanyon.app.ui.navigation.consumeLaunchTarget
 import fr.descentecanyon.app.ui.navigation.navigateSingleTop
 import fr.descentecanyon.app.ui.navigation.requestExplorerMap
+import fr.descentecanyon.app.ui.onboarding.HintOverlay
+import fr.descentecanyon.app.ui.onboarding.HintOverlayState
+import fr.descentecanyon.app.ui.onboarding.LocalHintOverlay
 import fr.descentecanyon.app.ui.onboarding.LocalOnboarding
 import fr.descentecanyon.app.ui.test.TestTags
 import fr.descentecanyon.app.ui.theme.DescenteCanyonTheme
@@ -359,81 +362,86 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
         incomingLaunchTargets.collect(::navigateTo)
     }
 
-    CompositionLocalProvider(LocalOnboarding provides onboarding) {
-        Scaffold(
-            bottomBar = {
-                if (showBottomBar) {
-                    // Opaque: the dark overlay color is translucent and the page would show through the bar.
-                    Surface(
-                        color = dcColors.surfaceOverlay.compositeOver(dcColors.backgroundBase),
-                        contentColor = dcColors.textPrimary,
-                        shadowElevation = 0.dp,
-                        border = BorderStroke(1.dp, dcColors.borderSubtle),
-                    ) {
-                        NavigationBar(
-                            modifier = Modifier.background(
-                                Brush.horizontalGradient(
-                                    listOf(
-                                        dcColors.waterDeep.copy(alpha = 0.26f),
-                                        dcColors.surfaceRaised,
-                                        dcColors.rock.copy(alpha = 0.16f),
+    val hintOverlay = remember { HintOverlayState() }
+    CompositionLocalProvider(LocalOnboarding provides onboarding, LocalHintOverlay provides hintOverlay) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Scaffold(
+                bottomBar = {
+                    if (showBottomBar) {
+                        // Opaque: the dark overlay color is translucent and the page would show through the bar.
+                        Surface(
+                            color = dcColors.surfaceOverlay.compositeOver(dcColors.backgroundBase),
+                            contentColor = dcColors.textPrimary,
+                            shadowElevation = 0.dp,
+                            border = BorderStroke(1.dp, dcColors.borderSubtle),
+                        ) {
+                            NavigationBar(
+                                modifier = Modifier.background(
+                                    Brush.horizontalGradient(
+                                        listOf(
+                                            dcColors.waterDeep.copy(alpha = 0.26f),
+                                            dcColors.surfaceRaised,
+                                            dcColors.rock.copy(alpha = 0.16f),
+                                        ),
                                     ),
                                 ),
-                            ),
-                            containerColor = androidx.compose.ui.graphics.Color.Transparent,
-                            tonalElevation = 0.dp,
-                            windowInsets = NavigationBarDefaults.windowInsets,
-                        ) {
-                            BottomNavItem.entries.forEach { item ->
-                                val itemLabel = stringResource(item.labelResId)
-                                NavigationBarItem(
-                                    modifier = Modifier.testTag(TestTags.bottomNavItem(item.name)),
-                                    icon = { Icon(item.icon, contentDescription = itemLabel) },
-                                    label = {
-                                        // Five tabs on a narrow phone with large text: a long name ("Favoriten") shrinks, never splits.
-                                        val labelStyle = MaterialTheme.typography.labelMedium
-                                        Text(
-                                            text = itemLabel,
-                                            style = labelStyle,
-                                            maxLines = 1,
-                                            textAlign = TextAlign.Center,
-                                            autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = labelStyle.fontSize),
-                                        )
-                                    },
-                                    colors = NavigationBarItemDefaults.colors(
-                                        selectedIconColor = dcColors.primaryActionContent,
-                                        selectedTextColor = dcColors.textPrimary,
-                                        indicatorColor = dcColors.primaryAction.copy(alpha = 0.92f),
-                                        unselectedIconColor = dcColors.textMuted,
-                                        unselectedTextColor = dcColors.textMuted,
-                                    ),
-                                    selected = item == selectedBottomNavItem,
-                                    onClick = {
-                                        item.launchSection()?.let { section -> AppShortcuts.reportUsed(context, section) }
-                                        val startDestinationId = navController.graph.findStartDestination().id
-                                        handleBottomNavClick(
-                                            item = item,
-                                            popToHome = {
-                                                navController.popBackStack(startDestinationId, false)
-                                            },
-                                            navigate = { screen ->
-                                                navController.navigate(screen) {
-                                                    applyAppRootNavigation(startDestinationId)
-                                                }
-                                            },
-                                        )
-                                    },
-                                )
+                                containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                                tonalElevation = 0.dp,
+                                windowInsets = NavigationBarDefaults.windowInsets,
+                            ) {
+                                BottomNavItem.entries.forEach { item ->
+                                    val itemLabel = stringResource(item.labelResId)
+                                    NavigationBarItem(
+                                        modifier = Modifier.testTag(TestTags.bottomNavItem(item.name)),
+                                        icon = { Icon(item.icon, contentDescription = itemLabel) },
+                                        label = {
+                                            // Five tabs on a narrow phone with large text: a long name ("Favoriten") shrinks, never splits.
+                                            val labelStyle = MaterialTheme.typography.labelMedium
+                                            Text(
+                                                text = itemLabel,
+                                                style = labelStyle,
+                                                maxLines = 1,
+                                                textAlign = TextAlign.Center,
+                                                autoSize = TextAutoSize.StepBased(minFontSize = 8.sp, maxFontSize = labelStyle.fontSize),
+                                            )
+                                        },
+                                        colors = NavigationBarItemDefaults.colors(
+                                            selectedIconColor = dcColors.primaryActionContent,
+                                            selectedTextColor = dcColors.textPrimary,
+                                            indicatorColor = dcColors.primaryAction.copy(alpha = 0.92f),
+                                            unselectedIconColor = dcColors.textMuted,
+                                            unselectedTextColor = dcColors.textMuted,
+                                        ),
+                                        selected = item == selectedBottomNavItem,
+                                        onClick = {
+                                            item.launchSection()?.let { section -> AppShortcuts.reportUsed(context, section) }
+                                            val startDestinationId = navController.graph.findStartDestination().id
+                                            handleBottomNavClick(
+                                                item = item,
+                                                popToHome = {
+                                                    navController.popBackStack(startDestinationId, false)
+                                                },
+                                                navigate = { screen ->
+                                                    navController.navigate(screen) {
+                                                        applyAppRootNavigation(startDestinationId)
+                                                    }
+                                                },
+                                            )
+                                        },
+                                    )
+                                }
                             }
                         }
                     }
-                }
-            },
-        ) { innerPadding ->
-            AppNavHost(
-                navController = navController,
-                topLevelContentPadding = innerPadding,
-            )
+                },
+            ) { innerPadding ->
+                AppNavHost(
+                    navController = navController,
+                    topLevelContentPadding = innerPadding,
+                )
+            }
+            // Over everything, the screens and their bars: the hint, its element lit.
+            HintOverlay(state = hintOverlay, host = onboarding)
         }
     }
 }
