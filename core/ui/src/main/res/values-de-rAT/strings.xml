@@ -11,7 +11,7 @@
     <string name="canyon_summary_parcours">Route</string>
     <string name="canyon_summary_timing">Zeit</string>
     <string name="tab_favorites">Favoriten</string>
-    <string name="favorites_screen_subtitle">Deine verfolgten Canyons zur Tourenplanung.</string>
+    <string name="favorites_screen_subtitle">Deine Favoriten und ihre aktuellen Bedingungen.</string>
     <string name="downloading_offline">Wird heruntergeladen…</string>
     <string name="photo_download_action">Foto speichern</string>
     <string name="last_debits">Neueste Wasserstände</string>

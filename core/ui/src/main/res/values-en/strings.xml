@@ -11,7 +11,7 @@
     <string name="canyon_summary_parcours">Route</string>
     <string name="canyon_summary_timing">Time</string>
     <string name="tab_favorites">Favorites</string>
-    <string name="favorites_screen_subtitle">Your tracked canyons for preparing an outing.</string>
+    <string name="favorites_screen_subtitle">My favorite canyons and today\'s conditions.</string>
     <string name="downloading_offline">Downloading…</string>
     <string name="photo_download_action">Save photo</string>
     <string name="last_debits">Latest flow reports</string>
@@ -52,7 +52,7 @@
     <string name="notifications_screen_title">Notifications</string>
     <string name="notifications_activity_title">Tracked activity</string>
     <string name="notifications_activity_subtitle">The latest flow reports and forum messages detected for your tracked items.</string>
-    <string name="notifications_empty_body">Follow a canyon with the bell of its page, a forum section from the forum tab of the home screen, or a member from their profile: their new reports and messages will show here.</string>
+    <string name="notifications_empty_body">Follow a canyon from the ⋮ menu of its page (“Track new flow reports”), a forum section from the forum tab of the home screen, or a member from their profile: their new reports and messages will show here.</string>
     <string name="notifications_clear_activity">Clear activity</string>
     <string name="notifications_permission_title">Allow notifications</string>
     <string name="notifications_permission_body">Android is still blocking alerts. Allow notifications to receive new tracked flow reports and forum messages.</string>
@@ -674,6 +674,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="outing_plan_for_day">Plan for %1$s</string>
     <string name="outing_plan_action_hint">Times of the day, gear, messages for the group</string>
     <string name="outing_active_summary">Outing planned %1$s · back around %2$s</string>
+    <string name="outing_underway_summary">Under way · back around %1$s</string>
     <string name="outing_plan_title">Plan the outing</string>
     <string name="outing_date_label">Day</string>
     <string name="outing_day_today">Today</string>

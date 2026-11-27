@@ -11,7 +11,7 @@
     <string name="canyon_summary_parcours">Parcours</string>
     <string name="canyon_summary_timing">Temps</string>
     <string name="tab_favorites">Favoris</string>
-    <string name="favorites_screen_subtitle">Mes canyons suivis et disponibles pour préparer la sortie.</string>
+    <string name="favorites_screen_subtitle">Mes canyons favoris et leurs conditions du jour.</string>
     <string name="downloading_offline">Téléchargement…</string>
     <string name="photo_download_action">Enregistrer la photo</string>
     <string name="last_debits">Derniers débits</string>
@@ -52,7 +52,7 @@
     <string name="notifications_screen_title">Notifications</string>
     <string name="notifications_activity_title">Activité suivie</string>
     <string name="notifications_activity_subtitle">Les derniers débits et messages détectés pour vos suivis.</string>
-    <string name="notifications_empty_body">Suivez un canyon avec la cloche de sa fiche, une rubrique depuis l\'onglet forum de l\'accueil, ou un membre depuis son profil : leurs nouveaux débits et messages apparaîtront ici.</string>
+    <string name="notifications_empty_body">Suivez un canyon depuis le menu ⋮ de sa fiche (« Suivre les nouveaux débits »), une rubrique depuis l\'onglet forum de l\'accueil, ou un membre depuis son profil : leurs nouveaux débits et messages apparaîtront ici.</string>
     <string name="notifications_clear_activity">Vider l\'activité</string>
     <string name="notifications_permission_title">Autoriser les notifications</string>
     <string name="notifications_permission_body">Android bloque encore les alertes. Autorisez les notifications pour recevoir les nouveaux débits et messages suivis.</string>
@@ -688,6 +688,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="outing_plan_for_day">Prévoir pour %1$s</string>
     <string name="outing_plan_action_hint">Horaires de la journée, matériel, messages pour le groupe</string>
     <string name="outing_active_summary">Sortie prévue %1$s · retour vers %2$s</string>
+    <string name="outing_underway_summary">En cours · retour vers %1$s</string>
     <string name="outing_plan_title">Préparer la sortie</string>
     <string name="outing_date_label">Jour</string>
     <string name="outing_day_today">Aujourd\'hui</string>

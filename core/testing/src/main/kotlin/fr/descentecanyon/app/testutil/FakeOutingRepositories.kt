@@ -20,13 +20,15 @@ import fr.descentecanyon.app.domain.repository.PlaceRepository
 import fr.descentecanyon.app.domain.repository.PlaceSearchRepository
 import fr.descentecanyon.app.domain.repository.StayRepository
 import java.time.Clock
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
-/** In-memory [OutingRepository]: ids given in order, outings kept soonest first. */
+/** In-memory [OutingRepository]: ids given in order, outings kept soonest first; a write takes [saveDelayMillis]. */
 class FakeOutingRepository : OutingRepository {
     val outings = MutableStateFlow<List<PlannedOuting>>(emptyList())
+    var saveDelayMillis = 0L
     private var nextId = 1L
 
     override fun observeAll(): Flow<List<PlannedOuting>> = outings
@@ -34,6 +36,7 @@ class FakeOutingRepository : OutingRepository {
     override suspend fun get(id: Long): PlannedOuting? = outings.value.firstOrNull { it.id == id }
 
     override suspend fun save(outing: PlannedOuting): Long {
+        if (saveDelayMillis > 0) delay(saveDelayMillis)
         val id = outing.id.takeIf { it > 0 } ?: nextId++
         outings.update { list -> (list.filterNot { it.id == id } + outing.copy(id = id)).sortedBy { it.start } }
         return id
@@ -110,11 +113,15 @@ class FakeStayRepository(
     }
 }
 
-/** [DriveTimeRepository] answering [route] for every place, and keeping the user's own times. */
+/** [DriveTimeRepository] answering [route] for every place, and keeping the user's own times, read in [storedDelayMillis]. */
 class FakeDriveTimeRepository(var route: DriveTime? = null) : DriveTimeRepository {
     val manual = mutableMapOf<Pair<Long, Int>, DriveTime>()
+    var storedDelayMillis = 0L
 
-    override suspend fun stored(placeId: Long, canyonId: Int, destination: GeoPoint): DriveTime? = manual[placeId to canyonId]
+    override suspend fun stored(placeId: Long, canyonId: Int, destination: GeoPoint): DriveTime? {
+        if (storedDelayMillis > 0) delay(storedDelayMillis)
+        return manual[placeId to canyonId]
+    }
 
     override suspend fun storedFrom(placeId: Long): Map<Int, DriveTime> =
         manual.filterKeys { it.first == placeId }.mapKeys { it.key.second }

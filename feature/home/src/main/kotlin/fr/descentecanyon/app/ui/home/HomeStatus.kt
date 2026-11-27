@@ -339,7 +339,6 @@ internal fun ActiveOutingCard(
 ) {
     val locale = LocalLocale.current.platformLocale
     val zone = ZoneId.systemDefault()
-    val start = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT).withLocale(locale).format(outing.start.atZone(zone))
     val back = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale).format(outing.expectedBack.atZone(zone))
     DcCard(
         variant = DcCardVariant.Condition,
@@ -353,7 +352,7 @@ internal fun ActiveOutingCard(
                 Icon(Icons.Default.Hiking, contentDescription = null)
                 Column(modifier = Modifier.weight(1f)) {
                     Text(outing.title, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
-                    Text(stringResource(R.string.outing_active_summary, start, back), style = MaterialTheme.typography.bodySmall)
+                    Text(stringResource(R.string.outing_underway_summary, back), style = MaterialTheme.typography.bodySmall)
                 }
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

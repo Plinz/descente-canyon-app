@@ -11,7 +11,7 @@
     <string name="canyon_summary_parcours">Route</string>
     <string name="canyon_summary_timing">Zeiten</string>
     <string name="tab_favorites">Favoriten</string>
-    <string name="favorites_screen_subtitle">Deine verfolgten Canyons zur Tourenplanung.</string>
+    <string name="favorites_screen_subtitle">Deine Favoriten und ihre aktuellen Bedingungen.</string>
     <string name="downloading_offline">Wird heruntergeladen…</string>
     <string name="photo_download_action">Foto speichern</string>
     <string name="last_debits">Letzte Wasserstände</string>
@@ -52,7 +52,7 @@
     <string name="notifications_screen_title">Benachrichtigungen</string>
     <string name="notifications_activity_title">Verfolgte Aktivität</string>
     <string name="notifications_activity_subtitle">Die neuesten Wasserstände und Forenbeiträge, die für deine verfolgten Elemente erkannt wurden.</string>
-    <string name="notifications_empty_body">Folgen Sie einem Canyon mit der Glocke seiner Seite, einem Forenbereich über den Forum-Tab der Startseite oder einem Mitglied über sein Profil: Neue Meldungen und Nachrichten erscheinen hier.</string>
+    <string name="notifications_empty_body">Folgen Sie einem Canyon über das Menü ⋮ seiner Seite („Neue Wasserstände verfolgen“), einem Forenbereich über den Forum-Tab der Startseite oder einem Mitglied über sein Profil: Neue Meldungen und Nachrichten erscheinen hier.</string>
     <string name="notifications_clear_activity">Aktivität leeren</string>
     <string name="notifications_permission_title">Benachrichtigungen erlauben</string>
     <string name="notifications_permission_body">Android blockiert die Hinweise noch. Erlaube Benachrichtigungen, um neue verfolgte Wasserstände und Forenbeiträge zu erhalten.</string>
@@ -674,6 +674,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="outing_plan_for_day">Für %1$s planen</string>
     <string name="outing_plan_action_hint">Tagesablauf, Ausrüstung, Nachrichten an die Gruppe</string>
     <string name="outing_active_summary">Tour geplant %1$s · zurück gegen %2$s</string>
+    <string name="outing_underway_summary">Unterwegs · zurück gegen %1$s</string>
     <string name="outing_plan_title">Tour planen</string>
     <string name="outing_date_label">Tag</string>
     <string name="outing_day_today">Heute</string>

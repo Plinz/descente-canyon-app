@@ -85,6 +85,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
@@ -195,6 +196,9 @@ data class OutingPlanUiState(
     val canAddCanyon: Boolean get() = nextCanyons.size + 1 < OutingChoices.MAX_CANYONS
 
     val withBeginners: Boolean get() = choices.groupLevel != GroupLevel.AUTONOMOUS
+
+    /** The times can be computed: the canyon loaded and, from a place, a first drive time read. */
+    val isPlanReady: Boolean get() = schedule != null && (place == null || meetingParking == null || drive != null)
 }
 
 /**
@@ -515,10 +519,15 @@ class OutingPlanViewModel @Inject constructor(
         }
     }
 
-    /** Times that change without the user (a route found, new settings): a planned outing follows them. */
+    /**
+     * Times that change without the user (a route found, new settings): a planned outing follows them.
+     * Not the times computed while the drive is still being read (a reopened plan): they would replace
+     * the kept ones. Each change goes through [persist], which compares with what was last written under
+     * its lock: compared here, a write under way would hide that the drive came back to the kept times.
+     */
     private suspend fun followComputedTimes() {
-        uiState.map { it.toPlannedOuting()?.times() }.distinctUntilChanged().collect { times ->
-            if (times != null && planned && times != sources.value.saved?.times()) persist()
+        uiState.filter { it.isPlanReady }.map { it.toPlannedOuting()?.times() }.distinctUntilChanged().collect { times ->
+            if (times != null && planned) persist()
         }
     }
 
@@ -593,9 +602,9 @@ class OutingPlanViewModel @Inject constructor(
         choices.update { if (it == initial) it.copy(anchorTime = earlier) else it }
     }
 
-    /** Until the times can be computed: the canyon loaded and, from a place, a first drive time. */
+    /** Until the times can be computed. */
     private suspend fun awaitPlan() {
-        uiState.first { it.schedule != null && (it.place == null || it.meetingParking == null || it.drive != null) }
+        uiState.first { it.isPlanReady }
     }
 
     /**

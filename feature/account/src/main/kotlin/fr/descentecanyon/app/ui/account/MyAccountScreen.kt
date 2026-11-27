@@ -229,6 +229,7 @@ fun MyAccountScreen(
                 item(key = "outings") {
                     OutingsSummary(
                         outings = state.outings,
+                        underwayId = state.underwayOutingId,
                         onOpen = { outing -> onOpenOuting(outing.canyonId, outing.id) },
                         onOpenAll = onOpenOutings,
                     )
@@ -426,7 +427,7 @@ private fun ContributorIdentityCard(identity: ContributorIdentity, onEdit: () ->
 
 /** The outings planned (the one under way first) and the way to all of them, the starting places and the stays. */
 @Composable
-private fun OutingsSummary(outings: List<PlannedOuting>, onOpen: (PlannedOuting) -> Unit, onOpenAll: () -> Unit) {
+private fun OutingsSummary(outings: List<PlannedOuting>, underwayId: Long?, onOpen: (PlannedOuting) -> Unit, onOpenAll: () -> Unit) {
     val locale = LocalLocale.current.platformLocale
     val zone = ZoneId.systemDefault()
     AccountSection(stringResource(R.string.outings_title), modifier = Modifier.testTag(TestTags.MY_ACCOUNT_OUTINGS)) {
@@ -447,7 +448,12 @@ private fun OutingsSummary(outings: List<PlannedOuting>, onOpen: (PlannedOuting)
                 Icon(Icons.Default.Hiking, contentDescription = null, tint = LocalDcColors.current.primaryAction)
                 Column(modifier = Modifier.weight(1f)) {
                     Text(outing.title, style = MaterialTheme.typography.titleSmall, fontWeight = FontWeight.SemiBold)
-                    Text(stringResource(R.string.outing_active_summary, start, back), style = MaterialTheme.typography.bodySmall)
+                    val summary = if (outing.id == underwayId) {
+                        stringResource(R.string.outing_underway_summary, back)
+                    } else {
+                        stringResource(R.string.outing_active_summary, start, back)
+                    }
+                    Text(summary, style = MaterialTheme.typography.bodySmall)
                 }
                 Icon(Icons.AutoMirrored.Filled.KeyboardArrowRight, contentDescription = null, tint = LocalDcColors.current.textMuted)
             }

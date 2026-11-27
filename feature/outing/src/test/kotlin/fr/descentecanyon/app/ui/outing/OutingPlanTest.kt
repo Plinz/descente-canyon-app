@@ -188,6 +188,28 @@ class OutingPlanTest {
     }
 
     @Test
+    fun `a planned outing reopened from a place keeps its drive, even when the drive comes during a write`() = runTest {
+        placeRepository.places.value = listOf(Place("Camping", 44.0, 6.8, lastUsedAt = 5, id = 7))
+        val first = viewModel()
+        advanceUntilIdle()
+        first.setManualDrive(25)
+        first.confirm()
+        advanceUntilIdle()
+        val kept = outingRepository.outings.value.single()
+        assertEquals(at(8, 15).atZone(zone).toInstant(), kept.departure)
+
+        // Reopened, the plan is first computed before the drive is read again: those times are not kept,
+        // even when the drive comes while a write is under way.
+        driveTimeRepository.storedDelayMillis = 100
+        outingRepository.saveDelayMillis = 1_000
+        val reopened = viewModel(outingId = kept.id)
+        advanceUntilIdle()
+
+        assertEquals(kept, outingRepository.outings.value.single())
+        assertEquals(kept.expectedBack, reopened.uiState.value.expectedBack?.atZone(zone)?.toInstant())
+    }
+
+    @Test
     fun `once confirmed every change is kept at once, and a planned outing reopens as it was`() = runTest {
         val first = viewModel()
         advanceUntilIdle()

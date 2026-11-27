@@ -57,6 +57,8 @@ data class MyAccountUiState(
     val contributorIdentity: ContributorIdentity? = null,
     /** The outing under way first, then those to come. */
     val outings: List<PlannedOuting> = emptyList(),
+    /** The outing under way, first of [outings]. */
+    val underwayOutingId: Long? = null,
     val stats: LogbookStats = LogbookStats(0, 0, 0),
     val recentEntries: List<LogbookEntry> = emptyList(),
     val memoCount: Int = 0,
@@ -103,7 +105,9 @@ class MyAccountViewModel @Inject constructor(
         observeMemos()
         viewModelScope.launch {
             outingRepository.observeAll().agenda(clock).collect { agenda ->
-                _uiState.update { it.copy(outings = listOfNotNull(agenda.underway) + agenda.upcoming) }
+                _uiState.update {
+                    it.copy(outings = listOfNotNull(agenda.underway) + agenda.upcoming, underwayOutingId = agenda.underway?.id)
+                }
             }
         }
         viewModelScope.launch {
