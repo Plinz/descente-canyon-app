@@ -3,7 +3,6 @@ package fr.descentecanyon.app.domain.model
 import java.net.URI
 import java.net.URLDecoder
 import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 import java.text.Normalizer
 import java.util.Locale
 
@@ -145,9 +144,10 @@ class AppLinks(val host: String) {
             decode(name) to decode(value)
         }.toMap()
 
-        private fun decode(value: String): String = runCatching { URLDecoder.decode(value, StandardCharsets.UTF_8) }.getOrDefault(value)
+        // The overloads taking a Charset need Android 13: the charset by name.
+        private fun decode(value: String): String = runCatching { URLDecoder.decode(value, "UTF-8") }.getOrDefault(value)
 
         /** For a link put in another link's query (the referrer of an installation). */
-        fun encode(value: String): String = URLEncoder.encode(value, StandardCharsets.UTF_8)
+        fun encode(value: String): String = URLEncoder.encode(value, "UTF-8")
     }
 }

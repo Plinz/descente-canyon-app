@@ -28,10 +28,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.intl.LocaleList
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -171,7 +171,7 @@ private fun FailedLink(failure: SharedLinkFailure, onRetry: () -> Unit, modifier
 @Composable
 private fun OutingFacts(outing: SharedOuting, title: String) {
     val colors = LocalDcColors.current
-    val locale = LocaleList.current.localeList.firstOrNull()?.platformLocale ?: Locale.getDefault()
+    val locale = LocalLocale.current.platformLocale
     Surface(color = colors.surfaceRaised, shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(6.dp)) {
             Text(
@@ -327,7 +327,7 @@ private fun CanyonRow(canyon: SharedCanyon, onOpenCanyon: (Int) -> Unit) {
 @Composable
 private fun StayHeader(state: SharedLinkUiState.Stay, onAddStay: () -> Unit, onOpenStay: (Long) -> Unit) {
     val colors = LocalDcColors.current
-    val locale = LocaleList.current.localeList.firstOrNull()?.platformLocale ?: Locale.getDefault()
+    val locale = LocalLocale.current.platformLocale
     val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(locale)
     Surface(color = colors.surfaceRaised, shape = MaterialTheme.shapes.large, modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -357,7 +357,7 @@ private fun StayHeader(state: SharedLinkUiState.Stay, onAddStay: () -> Unit, onO
 @Composable
 private fun StayDayCard(outing: SharedOuting, state: SharedLinkUiState.Stay, onAddOuting: (SharedOutingRequest) -> Unit) {
     val colors = LocalDcColors.current
-    val locale = LocaleList.current.localeList.firstOrNull()?.platformLocale ?: Locale.getDefault()
+    val locale = LocalLocale.current.platformLocale
     val names = outing.canyonIds.map { state.canyons[it]?.name.orEmpty() }.joinToString(" + ")
     val inCatalog = outing.canyonIds.all { state.canyons[it]?.item != null }
     Surface(color = colors.surfaceRaised, shape = MaterialTheme.shapes.medium, modifier = Modifier.fillMaxWidth()) {

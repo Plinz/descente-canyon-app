@@ -6,7 +6,6 @@ import com.android.installreferrer.api.InstallReferrerClient
 import com.android.installreferrer.api.InstallReferrerStateListener
 import fr.descentecanyon.app.domain.model.AppLinks
 import java.net.URLDecoder
-import java.nio.charset.StandardCharsets
 import kotlin.coroutines.resume
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withTimeoutOrNull
@@ -37,7 +36,8 @@ object InstallReferrerLink {
     internal fun linkOf(referrer: String): String? = referrer.split('&')
         .firstOrNull { it.startsWith("$PARAMETER=") }
         ?.substringAfter('=')
-        ?.let { runCatching { URLDecoder.decode(it, StandardCharsets.UTF_8) }.getOrNull() }
+        // The overload taking a Charset needs Android 13.
+        ?.let { runCatching { URLDecoder.decode(it, "UTF-8") }.getOrNull() }
         ?.takeIf { it.startsWith("https://") }
 
     private suspend fun read(context: Context): String? = suspendCancellableCoroutine { continuation ->
