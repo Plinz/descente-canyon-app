@@ -37,7 +37,9 @@
 		}
 	}
 
-	@api path /v1/health /v1/canyons/* /v1/tracks/* /v1/canyon-proposals /v1/canyon-proposals/*
+	# Every route of dcserver.api must be named here, else /v1/* below answers 404 from the static files
+	# (tests/test_caddy_routes.py checks it).
+	@api path /v1/health /v1/canyons/* /v1/tracks/* /v1/canyon-proposals /v1/canyon-proposals/* /v1/feedback /v1/feedback/* /v1/shares /v1/shares/*
 	handle @api {
 		encode zstd gzip
 		reverse_proxy api:8080
