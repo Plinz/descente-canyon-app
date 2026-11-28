@@ -60,10 +60,10 @@ def test_canyon_page_says_what_the_canyon_is_and_opens_the_app(client):
     assert "v4a4III" in page
     assert "Sigale · Alpes-Maritimes · France" in page
     assert 'property="og:title" content="Riolan (Clue du) (v4a4III)"' in page
-    assert f'rel="canonical" href="https://canyon.aduquennoy.fr/c/{SITE_CANYON_ID}-riolan-clue-du"' in page
+    assert f'rel="canonical" href="https://dc-app.fr/c/{SITE_CANYON_ID}-riolan-clue-du"' in page
     # Android: the intent link opens the app, the Play Store when it is missing, with the link as referrer.
-    assert f"intent://canyon.aduquennoy.fr/c/{SITE_CANYON_ID}-riolan#Intent;scheme=https;package=fr.descentecanyon.app;" in page
-    assert "referrer=dc_link%3Dhttps%253A%252F%252Fcanyon.aduquennoy.fr%252Fc%252F2895-riolan" in page
+    assert f"intent://dc-app.fr/c/{SITE_CANYON_ID}-riolan#Intent;scheme=https;package=fr.descentecanyon.app;" in page
+    assert "referrer=dc_link%3Dhttps%253A%252F%252Fdc-app.fr%252Fc%252F2895-riolan" in page
     assert "https://www.descente-canyon.com/canyoning/canyon/2895/riolan.html" in page
     assert "Ouvrir dans l&#x27;application" in page
     assert response.headers["x-robots-tag"] == "noindex, nofollow"
@@ -131,8 +131,10 @@ def test_asset_links(reference_settings):
 
 def test_settings_of_the_links():
     base = {"DC_PEPPER": "ab" * 32}
-    assert load_settings(base).public_url == "https://canyon.aduquennoy.fr"
-    assert load_settings({**base, "DC_DOMAIN": "liens.example.org"}).public_url == "https://liens.example.org"
+    assert load_settings(base).public_url == "https://dc-app.fr"
+    assert load_settings({**base, "DC_LINK_DOMAIN": "liens.example.org"}).public_url == "https://liens.example.org"
+    # The API's domain is not the links' one.
+    assert load_settings({**base, "DC_DOMAIN": "api.example.org"}).public_url == "https://dc-app.fr"
     assert load_settings({**base, "DC_PUBLIC_URL": "https://a.example/"}).public_url == "https://a.example"
     with pytest.raises(ConfigError):
         load_settings({**base, "DC_PUBLIC_URL": "http://a.example"})

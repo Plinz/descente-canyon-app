@@ -19,12 +19,12 @@ class CanyonShareTextTest {
         url = "https://www.descente-canyon.com/canyoning/canyon/2224/Riolan.html",
     )
 
-    private val links = AppLinks("canyon.aduquennoy.fr")
+    private val links = AppLinks("dc-app.fr")
 
     @Test
     fun `share text has the name, the place and the app's link`() {
         assertEquals(
-            "Riolan (v4a4III)\nSigale, Aiglun · Alpes-Maritimes · France\nhttps://canyon.aduquennoy.fr/c/2224-riolan",
+            "Riolan (v4a4III)\nSigale, Aiglun · Alpes-Maritimes · France\nhttps://dc-app.fr/c/2224-riolan",
             canyonShareText(riolan, links),
         )
     }
@@ -40,7 +40,7 @@ class CanyonShareTextTest {
     @Test
     fun `a canyon added in the app is shared by the app's link`() {
         val added = riolan.copy(id = 1_000_012, url = "")
-        assertEquals("https://canyon.aduquennoy.fr/c/1000012-riolan", canyonShareText(added, links).lines().last())
+        assertEquals("https://dc-app.fr/c/1000012-riolan", canyonShareText(added, links).lines().last())
     }
 
     @Test
@@ -48,7 +48,7 @@ class CanyonShareTextTest {
         val canyon = riolan.copy(cotation = "", communes = emptyList(), commune = "", departement = null)
 
         assertEquals(
-            "Riolan\nFrance\nhttps://canyon.aduquennoy.fr/c/2224-riolan",
+            "Riolan\nFrance\nhttps://dc-app.fr/c/2224-riolan",
             canyonShareText(canyon, links),
         )
     }

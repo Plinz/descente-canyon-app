@@ -673,14 +673,14 @@ class OutingPlanTest {
             buildOutingMessage(TestStrings, data, MessageAudience.RELATIVE, setOf(MessageSection.SAFETY)).lines(),
         )
         // The outing's link, once made, comes before the sheet; without it, no line.
-        val withLink = data.copy(outingLink = "https://canyon.aduquennoy.fr/s/k3F9x2pQa")
+        val withLink = data.copy(outingLink = "https://dc-app.fr/s/k3F9x2pQa")
         val team = buildOutingMessage(TestStrings, withLink, MessageAudience.TEAM, MessageAudience.TEAM.defaultSections).lines()
         assertEquals(
-            listOf("Covoiturage", "LINK https://canyon.aduquennoy.fr/s/k3F9x2pQa", "SHEET https://example.test/42"),
+            listOf("Covoiturage", "LINK https://dc-app.fr/s/k3F9x2pQa", "SHEET https://example.test/42"),
             team.takeLast(3),
         )
         assertEquals(
-            "LINK https://canyon.aduquennoy.fr/s/k3F9x2pQa",
+            "LINK https://dc-app.fr/s/k3F9x2pQa",
             buildOutingMessage(TestStrings, withLink, MessageAudience.GUESTS, MessageAudience.GUESTS.defaultSections).lines().last(),
         )
         assertEquals(
@@ -748,7 +748,7 @@ class OutingPlanTest {
         advanceUntilIdle()
 
         val prepared = viewModel.uiState.value.preparedLink!!
-        assertEquals("https://canyon.aduquennoy.fr/s/k3F9x2pQa", prepared.url)
+        assertEquals("https://dc-app.fr/s/k3F9x2pQa", prepared.url)
         assertTrue(prepared.isShort)
         val link = outingRepository.outings.value.single().choices!!.link!!
         assertTrue(link.isOwn)
@@ -781,7 +781,7 @@ class OutingPlanTest {
 
         val prepared = viewModel.uiState.value.preparedLink!!
         assertFalse(prepared.isShort)
-        val parsed = AppLinks("canyon.aduquennoy.fr").parse(prepared.url) as AppLink.OutingInLink
+        val parsed = AppLinks("dc-app.fr").parse(prepared.url) as AppLink.OutingInLink
         val outing = ShareCodec.unpack(parsed.payload)!!
         assertNull(outing.date)
         assertNull(outing.timing)
@@ -918,7 +918,7 @@ class OutingPlanTest {
             driveTimeRepository = driveTimeRepository,
             connectivityObserver = connectivity,
             shareRepository = shares,
-            appLinks = AppLinks("canyon.aduquennoy.fr"),
+            appLinks = AppLinks("dc-app.fr"),
             clock = clock,
         )
     }
@@ -934,7 +934,7 @@ class OutingPlanTest {
         override suspend fun publish(content: SharedContent, code: String?): Result<PublishedShare> {
             published += content to code
             val made = code ?: "k3F9x2pQa"
-            return Result.success(PublishedShare(made, "https://canyon.aduquennoy.fr/s/$made", published.size))
+            return Result.success(PublishedShare(made, "https://dc-app.fr/s/$made", published.size))
         }
 
         override suspend fun fetch(code: String): Result<ReceivedShare> =

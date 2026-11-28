@@ -37,7 +37,7 @@ sealed interface AppLink {
 }
 
 /**
- * The links of the app's domain ([host], "canyon.aduquennoy.fr"): built for sharing, read when a
+ * The links of the app's domain ([host], "dc-app.fr"): built for sharing, read when a
  * link opens the app. A canyon link carries a readable name the app ignores: /c/2895-riolan.
  */
 class AppLinks(val host: String) {

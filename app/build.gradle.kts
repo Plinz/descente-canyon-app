@@ -217,8 +217,9 @@ require(backendUrl.isEmpty() || backendUrl.startsWith("https://")) { "dc.backend
 require(backendPublicKeys.all { key -> key.matches(Regex("^[A-Za-z0-9+/]+={0,2}$")) }) { "dc.backendPublicKey must be base64" }
 
 // Domain of the links the app shares and opens (canyon pages, shared outings): the server answers
-// there with the pages of those links and the assetlinks.json that lets Android open them here.
-val linkHost = backendSetting("dc.linkHost", "DC_LINK_HOST").trim().lowercase().ifEmpty { "canyon.aduquennoy.fr" }
+// there with the pages of those links and the assetlinks.json that lets Android open them here. Same
+// default as the server's DC_LINK_DOMAIN (server/deploy/.env.example): the two change together.
+val linkHost = backendSetting("dc.linkHost", "DC_LINK_HOST").trim().lowercase().ifEmpty { "dc-app.fr" }
 require(linkHost.matches(Regex("^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$"))) { "dc.linkHost must be a host name" }
 
 // Catalog identity checked before a downloaded catalog replaces the APK's one: the same Room

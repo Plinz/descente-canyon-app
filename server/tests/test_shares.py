@@ -70,7 +70,7 @@ def test_an_outing_is_shared_read_changed_by_its_author_and_deleted(client):
     share = created.json()
     code = share["code"]
     assert len(code) == CODE_LENGTH and all(char in CODE_ALPHABET for char in code)
-    assert share["url"] == f"https://canyon.aduquennoy.fr/s/{code}"
+    assert share["url"] == f"https://dc-app.fr/s/{code}"
     assert share["version"] == 1
     # Kept 30 days after its day.
     assert share["expiresAt"] == "2026-08-04T00:00:00Z"
@@ -181,7 +181,7 @@ def test_the_page_of_a_shared_outing(client):
     assert "6 personnes, avec des débutants" in text
     # The note is shown, escaped.
     assert "&lt;b&gt;pas&lt;/b&gt;" in text
-    assert f"intent://canyon.aduquennoy.fr/s/{code}#Intent" in text
+    assert f"intent://dc-app.fr/s/{code}#Intent" in text
     assert page.headers["cache-control"] == "public, max-age=300"
     english = client.get(f"/s/{code}", headers={"Accept-Language": "en"}).text
     assert "Saturday 4 July 2026" in english

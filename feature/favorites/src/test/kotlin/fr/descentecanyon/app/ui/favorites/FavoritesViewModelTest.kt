@@ -59,7 +59,7 @@ class FavoritesViewModelTest {
 
         override suspend fun publish(content: SharedContent, code: String?): Result<PublishedShare> {
             published += content
-            return Result.success(PublishedShare("k3F9x2pQa", "https://canyon.aduquennoy.fr/s/k3F9x2pQa", 1))
+            return Result.success(PublishedShare("k3F9x2pQa", "https://dc-app.fr/s/k3F9x2pQa", 1))
         }
 
         override suspend fun fetch(code: String): Result<ReceivedShare> = Result.failure(UnsupportedOperationException())
@@ -192,7 +192,7 @@ class FavoritesViewModelTest {
         viewModel.shareList()
         advanceUntilIdle()
 
-        assertEquals("https://canyon.aduquennoy.fr/s/k3F9x2pQa", viewModel.uiState.value.sharedListUrl)
+        assertEquals("https://dc-app.fr/s/k3F9x2pQa", viewModel.uiState.value.sharedListUrl)
         assertEquals(SharedContent.CanyonList("", shown), shares.published.single())
         viewModel.sharedListHandled()
         assertEquals(null, viewModel.uiState.value.sharedListUrl)

@@ -10,7 +10,8 @@ from dataclasses import dataclass
 from pathlib import Path
 
 DEFAULT_USER_AGENT = "DescenteCanyonAppServer/1.0 (+https://plinz.github.io/descente-canyon-app/)"
-DEFAULT_PUBLIC_URL = "https://canyon.aduquennoy.fr"
+DEFAULT_PUBLIC_URL = "https://dc-app.fr"
+"""Address of the links the app shares: its default dc.linkHost (app/build.gradle.kts) is this host."""
 DEFAULT_ANDROID_PACKAGE = "fr.descentecanyon.app"
 RELEASE_CERT_SHA256 = "06:C9:84:D8:94:B5:7B:12:FB:4A:E9:FF:D4:0D:00:A2:3F:FB:1B:68:79:DA:02:30:10:6F:83:AE:CA:04:F0:A5"
 """Certificate of the APKs the Release workflow signs (GitHub releases, upload key of Google Play)."""
@@ -142,8 +143,8 @@ def _fingerprints(raw: str | None, default: tuple[str, ...]) -> tuple[str, ...]:
 
 def _public_url(env: Mapping[str, str]) -> str:
     url = (env.get("DC_PUBLIC_URL") or "").strip().rstrip("/")
-    if not url and (env.get("DC_DOMAIN") or "").strip():
-        url = "https://" + env["DC_DOMAIN"].strip().rstrip("/")
+    if not url and (env.get("DC_LINK_DOMAIN") or "").strip():
+        url = "https://" + env["DC_LINK_DOMAIN"].strip().rstrip("/")
     url = url or DEFAULT_PUBLIC_URL
     if not url.startswith("https://"):
         raise ConfigError("DC_PUBLIC_URL must be an https:// address")

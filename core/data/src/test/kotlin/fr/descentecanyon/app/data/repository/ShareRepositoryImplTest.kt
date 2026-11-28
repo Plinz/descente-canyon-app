@@ -80,7 +80,7 @@ class ShareRepositoryImplTest {
         val published = repository.publish(SharedContent.Outing(outing)).getOrThrow()
 
         assertEquals("4ECKQHyww", published.code)
-        assertEquals("https://canyon.aduquennoy.fr/s/4ECKQHyww", published.url)
+        assertEquals("https://dc-app.fr/s/4ECKQHyww", published.url)
         val request = backend.server.takeRequest()
         assertEquals("POST", request.method)
         assertEquals("/v1/shares", request.path)

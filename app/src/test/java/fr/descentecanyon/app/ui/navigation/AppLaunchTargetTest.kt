@@ -34,28 +34,28 @@ class AppLaunchTargetTest {
         assertEquals(AppLaunchTarget.None, target)
     }
 
-    private val appLinks = AppLinks("canyon.aduquennoy.fr")
+    private val appLinks = AppLinks("dc-app.fr")
 
     @Test
     fun `links of the app's domain open the canyon, its tab or its map`() {
         assertEquals(
             AppLaunchTarget.CanyonDetail(canyonId = 2895, openDebitsTab = false),
-            parseLaunchTargetFromUrl("https://canyon.aduquennoy.fr/c/2895-riolan", appLinks),
+            parseLaunchTargetFromUrl("https://dc-app.fr/c/2895-riolan", appLinks),
         )
         assertEquals(
             AppLaunchTarget.CanyonDetail(canyonId = 2895, openDebitsTab = false, section = CanyonSection.DEBITS),
-            parseLaunchTargetFromUrl("https://canyon.aduquennoy.fr/c/2895-riolan/debits", appLinks),
+            parseLaunchTargetFromUrl("https://dc-app.fr/c/2895-riolan/debits", appLinks),
         )
         assertEquals(
             AppLaunchTarget.CanyonMap(2895, 44.1, 6.5),
-            parseLaunchTargetFromUrl("https://canyon.aduquennoy.fr/c/2895/carte?lat=44.1&lon=6.5", appLinks),
+            parseLaunchTargetFromUrl("https://dc-app.fr/c/2895/carte?lat=44.1&lon=6.5", appLinks),
         )
-        assertEquals(AppLaunchTarget.Share("k3F9x2pQa"), parseLaunchTargetFromUrl("https://canyon.aduquennoy.fr/s/k3F9x2pQa", appLinks))
+        assertEquals(AppLaunchTarget.Share("k3F9x2pQa"), parseLaunchTargetFromUrl("https://dc-app.fr/s/k3F9x2pQa", appLinks))
     }
 
     @Test
     fun `the app's domain is ignored without its host, the site's links still open`() {
-        assertEquals(AppLaunchTarget.None, parseLaunchTargetFromUrl("https://canyon.aduquennoy.fr/c/2895"))
+        assertEquals(AppLaunchTarget.None, parseLaunchTargetFromUrl("https://dc-app.fr/c/2895"))
         assertEquals(
             AppLaunchTarget.CanyonDetail(canyonId = 212, openDebitsTab = false),
             parseLaunchTargetFromUrl("https://www.descente-canyon.com/canyoning/canyon/212/Rabou.html", appLinks),
@@ -65,13 +65,13 @@ class AppLaunchTargetTest {
     @Test
     fun `the link Google Play kept from a shared page is read from its referrer`() {
         assertEquals(
-            "https://canyon.aduquennoy.fr/s/k3F9x2pQa",
-            InstallReferrerLink.linkOf("dc_link=https%3A%2F%2Fcanyon.aduquennoy.fr%2Fs%2Fk3F9x2pQa"),
+            "https://dc-app.fr/s/k3F9x2pQa",
+            InstallReferrerLink.linkOf("dc_link=https%3A%2F%2Fdc-app.fr%2Fs%2Fk3F9x2pQa"),
         )
         assertEquals(
-            "https://canyon.aduquennoy.fr/o/2224-riolan#eJzLSM3JyVcozy_KSQEAGgQEXQ",
+            "https://dc-app.fr/o/2224-riolan#eJzLSM3JyVcozy_KSQEAGgQEXQ",
             InstallReferrerLink.linkOf(
-                "utm_source=x&dc_link=https%3A%2F%2Fcanyon.aduquennoy.fr%2Fo%2F2224-riolan%23eJzLSM3JyVcozy_KSQEAGgQEXQ",
+                "utm_source=x&dc_link=https%3A%2F%2Fdc-app.fr%2Fo%2F2224-riolan%23eJzLSM3JyVcozy_KSQEAGgQEXQ",
             ),
         )
         assertEquals(null, InstallReferrerLink.linkOf("utm_source=google-play&utm_medium=organic"))

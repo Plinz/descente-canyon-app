@@ -380,7 +380,7 @@ class OutingScreensTest {
 
         override suspend fun publish(content: SharedContent, code: String?): Result<PublishedShare> {
             published += content
-            return Result.success(PublishedShare("st4yC0de9", "https://canyon.aduquennoy.fr/s/st4yC0de9", 1))
+            return Result.success(PublishedShare("st4yC0de9", "https://dc-app.fr/s/st4yC0de9", 1))
         }
 
         override suspend fun fetch(code: String): Result<ReceivedShare> = Result.failure(UnsupportedOperationException())
@@ -404,7 +404,7 @@ class OutingScreensTest {
         viewModel.shareStay()
         advanceUntilIdle()
 
-        assertEquals("https://canyon.aduquennoy.fr/s/st4yC0de9", viewModel.shareState.value.url)
+        assertEquals("https://dc-app.fr/s/st4yC0de9", viewModel.shareState.value.url)
         val shared = (stayShares.published.single() as SharedContent.Stay).stay
         assertEquals(SharedPlace("Camping", 44.0, 6.8), shared.place)
         assertEquals(LocalDate.of(2026, 7, 14) to LocalDate.of(2026, 7, 16), shared.start to shared.end)
