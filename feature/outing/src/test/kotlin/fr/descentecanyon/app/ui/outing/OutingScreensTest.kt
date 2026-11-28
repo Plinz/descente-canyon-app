@@ -18,6 +18,10 @@ import fr.descentecanyon.app.domain.model.OutingChoices
 import fr.descentecanyon.app.domain.model.OutingSettings
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.PublishedShare
+import fr.descentecanyon.app.domain.model.ReceivedShare
+import fr.descentecanyon.app.domain.model.SharedContent
+import fr.descentecanyon.app.domain.model.SharedPlace
 import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.WeatherLocationSource
 import fr.descentecanyon.app.domain.model.WeatherTarget
@@ -25,6 +29,7 @@ import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
+import fr.descentecanyon.app.domain.repository.ShareRepository
 import fr.descentecanyon.app.domain.repository.WeatherRepository
 import fr.descentecanyon.app.domain.usecase.GetPersonalPaceUseCase
 import fr.descentecanyon.app.domain.usecase.GetPlaceWeatherUseCase
@@ -367,6 +372,51 @@ class OutingScreensTest {
         logbook: List<LogbookEntry> = emptyList(),
     ) = OutingsViewModel(outings, stays, places, mockk<LogbookRepository> { every { observeAll() } returns flowOf(logbook) }, clock)
 
+    /** The server's short links, recording what is shared. */
+    private val stayShares = object : ShareRepository {
+        val published = mutableListOf<SharedContent>()
+
+        override fun observeAvailable() = flowOf(true)
+
+        override suspend fun publish(content: SharedContent, code: String?): Result<PublishedShare> {
+            published += content
+            return Result.success(PublishedShare("st4yC0de9", "https://canyon.aduquennoy.fr/s/st4yC0de9", 1))
+        }
+
+        override suspend fun fetch(code: String): Result<ReceivedShare> = Result.failure(UnsupportedOperationException())
+
+        override suspend fun delete(code: String): Result<Unit> = Result.success(Unit)
+    }
+
+    @Test
+    fun `a stay is shared with its place, its days and its outings meeting at the campsite`() = runTest {
+        val place = Place("Camping", 44.0, 6.8, id = 7)
+        val stay = Stay(7, LocalDate.of(2026, 7, 14), LocalDate.of(2026, 7, 16), id = 3)
+        val outings = FakeOutingRepository()
+        outings.save(outingOn(LocalDate.of(2026, 7, 15), "Bollinette", placeId = 7, stayId = 3))
+        outings.save(outingOn(LocalDate.of(2026, 7, 16), "Riolan", stayId = 3))
+        val viewModel = stayViewModel(stay, place, outings, cached = null)
+        backgroundScope.launch { viewModel.uiState.collect {} }
+        backgroundScope.launch { viewModel.shareState.collect {} }
+        advanceUntilIdle()
+        assertTrue(viewModel.shareState.value.available)
+
+        viewModel.shareStay()
+        advanceUntilIdle()
+
+        assertEquals("https://canyon.aduquennoy.fr/s/st4yC0de9", viewModel.shareState.value.url)
+        val shared = (stayShares.published.single() as SharedContent.Stay).stay
+        assertEquals(SharedPlace("Camping", 44.0, 6.8), shared.place)
+        assertEquals(LocalDate.of(2026, 7, 14) to LocalDate.of(2026, 7, 16), shared.start to shared.end)
+        assertEquals(listOf("Bollinette", "Riolan"), shared.outings.map { it.summary.names.single() })
+        // Leaving from the campsite: the team meets there; the other one meets at the parking.
+        assertEquals(listOf(true, false), shared.outings.map { it.meetAtPlace })
+        assertEquals(LocalTime.of(9, 0), shared.outings.first().summary.walk)
+        viewModel.shareHandled()
+        advanceUntilIdle()
+        assertNull(viewModel.shareState.value.url)
+    }
+
     private fun stayViewModel(
         stay: Stay,
         place: Place,
@@ -408,6 +458,14 @@ class OutingScreensTest {
             },
             getPlaceWeatherUseCase = GetPlaceWeatherUseCase(weather),
             connectivityObserver = mockk<ConnectivityObserver> { every { isCurrentlyOnline() } returns false },
+            shareRepository = stayShares,
+            outingPreferencesRepository = FakeOutingPreferencesRepository(),
+            getPersonalPaceUseCase = GetPersonalPaceUseCase(
+                mockk<LogbookRepository> {
+                    every { observeAll() } returns flowOf(logbook)
+                },
+                canyons,
+            ),
             clock = clock,
         )
     }

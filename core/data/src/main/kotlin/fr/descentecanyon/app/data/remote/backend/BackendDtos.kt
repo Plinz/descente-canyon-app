@@ -54,6 +54,7 @@ data class ManifestMessageDto(
     val maxVersionCode: Int? = null,
     val until: String? = null,
     val text: Map<String, String> = emptyMap(),
+    val link: String? = null,
 )
 
 @Serializable

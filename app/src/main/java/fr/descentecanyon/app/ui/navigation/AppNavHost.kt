@@ -276,6 +276,8 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
             val route = backStackEntry.toRoute<Screen.CanyonPointsMap>()
             CanyonPointsMapScreen(
                 canyonId = route.canyonId,
+                focus = route.focus,
+                trackId = route.trackId,
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
                 onOpenEmergency = dropUnlessResumed { navController.navigateSingleTop(Screen.Emergency(route.canyonId)) },
                 contentPadding = topLevelContentPadding,

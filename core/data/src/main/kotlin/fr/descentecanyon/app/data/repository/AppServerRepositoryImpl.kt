@@ -213,6 +213,7 @@ class AppServerRepositoryImpl @Inject constructor(
         id = id,
         level = if (level == "warning") ServerMessageLevel.WARNING else ServerMessageLevel.INFO,
         texts = text,
+        link = link?.takeIf { it.startsWith("https://") },
     )
 
     private fun <T> observe(key: String, serializer: KSerializer<T>): Flow<T?> = keyValueDao.observe(key).map { decode(it, serializer) }

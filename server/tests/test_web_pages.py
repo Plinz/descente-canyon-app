@@ -154,3 +154,33 @@ def test_link_helpers():
     assert negotiate("nl-NL,en;q=0.4,it;q=0.8") == "it"
     assert negotiate(None) == "fr"
     assert negotiate("zh-CN") == "fr"
+
+
+def test_a_track_link_shows_the_track_and_its_gpx(reference_settings):
+    from dcserver.tracks.canyons import CanyonReference
+    from dcserver.tracks.service import TrackService
+
+    from .conftest import make_gpx, new_install_key, walk
+
+    service = TrackService(reference_settings.database_path, reference_settings.pepper, CanyonReference(reference_settings.canyon_reference_path))
+    with TestClient(create_app(reference_settings, service)) as client:
+        uploaded = client.post(
+            f"/v1/canyons/{CANYON_ID}/tracks",
+            params={"role": "APPROACH"},
+            content=make_gpx(walk()),
+            headers={"X-Install-Key": new_install_key(), "Content-Type": "application/gpx+xml", "X-Forwarded-For": "203.0.113.9"},
+        )
+        assert uploaded.status_code == 201, uploaded.text
+        track_id = uploaded.json()["id"]
+        page = client.get(f"/c/{CANYON_ID}/carte?trace={track_id}", headers={"Accept-Language": "fr"}).text
+        assert "Trace GPS partagée · Approche" in page
+        assert f'href="/v1/tracks/{track_id}/gpx"' in page
+        gpx = client.get(f"/v1/tracks/{track_id}/gpx")
+        assert gpx.status_code == 200
+        assert gpx.headers["content-type"].startswith("application/gpx+xml")
+        assert gpx.text.count("<trkpt") >= 2
+        assert "<time>" not in gpx.text
+        # Another canyon's link does not show it; a deleted or unknown track is not shown either.
+        assert "Trace GPS" not in client.get(f"/c/{SITE_CANYON_ID}/carte?trace={track_id}").text
+        assert client.get("/v1/tracks/tUnknown12345/gpx").status_code == 404
+    service.close()

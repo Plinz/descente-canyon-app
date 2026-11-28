@@ -121,3 +121,23 @@ def parse_gpx(data: bytes) -> ParsedGpx:
     if not segments:
         raise GpxError("TOO_FEW_POINTS", "no track or route with two points")
     return ParsedGpx(segments=segments, recorded_month=_month_of(first_time))
+
+
+def write_gpx(geometry: list[list[list[float]]], name: str) -> bytes:
+    """A GPX file of a stored track (no time: the server never keeps them), for the page of its link."""
+    from xml.sax.saxutils import escape, quoteattr
+
+    segments = []
+    for segment in geometry:
+        points = []
+        for coordinate in segment:
+            lon, lat = coordinate[0], coordinate[1]
+            ele = f"<ele>{coordinate[2]}</ele>" if len(coordinate) > 2 else ""
+            points.append(f"<trkpt lat={quoteattr(str(lat))} lon={quoteattr(str(lon))}>{ele}</trkpt>")
+        segments.append("<trkseg>" + "".join(points) + "</trkseg>")
+    return (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<gpx version="1.1" creator="Descente Canyon" xmlns="http://www.topografix.com/GPX/1/1">'
+        f"<metadata><name>{escape(name)}</name><copyright author=\"Descente Canyon\"><license>https://creativecommons.org/publicdomain/zero/1.0/</license></copyright></metadata>"
+        f"<trk><name>{escape(name)}</name>{''.join(segments)}</trk></gpx>\n"
+    ).encode("utf-8")

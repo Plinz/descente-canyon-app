@@ -909,6 +909,9 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="account_data_import_failed">Diese Datei ist kein Export der App.</string>
     <string name="account_data_cleared">Tourenbuch und Notizen gelöscht</string>
     <string name="favorites_filter_todo">Noch offen</string>
+    <string name="favorites_share">Liste teilen</string>
+    <string name="favorites_share_text">Meine Canyon-Liste:</string>
+    <string name="favorites_share_failed">Die Liste konnte nicht geteilt werden: Eine Verbindung ist nötig.</string>
     <string name="favorites_todo_empty">Alle Ihre Favoriten stehen schon im Tourenbuch.</string>
     <string name="search_filter_descended">Bereits begangen</string>
     <string name="search_filter_not_descended">Nie begangen</string>
@@ -1263,6 +1266,9 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="stay_delete">Aufenthalt löschen</string>
     <string name="stay_delete_confirm">Diesen Aufenthalt und die für seine Tage geplanten Canyons löschen?</string>
     <string name="stay_edit">Aufenthalt bearbeiten</string>
+    <string name="stay_share">Aufenthalt teilen</string>
+    <string name="stay_share_text">Aufenthalt in %1$s, %2$s: %3$s</string>
+    <string name="stay_share_failed">Der Aufenthalt konnte nicht geteilt werden: Eine Verbindung ist nötig.</string>
     <string name="stay_edit_intro">Der Campingplatz oder die Unterkunft, von der die Touren starten, und die Tage vor Ort.</string>
     <string name="stay_new">Neuer Aufenthalt</string>
     <string name="stay_no_place">Legen Sie zuerst den Campingplatz oder die Unterkunft auf der Karte fest.</string>
@@ -1581,12 +1587,13 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="settings_server_check_failed">Der Server war nicht erreichbar: Die App arbeitet mit ihren eigenen Daten weiter.</string>
     <string name="settings_server_never_checked">Noch nicht geprüft.</string>
     <string name="settings_server_check_now">Jetzt prüfen</string>
-    <string name="settings_privacy_server">Server der App, wenn er in den Einstellungen eingeschaltet ist: Er erhält die IP-Adresse des Telefons, 7 Tage lang gekürzt in seinen Protokollen gespeichert, und die GPS-Tracks, die du teilst (Verlauf und Monat der Tour, ohne Namen und Uhrzeiten), mit einem zufälligen Schlüssel dieser Installation, mit dem du deine Tracks löschen kannst und nur einmal abstimmst. Er erhält auch die Canyons, die du vorschlägst, und die Nachrichten der Ideenbox, mit, sofern du die Haken nicht entfernst, den technischen Angaben und, wenn die App bei descente-canyon.com angemeldet ist, deinem Kontonamen und der E-Mail-Adresse deines Kontos.</string>
+    <string name="settings_privacy_server">Server der App, wenn er in den Einstellungen eingeschaltet ist: Er erhält die IP-Adresse des Telefons, 7 Tage lang gekürzt in seinen Protokollen gespeichert, und die GPS-Tracks, die du teilst (Verlauf und Monat der Tour, ohne Namen und Uhrzeiten), mit einem zufälligen Schlüssel dieser Installation, mit dem du deine Tracks löschen kannst und nur einmal abstimmst. Er erhält auch die Canyons, die du vorschlägst, und die Nachrichten der Ideenbox, mit, sofern du die Haken nicht entfernst, den technischen Angaben und, wenn die App bei descente-canyon.com angemeldet ist, deinem Kontonamen und der E-Mail-Adresse deines Kontos. Die Links von Touren, Aufenthalten oder Listen, die Sie teilen, werden dort bis einen Monat nach ihrem letzten Tag aufbewahrt (ein Jahr für eine Route oder Liste), lesbar für alle, die den Link haben.</string>
     <string name="settings_data_sources_tracks">• Geteilte GPS-Tracks: Personen, die die App verwenden, gemeinfrei (CC0).</string>
     <string name="settings_data_sources_app_canyons">• In der App hinzugefügte Canyons: von Personen vorgeschlagen, die die App verwenden, vor der Veröffentlichung geprüft, gemeinfrei (CC0). Aus anderen Datenbanken (OpenCanyon, CWiki…) übernommene werden dabei übersetzt und abgeglichen und behalten ihre Lizenz CC BY-NC-SA: Die Quelle steht unter „Bibliografie“ des Canyons.</string>
     <string name="server_update_required">Eine neue Version der App ist verfügbar: Installiere sie, um weiterhin Aktualisierungen des Servers zu erhalten.</string>
     <string name="server_update_open">Aktualisieren</string>
     <string name="server_message_hide">Ausblenden</string>
+    <string name="server_message_open">Öffnen</string>
     <string name="tracks_title">Geteilte GPS-Tracks</string>
     <string name="tracks_intro">Von Personen aufgezeichnet, die dort waren, nach ihren Stimmen geordnet. Sie ersetzen weder die Beschreibung noch den Blick auf das Gelände.</string>
     <string name="tracks_empty">Noch kein geteilter Track für diesen Canyon.</string>
@@ -1622,6 +1629,8 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="track_mine">Dein Track</string>
     <string name="track_actions">Aktionen des Tracks</string>
     <string name="track_export">Als GPX exportieren</string>
+    <string name="track_share_link">Link teilen</string>
+    <string name="map_point_share">Punkt teilen</string>
     <string name="track_exported">Track gespeichert.</string>
     <string name="track_delete">Meinen Track löschen</string>
     <string name="track_delete_title">Diesen Track löschen?</string>

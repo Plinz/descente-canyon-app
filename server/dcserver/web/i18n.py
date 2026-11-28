@@ -160,7 +160,7 @@ TEXTS: dict[str, dict[str, str]] = {
     "with_beginners": {
         "fr": "avec des débutants",
         "en": "with beginners",
-        "de": "mit Anfängern",
+        "de": "mit Einsteigenden",
         "es": "con principiantes",
         "it": "con principianti",
     },
@@ -201,6 +201,18 @@ TEXTS: dict[str, dict[str, str]] = {
         "de": "Der Tourenplan steckt im Link: Die App liest ihn auch ohne Netz.",
         "es": "El programa de la salida está en el enlace: la aplicación lo lee incluso sin cobertura.",
         "it": "Il programma dell'uscita è nel link: l'app lo legge anche senza rete.",
+    },
+    "track_title": {"fr": "Trace GPS partagée", "en": "Shared GPS track", "de": "Geteilter GPS-Track", "es": "Track GPS compartido", "it": "Traccia GPS condivisa"},
+    "track_role_approach": {"fr": "Approche", "en": "Approach", "de": "Zustieg", "es": "Aproximación", "it": "Avvicinamento"},
+    "track_role_return": {"fr": "Retour", "en": "Return", "de": "Rückweg", "es": "Retorno", "it": "Ritorno"},
+    "track_role_escape": {"fr": "Échappatoire", "en": "Escape route", "de": "Notausstieg", "es": "Escapatoria", "it": "Via di fuga"},
+    "track_role_full": {"fr": "Sortie complète", "en": "Whole outing", "de": "Ganze Tour", "es": "Salida completa", "it": "Uscita completa"},
+    "track_download": {
+        "fr": "Télécharger la trace (GPX, domaine public)",
+        "en": "Download the track (GPX, public domain)",
+        "de": "Track herunterladen (GPX, gemeinfrei)",
+        "es": "Descargar el track (GPX, dominio público)",
+        "it": "Scarica la traccia (GPX, pubblico dominio)",
     },
     "privacy": {
         "fr": "Confidentialité",

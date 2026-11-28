@@ -47,8 +47,8 @@ data class ServerFeatures(
 
 enum class ServerMessageLevel { INFO, WARNING }
 
-/** A message published by the server, in French and usually other languages. */
-data class ServerMessage(val id: String, val level: ServerMessageLevel, val texts: Map<String, String>) {
+/** A message published by the server, in French and usually other languages; [link] what it opens (a canyon, a page). */
+data class ServerMessage(val id: String, val level: ServerMessageLevel, val texts: Map<String, String>, val link: String? = null) {
     /** The text in [language] (ISO 639-1), else in English, else in French. */
     fun textFor(language: String): String = texts[language] ?: texts["en"] ?: texts["fr"] ?: texts.values.firstOrNull().orEmpty()
 }

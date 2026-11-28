@@ -50,6 +50,7 @@ import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.MyLocation
 import androidx.compose.material.icons.filled.Navigation
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Sos
 import androidx.compose.material.icons.filled.WaterDrop
 import androidx.compose.material3.Button
@@ -106,11 +107,14 @@ import fr.descentecanyon.app.domain.model.GeoPoint
 import fr.descentecanyon.app.domain.model.Hint
 import fr.descentecanyon.app.domain.model.TrackStanding
 import fr.descentecanyon.app.domain.model.haversineKm
+import fr.descentecanyon.app.ui.common.LocalAppLinks
 import fr.descentecanyon.app.ui.common.asString
+import fr.descentecanyon.app.ui.common.shareText
 import fr.descentecanyon.app.ui.design.excludeFromBackGesture
 import fr.descentecanyon.app.ui.location.hasLocationPermission
 import fr.descentecanyon.app.ui.location.observeDeviceLocation
 import fr.descentecanyon.app.ui.location.requestLocationSettings
+import fr.descentecanyon.app.ui.map.MapBoundsRequest
 import fr.descentecanyon.app.ui.map.MapCameraState
 import fr.descentecanyon.app.ui.map.MapFitPadding
 import fr.descentecanyon.app.ui.map.MapFocusRequest
@@ -135,6 +139,9 @@ fun CanyonPointsMapScreen(
     canyonId: Int,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    /** From a link: the point nearest to these coordinates ("lat,lon"), or the shared track, shown first. */
+    focus: String? = null,
+    trackId: String? = null,
     onOpenEmergency: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: CanyonDetailViewModel = hiltViewModel(),
@@ -164,6 +171,10 @@ fun CanyonPointsMapScreen(
                 onBackClick = onBackClick,
                 onOpenEmergency = onOpenEmergency,
                 modifier = Modifier.padding(contentPadding),
+                linkFocus = focus?.split(',')?.takeIf { it.size == 2 }?.let { (lat, lon) ->
+                    lat.toDoubleOrNull()?.let { latitude -> lon.toDoubleOrNull()?.let { longitude -> latitude to longitude } }
+                },
+                linkTrackId = trackId,
             )
 
             else -> Box(
@@ -173,6 +184,9 @@ fun CanyonPointsMapScreen(
         }
     }
 }
+
+/** A point of a link this close to one of the canyon's is that point (the link rounds its coordinates). */
+private const val LINK_POINT_KM = 0.25
 
 /** Zoom at which a point picked in the strip is shown, unless the map is already closer. */
 private const val POINT_FOCUS_ZOOM = 14.5
@@ -191,8 +205,11 @@ private fun CanyonPointsMapContent(
     onBackClick: () -> Unit,
     onOpenEmergency: () -> Unit,
     modifier: Modifier = Modifier,
+    linkFocus: Pair<Double, Double>? = null,
+    linkTrackId: String? = null,
 ) {
     val context = LocalContext.current
+    val appLinks = LocalAppLinks.current
     val resources = LocalResources.current
     val snackbarHostState = remember { SnackbarHostState() }
     val hasWatershedPolygon = !watershedGeometryJson.isNullOrBlank()
@@ -323,6 +340,38 @@ private fun CanyonPointsMapContent(
         )
     }
 
+    // A link names a point or a shared track: shown once, when the points and the tracks are there.
+    var boundsRequest by remember { mutableStateOf<MapBoundsRequest?>(null) }
+    var linkShown by rememberSaveable(detail.canyon.id) { mutableStateOf(false) }
+    LaunchedEffect(points, orderedTracks, linkShown) {
+        if (linkShown) return@LaunchedEffect
+        if (linkFocus != null) {
+            val (latitude, longitude) = linkFocus
+            val nearest = points.withIndex().minByOrNull { (_, point) -> haversineKm(latitude, longitude, point.latitude, point.longitude) }
+            if (nearest != null && haversineKm(latitude, longitude, nearest.value.latitude, nearest.value.longitude) <= LINK_POINT_KM) {
+                showPoint(nearest.index + 1)
+            } else {
+                focusRequest =
+                    MapFocusRequest(id = (focusRequest?.id ?: 0) + 1, latitude = latitude, longitude = longitude, zoom = POINT_FOCUS_ZOOM)
+            }
+            linkShown = true
+        } else if (linkTrackId != null) {
+            val track = orderedTracks.firstOrNull { it.id == linkTrackId } ?: return@LaunchedEffect
+            hiddenTrackIds = hiddenTrackIds - track.id
+            if (track.standing == TrackStanding.DISCREDITED) showDiscreditedTracks = true
+            boundsRequest = MapBoundsRequest(
+                id = (boundsRequest?.id ?: 0) + 1,
+                south = track.bounds.minLatitude,
+                west = track.bounds.minLongitude,
+                north = track.bounds.maxLatitude,
+                east = track.bounds.maxLongitude,
+            )
+            linkShown = true
+        } else {
+            linkShown = true
+        }
+    }
+
     DisposableEffect(locationPermissionGranted) {
         if (!locationPermissionGranted) {
             onDispose {}
@@ -402,6 +451,7 @@ private fun CanyonPointsMapContent(
             fitPadding = FIT_PADDING,
             fitRequestId = fitRequestId,
             focusRequest = focusRequest,
+            boundsRequest = boundsRequest,
             locationFocusZoom = LOCATION_FOCUS_ZOOM,
             onUserCameraMove = {
                 if (trackingModeName != UserTrackingMode.NONE.name) {
@@ -542,12 +592,16 @@ private fun CanyonPointsMapContent(
         ) {
             camera?.let { MapScaleBar(latitude = it.latitude, zoom = it.zoom) }
             selectedPoint?.let { point ->
+                val pointName = point.displayName()
                 PointCard(
                     point = point,
                     distanceMeters = distances.getOrNull(points.indexOf(point)),
                     onNavigate = { navigateTo(point) },
                     onCopyCoordinates = { copyCoordinates(point) },
                     onClose = { selectedPointId = null },
+                    onShare = appLinks.canyonPoint(detail.canyon.id, detail.canyon.nom, point.latitude, point.longitude)?.let { link ->
+                        { context.shareText("$pointName — ${detail.canyon.nom}\n$link") }
+                    },
                 )
             }
             if (points.isNotEmpty()) {
@@ -649,6 +703,8 @@ private fun PointCard(
     onCopyCoordinates: () -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
+    /** Sends the link of this point: the map of the canyon on it, in the app or in a browser. */
+    onShare: (() -> Unit)? = null,
 ) {
     Card(
         modifier = modifier.fillMaxWidth().testTag(TestTags.MAP_POINT_CARD),
@@ -712,6 +768,11 @@ private fun PointCard(
                 Icon(Icons.Default.ContentCopy, contentDescription = null, modifier = Modifier.size(18.dp))
                 Spacer(Modifier.width(6.dp))
                 Text(stringResource(R.string.map_point_copy))
+            }
+            if (onShare != null) {
+                IconButton(onClick = onShare, modifier = Modifier.testTag(TestTags.MAP_POINT_SHARE)) {
+                    Icon(Icons.Default.Share, contentDescription = stringResource(R.string.map_point_share))
+                }
             }
         }
     }

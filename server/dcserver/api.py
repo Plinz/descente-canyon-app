@@ -4,6 +4,7 @@
     GET    /v1/canyons/{canyonId}/tracks          anonymous read, ETag
     POST   /v1/canyons/{canyonId}/tracks?role=R   body: the GPX file, header X-Install-Key
     PUT    /v1/tracks/{trackId}/vote              body: {"value": 1 | 0 | -1}, header X-Install-Key
+    GET    /v1/tracks/{trackId}/gpx               the track as a GPX file (CC0), for the page of its link
     DELETE /v1/tracks/{trackId}                   the author only, header X-Install-Key
     POST   /v1/canyon-proposals                   body: {"kind", "canyonId", "content", "licence"}, header X-Install-Key
     GET    /v1/canyon-proposals/mine              the proposals of this installation, header X-Install-Key
@@ -40,6 +41,8 @@ from .feedback.service import FeedbackError, FeedbackService
 from .tracks.canyons import CanyonReference
 from .tracks.service import TrackError, TrackService
 from .shares.service import ShareError, ShareService
+from .tracks.gpx import write_gpx
+from .web.links import slug
 from .web.routes import register_pages
 
 INSTALL_KEY_HEADER = "X-Install-Key"
@@ -214,6 +217,19 @@ def create_app(
         )
         return _json(track)
 
+    @app.get("/v1/tracks/{track_id}/gpx")
+    async def track_gpx(track_id: str) -> Response:
+        track = await run_in_threadpool(tracks().get, track_id)
+        entry = reference().entry(track["canyonId"]) or {}
+        name = " - ".join(part for part in (entry.get("name") or "", track["role"].lower()) if part)
+        body = write_gpx(track["geometry"], name)
+        filename = (slug(name) or "trace") + ".gpx"
+        return Response(
+            body,
+            media_type="application/gpx+xml",
+            headers={"Content-Disposition": f'attachment; filename="{filename}"', "Cache-Control": "public, max-age=3600"},
+        )
+
     @app.delete("/v1/tracks/{track_id}")
     async def delete_track(track_id: str, request: Request) -> Response:
         await run_in_threadpool(tracks().delete, track_id, request.headers.get(INSTALL_KEY_HEADER))
@@ -310,5 +326,5 @@ def create_app(
         await run_in_threadpool(shares().delete, code, request.headers.get(INSTALL_KEY_HEADER))
         return Response(status_code=204, headers={"Cache-Control": "no-store"})
 
-    register_pages(app, settings, reference, shares)
+    register_pages(app, settings, reference, shares, tracks)
     return app

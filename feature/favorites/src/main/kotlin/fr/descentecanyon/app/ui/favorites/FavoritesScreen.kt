@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.ui.favorites
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +27,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.FilterList
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -49,6 +53,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -56,6 +61,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.ui.common.asString
+import fr.descentecanyon.app.ui.common.startActivitySafely
 import fr.descentecanyon.app.ui.components.CanyonSummaryCard
 import fr.descentecanyon.app.ui.design.DcEmptyState
 import fr.descentecanyon.app.ui.design.DcSectionHeader
@@ -78,6 +84,21 @@ fun FavoritesScreen(
     val snackbarHostState = remember { SnackbarHostState() }
     val removedMessage = uiState.removedFavorite?.let { stringResource(R.string.favorite_removed, it.nom) }
     val undoLabel = stringResource(R.string.undo)
+
+    val context = LocalContext.current
+    val shareFailed = stringResource(R.string.favorites_share_failed)
+    val shareText = stringResource(R.string.favorites_share_text)
+    LaunchedEffect(uiState.sharedListUrl, uiState.shareListFailed) {
+        uiState.sharedListUrl?.let { url ->
+            viewModel.sharedListHandled()
+            val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, "$shareText $url")
+            context.startActivitySafely(Intent.createChooser(send, null))
+        }
+        if (uiState.shareListFailed) {
+            viewModel.sharedListHandled()
+            snackbarHostState.showSnackbar(shareFailed)
+        }
+    }
 
     LaunchedEffect(removedMessage) {
         removedMessage ?: return@LaunchedEffect
@@ -106,36 +127,21 @@ fun FavoritesScreen(
                 modifier = Modifier.padding(bottom = 12.dp),
             )
 
-            if (uiState.totalCount > 1) {
+            if (uiState.totalCount > 1 || (uiState.canShareList && uiState.favorites.isNotEmpty())) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.padding(bottom = 8.dp).horizontalScroll(rememberScrollState()),
                 ) {
-                    FilterChip(
-                        selected = uiState.toDoOnly,
-                        onClick = viewModel::toggleToDoOnly,
-                        label = { Text(stringResource(R.string.favorites_filter_todo)) },
-                        leadingIcon = { Icon(Icons.Default.FilterList, contentDescription = null, modifier = Modifier.size(18.dp)) },
-                        modifier = Modifier.testTag(TestTags.FAVORITES_TODO_FILTER),
-                    )
-                    VerticalDivider(modifier = Modifier.height(32.dp).align(Alignment.CenterVertically))
-                    FavoritesSort.entries.forEach { sort ->
-                        FilterChip(
-                            selected = uiState.sort == sort,
-                            onClick = { viewModel.selectSort(sort) },
-                            label = {
-                                Text(
-                                    stringResource(
-                                        when (sort) {
-                                            FavoritesSort.ADDED -> R.string.favorites_sort_added
-                                            FavoritesSort.NAME -> R.string.favorites_sort_name
-                                            FavoritesSort.LATEST_REPORT -> R.string.favorites_sort_report
-                                        },
-                                    ),
-                                )
-                            },
+                    if (uiState.canShareList && uiState.favorites.isNotEmpty()) {
+                        AssistChip(
+                            onClick = viewModel::shareList,
+                            enabled = !uiState.isSharingList,
+                            label = { Text(stringResource(R.string.favorites_share)) },
+                            leadingIcon = { Icon(Icons.Default.Share, contentDescription = null, modifier = Modifier.size(18.dp)) },
+                            modifier = Modifier.testTag(TestTags.FAVORITES_SHARE),
                         )
                     }
+                    if (uiState.totalCount > 1) FavoritesFilters(uiState, viewModel)
                 }
             }
 
@@ -264,5 +270,35 @@ private fun FavoriteDismissItem(onRemove: () -> Unit, modifier: Modifier = Modif
         },
     ) {
         content()
+    }
+}
+
+/** "To do" and the orders of the favorites. */
+@Composable
+private fun RowScope.FavoritesFilters(uiState: FavoritesUiState, viewModel: FavoritesViewModel) {
+    FilterChip(
+        selected = uiState.toDoOnly,
+        onClick = viewModel::toggleToDoOnly,
+        label = { Text(stringResource(R.string.favorites_filter_todo)) },
+        leadingIcon = { Icon(Icons.Default.FilterList, contentDescription = null, modifier = Modifier.size(18.dp)) },
+        modifier = Modifier.testTag(TestTags.FAVORITES_TODO_FILTER),
+    )
+    VerticalDivider(modifier = Modifier.height(32.dp).align(Alignment.CenterVertically))
+    FavoritesSort.entries.forEach { sort ->
+        FilterChip(
+            selected = uiState.sort == sort,
+            onClick = { viewModel.selectSort(sort) },
+            label = {
+                Text(
+                    stringResource(
+                        when (sort) {
+                            FavoritesSort.ADDED -> R.string.favorites_sort_added
+                            FavoritesSort.NAME -> R.string.favorites_sort_name
+                            FavoritesSort.LATEST_REPORT -> R.string.favorites_sort_report
+                        },
+                    ),
+                )
+            },
+        )
     }
 }

@@ -14,6 +14,7 @@ from fastapi.staticfiles import StaticFiles
 from ..config import Settings
 from ..shares.service import ShareError, ShareService
 from ..tracks.canyons import CanyonReference
+from ..tracks.service import TrackError, TrackService
 from . import html, links
 from .i18n import negotiate
 
@@ -75,6 +76,7 @@ def register_pages(
     settings: Settings,
     reference: Callable[[], CanyonReference],
     shares: Callable[[], ShareService] | None = None,
+    tracks: Callable[[], TrackService] | None = None,
 ) -> None:
     app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
@@ -96,7 +98,16 @@ def register_pages(
         if entry is None:
             return html_response(html.not_found_page(ctx, "unknown_canyon"), status=404)
         point = parse_point(request) if section == "carte" else None
-        return html_response(html.canyon_page(ctx, canyon_id, entry, link_of(request, settings), point))
+        track = None
+        trace = request.query_params.get("trace") if section == "carte" else None
+        if trace and tracks is not None:
+            try:
+                track = await run_in_threadpool(tracks().get, trace)
+            except TrackError:
+                track = None
+            if track is not None and track["canyonId"] != canyon_id:
+                track = None
+        return html_response(html.canyon_page(ctx, canyon_id, entry, link_of(request, settings), point, track))
 
     @app.get("/c/{ref}")
     async def canyon_page(request: Request, ref: str) -> HTMLResponse:

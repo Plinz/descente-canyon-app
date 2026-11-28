@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.EventAvailable
 import androidx.compose.material.icons.filled.Hiking
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.NightsStay
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material.icons.filled.WarningAmber
 import androidx.compose.material3.AlertDialog
@@ -50,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLocale
 import androidx.compose.ui.platform.LocalResources
 import androidx.compose.ui.platform.testTag
@@ -71,18 +73,30 @@ import fr.descentecanyon.app.domain.model.DaylightCheck
 import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.GeoPointType
 import fr.descentecanyon.app.domain.model.LogbookEntry
+import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.SharedContent
+import fr.descentecanyon.app.domain.model.SharedNextCanyon
+import fr.descentecanyon.app.domain.model.SharedOuting
+import fr.descentecanyon.app.domain.model.SharedOutingSummary
+import fr.descentecanyon.app.domain.model.SharedPlace
+import fr.descentecanyon.app.domain.model.SharedStay
+import fr.descentecanyon.app.domain.model.SharedTiming
 import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.SunCalculator
 import fr.descentecanyon.app.domain.model.WeatherCondition
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
+import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PlaceRepository
+import fr.descentecanyon.app.domain.repository.ShareRepository
 import fr.descentecanyon.app.domain.repository.StayRepository
+import fr.descentecanyon.app.domain.usecase.GetPersonalPaceUseCase
 import fr.descentecanyon.app.domain.usecase.GetPlaceWeatherUseCase
+import fr.descentecanyon.app.ui.common.shareText
 import fr.descentecanyon.app.ui.components.CompactAppBar
 import fr.descentecanyon.app.ui.components.debitLevelColor
 import fr.descentecanyon.app.ui.components.debitLevelLabel
@@ -109,11 +123,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 /** A day of the stay: the weather at the place, the outings planned and the canyons done. */
@@ -139,6 +155,14 @@ enum class StayWeatherProblem {
     OFFLINE,
     FAILED,
 }
+
+/** Sharing a stay by its link. */
+data class StayShareState(
+    val available: Boolean = false,
+    val isSharing: Boolean = false,
+    val url: String? = null,
+    val failed: Boolean = false,
+)
 
 data class StayUiState(
     val isLoading: Boolean = true,
@@ -175,6 +199,9 @@ class StayViewModel @Inject constructor(
     debitRepository: DebitRepository,
     private val getPlaceWeatherUseCase: GetPlaceWeatherUseCase,
     private val connectivityObserver: ConnectivityObserver,
+    private val shareRepository: ShareRepository,
+    private val outingPreferencesRepository: OutingPreferencesRepository,
+    private val getPersonalPaceUseCase: GetPersonalPaceUseCase,
     private val clock: Clock,
 ) : ViewModel() {
 
@@ -262,6 +289,66 @@ class StayViewModel @Inject constructor(
         }
     }
 
+    private val share = MutableStateFlow(StayShareState())
+
+    /** Sharing the stay: offered when the server makes short links; the link made, or the failure. */
+    val shareState: StateFlow<StayShareState> = combine(share, shareRepository.observeAvailable()) { state, available ->
+        state.copy(available = available)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), StayShareState())
+
+    /**
+     * The stay as a link: its place, its days and its outings with this phone's timing; each person
+     * adds the stay, then the outings of the days they come.
+     */
+    fun shareStay() {
+        if (share.value.isSharing) return
+        share.update { it.copy(isSharing = true, failed = false) }
+        viewModelScope.launch {
+            val current = uiState.first { !it.isLoading }
+            val stay = current.stay
+            val place = current.place
+            val url = if (stay != null && place != null) {
+                val settings = outingPreferencesRepository.observeSettings().first()
+                val pace = getPersonalPaceUseCase()?.takeIf { settings.usePersonalPace }
+                val outings = outingRepository.observeAll().first().filter(stay::includes)
+                    .mapNotNull { it.toSharedInStay(stay, SharedTiming(settings, pace?.ratio)) }
+                val shared = SharedStay(SharedPlace(place.name, place.latitude, place.longitude), stay.start, stay.end, outings)
+                shareRepository.publish(SharedContent.Stay(shared)).getOrNull()?.url
+            } else {
+                null
+            }
+            share.update { it.copy(isSharing = false, url = url, failed = url == null) }
+        }
+    }
+
+    fun shareHandled() = share.update { it.copy(url = null, failed = false) }
+
+    /** An outing of the stay as its link carries it: the team meets at the stay's place when it leaves from there. */
+    private fun PlannedOuting.toSharedInStay(stay: Stay, timing: SharedTiming): SharedOuting? {
+        val choices = choices ?: return null
+        val zone = clock.zone
+        return SharedOuting(
+            canyonId = canyonId,
+            next = choices.nextCanyons.map { SharedNextCanyon(it.canyonId, it.name, it.link, it.adjustments) },
+            date = choices.date,
+            anchorTime = choices.anchorTime,
+            meetAtPlace = choices.anchor == OutingAnchor.LEAVE_PLACE && choices.placeId == stay.placeId,
+            groupSize = choices.groupSize,
+            groupLevel = choices.groupLevel,
+            withShuttle = choices.withShuttle,
+            adjustments = choices.adjustments,
+            timing = choices.timing ?: timing,
+            note = choices.note.trim().take(SharedOuting.MAX_NOTE),
+            summary = SharedOutingSummary(
+                names = listOf(canyonName) + choices.nextCanyons.map { it.name },
+                meet = choices.anchorTime,
+                walk = start.atZone(zone).toLocalTime(),
+                back = expectedBack.atZone(zone).toLocalTime(),
+                backLatest = latestBack.atZone(zone).toLocalTime(),
+            ),
+        )
+    }
+
     fun delete() {
         viewModelScope.launch { stayRepository.delete(stayId) }
     }
@@ -318,6 +405,8 @@ fun StayScreen(
     viewModel: StayViewModel = hiltViewModel(),
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val shareState by viewModel.shareState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     val contentWidth = rememberDcContentWidth(maxWidth = 720.dp)
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -325,6 +414,25 @@ fun StayScreen(
     var menu by remember { mutableStateOf(false) }
     var confirmDelete by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(state.isGone) { if (state.isGone) onBackClick() }
+    LaunchedEffect(shareState.url, shareState.failed) {
+        shareState.url?.let { url ->
+            viewModel.shareHandled()
+            context.shareText(
+                resources.getString(
+                    R.string.stay_share_text,
+                    state.place?.name.orEmpty(),
+                    state.stay?.let {
+                        stayRangeLabelOf(it, resources)
+                    }.orEmpty(),
+                    url,
+                ),
+            )
+        }
+        if (shareState.failed) {
+            viewModel.shareHandled()
+            snackbarHostState.showSnackbar(resources.getString(R.string.stay_share_failed))
+        }
+    }
     if (confirmDelete) {
         AlertDialog(
             onDismissRequest = { confirmDelete = false },
@@ -355,6 +463,17 @@ fun StayScreen(
                             Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.more_actions))
                         }
                         DcDropdownMenu(expanded = menu, onDismissRequest = { menu = false }) {
+                            if (shareState.available) {
+                                DcDropdownMenuItem(
+                                    text = stringResource(R.string.stay_share),
+                                    icon = Icons.Default.Share,
+                                    onClick = {
+                                        menu = false
+                                        viewModel.shareStay()
+                                    },
+                                    modifier = Modifier.testTag(TestTags.STAY_SHARE),
+                                )
+                            }
                             DcDropdownMenuItem(
                                 text = stringResource(R.string.stay_edit),
                                 icon = Icons.Default.Edit,
@@ -460,6 +579,12 @@ private fun StayHeader(stay: Stay, weatherProblem: StayWeatherProblem?) {
 internal fun stayRangeLabel(stay: Stay): String {
     val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(LocalLocale.current.platformLocale)
     return stringResource(R.string.places_stay_range, stay.start.format(formatter), stay.end.format(formatter))
+}
+
+/** The same as [stayRangeLabel], outside composition (the text of a shared link). */
+private fun stayRangeLabelOf(stay: Stay, resources: android.content.res.Resources): String {
+    val formatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.MEDIUM).withLocale(resources.configuration.locales[0])
+    return resources.getString(R.string.places_stay_range, stay.start.format(formatter), stay.end.format(formatter))
 }
 
 /** The canyons done on the days of the stay already past. */

@@ -26,6 +26,8 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.ServerMessage
 import fr.descentecanyon.app.domain.model.ServerMessageLevel
 import fr.descentecanyon.app.domain.repository.AppServerRepository
+import fr.descentecanyon.app.ui.common.LocalAppLinks
+import fr.descentecanyon.app.ui.common.openAppLink
 import fr.descentecanyon.app.ui.common.openUrl
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
@@ -62,6 +64,7 @@ class ServerNoticesViewModel @Inject constructor(private val repository: AppServ
 @Composable
 internal fun HomeServerNotices(state: ServerNoticesState, onDismiss: (ServerMessage) -> Unit, modifier: Modifier = Modifier) {
     val context = LocalContext.current
+    val appLinks = LocalAppLinks.current
     val language = LocalConfiguration.current.locales[0].language
 
     Column(modifier = modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -91,6 +94,9 @@ internal fun HomeServerNotices(state: ServerNoticesState, onDismiss: (ServerMess
                         contentDescription = null,
                     )
                     Text(message.textFor(language), style = MaterialTheme.typography.bodyMedium, modifier = Modifier.weight(1f))
+                    message.link?.let { link ->
+                        TextButton(onClick = { context.openAppLink(link, appLinks) }) { Text(stringResource(R.string.server_message_open)) }
+                    }
                     TextButton(onClick = { onDismiss(message) }) {
                         Text(stringResource(R.string.server_message_hide))
                     }

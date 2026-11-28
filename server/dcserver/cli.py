@@ -143,6 +143,8 @@ def cmd_manifest(settings: Settings, args: argparse.Namespace) -> int:
                     "maxVersionCode": args.max_version,
                     "until": args.until,
                     "text": texts,
+                    # A canyon, a shared outing...: the app opens the links of its own domain itself.
+                    **({"link": args.link} if args.link else {}),
                 }
             ]
         elif args.action == "message-remove":
@@ -232,6 +234,7 @@ def build_parser() -> argparse.ArgumentParser:
     add.add_argument("--until", help="ISO date after which the app stops showing it")
     add.add_argument("--min-version", type=int, default=0)
     add.add_argument("--max-version", type=int)
+    add.add_argument("--link", help="https:// address the message opens (the app's own links open in the app)")
     remove = man_sub.add_parser("message-remove")
     remove.add_argument("--id", required=True)
     feature = man_sub.add_parser("feature")

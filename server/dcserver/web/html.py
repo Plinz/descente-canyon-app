@@ -9,7 +9,7 @@ from datetime import date
 from html import escape
 
 from . import links
-from .i18n import long_date, short_date, text
+from .i18n import TEXTS, long_date, short_date, text
 
 APP_NAME = "Descente Canyon"
 PRIVACY_URL = "https://plinz.github.io/descente-canyon-app/privacy-policy.html"
@@ -144,7 +144,27 @@ def first_point(entry: dict) -> tuple[float, float] | None:
     return float(latitude), float(longitude)
 
 
-def canyon_page(ctx: PageContext, canyon_id: int, entry: dict, link: str, point: tuple[float, float] | None = None) -> str:
+def track_block(ctx: PageContext, track: dict) -> str:
+    """A shared GPS track: its role, length and climb, and its GPX file (public domain)."""
+    role = ctx.t("track_role_" + str(track.get("role", "")).lower()) if f"track_role_{str(track.get('role', '')).lower()}" in TEXTS else ""
+    facts = [f"{track.get('lengthM', 0) / 1000:.1f} km".replace(".", "," if ctx.language in ("fr", "de", "es", "it") else ".")]
+    if track.get("ascentM"):
+        facts.append(f"+{track['ascentM']} m")
+    title = ctx.t("track_title") + (f" · {role}" if role else "")
+    return (
+        f'<section class="canyon-row"><h2>{escape(title)}</h2><p class="detail">{escape(" · ".join(facts))}</p>'
+        f'<ul class="links"><li><a href="/v1/tracks/{escape(str(track.get("id", "")))}/gpx">{escape(ctx.t("track_download"))}</a></li></ul></section>'
+    )
+
+
+def canyon_page(
+    ctx: PageContext,
+    canyon_id: int,
+    entry: dict,
+    link: str,
+    point: tuple[float, float] | None = None,
+    track: dict | None = None,
+) -> str:
     title = canyon_title(entry)
     description = " · ".join(part for part in (place_line(entry), ctx.t("open_app")) if part)
     point_line = ""
@@ -159,6 +179,7 @@ def canyon_page(ctx: PageContext, canyon_id: int, entry: dict, link: str, point:
             point_line,
             app_actions(ctx, link),
             canyon_links(ctx, entry, point),
+            track_block(ctx, track) if track else "",
         )
         if part
     )
@@ -203,7 +224,8 @@ def _group(ctx: PageContext, outing: dict) -> str:
 def _outing_facts(ctx: PageContext, outing: dict, meet_place: str | None) -> list[tuple[str, str]]:
     summary = outing.get("summary") or {}
     rows: list[tuple[str, str]] = []
-    meet = summary.get("meet") or outing.get("anchorTime")
+    # A route has no day: its times are only a suggestion, not shown.
+    meet = (summary.get("meet") or outing.get("anchorTime")) if outing.get("date") else None
     if meet:
         if outing.get("meetAtPlace") and meet_place:
             rows.append((ctx.t("meet"), ctx.t("meet_at_place").format(time=meet, place=meet_place)))

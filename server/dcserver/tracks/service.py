@@ -138,6 +138,14 @@ class TrackService:
         for track in best.values():
             track["isReference"] = True
 
+    def get(self, track_id: str) -> dict:
+        """One track, with its geometry, as the canyon's list gives it; NOT_FOUND when deleted."""
+        with self._lock:
+            row = self._connection.execute("SELECT 1 FROM tracks WHERE id = ?", (track_id,)).fetchone()
+            if row is None:
+                raise TrackError("NOT_FOUND", 404)
+            return self._track_json(self._connection, track_id)
+
     def _track_json(self, connection: sqlite3.Connection, track_id: str) -> dict:
         row = connection.execute("SELECT * FROM tracks WHERE id = ?", (track_id,)).fetchone()
         votes = [(r["voter_net"], r["value"]) for r in connection.execute("SELECT voter_net, value FROM votes WHERE track_id = ?", (track_id,))]

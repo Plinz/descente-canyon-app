@@ -165,6 +165,30 @@ d'hôte (`DC_ADMIN_HOSTS`, par défaut `localhost`) pour qu'aucun autre site ouv
 puisse l'atteindre. `docker compose run --rm --no-deps jobs canyons list` liste les canyons ajoutés et
 compte les propositions en attente.
 
+### Liens partagés
+
+L'app partage ses propres liens, sur ce domaine (`DC_PUBLIC_URL`, par défaut `https://<DC_DOMAIN>` ;
+côté app `dc.linkHost`, par défaut `canyon.aduquennoy.fr` : les deux changent ensemble) :
+
+- `/c/<id>[-nom][/topo|conditions|photos|debits|carte]` : un canyon (sa carte, un point `?lat=&lon=`, une
+  trace partagée `?trace=<id>` avec son GPX) ;
+- `/s/<code>` : une sortie, un itinéraire sans date, un séjour ou une liste de favoris, gardés sous un
+  code de 9 caractères (`/v1/shares`, table `shares`) jusqu'à 30 jours après leur dernier jour (un an
+  pour un itinéraire ou une liste), modifiables par l'installation qui les a créés ;
+- `/o/<id>#…` : une sortie entière dans le lien (QR code, ou sans serveur) : la partie après `#` n'arrive
+  jamais ici, la page la lit dans le navigateur (`static/outing.js`).
+
+Avec l'app installée, ces liens s'ouvrent directement dedans : Android lit
+`/.well-known/assetlinks.json`, qui liste les certificats autorisés (`DC_ANDROID_CERT_SHA256`). Par
+défaut seule la clé du workflow Release (APK de GitHub) y figure : **ajouter la clé de signature
+d'application de Google Play** (Play Console > Tester et publier > Intégrité de l'application >
+Signature de l'application, empreinte SHA-256), sinon les copies installées depuis Google Play ouvrent
+ces liens dans le navigateur. Sans l'app, les pages disent ce qui est partagé (en 5 langues, sans
+traceur ni indexation) et mènent au Play Store, qui transmet le lien à l'app à sa première ouverture.
+`… jobs share delete <code>` supprime un lien sur demande, `… jobs share prune` les liens expirés (l'API
+le fait aussi au passage) ; `… manifest feature shares off` fait revenir l'app aux liens qui portent
+la sortie entière.
+
 ## Développement
 
 ```bash
@@ -260,7 +284,8 @@ prépare sa sortie du matin la calculerait lui-même. Interrupteur : `manifest f
 
 - Messages et interrupteurs, signés à la volée :
   `docker compose run --rm --no-deps jobs manifest message-add --id site-2026-12 --level warning --fr "…" --en "…"`,
-  `… manifest message-remove --id …`, `… manifest feature communityTracks off`, `… manifest min-version 60`,
+  `--link https://<domaine>/c/1000012` pour qu'un message ouvre un canyon ou une page (l'app ouvre ses
+  propres liens elle-même), `… manifest message-remove --id …`, `… manifest feature communityTracks off`, `… manifest min-version 60`,
   `… manifest show`.
 - Rapports de la tâche catalogue : `/srv/dc/data/reports/catalog-*.json` (fiches relues, modifiées,
   échecs). Elle ne publie rien si plus de 5 % des pages n'ont plus de nom de canyon (format du site

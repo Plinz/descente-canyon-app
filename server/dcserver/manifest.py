@@ -97,6 +97,9 @@ def validate_state(state: dict[str, Any]) -> None:
         texts = message.get("text") or {}
         if "fr" not in texts or not all(isinstance(t, str) and t.strip() for t in texts.values()):
             raise ValueError(f"message {message_id}: a non-empty French text is required")
+        link = message.get("link")
+        if link is not None and (not isinstance(link, str) or not link.startswith("https://") or len(link) > 500):
+            raise ValueError(f"message {message_id}: link must be an https:// address")
     for catalog in state.get("catalogs", []):
         for key in ("schemaVersion", "identityHash", "dataVersion", "path", "sha256", "size", "uncompressedSize", "canyonCount"):
             if key not in catalog:

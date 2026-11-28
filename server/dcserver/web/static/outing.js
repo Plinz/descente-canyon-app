@@ -49,7 +49,8 @@
       day.textContent = labels.noDate;
     }
     var facts = document.getElementById("outing-facts");
-    var meet = summary.meet || outing.anchorTime;
+    // A route has no day: its times are only a suggestion, not shown.
+    var meet = outing.date ? (summary.meet || outing.anchorTime) : null;
     if (meet) {
       var place = outing.meetAtPlace && outing.place && outing.place.name;
       fact(facts, labels.meet, place ? fill(labels.meetPlace, { time: meet, place: place }) : fill(labels.meetParking, { time: meet }));

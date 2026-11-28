@@ -7,10 +7,12 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.CanyonSummary
 import fr.descentecanyon.app.domain.model.DailyDebitPrediction
+import fr.descentecanyon.app.domain.model.SharedContent
 import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
+import fr.descentecanyon.app.domain.repository.ShareRepository
 import fr.descentecanyon.app.ui.common.UiText
 import javax.inject.Inject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -61,6 +63,13 @@ data class FavoritesUiState(
     val removedFavorite: CanyonSummary? = null,
     /** Today's flow estimate of the favorites, as they are computed. */
     val estimates: Map<Int, DailyDebitPrediction> = emptyMap(),
+    /** The list can be shared by a short link (the app's server offers them). */
+    val canShareList: Boolean = false,
+    val isSharingList: Boolean = false,
+    /** The link of the list shown, made: the screen sends it, then says it is handled. */
+    val sharedListUrl: String? = null,
+    /** The link could not be made (no network, server). */
+    val shareListFailed: Boolean = false,
 )
 
 @HiltViewModel
@@ -69,6 +78,7 @@ class FavoritesViewModel @Inject constructor(
     private val debitRepository: DebitRepository,
     private val logbookRepository: LogbookRepository,
     private val debitPredictionRepository: DebitPredictionRepository,
+    private val shareRepository: ShareRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(FavoritesUiState())
@@ -79,11 +89,27 @@ class FavoritesViewModel @Inject constructor(
         loadFavorites()
         observeEstimates()
         viewModelScope.launch {
+            shareRepository.observeAvailable().collect { available -> _uiState.update { it.copy(canShareList = available) } }
+        }
+        viewModelScope.launch {
             logbookRepository.observeDescendedCanyonIds().collect { ids ->
                 _uiState.update { it.copy(descendedIds = ids).withShownFavorites() }
             }
         }
     }
+
+    /** A short link of the favorites shown (the filter and order on screen), for a stage, a club, a friend. */
+    fun shareList() {
+        val ids = _uiState.value.favorites.map { it.id }
+        if (ids.isEmpty() || _uiState.value.isSharingList) return
+        _uiState.update { it.copy(isSharingList = true, shareListFailed = false) }
+        viewModelScope.launch {
+            val published = shareRepository.publish(SharedContent.CanyonList(title = "", canyonIds = ids)).getOrNull()
+            _uiState.update { it.copy(isSharingList = false, sharedListUrl = published?.url, shareListFailed = published == null) }
+        }
+    }
+
+    fun sharedListHandled() = _uiState.update { it.copy(sharedListUrl = null, shareListFailed = false) }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     private fun loadFavorites() {

@@ -927,6 +927,9 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="account_data_import_failed">Este archivo no es una exportación de la aplicación.</string>
     <string name="account_data_cleared">Cuaderno y notas borrados</string>
     <string name="favorites_filter_todo">Por hacer</string>
+    <string name="favorites_share">Compartir la lista</string>
+    <string name="favorites_share_text">Mi lista de barrancos:</string>
+    <string name="favorites_share_failed">No se pudo compartir la lista: se necesita conexión.</string>
     <string name="favorites_todo_empty">Todos sus favoritos ya están en el cuaderno.</string>
     <string name="search_filter_descended">Ya descendidos</string>
     <string name="search_filter_not_descended">Nunca descendidos</string>
@@ -1295,6 +1298,9 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="stay_delete">Eliminar la estancia</string>
     <string name="stay_delete_confirm">¿Eliminar esta estancia y los barrancos previstos para sus días?</string>
     <string name="stay_edit">Modificar la estancia</string>
+    <string name="stay_share">Compartir la estancia</string>
+    <string name="stay_share_text">Estancia en %1$s, %2$s: %3$s</string>
+    <string name="stay_share_failed">No se pudo compartir la estancia: se necesita conexión.</string>
     <string name="stay_edit_intro">El camping o el alojamiento desde el que se sale, y los días pasados allí.</string>
     <string name="stay_new">Nueva estancia</string>
     <string name="stay_no_place">Sitúe primero el camping o el alojamiento en el mapa.</string>
@@ -1622,12 +1628,13 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="settings_server_check_failed">No se pudo contactar con el servidor: la aplicación sigue con sus propios datos.</string>
     <string name="settings_server_never_checked">Aún sin comprobar.</string>
     <string name="settings_server_check_now">Comprobar ahora</string>
-    <string name="settings_privacy_server">Servidor de la aplicación, si está activado en los ajustes: recibe la dirección IP del teléfono, guardada recortada 7 días en sus registros, y los tracks GPS que decides compartir (su trazado y el mes de la salida, sin nombre ni horas), con una clave aleatoria propia de esta instalación, que permite eliminar tus tracks y votar una sola vez. También recibe los barrancos que propones y los mensajes del buzón de ideas, con, salvo que los desmarques, los datos técnicos y, si la app tiene la sesión abierta en descente-canyon.com, el nombre y la dirección de correo de tu cuenta.</string>
+    <string name="settings_privacy_server">Servidor de la aplicación, si está activado en los ajustes: recibe la dirección IP del teléfono, guardada recortada 7 días en sus registros, y los tracks GPS que decides compartir (su trazado y el mes de la salida, sin nombre ni horas), con una clave aleatoria propia de esta instalación, que permite eliminar tus tracks y votar una sola vez. También recibe los barrancos que propones y los mensajes del buzón de ideas, con, salvo que los desmarques, los datos técnicos y, si la app tiene la sesión abierta en descente-canyon.com, el nombre y la dirección de correo de tu cuenta. Los enlaces de salida, estancia o lista que comparte se guardan allí hasta un mes después de su último día (un año para un itinerario o una lista), legibles por quien tenga el enlace.</string>
     <string name="settings_data_sources_tracks">• Tracks GPS compartidos: personas que usan la aplicación, dominio público (CC0).</string>
     <string name="settings_data_sources_app_canyons">• Barrancos añadidos en la aplicación: propuestos por las personas que la usan, revisados antes de publicarse, dominio público (CC0). Los tomados de otras bases (OpenCanyon, CWiki…) se traducen y contrastan, y mantienen su licencia CC BY-NC-SA: la fuente se cita en la bibliografía de la ficha.</string>
     <string name="server_update_required">Hay una nueva versión de la aplicación: instálala para seguir recibiendo las actualizaciones del servidor.</string>
     <string name="server_update_open">Actualizar</string>
     <string name="server_message_hide">Ocultar</string>
+    <string name="server_message_open">Abrir</string>
     <string name="tracks_title">Tracks GPS compartidos</string>
     <string name="tracks_intro">Grabados por personas que pasaron por allí, ordenados por sus votos. No sustituyen la reseña ni la lectura del terreno.</string>
     <string name="tracks_empty">Aún no hay tracks compartidos para este barranco.</string>
@@ -1663,6 +1670,8 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="track_mine">Tu track</string>
     <string name="track_actions">Acciones del track</string>
     <string name="track_export">Exportar en GPX</string>
+    <string name="track_share_link">Compartir el enlace</string>
+    <string name="map_point_share">Compartir el punto</string>
     <string name="track_exported">Track guardado.</string>
     <string name="track_delete">Eliminar mi track</string>
     <string name="track_delete_title">¿Eliminar este track?</string>

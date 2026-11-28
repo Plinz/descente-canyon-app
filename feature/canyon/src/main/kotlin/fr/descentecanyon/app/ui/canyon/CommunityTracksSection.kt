@@ -69,8 +69,10 @@ import fr.descentecanyon.app.domain.model.TrackRole
 import fr.descentecanyon.app.domain.model.TrackStanding
 import fr.descentecanyon.app.domain.model.TrackVote
 import fr.descentecanyon.app.domain.model.toGpx
+import fr.descentecanyon.app.ui.common.LocalAppLinks
 import fr.descentecanyon.app.ui.common.UiText
 import fr.descentecanyon.app.ui.common.asString
+import fr.descentecanyon.app.ui.common.shareText
 import fr.descentecanyon.app.ui.design.DcCard
 import fr.descentecanyon.app.ui.design.DcCardVariant
 import fr.descentecanyon.app.ui.design.LocalDcColors
@@ -107,6 +109,7 @@ internal fun CommunityTracksSection(
     if (!state.isAvailable) return
 
     val context = LocalContext.current
+    val appLinks = LocalAppLinks.current
     val colors = LocalDcColors.current
     val scope = rememberCoroutineScope()
     var expanded by rememberSaveable { mutableStateOf(false) }
@@ -224,6 +227,9 @@ internal fun CommunityTracksSection(
                                 onExport = {
                                     exportTrack = track
                                     createFile.launch(exportFileName(canyonName, roleLabels.getValue(track.role)))
+                                },
+                                onShare = appLinks.canyonTrack(track.canyonId, canyonName, track.id)?.let { link ->
+                                    { context.shareText("${roleLabels.getValue(track.role)} — $canyonName\n$link") }
                                 },
                                 onDelete = { deleteCandidate = track },
                             )
@@ -353,6 +359,8 @@ private fun TrackRow(
     onVote: (TrackVote) -> Unit,
     onExport: (() -> Unit)?,
     onDelete: () -> Unit,
+    /** Sends the link that opens the map of the canyon on this track (in the app, or its page with the GPX file). */
+    onShare: (() -> Unit)? = null,
 ) {
     var menuOpen by remember { mutableStateOf(false) }
     val colors = LocalDcColors.current
@@ -381,7 +389,7 @@ private fun TrackRow(
                 }
             }
         }
-        if (onExport != null || track.isMine) {
+        if (onExport != null || onShare != null || track.isMine) {
             Box {
                 IconButton(onClick = { menuOpen = true }) {
                     Icon(Icons.Default.MoreVert, contentDescription = stringResource(R.string.track_actions))
@@ -391,6 +399,12 @@ private fun TrackRow(
                         DropdownMenuItem(text = { Text(stringResource(R.string.track_export)) }, onClick = {
                             menuOpen = false
                             onExport()
+                        })
+                    }
+                    if (onShare != null) {
+                        DropdownMenuItem(text = { Text(stringResource(R.string.track_share_link)) }, onClick = {
+                            menuOpen = false
+                            onShare()
                         })
                     }
                     if (track.isMine) {

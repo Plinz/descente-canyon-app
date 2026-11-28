@@ -927,6 +927,9 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="account_data_import_failed">Ce fichier n\'est pas un export de l\'application.</string>
     <string name="account_data_cleared">Carnet et mémos effacés</string>
     <string name="favorites_filter_todo">À faire</string>
+    <string name="favorites_share">Partager la liste</string>
+    <string name="favorites_share_text">Ma liste de canyons :</string>
+    <string name="favorites_share_failed">La liste n\'a pas pu être partagée : connexion nécessaire.</string>
     <string name="favorites_todo_empty">Tous vos favoris sont déjà dans le carnet.</string>
     <string name="search_filter_descended">Déjà descendus</string>
     <string name="search_filter_not_descended">Jamais descendus</string>
@@ -1295,6 +1298,9 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="stay_delete">Supprimer le séjour</string>
     <string name="stay_delete_confirm">Supprimer ce séjour et les canyons prévus pour ses jours ?</string>
     <string name="stay_edit">Modifier le séjour</string>
+    <string name="stay_share">Partager le séjour</string>
+    <string name="stay_share_text">Séjour à %1$s, %2$s : %3$s</string>
+    <string name="stay_share_failed">Le séjour n\'a pas pu être partagé : connexion nécessaire.</string>
     <string name="stay_edit_intro">Le camping ou le gîte d\'où partent les sorties, et les jours passés sur place.</string>
     <string name="stay_new">Nouveau séjour</string>
     <string name="stay_no_place">Placez d\'abord le camping ou le gîte sur la carte.</string>
@@ -1622,12 +1628,13 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="settings_server_check_failed">Le serveur n\'a pas pu être joint : l\'application continue avec ses propres données.</string>
     <string name="settings_server_never_checked">Pas encore de vérification.</string>
     <string name="settings_server_check_now">Vérifier maintenant</string>
-    <string name="settings_privacy_server">Serveur de l\'application, s\'il est activé dans les réglages : il reçoit l\'adresse IP du téléphone, gardée tronquée 7 jours dans ses journaux, et les traces GPS que vous choisissez de partager (leur tracé et le mois de la sortie, sans nom ni horaires), avec une clé aléatoire propre à cette installation, qui permet de supprimer vos traces et de ne voter qu\'une fois. Il reçoit aussi les canyons que vous proposez et les messages de la boîte à idées, avec, sauf si vous les décochez, les infos techniques et, si l\'app est connectée à descente-canyon.com, votre identifiant et l\'adresse e-mail de votre compte.</string>
+    <string name="settings_privacy_server">Serveur de l\'application, s\'il est activé dans les réglages : il reçoit l\'adresse IP du téléphone, gardée tronquée 7 jours dans ses journaux, et les traces GPS que vous choisissez de partager (leur tracé et le mois de la sortie, sans nom ni horaires), avec une clé aléatoire propre à cette installation, qui permet de supprimer vos traces et de ne voter qu\'une fois. Il reçoit aussi les canyons que vous proposez et les messages de la boîte à idées, avec, sauf si vous les décochez, les infos techniques et, si l\'app est connectée à descente-canyon.com, votre identifiant et l\'adresse e-mail de votre compte. Les liens de sortie, de séjour ou de liste que vous partagez y sont gardés jusqu\'à un mois après leur dernier jour (un an pour un itinéraire ou une liste), lisibles par qui a le lien.</string>
     <string name="settings_data_sources_tracks">• Traces GPS partagées : personnes qui utilisent l\'application, domaine public (CC0).</string>
     <string name="settings_data_sources_app_canyons">• Canyons ajoutés dans l\'application : proposés par les personnes qui l\'utilisent, relus avant publication, domaine public (CC0). Ceux repris d\'autres bases (OpenCanyon, CWiki…) y sont traduits et recoupés, et restent sous leur licence CC BY-NC-SA : la source est citée dans la bibliographie de la fiche.</string>
     <string name="server_update_required">Une nouvelle version de l\'application est disponible : installez-la pour continuer à recevoir les mises à jour du serveur.</string>
     <string name="server_update_open">Mettre à jour</string>
     <string name="server_message_hide">Masquer</string>
+    <string name="server_message_open">Ouvrir</string>
     <string name="tracks_title">Traces GPS partagées</string>
     <string name="tracks_intro">Relevées par des personnes passées par là, classées par leurs votes. Elles ne remplacent ni le topo ni la lecture du terrain.</string>
     <string name="tracks_empty">Aucune trace partagée pour ce canyon.</string>
@@ -1663,6 +1670,8 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="track_mine">Votre trace</string>
     <string name="track_actions">Actions de la trace</string>
     <string name="track_export">Exporter en GPX</string>
+    <string name="track_share_link">Partager le lien</string>
+    <string name="map_point_share">Partager le point</string>
     <string name="track_exported">Trace enregistrée.</string>
     <string name="track_delete">Supprimer ma trace</string>
     <string name="track_delete_title">Supprimer cette trace ?</string>
