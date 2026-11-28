@@ -47,6 +47,8 @@ import fr.descentecanyon.app.ui.outing.OutingPlanScreen
 import fr.descentecanyon.app.ui.outing.OutingSettingsScreen
 import fr.descentecanyon.app.ui.outing.OutingsScreen
 import fr.descentecanyon.app.ui.outing.PlacesScreen
+import fr.descentecanyon.app.ui.outing.SharedLinkScreen
+import fr.descentecanyon.app.ui.outing.SharedOutingRequest
 import fr.descentecanyon.app.ui.outing.StayDayRequest
 import fr.descentecanyon.app.ui.outing.StayEditScreen
 import fr.descentecanyon.app.ui.outing.StayScreen
@@ -320,6 +322,32 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onOutingDeleted = {
                     navController.navigate(Screen.Outings) { applyAppRootNavigation(navController.graph.findStartDestination().id) }
                 },
+            )
+        }
+
+        composable<Screen.SharedLink> {
+            SharedLinkScreen(
+                onBackClick = dropUnlessResumed { navController.popBackStack() },
+                onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
+                // The plan takes the place of the link: back from it is where the link was opened from.
+                onAddOuting = dropUnlessResumedWith { request: SharedOutingRequest ->
+                    navController.popBackStack<Screen.SharedLink>(inclusive = true)
+                    navController.navigateSingleTop(
+                        Screen.OutingPlan(
+                            canyonId = request.canyonId,
+                            stayId = request.stayId,
+                            sharedPayload = request.payload,
+                            sharedCode = request.code,
+                            sharedVersion = request.version,
+                            sharedPlan = request.plan,
+                        ),
+                    )
+                },
+                onOpenOuting = dropUnlessResumedWith { canyonId: Int, outingId: Long ->
+                    navController.popBackStack<Screen.SharedLink>(inclusive = true)
+                    navController.navigateSingleTop(Screen.OutingPlan(canyonId, outingId))
+                },
+                onOpenStay = dropUnlessResumedWith { stayId: Long -> navController.navigateSingleTop(Screen.Stay(stayId)) },
             )
         }
 

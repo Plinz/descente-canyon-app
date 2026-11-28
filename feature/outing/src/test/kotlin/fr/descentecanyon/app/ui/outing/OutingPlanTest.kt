@@ -2,6 +2,10 @@ package fr.descentecanyon.app.ui.outing
 
 import androidx.lifecycle.SavedStateHandle
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
+import fr.descentecanyon.app.domain.error.AppError
+import fr.descentecanyon.app.domain.error.AppException
+import fr.descentecanyon.app.domain.model.AppLink
+import fr.descentecanyon.app.domain.model.AppLinks
 import fr.descentecanyon.app.domain.model.Canyon
 import fr.descentecanyon.app.domain.model.CanyonChain
 import fr.descentecanyon.app.domain.model.CanyonDetail
@@ -26,11 +30,19 @@ import fr.descentecanyon.app.domain.model.NextCanyon
 import fr.descentecanyon.app.domain.model.NiveauDebit
 import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.OutingChoices
+import fr.descentecanyon.app.domain.model.OutingLink
 import fr.descentecanyon.app.domain.model.OutingPhase
 import fr.descentecanyon.app.domain.model.OutingSettings
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.PublishedShare
+import fr.descentecanyon.app.domain.model.ReceivedShare
 import fr.descentecanyon.app.domain.model.SeasonCheck
+import fr.descentecanyon.app.domain.model.ShareCodec
+import fr.descentecanyon.app.domain.model.SharedContent
+import fr.descentecanyon.app.domain.model.SharedOuting
+import fr.descentecanyon.app.domain.model.SharedOutingSummary
+import fr.descentecanyon.app.domain.model.SharedTiming
 import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.normalizeForSearch
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
@@ -38,6 +50,7 @@ import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
 import fr.descentecanyon.app.domain.repository.DebitRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
+import fr.descentecanyon.app.domain.repository.ShareRepository
 import fr.descentecanyon.app.domain.repository.WeatherRepository
 import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonDebitPredictionsUseCase
@@ -659,6 +672,31 @@ class OutingPlanTest {
             listOf("H Riolan v4a4III", "P Sigale", "SAFE 18:00 112", "Covoiturage"),
             buildOutingMessage(TestStrings, data, MessageAudience.RELATIVE, setOf(MessageSection.SAFETY)).lines(),
         )
+        // The outing's link, once made, comes before the sheet; without it, no line.
+        val withLink = data.copy(outingLink = "https://canyon.aduquennoy.fr/s/k3F9x2pQa")
+        val team = buildOutingMessage(TestStrings, withLink, MessageAudience.TEAM, MessageAudience.TEAM.defaultSections).lines()
+        assertEquals(
+            listOf("Covoiturage", "LINK https://canyon.aduquennoy.fr/s/k3F9x2pQa", "SHEET https://example.test/42"),
+            team.takeLast(3),
+        )
+        assertEquals(
+            "LINK https://canyon.aduquennoy.fr/s/k3F9x2pQa",
+            buildOutingMessage(TestStrings, withLink, MessageAudience.GUESTS, MessageAudience.GUESTS.defaultSections).lines().last(),
+        )
+        assertEquals(
+            false,
+            buildOutingMessage(TestStrings, withLink, MessageAudience.RELATIVE, MessageAudience.RELATIVE.defaultSections).contains("LINK"),
+        )
+        // A canyon without sheet on the site and without the app's domain: no empty "sheet" line.
+        assertEquals(
+            false,
+            buildOutingMessage(
+                TestStrings,
+                data.copy(sheetUrl = ""),
+                MessageAudience.TEAM,
+                MessageAudience.TEAM.defaultSections,
+            ).contains("SHEET"),
+        )
     }
 
     private object TestStrings : OutingMessageStrings {
@@ -696,9 +734,113 @@ class OutingPlanTest {
         override fun guestsBring(items: String) = "BRING $items"
         override fun guestsProvided(items: String) = "PROVIDED $items"
         override fun sheet(url: String) = "SHEET $url"
+        override fun outingLink(url: String) = "LINK $url"
         override fun back(name: String, time: String) = "BACKMSG $name $time"
         override fun delay(name: String, alertTime: String, number: String) = "DELAY $name $alertTime $number"
     }
+
+    @Test
+    fun `the outing's link is made by the server, kept with the outing, and said outdated when the plan changes`() = runTest {
+        val viewModel = viewModel()
+        advanceUntilIdle()
+        viewModel.confirm()
+        viewModel.prepareLink(LinkUse.Share(asRoute = false))
+        advanceUntilIdle()
+
+        val prepared = viewModel.uiState.value.preparedLink!!
+        assertEquals("https://canyon.aduquennoy.fr/s/k3F9x2pQa", prepared.url)
+        assertTrue(prepared.isShort)
+        val link = outingRepository.outings.value.single().choices!!.link!!
+        assertTrue(link.isOwn)
+        assertEquals("k3F9x2pQa", link.code)
+        assertFalse(viewModel.uiState.value.ownLinkOutdated)
+        viewModel.linkHandled()
+
+        viewModel.selectGroupSize(6)
+        advanceUntilIdle()
+        assertTrue(viewModel.uiState.value.ownLinkOutdated)
+        viewModel.prepareLink(LinkUse.Refresh)
+        advanceUntilIdle()
+        // The same link, updated: those who have it see the new plan.
+        assertEquals("k3F9x2pQa", shares.published.last().second)
+        assertFalse(viewModel.uiState.value.ownLinkOutdated)
+        val sent = (shares.published.last().first as SharedContent.Outing).outing
+        assertEquals(6, sent.groupSize)
+        assertEquals(LocalDate.of(2026, 7, 14), sent.date)
+        assertEquals(LocalTime.of(8, 15), sent.summary.meet)
+        assertNull(sent.place)
+    }
+
+    @Test
+    fun `without the server's links, a route link carries the outing whole, without day nor timing`() = runTest {
+        shares.available.value = false
+        val viewModel = viewModel()
+        advanceUntilIdle()
+        viewModel.prepareLink(LinkUse.Share(asRoute = true))
+        advanceUntilIdle()
+
+        val prepared = viewModel.uiState.value.preparedLink!!
+        assertFalse(prepared.isShort)
+        val parsed = AppLinks("canyon.aduquennoy.fr").parse(prepared.url) as AppLink.OutingInLink
+        val outing = ShareCodec.unpack(parsed.payload)!!
+        assertNull(outing.date)
+        assertNull(outing.timing)
+        assertNull(outing.summary.meet)
+        assertNull(viewModel.uiState.value.choices.link)
+        assertTrue(shares.published.isEmpty())
+    }
+
+    @Test
+    fun `an outing from someone's link is planned at once with their timing, and offers their changes`() = runTest {
+        val shared = SharedOuting(
+            canyonId = CANYON_ID,
+            date = LocalDate.of(2026, 7, 16),
+            anchorTime = LocalTime.of(7, 30),
+            groupSize = 4,
+            groupLevel = GroupLevel.AUTONOMOUS,
+            timing = SharedTiming(OutingSettings(prepMinutes = 40), null),
+            summary = SharedOutingSummary(listOf("Riolan")),
+        )
+        val payload = ShareCodec.pack(shared)
+        val viewModel = viewModel(
+            shared = mapOf(
+                "sharedPayload" to payload,
+                "sharedCode" to "k3F9x2pQa",
+                "sharedVersion" to 1,
+                "sharedPlan" to true,
+            ),
+        )
+        advanceUntilIdle()
+
+        val state = viewModel.uiState.value
+        assertEquals(OutingStage.PLANNED, state.stage)
+        assertTrue(state.addedFromLink)
+        // 7:30 at the parking, then the sender's 40 min to gear up, not this phone's 20.
+        assertEquals(LocalDateTime.of(2026, 7, 16, 8, 10), state.schedule!!.walkStart)
+        val kept = outingRepository.outings.value.single()
+        assertEquals(OutingLink("k3F9x2pQa", 1, isOwn = false), kept.choices!!.link)
+
+        // The same link opened again: the outing kept is opened, not a second one.
+        viewModel(shared = mapOf("sharedPayload" to payload, "sharedCode" to "k3F9x2pQa", "sharedVersion" to 1, "sharedPlan" to true))
+        advanceUntilIdle()
+        assertEquals(1, outingRepository.outings.value.size)
+
+        // Reopened: the sender moved the meeting, the plan offers it and keeps this phone's own choices.
+        shares.received = ReceivedShare("k3F9x2pQa", 2, SharedContent.Outing(shared.copy(anchorTime = LocalTime.of(8, 0))))
+        val reopened = viewModel(outingId = kept.id)
+        advanceUntilIdle()
+        assertEquals(2, reopened.uiState.value.linkUpdate?.version)
+        reopened.selectAlertMargin(3)
+        reopened.applyLinkUpdate()
+        advanceUntilIdle()
+        val updated = outingRepository.outings.value.single().choices!!
+        assertEquals(LocalTime.of(8, 0), updated.anchorTime)
+        assertEquals(3, updated.alertMarginHours)
+        assertEquals(2, updated.link?.version)
+        assertNull(reopened.uiState.value.linkUpdate)
+    }
+
+    private val shares = FakeShareRepository()
 
     private fun viewModel(
         outingId: Long = 0,
@@ -709,6 +851,8 @@ class OutingPlanTest {
         parking: Pair<Double, Double> = 43.95 to 6.9,
         /** The flow reports of canyon 42 kept on the phone. */
         reports: List<Debit> = emptyList(),
+        /** An outing from someone's link: sharedPayload, sharedCode, sharedVersion, sharedPlan. */
+        shared: Map<String, Any?> = emptyMap(),
     ): OutingPlanViewModel {
         val canyonRepository = mockk<CanyonRepository> {
             coEvery { getChainsFrom(any()) } answers { chains.filter { it.fromCanyonId == firstArg<Int>() } }
@@ -756,7 +900,7 @@ class OutingPlanTest {
                     "outingId" to outingId,
                     "stayId" to stayId,
                     date?.let { "date" to it.toString() },
-                ).toMap(),
+                ).toMap() + shared,
             ),
             getCanyonPreviewUseCase = GetCanyonPreviewUseCase(canyonRepository),
             canyonRepository = canyonRepository,
@@ -773,8 +917,30 @@ class OutingPlanTest {
             getDriveTimeUseCase = GetDriveTimeUseCase(driveTimeRepository, online),
             driveTimeRepository = driveTimeRepository,
             connectivityObserver = connectivity,
+            shareRepository = shares,
+            appLinks = AppLinks("canyon.aduquennoy.fr"),
             clock = clock,
         )
+    }
+
+    /** The server's short links: [available] like the manifest says, [received] what a link holds now. */
+    private class FakeShareRepository : ShareRepository {
+        val available = MutableStateFlow(true)
+        val published = mutableListOf<Pair<SharedContent, String?>>()
+        var received: ReceivedShare? = null
+
+        override fun observeAvailable() = available
+
+        override suspend fun publish(content: SharedContent, code: String?): Result<PublishedShare> {
+            published += content to code
+            val made = code ?: "k3F9x2pQa"
+            return Result.success(PublishedShare(made, "https://canyon.aduquennoy.fr/s/$made", published.size))
+        }
+
+        override suspend fun fetch(code: String): Result<ReceivedShare> =
+            received?.let { Result.success(it) } ?: Result.failure(AppException(AppError.NotFound))
+
+        override suspend fun delete(code: String): Result<Unit> = Result.success(Unit)
     }
 
     private fun searchItem(id: Int, name: String, latitude: Double, longitude: Double) = CanyonSearchItem(

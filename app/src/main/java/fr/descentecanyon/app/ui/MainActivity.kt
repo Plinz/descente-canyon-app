@@ -366,9 +366,9 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
                     navController.navigateSingleTop(Screen.CanyonPointsMap(target.canyonId, focus = focus, trackId = target.trackId))
                 }
 
-                is AppLaunchTarget.Share -> Unit
+                is AppLaunchTarget.Share -> navController.navigateSingleTop(Screen.SharedLink(code = target.code))
 
-                is AppLaunchTarget.OutingInLink -> Unit
+                is AppLaunchTarget.OutingInLink -> navController.navigateSingleTop(Screen.SharedLink(payload = target.payload))
             }
         }
 

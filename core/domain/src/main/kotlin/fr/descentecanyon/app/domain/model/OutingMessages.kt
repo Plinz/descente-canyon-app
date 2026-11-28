@@ -16,12 +16,13 @@ enum class MessageAudience(val defaultSections: Set<MessageSection>) {
             MessageSection.CANYON,
             MessageSection.CONDITIONS,
             MessageSection.GEAR,
+            MessageSection.LINK,
             MessageSection.SHEET,
         ),
     ),
 
     /** Accompanied beginners: meeting, what to expect and what to bring. */
-    GUESTS(setOf(MessageSection.MEETING, MessageSection.SCHEDULE, MessageSection.CONDITIONS, MessageSection.GEAR)),
+    GUESTS(setOf(MessageSection.MEETING, MessageSection.SCHEDULE, MessageSection.CONDITIONS, MessageSection.GEAR, MessageSection.LINK)),
 }
 
 /** Kinds of information a message can carry, chosen one by one. */
@@ -35,4 +36,7 @@ enum class MessageSection {
     GROUP,
     SAFETY,
     SHEET,
+
+    /** The outing's own link: those who have the app add it to theirs, the others read it in a browser. */
+    LINK,
 }

@@ -1,0 +1,55 @@
+{
+ "kind": "OUTING",
+ "payload": {
+  "v": 1,
+  "canyonId": 2224,
+  "next": [
+   {
+    "canyonId": 2225,
+    "link": "ON_FOOT",
+    "adjustments": {
+     "APPROACH": 15
+    }
+   }
+  ],
+  "date": "2027-07-03",
+  "anchorTime": "08:30",
+  "meetAtPlace": true,
+  "place": {
+   "name": "Camping des Gorges",
+   "lat": 43.9,
+   "lon": 6.9
+  },
+  "groupSize": 6,
+  "groupLevel": "WITH_BEGINNERS",
+  "withShuttle": true,
+  "adjustments": {
+   "DESCENT": 30
+  },
+  "timing": {
+   "prep": 30,
+   "packUp": 20,
+   "shuttleHandling": 10,
+   "medium": 1.2,
+   "large": 1.3,
+   "huge": 1.5,
+   "beginners": 1.3,
+   "discovery": 1.6,
+   "beginnersPrep": 1.5,
+   "earlier": 10,
+   "later": 25,
+   "pace": 1.1
+  },
+  "note": "Combinaisons 5 mm",
+  "summary": {
+   "names": [
+    "Riolan",
+    "Aiglun"
+   ],
+   "meet": "08:30",
+   "walk": "09:05",
+   "back": "16:40",
+   "backLatest": "17:30"
+  }
+ }
+}

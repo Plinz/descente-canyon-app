@@ -51,7 +51,8 @@ internal fun NotifySheet(
     onNoteChanged: (String) -> Unit,
     onMeetAtPlaceChanged: (Boolean) -> Unit,
     onSaveSections: (MessageAudience, Set<MessageSection>) -> Unit,
-    onSend: (MessageAudience, String) -> Unit,
+    /** The message to send: with the outing's link when [MessageSection.LINK] is kept, made then. */
+    onSend: (MessageAudience, Set<MessageSection>) -> Unit,
 ) {
     val colors = LocalDcColors.current
     val resources = LocalResources.current
@@ -62,11 +63,12 @@ internal fun NotifySheet(
     var customizing by rememberSaveable { mutableStateOf(false) }
     val defaults = state.messageSections[audience] ?: audience.defaultSections
     val sections = edited[audience] ?: defaults
-    val message = remember(state, audience, sections, resources) {
-        outingMessageData(state, resources, locale, appLinks)?.let {
-            buildOutingMessage(ResourceOutingMessageStrings(resources), it, audience, sections)
-        }
-    }.orEmpty()
+    // The outing's own link once sent; before, a placeholder: the link is made when the message leaves.
+    val linkPreview = state.choices.link?.takeIf { it.isOwn }?.let { appLinks.share(it.code) }
+        ?: stringResource(R.string.outing_message_link_pending)
+    val message = remember(state, audience, sections, resources, linkPreview) {
+        notifyMessage(state, audience, sections, resources, locale, appLinks, linkPreview.takeIf { appLinks.isConfigured })
+    }
     OutingSheet(
         title = stringResource(R.string.outing_notify_title),
         onDismiss = onDismiss,
@@ -136,7 +138,7 @@ internal fun NotifySheet(
             )
         }
         Button(
-            onClick = { onSend(audience, message) },
+            onClick = { onSend(audience, sections) },
             enabled = message.isNotEmpty(),
             modifier = Modifier.fillMaxWidth().testTag(TestTags.OUTING_SHARE_BUTTON),
         ) {
@@ -173,6 +175,7 @@ private fun sendLabel(audience: MessageAudience): Int = when (audience) {
 @Composable
 private fun sectionLabel(section: MessageSection): String = stringResource(
     when (section) {
+        MessageSection.LINK -> R.string.outing_section_link
         MessageSection.MEETING -> R.string.outing_section_meeting
         MessageSection.SCHEDULE -> R.string.outing_section_schedule
         MessageSection.PLACE -> R.string.outing_section_place
@@ -196,3 +199,17 @@ private val SectionsSaver = Saver<Map<MessageAudience, Set<MessageSection>>, Lis
         }.toMap()
     },
 )
+
+/** The message for [audience] with [sections], carrying [link] as the outing's link when it is kept. */
+internal fun notifyMessage(
+    state: OutingPlanUiState,
+    audience: MessageAudience,
+    sections: Set<MessageSection>,
+    resources: android.content.res.Resources,
+    locale: java.util.Locale,
+    appLinks: fr.descentecanyon.app.domain.model.AppLinks,
+    link: String?,
+): String = outingMessageData(state, resources, locale, appLinks)
+    ?.copy(outingLink = link)
+    ?.let { buildOutingMessage(ResourceOutingMessageStrings(resources), it, audience, sections) }
+    .orEmpty()

@@ -7,9 +7,11 @@ import fr.descentecanyon.app.domain.model.GroupLevel
 import fr.descentecanyon.app.domain.model.NextCanyon
 import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.OutingChoices
+import fr.descentecanyon.app.domain.model.OutingLink
 import fr.descentecanyon.app.domain.model.OutingPhase
 import fr.descentecanyon.app.domain.model.OutingSettings
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.SharedTiming
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import java.time.Clock
 import java.time.Instant
@@ -92,6 +94,8 @@ class OutingRepositoryImpl @Inject constructor(private val dao: PlannedOutingDao
         val meetAtPlace: Boolean = false,
         val note: String = "",
         val nextCanyons: List<StoredNextCanyon> = emptyList(),
+        val timing: StoredTiming? = null,
+        val link: StoredLink? = null,
     ) {
         fun toDomain(): OutingChoices? {
             val day = runCatching { LocalDate.parse(date) }.getOrNull() ?: return null
@@ -111,6 +115,8 @@ class OutingRepositoryImpl @Inject constructor(private val dao: PlannedOutingDao
                 meetAtPlace = meetAtPlace,
                 note = note,
                 nextCanyons = nextCanyons.map { it.toDomain() },
+                timing = timing?.toDomain(),
+                link = link?.toDomain(),
             )
         }
 
@@ -130,7 +136,73 @@ class OutingRepositoryImpl @Inject constructor(private val dao: PlannedOutingDao
                 meetAtPlace = choices.meetAtPlace,
                 note = choices.note,
                 nextCanyons = choices.nextCanyons.map(StoredNextCanyon::of),
+                timing = choices.timing?.let(StoredTiming::of),
+                link = choices.link?.let(StoredLink::of),
             )
+        }
+    }
+
+    /** The timing of the phone that shared the outing ([SharedTiming]). */
+    @Serializable
+    private data class StoredTiming(
+        val prep: Int,
+        val packUp: Int,
+        val shuttleHandling: Int,
+        val medium: Double,
+        val large: Double,
+        val huge: Double,
+        val beginners: Double,
+        val discovery: Double,
+        val beginnersPrep: Double,
+        val earlier: Int,
+        val later: Int,
+        val pace: Double? = null,
+    ) {
+        fun toDomain() = SharedTiming(
+            settings = OutingSettings(
+                prepMinutes = prep,
+                packUpMinutes = packUp,
+                shuttleHandlingMinutes = shuttleHandling,
+                mediumGroupFactor = medium,
+                largeGroupFactor = large,
+                hugeGroupFactor = huge,
+                beginnersFactor = beginners,
+                discoveryFactor = discovery,
+                beginnersPrepFactor = beginnersPrep,
+                earlierPercent = earlier,
+                laterPercent = later,
+                usePersonalPace = pace != null,
+            ).sanitized(),
+            personalRatio = pace,
+        )
+
+        companion object {
+            fun of(timing: SharedTiming) = timing.settings.let { s ->
+                StoredTiming(
+                    prep = s.prepMinutes,
+                    packUp = s.packUpMinutes,
+                    shuttleHandling = s.shuttleHandlingMinutes,
+                    medium = s.mediumGroupFactor,
+                    large = s.largeGroupFactor,
+                    huge = s.hugeGroupFactor,
+                    beginners = s.beginnersFactor,
+                    discovery = s.discoveryFactor,
+                    beginnersPrep = s.beginnersPrepFactor,
+                    earlier = s.earlierPercent,
+                    later = s.laterPercent,
+                    pace = timing.personalRatio,
+                )
+            }
+        }
+    }
+
+    /** The short link of the outing ([OutingLink]). */
+    @Serializable
+    private data class StoredLink(val code: String, val version: Int, val own: Boolean, val fingerprint: String? = null) {
+        fun toDomain() = OutingLink(code = code, version = version, isOwn = own, publishedFingerprint = fingerprint)
+
+        companion object {
+            fun of(link: OutingLink) = StoredLink(link.code, link.version, link.isOwn, link.publishedFingerprint)
         }
     }
 

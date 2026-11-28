@@ -63,6 +63,7 @@ internal class ResourceOutingMessageStrings(private val resources: Resources) : 
     override fun guestsBring(items: String) = text(R.string.outing_message_gear_bring, items)
     override fun guestsProvided(items: String) = text(R.string.outing_message_gear_provided, items)
     override fun sheet(url: String) = text(R.string.outing_message_sheet, url)
+    override fun outingLink(url: String) = text(R.string.outing_message_link, url)
     override fun back(name: String, time: String) = text(R.string.outing_message_back, name, time)
     override fun delay(name: String, alertTime: String, number: String) = text(R.string.outing_message_delay, name, alertTime, number)
 }

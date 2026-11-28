@@ -7,8 +7,11 @@ import fr.descentecanyon.app.domain.model.GroupLevel
 import fr.descentecanyon.app.domain.model.NextCanyon
 import fr.descentecanyon.app.domain.model.OutingAnchor
 import fr.descentecanyon.app.domain.model.OutingChoices
+import fr.descentecanyon.app.domain.model.OutingLink
 import fr.descentecanyon.app.domain.model.OutingPhase
+import fr.descentecanyon.app.domain.model.OutingSettings
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.model.SharedTiming
 import fr.descentecanyon.app.testutil.TestDatabases
 import java.time.Clock
 import java.time.Duration
@@ -90,6 +93,27 @@ class OutingRepositoryImplTest {
         assertNull(repository.get(sooner))
         repository.clear()
         assertEquals(emptyList<PlannedOuting>(), repository.observeAll().first())
+    }
+
+    @Test
+    fun `an outing added from a link keeps the link and the sender's timing`() = runTest {
+        val timing =
+            SharedTiming(
+                OutingSettings(prepMinutes = 35, largeGroupFactor = 1.4, laterPercent = 30, usePersonalPace = true),
+                personalRatio = 1.15,
+            )
+        val choices = OutingChoices(
+            date = LocalDate.of(2026, 7, 15),
+            anchorTime = LocalTime.of(8, 30),
+            timing = timing,
+            link = OutingLink("k3F9x2pQa", 3, isOwn = false),
+        )
+        val id = repository.save(outing(42, startInHours = 26).copy(choices = choices))
+        assertEquals(choices, repository.get(id)?.choices)
+
+        val own = choices.copy(timing = null, link = OutingLink("k3F9x2pQa", 1, isOwn = true, publishedFingerprint = "0a1b2c"))
+        repository.save(outing(42, startInHours = 26).copy(id = id, choices = own))
+        assertEquals(own, repository.get(id)?.choices)
     }
 
     @Test

@@ -36,10 +36,29 @@ data class OutingChoices(
     val note: String = "",
     /** The canyons done after the first one, in their order: an "intégrale", or two canyons of a valley. */
     val nextCanyons: List<NextCanyon> = emptyList(),
+    /** Added from someone's link: the times follow the timing of the phone that shared it. */
+    val timing: SharedTiming? = null,
+    /** The short link this outing was shared by, or added from. */
+    val link: OutingLink? = null,
 ) {
-    /** From [placeId] (null: none): the time set is then leaving it, else arriving at the parking. */
-    fun withPlace(placeId: Long?): OutingChoices =
-        copy(placeId = placeId, anchor = if (placeId != null) OutingAnchor.LEAVE_PLACE else OutingAnchor.ARRIVE_PARKING)
+    /** Added from someone else's link: the meeting time is theirs, a starting place only moves the departure. */
+    val isFromLink: Boolean get() = link?.isOwn == false || timing != null
+
+    /**
+     * From [placeId] (null: none): the time set is then leaving it, else arriving at the parking; an
+     * outing added from a link keeps the meeting time at the parking.
+     */
+    fun withPlace(placeId: Long?): OutingChoices = copy(
+        placeId = placeId,
+        anchor = when {
+            placeId == null -> OutingAnchor.ARRIVE_PARKING
+
+            // Added from a link with the meeting at the parking: the time stays the meeting's, the place gives the departure.
+            isFromLink && !meetAtPlace -> OutingAnchor.ARRIVE_PARKING
+
+            else -> OutingAnchor.LEAVE_PLACE
+        },
+    )
 
     companion object {
         const val DEFAULT_ALERT_MARGIN_HOURS = 2

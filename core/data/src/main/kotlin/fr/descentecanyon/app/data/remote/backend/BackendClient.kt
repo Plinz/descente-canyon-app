@@ -181,6 +181,51 @@ class BackendClient @Inject constructor(
         execute(request, mapError = ::feedbackErrorOf) { }
     }
 
+    suspend fun createShare(request: ShareRequestDto, installKey: String): ShareDto {
+        val body = json.encodeToString(ShareRequestDto.serializer(), request).toRequestBody(JSON_MEDIA_TYPE)
+        val call = Request.Builder()
+            .url(url("v1/shares"))
+            .header(INSTALL_KEY_HEADER, installKey)
+            .post(body)
+            .build()
+        return execute(call, callTimeoutSeconds = SHARE_TIMEOUT_SECONDS, mapError = ::shareErrorOf) { response ->
+            decode(response, ShareDto.serializer())
+        }
+    }
+
+    suspend fun updateShare(code: String, request: ShareRequestDto, installKey: String): ShareDto {
+        val body = json.encodeToString(ShareRequestDto.serializer(), request).toRequestBody(JSON_MEDIA_TYPE)
+        val call = Request.Builder()
+            .url(url("v1/shares").newBuilder().addPathSegment(code).build())
+            .header(INSTALL_KEY_HEADER, installKey)
+            .put(body)
+            .build()
+        return execute(call, callTimeoutSeconds = SHARE_TIMEOUT_SECONDS, mapError = ::shareErrorOf) { response ->
+            decode(response, ShareDto.serializer())
+        }
+    }
+
+    /** A shared link, read without any key (anyone with the code can). */
+    suspend fun fetchShare(code: String): ShareDto {
+        val request = Request.Builder()
+            .url(url("v1/shares").newBuilder().addPathSegment(code).build())
+            .cacheControl(CacheControl.Builder().noStore().build())
+            .get()
+            .build()
+        return execute(request, callTimeoutSeconds = SHARE_TIMEOUT_SECONDS, mapError = ::shareErrorOf) { response ->
+            decode(response, ShareDto.serializer())
+        }
+    }
+
+    suspend fun deleteShare(code: String, installKey: String) {
+        val request = Request.Builder()
+            .url(url("v1/shares").newBuilder().addPathSegment(code).build())
+            .header(INSTALL_KEY_HEADER, installKey)
+            .delete()
+            .build()
+        execute(request, mapError = ::shareErrorOf) { }
+    }
+
     private fun url(path: String): HttpUrl {
         val base = baseUrl ?: appError(AppError.DataUnavailable)
         return base.newBuilder().addPathSegments(path).build()
@@ -247,6 +292,17 @@ class BackendClient @Inject constructor(
         }
     }
 
+    /** A link that does not exist, expired, or is not this phone's (to change): NotFound. */
+    private fun shareErrorOf(response: Response): AppError {
+        val code = errorBody(response)?.error
+        return when {
+            response.code == 404 || response.code == 403 || code == "NOT_FOUND" || code == "NOT_AUTHOR" -> AppError.NotFound
+            response.code == 429 || response.code == 413 -> AppError.Rejected(code)
+            response.code in 400..499 -> AppError.UnexpectedResponse
+            else -> AppError.Http(response.code)
+        }
+    }
+
     private fun errorOf(response: Response): AppError {
         val code = errorBody(response)?.error
         TrackRejection.entries.firstOrNull { it.name == code }?.let { return AppError.TrackRejected(it) }
@@ -278,6 +334,9 @@ class BackendClient @Inject constructor(
         const val MAX_JSON_BYTES = 8L * 1024 * 1024
         const val MAX_ERROR_BYTES = 4L * 1024
         const val CALL_TIMEOUT_SECONDS = 60L
+
+        /** A link is made while the person waits to send a message: short. */
+        const val SHARE_TIMEOUT_SECONDS = 15L
         const val DOWNLOAD_TIMEOUT_SECONDS = 15L * 60
         const val BUFFER_BYTES = 64 * 1024
     }

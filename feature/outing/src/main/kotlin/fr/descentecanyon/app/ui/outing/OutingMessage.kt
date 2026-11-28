@@ -41,6 +41,7 @@ internal interface OutingMessageStrings {
     fun guestsBring(items: String): String
     fun guestsProvided(items: String): String
     fun sheet(url: String): String
+    fun outingLink(url: String): String
     fun back(name: String, time: String): String
     fun delay(name: String, alertTime: String, number: String): String
 }
@@ -85,11 +86,13 @@ internal data class OutingMessageData(
     val guestsProvided: List<String> = emptyList(),
     val note: String = "",
     val sheetUrl: String,
+    /** The outing's link, once made (the message is sent then). */
+    val outingLink: String? = null,
 )
 
 /**
  * The message about an outing for [audience], with the [sections] the user kept, in a fixed order:
- * meeting, schedule, group, alert, parkings, the canyon, conditions, gear, note and sheet. Plain
+ * meeting, schedule, group, alert, parkings, the canyon, conditions, gear, note, link and sheet. Plain
  * text, so it reads the same in a text message, WhatsApp or Signal.
  */
 internal fun buildOutingMessage(
@@ -147,6 +150,7 @@ internal fun buildOutingMessage(
         }
     }
     data.note.trim().takeIf { it.isNotEmpty() }?.let(::add)
+    if (MessageSection.LINK in sections) data.outingLink?.let { add(strings.outingLink(it)) }
     if (MessageSection.SHEET in sections && data.sheetUrl.isNotBlank()) add(strings.sheet(data.sheetUrl))
 }.joinToString("\n")
 

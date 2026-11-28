@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
+import fr.descentecanyon.app.domain.model.AppLinks
 import fr.descentecanyon.app.domain.model.CanyonChain
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
@@ -33,6 +34,7 @@ import fr.descentecanyon.app.domain.model.MessageSection
 import fr.descentecanyon.app.domain.model.NextCanyon
 import fr.descentecanyon.app.domain.model.NextCanyonInput
 import fr.descentecanyon.app.domain.model.OutingChoices
+import fr.descentecanyon.app.domain.model.OutingLink
 import fr.descentecanyon.app.domain.model.OutingPace
 import fr.descentecanyon.app.domain.model.OutingPhase
 import fr.descentecanyon.app.domain.model.OutingSchedule
@@ -42,6 +44,10 @@ import fr.descentecanyon.app.domain.model.PersonalPace
 import fr.descentecanyon.app.domain.model.Place
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.SeasonCheck
+import fr.descentecanyon.app.domain.model.ShareCodec
+import fr.descentecanyon.app.domain.model.SharedContent
+import fr.descentecanyon.app.domain.model.SharedOuting
+import fr.descentecanyon.app.domain.model.SharedPlace
 import fr.descentecanyon.app.domain.model.Shuttle
 import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.SunCalculator
@@ -59,6 +65,7 @@ import fr.descentecanyon.app.domain.repository.DriveTimeRepository
 import fr.descentecanyon.app.domain.repository.OutingPreferencesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
 import fr.descentecanyon.app.domain.repository.PlaceRepository
+import fr.descentecanyon.app.domain.repository.ShareRepository
 import fr.descentecanyon.app.domain.repository.StayRepository
 import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
 import fr.descentecanyon.app.domain.usecase.GetCanyonDebitPredictionsUseCase
@@ -189,6 +196,16 @@ data class OutingPlanUiState(
     val nextCanyons: List<NextCanyonState> = emptyList(),
     /** The person deleted the outing from this screen: it closes. */
     val deleted: Boolean = false,
+    /** A link of the outing is being made, for this use. */
+    val preparingLink: LinkUse? = null,
+    /** A link made, waiting for the screen to use it. */
+    val preparedLink: PreparedLink? = null,
+    /** The outing was added from someone's link who changed it since: the new version, to apply. */
+    val linkUpdate: LinkUpdate? = null,
+    /** Just added from someone's link: the screen says so and asks for the permissions of the reminders. */
+    val addedFromLink: Boolean = false,
+    /** This phone sent the outing's link, and the outing changed since: the link shows the old plan. */
+    val ownLinkOutdated: Boolean = false,
 ) {
     /** "Pissarde (partie amont) + Pissarde (partie aval)". */
     val title: String?
@@ -229,6 +246,8 @@ class OutingPlanViewModel @Inject constructor(
     private val getDriveTimeUseCase: GetDriveTimeUseCase,
     private val driveTimeRepository: DriveTimeRepository,
     private val connectivityObserver: ConnectivityObserver,
+    private val shareRepository: ShareRepository,
+    private val appLinks: AppLinks,
     private val clock: Clock,
 ) : ViewModel() {
 
@@ -237,6 +256,12 @@ class OutingPlanViewModel @Inject constructor(
     private val requestedDate: LocalDate? = savedStateHandle.get<String>("date")?.let { runCatching { LocalDate.parse(it) }.getOrNull() }
     private val requestedPlaceId: Long = savedStateHandle["placeId"] ?: 0L
     private val requestedStayId: Long = savedStateHandle["stayId"] ?: 0L
+
+    /** An outing from someone's link ([ShareCodec.pack]ed), its short code if any, its version; planned at once when [sharedPlan]. */
+    private val sharedPayload: String? = savedStateHandle["sharedPayload"]
+    private val sharedCode: String? = savedStateHandle["sharedCode"]
+    private val sharedVersion: Int = savedStateHandle["sharedVersion"] ?: 0
+    private val sharedPlan: Boolean = savedStateHandle["sharedPlan"] ?: false
 
     private val choices = MutableStateFlow<OutingChoices?>(null)
     private val sources = MutableStateFlow(Sources())
@@ -301,6 +326,7 @@ class OutingPlanViewModel @Inject constructor(
         viewModelScope.launch { followDrive() }
         viewModelScope.launch { loadNextCanyons() }
         viewModelScope.launch { followComputedTimes() }
+        viewModelScope.launch { checkLinkUpdate() }
     }
 
     /** Leaving now, already at the parking or about to: today, the time set now; the place follows the day. */
@@ -460,6 +486,55 @@ class OutingPlanViewModel @Inject constructor(
     /** The canyon given to the day of the stay was said planned. */
     fun addedToStayShown() = sources.update { it.copy(addedToStay = false) }
 
+    fun addedFromLinkShown() = sources.update { it.copy(addedFromLink = false) }
+
+    /**
+     * Makes the outing's link for [use]: a short link kept by the server (this phone's own link of the
+     * outing updated, so those who have it see the new plan), else, offline or without server, a link
+     * that carries the outing whole. A QR code always carries it whole: it is read where there is no network.
+     */
+    fun prepareLink(use: LinkUse) {
+        val state = uiState.value
+        if (state.preparingLink != null) return
+        val shared = state.toSharedOuting(asRoute = use.asRoute) ?: return
+        val name = state.canyon?.canyon?.nom.orEmpty()
+        sources.update { it.copy(preparingLink = use) }
+        viewModelScope.launch {
+            val content = SharedContent.Outing(shared)
+            val own = choices.value?.link?.takeIf { it.isOwn && !use.asRoute }
+            val published = if (use !is LinkUse.Qr && shareRepository.observeAvailable().first()) {
+                shareRepository.publish(content, own?.code).getOrNull()
+            } else {
+                null
+            }
+            if (published != null && !use.asRoute) {
+                updateChoices {
+                    it.copy(link = OutingLink(published.code, published.version, isOwn = true, publishedFingerprint = shared.fingerprint()))
+                }
+            }
+            val url = published?.url ?: appLinks.outingInLink(canyonId, name, ShareCodec.pack(shared))
+            sources.update { it.copy(preparingLink = null, preparedLink = url?.let { link -> PreparedLink(use, link, published != null) }) }
+        }
+    }
+
+    /** The screen used the link made. */
+    fun linkHandled() = sources.update { it.copy(preparedLink = null) }
+
+    /** Takes the new version of the outing from the link it was added from: this phone's own choices stay. */
+    fun applyLinkUpdate() {
+        val update = sources.value.linkUpdate ?: return
+        sources.update { it.copy(linkUpdate = null) }
+        viewModelScope.launch {
+            val placeId = update.outing.place?.takeIf { update.outing.meetAtPlace }?.let { importPlace(it) }
+            updateChoices { current ->
+                val link = update.code?.let { OutingLink(it, update.version, isOwn = false) } ?: current.link
+                update.outing.update(current, placeId, link)
+            }
+        }
+    }
+
+    fun dismissLinkUpdate() = sources.update { it.copy(linkUpdate = null) }
+
     /** Back from the outing: it goes to the logbook and its notifications are cancelled; the plan stays on screen. */
     fun markBack() = forget { id -> endOutingUseCase(id) }
 
@@ -560,10 +635,27 @@ class OutingPlanViewModel @Inject constructor(
         // The canyon first: its time zone gives "today" and the default start.
         sources.first { !it.isLoading }
         val today = LocalDate.now(localClock())
+        val shared = sharedPayload?.let(ShareCodec::unpack)?.takeIf { it.canyonId == canyonId }
+        // A day gone by is planned again on a day ahead, like a route.
+        val sharedDay = shared?.date?.takeIf { !it.isBefore(today) }
         val existing = when {
             requestedOutingId > 0 -> outings.firstOrNull { it.id == requestedOutingId } ?: outingRepository.get(requestedOutingId)
+
+            shared != null -> outings.firstOrNull { sharedCode != null && it.choices?.link?.code == sharedCode }
+                ?: sharedDay?.let { day -> outings.firstOrNull { it.canyonId == canyonId && it.choices?.date == day } }
+
             requestedDate == null -> outings.firstOrNull { it.canyonId == canyonId }
+
             else -> outings.firstOrNull { it.canyonId == canyonId && it.choices?.date == requestedDate }
+        }
+        if (shared != null && existing == null) {
+            startFromLink(shared, sharedDay, settings, places, stays, outings)
+            return
+        }
+        // The same outing already on this phone: what the link holds now is offered, not imposed.
+        val alreadyMatches = existing?.choices?.link?.let { it.code == sharedCode && it.version >= sharedVersion } == true
+        if (shared != null && existing != null && sharedDay != null && !alreadyMatches) {
+            sources.update { it.copy(linkUpdate = LinkUpdate(shared, sharedCode, sharedVersion)) }
         }
         sources.update { it.copy(saved = existing) }
         planned = existing != null
@@ -592,6 +684,55 @@ class OutingPlanViewModel @Inject constructor(
                     sources.update { it.copy(addedToStay = true) }
                 }
             }
+        }
+    }
+
+    /**
+     * An outing from someone's link: on its day with their timing, planned at once when asked
+     * ([sharedPlan]); a route (or a day gone by) on the day of a new outing, at the pace of this phone.
+     */
+    private suspend fun startFromLink(
+        shared: SharedOuting,
+        day: LocalDate?,
+        settings: OutingSettings,
+        places: List<Place>,
+        stays: List<Stay>,
+        outings: List<PlannedOuting>,
+    ) {
+        if (day != null) {
+            val placeId = shared.place?.takeIf { shared.meetAtPlace }?.let { importPlace(it) }
+            val link = sharedCode?.let { OutingLink(it, sharedVersion, isOwn = false) }
+            choices.value = shared.toChoices(day, placeId, link)
+            if (sharedPlan) {
+                awaitPlan()
+                plan()
+                sources.update { it.copy(addedFromLink = true) }
+            }
+        } else {
+            val initial = newChoices(settings, places, stays, outings)
+            choices.value = shared.copy(timing = null, meetAtPlace = false, place = null)
+                .toChoices(initial.date, null, null)
+                .copy(anchorTime = initial.anchorTime)
+                .withPlace(initial.placeId)
+        }
+    }
+
+    /** The place a link names: one of this phone's places within [SAME_PLACE_KM], else a new one. */
+    private suspend fun importPlace(place: SharedPlace): Long {
+        val known = placeRepository.observeAll().first()
+            .filter { haversineKm(it.latitude, it.longitude, place.latitude, place.longitude) <= SAME_PLACE_KM }
+            .minByOrNull { haversineKm(it.latitude, it.longitude, place.latitude, place.longitude) }
+        return known?.id ?: placeRepository.save(Place(name = place.name, latitude = place.latitude, longitude = place.longitude))
+    }
+
+    /** An outing added from someone's link: its link is read again (nothing offline), and a newer version offered. */
+    private suspend fun checkLinkUpdate() {
+        uiState.first { !it.isLoading }
+        val link = sources.value.saved?.choices?.link?.takeIf { !it.isOwn && it.code.isNotEmpty() } ?: return
+        val received = shareRepository.fetch(link.code).getOrNull() ?: return
+        val outing = (received.content as? SharedContent.Outing)?.outing ?: return
+        if (received.version > link.version && outing.canyonId == canyonId) {
+            sources.update { it.copy(linkUpdate = LinkUpdate(outing, received.code, received.version)) }
         }
     }
 
@@ -696,9 +837,11 @@ class OutingPlanViewModel @Inject constructor(
     private fun buildState(choices: OutingChoices?, sources: Sources): OutingPlanUiState {
         val zone = zoneOf(sources)
         val today = LocalDate.now(clock.withZone(zone))
-        val settings = sources.settings
         val current = choices ?: defaultChoices(LocalDateTime.now(clock.withZone(zone)))
-        val pace = OutingPace.of(settings, current.groupSize, current.groupLevel, sources.personalPace)
+        // Added from someone's link: their timing, so that everyone has the same times.
+        val settings = current.timing?.settings ?: sources.settings
+        val personalPace = if (current.timing != null) current.timing?.personalPace else sources.personalPace
+        val pace = OutingPace.of(settings, current.groupSize, current.groupLevel, personalPace)
         val detail = sources.canyon
         val canyon = detail?.canyon
         val approach = CanyonDuration.parse(canyon?.tempsApproche)
@@ -811,7 +954,20 @@ class OutingPlanViewModel @Inject constructor(
             addedToStay = sources.addedToStay,
             nextCanyons = nextCanyons,
             deleted = sources.deleted,
-        )
+            preparingLink = sources.preparingLink,
+            preparedLink = sources.preparedLink,
+            linkUpdate = sources.linkUpdate,
+            addedFromLink = sources.addedFromLink,
+        ).let { state ->
+            val published = current.link?.takeIf { it.isOwn }?.publishedFingerprint
+            if (published == null ||
+                !state.isPlanReady
+            ) {
+                state
+            } else {
+                state.copy(ownLinkOutdated = state.toSharedOuting()?.fingerprint() != published)
+            }
+        }
     }
 
     /** The canyons after the first one, with the drive from the end of the one before when they are reached by car. */
@@ -915,6 +1071,10 @@ class OutingPlanViewModel @Inject constructor(
         val messageSections: Map<MessageAudience, Set<MessageSection>> = MessageAudience.entries.associateWith { it.defaultSections },
         val addedToStay: Boolean = false,
         val deleted: Boolean = false,
+        val preparingLink: LinkUse? = null,
+        val preparedLink: PreparedLink? = null,
+        val linkUpdate: LinkUpdate? = null,
+        val addedFromLink: Boolean = false,
     )
 
     companion object {
@@ -922,6 +1082,9 @@ class OutingPlanViewModel @Inject constructor(
         val UNKNOWN_DURATION_ASSUMPTION: Duration = Duration.ofHours(8)
 
         const val MAX_NOTE_LENGTH = 500
+
+        /** A place of a link this close to one of the phone's places is that place. */
+        private const val SAME_PLACE_KM = 0.15
 
         private const val NEARBY_KM = 30.0
         private const val MAX_CANDIDATES = 20

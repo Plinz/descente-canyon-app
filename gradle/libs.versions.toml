@@ -47,6 +47,8 @@ mockk = "1.14.12"
 robolectric = "4.18"
 androidxTestCore = "1.7.0"
 turbine = "1.2.1"
+qrcodegen = "1.8.0"
+installReferrer = "2.2"
 
 [libraries]
 # Gradle plugins used by build-logic convention plugins
@@ -133,6 +135,10 @@ mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 androidx-test-core = { group = "androidx.test", name = "core-ktx", version.ref = "androidxTestCore" }
 turbine = { group = "app.cash.turbine", name = "turbine", version.ref = "turbine" }
+# QR codes of the shared outings (MIT, no dependency)
+qrcodegen = { group = "io.nayuki", name = "qrcodegen", version.ref = "qrcodegen" }
+# The link a shared page passed to Google Play, opened after the installation
+installreferrer = { group = "com.android.installreferrer", name = "installreferrer", version.ref = "installReferrer" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

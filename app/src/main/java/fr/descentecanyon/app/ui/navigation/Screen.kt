@@ -92,7 +92,16 @@ sealed interface Screen {
         val date: String? = null,
         val placeId: Long = 0,
         val stayId: Long = 0,
+        /** An outing from someone's link (packed), its short code and version; added at once when [sharedPlan]. */
+        val sharedPayload: String? = null,
+        val sharedCode: String? = null,
+        val sharedVersion: Int = 0,
+        val sharedPlan: Boolean = false,
     ) : Screen
+
+    /** A link someone shared: by its short [code], or an outing the link carries whole ([payload]). */
+    @Serializable
+    data class SharedLink(val code: String? = null, val payload: String? = null) : Screen
 
     /** The Sorties tab: the outings planned, the stays and the logbook. */
     @Serializable

@@ -20,6 +20,7 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Description
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Tune
 import androidx.compose.material3.AlertDialog
@@ -56,6 +57,7 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.AppLinks
 import fr.descentecanyon.app.domain.model.MessageAudience
+import fr.descentecanyon.app.domain.model.MessageSection
 import fr.descentecanyon.app.ui.common.LocalAppLinks
 import fr.descentecanyon.app.ui.common.needsExactAlarmPermission
 import fr.descentecanyon.app.ui.common.needsNotificationPermission
@@ -73,7 +75,7 @@ import java.util.Locale
 import kotlinx.coroutines.launch
 
 /** What opens over the plan: one sheet or dialog at a time. */
-private enum class PlanOverlay { CANYONS, DAY, DEPARTURE, GROUP, ALERT_MARGIN, NOTIFY, BAG, DELETE }
+private enum class PlanOverlay { CANYONS, DAY, DEPARTURE, GROUP, ALERT_MARGIN, NOTIFY, BAG, DELETE, SHARE_LINK }
 
 /**
  * The plan of an outing, answer first: the day, the departure and the group in three lines, the key
@@ -262,6 +264,61 @@ fun OutingPlanScreen(
         }
     }
 
+    // Added from someone's link and planned: the reminders need their permissions, as for a confirmed outing.
+    LaunchedEffect(state.addedFromLink) {
+        if (!state.addedFromLink) return@LaunchedEffect
+        viewModel.addedFromLinkShown()
+        if (context.needsNotificationPermission() || context.needsExactAlarmPermission()) {
+            exactAlarmsExplained = true
+            primerForPlanned = true
+            showPermissionPrimer = true
+        } else {
+            confirmTracking()
+        }
+    }
+
+    /** A message of the "Notify" sheet, ready: a relative counts on it, the others just receive it. */
+    fun sendMessage(audience: MessageAudience, message: String) {
+        if (audience == MessageAudience.RELATIVE && state.alertChangedSinceInformed) {
+            // A new time for a relative who has an older one: kept as told until the message left.
+            shareNewAlertTime(message)
+            return
+        }
+        if (audience == MessageAudience.RELATIVE) {
+            // The relative counts on its alert time: sending the plan plans the outing, so the app
+            // reminds the user at the return and keeps the emergency screen at hand.
+            val wasPlanned = state.savedOuting != null
+            viewModel.markRelativeInformed()
+            if (!wasPlanned && context.needsNotificationPermission()) {
+                pendingShare = message
+                sharePermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                return
+            }
+        }
+        share(message)
+    }
+
+    // A link made for a message, to send alone, or to show as a QR code.
+    var qrLink by rememberSaveable { mutableStateOf<String?>(null) }
+    LaunchedEffect(state.preparedLink) {
+        val prepared = state.preparedLink ?: return@LaunchedEffect
+        viewModel.linkHandled()
+        when (val use = prepared.use) {
+            is LinkUse.Message -> sendMessage(
+                use.audience,
+                notifyMessage(state, use.audience, use.sections, resources, locale, appLinks, prepared.url),
+            )
+
+            is LinkUse.Share -> share(linkShareText(resources, state, prepared.url, use.asRoute, locale))
+
+            is LinkUse.Qr -> qrLink = prepared.url
+
+            LinkUse.Refresh -> snackbarHostState.showSnackbar(resources.getString(R.string.outing_link_updated))
+        }
+    }
+    if (state.preparingLink != null) PreparingLinkDialog()
+    qrLink?.let { link -> OutingQrDialog(link = link, title = state.title.orEmpty(), onDismiss = { qrLink = null }) }
+
     // A deleted outing has nothing left to show: back to the list of the outings.
     LaunchedEffect(state.deleted) {
         if (state.deleted) onOutingDeleted()
@@ -308,6 +365,17 @@ fun OutingPlanScreen(
                                     )
                                 },
                             )
+                            if (appLinks.isConfigured) {
+                                DcDropdownMenuItem(
+                                    text = stringResource(R.string.outing_link_share_action),
+                                    icon = Icons.Default.Link,
+                                    onClick = {
+                                        menu = false
+                                        overlay = PlanOverlay.SHARE_LINK
+                                    },
+                                    modifier = Modifier.testTag(TestTags.OUTING_LINK_MENU),
+                                )
+                            }
                             DcDropdownMenuItem(
                                 text = stringResource(R.string.outing_calendar_action),
                                 icon = Icons.Default.CalendarMonth,
@@ -392,6 +460,29 @@ fun OutingPlanScreen(
                         FollowStatusCard(state = state, timeFormatter = timeFormatter, onNotify = { openNotify(MessageAudience.RELATIVE) })
                     }
                 }
+                state.linkUpdate?.let { update ->
+                    item(key = "link_update") {
+                        LinkNoticeCard(
+                            title = stringResource(R.string.outing_link_update_title),
+                            text = linkUpdateText(resources, update, locale),
+                            action = stringResource(R.string.outing_link_update_apply),
+                            onAction = viewModel::applyLinkUpdate,
+                            onDismiss = viewModel::dismissLinkUpdate,
+                            modifier = Modifier.testTag(TestTags.OUTING_LINK_UPDATE),
+                        )
+                    }
+                }
+                if (state.ownLinkOutdated) {
+                    item(key = "link_outdated") {
+                        LinkNoticeCard(
+                            title = stringResource(R.string.outing_link_outdated_title),
+                            text = null,
+                            action = stringResource(R.string.outing_link_outdated_action),
+                            onAction = { viewModel.prepareLink(LinkUse.Refresh) },
+                            modifier = Modifier.testTag(TestTags.OUTING_LINK_OUTDATED),
+                        )
+                    }
+                }
                 item(key = "settings") {
                     PlanSettingsCard(
                         state = state,
@@ -473,25 +564,25 @@ fun OutingPlanScreen(
             onNoteChanged = viewModel::setNote,
             onMeetAtPlaceChanged = viewModel::setMeetAtPlace,
             onSaveSections = viewModel::saveMessageSections,
-            onSend = { audience, message ->
+            onSend = { audience, sections ->
                 overlay = null
-                if (audience == MessageAudience.RELATIVE && state.alertChangedSinceInformed) {
-                    // A new time for a relative who has an older one: kept as told until the message left.
-                    shareNewAlertTime(message)
-                    return@NotifySheet
+                if (MessageSection.LINK in sections && appLinks.isConfigured) {
+                    viewModel.prepareLink(LinkUse.Message(audience, sections))
+                } else {
+                    sendMessage(audience, notifyMessage(state, audience, sections, resources, locale, appLinks, null))
                 }
-                if (audience == MessageAudience.RELATIVE) {
-                    // The relative counts on its alert time: sending the plan plans the outing, so the app
-                    // reminds the user at the return and keeps the emergency screen at hand.
-                    val wasPlanned = state.savedOuting != null
-                    viewModel.markRelativeInformed()
-                    if (!wasPlanned && context.needsNotificationPermission()) {
-                        pendingShare = message
-                        sharePermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                        return@NotifySheet
-                    }
-                }
-                share(message)
+            },
+        )
+
+        PlanOverlay.SHARE_LINK -> ShareLinkSheet(
+            onDismiss = dismiss,
+            onSend = { asRoute ->
+                overlay = null
+                viewModel.prepareLink(LinkUse.Share(asRoute))
+            },
+            onShowQr = { asRoute ->
+                overlay = null
+                viewModel.prepareLink(LinkUse.Qr(asRoute))
             },
         )
 
@@ -566,4 +657,28 @@ private fun addToCalendar(context: Context, state: OutingPlanUiState, locale: Lo
         intent.putExtra(CalendarContract.Events.EVENT_LOCATION, String.format(Locale.ROOT, "%.5f, %.5f", point.latitude, point.longitude))
     }
     context.startActivitySafely(intent)
+}
+
+/** "Riolan + Aiglun, samedi 4 juillet : <link>", or "Itinéraire Riolan + Aiglun : <link>". */
+private fun linkShareText(
+    resources: android.content.res.Resources,
+    state: OutingPlanUiState,
+    link: String,
+    asRoute: Boolean,
+    locale: Locale,
+): String {
+    val title = state.title.orEmpty()
+    if (asRoute) return resources.getString(R.string.outing_link_share_route, title, link)
+    val day = java.time.format.DateTimeFormatter.ofPattern("EEEE d MMMM", locale).format(state.choices.date)
+    return resources.getString(R.string.outing_link_share_dated, title, day, link)
+}
+
+/** "Rendez-vous 08:30, samedi 4 juillet": what the new version of a shared outing says. */
+private fun linkUpdateText(resources: android.content.res.Resources, update: LinkUpdate, locale: Locale): String {
+    val time = update.outing.summary.meet ?: update.outing.anchorTime
+    val formattedTime = java.time.format.DateTimeFormatter.ofLocalizedTime(
+        java.time.format.FormatStyle.SHORT,
+    ).withLocale(locale).format(time)
+    val day = update.outing.date?.let { java.time.format.DateTimeFormatter.ofPattern("EEEE d MMMM", locale).format(it) }.orEmpty()
+    return resources.getString(R.string.outing_link_update_body, formattedTime, day)
 }

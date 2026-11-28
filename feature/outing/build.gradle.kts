@@ -5,3 +5,7 @@ plugins {
 android {
     namespace = "fr.descentecanyon.app.feature.outing"
 }
+
+dependencies {
+    implementation(libs.qrcodegen)
+}

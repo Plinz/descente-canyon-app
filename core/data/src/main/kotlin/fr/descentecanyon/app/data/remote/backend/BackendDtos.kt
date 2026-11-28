@@ -244,3 +244,19 @@ data class LiveCheckHorizonDto(
     val highShown: Int = 0,
     val highShownRight: Int = 0,
 )
+
+/** A shared link sent to the server: its kind (OUTING, STAY, LIST) and what it holds. */
+@Serializable
+data class ShareRequestDto(val kind: String, val payload: kotlinx.serialization.json.JsonElement)
+
+/** A shared link as the server answers: [payload] only when it is read. */
+@Serializable
+data class ShareDto(
+    val code: String,
+    val kind: String,
+    val version: Int,
+    val url: String,
+    val updatedAt: String? = null,
+    val expiresAt: String? = null,
+    val payload: kotlinx.serialization.json.JsonElement? = null,
+)

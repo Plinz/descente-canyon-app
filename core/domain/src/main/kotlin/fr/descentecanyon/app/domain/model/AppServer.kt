@@ -32,6 +32,9 @@ data class AppServerState(
 
     /** The idea box takes messages (only once the server says it does: older servers do not). */
     val feedbackAvailable: Boolean get() = isActive && features.feedback
+
+    /** Short links of outings, stays and lists can be made (else the link carries the outing whole). */
+    val sharesAvailable: Boolean get() = isActive && features.shares
 }
 
 data class ServerFeatures(
@@ -39,6 +42,7 @@ data class ServerFeatures(
     val catalogUpdates: Boolean = true,
     val canyonProposals: Boolean = true,
     val feedback: Boolean = false,
+    val shares: Boolean = false,
 )
 
 enum class ServerMessageLevel { INFO, WARNING }

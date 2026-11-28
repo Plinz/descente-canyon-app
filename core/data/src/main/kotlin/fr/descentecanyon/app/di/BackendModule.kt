@@ -8,10 +8,12 @@ import fr.descentecanyon.app.data.repository.AppServerRepositoryImpl
 import fr.descentecanyon.app.data.repository.CanyonProposalRepositoryImpl
 import fr.descentecanyon.app.data.repository.CommunityTrackRepositoryImpl
 import fr.descentecanyon.app.data.repository.FeedbackRepositoryImpl
+import fr.descentecanyon.app.data.repository.ShareRepositoryImpl
 import fr.descentecanyon.app.domain.repository.AppServerRepository
 import fr.descentecanyon.app.domain.repository.CanyonProposalRepository
 import fr.descentecanyon.app.domain.repository.CommunityTrackRepository
 import fr.descentecanyon.app.domain.repository.FeedbackRepository
+import fr.descentecanyon.app.domain.repository.ShareRepository
 import javax.inject.Singleton
 
 /** The app's own server (signed manifest, catalog updates, shared tracks, proposed canyons, idea box); BackendConfig comes from the app module. */
@@ -34,4 +36,8 @@ abstract class BackendModule {
     @Binds
     @Singleton
     abstract fun bindFeedbackRepository(impl: FeedbackRepositoryImpl): FeedbackRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindShareRepository(impl: ShareRepositoryImpl): ShareRepository
 }
