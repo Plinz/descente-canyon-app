@@ -75,10 +75,12 @@ import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.navigation.AppLaunchTarget
 import fr.descentecanyon.app.ui.navigation.AppNavHost
 import fr.descentecanyon.app.ui.navigation.BottomNavItem
+import fr.descentecanyon.app.ui.navigation.InstallReferrerLink
 import fr.descentecanyon.app.ui.navigation.LaunchSection
 import fr.descentecanyon.app.ui.navigation.Screen
 import fr.descentecanyon.app.ui.navigation.consumeLaunchTarget
 import fr.descentecanyon.app.ui.navigation.navigateSingleTop
+import fr.descentecanyon.app.ui.navigation.parseLaunchTargetFromUrl
 import fr.descentecanyon.app.ui.navigation.requestExplorerMap
 import fr.descentecanyon.app.ui.onboarding.HintOverlay
 import fr.descentecanyon.app.ui.onboarding.HintOverlayState
@@ -89,6 +91,8 @@ import fr.descentecanyon.app.ui.theme.DescenteCanyonTheme
 import fr.descentecanyon.app.ui.welcome.WelcomeScreen
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -103,6 +107,9 @@ class MainActivity : ComponentActivity() {
 
     private val incomingLaunchTargets = MutableSharedFlow<AppLaunchTarget>(extraBufferCapacity = 1)
 
+    /** The link a shared page gave Google Play: opened once the screens are there (after the welcome). */
+    private val installLinkTarget = MutableStateFlow<AppLaunchTarget?>(null)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         PerformanceTrace.logEvent(
@@ -112,6 +119,13 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         if (savedInstanceState == null) AppShortcuts.publish(this)
         val initialLaunchTarget = resolveLaunchTarget(intent)
+        if (savedInstanceState == null && initialLaunchTarget == AppLaunchTarget.None) {
+            lifecycleScope.launch {
+                InstallReferrerLink.consume(applicationContext, appLinks)?.let { link ->
+                    installLinkTarget.value = parseLaunchTargetFromUrl(link, appLinks).takeIf { it != AppLaunchTarget.None }
+                }
+            }
+        }
         setContent {
             val themeMode by preferencesRepository.observeThemeMode()
                 .collectAsStateWithLifecycle(initialValue = preferencesRepository.getThemeMode())
@@ -134,6 +148,7 @@ class MainActivity : ComponentActivity() {
                         appStartupCoordinator = appStartupCoordinator,
                         initialLaunchTarget = initialLaunchTarget,
                         incomingLaunchTargets = incomingLaunchTargets,
+                        installLinkTarget = installLinkTarget,
                     )
                 }
             }
@@ -169,6 +184,7 @@ private fun AppStartupScreen(
     appStartupCoordinator: AppStartupCoordinator,
     initialLaunchTarget: AppLaunchTarget,
     incomingLaunchTargets: MutableSharedFlow<AppLaunchTarget>,
+    installLinkTarget: MutableStateFlow<AppLaunchTarget?>,
 ) {
     val retryVersion = remember { mutableIntStateOf(0) }
     val startupState by produceState<StartupUiState>(
@@ -248,6 +264,7 @@ private fun AppStartupScreen(
             MainScreen(
                 initialLaunchTarget = initialLaunchTarget,
                 incomingLaunchTargets = incomingLaunchTargets,
+                installLinkTarget = installLinkTarget,
             )
         }
 
@@ -287,7 +304,11 @@ private const val LIGHT_NAVIGATION_SCRIM = 0xE6FFFFFF.toInt()
 private const val DARK_NAVIGATION_SCRIM = 0x801B1B1B.toInt()
 
 @Composable
-private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTargets: MutableSharedFlow<AppLaunchTarget>) {
+private fun MainScreen(
+    initialLaunchTarget: AppLaunchTarget,
+    incomingLaunchTargets: MutableSharedFlow<AppLaunchTarget>,
+    installLinkTarget: MutableStateFlow<AppLaunchTarget?>,
+) {
     androidx.compose.runtime.LaunchedEffect(Unit) {
         PerformanceTrace.logEvent("main_screen_visible")
     }
@@ -375,6 +396,13 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
         if (!initialTargetOpened) {
             navigateTo(initialLaunchTarget)
             initialTargetOpened = true
+        }
+        // The shared link the app was installed from, once (it may come after the screens are there).
+        launch {
+            installLinkTarget.filterNotNull().collect { target ->
+                installLinkTarget.value = null
+                navigateTo(target)
+            }
         }
         incomingLaunchTargets.collect(::navigateTo)
     }

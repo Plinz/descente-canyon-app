@@ -61,4 +61,20 @@ class AppLaunchTargetTest {
             parseLaunchTargetFromUrl("https://www.descente-canyon.com/canyoning/canyon/212/Rabou.html", appLinks),
         )
     }
+
+    @Test
+    fun `the link Google Play kept from a shared page is read from its referrer`() {
+        assertEquals(
+            "https://canyon.aduquennoy.fr/s/k3F9x2pQa",
+            InstallReferrerLink.linkOf("dc_link=https%3A%2F%2Fcanyon.aduquennoy.fr%2Fs%2Fk3F9x2pQa"),
+        )
+        assertEquals(
+            "https://canyon.aduquennoy.fr/o/2224-riolan#eJzLSM3JyVcozy_KSQEAGgQEXQ",
+            InstallReferrerLink.linkOf(
+                "utm_source=x&dc_link=https%3A%2F%2Fcanyon.aduquennoy.fr%2Fo%2F2224-riolan%23eJzLSM3JyVcozy_KSQEAGgQEXQ",
+            ),
+        )
+        assertEquals(null, InstallReferrerLink.linkOf("utm_source=google-play&utm_medium=organic"))
+        assertEquals(null, InstallReferrerLink.linkOf("dc_link=javascript%3Aalert(1)"))
+    }
 }
