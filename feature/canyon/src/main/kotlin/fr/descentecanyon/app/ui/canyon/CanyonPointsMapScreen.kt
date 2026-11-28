@@ -148,7 +148,7 @@ fun CanyonPointsMapScreen(
     }
 
     Scaffold(
-        modifier = modifier,
+        modifier = modifier.testTag(TestTags.CANYON_POINTS_MAP),
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
     ) { innerPadding ->
         when {

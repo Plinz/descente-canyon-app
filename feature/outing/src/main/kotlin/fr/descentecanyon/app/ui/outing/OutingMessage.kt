@@ -147,7 +147,7 @@ internal fun buildOutingMessage(
         }
     }
     data.note.trim().takeIf { it.isNotEmpty() }?.let(::add)
-    if (MessageSection.SHEET in sections) add(strings.sheet(data.sheetUrl))
+    if (MessageSection.SHEET in sections && data.sheetUrl.isNotBlank()) add(strings.sheet(data.sheetUrl))
 }.joinToString("\n")
 
 private fun meeting(strings: OutingMessageStrings, data: OutingMessageData): String = when {

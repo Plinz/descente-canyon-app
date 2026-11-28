@@ -7,6 +7,7 @@ import dagger.hilt.components.SingletonComponent
 import fr.descentecanyon.app.BuildConfig
 import fr.descentecanyon.app.data.AppBuildInfo
 import fr.descentecanyon.app.data.BackendConfig
+import fr.descentecanyon.app.domain.model.AppLinks
 
 /** Values only the application module knows. */
 @Module
@@ -17,6 +18,10 @@ object AppModule {
         versionCode = BuildConfig.VERSION_CODE,
         versionName = BuildConfig.VERSION_NAME,
     )
+
+    /** The domain of the links the app shares and opens. */
+    @Provides
+    fun provideAppLinks(): AppLinks = AppLinks(BuildConfig.LINK_HOST)
 
     @Provides
     fun provideBackendConfig(): BackendConfig = BackendConfig(

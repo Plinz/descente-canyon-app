@@ -62,12 +62,14 @@ import dagger.hilt.android.AndroidEntryPoint
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.model.AppCanyons
+import fr.descentecanyon.app.domain.model.AppLinks
 import fr.descentecanyon.app.domain.model.ThemeMode
 import fr.descentecanyon.app.domain.repository.PreferencesRepository
 import fr.descentecanyon.app.domain.usecase.EndOutingUseCase
 import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.startup.AppStartupCoordinator
 import fr.descentecanyon.app.startup.StartupLaunchMode
+import fr.descentecanyon.app.ui.common.LocalAppLinks
 import fr.descentecanyon.app.ui.common.shareOutingBackMessage
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.navigation.AppLaunchTarget
@@ -97,6 +99,8 @@ class MainActivity : ComponentActivity() {
 
     @Inject lateinit var endOutingUseCase: EndOutingUseCase
 
+    @Inject lateinit var appLinks: AppLinks
+
     private val incomingLaunchTargets = MutableSharedFlow<AppLaunchTarget>(extraBufferCapacity = 1)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -125,11 +129,13 @@ class MainActivity : ComponentActivity() {
                 onDispose {}
             }
             DescenteCanyonTheme(darkTheme = darkTheme) {
-                AppStartupScreen(
-                    appStartupCoordinator = appStartupCoordinator,
-                    initialLaunchTarget = initialLaunchTarget,
-                    incomingLaunchTargets = incomingLaunchTargets,
-                )
+                CompositionLocalProvider(LocalAppLinks provides appLinks) {
+                    AppStartupScreen(
+                        appStartupCoordinator = appStartupCoordinator,
+                        initialLaunchTarget = initialLaunchTarget,
+                        incomingLaunchTargets = incomingLaunchTargets,
+                    )
+                }
             }
         }
     }
@@ -148,7 +154,7 @@ class MainActivity : ComponentActivity() {
      * at once, then the screens show the flow report form.
      */
     private fun resolveLaunchTarget(intent: android.content.Intent?): AppLaunchTarget {
-        val target = consumeLaunchTarget(intent)
+        val target = consumeLaunchTarget(intent, appLinks)
         if (target !is AppLaunchTarget.OutingBack) return target
         lifecycleScope.launch {
             val ended = endOutingUseCase(target.outingId)
@@ -339,19 +345,30 @@ private fun MainScreen(initialLaunchTarget: AppLaunchTarget, incomingLaunchTarge
                 is AppLaunchTarget.OutingPlan -> navController.navigateSingleTop(Screen.OutingPlan(target.canyonId, target.outingId))
 
                 is AppLaunchTarget.CanyonDetail -> {
+                    val screen = Screen.CanyonDetail(
+                        canyonId = target.canyonId,
+                        openDebitsTab = target.openDebitsTab,
+                        section = target.section?.path,
+                    )
                     if (target.clearBackStack) {
-                        navController.navigate(Screen.CanyonDetail(target.canyonId, target.openDebitsTab)) {
+                        navController.navigate(screen) {
                             applyAppRootNavigation(navController.graph.findStartDestination().id)
                         }
                     } else {
-                        navController.navigateSingleTop(
-                            Screen.CanyonDetail(
-                                canyonId = target.canyonId,
-                                openDebitsTab = target.openDebitsTab,
-                            ),
-                        )
+                        navController.navigateSingleTop(screen)
                     }
                 }
+
+                // The map over the canyon page: "back" shows the canyon the link is about.
+                is AppLaunchTarget.CanyonMap -> {
+                    navController.navigateSingleTop(Screen.CanyonDetail(target.canyonId))
+                    val focus = if (target.latitude != null && target.longitude != null) "${target.latitude},${target.longitude}" else null
+                    navController.navigateSingleTop(Screen.CanyonPointsMap(target.canyonId, focus = focus, trackId = target.trackId))
+                }
+
+                is AppLaunchTarget.Share -> Unit
+
+                is AppLaunchTarget.OutingInLink -> Unit
             }
         }
 

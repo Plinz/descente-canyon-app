@@ -2,11 +2,31 @@ package fr.descentecanyon.app.ui.navigation
 
 import android.content.Intent
 import android.net.Uri
+import fr.descentecanyon.app.domain.model.AppLink
+import fr.descentecanyon.app.domain.model.AppLinks
+import fr.descentecanyon.app.domain.model.CanyonSection
 
 sealed interface AppLaunchTarget {
     data object None : AppLaunchTarget
     data class Notifications(val clearBackStack: Boolean = false) : AppLaunchTarget
-    data class CanyonDetail(val canyonId: Int, val openDebitsTab: Boolean, val clearBackStack: Boolean = false) : AppLaunchTarget
+
+    /** A canyon page, on its flow reports (notification) or on the [section] a link names. */
+    data class CanyonDetail(
+        val canyonId: Int,
+        val openDebitsTab: Boolean,
+        val clearBackStack: Boolean = false,
+        val section: CanyonSection? = null,
+    ) : AppLaunchTarget
+
+    /** The map of a canyon, over its page, on a point or a shared GPS track (a link). */
+    data class CanyonMap(val canyonId: Int, val latitude: Double? = null, val longitude: Double? = null, val trackId: String? = null) :
+        AppLaunchTarget
+
+    /** Something shared through the server, by its code (a link): an outing, a stay, a list of canyons. */
+    data class Share(val code: String) : AppLaunchTarget
+
+    /** An outing carried whole by a link (a QR code). */
+    data class OutingInLink(val canyonId: Int, val payload: String) : AppLaunchTarget
 
     /** The flow report form of a canyon, over its page (end-of-outing reminder). */
     data class DebitForm(val canyonId: Int) : AppLaunchTarget
@@ -34,6 +54,9 @@ enum class LaunchSection {
 fun Intent.putLaunchTarget(target: AppLaunchTarget): Intent = when (target) {
     AppLaunchTarget.None -> this
 
+    // Links: the intent's own address carries them.
+    is AppLaunchTarget.CanyonMap, is AppLaunchTarget.Share, is AppLaunchTarget.OutingInLink -> this
+
     is AppLaunchTarget.Notifications -> putExtra(EXTRA_LAUNCH_TARGET_KIND, TARGET_NOTIFICATIONS)
         .putExtra(EXTRA_CLEAR_BACKSTACK, target.clearBackStack)
 
@@ -58,7 +81,8 @@ fun Intent.putLaunchTarget(target: AppLaunchTarget): Intent = when (target) {
         .putExtra(EXTRA_CLEAR_BACKSTACK, target.clearBackStack)
 }
 
-fun consumeLaunchTarget(intent: Intent?): AppLaunchTarget {
+/** The target of [intent], read once: its extras are removed (the link stays, see MainScreen). */
+fun consumeLaunchTarget(intent: Intent?, appLinks: AppLinks = AppLinks.NONE): AppLaunchTarget {
     if (intent == null) return AppLaunchTarget.None
     val target = when (intent.getStringExtra(EXTRA_LAUNCH_TARGET_KIND)) {
         TARGET_NOTIFICATIONS -> AppLaunchTarget.Notifications(
@@ -93,7 +117,7 @@ fun consumeLaunchTarget(intent: Intent?): AppLaunchTarget {
             }
             ?: AppLaunchTarget.None
 
-        else -> parseLaunchTargetFromUri(intent.data)
+        else -> parseLaunchTargetFromUri(intent.data, appLinks)
     }
     intent.removeExtra(EXTRA_LAUNCH_TARGET_KIND)
     intent.removeExtra(EXTRA_CANYON_ID)
@@ -110,16 +134,26 @@ private fun outingTarget(intent: Intent, target: (Long, Int) -> AppLaunchTarget)
     return if (canyonId > 0 && outingId > 0) target(outingId, canyonId) else AppLaunchTarget.None
 }
 
-internal fun parseLaunchTargetFromUri(uri: Uri?): AppLaunchTarget = parseLaunchTargetFromUrl(uri?.toString())
+internal fun parseLaunchTargetFromUri(uri: Uri?, appLinks: AppLinks = AppLinks.NONE): AppLaunchTarget =
+    parseLaunchTargetFromUrl(uri?.toString(), appLinks)
 
-internal fun parseLaunchTargetFromUrl(url: String?): AppLaunchTarget {
+/** A canyon page of the site, or a link of the app's own domain ([appLinks]). */
+internal fun parseLaunchTargetFromUrl(url: String?, appLinks: AppLinks = AppLinks.NONE): AppLaunchTarget {
     val normalizedUrl = url.orEmpty()
+    appLinks.parse(normalizedUrl)?.let { return it.toLaunchTarget() }
     val match = DESCENTE_CANYON_DETAIL_URL_REGEX.matchEntire(normalizedUrl) ?: return AppLaunchTarget.None
     val canyonId = match.groupValues[1].toIntOrNull() ?: return AppLaunchTarget.None
     return AppLaunchTarget.CanyonDetail(
         canyonId = canyonId,
         openDebitsTab = false,
     )
+}
+
+internal fun AppLink.toLaunchTarget(): AppLaunchTarget = when (this) {
+    is AppLink.Canyon -> AppLaunchTarget.CanyonDetail(canyonId, openDebitsTab = false, section = section)
+    is AppLink.CanyonMap -> AppLaunchTarget.CanyonMap(canyonId, latitude, longitude, trackId)
+    is AppLink.Share -> AppLaunchTarget.Share(code)
+    is AppLink.OutingInLink -> AppLaunchTarget.OutingInLink(canyonId, payload)
 }
 
 private const val EXTRA_LAUNCH_TARGET_KIND = "launch_target_kind"

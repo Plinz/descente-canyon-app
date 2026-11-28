@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.MessageAudience
 import fr.descentecanyon.app.domain.model.MessageSection
+import fr.descentecanyon.app.ui.common.LocalAppLinks
 import fr.descentecanyon.app.ui.design.LocalDcColors
 import fr.descentecanyon.app.ui.test.TestTags
 
@@ -55,13 +56,14 @@ internal fun NotifySheet(
     val colors = LocalDcColors.current
     val resources = LocalResources.current
     val locale = LocalLocale.current.platformLocale
+    val appLinks = LocalAppLinks.current
     var audience by rememberSaveable { mutableStateOf(initialAudience) }
     var edited by rememberSaveable(stateSaver = SectionsSaver) { mutableStateOf(emptyMap<MessageAudience, Set<MessageSection>>()) }
     var customizing by rememberSaveable { mutableStateOf(false) }
     val defaults = state.messageSections[audience] ?: audience.defaultSections
     val sections = edited[audience] ?: defaults
     val message = remember(state, audience, sections, resources) {
-        outingMessageData(state, resources, locale)?.let {
+        outingMessageData(state, resources, locale, appLinks)?.let {
             buildOutingMessage(ResourceOutingMessageStrings(resources), it, audience, sections)
         }
     }.orEmpty()

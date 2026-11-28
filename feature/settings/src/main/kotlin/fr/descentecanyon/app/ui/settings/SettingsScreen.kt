@@ -34,6 +34,7 @@ import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Link
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Palette
@@ -69,6 +70,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.AppServerState
@@ -181,6 +183,13 @@ fun SettingsScreen(
                             style = MaterialTheme.typography.bodySmall,
                             color = LocalDcColors.current.textSecondary,
                         )
+                    }
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                    item {
+                        SettingsSection(title = stringResource(R.string.settings_section_links)) {
+                            LinkHandlingRow()
+                        }
                     }
                 }
                 if (uiState.server.isConfigured) {
@@ -386,6 +395,28 @@ private fun SettingsTextDialog(dialog: SettingsDialog, hasServer: Boolean, onDis
         confirmButton = {
             TextButton(onClick = onDismiss) { Text(stringResource(R.string.close)) }
         },
+    )
+}
+
+/** Which links open here: read again when the person comes back from the system settings. */
+@Composable
+private fun LinkHandlingRow() {
+    val context = LocalContext.current
+    var blocked by remember { mutableStateOf(context.domainsOpenedInBrowser()) }
+    LifecycleResumeEffect(Unit) {
+        blocked = context.domainsOpenedInBrowser()
+        onPauseOrDispose {}
+    }
+    SettingsLinkRow(
+        icon = Icons.Default.Link,
+        title = stringResource(R.string.settings_links_open),
+        subtitle = if (blocked.isEmpty()) {
+            stringResource(R.string.settings_links_all_here)
+        } else {
+            stringResource(R.string.settings_links_in_browser, blocked.joinToString(", "))
+        },
+        onClick = { context.openLinkSettings() },
+        trailingIcon = Icons.AutoMirrored.Filled.OpenInNew,
     )
 }
 

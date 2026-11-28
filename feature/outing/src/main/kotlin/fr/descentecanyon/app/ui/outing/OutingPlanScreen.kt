@@ -54,7 +54,9 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.AppCanyons
+import fr.descentecanyon.app.domain.model.AppLinks
 import fr.descentecanyon.app.domain.model.MessageAudience
+import fr.descentecanyon.app.ui.common.LocalAppLinks
 import fr.descentecanyon.app.ui.common.needsExactAlarmPermission
 import fr.descentecanyon.app.ui.common.needsNotificationPermission
 import fr.descentecanyon.app.ui.common.openExactAlarmSettings
@@ -97,6 +99,7 @@ fun OutingPlanScreen(
     val context = LocalContext.current
     val resources = LocalResources.current
     val locale = LocalLocale.current.platformLocale
+    val appLinks = LocalAppLinks.current
     val timeFormatter = rememberTimeFormatter()
     val contentWidth = rememberDcContentWidth(maxWidth = 720.dp)
     var overlay by rememberSaveable { mutableStateOf<PlanOverlay?>(null) }
@@ -310,7 +313,7 @@ fun OutingPlanScreen(
                                 icon = Icons.Default.CalendarMonth,
                                 onClick = {
                                     menu = false
-                                    addToCalendar(context, state, locale)
+                                    addToCalendar(context, state, locale, appLinks)
                                 },
                             )
                             DcDropdownMenuItem(
@@ -537,7 +540,7 @@ private fun delayMessage(context: Context, state: OutingPlanUiState, alertAt: Lo
 }
 
 /** An event of the whole day in the calendar app, with the message for the team as its description. */
-private fun addToCalendar(context: Context, state: OutingPlanUiState, locale: Locale) {
+private fun addToCalendar(context: Context, state: OutingPlanUiState, locale: Locale, appLinks: AppLinks) {
     val title = state.title ?: return
     val schedule = state.schedule ?: return
     val begin = schedule.leavePlace ?: schedule.arriveParking
@@ -545,7 +548,7 @@ private fun addToCalendar(context: Context, state: OutingPlanUiState, locale: Lo
     // The times of the plan are the canyon's: the event lands at the right moment wherever the phone is.
     val zone = state.zone
     val resources = context.resources
-    val description = outingMessageData(state, resources, locale)?.let { data ->
+    val description = outingMessageData(state, resources, locale, appLinks)?.let { data ->
         buildOutingMessage(
             ResourceOutingMessageStrings(resources),
             data,

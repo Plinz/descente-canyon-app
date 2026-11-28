@@ -1857,4 +1857,9 @@ Busca un barranco y añádelo a tus favoritos.</string>
         <item quantity="many">Novedades sobre %1$d mensajes</item>
         <item quantity="other">Novedades sobre %1$d mensajes</item>
     </plurals>
+    <!-- Links opened in the app (Android 12+: verified or allowed domains only) -->
+    <string name="settings_section_links">Enlaces</string>
+    <string name="settings_links_open">Abrir los enlaces en la aplicación</string>
+    <string name="settings_links_all_here">Las páginas de barrancos de descente-canyon.com y los enlaces compartidos desde la aplicación se abren aquí.</string>
+    <string name="settings_links_in_browser">Los enlaces de %1$s se abren en el navegador: toque para abrirlos aquí.</string>
 </resources>

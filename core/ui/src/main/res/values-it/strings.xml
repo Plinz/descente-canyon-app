@@ -1857,4 +1857,9 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
         <item quantity="many">Novità su %1$d messaggi</item>
         <item quantity="other">Novità su %1$d messaggi</item>
     </plurals>
+    <!-- Links opened in the app (Android 12+: verified or allowed domains only) -->
+    <string name="settings_section_links">Link</string>
+    <string name="settings_links_open">Apri i link nell\'app</string>
+    <string name="settings_links_all_here">Le pagine dei torrenti di descente-canyon.com e i link condivisi dall\'app si aprono qui.</string>
+    <string name="settings_links_in_browser">I link di %1$s si aprono nel browser: tocca per aprirli qui.</string>
 </resources>

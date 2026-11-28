@@ -1812,4 +1812,9 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
         <item quantity="one">Neues zu %1$d Nachricht</item>
         <item quantity="other">Neues zu %1$d Nachrichten</item>
     </plurals>
+    <!-- Links opened in the app (Android 12+: verified or allowed domains only) -->
+    <string name="settings_section_links">Links</string>
+    <string name="settings_links_open">Links in der App öffnen</string>
+    <string name="settings_links_all_here">Canyon-Seiten von descente-canyon.com und aus der App geteilte Links öffnen sich hier.</string>
+    <string name="settings_links_in_browser">Links von %1$s öffnen sich im Browser: Tippen, um sie hier zu öffnen.</string>
 </resources>

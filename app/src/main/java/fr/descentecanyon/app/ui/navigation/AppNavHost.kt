@@ -186,7 +186,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onUserClick = dropUnlessResumedWith { username: String -> navController.navigateSingleTop(Screen.UserProfile(username)) },
                 // Not single top: another canyon is pushed so "back" returns to this one; still for the day of the stay.
                 onOpenCanyon = dropUnlessResumedWith { canyonId: Int ->
-                    navController.navigate(detail.copy(canyonId = canyonId, openDebitsTab = false))
+                    navController.navigate(detail.copy(canyonId = canyonId, openDebitsTab = false, section = null))
                 },
                 planForDay = planDay,
                 onPlanOuting = dropUnlessResumed {
@@ -213,7 +213,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 },
                 onOpenLogbook = dropUnlessResumed { navController.navigateSingleTop(Screen.Logbook()) },
                 onProposeEdit = dropUnlessResumed { navController.navigateSingleTop(Screen.CanyonProposal(detail.canyonId)) },
-                openDebitsTabInitially = detail.openDebitsTab,
+                initialSection = detail.initialSection,
                 refreshDebitsAfterSubmission = refreshDebitsAfterSubmission,
                 onRefreshDebitsAfterSubmissionHandled = {
                     backStackEntry.savedStateHandle[DEBIT_SUBMISSION_REFRESH_KEY] = false

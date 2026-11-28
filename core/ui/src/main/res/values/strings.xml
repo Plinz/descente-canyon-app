@@ -1857,4 +1857,9 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
         <item quantity="many">Du nouveau pour %1$d messages</item>
         <item quantity="other">Du nouveau pour %1$d messages</item>
     </plurals>
+    <!-- Links opened in the app (Android 12+: verified or allowed domains only) -->
+    <string name="settings_section_links">Liens</string>
+    <string name="settings_links_open">Ouvrir les liens dans l\'application</string>
+    <string name="settings_links_all_here">Les pages canyon de descente-canyon.com et les liens partagés depuis l\'application s\'ouvrent ici.</string>
+    <string name="settings_links_in_browser">Les liens de %1$s s\'ouvrent dans le navigateur : touchez pour les ouvrir ici.</string>
 </resources>

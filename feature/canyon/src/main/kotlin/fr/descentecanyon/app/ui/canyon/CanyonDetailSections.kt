@@ -57,6 +57,7 @@ import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonDuration
 import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
+import fr.descentecanyon.app.domain.model.CanyonSection
 import fr.descentecanyon.app.domain.model.Debit
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.NearbyCanyon
@@ -94,7 +95,7 @@ internal fun CanyonDetailContent(
     memberAuthors: Set<String>,
     onUserClick: (String) -> Unit,
     onPersistedPhotoMissing: (Long) -> Unit,
-    openDebitsTabInitially: Boolean,
+    initialSection: CanyonSection?,
     modifier: Modifier = Modifier,
     personalNote: String? = null,
     nearbyCanyons: List<NearbyCanyon> = emptyList(),
@@ -111,9 +112,9 @@ internal fun CanyonDetailContent(
 ) {
     // A canyon added in the app has neither photos nor flow reports: they live on the site, which does not know it.
     val isAddedInApp = detail.canyon.isAddedInApp
-    var selectedTab by rememberSaveable(openDebitsTabInitially) {
+    var selectedTab by rememberSaveable(initialSection) {
         // The topo first: what people open a canyon sheet for.
-        mutableIntStateOf(if (openDebitsTabInitially && !isAddedInApp) TAB_DEBITS else TAB_TOPO)
+        mutableIntStateOf(initialTab(initialSection, isAddedInApp))
     }
     val scope = rememberCoroutineScope()
     val tabs = listOf(
@@ -183,6 +184,7 @@ internal fun CanyonDetailContent(
                     // their counts fit a narrow phone, a long one ("Débits (253)") shrinks rather than wraps.
                     Tab(
                         selected = selectedTab == index,
+                        modifier = Modifier.testTag(TestTags.detailTab(index)),
                         enabled = (index != TAB_PHOTOS && index != TAB_DEBITS) || !isAddedInApp,
                         onClick = {
                             selectedTab = index
@@ -512,6 +514,15 @@ internal fun InlineLoadingBanner(text: String, modifier: Modifier = Modifier) {
 }
 
 private const val TABS_HEADER_KEY = "canyon_tabs"
+
+/** The tab of [section]; photos and flow reports live on the site, so a canyon added in the app opens on its topo. */
+private fun initialTab(section: CanyonSection?, isAddedInApp: Boolean): Int = when (section) {
+    CanyonSection.CONDITIONS -> TAB_CONDITIONS
+    CanyonSection.PHOTOS -> if (isAddedInApp) TAB_TOPO else TAB_PHOTOS
+    CanyonSection.DEBITS -> if (isAddedInApp) TAB_TOPO else TAB_DEBITS
+    CanyonSection.TOPO, CanyonSection.MAP, null -> TAB_TOPO
+}
+
 private const val TAB_TOPO = 0
 private const val TAB_CONDITIONS = 1
 private const val TAB_PHOTOS = 2

@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.ui.canyon
 
+import fr.descentecanyon.app.domain.model.AppLinks
 import fr.descentecanyon.app.domain.model.Canyon
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -18,12 +19,28 @@ class CanyonShareTextTest {
         url = "https://www.descente-canyon.com/canyoning/canyon/2224/Riolan.html",
     )
 
+    private val links = AppLinks("canyon.aduquennoy.fr")
+
     @Test
-    fun `share text has the name, the place and the link`() {
+    fun `share text has the name, the place and the app's link`() {
+        assertEquals(
+            "Riolan (v4a4III)\nSigale, Aiglun · Alpes-Maritimes · France\nhttps://canyon.aduquennoy.fr/c/2224-riolan",
+            canyonShareText(riolan, links),
+        )
+    }
+
+    @Test
+    fun `without the app's domain the site's sheet is shared`() {
         assertEquals(
             "Riolan (v4a4III)\nSigale, Aiglun · Alpes-Maritimes · France\nhttps://www.descente-canyon.com/canyoning/canyon/2224/Riolan.html",
-            canyonShareText(riolan),
+            canyonShareText(riolan, AppLinks.NONE),
         )
+    }
+
+    @Test
+    fun `a canyon added in the app is shared by the app's link`() {
+        val added = riolan.copy(id = 1_000_012, url = "")
+        assertEquals("https://canyon.aduquennoy.fr/c/1000012-riolan", canyonShareText(added, links).lines().last())
     }
 
     @Test
@@ -31,8 +48,8 @@ class CanyonShareTextTest {
         val canyon = riolan.copy(cotation = "", communes = emptyList(), commune = "", departement = null)
 
         assertEquals(
-            "Riolan\nFrance\nhttps://www.descente-canyon.com/canyoning/canyon/2224/Riolan.html",
-            canyonShareText(canyon),
+            "Riolan\nFrance\nhttps://canyon.aduquennoy.fr/c/2224-riolan",
+            canyonShareText(canyon, links),
         )
     }
 }

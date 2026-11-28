@@ -86,12 +86,15 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.AppCanyons
+import fr.descentecanyon.app.domain.model.AppLinks
 import fr.descentecanyon.app.domain.model.Canyon
+import fr.descentecanyon.app.domain.model.CanyonSection
 import fr.descentecanyon.app.domain.model.FirstStep
 import fr.descentecanyon.app.domain.model.Hint
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.perf.PerformanceTrace
+import fr.descentecanyon.app.ui.common.LocalAppLinks
 import fr.descentecanyon.app.ui.common.asString
 import fr.descentecanyon.app.ui.common.needsNotificationPermission
 import fr.descentecanyon.app.ui.common.openUrl
@@ -134,7 +137,8 @@ fun CanyonDetailScreen(
     onOpenLogbook: () -> Unit = {},
     /** A change to a canyon added in the app (the site's sheets are changed on the site). */
     onProposeEdit: () -> Unit = {},
-    openDebitsTabInitially: Boolean = false,
+    /** The tab a notification or a link opens (the topo when null). */
+    initialSection: CanyonSection? = null,
     modifier: Modifier = Modifier,
     refreshDebitsAfterSubmission: Boolean = false,
     onRefreshDebitsAfterSubmissionHandled: () -> Unit = {},
@@ -350,7 +354,7 @@ fun CanyonDetailScreen(
                             memberAuthors = uiState.memberAuthors,
                             onUserClick = onUserClick,
                             onPersistedPhotoMissing = viewModel::onPersistedPhotoMissing,
-                            openDebitsTabInitially = openDebitsTabInitially,
+                            initialSection = initialSection,
                             personalNote = uiState.personalNote,
                             nearbyCanyons = uiState.nearbyCanyons,
                             onShowMap = onShowMapClick,
@@ -466,6 +470,7 @@ private fun CanyonMoreActions(
     myCanyonDialogs: MyCanyonDialogs?,
 ) {
     val context = LocalContext.current
+    val appLinks = LocalAppLinks.current
     var expanded by remember { mutableStateOf(false) }
     Box {
         IconButton(onClick = { expanded = true }) {
@@ -525,7 +530,7 @@ private fun CanyonMoreActions(
                     icon = Icons.Default.Share,
                     onClick = {
                         expanded = false
-                        context.shareCanyon(canyon)
+                        context.shareCanyon(canyon, appLinks)
                     },
                 )
             }
@@ -563,21 +568,26 @@ private fun SiteMenuItems(isFollowingDebits: Boolean, onToggleFollowDebits: () -
     )
 }
 
-private fun Context.shareCanyon(canyon: Canyon) {
+private fun Context.shareCanyon(canyon: Canyon, appLinks: AppLinks) {
     val send = Intent(Intent.ACTION_SEND)
         .setType("text/plain")
         .putExtra(Intent.EXTRA_SUBJECT, canyon.nom)
-        .putExtra(Intent.EXTRA_TEXT, canyonShareText(canyon))
+        .putExtra(Intent.EXTRA_TEXT, canyonShareText(canyon, appLinks))
     startActivitySafely(Intent.createChooser(send, null))
 }
 
-/** "Name (rating)", where it is, and the link: the site URL also opens the app for recipients who have it. */
-internal fun canyonShareText(canyon: Canyon): String {
+/**
+ * "Name (rating)", where it is, and the link: the app's own one, which opens the canyon in the app
+ * for those who have it and shows it (with its sheet on the site) to the others; a canyon added in
+ * the app has no other. The site's address without the app's domain.
+ */
+internal fun canyonShareText(canyon: Canyon, appLinks: AppLinks): String {
     val title = if (canyon.cotation.isBlank()) canyon.nom else "${canyon.nom} (${canyon.cotation})"
     val place = listOfNotNull(
         canyon.communes.joinToString(", ").ifBlank { canyon.commune }.takeIf { it.isNotBlank() },
         canyon.departement?.takeIf { it.isNotBlank() },
         canyon.pays.takeIf { it.isNotBlank() },
     ).distinct().joinToString(" · ")
-    return listOf(title, place, canyon.url).filter { it.isNotBlank() }.joinToString("\n")
+    val link = appLinks.canyon(canyon.id, canyon.nom) ?: canyon.url
+    return listOf(title, place, link).filter { it.isNotBlank() }.joinToString("\n")
 }

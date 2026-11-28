@@ -216,6 +216,11 @@ val backendPublicKeys = backendSetting("dc.backendPublicKey", "DC_BACKEND_PUBLIC
 require(backendUrl.isEmpty() || backendUrl.startsWith("https://")) { "dc.backendUrl must be an https:// address" }
 require(backendPublicKeys.all { key -> key.matches(Regex("^[A-Za-z0-9+/]+={0,2}$")) }) { "dc.backendPublicKey must be base64" }
 
+// Domain of the links the app shares and opens (canyon pages, shared outings): the server answers
+// there with the pages of those links and the assetlinks.json that lets Android open them here.
+val linkHost = backendSetting("dc.linkHost", "DC_LINK_HOST").trim().lowercase().ifEmpty { "canyon.aduquennoy.fr" }
+require(linkHost.matches(Regex("^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$"))) { "dc.linkHost must be a host name" }
+
 // Catalog identity checked before a downloaded catalog replaces the APK's one: the same Room
 // schema file as the generator, and the generation time of the embedded data.
 @Suppress("UNCHECKED_CAST")
@@ -316,6 +321,8 @@ android {
 
         buildConfigField("String", "BACKEND_URL", "\"$backendUrl\"")
         buildConfigField("String", "BACKEND_PUBLIC_KEYS", "\"${backendPublicKeys.joinToString(",")}\"")
+        buildConfigField("String", "LINK_HOST", "\"$linkHost\"")
+        manifestPlaceholders["linkHost"] = linkHost
         buildConfigField("int", "CATALOG_SCHEMA_VERSION", catalogSchemaVersion.toString())
         buildConfigField("String", "CATALOG_IDENTITY_HASH", "\"$catalogIdentityHash\"")
         buildConfigField("String", "EMBEDDED_CATALOG_VERSION", "\"$embeddedCatalogVersion\"")

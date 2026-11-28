@@ -38,6 +38,9 @@ object TestTags {
     const val EXPLORE_MODE_MAP = "explore_mode_map"
     const val OUTING_OFF_SEASON = "outing_off_season"
     const val DETAIL_LIST = "detail_list"
+
+    /** A tab of the canyon page, by its position (topo, conditions, photos, flow reports). */
+    fun detailTab(index: Int) = "detail_tab_$index"
     const val OUTING_PLAN_LIST = "outing_plan_list"
     const val OUTING_START_TIME = "outing_start_time"
     const val OUTING_TIMELINE = "outing_timeline"
@@ -50,6 +53,7 @@ object TestTags {
     const val EMERGENCY_CANYON = "emergency_canyon"
     const val EMERGENCY_OTHER_CANYON = "emergency_other_canyon"
     const val EMERGENCY_BUTTON = "emergency_button"
+    const val CANYON_POINTS_MAP = "canyon_points_map"
     const val MAP_POINTS_STRIP = "map_points_strip"
     const val MAP_POINT_CARD = "map_point_card"
     const val EMERGENCY_REPORT = "emergency_report"

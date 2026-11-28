@@ -1,5 +1,6 @@
 package fr.descentecanyon.app.ui.navigation
 
+import fr.descentecanyon.app.domain.model.CanyonSection
 import kotlinx.serialization.Serializable
 
 /**
@@ -38,7 +39,12 @@ sealed interface Screen {
         val stayId: Long = 0,
         val stayDate: String? = null,
         val stayOutingId: Long = 0,
-    ) : Screen
+        /** The [fr.descentecanyon.app.domain.model.CanyonSection] path a link opens ("conditions"...). */
+        val section: String? = null,
+    ) : Screen {
+        val initialSection: CanyonSection?
+            get() = section?.let(CanyonSection::ofPath) ?: CanyonSection.DEBITS.takeIf { openDebitsTab }
+    }
 
     /** A flow report; an outing already logged prefills its [date] (ISO), nothing else. */
     @Serializable
@@ -57,8 +63,9 @@ sealed interface Screen {
     @Serializable
     data class PhotoGallery(val canyonId: Int, val initialPhotoId: Long) : Screen
 
+    /** The map of a canyon, on the point nearest to [focus] ("lat,lon") or on the shared track [trackId], from a link. */
     @Serializable
-    data class CanyonPointsMap(val canyonId: Int) : Screen
+    data class CanyonPointsMap(val canyonId: Int, val focus: String? = null, val trackId: String? = null) : Screen
 
     @Serializable
     data object DebitPredictionInfo : Screen

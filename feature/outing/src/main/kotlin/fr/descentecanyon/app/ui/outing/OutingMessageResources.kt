@@ -2,6 +2,7 @@ package fr.descentecanyon.app.ui.outing
 
 import android.content.res.Resources
 import fr.descentecanyon.app.core.ui.R
+import fr.descentecanyon.app.domain.model.AppLinks
 import fr.descentecanyon.app.domain.model.CanyonDuration
 import fr.descentecanyon.app.domain.model.DailyWeather
 import fr.descentecanyon.app.domain.model.GearGroup
@@ -66,8 +67,11 @@ internal class ResourceOutingMessageStrings(private val resources: Resources) : 
     override fun delay(name: String, alertTime: String, number: String) = text(R.string.outing_message_delay, name, alertTime, number)
 }
 
-/** What the messages say about the outing on screen, in the language of the app. */
-internal fun outingMessageData(state: OutingPlanUiState, resources: Resources, locale: Locale): OutingMessageData? {
+/**
+ * What the messages say about the outing on screen, in the language of the app; [appLinks] gives the
+ * canyons' links, which open them in the app (the site's sheets without the app's domain).
+ */
+internal fun outingMessageData(state: OutingPlanUiState, resources: Resources, locale: Locale, appLinks: AppLinks): OutingMessageData? {
     val canyon = state.canyon?.canyon ?: return null
     val schedule = state.schedule ?: return null
     val times = DateTimeFormatter.ofLocalizedTime(FormatStyle.SHORT).withLocale(locale)
@@ -135,7 +139,8 @@ internal fun outingMessageData(state: OutingPlanUiState, resources: Resources, l
         guestsBring = gearOf(GearGroup.GUESTS_BRING),
         guestsProvided = gearOf(GearGroup.GUESTS_PROVIDED),
         note = state.choices.note,
-        sheetUrl = sheets.joinToString("\n") { it.url },
+        sheetUrl = sheets.mapNotNull { sheet -> appLinks.canyon(sheet.id, sheet.nom) ?: sheet.url.takeIf { it.isNotBlank() } }
+            .joinToString("\n"),
     )
 }
 
