@@ -95,8 +95,10 @@ L'app n'appelle ce serveur que si le build connaît son adresse HTTPS et sa clé
 
 ```properties
 # ~/.gradle/gradle.properties ou local.properties (ou DC_BACKEND_URL / DC_BACKEND_PUBLIC_KEYS)
-dc.backendUrl=https://api.example.org
+dc.backendUrl=https://dc-app.fr
 dc.backendPublicKey=MFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE...
+# Domaine des liens que l'app partage et ouvre (le même serveur), dc-app.fr par défaut
+dc.linkHost=dc-app.fr
 ```
 
 Sans ces valeurs (cas par défaut), rien ne change : catalogue de l'APK, aucune section de traces. Le workflow de

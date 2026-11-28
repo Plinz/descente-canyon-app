@@ -143,8 +143,8 @@ def _fingerprints(raw: str | None, default: tuple[str, ...]) -> tuple[str, ...]:
 
 def _public_url(env: Mapping[str, str]) -> str:
     url = (env.get("DC_PUBLIC_URL") or "").strip().rstrip("/")
-    if not url and (env.get("DC_LINK_DOMAIN") or "").strip():
-        url = "https://" + env["DC_LINK_DOMAIN"].strip().rstrip("/")
+    if not url and (env.get("DC_DOMAIN") or "").strip():
+        url = "https://" + env["DC_DOMAIN"].strip().rstrip("/")
     url = url or DEFAULT_PUBLIC_URL
     if not url.startswith("https://"):
         raise ConfigError("DC_PUBLIC_URL must be an https:// address")

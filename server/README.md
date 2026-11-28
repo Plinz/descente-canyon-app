@@ -167,9 +167,8 @@ compte les propositions en attente.
 
 ### Liens partagés
 
-L'app partage ses propres liens, sur un domaine à part, `DC_LINK_DOMAIN` dans `deploy/.env`, par défaut
-`dc-app.fr` : Caddy répond sur ce domaine en plus de `DC_DOMAIN`, celui de l'API, que les apps
-installées appellent. Côté app, c'est `dc.linkHost`, avec le même défaut : les deux changent ensemble.
+L'app partage ses propres liens, sur le domaine du serveur (`DC_DOMAIN`, `dc-app.fr`). Côté app, c'est
+`dc.linkHost`, `dc-app.fr` par défaut, à côté de `dc.backendUrl` : les trois changent ensemble.
 `DC_PUBLIC_URL` dans `/srv/dc/env` remplace l'adresse des liens que donne l'API, si besoin.
 
 - `/c/<id>[-nom][/topo|conditions|photos|debits|carte]` : un canyon (sa carte, un point `?lat=&lon=`, une
@@ -249,8 +248,7 @@ prépare sa sortie du matin la calculerait lui-même. Interrupteur : `manifest f
 
 À faire une fois, quand le VPS (Debian 13) et le nom de domaine sont pris.
 
-1. **DNS** : un enregistrement `A` (et `AAAA` si le VPS a une IPv6) du sous-domaine choisi vers le VPS,
-   de même pour le domaine des liens partagés (`DC_LINK_DOMAIN`, « Liens partagés »).
+1. **DNS** : un enregistrement `A` (et `AAAA` si le VPS a une IPv6) du domaine choisi vers le VPS.
 2. **Installation** (en root sur le VPS) : copier `deploy/bootstrap.sh` puis
    `bash bootstrap.sh "$(cat ~/.ssh/id_ed25519.pub)"` (depuis votre PC, la clé publique SSH). Le script met à
    jour le système, crée le compte `dc` (seul autorisé en SSH, par clé), installe Docker, le pare-feu
@@ -258,7 +256,7 @@ prépare sa sortie du matin la calculerait lui-même. Interrupteur : `manifest f
    `/srv/dc/repo` et copie les timers. Activer aussi le pare-feu du fournisseur avec les mêmes ports.
 3. **Configuration** (en `dc`) : `cp /srv/dc/repo/server/deploy/env.example /srv/dc/env`, `chmod 600`,
    renseigner `DC_PEPPER` (`openssl rand -hex 32`) ; `cp .env.example .env` dans `server/deploy` avec le
-   domaine, celui des liens et l'e-mail pour Let's Encrypt.
+   domaine et l'e-mail pour Let's Encrypt.
 4. **Clé de signature**, sur votre PC, jamais dans git :
    ```bash
    openssl ecparam -name prime256v1 -genkey -noout | openssl pkcs8 -topk8 -nocrypt -out manifest-key.pem
@@ -280,7 +278,7 @@ prépare sa sortie du matin la calculerait lui-même. Interrupteur : `manifest f
    externe sur `/v1/health`.
 9. **App** : dans `~/.gradle/gradle.properties` (ou les secrets du workflow de release),
    `dc.backendUrl=https://<domaine>` et `dc.backendPublicKey=<clé publique base64>`. Sans ces deux valeurs,
-   l'app n'appelle aucun serveur. Plusieurs clés publiques peuvent être données, séparées par des
+   l'app n'appelle aucun serveur. `dc.linkHost` (par défaut `dc-app.fr`) nomme le même domaine. Plusieurs clés publiques peuvent être données, séparées par des
    virgules, pour changer de clé sans bloquer les apps installées.
 
 ## Exploitation

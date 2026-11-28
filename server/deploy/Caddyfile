@@ -2,9 +2,7 @@
 	email {$DC_ACME_EMAIL}
 }
 
-# The API's domain, and the domain of the links the app shares (pages, assetlinks.json): the same
-# routes answer on both.
-{$DC_DOMAIN} {$DC_LINK_DOMAIN} {
+{$DC_DOMAIN} {
 	request_body {
 		max_size 3MB
 	}

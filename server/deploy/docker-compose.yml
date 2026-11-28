@@ -12,7 +12,6 @@ services:
       - "443:443/udp"
     environment:
       DC_DOMAIN: ${DC_DOMAIN:?set DC_DOMAIN in .env}
-      DC_LINK_DOMAIN: ${DC_LINK_DOMAIN:-dc-app.fr}
       DC_ACME_EMAIL: ${DC_ACME_EMAIL:?set DC_ACME_EMAIL in .env}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
@@ -29,8 +28,8 @@ services:
     user: "${DC_UID:-1000}:${DC_GID:-1000}"
     env_file: /srv/dc/env
     environment:
-      # The links the app shares are https://<links domain>/... (DC_PUBLIC_URL in /srv/dc/env overrides it).
-      DC_LINK_DOMAIN: ${DC_LINK_DOMAIN:-dc-app.fr}
+      # The links the app shares are https://<domain>/... (DC_PUBLIC_URL in /srv/dc/env overrides it).
+      DC_DOMAIN: ${DC_DOMAIN:?set DC_DOMAIN in .env}
     # The API never signs anything: the manifest key stays out of its container.
     volumes:
       - /srv/dc/data:/srv/dc/data

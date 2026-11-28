@@ -132,9 +132,7 @@ def test_asset_links(reference_settings):
 def test_settings_of_the_links():
     base = {"DC_PEPPER": "ab" * 32}
     assert load_settings(base).public_url == "https://dc-app.fr"
-    assert load_settings({**base, "DC_LINK_DOMAIN": "liens.example.org"}).public_url == "https://liens.example.org"
-    # The API's domain is not the links' one.
-    assert load_settings({**base, "DC_DOMAIN": "api.example.org"}).public_url == "https://dc-app.fr"
+    assert load_settings({**base, "DC_DOMAIN": "liens.example.org"}).public_url == "https://liens.example.org"
     assert load_settings({**base, "DC_PUBLIC_URL": "https://a.example/"}).public_url == "https://a.example"
     with pytest.raises(ConfigError):
         load_settings({**base, "DC_PUBLIC_URL": "http://a.example"})

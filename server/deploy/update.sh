@@ -6,8 +6,8 @@
 #
 # It pulls the repository, rebuilds the image and restarts the API when the server code changed,
 # reloads Caddy when its configuration changed, installs new or changed systemd units, enables the
-# timers, starts the jobs that never ran, then checks /v1/health and the links' domain. Running it
-# again changes nothing.
+# timers, starts the jobs that never ran, then checks /v1/health and the file that lets Android open the
+# shared links in the app. Running it again changes nothing.
 # sudo (password of dc) is asked only when a unit or a timer must change, or a job must start.
 #
 # Options:
@@ -141,21 +141,10 @@ if [[ $healthy == 1 ]]; then
 else
     echo "API: https://$domain/v1/health does not answer (docker compose logs --tail 50 api caddy)" >&2
 fi
-# The links' domain answers once its DNS names this VPS: Caddy then gets its certificate by itself.
-link_domain=$(sed -n 's/^DC_LINK_DOMAIN=//p' .env | tr -d '"' | tail -n 1)
-link_domain=${link_domain:-dc-app.fr}
-links=0
-for _ in $(seq 1 10); do
-    if curl -fsS --max-time 5 "https://$link_domain/.well-known/assetlinks.json" >/dev/null 2>&1; then
-        links=1
-        break
-    fi
-    sleep 2
-done
-if [[ $links == 1 ]]; then
-    echo "Links: https://$link_domain/.well-known/assetlinks.json answers"
+if curl -fsS --max-time 5 "https://$domain/.well-known/assetlinks.json" >/dev/null 2>&1; then
+    echo "Links: https://$domain/.well-known/assetlinks.json answers"
 else
-    echo "Links: https://$link_domain/.well-known/assetlinks.json does not answer: the DNS of $link_domain must name this VPS (A and AAAA), Caddy then gets its certificate (docker compose logs --tail 50 caddy)." >&2
+    echo "Links: https://$domain/.well-known/assetlinks.json does not answer: the app would open the shared links in the browser (docker compose logs --tail 50 api caddy)" >&2
 fi
 if ! grep -q '^DC_ADMIN_TOKEN=.\+' "$SRV/env" 2>/dev/null; then
     echo "Note: DC_ADMIN_TOKEN is empty in /srv/dc/env: the review tool of the proposed canyons refuses every request (openssl rand -hex 24, then docker compose up -d admin)."
