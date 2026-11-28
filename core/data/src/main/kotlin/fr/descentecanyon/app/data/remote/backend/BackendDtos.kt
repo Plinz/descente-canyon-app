@@ -155,6 +155,42 @@ data class ProposalDto(
 @Serializable
 data class ProposalListDto(val proposals: List<ProposalDto> = emptyList())
 
+/** No default on [kind] nor [text]: the shared Json leaves default values out of what it writes. */
+@Serializable
+data class FeedbackRequestDto(
+    val kind: String,
+    val text: String,
+    val technical: FeedbackTechnicalDto? = null,
+    val contact: FeedbackContactDto? = null,
+)
+
+@Serializable
+data class FeedbackTechnicalDto(
+    val appVersion: String,
+    val versionCode: Long,
+    val android: String,
+    val device: String,
+    val language: String,
+)
+
+@Serializable
+data class FeedbackContactDto(val username: String, val email: String? = null)
+
+@Serializable
+data class FeedbackDto(
+    val id: String,
+    val kind: String,
+    val text: String,
+    val status: String,
+    val createdAt: String,
+    val updatedAt: String? = null,
+    val reply: String? = null,
+    val repliedAt: String? = null,
+)
+
+@Serializable
+data class FeedbackListDto(val feedback: List<FeedbackDto> = emptyList())
+
 @Serializable
 data class VoteRequestDto(val value: Int)
 

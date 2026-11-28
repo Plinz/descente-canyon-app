@@ -113,6 +113,7 @@ fun MyAccountScreen(
     onOpenSettings: () -> Unit,
     modifier: Modifier = Modifier,
     onOpenPendingDebits: () -> Unit = {},
+    onOpenFeedback: () -> Unit = {},
     onProposeCanyon: () -> Unit = {},
     onOpenCanyon: (Int) -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
@@ -268,8 +269,10 @@ fun MyAccountScreen(
                         }
                     }
                 }
-                // Shown while proposals can be sent, as long as earlier ones are listed, and while reports wait.
-                if (state.canPropose || state.proposals.isNotEmpty() || state.pendingDebitCount > 0) {
+                // Shown while proposals or messages can be sent, as long as earlier ones are listed, and while reports wait.
+                if (state.canPropose || state.proposals.isNotEmpty() || state.pendingDebitCount > 0 || state.canSendFeedback ||
+                    state.feedback.isNotEmpty()
+                ) {
                     item(key = "proposals") {
                         ProposalsSection(
                             canPropose = state.canPropose,
@@ -279,6 +282,9 @@ fun MyAccountScreen(
                             onWithdraw = viewModel::withdrawProposal,
                             pendingDebitCount = state.pendingDebitCount,
                             onOpenPendingDebits = onOpenPendingDebits,
+                            canSendFeedback = state.canSendFeedback,
+                            feedback = state.feedback,
+                            onOpenFeedback = onOpenFeedback,
                         )
                     }
                 }

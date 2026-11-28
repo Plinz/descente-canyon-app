@@ -66,6 +66,10 @@ sealed interface Screen {
     @Serializable
     data object PendingDebits : Screen
 
+    /** The idea box: a bug, an idea or a change, and the answers to the earlier messages. */
+    @Serializable
+    data object Feedback : Screen
+
     @Serializable
     data object Settings : Screen
 

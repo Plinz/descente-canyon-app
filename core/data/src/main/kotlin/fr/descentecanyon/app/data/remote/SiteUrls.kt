@@ -11,6 +11,9 @@ object SiteUrls {
     const val FORUM_ACTIVE_TOPICS = "$BASE_URL/forums/search.php?search_id=active_topics"
     const val FORUM_CATEGORIES = "$BASE_URL/forums/"
 
+    /** The account of the logged-in member: account name, e-mail address, password. */
+    const val MY_ACCOUNT = "$BASE_URL/perso"
+
     /** Every flow report of the logged-in member, every year at once ("Ma liste de courses"). */
     const val MY_OBSERVATIONS = "$BASE_URL/perso/observations/all"
 

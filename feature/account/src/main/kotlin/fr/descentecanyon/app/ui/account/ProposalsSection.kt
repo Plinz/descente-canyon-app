@@ -6,6 +6,8 @@ import androidx.compose.material.icons.filled.AddLocationAlt
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.CloudUpload
+import androidx.compose.material.icons.filled.Feedback
+import androidx.compose.material.icons.filled.MarkChatUnread
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
@@ -22,6 +24,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.model.CanyonProposal
+import fr.descentecanyon.app.domain.model.FeedbackMessage
 import fr.descentecanyon.app.domain.model.ProposalKind
 import fr.descentecanyon.app.domain.model.ProposalStatus
 import fr.descentecanyon.app.ui.common.labelRes
@@ -31,8 +34,8 @@ import java.time.format.DateTimeFormatter
 import java.time.format.FormatStyle
 
 /**
- * What the user gives the community: the flow reports still to send, the canyons proposed from this
- * phone and what became of them; a new one starts here.
+ * What the user gives the community: the flow reports still to send, the messages of the idea box,
+ * the canyons proposed from this phone and what became of them; a new one starts here.
  */
 @Composable
 internal fun ProposalsSection(
@@ -43,6 +46,9 @@ internal fun ProposalsSection(
     onWithdraw: (CanyonProposal) -> Unit,
     pendingDebitCount: Int = 0,
     onOpenPendingDebits: () -> Unit = {},
+    canSendFeedback: Boolean = false,
+    feedback: List<FeedbackMessage> = emptyList(),
+    onOpenFeedback: () -> Unit = {},
 ) {
     var withdrawing by remember { mutableStateOf<CanyonProposal?>(null) }
     withdrawing?.let { proposal ->
@@ -66,6 +72,21 @@ internal fun ProposalsSection(
                 subtitle = pluralStringResource(R.plurals.debit_pending_count, pendingDebitCount, pendingDebitCount),
                 onClick = onOpenPendingDebits,
                 modifier = Modifier.testTag(TestTags.MY_ACCOUNT_PENDING_DEBITS),
+            )
+        }
+        // The idea box: new answers first, else how many messages were sent.
+        if (canSendFeedback || feedback.isNotEmpty()) {
+            val newReplies = feedback.count { it.isReplyNew }
+            AccountRow(
+                icon = if (newReplies > 0) Icons.Default.MarkChatUnread else Icons.Default.Feedback,
+                title = stringResource(R.string.feedback_title),
+                subtitle = when {
+                    newReplies > 0 -> pluralStringResource(R.plurals.account_feedback_new_replies, newReplies, newReplies)
+                    feedback.isNotEmpty() -> pluralStringResource(R.plurals.account_feedback_count, feedback.size, feedback.size)
+                    else -> stringResource(R.string.account_feedback_hint)
+                },
+                onClick = onOpenFeedback,
+                modifier = Modifier.testTag(TestTags.MY_ACCOUNT_FEEDBACK),
             )
         }
         if (canPropose) {

@@ -7,12 +7,14 @@ import dagger.hilt.components.SingletonComponent
 import fr.descentecanyon.app.data.repository.AppServerRepositoryImpl
 import fr.descentecanyon.app.data.repository.CanyonProposalRepositoryImpl
 import fr.descentecanyon.app.data.repository.CommunityTrackRepositoryImpl
+import fr.descentecanyon.app.data.repository.FeedbackRepositoryImpl
 import fr.descentecanyon.app.domain.repository.AppServerRepository
 import fr.descentecanyon.app.domain.repository.CanyonProposalRepository
 import fr.descentecanyon.app.domain.repository.CommunityTrackRepository
+import fr.descentecanyon.app.domain.repository.FeedbackRepository
 import javax.inject.Singleton
 
-/** The app's own server (signed manifest, catalog updates, shared tracks, proposed canyons); BackendConfig comes from the app module. */
+/** The app's own server (signed manifest, catalog updates, shared tracks, proposed canyons, idea box); BackendConfig comes from the app module. */
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class BackendModule {
@@ -28,4 +30,8 @@ abstract class BackendModule {
     @Binds
     @Singleton
     abstract fun bindCanyonProposalRepository(impl: CanyonProposalRepositoryImpl): CanyonProposalRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFeedbackRepository(impl: FeedbackRepositoryImpl): FeedbackRepository
 }

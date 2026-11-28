@@ -16,6 +16,7 @@ import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonProposalRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
+import fr.descentecanyon.app.domain.repository.FeedbackRepository
 import fr.descentecanyon.app.domain.repository.ForumUserRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
@@ -83,6 +84,12 @@ class MyAccountViewModelTest {
         coEvery { refreshMine() } returns Result.success(emptyList())
     }
 
+    private val feedbackRepository = mockk<FeedbackRepository> {
+        every { observeAvailable() } returns flowOf(false)
+        every { observeMine() } returns flowOf(emptyList())
+        coEvery { refreshMine() } returns Result.success(emptyList())
+    }
+
     private fun viewModel() = MyAccountViewModel(
         authRepository = authRepository,
         forumUserRepository = forumUserRepository,
@@ -94,6 +101,7 @@ class MyAccountViewModelTest {
         personalDataRepository = personalDataRepository,
         importSiteLogbookUseCase = importSiteLogbookUseCase,
         proposalRepository = proposalRepository,
+        feedbackRepository = feedbackRepository,
     )
 
     @Test

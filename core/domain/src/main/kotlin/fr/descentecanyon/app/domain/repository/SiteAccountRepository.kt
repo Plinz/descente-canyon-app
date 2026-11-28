@@ -16,4 +16,10 @@ interface SiteAccountRepository {
 
     /** Forgets the copy of the account's reports (logout). */
     suspend fun clearMyObservations()
+
+    /**
+     * The e-mail address of the logged-in account, read from its account page once and kept; null
+     * when the page does not show one. Fails like [refreshMyObservations] without a valid session.
+     */
+    suspend fun accountEmail(): Result<String?>
 }

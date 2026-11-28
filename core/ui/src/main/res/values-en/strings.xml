@@ -1515,7 +1515,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="settings_server_check_failed">The server could not be reached: the app goes on with its own data.</string>
     <string name="settings_server_never_checked">Not checked yet.</string>
     <string name="settings_server_check_now">Check now</string>
-    <string name="settings_privacy_server">App server, when switched on in the settings: it receives the phone\'s IP address, kept truncated for 7 days in its logs, and the GPS tracks you choose to share (their line and the month of the outing, without a name or times), with a random key of this installation, used to delete your tracks and to vote only once.</string>
+    <string name="settings_privacy_server">App server, when switched on in the settings: it receives the phone\'s IP address, kept truncated for 7 days in its logs, and the GPS tracks you choose to share (their line and the month of the outing, without a name or times), with a random key of this installation, used to delete your tracks and to vote only once. It also receives the canyons you propose and the messages of the idea box, with, unless you untick them, the technical details and, when the app is logged in to descente-canyon.com, your username and the e-mail address of your account.</string>
     <string name="settings_data_sources_tracks">• Shared GPS tracks: people using the app, public domain (CC0).</string>
     <string name="settings_data_sources_app_canyons">• Canyons added in the app: suggested by people using it, reviewed before publication, public domain (CC0). Those taken from other databases (OpenCanyon, CWiki…) are translated and cross-checked there and keep their CC BY-NC-SA licence: the source is credited in the sheet\'s bibliography.</string>
     <string name="server_update_required">A new version of the app is available: install it to keep receiving the server\'s updates.</string>
@@ -1752,4 +1752,64 @@ Search for a canyon and add it to your favorites.</string>
     <string name="settings_replay_hints">Show the tips again</string>
     <string name="settings_replay_hints_hint">First-visit explanations and the first steps</string>
     <string name="settings_replay_hints_done">The tips will come back as you visit.</string>
+    <!-- Idea box -->
+    <string name="feedback_title">An idea, a bug?</string>
+    <string name="feedback_intro">Something wrong in the app, a feature that is missing or could be better: say it here. Every message is read, and the answer comes back to this screen.</string>
+    <string name="feedback_kind_bug">Bug</string>
+    <string name="feedback_kind_idea">New idea</string>
+    <string name="feedback_kind_change">Improvement</string>
+    <string name="feedback_text_label">Your message</string>
+    <string name="feedback_hint_bug">What happened, what you expected, on which screen…</string>
+    <string name="feedback_hint_idea">What you would like to do with the app…</string>
+    <string name="feedback_hint_change">Which feature, and what would make it better…</string>
+    <string name="feedback_hint_none">First choose: bug, idea or improvement</string>
+    <string name="feedback_counter">%1$d / %2$d</string>
+    <string name="feedback_private_hint">No personal information in the text.</string>
+    <string name="feedback_attach_technical">Attach technical details</string>
+    <string name="feedback_technical_summary">Version %1$s · Android %2$s · %3$s · %4$s</string>
+    <string name="feedback_attach_contact">Attach my descente-canyon.com account</string>
+    <string name="feedback_contact_no_email">%s (no e-mail address found on the site)</string>
+    <string name="feedback_contact_hint">So that the answer can also come by e-mail.</string>
+    <string name="feedback_anonymous">Anonymous message: the answer will come here, in the app.</string>
+    <string name="feedback_unavailable">The idea box takes no messages for now.</string>
+    <string name="feedback_send">Send</string>
+    <string name="feedback_choose_kind">Choose bug, idea or improvement to send.</string>
+    <string name="feedback_sent">Thank you! Your message is sent.</string>
+    <string name="feedback_queued">No network: the message will leave as soon as it is back.</string>
+    <string name="feedback_send_failed">The message could not be sent. Try again later.</string>
+    <string name="feedback_delete_failed">The message could not be deleted.</string>
+    <string name="feedback_mine_title">My messages</string>
+    <string name="feedback_queued_label">Waiting for network</string>
+    <string name="feedback_reply_label">Answer of %s</string>
+    <string name="feedback_reply_label_undated">Answer</string>
+    <string name="feedback_delete">Delete</string>
+    <string name="feedback_delete_confirm">Delete this message? It is erased from the server too.</string>
+    <string name="feedback_delete_queued_confirm">Delete this message? It will not be sent.</string>
+    <string name="feedback_status_new">Sent</string>
+    <string name="feedback_status_read">Read</string>
+    <string name="feedback_status_planned">Planned</string>
+    <string name="feedback_status_done">Done</string>
+    <string name="feedback_status_declined">Not kept</string>
+    <string name="feedback_error_too_short">Message too short: at least 10 characters.</string>
+    <string name="feedback_error_too_long">Message too long: 4,000 characters at most.</string>
+    <string name="feedback_error_bad_email">The account\'s e-mail address is refused: untick “Attach my descente-canyon.com account”.</string>
+    <string name="feedback_error_rate_limited">Many messages today: try again tomorrow.</string>
+    <string name="feedback_error_too_many_open">Several messages are already waiting for an answer: please wait a little.</string>
+    <string name="feedback_error_blocked">Messages from this phone are no longer accepted.</string>
+    <string name="feedback_error_invalid">The server refused this message.</string>
+    <string name="account_feedback_hint">Report a bug, suggest an idea or an improvement</string>
+    <string name="notification_feedback_reply_title">Answer to your message</string>
+    <string name="notification_feedback_status_title">News about your message</string>
+    <plurals name="account_feedback_count">
+        <item quantity="one">%1$d message sent</item>
+        <item quantity="other">%1$d messages sent</item>
+    </plurals>
+    <plurals name="account_feedback_new_replies">
+        <item quantity="one">%1$d new answer</item>
+        <item quantity="other">%1$d new answers</item>
+    </plurals>
+    <plurals name="notification_feedback_answered_title">
+        <item quantity="one">News about %1$d message</item>
+        <item quantity="other">News about %1$d messages</item>
+    </plurals>
 </resources>

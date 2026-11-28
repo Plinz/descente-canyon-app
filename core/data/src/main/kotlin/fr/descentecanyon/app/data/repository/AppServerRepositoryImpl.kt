@@ -84,6 +84,8 @@ class AppServerRepositoryImpl @Inject constructor(
                 communityTracks = payload?.features?.get(FEATURE_TRACKS) ?: true,
                 catalogUpdates = payload?.features?.get(FEATURE_CATALOG) ?: true,
                 canyonProposals = payload?.features?.get(FEATURE_PROPOSALS) ?: true,
+                // A server without the idea box does not name it: no entry that would fail.
+                feedback = payload?.features?.get(FEATURE_FEEDBACK) ?: false,
             ),
             catalog = CatalogStatus(
                 source = if (snapshot.installedServerVersion != null) CatalogSource.SERVER else CatalogSource.APP,
@@ -238,6 +240,7 @@ class AppServerRepositoryImpl @Inject constructor(
         const val FEATURE_TRACKS = "communityTracks"
         const val FEATURE_CATALOG = "catalogUpdates"
         const val FEATURE_PROPOSALS = "canyonProposals"
+        const val FEATURE_FEEDBACK = "feedback"
         const val FEATURE_PREDICTIONS = "serverPredictions"
         const val MAX_PREDICTIONS_BYTES = 16L * 1024 * 1024
 

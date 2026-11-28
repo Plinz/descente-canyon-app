@@ -21,10 +21,12 @@ import dagger.hilt.components.SingletonComponent
 import fr.descentecanyon.app.data.BackendConfig
 import fr.descentecanyon.app.data.repository.AppServerRepositoryImpl
 import fr.descentecanyon.app.data.repository.CatalogUpdateScheduler
+import fr.descentecanyon.app.data.repository.FeedbackOutboxScheduler
 import fr.descentecanyon.app.domain.error.isTransient
 import fr.descentecanyon.app.domain.error.suspendRunCatching
 import fr.descentecanyon.app.domain.error.toAppError
 import fr.descentecanyon.app.domain.repository.AppServerRepository
+import fr.descentecanyon.app.domain.repository.FeedbackRepository
 import java.time.Duration
 import java.time.Instant
 import java.util.concurrent.TimeUnit
@@ -48,6 +50,8 @@ class AppServerSyncScheduler @Inject constructor(
     @param:ApplicationContext private val context: Context,
     private val config: BackendConfig,
     private val repository: AppServerRepository,
+    private val feedback: FeedbackRepository,
+    private val feedbackOutbox: FeedbackOutboxScheduler,
 ) {
     private val scope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
@@ -69,6 +73,10 @@ class AppServerSyncScheduler @Inject constructor(
                         .build(),
                 )
             }
+        }
+        scope.launch {
+            // Messages of the idea box written offline before the app was closed.
+            if (feedback.observeMine().first().any { it.isQueued }) feedbackOutbox.scheduleSend()
         }
         scope.launch {
             repository.observeState().map { it.isEnabled }.distinctUntilChanged().collect { enabled ->
@@ -126,14 +134,17 @@ interface AppServerWorkerEntryPoint {
     fun appServerRepository(): AppServerRepositoryImpl
 
     fun proposalDecisionCheck(): ProposalDecisionCheck
+
+    fun feedbackReplyCheck(): FeedbackReplyCheck
 }
 
 class AppServerManifestWorker(appContext: Context, params: WorkerParameters) : CoroutineWorker(appContext, params) {
     override suspend fun doWork(): Result {
         val entryPoint = EntryPointAccessors.fromApplication(applicationContext, AppServerWorkerEntryPoint::class.java)
         val result = entryPoint.appServerRepository().refresh()
-        // What became of the proposed canyons: a bonus that never fails the check.
+        // What became of the proposed canyons and of the messages of the idea box: bonuses that never fail the check.
         suspendRunCatching { entryPoint.proposalDecisionCheck().run() }
+        suspendRunCatching { entryPoint.feedbackReplyCheck().run() }
         return result.fold(
             onSuccess = { Result.success() },
             onFailure = { if (it.toAppError().isTransient() && runAttemptCount < MAX_ATTEMPTS) Result.retry() else Result.success() },

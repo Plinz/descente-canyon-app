@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.toAppError
+import fr.descentecanyon.app.domain.model.FeedbackRefusal
 import fr.descentecanyon.app.domain.model.ProposalRefusal
 import fr.descentecanyon.app.domain.model.TrackRejection
 
@@ -44,6 +45,8 @@ fun AppError.toUiText(@StringRes fallback: Int = R.string.error_generic, @String
 
     is AppError.ProposalRefused -> UiText.res(reason.messageRes())
 
+    is AppError.FeedbackRefused -> UiText.res(reason.messageRes())
+
     AppError.DataUnavailable, is AppError.Unknown -> UiText.res(fallback)
 }
 
@@ -64,6 +67,17 @@ private fun TrackRejection.messageRes(): Int = when (this) {
     TrackRejection.RATE_LIMITED -> R.string.track_error_rate_limited
     TrackRejection.OWN_TRACK -> R.string.track_error_own_track
     TrackRejection.NOT_AUTHOR -> R.string.track_error_not_author
+}
+
+@StringRes
+private fun FeedbackRefusal.messageRes(): Int = when (this) {
+    FeedbackRefusal.TEXT_TOO_SHORT -> R.string.feedback_error_too_short
+    FeedbackRefusal.TEXT_TOO_LONG -> R.string.feedback_error_too_long
+    FeedbackRefusal.BAD_EMAIL -> R.string.feedback_error_bad_email
+    FeedbackRefusal.RATE_LIMITED -> R.string.feedback_error_rate_limited
+    FeedbackRefusal.TOO_MANY_OPEN -> R.string.feedback_error_too_many_open
+    FeedbackRefusal.BLOCKED -> R.string.feedback_error_blocked
+    FeedbackRefusal.INVALID -> R.string.feedback_error_invalid
 }
 
 @StringRes

@@ -26,6 +26,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.LogbookEntry
+import fr.descentecanyon.app.ui.account.FeedbackScreen
 import fr.descentecanyon.app.ui.account.LogbookScreen
 import fr.descentecanyon.app.ui.account.LogbookTab
 import fr.descentecanyon.app.ui.account.MyAccountScreen
@@ -295,8 +296,13 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
         composable<Screen.Settings> {
             SettingsScreen(
                 onBackClick = dropUnlessResumed { navController.popBackStack() },
+                onOpenFeedback = dropUnlessResumed { navController.navigateSingleTop(Screen.Feedback) },
                 contentPadding = topLevelContentPadding,
             )
+        }
+
+        composable<Screen.Feedback> {
+            FeedbackScreen(onBackClick = dropUnlessResumed { navController.popBackStack() })
         }
 
         composable<Screen.OutingPlan> {
@@ -415,6 +421,7 @@ fun AppNavHost(navController: NavHostController, topLevelContentPadding: Padding
                 onOpenNotifications = dropUnlessResumed { navController.navigateSingleTop(Screen.Notifications) },
                 onOpenSettings = dropUnlessResumed { navController.navigateSingleTop(Screen.Settings) },
                 onOpenPendingDebits = dropUnlessResumed { navController.navigateSingleTop(Screen.PendingDebits) },
+                onOpenFeedback = dropUnlessResumed { navController.navigateSingleTop(Screen.Feedback) },
                 onProposeCanyon = dropUnlessResumed { navController.navigateSingleTop(Screen.CanyonProposal()) },
                 onOpenCanyon = dropUnlessResumedWith { canyonId: Int -> navController.navigateSingleTop(Screen.CanyonDetail(canyonId)) },
                 contentPadding = topLevelContentPadding,

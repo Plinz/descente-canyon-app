@@ -12,4 +12,6 @@ class FakeSiteAccountRepository @Inject constructor() : SiteAccountRepository {
     override suspend fun myObservationsReadAt(): Long? = null
 
     override suspend fun clearMyObservations() = Unit
+
+    override suspend fun accountEmail(): Result<String?> = Result.success(null)
 }

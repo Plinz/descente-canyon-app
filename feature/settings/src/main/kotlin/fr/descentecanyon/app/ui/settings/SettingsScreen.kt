@@ -30,6 +30,7 @@ import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CloudUpload
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Lightbulb
@@ -93,6 +94,7 @@ import java.time.format.FormatStyle
 fun SettingsScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
+    onOpenFeedback: () -> Unit = {},
     contentPadding: PaddingValues = PaddingValues(),
     viewModel: SettingsViewModel = hiltViewModel(),
 ) {
@@ -196,6 +198,16 @@ fun SettingsScreen(
                 }
                 item {
                     SettingsSection(title = stringResource(R.string.settings_section_help)) {
+                        if (uiState.server.feedbackAvailable) {
+                            Box(modifier = Modifier.testTag(TestTags.SETTINGS_FEEDBACK)) {
+                                SettingsLinkRow(
+                                    icon = Icons.Default.Feedback,
+                                    title = stringResource(R.string.feedback_title),
+                                    subtitle = stringResource(R.string.account_feedback_hint),
+                                    onClick = onOpenFeedback,
+                                )
+                            }
+                        }
                         val onboarding = LocalOnboarding.current
                         val replayed = stringResource(R.string.settings_replay_hints_done)
                         Box(modifier = Modifier.testTag(TestTags.SETTINGS_REPLAY_HINTS)) {

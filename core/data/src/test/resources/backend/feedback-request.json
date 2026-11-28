@@ -1,0 +1,15 @@
+{
+ "kind": "BUG",
+ "text": "La carte reste blanche quand je reviens de l'onglet Sorties.",
+ "technical": {
+  "appVersion": "3.2.2",
+  "versionCode": 30202,
+  "android": "14 (API 34)",
+  "device": "Google Pixel 5",
+  "language": "fr-FR"
+ },
+ "contact": {
+  "username": "Membre",
+  "email": "membre@example.org"
+ }
+}

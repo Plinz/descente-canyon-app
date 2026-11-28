@@ -19,6 +19,7 @@ import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.data.repository.OutingFlowAlert
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.model.CanyonProposal
+import fr.descentecanyon.app.domain.model.FeedbackMessage
 import fr.descentecanyon.app.domain.model.PlannedOuting
 import fr.descentecanyon.app.domain.model.PredictedDebitLevel
 import fr.descentecanyon.app.domain.model.ProposalKind
@@ -343,6 +344,46 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         return true
     }
 
+    /** Tells the author that the messages of the idea box were answered or decided; opens the user space. */
+    fun publishFeedbackAnswers(answered: List<FeedbackMessage>): Boolean {
+        if (answered.isEmpty()) return true
+        if (!canPostNotifications(CONTRIBUTIONS_CHANNEL_ID)) return false
+        val builder = NotificationCompat.Builder(context, CONTRIBUTIONS_CHANNEL_ID)
+            .setSmallIcon(fr.descentecanyon.app.R.drawable.ic_launcher_foreground)
+            .setAutoCancel(true)
+            .setContentIntent(sectionPendingIntent(LaunchSection.MY_ACCOUNT))
+        val notification = if (answered.size == 1) {
+            val message = answered.single()
+            val title = context.getString(
+                if (message.reply != null) R.string.notification_feedback_reply_title else R.string.notification_feedback_status_title,
+            )
+            val excerpt = message.text.lineSequence().first().take(FEEDBACK_EXCERPT_LENGTH)
+            val text = listOfNotNull(
+                "« $excerpt »",
+                context.getString(message.status.labelRes()),
+                message.reply,
+            ).joinToString("\n")
+            builder
+                .setContentTitle(title)
+                .setContentText(message.reply ?: context.getString(message.status.labelRes()))
+                .setStyle(NotificationCompat.BigTextStyle().bigText(text))
+                .build()
+        } else {
+            val lines = answered.map { message ->
+                "${message.text.lineSequence().first().take(FEEDBACK_EXCERPT_LENGTH)} · ${context.getString(message.status.labelRes())}"
+            }
+            builder
+                .setContentTitle(
+                    context.resources.getQuantityString(R.plurals.notification_feedback_answered_title, answered.size, answered.size),
+                )
+                .setContentText(lines.joinToString(separator = " • "))
+                .setStyle(NotificationCompat.InboxStyle().also { style -> lines.take(5).forEach(style::addLine) })
+                .build()
+        }
+        notifySafely(FEEDBACK_ANSWERED_NOTIFICATION_ID, notification)
+        return true
+    }
+
     /** Tells the author what became of the canyons proposed from this phone; opens the user space. */
     fun publishDecidedProposals(decided: List<CanyonProposal>): Boolean {
         if (decided.isEmpty()) return true
@@ -575,6 +616,8 @@ class AppNotificationPublisher @Inject constructor(@param:ApplicationContext pri
         const val DEBIT_SENT_NOTIFICATION_ID = 2004
         const val PENDING_LOGIN_NOTIFICATION_ID = 2005
         const val PROPOSALS_DECIDED_NOTIFICATION_ID = 2008
+        const val FEEDBACK_ANSWERED_NOTIFICATION_ID = 2009
+        const val FEEDBACK_EXCERPT_LENGTH = 60
 
         /** The single outing notifications of the versions before several outings. */
         val LEGACY_OUTING_NOTIFICATION_IDS = setOf(2006, 2007)

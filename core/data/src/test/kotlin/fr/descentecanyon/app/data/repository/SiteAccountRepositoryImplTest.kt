@@ -135,4 +135,28 @@ class SiteAccountRepositoryImplTest {
 
         assertEquals(AppError.UnexpectedResponse, repository.refreshMyObservations().appErrorOrNull())
     }
+
+    @Test
+    fun `the address of the account is read once from its page and kept for this account`() = runTest {
+        logIn()
+        val table = """<table><tr><th>Identifiant</th><td>Membre</td></tr><tr><th>E-mail</th><td>membre@example.org</td></tr></table>"""
+        siteClient.onGet(SiteUrls.MY_ACCOUNT, SitePages.loggedIn("Membre", table))
+        // The page read after a logout, without an address.
+        siteClient.onGet(SiteUrls.MY_ACCOUNT, SitePages.loggedIn("Membre", "<p>Identifiant : Membre</p>"))
+
+        assertEquals("membre@example.org", repository.accountEmail().getOrThrow())
+        assertEquals("membre@example.org", repository.accountEmail().getOrThrow())
+        assertEquals(listOf(SiteUrls.MY_ACCOUNT), siteClient.gets)
+
+        // Logged out: the address goes with the copy of the account.
+        repository.clearMyObservations()
+        assertEquals(null, repository.accountEmail().getOrThrow())
+        assertEquals(listOf(SiteUrls.MY_ACCOUNT, SiteUrls.MY_ACCOUNT), siteClient.gets)
+    }
+
+    @Test
+    fun `no address is read without a session`() = runTest {
+        assertEquals(AppError.AuthenticationRequired, repository.accountEmail().appErrorOrNull())
+        assertTrue(siteClient.gets.isEmpty())
+    }
 }

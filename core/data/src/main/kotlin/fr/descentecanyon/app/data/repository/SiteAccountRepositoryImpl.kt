@@ -7,6 +7,7 @@ import fr.descentecanyon.app.data.network.SiteHttpClient
 import fr.descentecanyon.app.data.remote.SiteUrls
 import fr.descentecanyon.app.data.remote.auth.SessionManager
 import fr.descentecanyon.app.data.remote.auth.SiteSessionInspector
+import fr.descentecanyon.app.data.remote.scraper.SiteAccountParser
 import fr.descentecanyon.app.data.remote.scraper.SiteObservationsParser
 import fr.descentecanyon.app.data.remote.scraper.failAsAnonymous
 import fr.descentecanyon.app.data.remote.scraper.parsing
@@ -54,10 +55,29 @@ class SiteAccountRepositoryImpl @Inject constructor(
     override suspend fun clearMyObservations() {
         mySiteReportDao.deleteAll()
         keyValueDao.delete(READ_AT_KEY)
+        keyValueDao.delete(EMAIL_KEY)
+    }
+
+    override suspend fun accountEmail(): Result<String?> = suspendRunCatching {
+        val username = sessionManager.loggedInUsername ?: sessionManager.failAsAnonymous()
+        // Kept for this account only: another account logged in later has its own address.
+        keyValueDao.get(EMAIL_KEY)?.split('|', limit = 2)?.takeIf {
+            it.size == 2 && it[0] == username
+        }?.let { return@suspendRunCatching it[1] }
+        val page = siteClient.get(SiteUrls.MY_ACCOUNT)
+        when (SiteSessionInspector.inspect(page.document, username)) {
+            SiteSessionInspector.Status.LOGGED_OUT -> sessionManager.failAsAnonymous()
+            SiteSessionInspector.Status.UNKNOWN -> appError(AppError.UnexpectedResponse)
+            SiteSessionInspector.Status.LOGGED_IN -> Unit
+        }
+        SiteAccountParser.email(page.document)?.also { email ->
+            keyValueDao.put(KeyValueEntity(EMAIL_KEY, "$username|$email", clock.millis()))
+        }
     }
 
     private companion object {
         const val SLOW_PAGE_TIMEOUT_MS = 60_000L
         const val READ_AT_KEY = "site_reports_read_at"
+        const val EMAIL_KEY = "site_account_email"
     }
 }

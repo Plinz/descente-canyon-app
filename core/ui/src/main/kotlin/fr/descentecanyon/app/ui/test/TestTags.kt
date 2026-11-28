@@ -90,6 +90,12 @@ object TestTags {
     const val PROPOSAL_ADD_POINT = "proposal_add_point"
     const val PROPOSAL_POINT_SAVE = "proposal_point_save"
     const val MY_ACCOUNT_PROPOSALS = "my_account_proposals"
+    const val MY_ACCOUNT_FEEDBACK = "my_account_feedback"
+    const val FEEDBACK_LIST = "feedback_list"
+    const val FEEDBACK_TEXT = "feedback_text"
+    const val FEEDBACK_SEND = "feedback_send"
+    const val FEEDBACK_ATTACH_TECHNICAL = "feedback_attach_technical"
+    const val FEEDBACK_ATTACH_CONTACT = "feedback_attach_contact"
     const val MY_ACCOUNT_PENDING_DEBITS = "my_account_pending_debits"
     const val MY_ACCOUNT_FOLLOWS = "my_account_follows"
     const val MY_ACCOUNT_SETTINGS = "my_account_settings"
@@ -144,9 +150,14 @@ object TestTags {
     const val WELCOME_START = "welcome_start"
     const val WELCOME_SKIP = "welcome_skip"
     const val SETTINGS_REPLAY_HINTS = "settings_replay_hints"
+    const val SETTINGS_FEEDBACK = "settings_feedback"
     const val OUTING_PERMISSIONS_CONTINUE = "outing_permissions_continue"
 
     fun pendingDebitDelete(id: Long): String = "pending_debit_delete_$id"
+
+    fun feedbackKind(kind: String): String = "feedback_kind_$kind"
+
+    fun feedbackMessage(id: String): String = "feedback_message_$id"
 
     fun pendingDebitResend(id: Long) = "pending_debit_resend_$id"
 

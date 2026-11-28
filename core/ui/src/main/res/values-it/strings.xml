@@ -1554,7 +1554,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="settings_server_check_failed">Non è stato possibile raggiungere il server: l\'app continua con i propri dati.</string>
     <string name="settings_server_never_checked">Non ancora controllato.</string>
     <string name="settings_server_check_now">Controlla ora</string>
-    <string name="settings_privacy_server">Server dell\'app, se attivato nelle impostazioni: riceve l\'indirizzo IP del telefono, conservato troncato per 7 giorni nei suoi registri, e le tracce GPS che scegli di condividere (il percorso e il mese dell\'uscita, senza nome né orari), con una chiave casuale di questa installazione, che permette di eliminare le tue tracce e di votare una sola volta.</string>
+    <string name="settings_privacy_server">Server dell\'app, se attivato nelle impostazioni: riceve l\'indirizzo IP del telefono, conservato troncato per 7 giorni nei suoi registri, e le tracce GPS che scegli di condividere (il percorso e il mese dell\'uscita, senza nome né orari), con una chiave casuale di questa installazione, che permette di eliminare le tue tracce e di votare una sola volta. Riceve anche i canyon che proponi e i messaggi della casella delle idee, con, a meno che tu non tolga la spunta, i dati tecnici e, se l\'app ha la sessione aperta su descente-canyon.com, il tuo nome utente e l\'indirizzo e-mail del tuo account.</string>
     <string name="settings_data_sources_tracks">• Tracce GPS condivise: persone che usano l\'app, pubblico dominio (CC0).</string>
     <string name="settings_data_sources_app_canyons">• Canyon aggiunti nell\'app: proposti dalle persone che la usano, rivisti prima della pubblicazione, pubblico dominio (CC0). Quelli ripresi da altre banche dati (OpenCanyon, CWiki…) vengono tradotti e verificati e mantengono la loro licenza CC BY-NC-SA: la fonte è citata nella bibliografia della scheda.</string>
     <string name="server_update_required">È disponibile una nuova versione dell\'app: installala per continuare a ricevere gli aggiornamenti del server.</string>
@@ -1794,4 +1794,67 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="settings_replay_hints">Rivedi i suggerimenti</string>
     <string name="settings_replay_hints_hint">Spiegazioni della prima visita e primi passi</string>
     <string name="settings_replay_hints_done">I suggerimenti torneranno nelle prossime visite.</string>
+    <!-- Idea box -->
+    <string name="feedback_title">Un\'idea, un bug?</string>
+    <string name="feedback_intro">Un problema nell\'app, una funzione che manca o che potrebbe essere fatta meglio: scrivilo qui. Ogni messaggio viene letto, e la risposta arriva in questa schermata.</string>
+    <string name="feedback_kind_bug">Bug</string>
+    <string name="feedback_kind_idea">Nuova idea</string>
+    <string name="feedback_kind_change">Miglioramento</string>
+    <string name="feedback_text_label">Il tuo messaggio</string>
+    <string name="feedback_hint_bug">Cosa è successo, cosa ti aspettavi, in quale schermata…</string>
+    <string name="feedback_hint_idea">Quello che vorresti poter fare con l\'app…</string>
+    <string name="feedback_hint_change">Quale funzione, e cosa la renderebbe migliore…</string>
+    <string name="feedback_hint_none">Scegli prima: bug, idea o miglioramento</string>
+    <string name="feedback_counter">%1$d / %2$d</string>
+    <string name="feedback_private_hint">Niente dati personali nel testo.</string>
+    <string name="feedback_attach_technical">Allega i dati tecnici</string>
+    <string name="feedback_technical_summary">Versione %1$s · Android %2$s · %3$s · %4$s</string>
+    <string name="feedback_attach_contact">Allega il mio account descente-canyon.com</string>
+    <string name="feedback_contact_no_email">%s (nessun indirizzo e-mail trovato sul sito)</string>
+    <string name="feedback_contact_hint">Per poterti rispondere anche via e-mail.</string>
+    <string name="feedback_anonymous">Messaggio anonimo: la risposta arriverà qui, nell\'app.</string>
+    <string name="feedback_unavailable">La casella delle idee non accetta messaggi per ora.</string>
+    <string name="feedback_send">Invia</string>
+    <string name="feedback_choose_kind">Scegli bug, idea o miglioramento per poter inviare.</string>
+    <string name="feedback_sent">Grazie! Il tuo messaggio è stato inviato.</string>
+    <string name="feedback_queued">Nessuna rete: il messaggio partirà appena torna.</string>
+    <string name="feedback_send_failed">Il messaggio non è potuto partire. Riprova più tardi.</string>
+    <string name="feedback_delete_failed">Il messaggio non è stato eliminato.</string>
+    <string name="feedback_mine_title">I miei messaggi</string>
+    <string name="feedback_queued_label">In attesa di rete</string>
+    <string name="feedback_reply_label">Risposta del %s</string>
+    <string name="feedback_reply_label_undated">Risposta</string>
+    <string name="feedback_delete">Elimina</string>
+    <string name="feedback_delete_confirm">Eliminare questo messaggio? Viene cancellato anche dal server.</string>
+    <string name="feedback_delete_queued_confirm">Eliminare questo messaggio? Non verrà inviato.</string>
+    <string name="feedback_status_new">Inviato</string>
+    <string name="feedback_status_read">Letto</string>
+    <string name="feedback_status_planned">Previsto</string>
+    <string name="feedback_status_done">Fatto</string>
+    <string name="feedback_status_declined">Non accolto</string>
+    <string name="feedback_error_too_short">Messaggio troppo corto: almeno 10 caratteri.</string>
+    <string name="feedback_error_too_long">Messaggio troppo lungo: al massimo 4000 caratteri.</string>
+    <string name="feedback_error_bad_email">L\'indirizzo e-mail dell\'account è rifiutato: togli la spunta da «Allega il mio account descente-canyon.com».</string>
+    <string name="feedback_error_rate_limited">Molti messaggi oggi: riprova domani.</string>
+    <string name="feedback_error_too_many_open">Diversi messaggi aspettano già una risposta: pazienta un po\'.</string>
+    <string name="feedback_error_blocked">I messaggi di questo telefono non sono più accettati.</string>
+    <string name="feedback_error_invalid">Il server ha rifiutato questo messaggio.</string>
+    <string name="account_feedback_hint">Segnalare un bug, proporre un\'idea o un miglioramento</string>
+    <string name="notification_feedback_reply_title">Risposta al tuo messaggio</string>
+    <string name="notification_feedback_status_title">Novità sul tuo messaggio</string>
+    <plurals name="account_feedback_count">
+        <item quantity="one">%1$d messaggio inviato</item>
+        <item quantity="many">%1$d messaggi inviati</item>
+        <item quantity="other">%1$d messaggi inviati</item>
+    </plurals>
+    <plurals name="account_feedback_new_replies">
+        <item quantity="one">%1$d nuova risposta</item>
+        <item quantity="many">%1$d nuove risposte</item>
+        <item quantity="other">%1$d nuove risposte</item>
+    </plurals>
+    <plurals name="notification_feedback_answered_title">
+        <item quantity="one">Novità su %1$d messaggio</item>
+        <item quantity="many">Novità su %1$d messaggi</item>
+        <item quantity="other">Novità su %1$d messaggi</item>
+    </plurals>
 </resources>

@@ -1,0 +1,34 @@
+{
+ "feedback": [
+  {
+   "id": "fMvOuIcmiNY0C",
+   "kind": "CHANGE",
+   "text": "Trier les favoris par distance.",
+   "status": "DECLINED",
+   "createdAt": "2026-11-28T09:38:35Z",
+   "updatedAt": "2026-11-28T09:38:36Z",
+   "reply": null,
+   "repliedAt": null
+  },
+  {
+   "id": "fSXV3QADoHEHf",
+   "kind": "IDEA",
+   "text": "Afficher la météo de toute la semaine.",
+   "status": "PLANNED",
+   "createdAt": "2026-11-28T09:38:35Z",
+   "updatedAt": "2026-11-28T09:38:36Z",
+   "reply": "Bonne idée, c'est prévu pour la prochaine version.",
+   "repliedAt": "2026-11-28T09:38:36Z"
+  },
+  {
+   "id": "fLmSqzBJuWNWX",
+   "kind": "BUG",
+   "text": "La carte reste blanche quand je reviens de l'onglet Sorties.",
+   "status": "NEW",
+   "createdAt": "2026-11-28T09:38:35Z",
+   "updatedAt": "2026-11-28T09:38:35Z",
+   "reply": null,
+   "repliedAt": null
+  }
+ ]
+}

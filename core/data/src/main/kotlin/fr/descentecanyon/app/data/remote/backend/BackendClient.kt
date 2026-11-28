@@ -7,6 +7,7 @@ import fr.descentecanyon.app.domain.coroutines.IoDispatcher
 import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.AppException
 import fr.descentecanyon.app.domain.error.appError
+import fr.descentecanyon.app.domain.model.FeedbackRefusal
 import fr.descentecanyon.app.domain.model.ProposalRefusal
 import fr.descentecanyon.app.domain.model.TrackRejection
 import java.io.File
@@ -32,8 +33,8 @@ import okhttp3.Response
 
 /**
  * HTTP access to the app's server. Plain reads (manifest, tracks of a canyon) carry no identifier;
- * only contributions (tracks, votes, proposed canyons) and the list of this installation's own
- * proposals send the random key of the installation. The shared OkHttp cache revalidates
+ * only contributions (tracks, votes, proposed canyons, messages of the idea box) and the lists of
+ * this installation's own proposals and messages send the random key of the installation. The shared OkHttp cache revalidates
  * the manifest and the track lists with their ETag, so an unchanged file costs a 304.
  */
 @Singleton
@@ -151,6 +152,35 @@ class BackendClient @Inject constructor(
         execute(request, mapError = ::proposalErrorOf) { }
     }
 
+    suspend fun submitFeedback(request: FeedbackRequestDto, installKey: String): FeedbackDto {
+        val body = json.encodeToString(FeedbackRequestDto.serializer(), request).toRequestBody(JSON_MEDIA_TYPE)
+        val call = Request.Builder()
+            .url(url("v1/feedback"))
+            .header(INSTALL_KEY_HEADER, installKey)
+            .post(body)
+            .build()
+        return execute(call, mapError = ::feedbackErrorOf) { response -> decode(response, FeedbackDto.serializer()) }
+    }
+
+    suspend fun myFeedback(installKey: String): FeedbackListDto {
+        val request = Request.Builder()
+            .url(url("v1/feedback/mine"))
+            .header(INSTALL_KEY_HEADER, installKey)
+            .cacheControl(CacheControl.Builder().noStore().build())
+            .get()
+            .build()
+        return execute(request, mapError = ::feedbackErrorOf) { response -> decode(response, FeedbackListDto.serializer()) }
+    }
+
+    suspend fun deleteFeedback(feedbackId: String, installKey: String) {
+        val request = Request.Builder()
+            .url(url("v1/feedback").newBuilder().addPathSegment(feedbackId).build())
+            .header(INSTALL_KEY_HEADER, installKey)
+            .delete()
+            .build()
+        execute(request, mapError = ::feedbackErrorOf) { }
+    }
+
     private fun url(path: String): HttpUrl {
         val base = baseUrl ?: appError(AppError.DataUnavailable)
         return base.newBuilder().addPathSegments(path).build()
@@ -194,6 +224,24 @@ class BackendClient @Inject constructor(
             code == "NOT_FOUND" || response.code == 404 -> AppError.NotFound
             response.code == 429 -> AppError.ProposalRefused(ProposalRefusal.RATE_LIMITED)
             response.code == 413 -> AppError.ProposalRefused(ProposalRefusal.TOO_LARGE)
+            response.code in 400..499 -> AppError.UnexpectedResponse
+            else -> AppError.Http(response.code)
+        }
+    }
+
+    private fun feedbackErrorOf(response: Response): AppError {
+        val code = errorBody(response)?.error
+        val refusal = when (code) {
+            null -> null
+            "TOO_MANY_OPEN" -> FeedbackRefusal.TOO_MANY_OPEN
+            "BAD_KIND", "BAD_REQUEST" -> FeedbackRefusal.INVALID
+            else -> FeedbackRefusal.entries.firstOrNull { it.name == code }
+        }
+        return when {
+            refusal != null -> AppError.FeedbackRefused(refusal)
+            code == "NOT_FOUND" || response.code == 404 -> AppError.NotFound
+            response.code == 429 -> AppError.FeedbackRefused(FeedbackRefusal.RATE_LIMITED)
+            response.code == 413 -> AppError.FeedbackRefused(FeedbackRefusal.TEXT_TOO_LONG)
             response.code in 400..499 -> AppError.UnexpectedResponse
             else -> AppError.Http(response.code)
         }

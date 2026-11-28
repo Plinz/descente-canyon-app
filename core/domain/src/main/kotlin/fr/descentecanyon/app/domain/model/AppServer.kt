@@ -29,9 +29,17 @@ data class AppServerState(
 
     /** New canyons and changes can be proposed (the operator can close proposals from the manifest). */
     val canyonProposalsAvailable: Boolean get() = isActive && features.canyonProposals
+
+    /** The idea box takes messages (only once the server says it does: older servers do not). */
+    val feedbackAvailable: Boolean get() = isActive && features.feedback
 }
 
-data class ServerFeatures(val communityTracks: Boolean = true, val catalogUpdates: Boolean = true, val canyonProposals: Boolean = true)
+data class ServerFeatures(
+    val communityTracks: Boolean = true,
+    val catalogUpdates: Boolean = true,
+    val canyonProposals: Boolean = true,
+    val feedback: Boolean = false,
+)
 
 enum class ServerMessageLevel { INFO, WARNING }
 

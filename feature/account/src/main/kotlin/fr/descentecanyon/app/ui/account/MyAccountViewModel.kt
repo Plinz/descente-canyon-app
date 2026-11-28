@@ -10,6 +10,7 @@ import fr.descentecanyon.app.domain.error.toAppError
 import fr.descentecanyon.app.domain.model.AuthState
 import fr.descentecanyon.app.domain.model.CanyonProposal
 import fr.descentecanyon.app.domain.model.ContributorIdentity
+import fr.descentecanyon.app.domain.model.FeedbackMessage
 import fr.descentecanyon.app.domain.model.ForumUser
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.LogbookStats
@@ -21,6 +22,7 @@ import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonProposalRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitSubmissionRepository
+import fr.descentecanyon.app.domain.repository.FeedbackRepository
 import fr.descentecanyon.app.domain.repository.ForumUserRepository
 import fr.descentecanyon.app.domain.repository.LogbookRepository
 import fr.descentecanyon.app.domain.repository.NotificationCenterRepository
@@ -63,6 +65,10 @@ data class MyAccountUiState(
     val canPropose: Boolean = false,
     /** The canyons and changes proposed from this phone, newest first. */
     val proposals: List<CanyonProposal> = emptyList(),
+    /** The idea box takes messages (the app's server has it). */
+    val canSendFeedback: Boolean = false,
+    /** The messages sent from this phone with the idea box, newest first. */
+    val feedback: List<FeedbackMessage> = emptyList(),
     val isImportingFromSite: Boolean = false,
     /** Set when an action needs a login first (import from the site with an expired session). */
     val loginRequest: UiText? = null,
@@ -85,6 +91,7 @@ class MyAccountViewModel @Inject constructor(
     private val personalDataRepository: PersonalDataRepository,
     private val importSiteLogbookUseCase: ImportSiteLogbookUseCase,
     private val proposalRepository: CanyonProposalRepository,
+    private val feedbackRepository: FeedbackRepository,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MyAccountUiState())
@@ -111,12 +118,19 @@ class MyAccountViewModel @Inject constructor(
         viewModelScope.launch {
             proposalRepository.observeAvailable().collect { available -> _uiState.update { it.copy(canPropose = available) } }
         }
+        viewModelScope.launch {
+            feedbackRepository.observeMine().collect { messages -> _uiState.update { it.copy(feedback = messages) } }
+        }
+        viewModelScope.launch {
+            feedbackRepository.observeAvailable().collect { available -> _uiState.update { it.copy(canSendFeedback = available) } }
+        }
         refreshProposals()
     }
 
-    /** Reads again what became of the proposals (the operator reviews them on the app's server). */
+    /** Reads again what became of the proposals and of the messages (the operator answers on the app's server). */
     fun refreshProposals() {
         viewModelScope.launch { proposalRepository.refreshMine() }
+        viewModelScope.launch { feedbackRepository.refreshMine() }
     }
 
     fun withdrawProposal(proposal: CanyonProposal) {
