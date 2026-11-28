@@ -77,6 +77,12 @@ restic ──► sauvegarde chiffrée chez un autre fournisseur        healthche
   "CC-BY-NC-SA-4.0"` et, dans `content`, ses `sources` (`[{"name", "url", "licence", "authors"?,
   "changes"?}]`, 5 au plus) : le catalogue les affiche comme ressources web du canyon. Une modification
   faite depuis l'app ou l'outil de relecture, qui ne les portent pas, les garde.
+- Boîte à idées : `POST /v1/feedback` (`{"kind": "BUG"|"IDEA"|"CHANGE", "text", "technical"?: {"appVersion",
+  "versionCode", "android", "device", "language"}, "contact"?: {"username", "email"?}}`, 32 Ko au plus, texte
+  de 10 à 4 000 caractères), `GET /v1/feedback/mine` (les messages de l'installation, leur statut `NEW`,
+  `READ`, `PLANNED`, `DONE` ou `DECLINED` et la réponse ; jamais le contact), `DELETE /v1/feedback/{id}`
+  (l'auteur l'efface du serveur), avec `X-Install-Key`. Refus : `{"error": "TEXT_TOO_SHORT", "field":
+  "text"}`, `BAD_EMAIL`, `RATE_LIMITED`, `TOO_MANY_OPEN`, `BLOCKED` (`dcserver/feedback/service.py`).
 
 ### Traces et votes
 
@@ -145,9 +151,16 @@ pas exposé sur Internet. Une fois : `openssl rand -hex 24`, la valeur dans `DC_
 ssh -N -L 8090:127.0.0.1:8090 dc@<domaine>
 ```
 
-puis ouvrir http://localhost:8090 et coller le jeton (gardé par l'onglet seulement). Pour fermer les
+puis ouvrir http://localhost:8090 et coller le jeton (gardé par l'onglet seulement). Les onglets
+« Retours » et « Retours clos » sont la boîte à idées : ouvrir un message nouveau le passe en « Lu »,
+le statut et la réponse enregistrés sont ceux que l'auteur voit dans l'app (notifié au plus tard à la
+lecture suivante du manifeste, deux fois par jour). Le contact (compte descente-canyon.com et e-mail) n'y
+figure que si la personne, connectée dans l'app, l'a laissé joint. Un message fait ou non retenu est
+effacé un an après ; « Bloquer l'auteur » vaut aussi pour ses propositions de canyons. Pour fermer les
 propositions sans mise à jour de l'app (vacances, afflux de spam) : `… manifest feature canyonProposals off`
-(l'app masque alors « Proposer un canyon » ; `on` pour rouvrir). La page vérifie le nom
+(l'app masque alors « Proposer un canyon » ; `on` pour rouvrir), de même `… manifest feature feedback off`
+pour la boîte à idées (l'app ne la montre que si le manifeste l'annonce : un serveur plus ancien ne la
+nomme pas). La page vérifie le nom
 d'hôte (`DC_ADMIN_HOSTS`, par défaut `localhost`) pour qu'aucun autre site ouvert dans le navigateur ne
 puisse l'atteindre. `docker compose run --rm --no-deps jobs canyons list` liste les canyons ajoutés et
 compte les propositions en attente.

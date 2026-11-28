@@ -8,9 +8,12 @@
     POST   /v1/canyon-proposals                   body: {"kind", "canyonId", "content", "licence"}, header X-Install-Key
     GET    /v1/canyon-proposals/mine              the proposals of this installation, header X-Install-Key
     DELETE /v1/canyon-proposals/{proposalId}      withdraws a pending proposal, header X-Install-Key
+    POST   /v1/feedback                           body: {"kind", "text", "technical"?, "contact"?}, header X-Install-Key
+    GET    /v1/feedback/mine                      the messages of this installation and their replies, header X-Install-Key
+    DELETE /v1/feedback/{feedbackId}              deletes one of them from the server, header X-Install-Key
 
 Errors are `{"error": CODE}` with the HTTP status of the code (see tracks.service and
-canyons.service); a sheet refused by its checks also names the `field`.
+canyons.service, feedback.service); a sheet or a message refused by its checks also names the `field`.
 """
 from __future__ import annotations
 
@@ -26,11 +29,13 @@ from starlette.concurrency import run_in_threadpool
 from .canyons.publication import repo_id_floor
 from .canyons.service import CanyonService, ProposalError
 from .config import Settings
+from .feedback.service import FeedbackError, FeedbackService
 from .tracks.canyons import CanyonReference
 from .tracks.service import TrackError, TrackService
 
 INSTALL_KEY_HEADER = "X-Install-Key"
 MAX_PROPOSAL_BYTES = 256 * 1024
+MAX_FEEDBACK_BYTES = 32 * 1024
 
 
 def client_ip(request: Request, trusted_proxy: bool) -> str:
@@ -67,7 +72,12 @@ async def _read_limited(request: Request, limit: int) -> bytes | None:
     return b"".join(chunks)
 
 
-def create_app(settings: Settings, service: TrackService | None = None, canyon_service: CanyonService | None = None) -> FastAPI:
+def create_app(
+    settings: Settings,
+    service: TrackService | None = None,
+    canyon_service: CanyonService | None = None,
+    feedback_service: FeedbackService | None = None,
+) -> FastAPI:
     holder: dict[str, object] = {}
 
     @asynccontextmanager
@@ -80,6 +90,7 @@ def create_app(settings: Settings, service: TrackService | None = None, canyon_s
             id_floor=lambda: repo_id_floor(settings.repo_dir),
             locate=reference.place_near,
         )
+        holder["feedback"] = feedback_service or FeedbackService(settings.database_path, settings.pepper)
         try:
             yield
         finally:
@@ -87,6 +98,8 @@ def create_app(settings: Settings, service: TrackService | None = None, canyon_s
                 holder["service"].close()
             if canyon_service is None:
                 holder["canyons"].close()
+            if feedback_service is None:
+                holder["feedback"].close()
 
     app = FastAPI(title="Descente-Canyon app server", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
 
@@ -96,12 +109,22 @@ def create_app(settings: Settings, service: TrackService | None = None, canyon_s
     def canyons() -> CanyonService:
         return holder["canyons"]
 
+    def feedback() -> FeedbackService:
+        return holder["feedback"]
+
     @app.exception_handler(TrackError)
     async def track_error(_: Request, exc: TrackError) -> JSONResponse:
         return _error(exc.code, exc.status)
 
     @app.exception_handler(ProposalError)
     async def proposal_error(_: Request, exc: ProposalError) -> JSONResponse:
+        body = {"error": exc.code}
+        if exc.field:
+            body["field"] = exc.field
+        return JSONResponse(body, status_code=exc.status, headers={"Cache-Control": "no-store"})
+
+    @app.exception_handler(FeedbackError)
+    async def feedback_error(_: Request, exc: FeedbackError) -> JSONResponse:
         body = {"error": exc.code}
         if exc.field:
             body["field"] = exc.field
@@ -187,6 +210,32 @@ def create_app(settings: Settings, service: TrackService | None = None, canyon_s
     @app.delete("/v1/canyon-proposals/{proposal_id}")
     async def withdraw_proposal(proposal_id: str, request: Request) -> Response:
         await run_in_threadpool(canyons().withdraw, proposal_id, request.headers.get(INSTALL_KEY_HEADER))
+        return Response(status_code=204, headers={"Cache-Control": "no-store"})
+
+    @app.post("/v1/feedback")
+    async def send_feedback(request: Request) -> Response:
+        data = await _read_limited(request, MAX_FEEDBACK_BYTES)
+        if data is None:
+            return _error("TOO_LARGE", 413)
+        try:
+            body = json.loads(data or b"{}")
+        except ValueError:
+            return _error("BAD_REQUEST", 400)
+        message = await run_in_threadpool(
+            feedback().submit,
+            body,
+            request.headers.get(INSTALL_KEY_HEADER),
+            client_ip(request, settings.trusted_proxy),
+        )
+        return _json(message, status=201)
+
+    @app.get("/v1/feedback/mine")
+    async def my_feedback(request: Request) -> Response:
+        return _json(await run_in_threadpool(feedback().mine, request.headers.get(INSTALL_KEY_HEADER)))
+
+    @app.delete("/v1/feedback/{feedback_id}")
+    async def delete_feedback(feedback_id: str, request: Request) -> Response:
+        await run_in_threadpool(feedback().delete_mine, feedback_id, request.headers.get(INSTALL_KEY_HEADER))
         return Response(status_code=204, headers={"Cache-Control": "no-store"})
 
     return app

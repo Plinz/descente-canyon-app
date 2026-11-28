@@ -1,4 +1,4 @@
-"""Review tool of the canyons proposed in the app (`dcserver admin`).
+"""Review tool of the canyons proposed in the app and of the idea box (`dcserver admin`).
 
 A small web page and its JSON API, for the operator only. It listens on the VPS's loopback
 (published by Docker on 127.0.0.1 only) and is reached through an SSH tunnel:
@@ -24,6 +24,11 @@ the approved sheets into the catalog within ten minutes.
     POST /api/canyons/{id}/restore                      {"revision", "note"?}
     POST /api/canyons/{id}/hidden                       {"hidden": true | false}
     GET  /api/nearby?lat=&lon=&radius=                  canyons of the catalog around a point
+    GET  /api/feedback?status=OPEN|CLOSED|ALL           messages of the idea box
+    GET  /api/feedback/{id}                             text, technical details, contact, author
+    POST /api/feedback/{id}                             {"status"?, "reply"?}: the author sees both in the app
+    DELETE /api/feedback/{id}
+    POST /api/feedback/{id}/block | /unblock            the installation that sent it (its proposals too)
 """
 from __future__ import annotations
 
@@ -42,6 +47,7 @@ from ..canyons import content as sheets
 from ..canyons import publication
 from ..canyons.service import REJECTION_REASONS, CanyonService, ProposalError
 from ..config import Settings
+from ..feedback.service import FeedbackError, FeedbackService
 from ..tracks.canyons import CanyonReference
 
 TOKEN_HEADER = "X-Admin-Token"
@@ -111,7 +117,12 @@ def _latest_report(settings: Settings, job: str) -> dict | None:
     return None
 
 
-def create_admin_app(settings: Settings, service: CanyonService | None = None, reference: CanyonReference | None = None) -> FastAPI:
+def create_admin_app(
+    settings: Settings,
+    service: CanyonService | None = None,
+    reference: CanyonReference | None = None,
+    feedback_service: FeedbackService | None = None,
+) -> FastAPI:
     holder: dict[str, Any] = {}
 
     @asynccontextmanager
@@ -123,11 +134,14 @@ def create_admin_app(settings: Settings, service: CanyonService | None = None, r
             id_floor=lambda: publication.repo_id_floor(settings.repo_dir),
             locate=holder["reference"].place_near,
         )
+        holder["feedback"] = feedback_service or FeedbackService(settings.database_path, settings.pepper)
         try:
             yield
         finally:
             if service is None:
                 holder["service"].close()
+            if feedback_service is None:
+                holder["feedback"].close()
 
     app = FastAPI(title="Descente-Canyon review tool", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     allowed_hosts = set(settings.admin_hosts)
@@ -137,6 +151,9 @@ def create_admin_app(settings: Settings, service: CanyonService | None = None, r
 
     def catalog() -> CanyonReference:
         return holder["reference"]
+
+    def feedback() -> FeedbackService:
+        return holder["feedback"]
 
     @app.middleware("http")
     async def guard(request: Request, call_next):
@@ -156,6 +173,13 @@ def create_admin_app(settings: Settings, service: CanyonService | None = None, r
 
     @app.exception_handler(ProposalError)
     async def proposal_error(_: Request, exc: ProposalError) -> JSONResponse:
+        body = {"error": exc.code}
+        if exc.field:
+            body["field"] = exc.field
+        return JSONResponse(body, status_code=exc.status)
+
+    @app.exception_handler(FeedbackError)
+    async def feedback_error(_: Request, exc: FeedbackError) -> JSONResponse:
         body = {"error": exc.code}
         if exc.field:
             body["field"] = exc.field
@@ -197,6 +221,7 @@ def create_admin_app(settings: Settings, service: CanyonService | None = None, r
                 state = {}
             return {
                 "pendingProposals": canyons().pending_count(),
+                "newFeedback": feedback().new_count(),
                 "publishedCanyons": len(export["canyons"]),
                 "hiddenCanyons": len(export["hidden"]),
                 "repoCanyons": len((repo_document or {}).get("canyons", [])),
@@ -288,5 +313,31 @@ def create_admin_app(settings: Settings, service: CanyonService | None = None, r
     async def around(lat: float, lon: float, radius: float = NEARBY_RADIUS_M) -> Response:
         radius = max(100.0, min(radius, 20_000.0))
         return ok(await run_in_threadpool(nearby, catalog(), [(lat, lon)], radius))
+
+    @app.get("/api/feedback")
+    async def feedback_list(status: str = "OPEN") -> Response:
+        return ok(await run_in_threadpool(feedback().messages, status))
+
+    @app.get("/api/feedback/{feedback_id}")
+    async def feedback_detail(feedback_id: str) -> Response:
+        return ok(await run_in_threadpool(feedback().get, feedback_id))
+
+    @app.post("/api/feedback/{feedback_id}")
+    async def feedback_update(feedback_id: str, request: Request) -> Response:
+        body = await body_of(request)
+        return ok(await run_in_threadpool(feedback().update, feedback_id, body.get("status"), body.get("reply")))
+
+    @app.delete("/api/feedback/{feedback_id}")
+    async def feedback_delete(feedback_id: str) -> Response:
+        await run_in_threadpool(feedback().delete, feedback_id)
+        return Response(status_code=204)
+
+    @app.post("/api/feedback/{feedback_id}/block")
+    async def feedback_block(feedback_id: str) -> Response:
+        return ok({"declined": await run_in_threadpool(feedback().block_author, feedback_id)})
+
+    @app.post("/api/feedback/{feedback_id}/unblock")
+    async def feedback_unblock(feedback_id: str) -> Response:
+        return ok({"unblocked": await run_in_threadpool(feedback().unblock_author, feedback_id)})
 
     return app

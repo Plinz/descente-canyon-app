@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Relecture des canyons</title>
+<title>Relecture des canyons et retours</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 <style>
@@ -73,6 +73,13 @@ button:disabled { opacity: .5; cursor: default; }
 .legend { display: flex; gap: 12px; flex-wrap: wrap; font-size: 12px; color: var(--muted); margin-top: 6px; }
 .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 4px; vertical-align: middle; }
 .revisions td button { padding: 3px 8px; font-size: 12px; }
+.message { white-space: pre-wrap; background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin: 8px 0; }
+.kind { font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 999px; margin-right: 6px; }
+.kind.BUG { color: var(--danger); background: var(--danger-soft); }
+.kind.IDEA { color: var(--ok); background: var(--ok-soft); }
+.kind.CHANGE { color: var(--accent); background: var(--accent-soft); }
+.reply-form { display: flex; flex-direction: column; gap: 8px; margin-top: 8px; }
+.reply-form textarea { min-height: 110px; }
 </style>
 </head>
 <body>
@@ -120,6 +127,9 @@ const REASONS = {
 };
 const STATUS = { PENDING: "En attente", APPROVED: "Publiée", REJECTED: "Refusée", WITHDRAWN: "Retirée par l'auteur" };
 const ORIGINS = { PROPOSAL: "Proposition", ADMIN: "Modification admin", RESTORE: "Retour arrière" };
+const FEEDBACK_KINDS = { BUG: "Bug", IDEA: "Idée", CHANGE: "Amélioration" };
+const FEEDBACK_STATUS = { NEW: "Nouveau", READ: "Lu", PLANNED: "Prévu", DONE: "Fait", DECLINED: "Non retenu" };
+const TECHNICAL = { appVersion: "Version de l'app", versionCode: "Code de version", android: "Android", device: "Appareil", language: "Langue" };
 
 const state = { tab: "pending", selected: null, status: null, map: null, layers: null };
 
@@ -184,7 +194,7 @@ function display(field, value) {
 function renderLogin(root) {
   const input = h("input", { type: "password", placeholder: "DC_ADMIN_TOKEN", autocomplete: "off" });
   root.append(h("div", { class: "panel login" },
-    h("h2", {}, "Relecture des canyons"),
+    h("h2", {}, "Relecture des canyons et retours"),
     h("p", { class: "meta" }, "Collez le jeton DC_ADMIN_TOKEN de /srv/dc/env. Il reste dans cet onglet uniquement."),
     h("form", { onsubmit: event => { event.preventDefault(); setToken(input.value.trim()); render(); } },
       input, " ", h("button", { class: "primary", type: "submit" }, "Entrer"))));
@@ -199,10 +209,11 @@ async function render() {
   if (!token()) return renderLogin(root);
   try { state.status = await api("GET", "/api/status"); } catch (e) { if (!token()) return; toast(e.message); }
   const s = state.status || {};
-  const tabs = [["pending", `À relire (${s.pendingProposals ?? "?"})`], ["decided", "Décisions"], ["canyons", "Canyons ajoutés"], ["create", "+ Ajouter un canyon"]];
+  const tabs = [["pending", `À relire (${s.pendingProposals ?? "?"})`], ["decided", "Décisions"], ["canyons", "Canyons ajoutés"], ["create", "+ Ajouter un canyon"],
+    ["feedback", `Retours (${s.newFeedback ?? "?"} nouveaux)`], ["feedback-closed", "Retours clos"]];
   const last = s.lastCatalogJob;
   root.append(h("header", {},
-    h("h1", {}, "Relecture des canyons"),
+    h("h1", {}, "Relecture"),
     h("nav", {}, tabs.map(([id, label]) => h("button", { class: state.tab === id ? "active" : "", onclick: () => { state.tab = id; state.selected = null; render(); } }, label))),
     h("div", { class: "status" },
       h("span", { class: "chip " + (s.publicationUpToDate ? "ok" : "warn") }, s.publicationUpToDate ? "Catalogue à jour" : "Publication dans ≤ 10 min"),
@@ -218,6 +229,24 @@ async function render() {
 
 async function renderList(list, detail) {
   try {
+    if (state.tab === "feedback" || state.tab === "feedback-closed") {
+      const messages = await api("GET", "/api/feedback?status=" + (state.tab === "feedback" ? "OPEN" : "CLOSED"));
+      if (!messages.length) list.append(h("div", { class: "empty" }, state.tab === "feedback" ? "Aucun retour ouvert." : "Aucun retour clos."));
+      for (const m of messages) {
+        // Opening a new message marks it read: the author sees "Lu" in the app, and the list says so at once.
+        const open = async () => {
+          state.selected = m.id;
+          if (m.status === "NEW") { try { await api("POST", "/api/feedback/" + encodeURIComponent(m.id), { status: "READ" }); } catch (e) { toast(e.message); } }
+          render();
+        };
+        list.append(h("button", { class: "item" + (state.selected === m.id ? " active" : ""), onclick: open },
+          h("span", { class: "kind " + m.kind }, FEEDBACK_KINDS[m.kind] || m.kind), m.status === "NEW" ? h("strong", {}, m.excerpt) : m.excerpt,
+          h("small", {}, `${FEEDBACK_STATUS[m.status] || m.status} · ${date(m.createdAt)}${m.replied ? " · répondu" : ""}${m.hasContact ? " · contact" : ""}`)));
+      }
+      if (state.selected) await renderFeedback(detail, state.selected);
+      else add(detail, h("div", { class: "empty" }, messages.length ? "Choisissez un retour." : ""));
+      return;
+    }
     if (state.tab === "canyons") {
       const canyons = await api("GET", "/api/canyons");
       if (!canyons.length) list.append(h("div", { class: "empty" }, "Aucun canyon ajouté pour l'instant."));
@@ -444,6 +473,48 @@ async function renderCanyon(detail, id) {
         try { await api("POST", `/api/canyons/${id}/hidden`, { hidden: hide }); toast(hide ? "Masqué." : "Réaffiché."); render(); } catch (e) { toast(e.message); }
       } }, c.status === "HIDDEN" ? "Réafficher dans l'application" : "Masquer de l'application")));
   buildMap(mapBox, sheet, c.nearby || []);
+}
+
+// Idea box
+
+async function renderFeedback(detail, id) {
+  const m = await api("GET", "/api/feedback/" + encodeURIComponent(id));
+  const counts = m.authorStats.counts || {};
+  const status = h("select", {}, Object.entries(FEEDBACK_STATUS).map(([k, l]) => h("option", { value: k }, l)));
+  status.value = m.status;
+  const reply = h("textarea", { placeholder: "Réponse (visible dans l'app de l'auteur)" }, m.reply || "");
+  const technical = m.technical ? Object.keys(TECHNICAL).filter(k => m.technical[k]).map(k => h("tr", {}, h("th", {}, TECHNICAL[k]), h("td", {}, m.technical[k]))) : [];
+  const contact = m.contact;
+  add(detail,
+    h("h2", {}, h("span", { class: "kind " + m.kind }, FEEDBACK_KINDS[m.kind] || m.kind), `Envoyé le ${date(m.createdAt)}`),
+    h("div", { class: "meta" }, `${m.id} · auteur ${m.author}… : ${Object.entries(counts).map(([k, v]) => `${v} ${(FEEDBACK_STATUS[k] || k).toLowerCase()}`).join(", ")}${m.authorStats.blocked ? " · BLOQUÉ" : ""}`),
+    h("div", { class: "message" }, m.text),
+    h("h3", {}, "Contact"),
+    contact
+      ? h("p", {}, contact.username ? `Compte descente-canyon.com : ${contact.username}` : null, contact.username && contact.email ? " · " : null,
+          contact.email ? h("a", { href: "mailto:" + encodeURIComponent(contact.email).replace("%40", "@") }, contact.email) : null)
+      : h("p", { class: "meta" }, "Anonyme : la réponse ci-dessous est le seul moyen de répondre."),
+    h("h3", {}, "Infos techniques"),
+    technical.length ? h("table", {}, technical) : h("p", { class: "meta" }, "Non jointes."),
+    h("h3", {}, "Statut et réponse"),
+    m.repliedAt ? h("p", { class: "meta" }, `Réponse envoyée le ${date(m.repliedAt)}`) : null,
+    h("div", { class: "reply-form" },
+      h("label", { class: "meta" }, "Statut ", status),
+      reply,
+      h("div", { class: "actions" },
+        h("button", { class: "primary", onclick: async () => {
+          try { await api("POST", "/api/feedback/" + encodeURIComponent(id), { status: status.value, reply: reply.value }); toast("Enregistré : l'auteur le verra dans l'app."); render(); } catch (e) { toast(e.message); }
+        } }, "Enregistrer"),
+        h("button", { class: "danger", onclick: async () => {
+          if (!confirm("Supprimer ce retour du serveur ?")) return;
+          try { await api("DELETE", "/api/feedback/" + encodeURIComponent(id)); toast("Supprimé."); state.selected = null; render(); } catch (e) { toast(e.message); }
+        } }, "Supprimer"),
+        m.authorStats.blocked
+          ? h("button", { class: "secondary", onclick: async () => { try { await api("POST", `/api/feedback/${encodeURIComponent(id)}/unblock`); toast("Auteur débloqué."); render(); } catch (e) { toast(e.message); } } }, "Débloquer l'auteur")
+          : h("button", { class: "secondary", onclick: async () => {
+            if (!confirm("Bloquer cet auteur ? Ses retours ouverts passent en « Non retenu », et ses prochains retours et propositions de canyons seront refusés.")) return;
+            try { const r = await api("POST", `/api/feedback/${encodeURIComponent(id)}/block`); toast(`Auteur bloqué (${r.declined} retour(s) clos).`); render(); } catch (e) { toast(e.message); }
+          } }, "Bloquer l'auteur"))));
 }
 
 function renderCreate(detail) {

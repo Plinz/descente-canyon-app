@@ -1,5 +1,5 @@
 """SQLite storage of the community tracks, their votes, the canyons added in the app and their
-proposals, and the rate-limit events."""
+proposals, the messages of the idea box, and the rate-limit events."""
 from __future__ import annotations
 
 import sqlite3
@@ -84,6 +84,26 @@ MIGRATIONS: list[str] = [
         author_key TEXT PRIMARY KEY,
         created_at TEXT NOT NULL
     );
+    """,
+    # 3: messages of the "idea or bug" box and the operator's replies
+    """
+    CREATE TABLE feedback (
+        id TEXT PRIMARY KEY,
+        kind TEXT NOT NULL CHECK (kind IN ('BUG', 'IDEA', 'CHANGE')),
+        text TEXT NOT NULL,
+        technical TEXT,
+        contact_username TEXT,
+        contact_email TEXT,
+        status TEXT NOT NULL CHECK (status IN ('NEW', 'READ', 'PLANNED', 'DONE', 'DECLINED')),
+        reply TEXT,
+        replied_at TEXT,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        author_key TEXT NOT NULL,
+        author_net TEXT NOT NULL
+    );
+    CREATE INDEX feedback_by_status ON feedback(status, created_at);
+    CREATE INDEX feedback_by_author ON feedback(author_key, created_at)
     """,
 ]
 
