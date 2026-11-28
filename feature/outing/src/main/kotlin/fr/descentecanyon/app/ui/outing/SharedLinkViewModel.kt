@@ -16,6 +16,7 @@ import fr.descentecanyon.app.domain.model.SharedOuting
 import fr.descentecanyon.app.domain.model.SharedStay
 import fr.descentecanyon.app.domain.model.Stay
 import fr.descentecanyon.app.domain.model.haversineKm
+import fr.descentecanyon.app.domain.repository.AppServerRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
 import fr.descentecanyon.app.domain.repository.OutingRepository
@@ -23,6 +24,7 @@ import fr.descentecanyon.app.domain.repository.PlaceRepository
 import fr.descentecanyon.app.domain.repository.ShareRepository
 import fr.descentecanyon.app.domain.repository.StayRepository
 import java.time.Clock
+import java.time.Duration
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -83,6 +85,18 @@ sealed interface SharedLinkUiState {
         SharedLinkUiState
 }
 
+/** A canyon of the link is not in this phone's catalog (added in the app since its last update). */
+private val SharedLinkUiState.lacksCanyon: Boolean
+    get() = when (this) {
+        is SharedLinkUiState.Outing -> canyons.any { it.item == null }
+        is SharedLinkUiState.Stay -> canyons.values.any { it.item == null }
+        is SharedLinkUiState.CanyonList -> canyons.any { it.item == null }
+        SharedLinkUiState.Loading, is SharedLinkUiState.Failed -> false
+    }
+
+/** What a link carries: read from the server (short link) or from the link itself. */
+private data class ReceivedLink(val content: SharedContent, val code: String?, val version: Int)
+
 /**
  * A link someone shared, opened in the app: a short link read from the server, or an outing the link
  * carries whole (QR code). Nothing is added without the person's tap.
@@ -97,6 +111,7 @@ class SharedLinkViewModel @Inject constructor(
     private val placeRepository: PlaceRepository,
     private val favoritesRepository: FavoritesRepository,
     private val connectivityObserver: ConnectivityObserver,
+    private val appServerRepository: AppServerRepository,
     private val clock: Clock,
 ) : ViewModel() {
     private val code: String? = savedStateHandle.get<String>("code")?.takeIf { it.isNotBlank() }
@@ -114,21 +129,34 @@ class SharedLinkViewModel @Inject constructor(
     private fun load() {
         state.value = SharedLinkUiState.Loading
         viewModelScope.launch {
-            state.value = when {
-                payload != null -> ShareCodec.unpack(payload)?.let { outingState(it, code = null, version = 0) }
-                    ?: SharedLinkUiState.Failed(SharedLinkFailure.UNREADABLE)
-
-                code != null -> fromServer(code)
-
-                else -> SharedLinkUiState.Failed(SharedLinkFailure.UNREADABLE)
+            val received = when {
+                payload != null -> ShareCodec.unpack(payload)?.let { ReceivedLink(SharedContent.Outing(it), code = null, version = 0) }
+                code != null -> fromServer(code) ?: return@launch
+                else -> null
             }
+            if (received == null) {
+                state.value = SharedLinkUiState.Failed(SharedLinkFailure.UNREADABLE)
+                return@launch
+            }
+            val shown = stateOf(received)
+            state.value = shown
+            if (!shown.lacksCanyon) return@launch
+            // A canyon added in the app after this phone's last check of the server: one check brings it
+            // (the changed canyons are applied at once), then the link is shown again unless already acted on.
+            appServerRepository.refreshIfOlderThan(SERVER_CATALOG_CHECK_AGE)
+            val again = stateOf(received)
+            if (again != shown) state.compareAndSet(shown, again)
         }
     }
 
-    private suspend fun fromServer(code: String): SharedLinkUiState {
-        if (!connectivityObserver.isCurrentlyOnline()) return SharedLinkUiState.Failed(SharedLinkFailure.OFFLINE)
+    /** The short link from the server; null once the failure is shown. */
+    private suspend fun fromServer(code: String): ReceivedLink? {
+        if (!connectivityObserver.isCurrentlyOnline()) {
+            state.value = SharedLinkUiState.Failed(SharedLinkFailure.OFFLINE)
+            return null
+        }
         val received = shareRepository.fetch(code).getOrElse { error ->
-            return SharedLinkUiState.Failed(
+            state.value = SharedLinkUiState.Failed(
                 when (error.toAppError()) {
                     AppError.NotFound -> SharedLinkFailure.NOT_FOUND
                     AppError.Offline, AppError.NetworkFailure, AppError.Timeout -> SharedLinkFailure.OFFLINE
@@ -136,12 +164,15 @@ class SharedLinkViewModel @Inject constructor(
                     else -> SharedLinkFailure.UNAVAILABLE
                 },
             )
+            return null
         }
-        return when (val content = received.content) {
-            is SharedContent.Outing -> outingState(content.outing, received.code, received.version)
-            is SharedContent.Stay -> stayState(content.stay)
-            is SharedContent.CanyonList -> listState(content)
-        }
+        return ReceivedLink(received.content, received.code, received.version)
+    }
+
+    private suspend fun stateOf(received: ReceivedLink): SharedLinkUiState = when (val content = received.content) {
+        is SharedContent.Outing -> outingState(content.outing, received.code, received.version)
+        is SharedContent.Stay -> stayState(content.stay)
+        is SharedContent.CanyonList -> listState(content)
     }
 
     private suspend fun catalog(): Map<Int, CanyonSearchItem> = canyonRepository.observeSearchCatalog().first().associateBy { it.id }
@@ -232,5 +263,8 @@ class SharedLinkViewModel @Inject constructor(
 
     private companion object {
         const val SAME_PLACE_KM = 0.15
+
+        /** A check of the server younger than this already brought the canyons it knows. */
+        val SERVER_CATALOG_CHECK_AGE: Duration = Duration.ofMinutes(10)
     }
 }

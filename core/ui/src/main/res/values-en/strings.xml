@@ -476,6 +476,7 @@ Search for a canyon and add it to your favorites.</string>
     <string name="error_timeout">The service did not respond in time. Please try again.</string>
     <string name="error_network">Connection problem. Please try again.</string>
     <string name="error_not_found">This page no longer exists on the site.</string>
+    <string name="canyon_not_in_catalog">This canyon is not in the app\'s catalogue yet: it will come with its next update.</string>
     <string name="error_http">The service returned an error (%1$d). Please try again later.</string>
     <string name="error_site_changed">descente-canyon.com changed its layout: an app update is needed.</string>
     <string name="error_unexpected_response">Unexpected response from the site. Please try again later.</string>

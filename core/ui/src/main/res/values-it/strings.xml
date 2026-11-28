@@ -476,6 +476,7 @@ Cerca un canyon e aggiungilo ai tuoi preferiti.</string>
     <string name="error_timeout">Il servizio non ha risposto in tempo. Riprova.</string>
     <string name="error_network">Problema di connessione. Riprova.</string>
     <string name="error_not_found">Questa pagina non esiste più sul sito.</string>
+    <string name="canyon_not_in_catalog">Questo torrente non è ancora nel catalogo dell\'app: arriverà con il prossimo aggiornamento.</string>
     <string name="error_http">Il servizio ha restituito un errore (%1$d). Riprova più tardi.</string>
     <string name="error_site_changed">descente-canyon.com ha cambiato impaginazione: serve un aggiornamento dell\'app.</string>
     <string name="error_unexpected_response">Risposta inattesa dal sito. Riprova più tardi.</string>

@@ -476,6 +476,7 @@ Suche nach einem Canyon und füge ihn deinen Favoriten hinzu.</string>
     <string name="error_timeout">Der Dienst hat nicht rechtzeitig geantwortet. Bitte versuche es erneut.</string>
     <string name="error_network">Verbindungsproblem. Bitte versuche es erneut.</string>
     <string name="error_not_found">Diese Seite gibt es auf der Website nicht mehr.</string>
+    <string name="canyon_not_in_catalog">Dieser Canyon ist noch nicht im Katalog der App: Er kommt mit dem nächsten Update.</string>
     <string name="error_http">Der Dienst hat einen Fehler gemeldet (%1$d). Bitte versuche es später erneut.</string>
     <string name="error_site_changed">descente-canyon.com hat sein Layout geändert: Ein App-Update ist nötig.</string>
     <string name="error_unexpected_response">Unerwartete Antwort der Website. Bitte versuche es später erneut.</string>

@@ -6,7 +6,10 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
+import fr.descentecanyon.app.domain.error.AppError
 import fr.descentecanyon.app.domain.error.suspendRunCatching
+import fr.descentecanyon.app.domain.error.toAppError
+import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.CanyonDebitPredictions
 import fr.descentecanyon.app.domain.model.CanyonDetail
 import fr.descentecanyon.app.domain.model.CanyonEdfPracticability
@@ -14,6 +17,7 @@ import fr.descentecanyon.app.domain.model.CanyonWeather
 import fr.descentecanyon.app.domain.model.LogbookEntry
 import fr.descentecanyon.app.domain.model.NearbyCanyon
 import fr.descentecanyon.app.domain.model.PlannedOuting
+import fr.descentecanyon.app.domain.repository.AppServerRepository
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.FavoritesRepository
@@ -29,6 +33,7 @@ import fr.descentecanyon.app.perf.PerformanceTrace
 import fr.descentecanyon.app.ui.common.UiText
 import fr.descentecanyon.app.ui.common.toUiText
 import java.time.Clock
+import java.time.Duration
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -120,6 +125,7 @@ class CanyonDetailViewModel @Inject constructor(
     private val getNearbyCanyonsUseCase: GetNearbyCanyonsUseCase,
     private val logbookRepository: LogbookRepository,
     private val outingRepository: OutingRepository,
+    private val appServerRepository: AppServerRepository,
     private val clock: Clock,
 ) : ViewModel() {
 
@@ -129,6 +135,9 @@ class CanyonDetailViewModel @Inject constructor(
     private val detailState = MutableStateFlow(CanyonDetailState())
     private var hasLoggedPrimaryContentReady = false
     private var hasRecordedView = false
+
+    /** The server was asked once for a canyon added in the app that this phone's catalog lacks. */
+    private var serverCatalogChecked = false
 
     val uiState: StateFlow<CanyonDetailUiState> =
         combine(detailState, media.state, conditions.state, ::toUiState)
@@ -210,10 +219,25 @@ class CanyonDetailViewModel @Inject constructor(
                     conditions.loadFor(withLatestReports(detail))
                 },
                 onFailure = { throwable ->
+                    val notInCatalog = AppCanyons.isAppCanyon(id) && throwable.toAppError() == AppError.NotFound
+                    if (notInCatalog && !serverCatalogChecked && detailState.value.canyonDetail == null) {
+                        // Added in the app after this phone's last check of the server (a shared link): one check
+                        // brings it, the changed canyons being applied at once, then the page loads again.
+                        serverCatalogChecked = true
+                        viewModelScope.launch {
+                            appServerRepository.refreshIfOlderThan(SERVER_CATALOG_CHECK_AGE)
+                            loadCanyon(id)
+                        }
+                        return@fold
+                    }
                     if (!hasLoggedPrimaryContentReady) {
                         PerformanceTrace.end(detailLoadKey(id), "failed", "canyonId" to id, "error" to throwable::class.simpleName)
                     }
-                    val message = throwable.toUiText(fallback = R.string.canyon_detail_load_error)
+                    val message = if (notInCatalog) {
+                        UiText.res(R.string.canyon_not_in_catalog)
+                    } else {
+                        throwable.toUiText(fallback = R.string.canyon_detail_load_error)
+                    }
                     val currentDetail = detailState.value.canyonDetail
                     if (currentDetail != null) {
                         // The catalog content stays on screen; only a short message tells the refresh failed.
@@ -410,5 +434,8 @@ internal fun mergeBaseCanyonDetail(newDetail: CanyonDetail, currentDetail: Canyo
 }
 
 private fun detailLoadKey(canyonId: Int): String = "screen.canyon.$canyonId.detail"
+
+/** A check of the server younger than this already brought the canyons it knows. */
+private val SERVER_CATALOG_CHECK_AGE: Duration = Duration.ofMinutes(10)
 
 private fun monotonicNowMs(): Long = System.nanoTime() / 1_000_000

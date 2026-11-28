@@ -3,6 +3,9 @@ package fr.descentecanyon.app.ui.canyon
 import androidx.lifecycle.SavedStateHandle
 import fr.descentecanyon.app.core.ui.R
 import fr.descentecanyon.app.domain.connectivity.ConnectivityObserver
+import fr.descentecanyon.app.domain.error.AppError
+import fr.descentecanyon.app.domain.error.AppException
+import fr.descentecanyon.app.domain.model.AppCanyons
 import fr.descentecanyon.app.domain.model.BibliographyEntry
 import fr.descentecanyon.app.domain.model.BibliographyKind
 import fr.descentecanyon.app.domain.model.Canyon
@@ -34,6 +37,7 @@ import fr.descentecanyon.app.domain.model.Regulation
 import fr.descentecanyon.app.domain.model.RuntimeLookupSource
 import fr.descentecanyon.app.domain.model.WeatherLocationSource
 import fr.descentecanyon.app.domain.model.WeatherTarget
+import fr.descentecanyon.app.domain.repository.AppServerRepository
 import fr.descentecanyon.app.domain.repository.CanyonNotesRepository
 import fr.descentecanyon.app.domain.repository.CanyonRepository
 import fr.descentecanyon.app.domain.repository.DebitPredictionRepository
@@ -99,13 +103,16 @@ class CanyonDetailViewModelTest {
     private val recentCanyonsRepository = mockk<RecentCanyonsRepository>(relaxUnitFun = true)
     private val personalNote = MutableStateFlow<String?>(null)
     private val canyonNotesRepository = mockk<CanyonNotesRepository>(relaxUnitFun = true) {
-        every { observeNote(42) } returns personalNote
+        every { observeNote(any()) } returns personalNote
     }
     private val logbook = MutableStateFlow<List<LogbookEntry>>(emptyList())
     private val outingRepository = FakeOutingRepository()
     private val logbookRepository = mockk<fr.descentecanyon.app.domain.repository.LogbookRepository>(relaxUnitFun = true) {
-        every { observeForCanyon(42) } returns logbook
+        every { observeForCanyon(any()) } returns logbook
         coEvery { knownCompanions() } returns listOf("Paul", "Léa")
+    }
+    private val appServerRepository = mockk<AppServerRepository> {
+        coEvery { refreshIfOlderThan(any()) } returns Result.success(Unit)
     }
     private val getCanyonPreviewUseCase = GetCanyonPreviewUseCase(canyonRepository)
     private val getCanyonDetailUseCase = GetCanyonDetailUseCase(canyonRepository)
@@ -463,8 +470,53 @@ class CanyonDetailViewModelTest {
         coVerify { logbookRepository.delete(3) }
     }
 
-    private fun createViewModel(): CanyonDetailViewModel = CanyonDetailViewModel(
-        savedStateHandle = SavedStateHandle(mapOf("canyonId" to 42)),
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `a canyon added in the app that the catalog lacks is asked to the server once, then shown`() = runTest {
+        val appCanyon = AppCanyons.FIRST_ID + 12
+        stubBaseState(appCanyon)
+        var serverChecked = false
+        coEvery { appServerRepository.refreshIfOlderThan(any()) } answers {
+            serverChecked = true
+            Result.success(Unit)
+        }
+        coEvery { canyonRepository.getCanyonPreview(appCanyon) } answers {
+            if (serverChecked) Result.success(detail(appCanyon)) else Result.failure(AppException(AppError.NotFound))
+        }
+        coEvery { canyonRepository.getCanyonDetail(appCanyon) } answers {
+            if (serverChecked) Result.success(detail(appCanyon)) else Result.failure(AppException(AppError.NotFound))
+        }
+
+        val viewModel = createViewModel(appCanyon)
+        advanceUntilIdle()
+
+        assertEquals(appCanyon, viewModel.uiState.value.canyonDetail?.canyon?.id)
+        assertEquals(null, viewModel.uiState.value.error)
+        coVerify(exactly = 1) { appServerRepository.refreshIfOlderThan(any()) }
+    }
+
+    @Test
+    @OptIn(ExperimentalCoroutinesApi::class)
+    fun `a canyon added in the app that the server does not bring yet says it comes with the next update`() = runTest {
+        val appCanyon = AppCanyons.FIRST_ID + 12
+        stubBaseState(appCanyon)
+        coEvery { canyonRepository.getCanyonPreview(appCanyon) } returns Result.failure(AppException(AppError.NotFound))
+        coEvery { canyonRepository.getCanyonDetail(appCanyon) } returns Result.failure(AppException(AppError.NotFound))
+
+        val viewModel = createViewModel(appCanyon)
+        advanceUntilIdle()
+
+        assertEquals(UiText.res(R.string.canyon_not_in_catalog), viewModel.uiState.value.error)
+        assertFalse(viewModel.uiState.value.isLoading)
+        coVerify(exactly = 1) { appServerRepository.refreshIfOlderThan(any()) }
+
+        viewModel.loadCanyon(appCanyon)
+        advanceUntilIdle()
+        coVerify(exactly = 1) { appServerRepository.refreshIfOlderThan(any()) }
+    }
+
+    private fun createViewModel(canyonId: Int = 42): CanyonDetailViewModel = CanyonDetailViewModel(
+        savedStateHandle = SavedStateHandle(mapOf("canyonId" to canyonId)),
         getCanyonPreviewUseCase = getCanyonPreviewUseCase,
         getCanyonDetailUseCase = getCanyonDetailUseCase,
         toggleFavoriteUseCase = toggleFavoriteUseCase,
@@ -490,30 +542,31 @@ class CanyonDetailViewModelTest {
         getNearbyCanyonsUseCase = GetNearbyCanyonsUseCase(canyonRepository, debitRepository),
         logbookRepository = logbookRepository,
         outingRepository = outingRepository,
+        appServerRepository = appServerRepository,
         clock = Clock.fixed(Instant.parse("2026-07-14T06:00:00Z"), ZoneOffset.UTC),
     )
 
-    private fun stubBaseState() {
-        every { canyonRepository.observeWatershed(42) } returns flowOf(null)
-        coEvery { canyonRepository.getWatershedGeometry(42) } returns null
+    private fun stubBaseState(id: Int = 42) {
+        every { canyonRepository.observeWatershed(id) } returns flowOf(null)
+        coEvery { canyonRepository.getWatershedGeometry(id) } returns null
         coEvery { weatherRepository.getCanyonWeather(any()) } returns Result.success(weather())
-        every { edfPracticabilityRepository.getReference(42) } returns null
+        every { edfPracticabilityRepository.getReference(id) } returns null
         coEvery { debitPredictionRepository.getPredictions(any()) } returns Result.success(predictions())
-        every { photoRepository.observePhotos(42) } returns flowOf(detail().photos)
-        coEvery { photoRepository.refreshPhotos(42, any()) } returns Result.success(detail().photos)
+        every { photoRepository.observePhotos(id) } returns flowOf(detail().photos)
+        coEvery { photoRepository.refreshPhotos(id, any()) } returns Result.success(detail().photos)
         coEvery { photoRepository.downloadPhoto(8) } returns Result.success("/tmp/photo.jpg")
-        every { debitRepository.getDebitsForCanyon(42) } returns flowOf(Result.success(detail().debits))
-        coEvery { debitRepository.refreshDebits(42, any()) } returns Result.success(detail().debits)
-        every { favoritesRepository.isFavorite(42) } returns flowOf(false)
-        every { notificationCenterRepository.observeIsCanyonFollowed(42) } returns flowOf(false)
+        every { debitRepository.getDebitsForCanyon(id) } returns flowOf(Result.success(detail().debits))
+        coEvery { debitRepository.refreshDebits(id, any()) } returns Result.success(detail().debits)
+        every { favoritesRepository.isFavorite(id) } returns flowOf(false)
+        every { notificationCenterRepository.observeIsCanyonFollowed(id) } returns flowOf(false)
         coEvery { notificationCenterRepository.toggleCanyonFollow(any(), any(), any()) } returns Unit
         every { connectivityObserver.observe() } returns flowOf(true)
         every { connectivityObserver.isCurrentlyOnline() } returns true
-        coEvery { weatherRepository.getCachedCanyonWeather(42) } returns null
-        coEvery { debitPredictionRepository.getCachedPredictions(42) } returns null
+        coEvery { weatherRepository.getCachedCanyonWeather(id) } returns null
+        coEvery { debitPredictionRepository.getCachedPredictions(id) } returns null
         every { canyonRepository.observeSearchCatalog() } returns flowOf(
             listOf(
-                searchItem(id = 42, name = "Riolan", latitude = 43.95, longitude = 6.90),
+                searchItem(id = id, name = "Riolan", latitude = 43.95, longitude = 6.90),
                 searchItem(id = 7, name = "Bollinette", latitude = 43.96, longitude = 6.92),
                 searchItem(id = 8, name = "Lointain", latitude = 45.50, longitude = 6.90),
             ),
@@ -538,9 +591,9 @@ class CanyonDetailViewModelTest {
         normalizedNomComplet = name.lowercase(),
     )
 
-    private fun detail() = CanyonDetail(
+    private fun detail(id: Int = 42) = CanyonDetail(
         canyon = Canyon(
-            id = 42,
+            id = id,
             nom = "Riolan",
             nomComplet = "Canyon du Riolan",
             pays = "France",

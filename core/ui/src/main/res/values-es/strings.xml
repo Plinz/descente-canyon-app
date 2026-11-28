@@ -476,6 +476,7 @@ Busca un barranco y añádelo a tus favoritos.</string>
     <string name="error_timeout">El servicio no respondió a tiempo. Inténtalo de nuevo.</string>
     <string name="error_network">Problema de conexión. Inténtalo de nuevo.</string>
     <string name="error_not_found">Esta página ya no existe en el sitio.</string>
+    <string name="canyon_not_in_catalog">Este barranco aún no está en el catálogo de la aplicación: llegará con su próxima actualización.</string>
     <string name="error_http">El servicio devolvió un error (%1$d). Inténtalo más tarde.</string>
     <string name="error_site_changed">descente-canyon.com ha cambiado su diseño: hace falta actualizar la aplicación.</string>
     <string name="error_unexpected_response">Respuesta inesperada del sitio. Inténtalo más tarde.</string>

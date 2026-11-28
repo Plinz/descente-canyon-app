@@ -476,6 +476,7 @@ Recherchez un canyon et ajoutez-le à vos favoris.</string>
     <string name="error_timeout">Le service n\'a pas répondu à temps. Réessayez.</string>
     <string name="error_network">Problème de connexion. Réessayez.</string>
     <string name="error_not_found">Cette page n\'existe plus sur le site.</string>
+    <string name="canyon_not_in_catalog">Ce canyon n\'est pas encore dans le catalogue de l\'application : il arrivera avec sa prochaine mise à jour.</string>
     <string name="error_http">Le service a répondu par une erreur (%1$d). Réessayez plus tard.</string>
     <string name="error_site_changed">Le site descente-canyon.com a changé de présentation : une mise à jour de l\'application est nécessaire.</string>
     <string name="error_unexpected_response">Réponse inattendue du site. Réessayez plus tard.</string>
