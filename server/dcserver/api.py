@@ -11,6 +11,13 @@
     POST   /v1/feedback                           body: {"kind", "text", "technical"?, "contact"?}, header X-Install-Key
     GET    /v1/feedback/mine                      the messages of this installation and their replies, header X-Install-Key
     DELETE /v1/feedback/{feedbackId}              deletes one of them from the server, header X-Install-Key
+    POST   /v1/shares                             body: {"kind", "payload"}, header X-Install-Key
+    GET    /v1/shares/{code}                      anonymous read of a shared link, ETag
+    PUT    /v1/shares/{code}                      the author only, same body as POST
+    DELETE /v1/shares/{code}                      the author only
+
+    GET    /, /c/{canyonId}[-slug][/section], /s/{code}, /o/{canyonId}, /.well-known/assetlinks.json, /static/*
+                                                  pages of the links the app shares (dcserver.web)
 
 Errors are `{"error": CODE}` with the HTTP status of the code (see tracks.service and
 canyons.service, feedback.service); a sheet or a message refused by its checks also names the `field`.
@@ -32,10 +39,13 @@ from .config import Settings
 from .feedback.service import FeedbackError, FeedbackService
 from .tracks.canyons import CanyonReference
 from .tracks.service import TrackError, TrackService
+from .shares.service import ShareError, ShareService
+from .web.routes import register_pages
 
 INSTALL_KEY_HEADER = "X-Install-Key"
 MAX_PROPOSAL_BYTES = 256 * 1024
 MAX_FEEDBACK_BYTES = 32 * 1024
+MAX_SHARE_BYTES = 32 * 1024
 
 
 def client_ip(request: Request, trusted_proxy: bool) -> str:
@@ -77,12 +87,14 @@ def create_app(
     service: TrackService | None = None,
     canyon_service: CanyonService | None = None,
     feedback_service: FeedbackService | None = None,
+    share_service: ShareService | None = None,
 ) -> FastAPI:
     holder: dict[str, object] = {}
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         reference = CanyonReference(settings.canyon_reference_path)
+        holder["reference"] = reference
         holder["service"] = service or TrackService(settings.database_path, settings.pepper, reference)
         holder["canyons"] = canyon_service or CanyonService(
             settings.database_path,
@@ -91,6 +103,12 @@ def create_app(
             locate=reference.place_near,
         )
         holder["feedback"] = feedback_service or FeedbackService(settings.database_path, settings.pepper)
+        holder["shares"] = share_service or ShareService(
+            settings.database_path,
+            settings.pepper,
+            known_canyon=reference.exists,
+            public_url=settings.public_url,
+        )
         try:
             yield
         finally:
@@ -100,11 +118,19 @@ def create_app(
                 holder["canyons"].close()
             if feedback_service is None:
                 holder["feedback"].close()
+            if share_service is None:
+                holder["shares"].close()
 
     app = FastAPI(title="Descente-Canyon app server", docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
 
     def tracks() -> TrackService:
         return holder["service"]
+
+    def reference() -> CanyonReference:
+        return holder["reference"]
+
+    def shares() -> ShareService:
+        return holder["shares"]
 
     def canyons() -> CanyonService:
         return holder["canyons"]
@@ -125,6 +151,13 @@ def create_app(
 
     @app.exception_handler(FeedbackError)
     async def feedback_error(_: Request, exc: FeedbackError) -> JSONResponse:
+        body = {"error": exc.code}
+        if exc.field:
+            body["field"] = exc.field
+        return JSONResponse(body, status_code=exc.status, headers={"Cache-Control": "no-store"})
+
+    @app.exception_handler(ShareError)
+    async def share_error(_: Request, exc: ShareError) -> JSONResponse:
         body = {"error": exc.code}
         if exc.field:
             body["field"] = exc.field
@@ -238,4 +271,44 @@ def create_app(
         await run_in_threadpool(feedback().delete_mine, feedback_id, request.headers.get(INSTALL_KEY_HEADER))
         return Response(status_code=204, headers={"Cache-Control": "no-store"})
 
+    async def share_body(request: Request) -> dict | None:
+        data = await _read_limited(request, MAX_SHARE_BYTES)
+        if data is None:
+            raise ShareError("TOO_LARGE", 413)
+        try:
+            return json.loads(data or b"{}")
+        except ValueError as exc:
+            raise ShareError("BAD_REQUEST", 400) from exc
+
+    @app.post("/v1/shares")
+    async def create_share(request: Request) -> Response:
+        body = await share_body(request)
+        share = await run_in_threadpool(
+            shares().create, body, request.headers.get(INSTALL_KEY_HEADER), client_ip(request, settings.trusted_proxy)
+        )
+        return _json(share, status=201)
+
+    @app.get("/v1/shares/{code}")
+    async def get_share(code: str, request: Request) -> Response:
+        share = await run_in_threadpool(shares().get, code)
+        etag = f'"v{share["version"]}"'
+        headers = {"ETag": etag, "Cache-Control": "no-cache"}
+        if request.headers.get("if-none-match") == etag:
+            return Response(status_code=304, headers=headers)
+        return _json(share, extra_headers=headers)
+
+    @app.put("/v1/shares/{code}")
+    async def update_share(code: str, request: Request) -> Response:
+        body = await share_body(request)
+        share = await run_in_threadpool(
+            shares().update, code, body, request.headers.get(INSTALL_KEY_HEADER), client_ip(request, settings.trusted_proxy)
+        )
+        return _json(share)
+
+    @app.delete("/v1/shares/{code}")
+    async def delete_share(code: str, request: Request) -> Response:
+        await run_in_threadpool(shares().delete, code, request.headers.get(INSTALL_KEY_HEADER))
+        return Response(status_code=204, headers={"Cache-Control": "no-store"})
+
+    register_pages(app, settings, reference, shares)
     return app

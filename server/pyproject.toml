@@ -30,6 +30,7 @@ include = ["dcserver*"]
 
 [tool.setuptools.package-data]
 "dcserver.admin" = ["static/*.html"]
+"dcserver.web" = ["static/*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

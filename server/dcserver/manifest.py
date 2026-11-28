@@ -10,7 +10,7 @@ Payload (schema 1):
       "schema": 1, "sequence": 1795745000, "generatedAt": "2026-11-25T02:41:07Z",
       "minVersionCode": 0,                      # older apps are asked to update
       "features": {"communityTracks": true, "catalogUpdates": true, "serverPredictions": true, "canyonProposals": true,
-                   "feedback": true},
+                   "feedback": true, "shares": true},
       "messages": [{"id": "...", "level": "info|warning", "minVersionCode": 0,
                     "maxVersionCode": null, "until": null, "text": {"fr": "...", "en": "..."}}],
       "catalogs": [{"schemaVersion": 4, "identityHash": "...", "dataVersion": "...",
@@ -41,7 +41,14 @@ from .publish import atomic_write_bytes
 SCHEMA = 1
 ENVELOPE_FORMAT = 1
 MESSAGE_LEVELS = {"info", "warning"}
-DEFAULT_FEATURES = {"communityTracks": True, "catalogUpdates": True, "serverPredictions": True, "canyonProposals": True, "feedback": True}
+DEFAULT_FEATURES = {
+    "communityTracks": True,
+    "catalogUpdates": True,
+    "serverPredictions": True,
+    "canyonProposals": True,
+    "feedback": True,
+    "shares": True,
+}
 
 
 def utc_now_iso() -> str:

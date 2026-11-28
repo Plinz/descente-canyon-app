@@ -24,11 +24,13 @@ def build_reference_from_catalog(catalog_db: Path) -> dict:
     connection = sqlite3.connect(f"file:{catalog_db}?mode=ro", uri=True)
     try:
         rows = connection.execute(
-            f"SELECT id, nom, isForbidden, sourceType, {', '.join(PLACE_FIELDS)} FROM canyons"
+            f"SELECT id, nom, isForbidden, sourceType, cotation, commune, url, {', '.join(PLACE_FIELDS)} FROM canyons"
         ).fetchall()
         names = {row[0]: row[1] for row in rows}
         flags = {row[0]: (bool(row[2]), row[3] == "APP") for row in rows}
-        places = {row[0]: {field: value for field, value in zip(PLACE_FIELDS, row[4:]) if value} for row in rows}
+        # What the pages of the shared links say of a canyon: its rating, commune and sheet on the site.
+        sheets = {row[0]: {"cotation": row[4] or "", "commune": row[5] or "", "url": row[6] or ""} for row in rows}
+        places = {row[0]: {field: value for field, value in zip(PLACE_FIELDS, row[7:]) if value} for row in rows}
         points: dict[int, list[list[float]]] = {}
         for canyon_id, latitude, longitude in connection.execute(
             "SELECT canyonId, latitude, longitude FROM geo_points ORDER BY canyonId, id"
@@ -45,6 +47,7 @@ def build_reference_from_catalog(catalog_db: Path) -> dict:
                 "forbidden": flags[canyon_id][0],
                 "app": flags[canyon_id][1],
                 "place": places[canyon_id],
+                **sheets[canyon_id],
             }
             for canyon_id in names
         },
@@ -92,10 +95,16 @@ class CanyonReference:
             return self._points.get(canyon_id)
 
     def entries(self) -> dict[int, dict]:
-        """Every canyon of the catalog: name, points ([lat, lon]), forbidden, app (added in the app), place."""
+        """Every canyon of the catalog: name, points ([lat, lon]), forbidden, app (added in the app),
+        place, cotation, commune and url (its sheet on the site, empty for a canyon added in the app)."""
         with self._lock:
             self._refresh()
             return self._entries
+
+    def entry(self, canyon_id: int) -> dict | None:
+        with self._lock:
+            self._refresh()
+            return self._entries.get(canyon_id)
 
     def place_near(self, latitude: float, longitude: float, max_distance_m: float = PLACE_MAX_DISTANCE_M) -> dict[str, str] | None:
         """The place (pays, region, departement, massif, bassin) of the catalog canyon with a point

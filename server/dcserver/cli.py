@@ -175,6 +175,23 @@ def cmd_track_delete(settings: Settings, args: argparse.Namespace) -> int:
     return 0 if removed else 1
 
 
+def cmd_share(settings: Settings, args: argparse.Namespace) -> int:
+    """Operator actions on the shared links: delete one on request (the code is in the link), prune."""
+    from .shares.service import ShareService
+
+    reference = CanyonReference(settings.canyon_reference_path)
+    service = ShareService(settings.database_path, settings.pepper, reference.exists, settings.public_url)
+    try:
+        if args.action == "prune":
+            print(f"{service.prune()} expired links deleted")
+            return 0
+        removed = service.takedown(args.code)
+    finally:
+        service.close()
+    print("Link deleted" if removed else "No such link")
+    return 0 if removed else 1
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="dcserver", description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -230,6 +247,12 @@ def build_parser() -> argparse.ArgumentParser:
     track_sub = track.add_subparsers(dest="action", required=True)
     delete = track_sub.add_parser("delete", help="delete a track after a legal notice")
     delete.add_argument("track_id")
+
+    share = sub.add_parser("share", help="operator actions on the links shared from the app")
+    share_sub = share.add_subparsers(dest="action", required=True)
+    share_delete = share_sub.add_parser("delete", help="delete a shared link (on request of its author or after a legal notice)")
+    share_delete.add_argument("code")
+    share_sub.add_parser("prune", help="delete the expired links now (the API also does it along the way)")
     return parser
 
 
@@ -258,6 +281,8 @@ def main(argv: list[str] | None = None) -> int:
         return cmd_canyon_reference(settings, args)
     if args.command == "track":
         return cmd_track_delete(settings, args)
+    if args.command == "share":
+        return cmd_share(settings, args)
     return 2
 
 

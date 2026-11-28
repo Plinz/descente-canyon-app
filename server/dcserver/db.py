@@ -1,5 +1,5 @@
 """SQLite storage of the community tracks, their votes, the canyons added in the app and their
-proposals, the messages of the idea box, and the rate-limit events."""
+proposals, the messages of the idea box, the links shared from the app, and the rate-limit events."""
 from __future__ import annotations
 
 import sqlite3
@@ -104,6 +104,22 @@ MIGRATIONS: list[str] = [
     );
     CREATE INDEX feedback_by_status ON feedback(status, created_at);
     CREATE INDEX feedback_by_author ON feedback(author_key, created_at)
+    """,
+    # 4: links shared from the app (outing, stay, list of canyons), kept until a while after their day
+    """
+    CREATE TABLE shares (
+        code TEXT PRIMARY KEY,
+        kind TEXT NOT NULL CHECK (kind IN ('OUTING', 'STAY', 'LIST')),
+        payload TEXT NOT NULL,
+        version INTEGER NOT NULL,
+        created_at TEXT NOT NULL,
+        updated_at TEXT NOT NULL,
+        expires_at TEXT NOT NULL,
+        author_key TEXT NOT NULL,
+        author_net TEXT NOT NULL
+    );
+    CREATE INDEX shares_by_expiry ON shares(expires_at);
+    CREATE INDEX shares_by_author ON shares(author_key, created_at)
     """,
 ]
 

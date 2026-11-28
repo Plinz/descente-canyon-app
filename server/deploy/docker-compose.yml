@@ -27,6 +27,9 @@ services:
     restart: unless-stopped
     user: "${DC_UID:-1000}:${DC_GID:-1000}"
     env_file: /srv/dc/env
+    environment:
+      # The links the app shares are https://<domain>/... (DC_PUBLIC_URL in /srv/dc/env overrides it).
+      DC_DOMAIN: ${DC_DOMAIN:?set DC_DOMAIN in .env}
     # The API never signs anything: the manifest key stays out of its container.
     volumes:
       - /srv/dc/data:/srv/dc/data

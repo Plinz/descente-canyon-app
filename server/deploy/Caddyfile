@@ -43,6 +43,15 @@
 		reverse_proxy api:8080
 	}
 
+	# Pages of the links the app shares (canyon, its map, point or track, shared outing or stay), the file that lets
+	# Android open them in the app, and the files of those pages.
+	@pages path / /.well-known/assetlinks.json /static/* /c/* /s/* /o/*
+	handle @pages {
+		encode zstd gzip
+		header /static/* Cache-Control "public, max-age=86400"
+		reverse_proxy api:8080
+	}
+
 	handle /v1/* {
 		root * /srv/publish
 		@manifest path /v1/manifest.json

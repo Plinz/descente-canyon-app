@@ -4,11 +4,16 @@ from __future__ import annotations
 import base64
 import binascii
 import os
+import re
 from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
 DEFAULT_USER_AGENT = "DescenteCanyonAppServer/1.0 (+https://plinz.github.io/descente-canyon-app/)"
+DEFAULT_PUBLIC_URL = "https://canyon.aduquennoy.fr"
+DEFAULT_ANDROID_PACKAGE = "fr.descentecanyon.app"
+RELEASE_CERT_SHA256 = "06:C9:84:D8:94:B5:7B:12:FB:4A:E9:FF:D4:0D:00:A2:3F:FB:1B:68:79:DA:02:30:10:6F:83:AE:CA:04:F0:A5"
+"""Certificate of the APKs the Release workflow signs (GitHub releases, upload key of Google Play)."""
 
 
 class ConfigError(RuntimeError):
@@ -48,6 +53,14 @@ class Settings:
     """Token of the review tool (`dcserver admin`); without it the tool refuses every request."""
     admin_hosts: tuple[str, ...] = ("localhost", "127.0.0.1", "::1")
     """Host names the review tool answers to (it is reached through an SSH tunnel)."""
+    public_url: str = DEFAULT_PUBLIC_URL
+    """Address of the links the app shares (https://<domain>, no trailing slash)."""
+    android_package: str = DEFAULT_ANDROID_PACKAGE
+    android_cert_sha256: tuple[str, ...] = (RELEASE_CERT_SHA256,)
+    """Certificates allowed to open the links in the app (assetlinks.json): the Release workflow's
+    key and, for the copies installed from Google Play, the Play app signing key."""
+    android_debug_cert_sha256: tuple[str, ...] = ()
+    """Debug keys allowed for the debug build (package suffixed with .debug), for tests on a phone."""
 
     @property
     def database_path(self) -> Path:
@@ -107,6 +120,36 @@ def _admin_token(raw: str | None) -> str | None:
     return token
 
 
+_FINGERPRINT = re.compile(r"^[0-9A-F]{2}(:[0-9A-F]{2}){31}$")
+
+
+def _fingerprints(raw: str | None, default: tuple[str, ...]) -> tuple[str, ...]:
+    """SHA-256 certificate fingerprints, comma-separated, as keytool or the Play Console print them."""
+    if raw is None or not raw.strip():
+        return default
+    values = []
+    for part in raw.split(","):
+        value = part.strip().upper()
+        if not value:
+            continue
+        if ":" not in value and len(value) == 64:
+            value = ":".join(value[i : i + 2] for i in range(0, 64, 2))
+        if not _FINGERPRINT.match(value):
+            raise ConfigError(f"Not a SHA-256 certificate fingerprint: {part.strip()}")
+        values.append(value)
+    return tuple(values)
+
+
+def _public_url(env: Mapping[str, str]) -> str:
+    url = (env.get("DC_PUBLIC_URL") or "").strip().rstrip("/")
+    if not url and (env.get("DC_DOMAIN") or "").strip():
+        url = "https://" + env["DC_DOMAIN"].strip().rstrip("/")
+    url = url or DEFAULT_PUBLIC_URL
+    if not url.startswith("https://"):
+        raise ConfigError("DC_PUBLIC_URL must be an https:// address")
+    return url
+
+
 def load_settings(env: Mapping[str, str] = os.environ) -> Settings:
     """Reads the settings; DC_PEPPER is required, everything else has a default."""
     pepper_raw = env.get("DC_PEPPER")
@@ -136,4 +179,8 @@ def load_settings(env: Mapping[str, str] = os.environ) -> Settings:
         forecast_max_age_h=float(env.get("DC_FORECAST_MAX_AGE_H", "5")),
         admin_token=_admin_token(env.get("DC_ADMIN_TOKEN")),
         admin_hosts=tuple(h.strip().lower() for h in env.get("DC_ADMIN_HOSTS", "localhost,127.0.0.1,::1").split(",") if h.strip()),
+        public_url=_public_url(env),
+        android_package=(env.get("DC_ANDROID_PACKAGE") or DEFAULT_ANDROID_PACKAGE).strip(),
+        android_cert_sha256=_fingerprints(env.get("DC_ANDROID_CERT_SHA256"), (RELEASE_CERT_SHA256,)),
+        android_debug_cert_sha256=_fingerprints(env.get("DC_ANDROID_DEBUG_CERT_SHA256"), ()),
     )

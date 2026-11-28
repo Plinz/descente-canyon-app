@@ -98,9 +98,11 @@ if ((${#to_enable[@]})); then
 fi
 
 # 4. The GPS reference of the canyons carries their place (country, region...) since the proposed
-#    canyons take theirs from it: rebuilt once from the current catalog, not at the next catalog job.
-if [[ -f "$DATA/catalog/current.db" && -f "$DATA/canyon-reference.json" ]] && ! grep -q '"place"' "$DATA/canyon-reference.json"; then
-    echo "Reference: adding the place of each canyon"
+#    canyons take theirs from it, and their rating, commune and sheet since the pages of the shared
+#    links show them: rebuilt once from the current catalog, not at the next catalog job.
+if [[ -f "$DATA/catalog/current.db" && -f "$DATA/canyon-reference.json" ]] \
+    && ! { grep -q '"place"' "$DATA/canyon-reference.json" && grep -q '"cotation"' "$DATA/canyon-reference.json"; }; then
+    echo "Reference: adding the place, rating, commune and sheet of each canyon"
     docker compose run -T --rm --no-deps jobs canyon-reference --catalog-db "$DATA/catalog/current.db"
 fi
 
